@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+    <record id="course_01" model="shumeng.course">
+        <field name="name">Python</field>
+    </record>
+    <record id="course_02" model="shumeng.course">
+        <field name="name">JavaScript</field>
+    </record>
+    <record id="course_03" model="shumeng.course">
+        <field name="name">ODOO实施199999</field>
+    </record>
+    <record id="course_04" model="shumeng.course">
+        <field name="name">英语1222</field>
+    </record>
+    <record id="course_05" model="shumeng.course">
+        <field name="name">通信1</field>
+    </record>
+
+
+
+    </data>
+</openerp>

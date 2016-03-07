@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!-- t-call所用的template来源于 report模块 -->
+    <template id="report_course">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.external_layout">
+                    <div class="page">
+                        <section>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-md-12 text-center mt16 mb32">
+                                    <h2>课程：<t t-esc='o.name'/></h2>
+                                </div>
+                                <div class="col-md-12 mb16 mt16">
+                                    <t t-raw="o.jieshao" />
+                                </div>
+                              </div>
+                            </div>
+                          </section>
+                          <section class="mt16 mb16">
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-md-12 text-center mt16 mb32">
+                                  <h3 class="text-muted">开课记录11</h3>
+                                </div>
+                                <table class="table table-bordered table-responsive">
+                                  <tbody>
+                                    <tr>
+                                      <td>名称​</td>
+                                      <td>​开始时间</td>
+                                      <td>​结束时间</td>
+                                    </tr>
+                                    <t t-foreach="o.course_log_ids" t-as="cl">
+                                        <tr>
+                                            <td><t t-esc='cl.name'/></td>
+                                            <td>​<t t-esc='cl.start_date'/></td>
+                                            <td>​<t t-est='cl.end_date'/></td>
+                                        </tr>
+                                    </t>
+                                  </tbody>
+                                </table>
+                                <p/>
+                              </div>
+                            </div>
+                          </section>
+                        
+                        <br/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <template id="advance_custom_report">
+      <h1>111111111</h1>
+      <t t-foreach="docs" t-as="o">
+         <h1><t t-raw="o.name" /></h1>
+         <t t-foreach="chengji" t-as="c">
+            <t t-if="o.id == c">
+              <t t-foreach="chengji[c]" t-as="kk">
+                  <t t-raw="kk.name"/>
+                  <t t-raw="chengji[c][kk]" />
+              </t>
+            </t>
+         </t>
+      </t>
+    </template>
+
+
+
+    </data>
+</openerp>

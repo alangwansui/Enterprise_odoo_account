@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="seq_shumeng_course_log" model="ir.sequence">
+            <field name="name">开课记录</field>
+            <field name="code">shumeng.course.log</field>
+            <field name="prefix">CL</field>
+            <field name="padding">3</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</openerp>

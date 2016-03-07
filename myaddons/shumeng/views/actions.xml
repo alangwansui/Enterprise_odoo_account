@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record model="ir.actions.server" id="server_act_shumeng_shumeng">
+        <field name="name">学院信息</field>
+        <field name="model_id" ref="model_shumeng_shumeng"/>
+        <field name="code">
+            action = {
+            'name':'学院信息',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'shumeng.shumeng',
+            'res_id': user.xueyuan.id,
+            'views':[(self.pool.get('ir.model.data').get_object(cr, uid, 'shumeng', 'view_shumeng_shumeng_form').id,'form')]
+            }
+        </field>
+    </record>
+
+<!-- 该动作由server动作替代 -->
+    <record id="act_shumeng" model="ir.actions.act_window">
+        <field name="name">数梦</field>
+        <field name="res_model">shumeng.shumeng</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="act_shumeng_course" model="ir.actions.act_window">
+        <field name="name">全部课程</field>
+        <field name="res_model">shumeng.course</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_shumeng_course_search"/>
+        <field name="context">{'search_default_wodezhujiang_filter':1}</field>
+    </record>
+
+    <record id="act_shumeng_course_validate" model="ir.actions.act_window">
+        <field name="name">可用课程</field>
+        <field name="res_model">shumeng.course</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <!-- <field name="search_view_id" ref="view_shumeng_course_search"/> -->
+        <field name="domain">[('is_validate','=',True)]</field>
+    </record>
+
+    <record id="act_shumeng_exam" model="ir.actions.act_window">
+        <field name="name">考试</field>
+        <field name="res_model">shumeng.exam</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+    <record id="act_shumeng_teacher_validate" model="ir.actions.act_window">
+        <field name="name">教师</field>
+        <field name="res_model">shumeng.teacher</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">tree</field>
+        <field name="view_id" ref="view_shumeng_teacher_tree"/>
+        <field name="domain">[('parent_id','=',False)]</field>
+    </record>
+
+    <record id="act_shumeng_teacher_form" model="ir.actions.act_window">
+        <field name="name">教师</field>
+        <field name="res_model">shumeng.teacher</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('id','=',active_id)]</field>
+    </record>
+
+    <record id="ir_open_teacher" model="ir.values">
+        <field eval="'tree_but_open'" name="key2"/>
+        <field eval="'shumeng.teacher'" name="model"/>
+        <field name="name">教师</field>
+        <field eval="'ir.actions.act_window,%d'%act_shumeng_teacher_form" name="value"/>
+    </record>
+
+    <record id="act_shumeng_qingjiadan" model="ir.actions.act_window">
+        <field name="name">请假单</field>
+        <field name="res_model">shumeng.qingjiadan</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    
+    <!-- 做一个官方文档的菜单 -->
+
+    <record id="urlact_odoo_doc" model="ir.actions.act_url">
+        <field name="name">ODOO文档</field>
+        <field name="url">https://www.odoo.com/documentation/8.0/</field>
+        <field name="target">new</field>
+    </record>
+
+    
+    <record id="urlact_odoo_server" model="ir.actions.act_url">
+        <field name="name">Server模块</field>
+        <field name="url">https://www.odoo.com/documentation/8.0/howtos/backend.html</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="urlact_odoo_using" model="ir.actions.act_url">
+        <field name="name">应用</field>
+        <field name="url">https://www.odoo.com/documentation/user/9.0/</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <record id="act_shumeng_course_tags" model="ir.actions.act_window">
+        <field name="name">标签</field>
+        <field name="res_model">shumeng.course.tag</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+
+
+    </data>
+</openerp>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="saleorder_workflow" model="workflow">
+        <field name="name">数梦销售流程</field>
+        <field name="osv">sale.order</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record id="activity_draft" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="flow_start">True</field>
+        <field name="name">商务报备</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_draft()</field>
+    </record>
+    <record id="activity_wait" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">规范性审核</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_wait()</field>
+    </record>
+    <record id="activity_wait2" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">商务审核</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_wait2()</field>
+    </record>
+
+    <record id="activity_done" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">确认报价</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="activity_start" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">启动订单</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="activity_10" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">商务审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="activity_11" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">总裁审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="activity_12" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">结束</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="activity_refuse" model="workflow.activity">
+        <field name="wkf_id" ref="saleorder_workflow"/>
+        <field name="name">拒绝</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_refuse()</field>
+    </record>
+
+
+
+    <record id="trans_a_b" model="workflow.transition">
+        <field name="act_from" ref="activity_draft"/>
+        <field name="act_to" ref="activity_wait"/>
+        <field name="condition">client_order_ref</field>
+    </record>
+
+    <record id="trans_wait_wait2" model="workflow.transition">
+        <field name="act_from" ref="activity_wait"/>
+        <field name="act_to" ref="activity_wait2"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_wait2_done" model="workflow.transition">
+        <field name="act_from" ref="activity_wait2"/>
+        <field name="act_to" ref="activity_done"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_done_start" model="workflow.transition">
+        <field name="act_from" ref="activity_done"/>
+        <field name="act_to" ref="activity_start"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+
+    <record id="trans_start_1" model="workflow.transition">
+        <field name="act_from" ref="activity_start"/>
+        <field name="act_to" ref="activity_10"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+
+<!-- 商务审批到总裁审批 -->
+    <record id="trans_10_11" model="workflow.transition">
+        <field name="act_from" ref="activity_10"/>
+        <field name="act_to" ref="activity_11"/>
+        <field name="signal">btn_confirm_s</field>
+    </record>
+
+
+
+    <record id="trans_wait_refuse" model="workflow.transition">
+        <field name="act_from" ref="activity_wait"/>
+        <field name="act_to" ref="activity_refuse"/>
+        <field name="signal">wizard_refuse</field>
+    </record>
+
+    <record id="trans_wait2_refuse" model="workflow.transition">
+        <field name="act_from" ref="activity_wait2"/>
+        <field name="act_to" ref="activity_refuse"/>
+        <field name="signal">wizard_refuse</field>
+    </record>
+
+    <record id="trans_refuse_draft" model="workflow.transition">
+        <field name="act_from" ref="activity_refuse"/>
+        <field name="act_to" ref="activity_draft"/>
+        <field name="signal">btn_retry</field>
+    </record>
+
+<!-- 商务审批到启动订单 -->
+    <record id="trans_10_start" model="workflow.transition">
+        <field name="act_from" ref="activity_10"/>
+        <field name="act_to" ref="activity_start"/>
+        <field name="signal">btn_retry</field>
+    </record>
+
+<!-- 总裁审批到启动订单 -->
+    <record id="trans_11_start" model="workflow.transition">
+        <field name="act_from" ref="activity_11"/>
+        <field name="act_to" ref="activity_start"/>
+        <field name="signal">btn_retry</field>
+    </record>
+
+<!-- 总裁审批到结束 -->
+    <record id="trans_11_12" model="workflow.transition">
+        <field name="act_from" ref="activity_11"/>
+        <field name="act_to" ref="activity_12"/>
+        <field name="signal">btn_retry</field>
+    </record>
+
+<!-- 商务审批到结束 -->
+    <record id="trans_10_12" model="workflow.transition">
+        <field name="act_from" ref="activity_10"/>
+        <field name="act_to" ref="activity_12"/>
+        <field name="signal">btn_retry</field>
+    </record>
+
+    </data>
+</openerp>

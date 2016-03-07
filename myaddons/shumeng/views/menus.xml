@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <menuitem name="ODOO学院" id="menu_top_odoo_study"></menuitem>
+
+    <menuitem name="业务" id="menu_fir_course" parent="menu_top_odoo_study"></menuitem>
+    <menuitem name="人员" id="menu_fir_human" parent="menu_top_odoo_study"  sequence="10"></menuitem>
+    <menuitem name="资料" id="menu_fir_material" parent="menu_top_odoo_study"  sequence="20"></menuitem>
+    <menuitem name="配置" id="menu_fir_config" parent="menu_top_odoo_study" sequence="100" groups="group_shumeng_01"></menuitem>
+
+    
+    <menuitem name="学院" id="menu_sec_shumeng" parent="menu_fir_course"
+            action="server_act_shumeng_shumeng"></menuitem>
+
+    <menuitem name="课程" id="menu_sec_course" parent="menu_fir_course"
+            sequence="20"
+            action="act_shumeng_course"></menuitem>
+
+    <menuitem action="action_cr_all" id="menu_cr_all" parent="menu_fir_course" sequence="21" name="报表演示"/>
+
+    <!-- <menuitem name="可用课程" id="menu_sec_course_validate" parent="menu_fir_course"
+            sequence="25"
+            action="act_shumeng_course_validate"></menuitem> -->
+    <menuitem name="培训" id="menu_sec_course_log" parent="menu_fir_course"
+            sequence="25"
+            action="act_shumeng_course_log"></menuitem>
+
+    <menuitem name="考试" id="menu_sec_exam" parent="menu_fir_course"
+            sequence="30"
+            action="act_shumeng_exam"></menuitem>
+
+    
+    
+<!-- 人员 -->
+    <menuitem name="教师" id="menu_sec_teacher" parent="menu_fir_human"
+            sequence="40"
+            action="act_shumeng_teacher_validate"></menuitem>
+
+    <menuitem name="请假单" id="menu_shumeng_qingjiadan" parent="menu_fir_human"
+            sequence="60"
+            action="act_shumeng_qingjiadan"></menuitem>
+
+<!-- 资料 -->
+    <menuitem name="ODOO文档" id="menu_odoo_document" parent="menu_fir_material"
+        sequence="70"></menuitem>
+
+    <menuitem name="8.0目录" id="menu_od_8_home" parent="menu_odoo_document"
+        sequence="10"
+        action="urlact_odoo_doc"></menuitem>
+
+    <menuitem name="Server模块" id="menu_od_server_module" parent="menu_odoo_document"
+        sequence="20"
+        action="urlact_odoo_server"></menuitem>
+
+    <menuitem name="9.0应用" id="menu_od_server_using" parent="menu_odoo_document"
+        sequence="30"
+        action="urlact_odoo_using"></menuitem>
+
+<!-- 配置 -->
+    <menuitem name="标签" id="menu_sec_course_tag" parent="menu_fir_config"
+            sequence="10"
+            action="act_shumeng_course_tags"></menuitem>
+    </data>
+</openerp>

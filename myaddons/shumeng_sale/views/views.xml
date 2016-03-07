@@ -1,0 +1,112 @@
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="shumeng_sale.crm_lead_list">
+      <field name="name">项目</field>
+      <field name="model">crm.lead</field>
+      <field name="priority">17</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="s_xiangmubianhao"/>
+          <field name="name" string="项目名称"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="shumeng_sale.crm_lead_form">
+      <field name="name">项目</field>
+      <field name="model">crm.lead</field>
+      <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+      <field name="arch" type="xml">
+          <field name="partner_id" position="after">
+            <field name="s_xitongbu" domain="[('parent_id','=',False)]"/>
+            <field name="s_hangye" domain="[('parent_id.parent_id','=',False)]"/>
+            <field name="s_zihangye" domain="[('parent_id.parent_id.parent_id','=',False)]"/>
+          </field>
+
+          <field name="fax" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </field>
+            
+
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="shumeng_sale.view_order_form_inherit">
+      <field name="name">Sale order inherit</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+
+        <button name="action_quotation_send" position="replace">
+        </button>
+        <button name="print_quotation" position="replace">
+          <button name="btn_confirm_s" type="workflow" string="第一步" />
+        </button>
+
+        <field name="state" position="attributes">
+          <attribute name="statusbar_visible">draft,s1,s2</attribute>        
+        </field>
+
+        <xpath expr="//tree/field[@name='tax_id']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+      </field>
+    </record>
+
+
+    <record id="view_res_users_form_inherit2" model="ir.ui.view">
+        <field name="name">view.res.users.form.inherit2</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <field name="partner_id" position="before">
+                <field name="s_hangye" />
+            </field>
+        </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="shumeng_sale.action_window">
+      <field name="name">shumeng_sale window</field>
+      <field name="res_model">shumeng_sale.shumeng_sale</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="shumeng_sale.action_server">
+      <field name="name">shumeng_sale server</field>
+      <field name="model_id" ref="model_shumeng_sale_shumeng_sale"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="shumeng_sale" id="shumeng_sale.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="shumeng_sale.menu_1" parent="shumeng_sale.menu_root"/>
+    <menuitem name="Menu 2" id="shumeng_sale.menu_2" parent="shumeng_sale.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="shumeng_sale.menu_1_list" parent="shumeng_sale.menu_1"
+              action="shumeng_sale.action_window"/>
+    <menuitem name="Server to list" id="shumeng_sale" parent="shumeng_sale.menu_2"
+              action="shumeng_sale.action_server"/>
+    -->
+  </data>
+</openerp>

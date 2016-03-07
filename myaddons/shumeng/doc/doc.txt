@@ -1,0 +1,14 @@
+
+QWeb格式化报表
+1. 打印菜单
+我们创建一个ir.actions.report.xml类型的动作
+2. QWeb视图
+
+3. 预览
+http://localhost:8069/report/html/account.report_invoice/1
+
+高级:自定义报表
+适用场景: 希望在报表中加入别的model的记录
+
+
+Graph数据报表

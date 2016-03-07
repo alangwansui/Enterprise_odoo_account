@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    
+
+    <record id="view_shumeng_shumeng_tree" model="ir.ui.view">
+        <field name="name">view.shumeng.shumeng.tree</field>
+        <field name="model">shumeng.shumeng</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"  string="名称"/>
+                <field name="renshu"/>
+                <field name="xingzhi"/>
+                <field name="chengliriqi"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shumeng_shumeng_form" model="ir.ui.view">
+        <field name="name">view.shumeng.shumeng.form</field>
+        <field name="model">shumeng.shumeng</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" string="名称"/>
+                        </group>
+                        <group>
+                            <field name="renshu"/>
+                            <field name="xingzhi"/>
+                            <field name="chengliriqi"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+    
+
+
+
+
+
+    </data>
+</openerp>

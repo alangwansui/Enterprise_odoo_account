@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- course log search 提升位置 -->
+    <record id="view_shumeng_course_log_search" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.search</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="course_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="act_shumeng_course_log" model="ir.actions.act_window">
+        <field name="name">开课记录</field>
+        <field name="res_model">shumeng.course.log</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,gantt,calendar,graph</field>
+        <field name="search_view_id" ref="view_shumeng_course_log_search" />
+    </record>
+
+    <record id="view_shumeng_course_tree" model="ir.ui.view">
+        <field name="name">view.shumeng.course.tree</field>
+        <field name="model">shumeng.course</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="keshi_lilun"/>
+                <field name="keshi_shicao"/>
+                <field name="keshi_total"/>
+                <field name="is_validate" />
+                <field name="academy_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shumeng_course_form" model="ir.ui.view">
+        <field name="name">view.shumeng.course.form</field>
+        <field name="model">shumeng.course</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <button class="oe_inline oe_stat_button" type="action" name="%(shumeng.act_shumeng_course_log)d" 
+                            icon="fa-strikethrough" context="{'search_default_course_id':active_id, 'default_course_id':active_id}">
+                            <field string="开课记录" name="course_log_nums" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="课程标准名称"/>
+                            <field name="keshi_lilun"/>
+                            <field name="keshi_shicao"/>
+                            <field name="keshi_total"/>
+                            <field name="access_mark" />
+                        </group>
+                        <group>
+                            <field name="tags_ids" widget="many2many_tags"/>
+                            <field name="zhu_jiang" />
+                            <field name="ke_shi_price" />
+                            <field name="ke_shi_fee"/>
+                            <field name="is_validate" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="信息">
+                            <field name="jieshao"/>
+                            <group>
+                                <field name="academy_id" />
+                            </group>
+                        </page>
+                        <page string="开课记录">
+                            <field name="course_log_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+<!-- course search view -->
+    <record id="view_shumeng_course_search" model="ir.ui.view">
+        <field name="name">view.shumeng.course.search</field>
+        <field name="model">shumeng.course</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="tags_ids"/>
+                <field name="keshi_total" />
+                <filter string="我做主讲" domain="[('zhu_jiang','=',uid)]" name="wodezhujiang_filter"/>
+                <group  expand="0" string="Group By">
+                    <filter string="主讲" context="{'group_by':'zhu_jiang'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+<!-- exam -->
+    <record id="view_shumeng_exam_tree" model="ir.ui.view">
+        <field name="name">view.shumeng.exam.tree</field>
+        <field name="model">shumeng.exam</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="course_id" />
+            </tree>
+        </field>
+    </record>
+
+<!-- 测试视图用户组 -->
+    <record id="view_shumeng_exam_tree2" model="ir.ui.view">
+        <field name="name">view.shumeng.exam.tree</field>
+        <field name="model">shumeng.exam</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shumeng_exam_form" model="ir.ui.view">
+        <field name="name">view.shumeng.exam.form</field>
+        <field name="model">shumeng.exam</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state"  widget="statusbar" statusbar_visible="draft,wait,approve,done" clickable="True"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                            <field name="shi_chang"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                            <field name="type"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                            <field name="chukao_id"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                        </group>
+                        <group>
+                            <field name="course_log_id"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                            <field name="keshi_total"/>
+                            <field name="create_date"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                            <field name="start_time"  attrs="{'readonly':[('state', '!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="成绩">
+                            <field name="chengji_ids"  attrs="{'readonly':[('state', '!=','approve')]}">
+                                <tree editable="bottom">
+                                    <field name="partner_id"/>
+                                    <field name="chengji" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="补考">
+                            <field name="bukao_ids" readonly="1">
+                                <field name="name"/>
+                                <field name="start_time"/>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+
+
+    
+
+<!-- course tags -->
+
+
+    <record id="view_shumeng_course_tags_tree" model="ir.ui.view">
+        <field name="name">view.shumeng.course.tag.tree</field>
+        <field name="model">shumeng.course.tag</field>
+        <field name="arch" type="xml">
+            <tree editable="top">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+<!-- 开课记录 -->
+
+
+
+
+    <record id="view_shumeng_course_log_kanban" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.kanban</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <kanban string="开课">
+                <!-- <field name="name"/>
+                <field name="course_id"/> -->
+                <templates>
+                    <field name="name"/>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <record id="view_shumeng_course_log_gantt" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.gantt</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <gantt string="开课" date_start="start_date" date_stop="end_date">
+                <field name="name"/>
+                <field name="course_id"/>
+            </gantt>
+        </field>
+    </record>
+
+
+    <record id="view_shumeng_course_log_calendar" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.calendar</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <calendar string="开课" color="state" date_start="start_date" date_stop="end_date">
+                <field name="name"/>
+                <field name="course_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_shumeng_course_log_tree" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.tree</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <tree colors="grey:state=='one';blue:state in ('two','thr')">
+                <field name="name"/>
+                <field name="course_id" />
+                <field name="start_date" />
+                <field name="end_date" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_shumeng_course_log_form" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.form</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="one,two,thr" clickable="True" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="course_id" domain="[('zhu_jiang','!=',False)]"/>
+                            <field name="course_keshi"/>
+                            <field name="attends_num"/>
+                        </group>
+                        <group>
+                            <field name="start_date" />
+                            <field name="end_date" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="学员">
+                            <field name="student_ids">
+                                <tree>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="授课记录">
+                        </page>
+                        <page string="考试记录">
+                            <field name="exam_ids">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="start_time" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_shumeng_course_log_graph" model="ir.ui.view">
+        <field name="name">view.shumeng.course.log.graph</field>
+        <field name="model">shumeng.course.log</field>
+        <field name="arch" type="xml">
+            <graph type="bar" stacked="False">
+                <field name="start_date"/>
+                <field name="course_id"/>
+                <field name="attends_num" type="measure" />
+            </graph>
+        </field>
+    </record>
+
+
+
+    </data>
+</openerp>

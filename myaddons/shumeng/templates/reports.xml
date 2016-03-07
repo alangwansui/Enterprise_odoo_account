@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <report
+        id="report_shumeng_course"
+        model="shumeng.course"
+        string="课程总结"
+        report_type="qweb-pdf"
+        name="shumeng.report_course"
+        file="shumeng.report_course"
+    />
+
+    <report
+        id="report_shumeng_course_advance"
+        model="shumeng.course"
+        string="课程总结自定义"
+        report_type="qweb-pdf"
+        name="shumeng.advance_custom_report"
+        file="shumeng.advance_custom_report"
+    />
+
+    
+
+
+
+
+    </data>
+</openerp>

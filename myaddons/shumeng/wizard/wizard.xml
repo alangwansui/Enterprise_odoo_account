@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_shumeng_exam_wizard_form" model="ir.ui.view">
+        <field name="name">view.shumeng.exam.wizard.form</field>
+        <field name="model">shumeng.exam.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                    <span>考生</span>
+                    <field name="attendee_ids">
+                        <tree>
+                            <field name="name" />
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="btn_confirm" type="object"
+                                string="确认" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="取消"/>
+                    </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <act_window id="launch_shumeng_exam_wizard"
+            name="创建考试"
+            src_model="shumeng.course.log"
+            res_model="shumeng.exam.wizard"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"/>
+
+
+
+    </data>
+</openerp>

@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    OpenERP, Open Source Management Solution
+#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+
+from openerp import models, fields, api
+from openerp import tools
+
+class sale_report(models.Model):
+    _name = "course.report"
+    _description = "Courses Statistics"
+    _auto = False
+
+    name = fields.Char("课程")
+    keshi = fields.Integer("课时")
+    keshi_fee = fields.Float("课时费")
+
+    _order = 'keshi desc'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, 'course_report')
+        cr.execute("""CREATE or REPLACE VIEW course_report as (
+            SELECT
+                c.id AS id,
+                c.name AS name,
+                c.keshi_lilun AS keshi,
+                c.ke_shi_fee AS keshi_fee
+            FROM 
+                shumeng_course AS c
+            )""")
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

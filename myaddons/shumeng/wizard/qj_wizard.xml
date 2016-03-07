@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_shumeng_qingjia_wizard_form" model="ir.ui.view">
+        <field name="name">view.shumeng.qingjia.wizard.form</field>
+        <field name="model">shumeng.qingjia.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="liyou"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+                    或
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="act_qingjia_wizard" model="ir.actions.act_window">
+        <field name="name">请假审批</field>
+        <field name="res_model">shumeng.qingjia.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+
+    </data>
+</openerp>

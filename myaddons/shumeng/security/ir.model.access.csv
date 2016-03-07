@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_shumeng_shumeng,shumeng.shumeng,model_shumeng_shumeng,,1,0,0,0
+access_shumeng_course,shumeng.course,model_shumeng_course,,1,0,0,0
+access_shumeng_course_log,shumeng.chourse.log,model_shumeng_course_log,,1,0,0,0
+access_shumeng_exam,shumeng.exam,model_shumeng_exam,,1,0,0,0
+access_shumeng_chengji,shumeng.chengji,model_shumeng_chengji,,1,0,0,0
+access_shumeng_course_tag,shumeng.course.tag,model_shumeng_course_tag,,1,0,0,0
+access_shumeng_teacher,shumeng.teacher,model_shumeng_teacher,,1,0,0,0
+access_shumeng_qingjiadan,shumeng.qingjiadan,model_shumeng_qingjiadan,,1,0,0,0
+
+access_shumeng_shumeng_zongguan,shumeng.shumeng.zongguan,model_shumeng_shumeng,shumeng.group_shumeng_01,1,1,0,0
+
+access_shumeng_course_zg,shumeng.course.zg,model_shumeng_course,shumeng.group_shumeng_01,1,1,1,1
+access_shumeng_course_fg,shumeng.course.fg,model_shumeng_course,shumeng.group_shumeng_02,1,1,0,0
+
+access_shumeng_qingjiadan_js,shumeng.qingjiadan,model_shumeng_qingjiadan,shumeng.group_shumeng_03,1,1,1,0

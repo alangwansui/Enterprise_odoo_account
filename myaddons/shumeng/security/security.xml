@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record model="ir.module.category" id="module_shumeng_group">
+            <field name="name">ODOO学院</field>
+            <field name="description">ODOO学院</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="group_shumeng_03" model="res.groups">
+            <field name="name">教师</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_shumeng_group"/>
+        </record>
+
+        <record id="group_shumeng_04" model="res.groups">
+            <field name="name">督导</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_shumeng_group"/>
+        </record>
+        
+        <record id="group_shumeng_02" model="res.groups">
+            <field name="name">分管</field>
+            <field name="implied_ids" eval="[(4,ref('shumeng.group_shumeng_03')),(4,ref('shumeng.group_shumeng_04'))]"/>
+            <field name="category_id" ref="module_shumeng_group"/>
+        </record>
+        
+        <record id="group_shumeng_01" model="res.groups">
+            <field name="name">总管</field>
+            <field name="implied_ids" eval="[(4,ref('shumeng.group_shumeng_02'))]"/>
+            <field name="category_id" ref="module_shumeng_group"/>
+        </record>
+
+
+
+
+<!-- 全局规则：只能看到自己学院的课程 -->
+        <record id="shumeng_shumeng_rule_00" model="ir.rule">
+            <field name="name">全局规则：只能看到自己学院的课程</field>
+            <field name="model_id" ref="model_shumeng_course"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('academy_id','=',user.xueyuan.id)]</field>
+        </record>
+<!-- 全局规则:能看到所有的课程 -->
+        <record id="shumeng_shumeng_rule_01" model="ir.rule">
+            <field name="name">全局规则：能看到所有的课程</field>
+            <field name="model_id" ref="model_shumeng_course"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+<!-- 组规则:教师和督导只能看到有效的课程 -->
+        <record id="shumeng_shumeng_rule_02" model="ir.rule">
+            <field name="name">组规则:教师和督导只能看到有效的课程</field>
+            <field name="model_id" ref="model_shumeng_course"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">[('is_validate','=',True)]</field>
+        </record>
+
+<!-- 教师只能看到自己主讲课程的开课记录、考试记录（讲一练一） -->
+        <record id="shumeng_shumeng_rule_1" model="ir.rule">
+            <field name="name">只看到自己主讲课程的开课记录</field>
+            <field name="model_id" ref="model_shumeng_course_log"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">['|',('course_id.zhu_jiang','=',user.id),('course_id.zhu_jiang','=',False)]</field>
+            <field name="groups" eval="[(4, ref('group_shumeng_03'))]"/>
+        </record>
+
+        <!-- 教师:只能看到需要自己审批的记录, 还得看到自己创建的记录 -->
+        <record id="shumeng_shumeng_rule_200" model="ir.rule">
+            <field name="name">教师:只能看到需要自己审批的记录, 还得看到自己创建的记录</field>
+            <field name="model_id" ref="model_shumeng_qingjiadan"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">['|',('create_uid','=',user.id),('shengpiren.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_shumeng_03'))]"></field>
+        </record>
+
+
+    </data>
+</openerp>

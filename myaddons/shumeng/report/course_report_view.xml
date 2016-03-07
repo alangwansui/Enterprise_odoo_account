@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="view_cr_graph" model="ir.ui.view">
+         <field name="name">cr.graph</field>
+         <field name="model">course.report</field>
+         <field name="arch" type="xml">
+             <graph string="cr">
+                 <field name="name"/>
+                 <field name="keshi"/>
+                 <field name="keshi_fee" type="measure"/>
+             </graph>
+         </field>
+    </record>
+
+    <record id="action_cr_all" model="ir.actions.act_window">
+        <field name="name">cr</field>
+        <field name="res_model">course.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_cr_graph"/>
+    </record>
+
+
+
+</data>
+</openerp>
