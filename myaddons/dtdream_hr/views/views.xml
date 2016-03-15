@@ -1,12 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-  <data>
-      <record id="hr.open_module_tree_department" model="ir.actions.act_window">
-          <field name="view_mode">kanban,form,tree</field>
-      </record>
+    <data>
+        <record id="hr.open_module_tree_department" model="ir.actions.act_window">
+            <field name="view_mode">kanban,tree,form</field>
+            <!--<field name="view_type">form</field>-->
+           <!-- <field name="view_id" ref="hr.view_department_tree"/>-->
+            <field name="domain">[]</field>
+        </record>
 
+        <!--<record id="act_dtdream_hr_department_form" model="ir.actions.act_window">
+            &lt;!&ndash;<field name="name">部门</field>&ndash;&gt;
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id','=',active_id)]</field>
+        </record>
 
-      <record id="dtdream_view_employee_form" model="ir.ui.view" >
+        <record id="ir_open_department" model="ir.values">
+            <field eval="'tree_but_open'" name="key2"/>
+            <field eval="'hr.department'" name="model"/>
+            &lt;!&ndash;<field name="name">部门</field>&ndash;&gt;
+            <field eval="'ir.actions.act_window,%d'%act_dtdream_hr_department_form" name="value"/>
+        </record>-->
+
+         <record id="dtdream_view_department_tree" model="ir.ui.view">
+            <field name="name">dtdream.hr.department.tree</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_tree"/>
+            <field name="arch" type="xml">
+                <field name="complete_name" position="after">
+                    <field name="name"/>
+                </field>
+                <field name="complete_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="dtdream_view_employee_form" model="ir.ui.view" >
             <field name="name">employee form inherit</field>
             <field name="model">hr.employee</field>
             <field name="priority">15</field>
@@ -218,7 +250,7 @@
 
 
             </field>-->
-      </record>
+        </record>
 
 
        <record id="view_employee_tree" model="ir.ui.view" >

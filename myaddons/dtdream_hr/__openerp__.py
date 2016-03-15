@@ -27,6 +27,7 @@
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'security/dtdream_hr_security.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
