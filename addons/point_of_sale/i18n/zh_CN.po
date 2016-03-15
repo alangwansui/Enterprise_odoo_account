@@ -2849,7 +2849,7 @@ msgstr "PoS类别"
 #: model:ir.actions.act_window,name:point_of_sale.product_pos_category_action
 #: model:ir.ui.menu,name:point_of_sale.menu_product_pos_category
 msgid "Pos Product Categories"
-msgstr "POS产品类别"
+msgstr "POS产品分类"
 
 #. module: point_of_sale
 #: model:ir.ui.view,arch_db:point_of_sale.view_pos_confirm
@@ -2950,7 +2950,7 @@ msgstr "产品"
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order_product_categ_id
 #: model:ir.ui.view,arch_db:point_of_sale.view_report_pos_order_search
 msgid "Product Category"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_report_transaction_pos_product_nb
@@ -2960,7 +2960,7 @@ msgstr "产品号"
 #. module: point_of_sale
 #: model:ir.ui.view,arch_db:point_of_sale.product_pos_category_tree_view
 msgid "Product Product Categories"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order_product_qty

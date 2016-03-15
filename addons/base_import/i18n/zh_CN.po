@@ -1061,7 +1061,7 @@ msgid ""
 "                        to make a reference to that record with columns like \n"
 "                        \"Field/External ID\". The following two CSV files give \n"
 "                        you an example for Products and their Categories."
-msgstr "当你使用External IDs,导入CSV文件\n你导入的每一条记录得External\nID 用 \"External ID\" 列来定义 . 然后, \n你将用一个列为\"Field/External ID\" 的\n数据记录做参考. 下面的两个 CSV 文件\n给你一个产品和产品类别的例子。"
+msgstr "当你使用External IDs,导入CSV文件\n你导入的每一条记录得External\nID 用 \"External ID\" 列来定义 . 然后, \n你将用一个列为\"Field/External ID\" 的\n数据记录做参考. 下面的两个 CSV 文件\n给你一个产品和产品分类的例子。"
 
 #. module: base_import
 #. openerp-web

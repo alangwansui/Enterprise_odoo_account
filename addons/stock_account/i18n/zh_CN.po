@@ -361,7 +361,7 @@ msgstr "产品警示时间"
 #: model:ir.model.fields,field_description:stock_account.field_stock_history_product_categ_id
 #: model:ir.ui.view,arch_db:stock_account.view_stock_history_report_search
 msgid "Product Category"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: stock_account
 #: model:ir.model.fields,field_description:stock_account.field_product_product_life_time
@@ -597,7 +597,7 @@ msgid ""
 "specific valuation account set on the source location. This is the default "
 "value for all products in this category. It can also directly be set on each"
 " product"
-msgstr "在进行实时库存计价时，除非在源库位指定一个核算科目，否则所有进仓调拨在对应的的分类账将登入这科目。这是该产品类别的默认值。它也可以直接设定在每个产品上。"
+msgstr "在进行实时库存计价时，除非在源库位指定一个核算科目，否则所有进仓调拨在对应的的分类账将登入这科目。这是该产品分类的默认值。它也可以直接设定在每个产品上。"
 
 #. module: stock_account
 #: model:ir.model.fields,help:stock_account.field_product_product_property_stock_account_input
@@ -607,7 +607,7 @@ msgid ""
 "incoming stock moves will be posted in this account, unless there is a "
 "specific valuation account set on the source location. When not set on the "
 "product, the one from the product category is used."
-msgstr "在进行实时库存计价时，除非为源库位指定一个库存核算科目，否则所有的入库调拨分类账明细将登入这科目。当没在产品设定时，使用产品类别的设定。"
+msgstr "在进行实时库存计价时，除非为源库位指定一个库存核算科目，否则所有的入库调拨分类账明细将登入这科目。当没在产品设定时，使用产品分类的设定。"
 
 #. module: stock_account
 #: model:ir.model.fields,help:stock_account.field_product_category_property_stock_account_output_categ_id
@@ -617,7 +617,7 @@ msgid ""
 "specific valuation account set on the destination location. This is the "
 "default value for all products in this category. It can also directly be set"
 " on each product"
-msgstr "在进行实时库存计价时，除非目标库位指定一个核算科目否则所有出库调拨分类账明细将记录到这科目。这是该产品类别的默认设置。它也可直接设定在每个产品上。"
+msgstr "在进行实时库存计价时，除非目标库位指定一个核算科目否则所有出库调拨分类账明细将记录到这科目。这是该产品分类的默认设置。它也可直接设定在每个产品上。"
 
 #. module: stock_account
 #: model:ir.model.fields,help:stock_account.field_product_product_property_stock_account_output

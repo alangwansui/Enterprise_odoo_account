@@ -944,7 +944,7 @@ msgid ""
 "Each rule include a set of applicability criteria (date range,\n"
 "                product category...) and a computation that easily helps to achieve\n"
 "                any kind of pricing."
-msgstr "每个规则包括：一套适用标准(日期范围，产品类别......)和计算，可以轻松地帮助实现任何一种定价。"
+msgstr "每个规则包括：一套适用标准(日期范围，产品分类......)和计算，可以轻松地帮助实现任何一种定价。"
 
 #. module: product
 #: model:product.product,website_description:product.product_product_5b
@@ -1477,7 +1477,7 @@ msgstr "内部"
 #: model:ir.model.fields,field_description:product.field_product_template_categ_id
 #: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Internal Category"
-msgstr "内部分类"
+msgstr "产品分类"
 
 #. module: product
 #: model:ir.model.fields,field_description:product.field_product_product_code
@@ -2169,13 +2169,13 @@ msgstr "产品属性"
 #: model:ir.ui.view,arch_db:product.product_category_list_view
 #: model:ir.ui.view,arch_db:product.product_category_search_view
 msgid "Product Categories"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: product
 #: model:ir.model,name:product.model_product_category
 #: model:ir.model.fields,field_description:product.field_product_pricelist_item_categ_id
 msgid "Product Category"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: product
 #: model:ir.model.fields,field_description:product.field_product_product_product_manager

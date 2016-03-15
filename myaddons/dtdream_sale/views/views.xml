@@ -1,0 +1,79 @@
+<openerp>
+  <data>
+      <!--产品视图-->
+      <record id="view_res_product_template_form_inherit" model="ir.ui.view">
+          <field name="name">view.res.product.template.form.inherit</field>
+          <field name="model">product.template</field>
+          <field name="inherit_id" ref="product.product_template_form_view" />
+          <field name="arch" type="xml">
+              <field name="list_price" position="attributes">
+                  <attribute name="string">目录价</attribute>
+              </field>
+              <field name="name" position="attributes">
+                  <attribute name="string">产品型号</attribute>
+              </field>
+              <field name="type" position="before">
+                  <field name="bom" />
+              </field>
+              <field name="invoice_policy" position="before">
+                  <field name="pro_version" />
+                  <field name="pro_status" string="状态"/>
+                  <field name="pro_description" />
+              </field>
+              <field name="list_price" position="before">
+                  <field name="pro_type" />
+              </field>
+              <field name="list_price" position="after">
+                  <field name="ref_discount" />
+                  <field name="office_manager_discount" />
+                  <field name="system_department_discount" />
+                  <field name="market_president_discount" />
+                  <field name="company_president_discount" />
+              </field>
+              <field name="invoice_policy" position="after">
+                  <field name="remark" />
+              </field>
+          </field>
+      </record>
+      <!--新增产品类别页面-->
+      <record id="product_pro_type_form_view" model="ir.ui.view">
+          <field name="name">product.pro.type.form</field>
+          <field name="model">product.pro.type</field>
+          <field name="arch" type="xml">
+              <form string="产品类别">
+                  <sheet>
+                      <group>
+                          <field name="name"/>
+                      </group>
+                      <group>
+
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+      <record id="product_pro_type_form_action" model="ir.actions.act_window">
+          <field name="name">产品类别</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">product.pro.type</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+
+      <!--产品搜索界面增加产品分类分组-->
+      <record id="product_search_form_inherit_view" model="ir.ui.view">
+          <field name="name">product.template.search.inherit</field>
+          <field name="model">product.template</field>
+          <field name="inherit_id" ref="product.product_template_search_view"/>
+          <field name="arch" type="xml">
+               <field name="pricelist_id" position="after">
+                  <filter string="产品分类" name="categ_id" context="{'group_by':'categ_id'}"/>
+               </field>
+          </field>
+      </record>
+
+      <!--新增产品类别菜单-->
+      <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />
+
+  </data>
+</openerp>
