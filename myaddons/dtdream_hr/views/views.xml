@@ -3,27 +3,14 @@
     <data>
         <record id="hr.open_module_tree_department" model="ir.actions.act_window">
             <field name="view_mode">kanban,tree,form</field>
-            <!--<field name="view_type">form</field>-->
-           <!-- <field name="view_id" ref="hr.view_department_tree"/>-->
-            <field name="domain">[]</field>
-            <field name="context">{'search_default_parent_dep':1}</field>
+            <field name="context">{
+                'search_default_parent_dep':1,
+                'search_default_group_type':1,
+                'search_default_my_leaves':1,
+                }
+            </field>
         </record>
 
-        <!--<record id="act_dtdream_hr_department_form" model="ir.actions.act_window">
-            &lt;!&ndash;<field name="name">部门</field>&ndash;&gt;
-            <field name="res_model">hr.department</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[('id','=',active_id)]</field>
-        </record>
-
-        <record id="ir_open_department" model="ir.values">
-            <field eval="'tree_but_open'" name="key2"/>
-            <field eval="'hr.department'" name="model"/>
-            &lt;!&ndash;<field name="name">部门</field>&ndash;&gt;
-            <field eval="'ir.actions.act_window,%d'%act_dtdream_hr_department_form" name="value"/>
-        </record>-->
 
         <record id="dtdream_view_department_filter" model="ir.ui.view">
             <field name="name">dtdream.hr.department.filter</field>
@@ -67,33 +54,22 @@
                         </div>
                         <field name="image" widget='image' class="oe_avatar" options='{"preview_image":"image_medium"}'/>
                         <div class="oe_title">
-                            <label for="full_name" class="oe_edit_only"/>
+                            <label for="name" string="花名" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" placeholder="花名"/>
+                                <field name="name" placeholder="请输入花名" string="花名"/>
                             </h1>
                         </div>
                         <notebook>
-                            <page name="public" string="基础信息">
+                            <page name="public" string="公开信息">
                                 <group>
                                     <group>
-                                         <field name="full_name" string="姓名"/>
-                                        <!--<field name="account_number"/>-->
+                                         <field name="full_name"/>
                                         <field name="job_number"/>
-                                        <!--<field name="work_location"/>-->
                                         <field name="work_email" widget="email"/>
-                                        <!--<field name="work_phone"/>-->
                                     </group>
                                     <group>
-                                        <!--<field name="Job_Type"/>-->
                                         <field name="department_id" on_change="onchange_department_id(department_id)"/>
-                                         <field name="mobile_phone" string="手机号"/>
-                                        <!--<field name="duties"/>-->
-                                        <!--<field name="post"/>-->
-                                       <!-- <field name="education"/>-->
-                                        <!--<field name="entry_day"/>
-                                        <field name="Inaugural_state"/>-->
-                                        <field name="parent_id" invisible="1"/>
-                                        <field name="coach_id" invisible="1"/>
+                                        <field name="mobile_phone" string="手机号"/>
                                     </group>
                                 </group>
                             </page>
@@ -103,6 +79,7 @@
                                         <field name="duties"/>
                                         <field name="post"/>
                                         <field name="gender"/>
+                                        <field name="education"/>
                                     </group>
                                     <group>
                                         <field name="home_address"/>
@@ -110,48 +87,7 @@
                                         <field name="Inaugural_state"/>
                                     </group>
                                 </group>
-                                <!--<group>
-                                    <group string="身份和其他信息">
-                                        <field name="country_id" options='{"no_open": True, "no_create": True}' invisible="1"/>
-                                        <field name="identification_id" groups="base.group_hr_user"/>
-                                        <field name="birthplace"></field>
-                                        <field name="passport_id" groups="base.group_hr_user" invisible="1"/>
-                                        <field name="bank_account_id"/>
-                                        <field name="oil_number"/>
-                                        <field name="zhongda"/>
-                                    </group>
-                                    <group string="联系信息">
-                                        <field name="address_home_id"
-                                            context="{'show_address': 1}"
-                                            options='{"always_reload": True, "highlight_first_line": True}'/>
-                                        <field name="nation"></field>
-                                        <field name="zip_code"></field>
-                                    </group>
-                                    <group string="状态">
-                                        <field name="gender"/>
-                                        <field name="marital"/>
-                                        <field name="childrenNumber"/>
-                                    </group>
-                                    <group string="出生">
-                                        <field name="birthday"/>
-                                    </group>
-                                </group>
-                                 <group string="家庭信息">
-                                     <field name="family_ids"/>
-                                 </group>
-                                <group string="社保/公积金">
-                                    <group>
-                                        <field  name="Residing"/>
-                                        <field name="sb_month"/>
-                                        <field name="sb_add"/>
-                                        <field name="apply_add"/>
-                                    </group>
-                                    <group>
-                                        <field  name="Hukou"/>
-                                        <field name="gjj_month"/>
-                                        <field name="gjj_add"/>
-                                    </group>
-                                </group>-->
+
                             </page>
                             <page string="HR设置" groups="base.group_hr_user">
                                 <group>
@@ -170,165 +106,23 @@
                     </div>
                 </form>
             </field>
-            <!--<field name="inherit_id" ref="hr.view_employee_form"/>-->
-            <!--<field name="arch" type="xml">
-                <label for="name" class="oe_edit_only" position="replace">
-                    <label for="full_name" class="oe_edit_only"/>
-                </label>
 
-                <field name="name" position="replace">
-                    <field name="full_name" placeholder="员工花名" ></field>
-                </field>
-
-                <field name="address_id" position="before">
-                    <field name="name"/>
-                </field>
-
-                <field name="address_id" position="before">
-                    <field name="account_number"/>
-                </field>
-
-                <field name="address_id" position="before">
-                    <field name="job_number"/>
-                </field>
-
-                 <field name="country_id" position="attributes" >
-                    <attribute name="invisible">1</attribute>
-                 </field>
-
-                <field name="passport_id" position="attributes" >
-                    <attribute name="invisible">1</attribute>
-                 </field>
-
-                <field name="marital" position="after">
-                    <field name="childrenNumber"/>
-                </field>
-
-                <field name="identification_id" position="after">
-                    <field name="birthplace"></field>
-                </field>
-
-                <field name="address_home_id" position="after">
-                    <field name="zip_code"></field>
-                </field>
-
-                <field name="department_id" position="before">
-                    <field name="Job_Type"/>
-                </field>
-
-                <field name="job_id" position="after">
-                    <field name="entry_day"/>
-                </field>
-
-                <field name="job_id" position="after">
-                    <field name="post"/>
-                </field>
-
-                <field name="job_id" position="after">
-                    <field name="education"/>
-                </field>
-
-
-                <field name="parent_id" position="attributes" >
-                    <attribute name="invisible">1</attribute>
-                </field>
-
-                <field name="coach_id" position="attributes" >
-                    <attribute name="invisible">1</attribute>
-                </field>
-
-                <field name="bank_account_id" position="after">
-                    <field name="zhongda"/>
-                </field>
-
-                <field name="bank_account_id" position="after">
-                    <field name="oil_number"/>
-                </field>
-
-                <xpath expr="//notebook[1]/page[2]" position="inside" >
-                    <group string="家庭信息">
-                        <field name="family_ids"/>
-                    </group>
-                </xpath>
-
-
-                <xpath expr="//notebook[1]/page[2]" position="inside" >
-                        <group string="社保/公积金">
-                            <group>
-                                <field  name="Residing"/>
-                                <field name="sb_month"/>
-                                <field name="sb_add"/>
-                                <field name="apply_add"/>
-                            </group>
-                            <group>
-                                <field  name="Hukou"/>
-                                <field name="gjj_month"/>
-                                <field name="gjj_add"/>
-                            </group>
-                        </group>
-                </xpath>
-
-
-
-            </field>-->
         </record>
 
 
-       <record id="view_employee_tree" model="ir.ui.view" >
-            <field name="name">employee tree inherit</field>
+       <record id="dtdream_view_employee_tree" model="ir.ui.view" >
+            <field name="name">employee tree</field>
             <field name="model">hr.employee</field>
-            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field eval="15" name="priority"/>
             <field name="arch" type="xml">
-                     <xpath expr="//tree/field[@name='name']" position="before">
-                        <field name="full_name"/>
-                    </xpath>
-                 <field name="work_phone" position="invisible"/>
-                <field name="job_id" position="invisible"/>
-
+                <tree>
+                    <field name="name"/>
+                    <field name="full_name"/>
+                    <field name="job_number"/>
+                    <field name="mobile_phone" string="手机号"/>
+                </tree>
             </field>
        </record>
-
-
-
-     <!-- <record id="dtdream_view_hr_employee_family_tree" model="ir.ui.view">
-        <field name="name">dtdream.view.hr.employee.family.tree</field>
-        <field name="model">hr.employee.family</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field  name="relation"/>
-                <field name="name"/>
-                <field name="employer"/>
-                <field name="zip_code"/>
-                <field name="email"/>
-                <field name="tel"/>
-                <field name="eme_cont"/>
-            </tree>
-        </field>
-      </record>
-
-      <record id="dtdream_view_hr_employee_family_form" model="ir.ui.view">
-        <field name="name">dtdream.view.hr.employee.family.form</field>
-        <field name="model">hr.employee.family</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field  name="relation"/>
-                            <field name="name"/>
-                            <field name="zip_code"/>
-                        </group>
-                        <group>
-                            <field name="email"/>
-                            <field name="tel"/>
-                            <field name="eme_cont"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>-->
-
 
   </data>
 </openerp>
