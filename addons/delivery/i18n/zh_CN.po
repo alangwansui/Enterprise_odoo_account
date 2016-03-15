@@ -670,7 +670,7 @@ msgstr "入库"
 #. module: delivery
 #: model:ir.model.fields,field_description:delivery.field_delivery_carrier_categ_id
 msgid "Internal Category"
-msgstr "内部分类"
+msgstr "产品分类"
 
 #. module: delivery
 #: model:ir.model.fields,field_description:delivery.field_delivery_carrier_code

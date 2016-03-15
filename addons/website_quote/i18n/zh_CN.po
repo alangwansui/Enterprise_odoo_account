@@ -1155,7 +1155,7 @@ msgstr "产品"
 #. module: website_quote
 #: model:sale.quote.option,website_description:website_quote.website_sale_option_line_1
 msgid "Product Category &amp; product Configuration with Order point"
-msgstr "产品类别，产品配置与订购点"
+msgstr "产品分类，产品配置与订购点"
 
 #. module: website_quote
 #: model:sale.quote.option,website_description:website_quote.website_sale_option_line_1

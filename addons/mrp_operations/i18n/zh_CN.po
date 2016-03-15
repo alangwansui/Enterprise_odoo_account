@@ -374,7 +374,7 @@ msgstr "产品"
 #. module: mrp_operations
 #: model:ir.model.fields,field_description:mrp_operations.field_mrp_workorder_category_id
 msgid "Product Category"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: mrp_operations
 #: model:ir.model.fields,field_description:mrp_operations.field_mrp_workorder_product_qty

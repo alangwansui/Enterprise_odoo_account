@@ -4437,13 +4437,13 @@ msgstr "产品"
 #: model:ir.ui.view,arch_db:stock.stock_location_route_form_view
 #, python-format
 msgid "Product Categories"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: stock
 #: model:ir.model,name:stock.model_product_category
 #: model:ir.model.fields,field_description:stock.field_stock_fixed_putaway_strat_category_id
 msgid "Product Category"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_inventory_line_product_code

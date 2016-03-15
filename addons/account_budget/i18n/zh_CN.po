@@ -74,7 +74,7 @@ msgid ""
 "                expected for a period in the future. A budget is defined on some\n"
 "                financial accounts and/or analytic accounts (that may represent\n"
 "                projects, departments, categories of products, etc.)"
-msgstr "预算是对未来一段时间公司收入和费用的预测。 预算是基于一些财务科目或是分析科目 (可能是项目, 部门, 产品类别, 等等.)"
+msgstr "预算是对未来一段时间公司收入和费用的预测。 预算是基于一些财务科目或是分析科目 (可能是项目, 部门, 产品分类, 等等.)"
 
 #. module: account_budget
 #: model:ir.model,name:account_budget.model_account_budget_crossvered_report

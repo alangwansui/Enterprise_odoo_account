@@ -1432,7 +1432,7 @@ msgstr "产品页"
 #. module: website_sale
 #: model:ir.ui.view,arch_db:website_sale.product_public_category_tree_view
 msgid "Product Product Categories"
-msgstr "产品类别"
+msgstr "产品分类"
 
 #. module: website_sale
 #: model:ir.model,name:website_sale.model_product_template
