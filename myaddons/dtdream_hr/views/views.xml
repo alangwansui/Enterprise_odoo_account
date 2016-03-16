@@ -18,7 +18,8 @@
             <field name="inherit_id" ref="hr.view_department_filter"/>
              <field name="arch" type="xml">
                  <field name="manager_id" position="after">
-                     <filter string="上级部门" name="parent_dep" domain="[]"/>
+                     <!--<filter string="上级部门" name="parent_dep" domain="[]"/>-->
+                     <filter name="group_type" string="上级部门" context="{'group_by':'parent_id'}"/>
                  </field>
              </field>
         </record>
