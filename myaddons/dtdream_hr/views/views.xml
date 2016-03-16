@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="hr.open_module_tree_department" model="ir.actions.act_window">
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{
+                'search_default_parent_dep':1,
+                'search_default_group_type':1,
+                'search_default_my_leaves':1,
+                }
+            </field>
+        </record>
+
+
+        <record id="dtdream_view_department_filter" model="ir.ui.view">
+            <field name="name">dtdream.hr.department.filter</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_filter"/>
+             <field name="arch" type="xml">
+                 <field name="manager_id" position="after">
+                     <filter string="上级部门" name="parent_dep" domain="[]"/>
+                 </field>
+             </field>
+        </record>
+
+
+         <record id="dtdream_view_department_tree" model="ir.ui.view">
+            <field name="name">dtdream.hr.department.tree</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_tree"/>
+            <field name="arch" type="xml">
+                <field name="complete_name" position="after">
+                    <field name="name"/>
+                </field>
+                <field name="complete_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="dtdream_view_employee_form" model="ir.ui.view" >
+            <field name="name">employee form inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="priority">15</field>
+            <field name="arch" type="xml">
+                <form string="Employee">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box" groups="base.group_hr_user">
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                    options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <field name="image" widget='image' class="oe_avatar" options='{"preview_image":"image_medium"}'/>
+                        <div class="oe_title">
+                            <label for="name" string="花名" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="请输入花名" string="花名"/>
+                            </h1>
+                        </div>
+                        <notebook>
+                            <page name="public" string="公开信息">
+                                <group>
+                                    <group>
+                                         <field name="full_name"/>
+                                        <field name="job_number"/>
+                                        <field name="work_email" widget="email"/>
+                                    </group>
+                                    <group>
+                                        <field name="department_id" on_change="onchange_department_id(department_id)"/>
+                                        <field name="mobile_phone" string="手机号"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="个人信息" groups="base.group_hr_user">
+                                <group>
+                                    <group>
+                                        <field name="duties"/>
+                                        <field name="post"/>
+                                        <field name="gender"/>
+                                        <field name="education"/>
+                                    </group>
+                                    <group>
+                                        <field name="home_address"/>
+                                        <field name="entry_day"/>
+                                        <field name="Inaugural_state"/>
+                                    </group>
+                                </group>
+
+                            </page>
+                            <page string="HR设置" groups="base.group_hr_user">
+                                <group>
+                                    <group string='状态' name="active_group">
+                                        <field name="company_id" groups="base.group_multi_company" on_change="onchange_company(company_id)"/>
+                                        <field name="user_id" on_change="onchange_user(name, image, user_id)" string="相关用户"
+                                            context="{'default_groups_ref': ['base.group_user']}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+
+        </record>
+
+
+       <record id="dtdream_view_employee_tree" model="ir.ui.view" >
+            <field name="name">employee tree</field>
+            <field name="model">hr.employee</field>
+            <field eval="15" name="priority"/>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="full_name"/>
+                    <field name="job_number"/>
+                    <field name="mobile_phone" string="手机号"/>
+                </tree>
+            </field>
+       </record>
+
+  </data>
+</openerp>
