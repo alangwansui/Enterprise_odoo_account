@@ -5,6 +5,8 @@ from openerp import models, fields, api
 class dtdream_hr(models.Model):
     _inherit = 'hr.department'
 
+    code = fields.Char("部门编码")
+
 
 
 class dtdream_hr_employee(models.Model):
@@ -20,7 +22,7 @@ class dtdream_hr_employee(models.Model):
         ('education_03','本科'),
         ('education_04', '硕士'),
         ('education_05', '博士'),
-        ('education_05', '其他'),
+        ('education_06', '其他'),
         ], string='最高学历')
 
     duties = fields.Char("职务")
