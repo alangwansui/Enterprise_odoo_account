@@ -1,0 +1,12 @@
+<openerp>
+    <data>
+        <record id="act_dtdream_account_account_type" model="ir.actions.act_window">
+            <field name="name">科目类型</field>
+            <field name="res_model">account.account.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="科目类型" sequence="100" id="dtdream_account_account_type" parent="account.menu_finance_entries" action="act_dtdream_account_account_type"></menuitem>
+    </data>
+</openerp>
