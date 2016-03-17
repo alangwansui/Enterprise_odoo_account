@@ -1830,7 +1830,7 @@ msgstr "超售"
 #: selection:sale.order,invoice_status:0
 #: selection:sale.order.line,invoice_status:0
 msgid "Upselling Opportunity"
-msgstr "超售商机"
+msgstr "超售项目管理"
 
 #. module: sale
 #: model:web.tip,description:sale.sale_tip_2

@@ -145,7 +145,7 @@ msgstr "触发提示的模型名称,例如,'res.partner'."
 #. module: web_tip
 #: model:ir.model.fields,help:web_tip.field_web_tip_type
 msgid "Model type, e.g. lead or opportunity for crm.lead"
-msgstr "模型类型,例如,线索或机会是crm.lead"
+msgstr "模型类型,例如,项目立项或机会是crm.lead"
 
 #. module: web_tip
 #: model:web.tip,description:web_tip.web_tip_1

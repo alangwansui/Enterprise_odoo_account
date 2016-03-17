@@ -35,7 +35,7 @@ msgstr "如果你遇到了急待解决的问题，请不要犹豫，立即通过
 #. module: website_crm
 #: model:ir.model,name:website_crm.model_crm_lead
 msgid "Lead/Opportunity"
-msgstr "线索/商机"
+msgstr "项目立项/项目管理"
 
 #. module: website_crm
 #: model:ir.ui.view,arch_db:website_crm.contactus_form

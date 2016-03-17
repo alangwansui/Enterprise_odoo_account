@@ -193,7 +193,7 @@ msgid ""
 "Go to your \"Related Document Model\" page and set the filter parameters in "
 "the \"Search\" view (Example of filter based on Leads/Opportunities: "
 "Creation Date \"is equal to\" 01/01/2012)"
-msgstr "到您的\"相关模型\"页面，在\"查找\"视图 设置过滤条件 (例如:线索/商机 使用 过滤条件：创建日期\"等于\"2012-01-01)"
+msgstr "到您的\"相关模型\"页面，在\"查找\"视图 设置过滤条件 (例如:项目立项/项目管理 使用 过滤条件：创建日期\"等于\"2012-01-01)"
 
 #. module: base_action_rule
 #: selection:base.action.rule,trg_date_range_type:0
@@ -384,17 +384,17 @@ msgstr "主题"
 #. module: base_action_rule
 #: model:ir.filters,name:base_action_rule.test_filter_done
 msgid "Test lead in state 'done'"
-msgstr "测试完成状态的线索"
+msgstr "测试完成状态的项目立项"
 
 #. module: base_action_rule
 #: model:ir.filters,name:base_action_rule.test_filter_draft
 msgid "Test lead in state 'draft'"
-msgstr "测试草稿状态的线索"
+msgstr "测试草稿状态的项目立项"
 
 #. module: base_action_rule
 #: model:ir.filters,name:base_action_rule.test_filter_open
 msgid "Test lead in state 'open'"
-msgstr "测试打开状态的线索"
+msgstr "测试打开状态的项目立项"
 
 #. module: base_action_rule
 #: model:ir.model.fields,field_description:base_action_rule.field_base_action_rule_trg_date_id
@@ -414,7 +414,7 @@ msgid ""
 "                be automatically set to a specific sales team, or an\n"
 "                opportunity which still has status pending after 14 days might\n"
 "                trigger an automatic reminder email."
-msgstr "使用自动操作来触发不同屏幕的动作\n例如：一个特定用户创建的线索可能被自动分配给某一个销售团队\n或者商机在等待14天后自动触发一个提醒电子邮件，"
+msgstr "使用自动操作来触发不同屏幕的动作\n例如：一个特定用户创建的项目立项可能被自动分配给某一个销售团队\n或者项目管理在等待14天后自动触发一个提醒电子邮件，"
 
 #. module: base_action_rule
 #: model:ir.model.fields,help:base_action_rule.field_base_action_rule_trg_date_calendar_id
