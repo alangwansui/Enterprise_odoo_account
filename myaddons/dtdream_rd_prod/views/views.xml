@@ -1,0 +1,56 @@
+<openerp>
+  <data>
+<!--研发项目-->
+    <record id="act_dtdream_rd_prod" model="ir.actions.act_window">
+        <field name="name">研发项目</field>
+        <field name="res_model">dtdream_rd_prod.dtdream_rd_prod</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_dtdream_rd_prod_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.rd.prod.tree</field>
+        <field name="model">dtdream_rd_prod.dtdream_rd_prod</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="code"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_rd_prod_form" model="ir.ui.view">
+        <field name="name">view.dtdream.rd.prod.form</field>
+        <field name="model">dtdream_rd_prod.dtdream_rd_prod</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                        <group>
+                            <field name="code" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+<!--版本-->
+    <!--<record id="act_dtdream_rd_version" model="ir.actions.act_window">-->
+        <!--<field name="name">版本</field>-->
+        <!--<field name="res_model">dtdream_rd_prod.dtdream_rd_version</field>-->
+        <!--<field name="type">ir.actions.act_window</field>-->
+        <!--<field name="view_type">form</field>-->
+        <!--<field name="view_mode">tree,form</field>-->
+    <!--</record>-->
+
+<!--菜单-->
+    <menuitem id="menu_finance_rd" name="研发" parent="account.menu_finance" sequence="200" />
+    <menuitem id="menu_finance_rd_prod" name="研发项目" parent="menu_finance_rd" sequence="100"  action="act_dtdream_rd_prod"/>
+    <!--<menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>-->
+  </data>
+</openerp>
