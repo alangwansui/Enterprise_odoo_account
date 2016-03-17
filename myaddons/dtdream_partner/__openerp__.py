@@ -7,7 +7,7 @@
         """,
 
     'description': """
-        增加客户管理模块的数梦工场特性，包括新增字段，增加行业、区域两个维度的权限管理，增加客户营销活动管理等。增加行业配置项。
+        增加客户管理模块的数梦工场特性，包括新增字段，增加行业、区域两个维度的权限管理，增加客户营销活动管理等。
     """,
 
     'author': "Dtdream",
@@ -26,7 +26,6 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/views.xml',
-        'views/industry.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

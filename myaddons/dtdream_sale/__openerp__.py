@@ -3,15 +3,14 @@
     'name': "dtdream_sale",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        增加销售管理模块的数梦工场特性""",
 
     'description': """
-        Long description of module's purpose
+    增加销售管理模块的数梦工场特性，包括新增字段，增加行业、区域等多个维度的权限管理，增加行业、办事处配置项。
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "Dtdream",
+    'website': "http://www.dtdream.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
@@ -26,6 +25,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',
+        'views/industry_office.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

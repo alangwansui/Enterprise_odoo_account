@@ -22,7 +22,7 @@ class dtdream_product(models.Model):
     market_president_discount = fields.Float(string="市场部总裁授权折扣")
     company_president_discount = fields.Float(string="公司总裁授权折扣")
 
-# 新增产品类别
+# 定义产品类别
 class product_pro_type(models.Model):
     _name = 'product.pro.type'
 
@@ -65,6 +65,7 @@ class dtdream_sale(models.Model):
         result = super(dtdream_sale, self).create(vals)
         return result
 
+# 定义行业模型
 class dtdream_industry(models.Model):
     _name = 'dtdream.industry'
 
@@ -77,13 +78,14 @@ class dtdream_industry(models.Model):
                 res.append(cat.name)
                 cat = cat.parent_id
             return res
-
         return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
 
-    name = fields.Char("行业名称")
-    parent_id = fields.Many2one("dtdream.industry", string="上级")
+    name = fields.Char(string='行业名称',required=True)
+    parent_no = fields.Char(string='行业编码',required=True)
+    parent_id = fields.Many2one('dtdream.industry', string='上级行业')
+    children_ids = fields.One2many('dtdream.industry','parent_id',string='下级行业')
 
-
+#定义办事处模型
 class dtdream_office(models.Model):
     _name = 'dtdream.office'
 

@@ -32,11 +32,11 @@ class dtdream_partner(models.Model):
     partner_owner = fields.Many2one('res.users', string='营销责任人',required=True)
 
 
-# 新增行业类别
-class dtdream_industry(models.Model):
-    _name = 'dtdream.industry'
+# # 新增行业类别
+# class dtdream_industry(models.Model):
+#     _name = 'dtdream.industry'
 
-    name = fields.Char(string='行业名称',required=True)
-    parent_no = fields.Char(string='行业编码',required=True)
-    parent_id = fields.Many2one('dtdream.industry', string='上级行业')
-    children_ids = fields.One2many('dtdream.industry','parent_id',string='下级行业')
+#     name = fields.Char(string='行业名称',required=True)
+#     parent_no = fields.Char(string='行业编码',required=True)
+#     parent_id = fields.Many2one('dtdream.industry', string='上级行业')
+#     children_ids = fields.One2many('dtdream.industry','parent_id',string='下级行业')

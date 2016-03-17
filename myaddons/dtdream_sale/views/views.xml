@@ -35,7 +35,8 @@
               </field>
           </field>
       </record>
-      <!--新增产品类别页面-->
+
+      <!--产品产品类别-->
       <record id="product_pro_type_form_view" model="ir.ui.view">
           <field name="name">product.pro.type.form</field>
           <field name="model">product.pro.type</field>
@@ -53,36 +54,16 @@
           </field>
       </record>
 
-      <!--新增办事处页面-->
-      <record id="view_leads_office_form" model="ir.ui.view">
-          <field name="name">view.leads.office.form</field>
-          <field name="model">dtdream.office</field>
-          <field name="arch" type="xml">
-              <form>
-                  <sheet>
-                      <group>
-                          <group>
-                              <field name="name"/>
-                          </group>
-                          <group>
-                              <field name="code"/>
-                          </group>
-                      </group>
-                  </sheet>
-              </form>
-          </field>
+      <!--定义产品类别action-->
+      <record id="product_pro_type_form_action" model="ir.actions.act_window">
+          <field name="name">产品类别</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">product.pro.type</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
       </record>
 
-      <record id="view_leads_office_tree" model="ir.ui.view">
-          <field name="name">view.leads.office.tree</field>
-          <field name="model">dtdream.office</field>
-          <field name="arch" type="xml">
-              <tree>
-                  <field name="name"/>
-                  <field name="code"/>
-              </tree>
-          </field>
-      </record>
+<!-- 定义项目立项 -->
       <record model="ir.ui.view" id="dtdream_sale.crm_lead_form">
           <field name="name">项目立项</field>
           <field name="model">crm.lead</field>
@@ -106,15 +87,6 @@
           </field>
       </record>
 
-      <!--产品类别action定义-->
-      <record id="product_pro_type_form_action" model="ir.actions.act_window">
-          <field name="name">产品类别</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="res_model">product.pro.type</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
-      </record>
-
       <!--产品搜索界面增加产品分类分组-->
       <record id="product_search_form_inherit_view" model="ir.ui.view">
           <field name="name">product.template.search.inherit</field>
@@ -127,19 +99,8 @@
           </field>
       </record>
 
-      <!--办事处action定义-->
-      <record id="leads_office_form_action" model="ir.actions.act_window">
-          <field name="name">办事处</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="res_model">dtdream.office</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
-      </record>
-
-      <!--新增产品类别、办事处菜单-->
+      <!--新增产品类别菜单-->
       <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />
-      <menuitem name="办事处" action="leads_office_form_action" id="menu_leads_office_form_action" parent="base.menu_crm_config_lead" sequence="8" />
-
 
   </data>
 </openerp>
