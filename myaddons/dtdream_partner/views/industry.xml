@@ -1,0 +1,70 @@
+<openerp>
+  <data>
+
+      <!--新增行业类别页面-->
+
+        <record id="view_dtdream_industry_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.industry.tree</field>
+            <field name="model">dtdream.industry</field>
+            <field name="field_parent">children_ids</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dtdream_industry_form" model="ir.ui.view">
+            <field name="name">view.dtdream.industry.form</field>
+            <field name="model">dtdream.industry</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="parent_no"/>
+                            </group>
+                            <group>
+                                <field name="parent_id" />                     
+                                <field name="children_ids" />                     
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_dtdream_industry" model="ir.actions.act_window">
+            <field name="name">行业</field>
+            <field name="res_model">dtdream.industry</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('parent_id','=',False)]</field>
+        </record>
+
+        #===让tree视图里的记录也可双击修改===
+        <record id="act_dtdream_industry_form" model="ir.actions.act_window">
+            <field name="name">行业</field>
+            <field name="res_model">dtdream.industry</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id','=',active_id)]</field>
+        </record>
+
+        <record id="ir_open_industry" model="ir.values">
+            <field name='key2'>tree_but_open</field>
+            <field name='model'>dtdream.industry</field>
+            <field name="name">行业</field>
+            <field eval="'ir.actions.act_window,%d'%act_dtdream_industry_form" name='value'/>
+        </record>
+
+        <menuitem name="行业" id="menu_industry" parent="base.menu_sale_config"
+            sequence="12"
+            action="act_dtdream_industry">
+        </menuitem>
+
+  </data>
+</openerp>

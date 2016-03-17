@@ -1,0 +1,21 @@
+<openerp>
+  <data>
+
+<!--项目视图-->
+      <record model="ir.ui.view" id="view_dtdream_partner_form_inherit">
+          <field name="name">view.dtdream.partner.form.inherit</field>
+          <field name="model">res.partner</field>
+          <field name="inherit_id" ref="base.view_partner_form" />
+          <field name="arch" type="xml">
+              <field name="website" position="after">
+                  <field name="partner_no" />
+                  <field name="industry_id" />
+                  <field name="partner_important" />
+                  <field name="partner_owner" />
+              </field>
+
+          </field>
+      </record>
+
+  </data>
+</openerp>
