@@ -80,6 +80,7 @@
                     <field name="full_name"/>
                     <field name="job_number"/>
                     <field name="mobile_phone" string="手机号"/>
+                    <field name="department_id"/>
                 </tree>
             </field>
        </record>
