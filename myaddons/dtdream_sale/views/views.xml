@@ -7,32 +7,61 @@
           <field name="inherit_id" ref="product.product_template_form_view" />
           <field name="arch" type="xml">
               <field name="list_price" position="attributes">
-                  <attribute name="string">目录价</attribute>
+                  <attribute name="invisible">1</attribute>
               </field>
               <field name="name" position="attributes">
                   <attribute name="string">产品型号</attribute>
               </field>
               <field name="type" position="before">
                   <field name="bom" />
-              </field>
-              <field name="invoice_policy" position="before">
                   <field name="pro_version" />
                   <field name="pro_status" string="状态"/>
+              </field>
+              <field name="uom_po_id" position="after">
                   <field name="pro_description" />
               </field>
               <field name="list_price" position="before">
                   <field name="pro_type" />
               </field>
-              <field name="list_price" position="after">
-                  <field name="ref_discount" />
-                  <field name="office_manager_discount" />
-                  <field name="system_department_discount" />
-                  <field name="market_president_discount" />
-                  <field name="company_president_discount" />
-              </field>
               <field name="invoice_policy" position="after">
                   <field name="remark" />
               </field>
+              <xpath expr="//page[@name='sales']" position="after">
+                  <page name="discount" string="折扣">
+                      <group>
+                          <group>
+                              <field name="list_price" />
+                              <field name="office_manager_discount" />
+                              <field name="market_president_discount" />
+                          </group>
+                          <group>
+                              <field name="ref_discount" />
+                              <field name="system_department_discount" />
+                              <field name="company_president_discount" />
+                          </group>
+                      </group>
+                  </page>
+              </xpath>
+          </field>
+      </record>
+
+      <record id="view_res_product_template_tree_view" model="ir.ui.view">
+          <field name="name">view.res.product.template.tree</field>
+          <field name="model">product.template</field>
+          <field name="priority">13</field>
+          <field name="arch" type="xml">
+              <tree string="Product">
+                  <field name="categ_id"/>
+                  <field name="pro_type"/>
+                  <field name="bom"/>
+                  <field name="name" string="产品名称"/>
+                  <field name="uom_id"/>
+                  <field name="pro_description"/>
+                  <field name="seller_ids"/>
+                  <field name="pro_status" string="状态"/>
+                  <field name="pro_version"/>
+                  <field name="write_date"/>
+              </tree>
           </field>
       </record>
 

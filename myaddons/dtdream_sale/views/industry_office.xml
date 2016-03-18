@@ -26,8 +26,7 @@
                                 <field name="parent_no"/>
                             </group>
                             <group>
-                                <field name="parent_id" />                     
-                                <field name="children_ids" />                     
+                                <field name="parent_id" />
                             </group>
                         </group>
                     </sheet>
@@ -37,8 +36,8 @@
 
         <record id="act_dtdream_industry" model="ir.actions.act_window">
             <field name="name">行业</field>
-            <field name="res_model">dtdream.industry</field>
             <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dtdream.industry</field>
             <field name="view_type">tree</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('parent_id','=',False)]</field>
