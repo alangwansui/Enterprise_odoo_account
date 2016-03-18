@@ -1737,7 +1737,7 @@ msgstr "让你的客户访问他们的单据"
 msgid ""
 "Gives the probability to assign a lead to this partner. (0 means no "
 "assignation.)"
-msgstr "为线索指定一个业务伙伴的概率（0表示没指派）"
+msgstr "为项目立项指定一个业务伙伴的概率（0表示没指派）"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_category_sequence

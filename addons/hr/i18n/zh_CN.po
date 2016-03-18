@@ -667,7 +667,7 @@ msgstr "正在招聘"
 #: model:hr.job,website_description:hr.job_hrm
 #: model:hr.job,website_description:hr.job_marketing
 msgid "Increase opportunities"
-msgstr "增加商机"
+msgstr "增加项目管理"
 
 #. module: hr
 #: model:hr.job,website_description:hr.job_ceo

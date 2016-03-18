@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dtdream_sale_dtdream_sale,dtdream_sale.dtdream_sale,model_dtdream_sale_dtdream_sale,,1,0,0,0
+access_product_pro_type_user,product.pro.type.user,model_product_pro_type,base.group_user,1,1,1,1
+access_product_dtdream_office,product.dtdream.office,model_dtdream_office,base.group_user,1,1,1,1
+access_product_dtdream_industry,product.dtdream.industry,model_dtdream_industry,base.group_user,1,1,1,1

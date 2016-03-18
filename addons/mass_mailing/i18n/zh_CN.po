@@ -650,7 +650,7 @@ msgstr "关注者（合作伙伴）"
 #. module: mass_mailing
 #: selection:mail.mass_mailing,reply_to_mode:0
 msgid "Followers of leads/applicants"
-msgstr "线索的跟踪者/应用"
+msgstr "项目立项的跟踪者/应用"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mail_mass_mailing_email_from
@@ -1060,7 +1060,7 @@ msgstr "群发邮件"
 msgid ""
 "Mass mailing allows you to to easily design and send mass mailings to your "
 "contacts, customers or leads using mailing lists."
-msgstr "批量邮件能让你便捷的设计并且给所有的联系人，客户或者使用邮件列表的线索批量发送邮件"
+msgstr "批量邮件能让你便捷的设计并且给所有的联系人，客户或者使用邮件列表的项目立项批量发送邮件"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mass_mailing_config_settings_module_mass_mailing_themes

@@ -1340,7 +1340,7 @@ msgid ""
 "The calendar is shared between employees and fully integrated with\n"
 "            other applications such as the employee holidays or the business\n"
 "            opportunities."
-msgstr "日历允许员工之间共享，并可以与其它应用程序整合,\n            如：员工休假或商机。"
+msgstr "日历允许员工之间共享，并可以与其它应用程序整合,\n            如：员工休假或项目管理。"
 
 #. module: calendar
 #: code:addons/calendar/calendar.py:1382
