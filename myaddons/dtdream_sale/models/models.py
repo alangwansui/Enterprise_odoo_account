@@ -46,13 +46,13 @@ class dtdream_sale(models.Model):
 
     bidding_time = fields.Date("招标时间")
     supply_time = fields.Date("供货时间")
-    project_stage =fields.Selection([
-        ('point', '机会点'),
-        ('start', '项目启动'),
-        ('communication', '商务/技术交流'),
-        ('bidding', '项目招投标'),
-        ('end', '项目结束'),
-    ])
+    # project_stage =fields.Selection([
+    #     ('point', '机会点'),
+    #     ('start', '项目启动'),
+    #     ('communication', '商务/技术交流'),
+    #     ('bidding', '项目招投标'),
+    #     ('end', '项目结束'),
+    # ])
     project_detail = fields.Text("项目详情")
 
     @api.model

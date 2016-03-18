@@ -107,7 +107,7 @@
               <field name="mobile" position="after">
                   <field name="bidding_time"/>
                   <field name="supply_time"/>
-                  <field name="project_stage" string="项目阶段"/>
+                  <!-- <field name="project_stage" string="项目阶段"/> -->
                   <field name="project_detail"/>
               </field>
               <field name="fax" position="attributes">
