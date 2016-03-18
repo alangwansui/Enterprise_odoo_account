@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!--
+    会计科目表模板
+-->
+
+    <data noupdate="True">
+
+        <record id="chart10003" model="account.account.template">
+            <field name="name">转让帐户</field>
+            <field name="code">1003</field>
+            <field name="reconcile" eval="True"/>
+            <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+        </record>
+
+        <!-- Chart template -->
+        <record id="l10n_chart_dtdream_business" model="account.chart.template">
+            <field name="name">数梦会计科目表</field>
+            <field name="code_digits" eval="4"/>
+            <field name="currency_id" ref="base.CNY"/>
+            <field name="cash_account_code_prefix">1001</field>
+            <field name="bank_account_code_prefix">1002</field>
+            <field name="transfer_account_id" ref="chart10003"/>
+        </record>
+        <record id="chart10003" model="account.account.template">
+            <field name="chart_template_id" ref="l10n_chart_dtdream_business"/>
+        </record>
+
+        <!-- 会计科目 -->
+        <record id="l10n_chart_dtdream_business" model="account.chart.template">
+        </record>
+
+        <record id="l10n_chart_dtdream_business_value" model="ir.values">
+            <field name="name">数梦会计科目表</field>
+            <field name="model">account.chart.template</field>
+            <field name="key">default</field>
+            <field name="res_id" ref="l10n_chart_dtdream_business"/>
+            <field name="value" ref="base.CNY"/>
+        </record>
+
+
+
+    </data>
+</odoo>
