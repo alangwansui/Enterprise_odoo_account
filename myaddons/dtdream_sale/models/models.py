@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+import datetime
 
 # 继承产品模型，修改字段
 class dtdream_product(models.Model):
@@ -28,11 +29,18 @@ class product_pro_type(models.Model):
 
     name = fields.Char('产品类别',required=True)
 
+#定义办事处模型
+class dtdream_office(models.Model):
+    _name = 'dtdream.office'
+
+    name = fields.Char("办事处名称",required=True)
+    code = fields.Char("办事处编码",required=True)
+
 class dtdream_sale(models.Model):
     _inherit = 'crm.lead'
 
     user_id = fields.Many2one(string="项目责任人")
-    project_number = fields.Char(string="项目编号", default="New")
+    project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
     project_leave = fields.Selection([
         ('company_leave', '公司级'),
         ('department_leave', '部门级'),
@@ -42,7 +50,7 @@ class dtdream_sale(models.Model):
     # sys_department = fields.Many2one("dtdream.industry", string="系统部")
     industry = fields.Many2one("dtdream.industry", string="行业")
     # sub_industry = fields.Many2one("dtdream.industry", string="子行业")
-    office = fields.Many2one("dtdream.office", string="办事处")
+    office = fields.Many2one("dtdream.office", string="办事处",required=True)
 
     bidding_time = fields.Date("招标时间")
     supply_time = fields.Date("供货时间")
@@ -58,10 +66,11 @@ class dtdream_sale(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('project_number', 'New') == 'New':
-            vals['project_number'] = self.env['ir.sequence'].next_by_code('crm.lead') or 'New'
-        print self.env['ir.sequence']
-        print self.env['ir.sequence'].next_by_code('crm.lead')
-        print self.env['ir.sequence'].next_by_code('dtdream.sale')
+            o_id = vals.get('office')
+            office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
+            print office_rec.code
+            print self.env['ir.sequence'].next_by_code('project.number')
+            vals['project_number'] = ''.join([office_rec.code,self.env['ir.sequence'].next_by_code('project.number'),'N']) or 'New'
         result = super(dtdream_sale, self).create(vals)
         return result
 
@@ -84,10 +93,3 @@ class dtdream_industry(models.Model):
     code = fields.Char(string='行业编码',required=True)
     parent_id = fields.Many2one('dtdream.industry', string='上级行业')
     children_ids = fields.One2many('dtdream.industry','parent_id',string='下级行业')
-
-#定义办事处模型
-class dtdream_office(models.Model):
-    _name = 'dtdream.office'
-
-    name = fields.Char("办事处名称",required=True)
-    code = fields.Char("办事处编码",required=True)
