@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-import datetime  
+import datetime
 
 # 继承客户模型，修改字段
 class dtdream_partner(models.Model):
@@ -22,8 +22,7 @@ class dtdream_partner(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('partner_code', 'New') == 'New':
-
+        if vals.get('partner_code', 'New') == 'New' and vals.get('office_id') > 0:
             o_id = vals.get('office_id')
             i_id = vals.get('industry_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])

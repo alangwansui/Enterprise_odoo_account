@@ -64,8 +64,69 @@
               </tree>
           </field>
       </record>
+      <!--重写项目立项tree视图-->
+      <record id="view_res_product_leads_tree_view" model="ir.ui.view">
+            <field name="name">view.res.product.leads.tree</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="project_number"/>
+                </field>
+                <field name="name" position="after">
+                    <field name="name" string="项目名称"/>
+                    <field name="project_leave" string="项目级别"/>
+                    <field name="office"/>
+                    <field name="industry"/>
+                    <field name="bidding_time"/>
+                    <field name="supply_time"/>
+                    <field name="user_id" string="销售员"/>
+                </field>
+                <field name="create_date" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="contact_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="country_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="email_from" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="phone" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="stage_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="team_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
 
-      <!--产品产品类别-->
+      <!--项目管理合同信息字段添加-->
+      <record id="view_res_product_oppr_form" model="ir.ui.view">
+            <field name="name">view.res.product.oppr</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <field name="partner_name" position="before">
+                    <field name="project_number"/>
+                    <field name="project_leave" string="项目级别"/>
+                    <field name="office"/>
+                    <field name="industry"/>
+                </field>
+                <field name="mobile" position="after">
+                    <field name="bidding_time"/>
+                    <field name="supply_time"/>
+                    <field name="project_detail"/>
+                </field>
+            </field>
+      </record>
+
+      <!--产品类别-->
       <record id="product_pro_type_form_view" model="ir.ui.view">
           <field name="name">product.pro.type.form</field>
           <field name="model">product.pro.type</field>
@@ -92,7 +153,7 @@
           <field name="view_mode">tree,form</field>
       </record>
 
-<!-- 定义项目立项 -->
+      <!-- 定义项目立项 -->
       <record model="ir.ui.view" id="dtdream_sale.crm_lead_form">
           <field name="name">项目立项</field>
           <field name="model">crm.lead</field>
