@@ -1,7 +1,33 @@
 <openerp>
   <data>
 
-<!--项目视图-->
+        <record model="ir.ui.view" id="view_dtdream_partner_tree_inherit">
+            <field name="name">view.dtdream.partner.tree.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree" />
+            <field name="priority">6</field>
+            <field name="arch" type="xml">
+
+                <field name="display_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="phone" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="email" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+                <tree>
+                    <field name="partner_code"/>
+                    <field name="industry_id" />
+                    <field name='office_id' />
+                    <field name='name' />
+                    <field name='partner_owner' />
+                </tree>
+            </field>
+        </record>
+
       <record model="ir.ui.view" id="view_dtdream_partner_form_inherit">
           <field name="name">view.dtdream.partner.form.inherit</field>
           <field name="model">res.partner</field>
@@ -9,9 +35,9 @@
           <field name="arch" type="xml">
               <field name="website" position="after">
                   <field name="partner_code" />
-                  <field name="industry_id" />
-                  <field name="office_id" />
-                  <field name="partner_important" />
+                  <field name="industry_id" attrs="{'required' : [('is_company', '=', True)]}"/>
+                  <field name="office_id" attrs="{'required' : [('is_company', '=', True)]}"/>
+                  <field name="partner_important" attrs="{'required' : [('is_company', '=', True)]}"/>
               </field>
 
               <field name="category_id" position="after">
