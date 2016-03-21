@@ -8,9 +8,13 @@
           <field name="inherit_id" ref="base.view_partner_form" />
           <field name="arch" type="xml">
               <field name="website" position="after">
-                  <field name="partner_no" />
+                  <field name="partner_code" />
                   <field name="industry_id" />
+                  <field name="office_id" />
                   <field name="partner_important" />
+              </field>
+
+              <field name="category_id" position="after">
                   <field name="partner_owner" />
               </field>
 

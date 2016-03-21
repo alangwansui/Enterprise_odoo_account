@@ -1,42 +1,37 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-
-# class dtdream_partner(models.Model):
-#     _name = 'dtdream_partner.dtdream_partner'
-
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         self.value2 = float(self.value) / 100
+import datetime  
 
 # 继承客户模型，修改字段
 class dtdream_partner(models.Model):
     _inherit = ["res.partner"]
 
-    # partner_no = fields.Char(string="客户编号",compute='')
-    partner_no = fields.Char(string='客户编号')
+    partner_code = fields.Char(string='客户编号',default='New',store=True,readonly=True)
     industry_id = fields.Many2one('dtdream.industry',string='行业',required=True)
+    office_id = fields.Many2one('dtdream.office', string='办事处',required=True)
     partner_important = fields.Selection([
-        ('ss', 'SS'),
-        ('s', 'S'),
-        ('a','A'),
-        ('b','B'),
-        ('c','C'),
-        ('d','D'),
+        ('SS', 'SS'),
+        ('S', 'S'),
+        ('A','A'),
+        ('B','B'),
+        ('C','C'),
+        ('D','D'),
     ], string='客户重要级', required=True)
-    partner_owner = fields.Many2one('res.users', string='营销责任人',required=True)
+    partner_owner = fields.Many2one('res.users', string='营销责任人')
 
+    @api.model
+    def create(self, vals):
+        if vals.get('partner_code', 'New') == 'New':
 
-# # 新增行业类别
-# class dtdream_industry(models.Model):
-#     _name = 'dtdream.industry'
+            o_id = vals.get('office_id')
+            i_id = vals.get('industry_id')
+            office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
+            industry_rec = self.env['dtdream.industry'].search([('id','=',i_id)])
+            # year_month = datetime.datetime.now().strftime("%Y%m")
 
-#     name = fields.Char(string='行业名称',required=True)
-#     parent_no = fields.Char(string='行业编码',required=True)
-#     parent_id = fields.Many2one('dtdream.industry', string='上级行业')
-#     children_ids = fields.One2many('dtdream.industry','parent_id',string='下级行业')
+            # 办事处编号A1+行业编号（A02）+建立时间（201603）+两位流水号+客户级别（SS/S/A/B/C/D）
+            vals['partner_code'] = ''.join([office_rec.code,industry_rec.code,self.env['ir.sequence'].next_by_code('partner.code'),vals.get('partner_important')]) or 'New'
+
+        result = super(dtdream_partner, self).create(vals)
+        return result

@@ -81,7 +81,7 @@ class dtdream_industry(models.Model):
         return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
 
     name = fields.Char(string='行业名称',required=True)
-    parent_no = fields.Char(string='行业编码',required=True)
+    code = fields.Char(string='行业编码',required=True)
     parent_id = fields.Many2one('dtdream.industry', string='上级行业')
     children_ids = fields.One2many('dtdream.industry','parent_id',string='下级行业')
 
@@ -89,5 +89,5 @@ class dtdream_industry(models.Model):
 class dtdream_office(models.Model):
     _name = 'dtdream.office'
 
-    name = fields.Char("名称",required=True)
-    code = fields.Char("编号",required=True)
+    name = fields.Char("办事处名称",required=True)
+    code = fields.Char("办事处编码",required=True)
