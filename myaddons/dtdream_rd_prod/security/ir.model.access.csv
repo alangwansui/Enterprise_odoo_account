@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dtdream_rd_prod_dtdream_rd_prod,dtdream_rd_prod.dtdream_rd_prod,model_dtdream_rd_prod_dtdream_rd_prod,,1,0,0,0
+access_dtdream_rd_prod_dtdream_prod_appr,dtdream_rd_prod.dtdream_prod_appr,model_dtdream_rd_prod_dtdream_prod_appr,,1,0,0,0
+access_dtdream_rd_prod_dtdream_rd_version,dtdream_rd_prod.dtdream_rd_version,model_dtdream_rd_prod_dtdream_rd_version,,1,0,0,0
+access_dtdream_rd_prod_dtdream_rd_config,dtdream_rd_prod.dtdream_rd_config,model_dtdream_rd_prod_dtdream_rd_config,,1,0,0,0
