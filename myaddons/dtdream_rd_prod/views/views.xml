@@ -1,8 +1,8 @@
 <openerp>
   <data>
-<!--研发项目-->
+<!--会计项目-->
     <record id="act_dtdream_rd_prod" model="ir.actions.act_window">
-        <field name="name">研发项目</field>
+        <field name="name">会计项目</field>
         <field name="res_model">dtdream_rd_prod.dtdream_rd_prod</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -29,9 +29,11 @@
                     <group>
                         <group>
                             <field name="name" />
+                            <!--<field name="department" domain="[('parent_id.parent_id','=',False),('child_ids','!=',False)]"/>-->
                         </group>
                         <group>
                             <field name="code" />
+                            <!--<field name="department_2" domain="[('parent_id.parent_id.parent_id','=',False)]"/>-->
                         </group>
                     </group>
                 </sheet>
@@ -39,18 +41,143 @@
         </field>
     </record>
 
+
+<!--研发项目-->
+      <record id="act_dtdream_prod_appr" model="ir.actions.act_window">
+            <field name="name">研发项目</field>
+            <field name="res_model">dtdream_rd_prod.dtdream_prod_appr</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+      </record>
+      <record id="view_dtdream_prod_appr_form" model="ir.ui.view">
+          <field name="name">view.dtdream.prod.appr.form</field>
+            <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <notebook>
+                            <page name="public" string="基本信息">
+                                <group>
+                                    <group>
+                                        <field name="name" />
+                                        <field name="department" domain="[('parent_id.parent_id','=',False),('child_ids','!=',False)]"/>
+                                         <!--<field name="state" />-->
+                                    </group>
+                                    <group>
+                                        <!--<field name="code" />-->
+                                        <field name="department_2" domain="[('parent_id.parent_id.parent_id','=',False)]"/>
+                                         <field name="state" />
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="detail" string="详细信息">
+                                <field name="role_ids" string="角色"/>
+                                <!--<tree>
+                                    <field name="name"/>
+                                </tree>-->
+                            </page>
+                            <page name="version" string="版本信息">
+                                 <field name="version_ids">
+                                <tree>
+                                    <field name="proName"/>
+                                    <field name="version_numb"/>
+                                    <field name="pro_flag"/>
+                                    <field name="version_state"/>
+
+                                </tree>
+                            </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+          </field>
+    </record>
+
+
+
+
 <!--版本-->
-    <!--<record id="act_dtdream_rd_version" model="ir.actions.act_window">-->
-        <!--<field name="name">版本</field>-->
-        <!--<field name="res_model">dtdream_rd_prod.dtdream_rd_version</field>-->
-        <!--<field name="type">ir.actions.act_window</field>-->
-        <!--<field name="view_type">form</field>-->
-        <!--<field name="view_mode">tree,form</field>-->
-    <!--</record>-->
+      <record id="act_dtdream_rd_version" model="ir.actions.act_window">
+          <field name="name">版本</field>
+          <field name="res_model">dtdream_rd_prod.dtdream_rd_version</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+
+      <record id="view_dtdream_rd_version_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.version.tree</field>
+            <field name="model">dtdream_rd_prod.dtdream_rd_version</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="proName"/>
+                    <field name="pro_flag" />
+                    <field name="version_numb"/>
+                    <field name="version_state" />
+                </tree>
+            </field>
+      </record>
+
+      <record id="view_dtdream_rd_version_form" model="ir.ui.view">
+        <field name="name">view.dtdream.rd.version.form</field>
+        <field name="model">dtdream_rd_prod.dtdream_rd_version</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="proName" />
+                            <field name="pro_flag" />
+                        </group>
+                        <group>
+                            <field name="version_numb" />
+                             <field name="version_state" />
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                             <field name="plan_dev_time" />
+                             <field name="actual_dev_time" />
+                             <field name="place" />
+                        </group>
+                        <group>
+                            <field name="plan_pub_time" />
+                            <field name="actual_pub_time" />
+                            <field name="Material"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+<!--角色配置-->
+      <record id="act_dtdream_rd_Rconfig" model="ir.actions.act_window">
+          <field name="name">角色配置</field>
+          <field name="res_model">dtdream_rd_prod.dtdream_rd_config</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree</field>
+      </record>
+
+      <record id="view_dtdream_rd_config_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.config.tree</field>
+            <field name="model">dtdream_rd_prod.dtdream_rd_config</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name='name'/>
+                    <field name="person"/>
+                </tree>
+            </field>
+      </record>
 
 <!--菜单-->
-    <menuitem id="menu_finance_rd" name="研发" parent="account.menu_finance" sequence="200" />
-    <menuitem id="menu_finance_rd_prod" name="研发项目" parent="menu_finance_rd" sequence="100"  action="act_dtdream_rd_prod"/>
-    <!--<menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>-->
+    <menuitem id="menu_finance_rd" name="研发" />
+    <menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod"/>
+    <menuitem id="menu_finance_prod_appr" name="研发项目" parent="menu_finance_rd" sequence="100"  action="act_dtdream_prod_appr"/>
+    <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
+    <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
+    <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="500"  action="act_dtdream_rd_Rconfig"/>
   </data>
 </openerp>
