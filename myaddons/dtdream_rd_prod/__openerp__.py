@@ -3,13 +3,13 @@
     'name': "dtdream_rd_prod",
 
     'summary': """
-        研发""",
+        研发产品""",
 
     'description': """
-        研发
+        该模块是新创建的，不继承原有模块，主要解决研发产品的立项审批与进度跟踪
     """,
 
-    'author': "czf",
+    'author': "小池",
     'website': "http://www.dtdream.com/",
 
     # Categories can be used to filter modules in modules listing

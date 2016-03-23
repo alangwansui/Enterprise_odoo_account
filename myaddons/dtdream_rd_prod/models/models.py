@@ -14,10 +14,14 @@ class dtdream_prod_appr(models.Model):
     department_2 = fields.Many2one('hr.department','二级部门')
     name=fields.Char('产品名称',required=True)
     # code = fields.Char('项目编码')
-    state = fields.Char('产品状态')
-    version_ids = fields.One2many('dtdream_rd_prod.dtdream_rd_version','pro_id','版本')
+    state = fields.Selection([('state_01','立项'),('state_02','总体设计'),('state_03','迭代开发'),('state_04','验证发布')],'产品状态')
+    version_ids = fields.One2many('dtdream_rd_prod.dtdream_rd_version','proName','版本')
     role_ids = fields.Many2many('dtdream_rd_prod.dtdream_rd_config','pro_id','角色')
 
+
+    pro_time = fields.Date('立项时间')
+    overall_plan_time = fields.Date('总体设计计划开始时间')
+    overall_actual_time = fields.Date('总体设计实际开始时间')
 
 #部门的联动
     @api.onchange('department_2')
@@ -39,11 +43,13 @@ class dtdream_prod_appr(models.Model):
 
 class dtdream_rd_version(models.Model):
     _name = 'dtdream_rd_prod.dtdream_rd_version'
-    proName = fields.Char('产品名称')
+
+    proName = fields.Many2one("dtdream_rd_prod.dtdream_prod_appr",string='产品名称')
+
     version_numb = fields.Char("版本号")
     pro_flag = fields.Selection([('flag_01','内部测试版本'),('flag_02','外部测试版本'),('flag_03','公测版本'),
-                                ('flag_004','演示版本'),('flag_05','补丁版本'),('flag_06','正式版本')],
-                             '产品标识')
+                                ('flag_04','演示版本'),('flag_05','补丁版本'),('flag_06','正式版本')],
+                             '版本标识')
     version_state = fields.Selection([
         ('initialization','初始化'),
         ('Development','开发中'),
@@ -56,7 +62,11 @@ class dtdream_rd_version(models.Model):
     actual_pub_time = fields.Date("实际发布时间")
     place = fields.Char('版本存放位置')
     Material =fields.Char('发布材料')
-    pro_id = fields.Many2one("dtdream_rd_prod.dtdream_prod_appr")
+
+
+
+
+
 
 class dtdream_rd_config(models.Model):
     _name = 'dtdream_rd_prod.dtdream_rd_config'

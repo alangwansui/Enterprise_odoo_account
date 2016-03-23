@@ -55,7 +55,7 @@
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" states="draft"/>
                     <!-- <button name="btn_approve" string="审核通过" type="workflow" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('wait','wait2'))]}"/> -->
-                    <!-- <button name="%(shumeng.act_qingjia_wizard)d" string="拒绝" type="action" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('wait','wait2'))]}"/> -->
+                     <button name="%(shumeng.act_qingjia_wizard)d" string="拒绝" type="action" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('wait','wait2'))]}"/>
                     <button name="btn_approve" string="审核通过" type="workflow" groups="shumeng.group_shumeng_03"/>
                     <button name="%(shumeng.act_qingjia_wizard)d" string="拒绝" type="action" groups="shumeng.group_shumeng_03"/>
                     <button name="btn_approve2" string="并行审批" type="workflow"/>
