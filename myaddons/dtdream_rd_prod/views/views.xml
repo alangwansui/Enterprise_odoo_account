@@ -50,32 +50,49 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
       </record>
+
+
+
+
+      <record id="view_dtdream_prod_appr_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.prod.appr.tree</field>
+        <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="state" />
+                <field name="department"/>
+            </tree>
+        </field>
+    </record>
+
       <record id="view_dtdream_prod_appr_form" model="ir.ui.view">
           <field name="name">view.dtdream.prod.appr.form</field>
             <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
             <field name="arch" type="xml">
                 <form>
+                    <!--<header>
+                         <button name="btn_submit" string="提交" type="workflow" states="state_01"/>
+                         <field name="state" widget="statusbar" statusbar_visible="state_01,state_02,state_03" clickable="True"/>
+                    </header>-->
                     <sheet>
+                        <group>
+                            <field name="name" />
+                        </group>
                         <notebook>
                             <page name="public" string="基本信息">
                                 <group>
                                     <group>
-                                        <field name="name" />
                                         <field name="department" domain="[('parent_id.parent_id','=',False),('child_ids','!=',False)]"/>
+                                         <field name="state" />
                                     </group>
                                     <group>
-                                        <!--<field name="code" />-->
-                                        <field name="state" />
                                         <field name="department_2" domain="[('parent_id.parent_id.parent_id','=',False)]"/>
-
                                     </group>
                                 </group>
                             </page>
                             <page name="detail" string="详细信息">
                                 <field name="role_ids" string="角色"/>
-                                <!--<tree>
-                                    <field name="name"/>
-                                </tree>-->
                             </page>
                             <page name="version" string="进度与计划">
                                 <group>
@@ -92,7 +109,7 @@
                                     <field name="plan_dev_time"/>
                                     <field name="plan_pub_time"/>
                                     <field name="actual_dev_time"/>
-                                    <field name="actual_pub_time"/>
+                                    <field name="actual_check_pub_time"/>
                                 </tree>
                             </field>
                             </page>
@@ -136,6 +153,7 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="name" invisible="1"/>
                             <field name="proName" />
                             <field name="pro_flag" />
                         </group>
@@ -144,18 +162,29 @@
                              <field name="version_state" />
                         </group>
                     </group>
-                    <group>
-                        <group>
-                             <field name="plan_dev_time" />
-                             <field name="actual_dev_time" />
-                             <field name="place" />
-                        </group>
-                        <group>
-                            <field name="plan_pub_time" />
-                            <field name="actual_pub_time" />
-                            <field name="Material"/>
-                        </group>
-                    </group>
+                    <notebook>
+                        <page  string="版本计划">
+                            <group>
+                                <field name="plan_dev_time" />
+                                <field name="plan_check_pub_time" />
+                                <field name="plan_pub_time" />
+                                <field name="plan_mater" />
+                            </group>
+                        </page>
+                        <page string="版本开发">
+                            <group>
+                                <field name="actual_dev_time" />
+                                <field name="dev_mater" />
+                            </group>
+                        </page>
+                        <page string="版本发布">
+                            <group>
+                                <field name="actual_check_pub_time" />
+                                <field name="place" />
+                                <field name="Material" />
+                            </group>
+                        </page>
+                     </notebook>
                 </sheet>
             </form>
         </field>
@@ -200,8 +229,8 @@
       </record>
 
 <!--菜单-->
-    <menuitem id="menu_finance_rd" name="研发" />
-    <menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod"/>
+    <menuitem id="menu_finance_rd" name="研发" groups ="group_dtdream_rd_user"/>
+    <menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod" groups="group_dtdream_rd_user"/>
     <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"  action="act_dtdream_prod_appr"/>
     <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
     <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
