@@ -42,7 +42,7 @@ msgstr "# 活动"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "(if leads are activated)"
-msgstr "(如果项目立项已经激活)"
+msgstr "(如果机会点已经激活)"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -147,7 +147,7 @@ msgstr "<span class=\"label label-default text-center odoo_purple\">收到电子
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "<span class=\"label label-default text-center odoo_purple\">Lead</span>"
-msgstr "<span class=\"label label-default text-center odoo_purple\">项目立项</span>"
+msgstr "<span class=\"label label-default text-center odoo_purple\">机会点</span>"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -298,7 +298,7 @@ msgstr "<span class=\"panel-title\">\n                                        <s
 msgid ""
 "<span class=\"panel-title\"><span data-icon=\"&#57366;\"/><strong> Exercise 1</strong></span>\n"
 "                                    <span>(Lead Manager)</span>"
-msgstr "<span class=\"panel-title\"><span data-icon=\"&#57366;\"/><strong> 练习 1</strong></span>\n                                    <span>(项目立项经理)</span>"
+msgstr "<span class=\"panel-title\"><span data-icon=\"&#57366;\"/><strong> 练习 1</strong></span>\n                                    <span>(机会点经理)</span>"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -388,7 +388,7 @@ msgstr "<strong>练习： </strong>请试着从看板视图转换到图表视图
 msgid ""
 "<strong>Exercise:</strong> Try to get the number of leads per salesperson "
 "and by creation date"
-msgstr "<strong>练习：</strong> 试着按销售人员项目立项的创建时间先后顺序来获取项目管理的数量"
+msgstr "<strong>练习：</strong> 试着按销售人员机会点的创建时间先后顺序来获取项目管理的数量"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -508,7 +508,7 @@ msgstr "<strong>潜在客户</strong> 开始讨论您的服务"
 msgid ""
 "<strong>To boost your leads acquisition,</strong> you should have a look at "
 "our marketing apps:"
-msgstr "<strong>为了提高您的项目立项采集的能力，</strong> 你应该看看我们的市场营销应用程序："
+msgstr "<strong>为了提高您的机会点采集的能力，</strong> 你应该看看我们的市场营销应用程序："
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -854,7 +854,7 @@ msgstr "客户关系管理活动分析"
 #. module: crm
 #: model:ir.model,name:crm.model_crm_opportunity_report
 msgid "CRM Opportunity Analysis"
-msgstr "客户关系管理项目立项分析"
+msgstr "客户关系管理机会点分析"
 
 #. module: crm
 #: model:crm.activity,name:crm.crm_activity_data_call
@@ -900,7 +900,7 @@ msgstr "案件，按销售团队"
 #. module: crm
 #: model:ir.model,name:crm.model_crm_lead_tag
 msgid "Category of lead"
-msgstr "项目立项的分类"
+msgstr "机会点的分类"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_stage_on_change
@@ -946,7 +946,7 @@ msgstr "城市"
 msgid ""
 "Classify and analyze your lead/opportunity categories like: Training, "
 "Service"
-msgstr "对项目立项/项目管理进行分析和分类， 诸如：培训，服务"
+msgstr "对机会点/项目管理进行分析和分类， 诸如：培训，服务"
 
 #. module: crm
 #: code:addons/crm/crm_lead.py:922
@@ -977,7 +977,7 @@ msgstr "点击输入一个新的销售标签。"
 #. module: crm
 #: model:ir.actions.act_window,help:crm.crm_lead_stage_act
 msgid "Click to set a new stage in your lead/opportunity pipeline."
-msgstr "点击，为你的项目立项／项目管理渠道设置一个新的阶段"
+msgstr "点击，为你的机会点／项目管理渠道设置一个新的阶段"
 
 #. module: crm
 #: model:web.tip,description:crm.crm_tip_2
@@ -1003,7 +1003,7 @@ msgstr "已关闭"
 #: code:addons/crm/wizard/crm_lead_to_opportunity.py:90
 #, python-format
 msgid "Closed/Dead leads cannot be converted into opportunities."
-msgstr "关闭不能转化为机遇的项目立项"
+msgstr "关闭不能转化为机遇的机会点"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_lead_color
@@ -1087,7 +1087,7 @@ msgstr "转换日期"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_opportunity_report_view_search
 msgid "Conversion Date from Lead to Opportunity"
-msgstr "从项目立项转化为项目管理的时间"
+msgstr "从机会点转化为项目管理的时间"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_lead2opportunity_partner_mass
@@ -1104,12 +1104,12 @@ msgstr "转为项目管理"
 #: model:ir.ui.view,arch_db:crm.view_crm_lead2opportunity_partner
 #: model:ir.ui.view,arch_db:crm.view_crm_lead2opportunity_partner_mass
 msgid "Convert to Opportunity"
-msgstr "转换为项目管理"
+msgstr "正式立项"
 
 #. module: crm
 #: model:ir.actions.act_window,name:crm.action_crm_send_mass_convert
 msgid "Convert to opportunities"
-msgstr "转为项目管理"
+msgstr "正式立项"
 
 #. module: crm
 #: selection:crm.lead2opportunity.partner,name:0
@@ -1169,7 +1169,7 @@ msgid ""
 "                to better classify and analyse your leads and opportunities.\n"
 "                Such categories could for instance reflect your product\n"
 "                structure or the different types of sales you do."
-msgstr " 点击新建一个适合公司活动的标签 用于更好地分类和分析你的项目立项和项目管理。 标签分类可以快速反映你的商品结构或者不同的销售类型。"
+msgstr " 点击新建一个适合公司活动的标签 用于更好地分类和分析你的机会点和项目管理。 标签分类可以快速反映你的商品结构或者不同的销售类型。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -1314,7 +1314,7 @@ msgstr "默认"
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_sale_config_settings_alias_prefix
 msgid "Default Alias Name for Leads"
-msgstr "默认的项目立项别名名称"
+msgstr "默认的机会点别名名称"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_team_alias_defaults
@@ -1433,7 +1433,7 @@ msgstr "下载"
 #. module: crm
 #: model:ir.filters,name:crm.filter_draft_lead
 msgid "Draft Leads"
-msgstr "草稿项目立项"
+msgstr "草稿机会点"
 
 #. module: crm
 #: selection:sale.config.settings,group_use_lead:0
@@ -1455,7 +1455,7 @@ msgid ""
 "                                    could be setup on the sales team form. You\n"
 "                                    can setup a generic email alias to create\n"
 "                                    incoming leads."
-msgstr "每一个销售团队都有一个邮件别名，它被设置在销售团队的表单，\n你可以设置一个通用的邮件别名来穿件即将进来的项目立项"
+msgstr "每一个销售团队都有一个邮件别名，它被设置在销售团队的表单，\n你可以设置一个通用的邮件别名来穿件即将进来的机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_kanban_view_leads
@@ -1743,7 +1743,7 @@ msgstr "联系人组"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "Grow leads acquisition"
-msgstr "成长项目立项获取"
+msgstr "成长机会点获取"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -1921,7 +1921,7 @@ msgstr "收到的邮件"
 msgid ""
 "Incoming email create leads automatically when a new prospect contacts you.\n"
 "                        That's the easiest way to integrate Odoo with third party apps."
-msgstr "收到的邮件会自动创建项目立项,当一个新的联系人你时.那是最简单的方法去把第三方的应用集成到Odoo."
+msgstr "收到的邮件会自动创建机会点,当一个新的联系人你时.那是最简单的方法去把第三方的应用集成到Odoo."
 
 #. module: crm
 #: model:ir.model.fields,help:crm.field_sale_config_settings_module_crm_voip
@@ -2045,18 +2045,18 @@ msgstr "最后更新时间"
 #: model:ir.ui.view,arch_db:crm.crm_opportunity_report_view_search
 #, python-format
 msgid "Lead"
-msgstr "项目立项"
+msgstr "机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 msgid "Lead / Customer"
-msgstr "项目立项/客户"
+msgstr "机会点/客户"
 
 #. module: crm
 #: model:mail.message.subtype,name:crm.mt_lead_create
 #: model:mail.message.subtype,name:crm.mt_salesteam_lead
 msgid "Lead Created"
-msgstr "项目立项已创建"
+msgstr "机会点已创建"
 
 #. module: crm
 #: model:ir.actions.act_window,name:crm.crm_lead_tag_action
@@ -2069,22 +2069,22 @@ msgstr ""
 #. module: crm
 #: model:ir.model,name:crm.model_crm_lead2opportunity_partner
 msgid "Lead To Opportunity Partner"
-msgstr "项目立项至业务伙伴或项目管理"
+msgstr "机会点至业务伙伴或项目管理"
 
 #. module: crm
 #: model:mail.message.subtype,description:crm.mt_lead_create
 msgid "Lead created"
-msgstr "项目立项已创建"
+msgstr "机会点已创建"
 
 #. module: crm
 #: model:ir.model,name:crm.model_crm_lead
 msgid "Lead/Opportunity"
-msgstr "项目立项/项目管理"
+msgstr "机会点/项目管理"
 
 #. module: crm
 #: model:ir.actions.act_window,name:crm.action_lead_mass_mail
 msgid "Lead/Opportunity Mass Mail"
-msgstr "项目立项/项目管理群发邮件"
+msgstr "机会点/项目管理群发邮件"
 
 #. module: crm
 #: model:ir.actions.act_window,name:crm.crm_case_form_view_salesteams_lead
@@ -2099,13 +2099,13 @@ msgstr "项目立项/项目管理群发邮件"
 #: model:ir.ui.view,arch_db:crm.sales_team_form_view_in_crm
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 msgid "Leads"
-msgstr "项目立项"
+msgstr "机会点"
 
 #. module: crm
 #: code:addons/crm/crm_lead.py:60
 #, python-format
 msgid "Leads / Opportunities"
-msgstr "项目立项/项目管理"
+msgstr "机会点/项目管理"
 
 #. module: crm
 #: model:ir.actions.act_window,name:crm.action_report_crm_lead_salesteam
@@ -2114,7 +2114,7 @@ msgstr "项目立项/项目管理"
 #: model:ir.ui.view,arch_db:crm.crm_opportunity_report_view_pivot_lead
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "Leads Analysis"
-msgstr "项目立项分析"
+msgstr "机会点分析"
 
 #. module: crm
 #: model:ir.actions.act_window,help:crm.action_report_crm_lead_salesteam
@@ -2122,64 +2122,64 @@ msgid ""
 "Leads Analysis allows you to check different CRM related information like "
 "the treatment delays or number of leads per state. You can sort out your "
 "leads analysis by different groups to get accurate grained analysis."
-msgstr "项目立项分析允许你检查不同的关联CRM的信息，例如延迟或每个状态的项目立项的数量。你可以使用不同的分组对项目立项分析进行整理已获得精确细致的分析结果。"
+msgstr "机会点分析允许你检查不同的关联CRM的信息，例如延迟或每个状态的机会点的数量。你可以使用不同的分组对机会点分析进行整理已获得精确细致的分析结果。"
 
 #. module: crm
 #: model:ir.filters,name:crm.filter_opportunity_salesperson
 msgid "Leads By Salespersons"
-msgstr "销售人员的项目立项"
+msgstr "销售人员的机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_sale_config_settings
 msgid "Leads Email Alias"
-msgstr "（接收）项目立项邮箱别名"
+msgstr "（接收）机会点邮箱别名"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_form_view_leads
 msgid "Leads Form"
-msgstr "项目立项表单"
+msgstr "机会点表单"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_calendar_view_leads
 msgid "Leads Generation"
-msgstr "项目立项生成"
+msgstr "机会点生成"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "Leads by Source"
-msgstr "项目立项源头"
+msgstr "机会点源头"
 
 #. module: crm
 #: model:ir.filters,name:crm.filter_usa_lead
 msgid "Leads from USA"
-msgstr "来自USA的项目立项"
+msgstr "来自USA的机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 msgid "Leads that are assigned to me"
-msgstr "分配给我的项目立项"
+msgstr "分配给我的机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 msgid "Leads that did not ask not to be included in mass mailing campaigns"
-msgstr "未要求的项目立项不要包括到批量邮件营销活动中"
+msgstr "未要求的机会点不要包括到批量邮件营销活动中"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_lead2opportunity_partner_mass
 msgid ""
 "Leads that you selected that have duplicates. If the list is empty, it means"
 " that no duplicates were found"
-msgstr "你选择的项目立项有重复。如果列表为空，表明没有发现重复项目立项。"
+msgstr "你选择的机会点有重复。如果列表为空，表明没有发现重复机会点。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_lead2opportunity_partner_mass
 msgid "Leads with existing duplicates (for information)"
-msgstr "存在的重复项目立项（信息）"
+msgstr "存在的重复机会点（信息）"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_merge_opportunity_opportunity_ids
 msgid "Leads/Opportunities"
-msgstr "项目立项/项目管理"
+msgstr "机会点/项目管理"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -2207,7 +2207,7 @@ msgstr "链接到现有客户"
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_lead_partner_id
 msgid "Linked partner (optional). Usually created when converting the lead."
-msgstr "链接的业务伙伴(可选), 通常用于在项目立项转换时自动创建业务伙伴."
+msgstr "链接的业务伙伴(可选), 通常用于在机会点转换时自动创建业务伙伴."
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -2276,7 +2276,7 @@ msgstr "市场营销"
 #. module: crm
 #: model:ir.model,name:crm.model_crm_lead2opportunity_partner_mass
 msgid "Mass Lead To Opportunity Partner"
-msgstr "批量转换项目立项为项目管理或业务伙伴"
+msgstr "批量转换机会点为项目管理或业务伙伴"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_base_partner_merge_automatic_wizard_maximum_group
@@ -2329,7 +2329,7 @@ msgstr "合并合同"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.merge_opportunity_form
 msgid "Merge Leads/Opportunities"
-msgstr "合并项目立项/项目管理"
+msgstr "合并机会点/项目管理"
 
 #. module: crm
 #: model:ir.actions.act_window,name:crm.action_partner_merge
@@ -2340,7 +2340,7 @@ msgstr "合并选中的合同"
 #: model:ir.actions.act_window,name:crm.action_merge_opportunities
 #: model:ir.actions.act_window,name:crm.merge_opportunity_act
 msgid "Merge leads/opportunities"
-msgstr "合并项目立项/项目管理"
+msgstr "合并机会点/项目管理"
 
 #. module: crm
 #: model:ir.model,name:crm.model_crm_merge_opportunity
@@ -2360,7 +2360,7 @@ msgstr "手动检查与合并"
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_lead2opportunity_partner_mass_deduplicate
 msgid "Merge with existing leads/opportunities of each partner"
-msgstr "将每一个业务伙伴已存在的项目立项或项目管理合并"
+msgstr "将每一个业务伙伴已存在的机会点或项目管理合并"
 
 #. module: crm
 #: selection:crm.lead2opportunity.partner,name:0
@@ -2372,13 +2372,13 @@ msgstr "与已存在的项目管理合并"
 #: code:addons/crm/crm_lead.py:543
 #, python-format
 msgid "Merged lead"
-msgstr "合并的项目立项"
+msgstr "合并的机会点"
 
 #. module: crm
 #: code:addons/crm/crm_lead.py:537
 #, python-format
 msgid "Merged leads"
-msgstr "合并的项目立项"
+msgstr "合并的机会点"
 
 #. module: crm
 #: code:addons/crm/crm_lead.py:539
@@ -2683,14 +2683,14 @@ msgstr "Odoo将在几分钟内帮助您创建,精良的,专业的报价和合同
 msgid ""
 "Once qualified, the lead can be converted into a business\n"
 "                    opportunity and/or a new customer in your address book."
-msgstr "一旦合格,项目立项将转变成项目管理,或者你地址薄的一个新的客户."
+msgstr "一旦合格,机会点将转变成项目管理,或者你地址薄的一个新的客户."
 
 #. module: crm
 #: model:ir.actions.act_window,help:crm.crm_lead_all_leads
 msgid ""
 "Once qualified, the lead can be converted into a business\n"
 "                opportunity and/or a new customer in your address book."
-msgstr "一旦合格,项目立项将转变成项目管理,或者你地址薄的一个新的客户"
+msgstr "一旦合格,机会点将转变成项目管理,或者你地址薄的一个新的客户"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -2832,7 +2832,7 @@ msgid ""
 "Optional ID of a thread (record) to which all incoming messages will be "
 "attached, even if they did not reply to it. If set, this will disable the "
 "creation of new records completely."
-msgstr "所有的来邮都将附上一条项目立项（记录）选配的ID，即使它们不曾回复过它。如果设置了，这个将完全阻止新记录的创建。"
+msgstr "所有的来邮都将附上一条机会点（记录）选配的ID，即使它们不曾回复过它。如果设置了，这个将完全阻止新记录的创建。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.base_partner_merge_automatic_wizard_form
@@ -2967,7 +2967,7 @@ msgstr "渠道分析给你体同一个一个即时访问带有相关信息的项
 #. module: crm
 #: model:web.planner,tooltip_planner:crm.planner_crm
 msgid "Plan your sales strategy: objectives, leads, KPIs, and much more!"
-msgstr "计划你的销售策略：目标，项目立项，关键绩效指标,以及更多!"
+msgstr "计划你的销售策略：目标，机会点，关键绩效指标,以及更多!"
 
 #. module: crm
 #: model:ir.model,name:crm.model_web_planner
@@ -2980,7 +2980,7 @@ msgstr "计划"
 msgid ""
 "Please select more than one element (lead or opportunity) from the list "
 "view."
-msgstr "请从列表视图中选择一个以上元素（项目立项或机会）。"
+msgstr "请从列表视图中选择一个以上元素（机会点或机会）。"
 
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_team_alias_contact
@@ -3054,12 +3054,12 @@ msgstr "评级"
 #. module: crm
 #: model:ir.model,name:crm.model_crm_lost_reason
 msgid "Reason for loosing leads"
-msgstr "失去项目立项的原因"
+msgstr "失去机会点的原因"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_team_alias_force_thread_id
 msgid "Record Thread ID"
-msgstr "记录项目立项D"
+msgstr "记录机会点D"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_lead_referred
@@ -3084,7 +3084,7 @@ msgstr "关联字段"
 msgid ""
 "Reminder on Lead: ${object.id} from ${object.partner_id != False and "
 "object.partner_id.name or object.contact_name}"
-msgstr "关于项目立项的提醒 : ${object.id} 来自 ${object.partner_id != False and object.partner_id.name or object.contact_name}"
+msgstr "关于机会点的提醒 : ${object.id} 来自 ${object.partner_id != False and object.partner_id.name or object.contact_name}"
 
 #. module: crm
 #: model:ir.actions.server,name:crm.action_email_reminder_lead
@@ -3187,7 +3187,7 @@ msgstr "保存筛选器或向您的仪表板添加任何报告以最喜欢的菜
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 msgid "Search Leads"
-msgstr "查询项目立项"
+msgstr "查询机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_lost_reason_view_search
@@ -3203,7 +3203,7 @@ msgstr "基于重复数据的重复搜索项"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.merge_opportunity_form
 msgid "Select Leads/Opportunities"
-msgstr "选择项目管理/项目立项"
+msgstr "选择项目管理/机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.sales_team_form_view_in_crm
@@ -3286,7 +3286,7 @@ msgstr "设置你的域名别名"
 #. module: crm
 #: model:res.groups,name:crm.group_use_lead
 msgid "Show Lead Menu"
-msgstr "显示项目立项菜单"
+msgstr "显示机会点菜单"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -3305,7 +3305,7 @@ msgstr "显示下一个动作日期是今天还是以前的所有机会"
 #: model:ir.ui.view,arch_db:crm.crm_activity_report_view_search
 #: model:ir.ui.view,arch_db:crm.crm_opportunity_report_view_search
 msgid "Show only lead"
-msgstr "仅显示项目立项"
+msgstr "仅显示机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_activity_report_view_search
@@ -3396,7 +3396,7 @@ msgstr "阶段"
 msgid ""
 "Stages will allow salespersons to easily track how a specific\n"
 "                lead or opportunity is positioned in the sales cycle."
-msgstr "阶段会让销售人员轻松跟踪一个特定的项目立项\n或在销售周期中的机会定位。"
+msgstr "阶段会让销售人员轻松跟踪一个特定的机会点\n或在销售周期中的机会定位。"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_base_partner_merge_automatic_wizard_state
@@ -3506,7 +3506,7 @@ msgstr "没有采取动作之前的日期"
 msgid ""
 "The email address associated with this team. New emails received will "
 "automatically create new leads assigned to the team."
-msgstr "此邮件地址关联此团队。收到的新邮件将自动创建项目立项并分配给此团队。"
+msgstr "此邮件地址关联此团队。收到的新邮件将自动创建机会点并分配给此团队。"
 
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_team_use_leads
@@ -3514,7 +3514,7 @@ msgid ""
 "The first contact you get with a potential customer is a lead you qualify "
 "before converting it into a real business opportunity. Check this box to "
 "manage leads in this sales team."
-msgstr "第一次接触潜在客户是一个将它转换为真正的商业机会的项目立项。选中这个框，管理销售团队的项目立项。"
+msgstr "第一次接触潜在客户是一个将它转换为真正的商业机会的机会点。选中这个框，管理销售团队的机会点。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -3541,7 +3541,7 @@ msgstr "邮件别名的名称，例如，如果你要收取 <jobs@example.odoo.c
 msgid ""
 "The name of the future partner company that will be created while converting"
 " the lead into opportunity"
-msgstr "在销售项目立项转化为项目管理时对应创建业务伙伴的公司名称."
+msgstr "在销售机会点转化为项目管理时对应创建业务伙伴的公司名称."
 
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_team_alias_user_id
@@ -3607,7 +3607,7 @@ msgstr "销售部门的邮件地址已经被预先的默认设置<br/>"
 msgid ""
 "This field is used to distinguish stages related to Leads from stages "
 "related to Opportunities, or to specify stages available for both types."
-msgstr "此域用于区分用于项目立项的阶段和用于项目管理的阶段，或者指示同时可用于两个类型。"
+msgstr "此域用于区分用于机会点的阶段和用于项目管理的阶段，或者指示同时可用于两个类型。"
 
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_lead_campaign_id
@@ -3648,7 +3648,7 @@ msgstr "这默认百分比描述业务在这阶段的平均的成功概率"
 msgid ""
 "This report analyses the source of your leads\n"
 "(including those converted into opportunities)."
-msgstr "这个报告分析了项目立项的源头(包含那些已经转化为项目管理的)"
+msgstr "这个报告分析了机会点的源头(包含那些已经转化为项目管理的)"
 
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_stage_fold
@@ -3671,7 +3671,7 @@ msgstr "需要关闭该交易"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
 msgid "Time to Qualify a Lead"
-msgstr "评估项目立项所需时间"
+msgstr "评估机会点所需时间"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_lead_title
@@ -3708,7 +3708,7 @@ msgstr "类型"
 #: model:ir.model.fields,help:crm.field_crm_lead_type
 #: model:ir.model.fields,help:crm.field_crm_opportunity_report_type
 msgid "Type is used to separate Leads and Opportunities"
-msgstr "类型用于区分销售项目立项和项目管理"
+msgstr "类型用于区分销售机会点和项目管理"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_kanban_view_leads
@@ -3773,7 +3773,7 @@ msgid ""
 "                    opportunity or a customer. It can be a business card you received,\n"
 "                    a contact form filled in your website, or a file of unqualified\n"
 "                    prospects you import, etc."
-msgstr "如果你想在创建项目管理或者客户之前需要资格确认步骤，那么就用项目立项\n它可以是你收到的名片，一个在你的网站登记的联系方式，或者你导入的没有经过前景资格确认的文件等。"
+msgstr "如果你想在创建项目管理或者客户之前需要资格确认步骤，那么就用机会点\n它可以是你收到的名片，一个在你的网站登记的联系方式，或者你导入的没有经过前景资格确认的文件等。"
 
 #. module: crm
 #: model:ir.actions.act_window,help:crm.crm_lead_all_leads
@@ -3782,14 +3782,14 @@ msgid ""
 "                opportunity or a customer. It can be a business card you received,\n"
 "                a contact form filled in your website, or a file of unqualified\n"
 "                prospects you import, etc."
-msgstr "如果你想在创建项目管理或者客户之前需要资格确认步骤，那么就用项目立项\n它可以是你收到的名片，一个在你的网站登记的联系方式，或者你导入的没有经过前景资格确认的文件等。"
+msgstr "如果你想在创建项目管理或者客户之前需要资格确认步骤，那么就用机会点\n它可以是你收到的名片，一个在你的网站登记的联系方式，或者你导入的没有经过前景资格确认的文件等。"
 
 #. module: crm
 #: selection:sale.config.settings,group_use_lead:0
 msgid ""
 "Use leads if you need a qualification step before creating an opportunity or"
 " a customer"
-msgstr "如果你想在创建项目管理或者客户之前需要资格步骤，那么就用项目立项"
+msgstr "如果你想在创建项目管理或者客户之前需要资格步骤，那么就用机会点"
 
 #. module: crm
 #: model:ir.actions.act_window,help:crm.crm_lost_reason_action

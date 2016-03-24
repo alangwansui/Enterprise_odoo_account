@@ -64,7 +64,7 @@
               </tree>
           </field>
       </record>
-      <!--重写项目立项tree视图-->
+      <!--重写机会点tree视图-->
       <record id="view_res_product_leads_tree_view" model="ir.ui.view">
             <field name="name">view.res.product.leads.tree</field>
             <field name="model">crm.lead</field>
@@ -121,6 +121,18 @@
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
                     <field name="project_detail"/>
+                </field>
+                <field name="team_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="user_id" position="after">
+                    <field name="team_id" domain="[('use_leads','=',True)]"/>
+                </field>
+                <h2 position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </h2>
+                <field name="probability" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </field>
             </field>
       </record>
@@ -189,6 +201,57 @@
           </field>
       </record>
 
+      <!--项目查阅权限视图-->
+      <record id="view_res_users_access_form_inherit" model="ir.ui.view">
+          <field name="name">view.res.users.access.form.inherit2</field>
+          <field name="model">res.users</field>
+          <field name="inherit_id" ref="base.view_users_form" />
+          <field name="arch" type="xml">
+              <xpath expr="//page[@name='access_rights']" position="after">
+                  <page name="access_office" string="办事处">
+                      <field name="user_access_office" widget="many2many_kanban">
+                          <kanban quick_create="false" create="true" delete="true">
+                              <field name="name"/>
+                              <templates>
+                                  <t t-name="kanban-box">
+                                      <div class="oe_kanban_global_click" style="position: relative">
+                                          <a t-if="! read_only_mode" type="delete" style="position: absolute; right: 0; padding: 4px; diplay: inline-block">X</a>
+                                          <div class="oe_module_vignette">
+                                              <img t-att-src="kanban_image('res.users', 'image_small', record.id.value)" class="oe_avatar oe_kanban_avatar_smallbox"/>
+                                              <div class="oe_module_desc">
+                                                  <field name="name"/>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </t>
+                              </templates>
+                          </kanban>
+                      </field>
+                  </page>
+                  <page name="access_industry" string="行业">
+                      <field name="user_access_industry" widget="many2many_kanban">
+                          <kanban quick_create="false" create="true" delete="true">
+                              <field name="name"/>
+                              <templates>
+                                  <t t-name="kanban-box">
+                                      <div class="oe_kanban_global_click" style="position: relative">
+                                          <a t-if="! read_only_mode" type="delete" style="position: absolute; right: 0; padding: 4px; diplay: inline-block">X</a>
+                                          <div class="oe_module_vignette">
+                                              <img t-att-src="kanban_image('res.users', 'image_small', record.id.value)" class="oe_avatar oe_kanban_avatar_smallbox"/>
+                                              <div class="oe_module_desc">
+                                                  <field name="name"/>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </t>
+                              </templates>
+                          </kanban>
+                      </field>
+                  </page>
+              </xpath>
+          </field>
+      </record>
+
       <!--定义产品类别action-->
       <record id="product_pro_type_form_action" model="ir.actions.act_window">
           <field name="name">产品类别</field>
@@ -198,9 +261,9 @@
           <field name="view_mode">tree,form</field>
       </record>
 
-      <!-- 定义项目立项 -->
+      <!-- 定义机会点 -->
       <record model="ir.ui.view" id="dtdream_sale.crm_lead_form">
-          <field name="name">项目立项</field>
+          <field name="name">机会点</field>
           <field name="model">crm.lead</field>
           <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
           <field name="arch" type="xml">
@@ -210,10 +273,20 @@
                   <field name="office"/>
                   <field name="industry"/>
               </field>
+              <field name="contact_name" position="before">
+                  <field name="partner_id"/>
+                  <field name="partner_name"/>
+                  <field name="street"/>
+              </field>
+              <field name="team_id" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="user_id" position="after">
+                  <field name="team_id" domain="[('use_leads','=',True)]"/>
+              </field>
               <field name="mobile" position="after">
                   <field name="bidding_time"/>
                   <field name="supply_time"/>
-                  <!-- <field name="project_stage" string="项目阶段"/> -->
                   <field name="project_detail"/>
               </field>
               <field name="fax" position="attributes">

@@ -2,6 +2,8 @@
 
 from openerp import models, fields, api
 import datetime
+from openerp.exceptions import UserError, ValidationError
+from openerp.osv import osv
 
 # 继承产品模型，修改字段
 class dtdream_product(models.Model):
@@ -29,6 +31,12 @@ class product_pro_type(models.Model):
 
     name = fields.Char('产品类别',required=True)
 
+class res_users_read_access(models.Model):
+    _inherit = ['res.users']
+
+    user_access_industry = fields.Many2many("dtdream.industry", string="行业",required=True)
+    user_access_office = fields.Many2many("dtdream.office", string="办事处",required=True)
+
 #定义办事处模型
 class dtdream_office(models.Model):
     _name = 'dtdream.office'
@@ -39,28 +47,24 @@ class dtdream_office(models.Model):
 class dtdream_sale(models.Model):
     _inherit = 'crm.lead'
 
+    @api.onchange('bidding_time','supply_time')
+    def _onchange_time(self):
+        if self.bidding_time!=False and self.supply_time!=False:
+            if self.bidding_time >= self.supply_time:
+                raise UserError("供货时间应晚于招标时间")
+
     user_id = fields.Many2one(string="项目责任人")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
     project_leave = fields.Selection([
         ('company_leave', '公司级'),
         ('department_leave', '部门级'),
         ('normal_leave', '一般项目'),
-    ])
-
-    # sys_department = fields.Many2one("dtdream.industry", string="系统部")
-    industry = fields.Many2one("dtdream.industry", string="行业")
-    # sub_industry = fields.Many2one("dtdream.industry", string="子行业")
+    ],required=True)
+    industry = fields.Many2one("dtdream.industry", string="行业",required=True)
     office = fields.Many2one("dtdream.office", string="办事处",required=True)
-
-    bidding_time = fields.Date("招标时间")
-    supply_time = fields.Date("供货时间")
-    # project_stage =fields.Selection([
-    #     ('point', '机会点'),
-    #     ('start', '项目启动'),
-    #     ('communication', '商务/技术交流'),
-    #     ('bidding', '项目招投标'),
-    #     ('end', '项目结束'),
-    # ])
+    bidding_time = fields.Date("招标时间",required=True)
+    supply_time = fields.Date("供货时间",required=True)
+    partner_id = fields.Many2one(required=True)
     project_detail = fields.Text("项目详情")
 
     @api.model
@@ -68,8 +72,6 @@ class dtdream_sale(models.Model):
         if vals.get('project_number', 'New') == 'New':
             o_id = vals.get('office')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
-            print office_rec.code
-            print self.env['ir.sequence'].next_by_code('project.number')
             vals['project_number'] = ''.join([office_rec.code,self.env['ir.sequence'].next_by_code('project.number'),'N']) or 'New'
         result = super(dtdream_sale, self).create(vals)
         return result
