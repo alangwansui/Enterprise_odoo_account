@@ -727,13 +727,13 @@ msgstr "可能收入"
 #: model:ir.ui.view,arch_db:crm_partner_assign.view_report_crm_lead_assign_filter
 #: model:ir.ui.view,arch_db:crm_partner_assign.view_report_crm_partner_assign_filter
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: crm_partner_assign
 #: model:ir.ui.view,arch_db:crm_partner_assign.view_report_crm_lead_assign_filter
 #: model:ir.ui.view,arch_db:crm_partner_assign.view_report_crm_partner_assign_filter
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: crm_partner_assign
 #: model:ir.ui.view,arch_db:crm_partner_assign.crm_lead_forward_to_partner_form

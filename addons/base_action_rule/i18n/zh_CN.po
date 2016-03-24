@@ -414,7 +414,7 @@ msgid ""
 "                be automatically set to a specific sales team, or an\n"
 "                opportunity which still has status pending after 14 days might\n"
 "                trigger an automatic reminder email."
-msgstr "使用自动操作来触发不同屏幕的动作\n例如：一个特定用户创建的机会点可能被自动分配给某一个销售团队\n或者项目管理在等待14天后自动触发一个提醒电子邮件，"
+msgstr "使用自动操作来触发不同屏幕的动作\n例如：一个特定用户创建的机会点可能被自动分配给某一个项目团队\n或者项目管理在等待14天后自动触发一个提醒电子邮件，"
 
 #. module: base_action_rule
 #: model:ir.model.fields,help:base_action_rule.field_base_action_rule_trg_date_calendar_id

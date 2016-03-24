@@ -305,7 +305,7 @@ msgstr "<span class=\"panel-title\"><span data-icon=\"&#57366;\"/><strong> 练�
 msgid ""
 "<span class=\"panel-title\"><span data-icon=\"&#57438;\"/><strong> Exercise 3</strong></span>\n"
 "                                    <span>(Salesperson)</span>"
-msgstr "<span class=\"panel-title\"><span data-icon=\"&#57438;\"/><strong> 练习 3</strong></span>\n                                    <span>(销售员)</span>"
+msgstr "<span class=\"panel-title\"><span data-icon=\"&#57438;\"/><strong> 练习 3</strong></span>\n                                    <span>(营销责任人)</span>"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -399,7 +399,7 @@ msgid ""
 "                                    an up-to-date pipeline of opportunities.\n"
 "                                    After a few month, set the real success rate according to the stages, to have\n"
 "                                    accurate expected revenues by closing date."
-msgstr "<strong>预测收入</strong><br/>\n                                    您可以通过未来月或季度的预期收入\n                                    来评估销售团队的成熟度.\n                                    用最新式的项目管理中的销售渠道来训练团队\n                                    以达到有效率的预测.\n                                    在几个月后, 为阶段设置其真正的成功率, 以拥有准确的预 期收入按截至日期\n                                   "
+msgstr "<strong>预测收入</strong><br/>\n                                    您可以通过未来月或季度的预期收入\n                                    来评估项目团队的成熟度.\n                                    用最新式的项目管理中的销售渠道来训练团队\n                                    以达到有效率的预测.\n                                    在几个月后, 为阶段设置其真正的成功率, 以拥有准确的预 期收入按截至日期\n                                   "
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -421,7 +421,7 @@ msgstr "<strong>新建：</strong>"
 msgid ""
 "<strong>Organize weekly sales meetings</strong><br/>\n"
 "                                    It's a great way to see where you can improve and keep track of the progress of your sales team. Start the pipeline review by looking at the big picture; revenues and number of opportunities by stage, by expected closing date and by salespeople."
-msgstr "<strong>组织销售周会</strong><br/>\n                                    这是一个很好的方法来让您发现哪里可以让您提高及持续追踪\n您销售团队的进度. 从重点开始回顾销售管道; 按收益及按不同阶段的项目管理数量,按预期截至日期以及销售员."
+msgstr "<strong>组织销售周会</strong><br/>\n                                    这是一个很好的方法来让您发现哪里可以让您提高及持续追踪\n您项目团队的进度. 从重点开始回顾销售管道; 按收益及按不同阶段的项目管理数量,按预期截至日期以及营销责任人."
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -794,7 +794,7 @@ msgstr "自动合并向导"
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_sale_config_settings_generate_sales_team_alias
 msgid "Automatically generate an email alias at the sales team creation"
-msgstr "在销售团队创建的时候生成一封电子邮件别名"
+msgstr "在项目团队创建的时候生成一封电子邮件别名"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_tree_view_oppor
@@ -895,7 +895,7 @@ msgstr "取消"
 #. module: crm
 #: model:ir.actions.act_window,name:crm.crm_team_act_tree
 msgid "Cases by Sales Team"
-msgstr "案件，按销售团队"
+msgstr "案件，按项目团队"
 
 #. module: crm
 #: model:ir.model,name:crm.model_crm_lead_tag
@@ -927,7 +927,7 @@ msgstr "渠道"
 #. module: crm
 #: model:ir.model.fields,help:crm.field_crm_team_use_opportunities
 msgid "Check this box to manage opportunities in this sales team."
-msgstr "勾选它来使用这个销售团队管理项目管理。"
+msgstr "勾选它来使用这个项目团队管理项目管理。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_form_view_oppor
@@ -1341,7 +1341,7 @@ msgstr "刪除"
 msgid ""
 "Depending on how complex your business is, it may take between 6 months and 18 months for a new\n"
 "                                    sales team to efficiently forecasts future revenues."
-msgstr "依赖于你们的业务的复杂程度，通常对于一个销售团队需要6到18个月能够有效的预估将来的营收"
+msgstr "依赖于你们的业务的复杂程度，通常对于一个项目团队需要6到18个月能够有效的预估将来的营收"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -1455,7 +1455,7 @@ msgid ""
 "                                    could be setup on the sales team form. You\n"
 "                                    can setup a generic email alias to create\n"
 "                                    incoming leads."
-msgstr "每一个销售团队都有一个邮件别名，它被设置在销售团队的表单，\n你可以设置一个通用的邮件别名来穿件即将进来的机会点"
+msgstr "每一个项目团队都有一个邮件别名，它被设置在项目团队的表单，\n你可以设置一个通用的邮件别名来穿件即将进来的机会点"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_case_kanban_view_leads
@@ -1775,7 +1775,7 @@ msgstr "享受部署销售策略的乐趣,"
 msgid ""
 "Here are a few examples of documents you should provide to your sales team "
 "based on the sales stage:"
-msgstr "这儿有几个例子,你应该根据你的销售阶段提供给你的销售团队:"
+msgstr "这儿有几个例子,你应该根据你的销售阶段提供给你的项目团队:"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -2196,7 +2196,7 @@ msgstr "行"
 msgid ""
 "Link between stages and sales teams. When set, this limitate the current "
 "stage to the selected sales teams."
-msgstr "在阶段和邮件地址建连接。设置后，将限制当前的阶段选择的销售团队。"
+msgstr "在阶段和邮件地址建连接。设置后，将限制当前的阶段选择的项目团队。"
 
 #. module: crm
 #: selection:crm.lead2opportunity.partner,action:0
@@ -2568,7 +2568,7 @@ msgstr "无主题"
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 #: model:ir.ui.view,arch_db:crm.view_crm_case_opportunities_filter
 msgid "No salesperson"
-msgstr "没有销售员"
+msgstr "没有营销责任人"
 
 #. module: crm
 #: selection:crm.lead,priority:0 selection:crm.opportunity.report,priority:0
@@ -2668,7 +2668,7 @@ msgstr "Odoo是世界上唯一一个全面整合营销的应用程序为您的�
 #. module: crm
 #: model:ir.model.fields,help:crm.field_sale_config_settings_generate_sales_team_alias
 msgid "Odoo will generate an email alias based on the sales team name"
-msgstr "Odoo将基于销售团队名称产生邮件别名"
+msgstr "Odoo将基于项目团队名称产生邮件别名"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -2952,7 +2952,7 @@ msgid ""
 "missed deadlines or the number of interactions per opportunity. This report is\n"
 "mainly used by the sales manager in order to do the periodic review with the\n"
 "teams of the sales pipeline."
-msgstr "渠道分析给你提供一个即时访问带有相关信息的项目管理，\n例如期望营收，计划成本，错过最后日期或者相互影响的项目管理的数量\n该报告主要被销售经理用来和相关销售渠道的销售团队做定期检查"
+msgstr "渠道分析给你提供一个即时访问带有相关信息的项目管理，\n例如期望营收，计划成本，错过最后日期或者相互影响的项目管理的数量\n该报告主要被销售经理用来和相关销售渠道的项目团队做定期检查"
 
 #. module: crm
 #: model:ir.actions.act_window,help:crm.crm_opportunity_report_action_graph
@@ -2962,7 +2962,7 @@ msgid ""
 "missed deadlines or the number of interactions per opportunity. This report is\n"
 "mainly used by the sales manager in order to periodically review the pipeline\n"
 "with the the sales teams."
-msgstr "渠道分析给你体同一个一个即时访问带有相关信息的项目管理，\n例如期望营收，计划成本，错过最后日期或者相互影响的项目管理的数量\n该报告主要被销售经理用来和相关销售渠道的销售团队做定期检查"
+msgstr "渠道分析给你体同一个一个即时访问带有相关信息的项目管理，\n例如期望营收，计划成本，错过最后日期或者相互影响的项目管理的数量\n该报告主要被销售经理用来和相关销售渠道的项目团队做定期检查"
 
 #. module: crm
 #: model:web.planner,tooltip_planner:crm.planner_crm
@@ -3154,7 +3154,7 @@ msgstr "销售标签"
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 #: model:ir.ui.view,arch_db:crm.view_crm_case_opportunities_filter
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -3164,7 +3164,7 @@ msgstr "销售工具"
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_lead2opportunity_partner_mass_user_ids
 msgid "Salesmen"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_lead2opportunity_partner_mass_user_id
@@ -3176,7 +3176,7 @@ msgstr "销售员"
 #: model:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 #: model:ir.ui.view,arch_db:crm.view_crm_case_opportunities_filter
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -3208,7 +3208,7 @@ msgstr "选择项目管理/机会点"
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.sales_team_form_view_in_crm
 msgid "Select Stages for this Sales Team"
-msgstr "为这个销售团队选择阶段"
+msgstr "为这个项目团队选择阶段"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.base_partner_merge_automatic_wizard_form
@@ -3514,7 +3514,7 @@ msgid ""
 "The first contact you get with a potential customer is a lead you qualify "
 "before converting it into a real business opportunity. Check this box to "
 "manage leads in this sales team."
-msgstr "第一次接触潜在客户是一个将它转换为真正的商业机会的机会点。选中这个框，管理销售团队的机会点。"
+msgstr "第一次接触潜在客户是一个将它转换为真正的商业机会的机会点。选中这个框，管理项目团队的机会点。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -3568,7 +3568,7 @@ msgid ""
 "The three main practices to develop a sales force are\n"
 "                        <strong>methodical organization</strong>, <strong>trainings</strong> and\n"
 "                        <strong>good sales tools</strong>."
-msgstr "三个重要的实践是发展一个<strong>有良好组织的</strong>, <strong>训练有素的</strong>和<strong>有良好销售工具</strong>的销售团队"
+msgstr "三个重要的实践是发展一个<strong>有良好组织的</strong>, <strong>训练有素的</strong>和<strong>有良好销售工具</strong>的项目团队"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -3961,7 +3961,7 @@ msgstr "你的销售目标是什么？你目前面临的挑战是什么？搞清
 #: model:ir.model.fields,help:crm.field_crm_lead_team_id
 msgid ""
 "When sending mails, the default email address is taken from the sales team."
-msgstr "发送邮件的时候，默认的邮件地址来自销售团队。"
+msgstr "发送邮件的时候，默认的邮件地址来自项目团队。"
 
 #. module: crm
 #: model:ir.ui.view,arch_db:crm.crm_planner
@@ -4022,7 +4022,7 @@ msgid ""
 "                            practice to do it at least once a month. Ask your team to set tags on opportunities to\n"
 "                            identify why they were lost and use this information to generate statistics. Here are\n"
 "                            some examples of tags to create: no budget, competition, no pain found, etc."
-msgstr "不必在每次销售会议上检查失去的项目管理，但是最好一个月最少一次你可以让你的销售团队在失去的项目管理上标识一个标签，然后你们可以根据标签内容做分析有一些标签的例子：没有预算，竞争者，没有痛点等等"
+msgstr "不必在每次销售会议上检查失去的项目管理，但是最好一个月最少一次你可以让你的项目团队在失去的项目管理上标识一个标签，然后你们可以根据标签内容做分析有一些标签的例子：没有预算，竞争者，没有痛点等等"
 
 #. module: crm
 #: code:addons/crm/base_partner_merge.py:447

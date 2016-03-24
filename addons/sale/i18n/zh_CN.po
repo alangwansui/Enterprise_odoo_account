@@ -158,7 +158,7 @@ msgstr "<strong>付款条款:</strong>"
 #. module: sale
 #: model:ir.ui.view,arch_db:sale.report_saleorder_document
 msgid "<strong>Salesperson:</strong>"
-msgstr "<strong>销售员:</strong>"
+msgstr "<strong>营销责任人:</strong>"
 
 #. module: sale
 #: model:ir.ui.view,arch_db:sale.report_saleorder_document
@@ -280,12 +280,12 @@ msgstr "By Product"
 #. module: sale
 #: model:ir.filters,name:sale.filter_sale_report_salespersons
 msgid "By Salespersons"
-msgstr "按销售员"
+msgstr "按营销责任人"
 
 #. module: sale
 #: model:ir.filters,name:sale.filter_sale_report_salesteam
 msgid "By Salesteam"
-msgstr "按销售团队"
+msgstr "按项目团队"
 
 #. module: sale
 #: model:ir.model.fields,field_description:sale.field_sale_order_line_qty_delivered_updateable
@@ -306,7 +306,7 @@ msgstr "已取消"
 #. module: sale
 #: model:ir.model.fields,help:sale.field_crm_team_use_invoices
 msgid "Check this box to manage invoices in this sales team."
-msgstr "选择此项来管理这个销售团队中的发票。"
+msgstr "选择此项来管理这个项目团队中的发票。"
 
 #. module: sale
 #: model:ir.model.fields,help:sale.field_crm_team_use_quotations
@@ -792,7 +792,7 @@ msgid ""
 "Invoice revenue for the current month. This is the amount the sales team has"
 " invoiced this month. It is used to compute the progression ratio of the "
 "current and target revenue on the kanban view."
-msgstr "当月发票的收入。这是本月销售团队已开具的发票金额。 它是用来在看板视图中计算实际和预测的收入之间的比例关系。"
+msgstr "当月发票的收入。这是本月项目团队已开具的发票金额。 它是用来在看板视图中计算实际和预测的收入之间的比例关系。"
 
 #. module: sale
 #: selection:sale.advance.payment.inv,advance_payment_method:0
@@ -1485,7 +1485,7 @@ msgstr "销售订单统计"
 #: model:ir.ui.view,arch_db:sale.view_order_product_search
 #: model:ir.ui.view,arch_db:sale.view_sales_order_filter
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: sale
 #: model:ir.actions.act_window,name:sale.action_orders_to_invoice
@@ -1507,7 +1507,7 @@ msgstr "销售人员在报价时不需要查看利润率"
 #: model:ir.ui.view,arch_db:sale.view_sales_order_filter
 #: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: sale
 #: model:ir.ui.view,arch_db:sale.view_sales_order_filter
@@ -1606,7 +1606,7 @@ msgstr "小计"
 msgid ""
 "Target of invoice revenue for the current month. This is the amount the "
 "sales team estimates to be able to invoice this month."
-msgstr "当月发票收入目标。这是销售团队本月预计能够开出的发票。"
+msgstr "当月发票收入目标。这是项目团队本月预计能够开出的发票。"
 
 #. module: sale
 #: model:ir.model.fields,field_description:sale.field_sale_order_amount_tax

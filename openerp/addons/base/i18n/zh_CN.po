@@ -72,7 +72,7 @@ msgid ""
 "This module allows the cashier to quickly give a percentage\n"
 "sale discount to a customer.\n"
 "\n"
-msgstr "\n\n=======================\n\n销售员可用本模块迅速按百分比给予客人折扣。\n\n"
+msgstr "\n\n=======================\n\n营销责任人可用本模块迅速按百分比给予客人折扣。\n\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_pos_loyalty
@@ -3666,7 +3666,7 @@ msgid ""
 "sales team, or an opportunity which still has status pending after 14 days might\n"
 "trigger an automatic reminder email.\n"
 "    "
-msgstr "\n本模块允许实施任何对象的执行规则.\n============================================================\n\n在不同的界面里使用内嵌措施自动触发执行.\n\n**比如:** 特定用户创建一条线索可能会自动发给特定销售团队，\n 或者一条商机如果呆滞了14天后就会自动触发一封提醒邮件.\n\n    "
+msgstr "\n本模块允许实施任何对象的执行规则.\n============================================================\n\n在不同的界面里使用内嵌措施自动触发执行.\n\n**比如:** 特定用户创建一条线索可能会自动发给特定项目团队，\n 或者一条商机如果呆滞了14天后就会自动触发一封提醒邮件.\n\n    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_us_check_printing
@@ -4093,7 +4093,7 @@ msgid ""
 "Using this application you can manage Sales Team  with CRM and/or Sales \n"
 "=======================================================================\n"
 " "
-msgstr "\n这个模块在CRM和销售模块增加了销售团队\n===================================================\n    "
+msgstr "\n这个模块在CRM和销售模块增加了项目团队\n===================================================\n    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_base_vat
@@ -14146,18 +14146,18 @@ msgstr "销售管理"
 #. module: base
 #: model:ir.module.module,summary:base.module_sales_team
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: base
 #: selection:ir.ui.view,type:0
 msgid "Sales Team Dashboard"
-msgstr "销售团队仪表盘"
+msgstr "项目团队仪表盘"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sales_team
 #: model:ir.ui.menu,name:base.sales_team_config
 msgid "Sales Teams"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_timesheet
@@ -14179,7 +14179,7 @@ msgstr "销售和仓库管理"
 #: model:ir.model.fields,field_description:base.field_res_users_user_id
 #: model:ir.ui.view,arch_db:base.view_res_partner_filter
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: base
 #: model:res.country,name:base.ws
@@ -15650,7 +15650,7 @@ msgstr "用户组中的用户需要授权才能确认此迁移。"
 msgid ""
 "The internal user that is in charge of communicating with this contact if "
 "any."
-msgstr "如果存在此销售员，则通过该人员内部账号与该客户沟通对话交流。"
+msgstr "如果存在此营销责任人，则通过该人员内部账号与该客户沟通对话交流。"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_inherited_model_ids

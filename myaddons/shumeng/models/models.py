@@ -205,7 +205,9 @@ class shumeng_qingjiadan(models.Model):
         # 若没有审批人
         teacher_obj = self.env['shumeng.teacher']
         teacher = teacher_obj.search([('user_id','=',self.create_uid.id)])
-        
+        print teacher.parent_id.id
+        print teacher.parent_id.user_id
+        print teacher.parent_id.user_id.name
         if len(teacher) == 1:
             if teacher.parent_id:
                 self.write({'state':'wait','shengpiren':teacher.parent_id.id})

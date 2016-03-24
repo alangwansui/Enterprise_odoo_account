@@ -75,11 +75,11 @@
                 </field>
                 <field name="name" position="after">
                     <field name="project_leave" string="项目级别"/>
-                    <field name="office"/>
-                    <field name="industry"/>
+                    <field name="office_id"/>
+                    <field name="industry_id"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
-                    <field name="user_id" string="销售员"/>
+                    <field name="user_id" string="营销责任人"/>
                 </field>
                 <field name="create_date" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -114,13 +114,35 @@
                 <field name="partner_id" position="before">
                     <field name="project_number"/>
                     <field name="project_leave" string="项目级别"/>
-                    <field name="office"/>
-                    <field name="industry"/>
-                </field>
-                <field name="date_deadline" position="before">
+                    <field name="office_id"/>
+                    <field name="industry_id"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
                     <field name="project_detail"/>
+                </field>
+                <field name="partner_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="email_from" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="phone" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <div class="o_address_format" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </div>
+                <field name="partner_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="partner_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <label for="street" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </label>
+                <field name="date_deadline" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </field>
                 <field name="team_id" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -131,8 +153,62 @@
                 <h2 position="attributes">
                     <attribute name="invisible">1</attribute>
                 </h2>
+                <field name="email_from" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="function" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="phone" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <div class="o_row" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </div>
                 <field name="probability" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </field>
+                <field name="fax" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <label for="contact_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </label>
+                <field name="contact_name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="title" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <div class="o_row" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </div>
+                <field name="mobile" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_deadline" position="after">
+                    <field name="partner_id" string="客户"
+                           on_change="on_change_partner_id(partner_id)"
+                           options='{"create_name_field": "name"}'
+                           context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}"/>
+                    <field name="partner_name" string="公司名称"/>
+                    <label for="street" string="地址"/>
+                    <div class="o_address_format">
+                        <field name="street" placeholder="Street..." class="o_address_street"/>
+                        <field name="city" placeholder="City" class="o_address_city"/>
+                        <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
+                        <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                        <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                    </div>
+                    <label for="contact_name"/>
+                    <div class="o_row">
+                        <field name="contact_name"/>
+                        <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
+                    </div>
+                    <field name="email_from" widget="email"/>
+                    <field name="function"/>
+                    <field name="phone" widget="phone"/>
+                    <field name="mobile"/>
                 </field>
             </field>
       </record>
@@ -148,8 +224,8 @@
                 </field>
                 <field name="name" position="after">
                     <field name="project_leave" string="项目级别"/>
-                    <field name="office"/>
-                    <field name="industry"/>
+                    <field name="office_id"/>
+                    <field name="industry_id"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
                 </field>
@@ -270,24 +346,44 @@
               <field name="partner_id" position="before">
                   <field name="project_number"/>
                   <field name="project_leave" string="项目级别"/>
-                  <field name="office"/>
-                  <field name="industry"/>
+                  <field name="office_id"/>
+                  <field name="industry_id"/>
+                  <field name="bidding_time"/>
+                  <field name="supply_time"/>
+                  <field name="project_detail"/>
               </field>
-              <field name="contact_name" position="before">
-                  <field name="partner_id"/>
-                  <field name="partner_name"/>
-                  <field name="street"/>
+              <div class="o_address_format" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </div>
+              <field name="partner_id" position="attributes">
+                  <attribute name="invisible">1</attribute>
               </field>
+              <field name="partner_name" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <label for="street" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </label>
+              <label for="contact_name" position="before">
+                  <field name="partner_id" string="客户"
+                         on_change="on_change_partner_id(partner_id)"
+                         options='{"create_name_field": "name"}'
+                         context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}"/>
+                  <field name="partner_name" string="公司名称"/>
+                  <label for="street" string="地址"/>
+                  <div class="o_address_format">
+                      <field name="street" placeholder="Street..." class="o_address_street"/>
+                      <field name="city" placeholder="City" class="o_address_city"/>
+                      <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
+                      <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                      <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                  </div>
+              </label>
               <field name="team_id" position="attributes">
                   <attribute name="invisible">1</attribute>
               </field>
               <field name="user_id" position="after">
                   <field name="team_id" domain="[('use_leads','=',True)]"/>
-              </field>
-              <field name="mobile" position="after">
-                  <field name="bidding_time"/>
-                  <field name="supply_time"/>
-                  <field name="project_detail"/>
               </field>
               <field name="fax" position="attributes">
                   <attribute name="invisible">1</attribute>

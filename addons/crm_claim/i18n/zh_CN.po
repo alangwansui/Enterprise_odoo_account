@@ -376,7 +376,7 @@ msgstr "确认后, 会出现新消息."
 msgid ""
 "If you check this field, this stage will be proposed by default on each "
 "sales team. It will not assign this stage to existing teams."
-msgstr "如果你勾选了这里，这个阶段会作为每个销售团队的默认阶段。对已有的销售团队无效。"
+msgstr "如果你勾选了这里，这个阶段会作为每个项目团队的默认阶段。对已有的项目团队无效。"
 
 #. module: crm_claim
 #: model:crm.claim.stage,name:crm_claim.stage_claim5
@@ -419,7 +419,7 @@ msgstr "最后更新"
 msgid ""
 "Link between stages and sales teams. When set, this limitate the current "
 "stage to the selected sales teams."
-msgstr "在阶段和邮件地址建连接。设置后，将限制当前的阶段选择的销售团队。"
+msgstr "在阶段和邮件地址建连接。设置后，将限制当前的阶段选择的项目团队。"
 
 #. module: crm_claim
 #: selection:crm.claim,priority:0 selection:crm.claim.report,priority:0
@@ -449,7 +449,7 @@ msgstr "我的公司"
 #. module: crm_claim
 #: model:ir.ui.view,arch_db:crm_claim.view_report_crm_claim_filter
 msgid "My Sales Team(s)"
-msgstr "我的销售团队"
+msgstr "我的项目团队"
 
 #. module: crm_claim
 #: model:ir.model.fields,field_description:crm_claim.field_crm_claim_category_name
@@ -593,7 +593,7 @@ msgstr "责任用户"
 msgid ""
 "Responsible sales team. Define Responsible user and Email account for mail "
 "gateway."
-msgstr "负责的销售团队。定义一个负责的用户和Email 账户"
+msgstr "负责的项目团队。定义一个负责的用户和Email 账户"
 
 #. module: crm_claim
 #: model:ir.model.fields,field_description:crm_claim.field_crm_claim_cause
@@ -610,12 +610,12 @@ msgstr "根本原因"
 #: model:ir.model.fields,field_description:crm_claim.field_crm_claim_team_id
 #: model:ir.ui.view,arch_db:crm_claim.view_report_crm_claim_filter
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: crm_claim
 #: model:ir.ui.view,arch_db:crm_claim.view_report_crm_claim_filter
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: crm_claim
 #: model:ir.ui.view,arch_db:crm_claim.view_report_crm_claim_filter

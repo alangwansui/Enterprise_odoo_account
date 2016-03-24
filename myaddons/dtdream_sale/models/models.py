@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-import datetime
-from openerp.exceptions import UserError, ValidationError
-from openerp.osv import osv
+from openerp.exceptions import Warning
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 # 继承产品模型，修改字段
 class dtdream_product(models.Model):
@@ -34,8 +34,8 @@ class product_pro_type(models.Model):
 class res_users_read_access(models.Model):
     _inherit = ['res.users']
 
-    user_access_industry = fields.Many2many("dtdream.industry", string="行业",required=True)
-    user_access_office = fields.Many2many("dtdream.office", string="办事处",required=True)
+    user_access_industry = fields.Many2many("dtdream.industry", string="行业")
+    user_access_office = fields.Many2many("dtdream.office", string="办事处")
 
 #定义办事处模型
 class dtdream_office(models.Model):
@@ -51,7 +51,8 @@ class dtdream_sale(models.Model):
     def _onchange_time(self):
         if self.bidding_time!=False and self.supply_time!=False:
             if self.bidding_time >= self.supply_time:
-                raise UserError("供货时间应晚于招标时间")
+                self.bidding_time = ""
+                raise Warning("供货时间应晚于招标时间")
 
     user_id = fields.Many2one(string="项目责任人")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
@@ -60,10 +61,10 @@ class dtdream_sale(models.Model):
         ('department_leave', '部门级'),
         ('normal_leave', '一般项目'),
     ],required=True)
-    industry = fields.Many2one("dtdream.industry", string="行业",required=True)
-    office = fields.Many2one("dtdream.office", string="办事处",required=True)
-    bidding_time = fields.Date("招标时间",required=True)
-    supply_time = fields.Date("供货时间",required=True)
+    industry_id = fields.Many2one("dtdream.industry", string="行业",required=True)
+    office_id = fields.Many2one("dtdream.office", string="办事处",required=True)
+    bidding_time = fields.Date("招标时间",required=True,default=datetime.today())
+    supply_time = fields.Date("供货时间",required=True,default=datetime.today() + relativedelta(months=1))
     partner_id = fields.Many2one(required=True)
     project_detail = fields.Text("项目详情")
 

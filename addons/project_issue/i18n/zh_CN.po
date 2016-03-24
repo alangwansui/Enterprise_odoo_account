@@ -659,19 +659,19 @@ msgstr "准备好下一个阶段"
 #. module: project_issue
 #: model:ir.model.fields,field_description:project_issue.field_project_issue_report_team_id
 msgid "Sale Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: project_issue
 #: model:ir.model.fields,field_description:project_issue.field_project_issue_team_id
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: project_issue
 #: model:ir.model.fields,help:project_issue.field_project_issue_team_id
 msgid ""
 "Sales team to which Case belongs to.                             Define "
 "Responsible user and Email account for mail gateway."
-msgstr "这个业务所属的销售团队。输入团队负责人和邮箱。"
+msgstr "这个业务所属的项目团队。输入团队负责人和邮箱。"
 
 #. module: project_issue
 #: model:ir.ui.view,arch_db:project_issue.view_project_issue_report_filter

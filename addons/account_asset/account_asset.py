@@ -252,6 +252,7 @@ class AccountAssetAsset(models.Model):
                 today = datetime.today().strftime(DF)
                 vals = {
                     'amount': asset.value_residual,
+
                     'asset_id': asset.id,
                     'sequence': sequence,
                     'name': (asset.code or '') + '/' + str(sequence),
