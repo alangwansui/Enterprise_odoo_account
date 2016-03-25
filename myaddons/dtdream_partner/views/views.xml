@@ -33,6 +33,19 @@
           <field name="model">res.partner</field>
           <field name="inherit_id" ref="base.view_partner_form" />
           <field name="arch" type="xml">
+
+              <field name="company_type" position="attributes">
+                <attribute name="default">company</attribute>
+              </field>
+
+              <field name="street2" position="attributes">
+                <attribute name="invisible">1</attribute>
+              </field>
+
+              <field name="user_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+              </field>              
+
               <field name="website" position="after">
 <!--                   <field name="partner_code" attrs="{'required' : [('is_company', '=', True),('customer', '=', True)],'invisible' : ['|',('is_company', '!=', True),('customer', '!=', True)]}"/>
                   <field name="industry_id" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
@@ -46,13 +59,12 @@
               </field>
 
               <field name="category_id" position="after">
-                  <!-- <field name="partner_owner" attrs="{'required' : [('is_company', '=', True),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}"/> -->
-                  <field name="partner_owner" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}"/>
+                  <field name="partner_owner" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}" />
               </field>
 
-              <field name="company_type" position="attributes">
-                <attribute name="default">company</attribute>
-              </field>
+<!--               <field name="user_id" position="attributes">
+                <attribute name="string">营销责任人</attribute>
+              </field>    -->
 
           </field>
       </record>

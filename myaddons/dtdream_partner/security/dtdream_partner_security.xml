@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+<data noupdate="0">
+    <!-- 重新定义四个权限控制组 -->
+    <record model="ir.module.category" id="model_dtdream_partner">
+        <field name="name">客户权限</field>
+        <field name="description">设置用户的客户权限</field>
+        <field name="sequence">4</field>
+    </record>
+
+    <record id="group_dtdream_partner_self" model="res.groups">
+        <field name="name">查看自己的客户</field>
+        <field name="implied_ids">[(4,ref(base.group_user))]</field>
+        <field name="category_id" ref='model_dtdream_partner'/>
+    </record>
+
+    <record id="group_dtdream_partner_by_industry_office" model="res.groups">
+        <field name="name">按行业/区域组合授权查看客户</field>
+        <field name="implied_ids">[(4,ref(base.group_user))]</field>
+        <field name="category_id" ref='model_dtdream_partner'/>
+    </record>
+
+    <record id="group_dtdream_partner_all" model="res.groups">
+        <field name="name">查看全部客户</field>
+        <field name="implied_ids">[(4,ref(base.group_user))]</field>
+        <field name="category_id" ref='model_dtdream_partner'/>
+    </record>
+
+    <record id="group_dtdream_partner_modify" model="res.groups">
+        <field name="name">修改与删除客户</field>
+        <field name="implied_ids">[(4,ref(base.group_user))]</field>
+        <field name="category_id" ref='model_dtdream_partner'/>
+    </record>
+
+    <!-- 定义四个组的规则 -->
+    <record id="dtdream_partner_rule_self" model="ir.rule">
+        <field name="name">查看自己的客户</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+        <field name="domain_force">['|',('partner_owner','=',user.id),('partner_owner','=',False)]</field>
+        <field name="groups" eval="[(4, ref('group_dtdream_partner_self'))]"/>
+    </record>
+
+    <record id="dtdream_partner_rule_by_industry_office" model="ir.rule">
+        <field name="name">按行业/区域组合授权查看客户</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+        <field name="domain_force">[('office_id','in',[x.id for x in user.user_access_office]),('industry_id','in',[x.id for x in user.user_access_industry])]</field>
+        <field name="groups" eval="[(4, ref('group_dtdream_partner_by_industry_office'))]"/>
+    </record>
+
+    <record id="dtdream_partner_rule_all" model="ir.rule">
+        <field name="name">查看全部客户</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('group_dtdream_partner_all'))]"/>
+    </record>
+
+    <record id="dtdream_partner_rule_modify" model="ir.rule">
+        <field name="name">修改与删除客户</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('group_dtdream_partner_modify'))]"/>
+    </record>
+
+</data>
+</openerp>

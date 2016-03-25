@@ -1,2 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dtdream_partner_dtdream_partner,dtdream_partner.dtdream_partner,model_dtdream_partner_dtdream_partner,,1,0,0,0
+access_dtdream_partner,dtdream_partner,model_dtdream_partner,,1,0,0,0
+access_res_partner_self,res.partner.self,model_res_partner,dtdream_partner.group_dtdream_partner_self,1,1,1,0
+access_res_partner_by_industry_office,res.partner.by.industry.office,model_res_partner,dtdream_partner.group_dtdream_partner_by_industry_office,1,1,1,0
+access_res_partner_all,res.partner.all,model_res_partner,dtdream_partner.group_dtdream_partner_all,1,1,1,0
+access_res_partner_modify,res.partner.modify,model_res_partner,dtdream_partner.group_dtdream_partner_modify,1,1,1,1
