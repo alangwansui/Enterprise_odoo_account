@@ -74,7 +74,7 @@ class dtdream_sale(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('project_number', 'New') == 'New':
-            o_id = vals.get('office')
+            o_id = vals.get('office_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
             vals['project_number'] = ''.join([office_rec.code,self.env['ir.sequence'].next_by_code('project.number'),'N']) or 'New'
         result = super(dtdream_sale, self).create(vals)
