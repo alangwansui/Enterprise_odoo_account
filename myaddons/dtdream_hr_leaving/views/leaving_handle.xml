@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <openerp>
   <data>
     <!-- explicit list view definition -->
@@ -12,6 +13,7 @@
           <field name="job_number"/>
           <field name="department"/>
           <field name="leave_date"/>
+          <field name="state"/>
         </tree>
       </field>
     </record>
@@ -22,21 +24,53 @@
       <field name="arch" type="xml">
         <form>
           <header>
-              <button name="btn_submit" type="workflow" states="0" string="提交" class="oe_highlight"></button>
-              <button name="btn_approve" type="workflow" states="1,2,3,4,5" string="审批" class="oe_highlight"></button>
-              <button name="btn_refuse" type="workflow" states="1,2,3,4,5" string="驳回" class="oe_highlight"></button>
-              <field name="state" statusbar_visible="0,1,2,3,4,5,9" widget="statusbar"></field>
+              <button name="btn_submit" type="workflow" states="0,3,5" string="提交" class="oe_highlight"></button>
+              <button name="btn_reset" type="workflow" states="-1" string="重置为草稿" class="oe_highlight"></button>
+              <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" states="1,2,4,6,7" string="审批" class="oe_highlight"></button>
+              <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,99" widget="statusbar"></field>
           </header>
           <sheet>
             <group  col="4">
-              <field name="name"/>
+              <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="full_name"/>
               <field name="job_number"/>
               <field name="department"/>
-              <field name="post"/>
+              <field name="post" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="entry_day"/>
-              <field name="leave_date"/>
+              <field name="leave_date" attrs="{'readonly':[('state', '!=','0')]}"/>
             </group>
+            <notebook>
+              <page string="离岗前环节" states="3,4,5,6,7,99">
+                <field name="leaving_handle_process_ids1" >
+                  <tree editable="bottom" create="false" delete="false">
+                    <field name="process_id" readonly="True"></field>
+                    <field name="is_finish"></field>
+                  </tree>
+                </field>
+                <field name="is_finish1" invisible="True"/>
+              </page>
+               <page string="离岗后环节" states="5,6,7,99">
+                <field name="leaving_handle_process_ids2" >
+                  <tree editable="bottom" create="false" delete="false">
+                    <field name="process_id" readonly="True"></field>
+                    <field name="is_finish"></field>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+            <notebook>
+              <page string="审批记录" states="1,2,3,4,5,6,7,99">
+                <field name="opinion_ids" readonly="True">
+                  <tree editable="bottom" default_order="create_date desc">
+                      <field name="name" />
+                      <field name="result" string="审批结果"/>
+                      <field name="opinion" />
+                      <field name="create_uid" string="审批人"/>
+                      <field name="create_date" string="审批时间"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
           </sheet>
         </form>
       </field>

@@ -26,7 +26,9 @@
     'data': [
         'security/ir.model.access.csv',
         'views/menu.xml',
+        'wizard/leaving_handle_wizard.xml',
         'views/leaving_handle.xml',
+        'workflow/workflow.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- Workflow definition
+        1. draft->submitted (confirm signal) if can_reset
+        2. submitted->draft (reset signal) if can_reset
+        2. submitted->accepted (validate signal) if not double_validation
+        2. submitted->first_accepted (validate signal) if double_validation
+        2. submitted->refused (refuse signal)
+        3. accepted->refused (refuse signal)
+        4. first_accepted -> accepted (second_validate signal)
+        4. first_accepted -> refused (refuse signal)
+        5. refuse -> draft (reset signal) if can_reset
+    -->
+
+    <record model="workflow" id="wkf_leaving_handle">
+        <field name="name">离职交接电子流</field>
+        <field name="osv">leaving.handle</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record model="workflow.activity" id="act_draft"> <!-- 离职办理申请 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">离职办理申请</field>
+        <field name="flow_start" eval="True"/>
+        <field name="kind">function</field>
+        <field name="action">wkf_draft()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve1"> <!-- 离职办理确认 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">离职办理确认</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve1()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve2"> <!-- 工作交接确认 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">工作交接确认</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve2()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve3"> <!-- 离岗前环节 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">离岗前环节</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve3()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve4"> <!-- 员工离岗确认 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">员工离岗确认</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve4()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve5"> <!-- 离岗后环节 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">离岗后环节</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve5()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve6"> <!-- 离职手续办理完毕确认 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">离职手续办理完毕确认</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve6()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_approve7"> <!-- 启动离职结算 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">启动离职结算</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve7()</field>
+     </record>
+
+     <record model="workflow.activity" id="act_done"> <!-- 审批通过 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">审批完</field>
+        <field name="flow_stop" eval="True"/>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+     </record>
+
+    <record model="workflow.activity" id="act_reject"> <!-- 审批驳回 -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">驳回</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_reject()</field>
+     </record>
+
+    <!--
+        workflow transition
+    -->
+
+    <record model="workflow.transition" id="trans_draft_approve1"> <!-- 1. draft->submitted (confirm signal) -->
+        <field name="act_from" ref="act_draft" />
+        <field name="act_to" ref="act_approve1" />
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record model="workflow.transition" id="trans_approve1_approve2"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve1" />
+        <field name="act_to" ref="act_approve2" />
+        <field name="signal">btn_agree</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve2_approve3"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve2" />
+        <field name="act_to" ref="act_approve3" />
+        <field name="signal">btn_agree</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve3_approve4"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve3" />
+        <field name="act_to" ref="act_approve4" />
+        <field name="signal">btn_submit</field>
+        <field name="condition">is_finish1</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve4_approve5"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve4" />
+        <field name="act_to" ref="act_approve5" />
+        <field name="signal">btn_agree</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve5_approve6"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve5" />
+        <field name="act_to" ref="act_approve6" />
+        <field name="signal">btn_submit</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve6_approve7"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve6" />
+        <field name="act_to" ref="act_approve7" />
+        <field name="signal">btn_agree</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve7_done"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve7" />
+        <field name="act_to" ref="act_done" />
+        <field name="signal">btn_agree</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve1_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve1" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve2_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve2" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve3_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve3" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve4_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve4" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve5_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve5" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve6_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve6" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve7_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve7" />
+        <field name="act_to" ref="act_reject" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_reject_draft"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_reject" />
+        <field name="act_to" ref="act_draft" />
+        <field name="signal">btn_reset</field>
+    </record>
+</data>
+</openerp>
