@@ -511,7 +511,7 @@ msgstr "保存你的修改"
 #. module: website_event
 #: model:ir.ui.view,arch_db:website_event.country_events_list
 msgid "See all events from"
-msgstr "查看所有线索"
+msgstr "查看所有机会点"
 
 #. module: website_event
 #: model:ir.ui.view,arch_db:website_event.country_events_list

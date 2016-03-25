@@ -830,7 +830,7 @@ msgstr "默认价格表"
 #. module: website_sale
 #: model:ir.ui.view,arch_db:website_sale.website_config_settings_view_form
 msgid "Default Sales Team"
-msgstr "默认的销售团队"
+msgstr "默认的项目团队"
 
 #. module: website_sale
 #: model:ir.ui.view,arch_db:website_sale.website_config_settings_view_form
@@ -1593,13 +1593,13 @@ msgstr "销售订单行"
 #: model:ir.model.fields,field_description:website_sale.field_website_config_settings_salesteam_id
 #: model:ir.model.fields,field_description:website_sale.field_website_salesteam_id
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: website_sale
 #: model:ir.model.fields,field_description:website_sale.field_website_config_settings_salesperson_id
 #: model:ir.model.fields,field_description:website_sale.field_website_salesperson_id
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: website_sale
 #. openerp-web

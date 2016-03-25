@@ -373,7 +373,7 @@ msgstr "有价值的产品"
 #. module: website_quote
 #: model:sale.quote.template,website_description:website_quote.website_quote_template_1
 msgid "Access to the Lead"
-msgstr "访问项目立项"
+msgstr "访问机会点"
 
 #. module: website_quote
 #: model:product.product,name:website_quote.product_product_quote_3
@@ -509,7 +509,7 @@ msgstr "控制器和视图"
 #. module: website_quote
 #: model:sale.quote.option,website_description:website_quote.website_sale_option_line_1
 msgid "Convert Lead to Opportunity &amp; Customer management"
-msgstr "项目立项转换为机遇，客户管理"
+msgstr "机会点转换为机遇，客户管理"
 
 #. module: website_quote
 #: model:sale.quote.line,website_description:website_quote.website_sale_order_line_2
@@ -1568,7 +1568,7 @@ msgid ""
 "                        leads, close deals, gives you feedback and best\n"
 "                        practices, delivers sales training and is your direct\n"
 "                        point of contact for any request you may have."
-msgstr "我们会为您指定专门的客户经理，有经验的销售人员，以帮助您开发Odoo业务。该客户经理可以帮助你得到的项目立项，完成交易，给你的反馈和最佳实践，提供销售培训，是您的直接联系点，您的任何要求。"
+msgstr "我们会为您指定专门的客户经理，有经验的销售人员，以帮助您开发Odoo业务。该客户经理可以帮助你得到的机会点，完成交易，给你的反馈和最佳实践，提供销售培训，是您的直接联系点，您的任何要求。"
 
 #. module: website_quote
 #: model:ir.actions.report.xml,name:website_quote.report_web_quote

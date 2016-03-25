@@ -669,7 +669,7 @@ msgid ""
 "It is used in computation. For e.g. A rule for sales having 1% commission of"
 " basic salary for per product can defined in expression like result = "
 "inputs.SALEURO.amount * contract.wage*0.01."
-msgstr "用于计算。例如，某个规则是销售员每卖一件产品得到1%的提成，表达式是：result = inputs.SALEURO.amount * contract.wage*0.01."
+msgstr "用于计算。例如，某个规则是营销责任人每卖一件产品得到1%的提成，表达式是：result = inputs.SALEURO.amount * contract.wage*0.01."
 
 #. module: hr_payroll
 #: model:ir.model.fields,field_description:hr_payroll.field_hr_contribution_register___last_update

@@ -1737,7 +1737,7 @@ msgstr "让你的客户访问他们的单据"
 msgid ""
 "Gives the probability to assign a lead to this partner. (0 means no "
 "assignation.)"
-msgstr "为项目立项指定一个业务伙伴的概率（0表示没指派）"
+msgstr "为机会点指定一个业务伙伴的概率（0表示没指派）"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_category_sequence
@@ -3208,7 +3208,7 @@ msgstr "用户月销售情况"
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_user_id
 #: model:ir.ui.view,arch_db:point_of_sale.view_pos_order_filter
 msgid "Salesman"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_details_user_ids
@@ -3219,7 +3219,7 @@ msgstr "售货员"
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order_user_id
 #: model:ir.ui.view,arch_db:point_of_sale.view_report_pos_order_search
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: point_of_sale
 #: model:product.product,name:point_of_sale.san_pellegrino_1l

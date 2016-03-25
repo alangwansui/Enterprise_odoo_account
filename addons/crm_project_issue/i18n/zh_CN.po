@@ -100,7 +100,7 @@ msgstr "最后更新"
 #. module: crm_project_issue
 #: model:ir.model.fields,field_description:crm_project_issue.field_crm_lead2projectissue_wizard_lead_id
 msgid "Lead"
-msgstr "项目立项"
+msgstr "机会点"
 
 #. module: crm_project_issue
 #: selection:crm.lead2projectissue.wizard,action:0

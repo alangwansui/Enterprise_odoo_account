@@ -2383,7 +2383,7 @@ msgid ""
 "Optional ID of a thread (record) to which all incoming messages will be "
 "attached, even if they did not reply to it. If set, this will disable the "
 "creation of new records completely."
-msgstr "所有的来邮都将附上一条线索（记录）选配的ID，即使它们不曾回复过它。如果设置了，这个将完全阻止新记录的创建。"
+msgstr "所有的来邮都将附上一条机会点（记录）选配的ID，即使它们不曾回复过它。如果设置了，这个将完全阻止新记录的创建。"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
@@ -2715,7 +2715,7 @@ msgstr "准备已经被文档化过的取消"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_force_thread_id
 msgid "Record Thread ID"
-msgstr "记录线索D"
+msgstr "记录机会点D"
 
 #. module: project
 #: selection:project.config.settings,module_project_timesheet:0

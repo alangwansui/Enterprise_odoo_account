@@ -141,7 +141,7 @@ msgstr "它表明会员的状态。\n                    -非会员：业务伙�
 #. module: sale_crm
 #: model:ir.model,name:sale_crm.model_crm_lead
 msgid "Lead/Opportunity"
-msgstr "项目立项/项目管理"
+msgstr "机会点/项目管理"
 
 #. module: sale_crm
 #: model:ir.ui.view,arch_db:sale_crm.sale_view_inherit123

@@ -2004,7 +2004,7 @@ msgstr "By 退款"
 #. module: account
 #: model:ir.filters,name:account.filter_invoice_salespersons
 msgid "By Salespersons"
-msgstr "按销售员"
+msgstr "按营销责任人"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_fiscal_position_active
@@ -7195,7 +7195,7 @@ msgstr "销售税(%)"
 #. module: account
 #: model:ir.ui.view,arch_db:account.view_account_invoice_report_search
 msgid "Sales Team"
-msgstr "销售团队"
+msgstr "项目团队"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_config_settings_sale_tax_rate
@@ -7208,7 +7208,7 @@ msgstr "销售税(%)"
 #: model:ir.ui.view,arch_db:account.view_account_invoice_filter
 #: model:ir.ui.view,arch_db:account.view_account_invoice_report_search
 msgid "Salesperson"
-msgstr "销售员"
+msgstr "营销责任人"
 
 #. module: account
 #: model:ir.ui.view,arch_db:account.view_account_journal_search

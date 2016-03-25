@@ -203,7 +203,7 @@ msgstr "8版本的新的会计模块和改进的详细路线图。"
 #: model:event.track,name:website_event_track.event_track8
 msgid ""
 "Discover Odoo CRM: How to optimize your sales, from leads to sales orders."
-msgstr "发现的Odoo CRM：如何优化你的销售，从项目立项到销售订单。"
+msgstr "发现的Odoo CRM：如何优化你的销售，从机会点到销售订单。"
 
 #. module: website_event_track
 #: model:event.track,name:website_event_track.event_track11
@@ -353,7 +353,7 @@ msgstr "最高"
 msgid ""
 "How to build your marketing strategy for the purpose of generating leads "
 "with Odoo."
-msgstr "如何生成项目立项与Odoo的目的建立自己的营销策略。"
+msgstr "如何生成机会点与Odoo的目的建立自己的营销策略。"
 
 #. module: website_event_track
 #: model:event.track,name:website_event_track.event_track1

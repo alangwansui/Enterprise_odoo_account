@@ -57,7 +57,7 @@ msgstr "按日期"
 #: model:ir.ui.view,arch_db:website_mail_channel.group_message
 #: model:ir.ui.view,arch_db:website_mail_channel.group_messages
 msgid "By thread"
-msgstr "按线索"
+msgstr "按机会点"
 
 #. module: website_mail_channel
 #: model:ir.ui.view,arch_db:website_mail_channel.subscribe

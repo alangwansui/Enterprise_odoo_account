@@ -253,7 +253,7 @@ msgstr "最后更新"
 #. module: website_forum_doc
 #: model:forum.documentation.toc,name:website_forum_doc.toc_crm_lead
 msgid "Lead & Opportunity"
-msgstr "项目立项/项目管理"
+msgstr "机会点/项目管理"
 
 #. module: website_forum_doc
 #: model:ir.model.fields,field_description:website_forum_doc.field_forum_documentation_toc_parent_left
@@ -428,7 +428,7 @@ msgstr "官方文档被提供的问题和答案必须满足一下条件："
 msgid ""
 "Tracks leads, boost opportunities and close deals.\n"
 "                    This serie of how-to will help you develop your business."
-msgstr "跟踪项目立项，提升机会和完成交易。如何处理这个系列将帮助你发展你的业务。"
+msgstr "跟踪机会点，提升机会和完成交易。如何处理这个系列将帮助你发展你的业务。"
 
 #. module: website_forum_doc
 #: model:forum.documentation.toc,name:website_forum_doc.toc_website
