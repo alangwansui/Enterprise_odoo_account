@@ -1468,7 +1468,7 @@ msgid ""
 "marketing campaigns performance to improve conversion rates. Design\n"
 "professional emails and reuse templates in a few clicks.\n"
 "    "
-msgstr "\n很容易发送大量的邮件给你的线人、商机者或是客户。跟踪市场活动效果以提高有效率。\n点击几次就能设计出专业的邮件及重复使用的模板。\n    "
+msgstr "\n很容易发送大量的邮件给你的线人、项目管理者或是客户。跟踪市场活动效果以提高有效率。\n点击几次就能设计出专业的邮件及重复使用的模板。\n    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_utm
@@ -1735,7 +1735,7 @@ msgid ""
 "\n"
 "Link module to map leads to issues\n"
 "        "
-msgstr "\n从线索到问题\n==============\n\n映射线索到问题的链接模块\n        "
+msgstr "\n从机会点到问题\n==============\n\n映射机会点到问题的链接模块\n        "
 
 #. module: base
 #: model:ir.module.module,description:base.module_board
@@ -2714,7 +2714,7 @@ msgid ""
 "For more specific needs, you may also assign custom-defined actions\n"
 "(technically: Server Actions) to be triggered for each incoming mail.\n"
 "    "
-msgstr "\n收取POP/IMAP服务器上的电子邮件。\n============================================\n\n输入你的POP/IMAP帐号参数，这些帐号的邮件\n将自动下载到你的OpenERP系统。支持所有\n兼容POP3/IMAP的服务器, 包括那些要求加密的SSL/TLS连接。\n\n这个可很容易地用于生成基于邮件的OpenERP文件工作流，例如：\n----------------------------------------------------------------------------------------------------------\n * CRM 线索/机会\n * CRM 投诉\n * 项目问题\n * 项目任务\n * 人力资源招聘 (应用)\n\n只需安装相关应用，你可以将任何这样的文件类型\nt (线索, 项目问题) 应用到你的电子邮件帐户。新邮件将\n自动生成所选类型的新文件，这是建立\n邮箱-到-OpenERP整合的捷径。更好地是：这些文件将直接作为通过Email同步的最小会话。你可以从OpenERP内回复，回复将自动汇总附到\n相同的 *会话* 文件。\n\n对于一些特殊应用，你可以分配定义的动作\n(技术上: 服务器动作) 触发处理每个收到的邮件."
+msgstr "\n收取POP/IMAP服务器上的电子邮件。\n============================================\n\n输入你的POP/IMAP帐号参数，这些帐号的邮件\n将自动下载到你的OpenERP系统。支持所有\n兼容POP3/IMAP的服务器, 包括那些要求加密的SSL/TLS连接。\n\n这个可很容易地用于生成基于邮件的OpenERP文件工作流，例如：\n----------------------------------------------------------------------------------------------------------\n * CRM 机会点/机会\n * CRM 投诉\n * 项目问题\n * 项目任务\n * 人力资源招聘 (应用)\n\n只需安装相关应用，你可以将任何这样的文件类型\nt (机会点, 项目问题) 应用到你的电子邮件帐户。新邮件将\n自动生成所选类型的新文件，这是建立\n邮箱-到-OpenERP整合的捷径。更好地是：这些文件将直接作为通过Email同步的最小会话。你可以从OpenERP内回复，回复将自动汇总附到\n相同的 *会话* 文件。\n\n对于一些特殊应用，你可以分配定义的动作\n(技术上: 服务器动作) 触发处理每个收到的邮件."
 
 #. module: base
 #: model:ir.module.module,description:base.module_website_sale_digital
@@ -2810,7 +2810,7 @@ msgid ""
 "Survey - CRM (bridge module)\n"
 "=================================================================================\n"
 "This module adds a Survey mass mailing button inside the more option of lead/customers views\n"
-msgstr "\n问卷调查 - CRM (桥接模块)\n=================================================================================\n本模块在线索/客户视图的“更多下拉菜单中， 增加了群发问卷调查邮件的 菜单项 \n"
+msgstr "\n问卷调查 - CRM (桥接模块)\n=================================================================================\n本模块在机会点/客户视图的“更多下拉菜单中， 增加了群发问卷调查邮件的 菜单项 \n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ch
@@ -2945,7 +2945,7 @@ msgid ""
 "-------------------------------\n"
 "* Planned Revenue by Stage and User (graph)\n"
 "* Opportunities by Stage (graph)\n"
-msgstr "\n通用客户关系管理（CRM）模块\n====================================================\n此模块能让群组人员合理有效地管理线索、商机、会谈以及电话访问等活动。\n管理涉及的重要功能包括：通信、身份识别、优先级设定、任务委派、投诉解决及通知等。\nOpenERP可以有效跟踪用户、客户和供应商的所有的活动案例。根据设定的规则，可以自动发送提醒、请求，触发各种动作。\n最重要的好处是，用户不需要做任何特殊的事。此模块集成了电子邮件网关，邮件在OpenERP中自动同步，用户只需在OpenERP中根据系统反馈，按需发送和回复邮件。\nOpenERP将接管其余的事，诸如发送感谢信、自动转发到相关人员并确保之后相应的回复能准确送达。\n\nCRM 控制面板（Dashboard） 包括：\n---------------------------------------\n* 可按阶段和用户分类的预计收益(图表)\n* 按阶段分类的商机(图表)\n"
+msgstr "\n通用客户关系管理（CRM）模块\n====================================================\n此模块能让群组人员合理有效地管理机会点、项目管理、会谈以及电话访问等活动。\n管理涉及的重要功能包括：通信、身份识别、优先级设定、任务委派、投诉解决及通知等。\nOpenERP可以有效跟踪用户、客户和供应商的所有的活动案例。根据设定的规则，可以自动发送提醒、请求，触发各种动作。\n最重要的好处是，用户不需要做任何特殊的事。此模块集成了电子邮件网关，邮件在OpenERP中自动同步，用户只需在OpenERP中根据系统反馈，按需发送和回复邮件。\nOpenERP将接管其余的事，诸如发送感谢信、自动转发到相关人员并确保之后相应的回复能准确送达。\n\nCRM 控制面板（Dashboard） 包括：\n---------------------------------------\n* 可按阶段和用户分类的预计收益(图表)\n* 按阶段分类的项目管理(图表)\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_base
@@ -3357,7 +3357,7 @@ msgid ""
 "Once the coordinates of the Lead/Opportunity is known, they can be automatically assigned\n"
 "to an appropriate local partner, based on the distance and the weight that was assigned to the partner.\n"
 "    "
-msgstr "\n这是OpenERP SA基于物理定位进行重定向客户到其业务伙伴时所使用的模块。\n======================================================================================================\n\n这个模块使你通过它们的地址来定位线索、商机和合作伙伴。\n\n一旦线索或商机的坐标被知晓，它们可以根据距离和权重\n指定给一个合适的当地合作伙伴。"
+msgstr "\n这是OpenERP SA基于物理定位进行重定向客户到其业务伙伴时所使用的模块。\n======================================================================================================\n\n这个模块使你通过它们的地址来定位机会点、项目管理和合作伙伴。\n\n一旦机会点或项目管理的坐标被知晓，它们可以根据距离和权重\n指定给一个合适的当地合作伙伴。"
 
 #. module: base
 #: model:ir.module.module,description:base.module_rating_project
@@ -3472,7 +3472,7 @@ msgid ""
 "We suggest you to install this module, if you installed both the sale and the crm\n"
 "modules.\n"
 "    "
-msgstr "\n这个模块在CRM的一个或多个商机中添加一个图标。\n===========================================================================\n\n这个图标可以让你把选择的商机转换成为销售订单。如果打开了一个商机列表，它将把他们转换成对应的一个商机。然后商机将被关闭并直接链接到转换的销售订单去。如果你已经安装了CRM模块和销售模块，我们建议您安装这个模块。"
+msgstr "\n这个模块在CRM的一个或多个项目管理中添加一个图标。\n===========================================================================\n\n这个图标可以让你把选择的项目管理转换成为销售订单。如果打开了一个项目管理列表，它将把他们转换成对应的一个项目管理。然后项目管理将被关闭并直接链接到转换的销售订单去。如果你已经安装了CRM模块和销售模块，我们建议您安装这个模块。"
 
 #. module: base
 #: model:ir.module.module,description:base.module_portal_stock
@@ -3666,7 +3666,7 @@ msgid ""
 "sales team, or an opportunity which still has status pending after 14 days might\n"
 "trigger an automatic reminder email.\n"
 "    "
-msgstr "\n本模块允许实施任何对象的执行规则.\n============================================================\n\n在不同的界面里使用内嵌措施自动触发执行.\n\n**比如:** 特定用户创建一条线索可能会自动发给特定项目团队，\n 或者一条商机如果呆滞了14天后就会自动触发一封提醒邮件.\n\n    "
+msgstr "\n本模块允许实施任何对象的执行规则.\n============================================================\n\n在不同的界面里使用内嵌措施自动触发执行.\n\n**比如:** 特定用户创建一条机会点可能会自动发给特定项目团队，\n 或者一条项目管理如果呆滞了14天后就会自动触发一封提醒邮件.\n\n    "
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_us_check_printing
@@ -3943,7 +3943,7 @@ msgid ""
 "      module, but this will also install the CRM application as it depends on\n"
 "      CRM Leads.\n"
 "    "
-msgstr "\n这个模块使用营销活动自动化销售线索（实际在任何资源上都能够定义活动，而不仅仅是对CRM中的销售线索）.\n=========================================================================================================================================\n\n活动是动态且多渠道的.流程如下:\n------------------------------------------------------------------------\n *像工作流那样设计营销活动，包括要发送的邮件模板\n要打印的报表和定制的动作\n * 定义能够选取应该填入活动的项目的输入片段\n （例如：一些国家的销售线索）\n * 在模拟模式中运行活动以测试它的实际表现和增速\n然后适当的做适当的调整\n * 你也可以在手工模式下开始真实的活动，\n 这就需要手工做些验证\n * 最终正式开始你的活动，\n当活动自动的做所有事情时，你可以查看相应的统计信息.\n\n当活动在运行的时候，\n你当然可以继续调整参数，输入片段和工作流以优化它.\n\n**注意：** 如果你需要示例数据，你可以安装marketing_campaign_crm_demo模块\n 但是这样系统也会安装CRM程序，\n 因为它依赖与CRM销售线索."
+msgstr "\n这个模块使用营销活动自动化销售机会点（实际在任何资源上都能够定义活动，而不仅仅是对CRM中的销售机会点）.\n=========================================================================================================================================\n\n活动是动态且多渠道的.流程如下:\n------------------------------------------------------------------------\n *像工作流那样设计营销活动，包括要发送的邮件模板\n要打印的报表和定制的动作\n * 定义能够选取应该填入活动的项目的输入片段\n （例如：一些国家的销售机会点）\n * 在模拟模式中运行活动以测试它的实际表现和增速\n然后适当的做适当的调整\n * 你也可以在手工模式下开始真实的活动，\n 这就需要手工做些验证\n * 最终正式开始你的活动，\n当活动自动的做所有事情时，你可以查看相应的统计信息.\n\n当活动在运行的时候，\n你当然可以继续调整参数，输入片段和工作流以优化它.\n\n**注意：** 如果你需要示例数据，你可以安装marketing_campaign_crm_demo模块\n 但是这样系统也会安装CRM程序，\n 因为它依赖与CRM销售机会点."
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_at
@@ -7150,12 +7150,12 @@ msgstr "从联系人窗体创建问题"
 #. module: base
 #: model:ir.module.module,summary:base.module_crm_project_issue
 msgid "Create Issues from Leads"
-msgstr "从线索创建议题"
+msgstr "从机会点创建议题"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_crm
 msgid "Create Leads From Contact Form"
-msgstr "从联系人窗体创建线索"
+msgstr "从联系人窗体创建机会点"
 
 #. module: base
 #: model:ir.actions.act_window,name:base.act_menu_create
@@ -9514,7 +9514,7 @@ msgstr "帮你处理报价，销售订单以及开票."
 #. module: base
 #: model:ir.module.category,description:base.module_category_lead_automation
 msgid "Helps you manage lead of your marketing campaigns step by step."
-msgstr "帮助你逐步管理市场营销的线索."
+msgstr "帮助你逐步管理市场营销的机会点."
 
 #. module: base
 #: model:ir.module.category,description:base.module_category_event_management
@@ -11021,22 +11021,22 @@ msgstr "启动台"
 #. module: base
 #: model:ir.module.category,name:base.module_category_lead_automation
 msgid "Lead Automation"
-msgstr "线索自动化"
+msgstr "机会点自动化"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_crm_score
 msgid "Lead Scoring"
-msgstr "线索评分"
+msgstr "机会点评分"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_crm_project_issue
 msgid "Lead to Issue"
-msgstr "线索转为问题"
+msgstr "机会点转为问题"
 
 #. module: base
 #: model:ir.ui.menu,name:base.menu_crm_config_lead
 msgid "Leads & Opportunities"
-msgstr "线索与商机"
+msgstr "机会点与项目管理"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_crm
@@ -12526,12 +12526,12 @@ msgstr "OpenERP Web 图表"
 #. module: base
 #: model:ir.ui.menu,name:base.menu_crm_config_opportunity
 msgid "Opportunities"
-msgstr "商机"
+msgstr "项目管理"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_crm
 msgid "Opportunity to Quotation"
-msgstr "商机到报价"
+msgstr "项目管理到报价"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_act_window_domain
@@ -14286,12 +14286,12 @@ msgstr "安全与验证"
 #. module: base
 #: model:res.groups,name:base.group_sale_salesman
 msgid "See Own Leads"
-msgstr "查看自己的线索"
+msgstr "查看自己的机会点"
 
 #. module: base
 #: model:res.groups,name:base.group_sale_salesman_all_leads
 msgid "See all Leads"
-msgstr "查看所有线索"
+msgstr "查看所有机会点"
 
 #. module: base
 #: code:addons/base/ir/ir_fields.py:306
@@ -14939,7 +14939,7 @@ msgstr "拆分模式"
 #. module: base
 #: model:ir.module.module,summary:base.module_website_event_track
 msgid "Sponsors, Tracks, Agenda, Event News"
-msgstr "赞助商，线索，议程，活动新闻"
+msgstr "赞助商，机会点，议程，活动新闻"
 
 #. module: base
 #: model:res.partner.title,shortcut:base.res_partner_title_sir

@@ -51,8 +51,11 @@ class dtdream_sale(models.Model):
     def _onchange_time(self):
         if self.bidding_time!=False and self.supply_time!=False:
             if self.bidding_time >= self.supply_time:
-                self.bidding_time = ""
-                raise Warning("供货时间应晚于招标时间")
+                warning = {
+                    'title': '警告：',
+                    'message': '供货时间应晚于招标时间。',
+                }
+                return {'warning': warning}
 
     user_id = fields.Many2one(string="项目责任人")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
