@@ -100,7 +100,7 @@
                                     <field name="overall_plan_time"/>
                                     <field name="overall_actual_time"/>
                                 </group>
-                                 <field name="version_ids">
+                                 <field name="version_ids"  context="{'default_proName':id}">
                                 <tree>
                                     <field name="proName"/>
                                     <field name="version_numb"/>
