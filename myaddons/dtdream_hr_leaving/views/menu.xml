@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
         <record id="act_dtdream_hr_leaving" model="ir.actions.act_window">
@@ -7,6 +8,14 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem name="离职办理申请" sequence="10" id="dtdream_hr_leaving" parent="hr.menu_hr_root" action="act_dtdream_hr_leaving"></menuitem>
+        <record id="act_dtdream_process_process" model="ir.actions.act_window">
+            <field name="name">离职办理并行环节</field>
+            <field name="res_model">process.process</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="离职办理" sequence="10" id="dtdream_hr_leaving" parent="hr.menu_hr_root" action="act_dtdream_hr_leaving"></menuitem>
+        <menuitem name="离职办理环节配置" sequence="15" id="dtdream_process_process" parent="hr.menu_hr_root" action="act_dtdream_process_process"></menuitem>
     </data>
 </openerp>

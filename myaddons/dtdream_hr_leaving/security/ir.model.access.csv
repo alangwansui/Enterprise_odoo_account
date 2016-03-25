@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_leaving_handle,leaving.handle,model_leaving_handle,,1,1,1,1
+access_leaving_handle_process,leaving.handle.process,model_leaving_handle_process,,1,1,1,1
+access_process_process,process.process,model_process_process,,1,1,1,1
