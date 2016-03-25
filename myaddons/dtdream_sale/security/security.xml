@@ -8,7 +8,7 @@
         </record>
 
         <record id="dtdream_sale_read_rule1" model="ir.rule">
-            <field name="name">查阅组规则1:</field>
+            <field name="name">按行业/区域授权组规则1:</field>
             <field name="model_id" ref="model_crm_lead"/>
             <field name="perm_read" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -19,7 +19,7 @@
         </record>
 
         <record id="dtdream_sale_read_rule2" model="ir.rule">
-            <field name="name">查阅组规则2:</field>
+            <field name="name">按行业/区域授权组规则2:</field>
             <field name="model_id" ref="model_crm_lead"/>
             <field name="perm_read" eval="0"/>
             <field name="perm_create" eval="1"/>
