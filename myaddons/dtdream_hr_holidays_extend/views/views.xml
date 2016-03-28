@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <openerp>
+            <data>
+                <record id="edit_holiday_new_inher" model="ir.ui.view">
+                  <field name="name">edit.holiday.new.inher</field>
+                  <field name="model">hr.holidays</field>
+                  <field name="inherit_id" ref="hr_holidays.edit_holiday_new"></field>
+                  <field name="arch" type="xml">
+                        <field name="name" position="before">
+                            <field name="shenqingren"></field>
+                        </field>
+                        <field name="name" position="before">
+                            <field name="gonghao"></field>
+                        </field>
+                        <field name="name" position="before">
+                            <field name="bumen"></field>
+                        </field>
+                        <field name="name" position="before">
+                            <field name="create_time"></field>
+                        </field>
+                  </field>
+                </record>
+
+                 <menuitem name="审批人配置" id="shenpiren_config" parent="hr_holidays.menu_hr_holidays_root" sequence="500" action="act_shenpiren_config"></menuitem>
+                 <menuitem name="Leaves to Approve" id="hr_holidays.menu_hr_holidays_approvals" parent="hr_holidays.menu_hr_holidays_root" sequence="3" groups="base.group_user"/>
+                 <menuitem name="Leaves" parent="hr_holidays.menu_hr_holidays_approvals" id="hr_holidays.menu_open_department_leave_approve" groups="base.group_hr_manager,base.group_hr_user,base.group_user" action="hr_holidays.open_department_holidays_approve" sequence="1"/>
+                  <record id="act_shenpiren_config" model="ir.actions.act_window">
+                      <field name="name">审批人配置</field>
+                      <field name="res_model">dtdream.hr.holidays.extend.new.menu</field>
+                      <field name="type">ir.actions.act_window</field>
+                      <field name="view_type">form</field>
+                      <field name="view_mode">tree,form</field>
+                  </record>
+                  <record id="view_dtdream_hr_holidays_extend_new_menu_form" model="ir.ui.view">
+                    <field name="name">view.dtdream.hr.holidays.extend.new.menu.form</field>
+                    <field name="model">dtdream.hr.holidays.extend.new.menu</field>
+                    <field name="arch" type="xml">
+                        <form create="false" delete="false">
+                          <sheet>
+                            <group>
+                                <group>
+                                  <field name="shenpiren1"></field>
+                                  <field name="shenpiren2"></field>
+                                  <field name="shenpiren3"></field>
+                                  <field name="shenpiren4"></field>
+                                  <field name="shenpiren5"></field>
+                                </group>
+                                <group>
+                                  <div>
+                                    <p>1 无二级部门时：</p>
+                                    <p>第一审批人：部门行政助理</p>
+                                    <p>  第二审批人：一级部门主管</p>
+                                    <p>  第三审批人：人力资源部部长（当请假时长超过一个月时）</p>
+                                    <p>2 有二级部门时：</p>
+                                    <p>  第一审批人：部门行政助理</p>
+                                    <p>  第二审批人：二级部门主管</p>
+                                    <p> 第三审批人：一级部门主管（当请假时长超过7天时）</p>
+                                    <p>第四审批人：人力资源部部长（当请假时长超过一个月时）</p>
+                                    <p>3 一级部门主管请假：</p>
+                                    <p>第一审批人：部门行政助理</p>
+                                    <p>第二审批人：EMT分管领导或总裁</p>
+                                  </div>
+                                </group>
+                            </group>
+
+                          </sheet>
+
+                        </form>
+                    </field>
+                  </record>
+
+
+            </data>
+        </openerp>
