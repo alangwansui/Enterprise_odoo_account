@@ -18,10 +18,13 @@ class dtdream_prod_appr(models.Model):
     version_ids = fields.One2many('dtdream_rd_prod.dtdream_rd_version','proName','版本')
     role_ids = fields.Many2many('dtdream_rd_prod.dtdream_rd_config','pro_id','角色')
 
-
     pro_time = fields.Date('立项时间')
     overall_plan_time = fields.Date('总体设计计划开始时间')
     overall_actual_time = fields.Date('总体设计实际开始时间')
+
+
+    # color = fields.Integer('Color Index')
+    # active = fields.Boolean(default=True)
 
 #部门的联动
     @api.onchange('department_2')

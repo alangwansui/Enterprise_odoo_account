@@ -52,6 +52,44 @@
       </record>
 
 
+<!--      <record model="ir.ui.view" id="view_dtdream_prod_appr_kanban">
+            <field name="name">view.dtdream.prod.appr.kanban</field>
+            <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state" class="o_kanban_small_column">
+                    <field name="state"/>
+                    <field name="color"/>
+                    <field name="active"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                                <div class="o_dropdown_kanban dropdown">
+
+                                    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" >
+                                        <span class="fa fa-bars fa-lg"/>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                        <t t-if="widget.editable"><li><a type="edit">编辑</a></li></t>
+                                        <t t-if="widget.deletable"><li><a type="delete">删除</a></li></t>
+&lt;!&ndash;                                        <li t-if="! record.active.value"><a name="action_set_active" type="object">取消归档</a></li>
+                                        <li t-if="record.active.value"><a name="action_set_unactive" type="object">归档</a></li>&ndash;&gt;
+                                        <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
+                                    </ul>
+                                </div>
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                </div>
+                                <div class="oe_clear"></div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+      </record>-->
+
+
 
 
       <record id="view_dtdream_prod_appr_tree" model="ir.ui.view">
@@ -245,7 +283,7 @@
 
 <!--菜单-->
     <menuitem id="menu_finance_rd" name="研发" groups ="group_dtdream_rd_user"/>
-    <menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod" groups="group_dtdream_rd_user"/>
+    <!--<menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod" groups="group_dtdream_rd_user"/>-->
     <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"  action="act_dtdream_prod_appr"/>
     <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
     <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
