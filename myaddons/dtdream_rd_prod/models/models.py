@@ -69,16 +69,16 @@ class dtdream_rd_version(models.Model):
         ('pending','待发布'),
         ('released','已发布')],
         '版本状态')
-    plan_dev_time = fields.Date("版本计划开发开始时间",help="版本开始时间指迭代开发开始时间")
-    plan_check_pub_time = fields.Date("版本计划验证发布开始时间")
-    plan_pub_time = fields.Date("版本计划发布完成时间")
+    plan_dev_time = fields.Date("计划开发开始时间",help="版本开始时间指迭代开发开始时间")
+    plan_check_pub_time = fields.Date("计划验证发布开始时间")
+    plan_pub_time = fields.Date("计划发布完成时间")
     plan_mater=fields.Text("版本计划材料")
 
-    actual_dev_time = fields.Date("版本实际开发开始时间",help="版本开始时间指迭代开发开始时间")
-    dev_mater = fields.Text("版本发布材料")
+    actual_dev_time = fields.Date("实际开发开始时间",help="版本开始时间指迭代开发开始时间")
+    dev_mater = fields.Text("版本开发材料")
 
-    actual_check_pub_time =fields.Date("版本实际验证发布开始时间")
-    # actual_pub_time = fields.Date("实际发布时间")
+    actual_check_pub_time =fields.Date("实际验证发布开始时间")
+    actual_pub_time = fields.Date("实际发布完成时间")
     place = fields.Char('版本存放位置')
     Material =fields.Text('版本发布材料')
 

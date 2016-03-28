@@ -97,10 +97,16 @@
                             <page name="version" string="进度与计划">
                                 <group>
                                     <field name="pro_time"/>
-                                    <field name="overall_plan_time"/>
-                                    <field name="overall_actual_time"/>
                                 </group>
-                                 <field name="version_ids"  context="{'default_proName':id}">
+                                <group>
+                                    <group>
+                                        <field name="overall_plan_time"/>
+                                    </group>
+                                    <group>
+                                        <field name="overall_actual_time"/>
+                                    </group>
+                                </group>
+                                 <field name="version_ids">   <!--context="{'default_proName':id}"-->
                                 <tree>
                                     <field name="proName"/>
                                     <field name="version_numb"/>
@@ -179,10 +185,19 @@
                         </page>
                         <page string="版本发布">
                             <group>
-                                <field name="actual_check_pub_time" />
-                                <field name="place" />
-                                <field name="Material" />
+                                <group>
+                                    <group>
+                                        <field name="actual_check_pub_time" />
+                                    </group>
+                                    <group>
+                                        <field name="actual_pub_time" />
+                                    </group>
+                                </group>
                             </group>
+                             <group>
+                                    <field name="place" />
+                                    <field name="Material" />
+                                </group>
                         </page>
                      </notebook>
                 </sheet>
