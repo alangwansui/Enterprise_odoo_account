@@ -2,23 +2,12 @@
 <openerp>
     <data>
         <record id="hr.open_module_tree_department" model="ir.actions.act_window">
-            <field name="view_mode">tree,form</field>
-            <field name="context">{
-                'search_default_group_type':1,
-                }
-            </field>
+            <field name="name">部门</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree,list,form</field>
+            <field name="domain">[('parent_id','=',False)]</field>
         </record>
 
-        <record id="dtdream_view_department_filter" model="ir.ui.view">
-            <field name="name">dtdream.hr.department.filter</field>
-            <field name="model">hr.department</field>
-            <field name="inherit_id" ref="hr.view_department_filter"/>
-             <field name="arch" type="xml">
-                 <field name="manager_id" position="after">
-                     <filter name="group_type" string="上级部门" context="{'group_by':'parent_id'}"/>
-                 </field>
-             </field>
-        </record>
         <record id="dtdream_view_department_form" model="ir.ui.view">
             <field name="name">dtdream.hr.department.form</field>
             <field name="model">hr.department</field>
@@ -41,21 +30,34 @@
                 </form>
             </field>
         </record>
+        <!--tree-->
         <record id="dtdream_view_department_tree" model="ir.ui.view">
             <field name="name">dtdream.hr.department.tree</field>
             <field name="model">hr.department</field>
-            <field name="inherit_id" ref="hr.view_department_tree"/>
+            <field name="field_parent">child_ids</field>
             <field name="arch" type="xml">
-                <field name="complete_name" position="after">
+                <tree>
                     <field name="name"/>
-                </field>
-                <field name="name" position="after">
+                    <field name="manager_id"/>
                     <field name="code"/>
-                </field>
-                <field name="complete_name" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
+                </tree>
             </field>
+        </record>
+        <!--tree视图的记录双击可修改-->
+        <record id="act_dtdream_department_form" model="ir.actions.act_window">
+            <field name="name">部门</field>
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id','=',active_id)]</field>
+        </record>
+
+        <record id="ir_open_department" model="ir.values">
+            <field name='key2'>tree_but_open</field>
+            <field name='model'>hr.department</field>
+            <field name="name">模型</field>
+            <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form" name='value'/>
         </record>
   </data>
 </openerp>
