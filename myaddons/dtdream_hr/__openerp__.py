@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_hr",
+    'name': "数梦部门和员工管理",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        部门和员工管理
+        """,
 
     'description': """
-        Long description of module's purpose
+        部门和员工管理
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "小毅",
+    'website': "www.dtdream.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
