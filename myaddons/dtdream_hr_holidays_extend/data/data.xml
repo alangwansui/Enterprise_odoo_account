@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-            <openerp>
-                <data>
-                    <record id="config_01" model="dtdream.hr.holidays.extend.new.menu">
-                        <field name="chuangjian">example</field>
+<!--<?xml version="1.0" encoding="UTF-8" ?>-->
+            <!--<openerp>-->
+                <!--<data>-->
+                    <!--<record id="config_01" model="dtdream.hr.holidays.extend.new.menu">-->
+                        <!--<field name="chuangjian">example</field>-->
 
-                    </record>
+                    <!--</record>-->
 
-                </data>
-            </openerp>
+                <!--</data>-->
+            <!--</openerp>-->
