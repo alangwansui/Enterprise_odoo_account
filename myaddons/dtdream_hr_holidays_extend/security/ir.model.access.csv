@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_hr_holidays_extend_new_menu,dtdream.hr.holidays.extend.new.menu,model_dtdream_hr_holidays_extend_new_menu,base.group_user,1,1,1,1
