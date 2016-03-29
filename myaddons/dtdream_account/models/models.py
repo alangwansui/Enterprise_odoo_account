@@ -29,14 +29,28 @@ class dtdream_account(models.Model):
         help="The 'Internal Type' is used for features available on "\
         "different types of accounts: liquidity type is for cash or bank accounts"\
         ", payable/receivable is for vendor/customer accounts.")
-    # note = fields.Text(string='说明12222')
-#     _name = 'dtdream_account.dtdream_account'
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         self.value2 = float(self.value) / 100
+class dtdream_account_move(models.Model):
+    _inherit = "account.move"
+
+    @api.depends('dept_id')
+    def _compute_dept(self):
+        for rec in self.dept_id:
+            self.dept_code = rec.code
+
+    dept_id = fields.Many2one('hr.department',string="部门")
+    dept_code = fields.Char(compute=_compute_dept, string="部门编码")
+    company = fields.Many2one('dtdream.company',string="公司")
+    product = fields.Char(string="产品",default="0000000")
+    region = fields.Char(string="区域",default="0000")
+    bussiness_mode = fields.Char(string="商业模式",default="00")
+    sale_mode = fields.Char(string="销售模式", default="0000")
+    rel_company = fields.Char(string="关联公司", default="000")
+    other = fields.Char(string="备用", default="0000")
+
+
+
+class dtdream_company(models.Model):
+    _name = "dtdream.company"
+
+    name = fields.Char("名称")

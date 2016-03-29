@@ -1,59 +1,24 @@
 <openerp>
   <data>
-    <!-- explicit list view definition -->
-    <!--
-    <record model="ir.ui.view" id="dtdream_account.list">
-      <field name="name">dtdream_account list</field>
-      <field name="model">dtdream_account.dtdream_account</field>
+    <record id="dtdream_view_move_form" model="ir.ui.view">
+      <field name="name">dtdream.view.move.form</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_move_form"/>
       <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
+            <field name="partner_id" position="after">
+                <field name="dept_id"></field>
+                <field name="company"></field>
+                <field name="region"></field>
+                <field name="sale_mode"></field>
+                <field name="other"></field>
+            </field>
+            <field name="ref" position="after">
+                <field name="dept_code"></field>
+                <field name="product"></field>
+                <field name="bussiness_mode"></field>
+                <field name="rel_company"></field>
+            </field>
       </field>
     </record>
-    -->
-
-    <!-- actions opening views on models -->
-    <!--
-    <record model="ir.actions.act_window" id="dtdream_account.action_window">
-      <field name="name">dtdream_account window</field>
-      <field name="res_model">dtdream_account.dtdream_account</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    -->
-
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="dtdream_account.action_server">
-      <field name="name">dtdream_account server</field>
-      <field name="model_id" ref="model_dtdream_account_dtdream_account"/>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
-      </field>
-    </record>
-    -->
-
-    <!-- Top menu item -->
-    <!--
-    <menuitem name="dtdream_account" id="dtdream_account.menu_root"/>
-    -->
-    <!-- menu categories -->
-    <!--
-    <menuitem name="Menu 1" id="dtdream_account.menu_1" parent="dtdream_account.menu_root"/>
-    <menuitem name="Menu 2" id="dtdream_account.menu_2" parent="dtdream_account.menu_root"/>
-    -->
-    <!-- actions -->
-    <!--
-    <menuitem name="List" id="dtdream_account.menu_1_list" parent="dtdream_account.menu_1"
-              action="dtdream_account.action_window"/>
-    <menuitem name="Server to list" id="dtdream_account" parent="dtdream_account.menu_2"
-              action="dtdream_account.action_server"/>
-    -->
   </data>
 </openerp>
