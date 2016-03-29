@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_account",
+    'name': "数梦会计",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        数梦会计""",
 
     'description': """
-        Long description of module's purpose
+        增加科目类型菜单
+        会计分录里增加字段
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "小毅",
+    'website': "www.dtdream.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account_accountant'],
+    'depends': ['dtdream_hr','account_accountant'],
 
     # always loaded
     'data': [
