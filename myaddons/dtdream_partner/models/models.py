@@ -18,12 +18,12 @@ class dtdream_partner(models.Model):
         ('C','C'),
         ('D','D'),
     ], string='客户重要级')
-    partner_owner = fields.Many2one('res.users', string='营销责任人')
+    company_type = fields.Selection(default='company')
 
 
     @api.model
     def create(self, vals):
-        if vals.get('partner_code', 'New') == 'New' and vals.get('company_type') == 'company':
+        if vals.get('partner_code', 'New') == 'New' and vals.get('company_type') == 'company' and vals.get('customer') == True:
             o_id = vals.get('office_id')
             i_id = vals.get('industry_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])

@@ -2,13 +2,13 @@
 <openerp>
     <data noupdate="0">
         <record id="group_dtdream_sale_read" model="res.groups">
-            <field name="name">按行业/区域授权</field>
+            <field name="name">按行业区域授权</field>
             <field name="implied_ids" eval="[(4,ref('base.group_sale_manager'))]"/>
             <field name="category_id" ref="base.module_category_sales_management"/>
         </record>
 
         <record id="dtdream_sale_read_rule1" model="ir.rule">
-            <field name="name">按行业/区域授权组规则1:</field>
+            <field name="name">按行业区域授权组规则1:</field>
             <field name="model_id" ref="model_crm_lead"/>
             <field name="perm_read" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -19,7 +19,7 @@
         </record>
 
         <record id="dtdream_sale_read_rule2" model="ir.rule">
-            <field name="name">按行业/区域授权组规则2:</field>
+            <field name="name">按行业区域授权组规则2:</field>
             <field name="model_id" ref="model_crm_lead"/>
             <field name="perm_read" eval="0"/>
             <field name="perm_create" eval="1"/>

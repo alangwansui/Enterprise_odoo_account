@@ -23,7 +23,7 @@
                     <field name="industry_id" />
                     <field name='office_id' />
                     <field name='name' />
-                    <field name='partner_owner' />
+                    <field name='user_id' />
                 </tree>
             </field>
         </record>
@@ -34,17 +34,24 @@
           <field name="inherit_id" ref="base.view_partner_form" />
           <field name="arch" type="xml">
 
-              <field name="company_type" position="attributes">
-                <attribute name="default">company</attribute>
-              </field>
-
               <field name="street2" position="attributes">
                 <attribute name="invisible">1</attribute>
               </field>
 
+              <field name="state_id" position="attributes">
+                <attribute name="help">省份</attribute>
+                <attribute name="placeholder">省份</attribute>
+              </field>
+
+              <field name="title" position="attributes">
+                <attribute name="string">头衔</attribute>
+              </field>
+
               <field name="user_id" position="attributes">
                 <attribute name="invisible">1</attribute>
-              </field>              
+              </field>
+              <field name="user_id" position="replace">
+              </field>
 
               <field name="website" position="after">
 <!--                   <field name="partner_code" attrs="{'required' : [('is_company', '=', True),('customer', '=', True)],'invisible' : ['|',('is_company', '!=', True),('customer', '!=', True)]}"/>
@@ -59,12 +66,8 @@
               </field>
 
               <field name="category_id" position="after">
-                  <field name="partner_owner" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}" />
+                  <field name="user_id" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}"  string="营销责任人"/>
               </field>
-
-<!--               <field name="user_id" position="attributes">
-                <attribute name="string">营销责任人</attribute>
-              </field>    -->
 
           </field>
       </record>

@@ -41,7 +41,7 @@
         <field name="perm_create" eval="0"/>
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="0"/>
-        <field name="domain_force">['|',('partner_owner','=',user.id),('partner_owner','=',False)]</field>
+        <field name="domain_force">[('customer','=',True),'|',('user_id','=',user.id),('user_id','=',False)]</field>
         <field name="groups" eval="[(4, ref('group_dtdream_partner_self'))]"/>
     </record>
 
@@ -50,7 +50,7 @@
         <field name="model_id" ref="model_res_partner"/>
         <field name="perm_read" eval="1"/>
         <field name="perm_create" eval="0"/>
-        <field name="perm_write" eval="1"/>
+        <field name="perm_write" eval="0"/>
         <field name="perm_unlink" eval="0"/>
         <field name="domain_force">[('office_id','in',[x.id for x in user.user_access_office]),('industry_id','in',[x.id for x in user.user_access_industry])]</field>
         <field name="groups" eval="[(4, ref('group_dtdream_partner_by_industry_office'))]"/>
@@ -61,9 +61,9 @@
         <field name="model_id" ref="model_res_partner"/>
         <field name="perm_read" eval="1"/>
         <field name="perm_create" eval="1"/>
-        <field name="perm_write" eval="1"/>
+        <field name="perm_write" eval="0"/>
         <field name="perm_unlink" eval="0"/>
-        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="domain_force">[('customer','=',True)]</field>
         <field name="groups" eval="[(4, ref('group_dtdream_partner_all'))]"/>
     </record>
 
@@ -74,8 +74,19 @@
         <field name="perm_create" eval="1"/>
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="1"/>
-        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="domain_force">[('customer','=',True)]</field>
         <field name="groups" eval="[(4, ref('group_dtdream_partner_modify'))]"/>
+    </record>
+
+    <record id="dtdream_hr_rule_only_employee" model="ir.rule">
+        <field name="name">员工组只能查看员工</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+        <field name="domain_force">[('company_type','=','person'),('customer','=',False)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
 </data>
