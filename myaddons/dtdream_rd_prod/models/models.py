@@ -145,7 +145,7 @@ class dtdream_rd_config(models.Model):
     _name = 'dtdream_rd_prod.dtdream_rd_config'
     name = fields.Char('角色名称')
     pro_id = fields.Many2one("dtdream_rd_prod.dtdream_prod_appr")
-    person = fields.Many2one("res.users",'人员')
+    person = fields.Many2one("hr.employee",'人员')
 
 
 # class dtdream_rd_prod_state(models.Model):
