@@ -35,8 +35,8 @@ class dtdream_account_move_line(models.Model):
 
     @api.depends('dept_id')
     def _compute_dept(self):
-        for rec in self.dept_id:
-            self.dept_code = rec.code
+        for rec in self:
+            rec.dept_code = rec.dept_id.code
 
     dept_id = fields.Many2one('hr.department',string="部门")
     dept_code = fields.Char(compute=_compute_dept, string="部门编码")
