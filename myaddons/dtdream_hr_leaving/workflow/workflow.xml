@@ -140,43 +140,38 @@
     </record>
     <record model="workflow.transition" id="trans_approve1_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve1" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_draft" />
         <field name="signal">btn_reject</field>
     </record>
     <record model="workflow.transition" id="trans_approve2_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve2" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_approve1" />
         <field name="signal">btn_reject</field>
     </record>
     <record model="workflow.transition" id="trans_approve3_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve3" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_approve2" />
         <field name="signal">btn_reject</field>
     </record>
     <record model="workflow.transition" id="trans_approve4_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve4" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_approve3" />
         <field name="signal">btn_reject</field>
     </record>
     <record model="workflow.transition" id="trans_approve5_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve5" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_approve4" />
         <field name="signal">btn_reject</field>
     </record>
     <record model="workflow.transition" id="trans_approve6_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve6" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_approve5" />
         <field name="signal">btn_reject</field>
     </record>
     <record model="workflow.transition" id="trans_approve7_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve7" />
-        <field name="act_to" ref="act_reject" />
+        <field name="act_to" ref="act_approve6" />
         <field name="signal">btn_reject</field>
-    </record>
-    <record model="workflow.transition" id="trans_reject_draft"> <!-- 2. submitted->draft (reset signal) -->
-        <field name="act_from" ref="act_reject" />
-        <field name="act_to" ref="act_draft" />
-        <field name="signal">btn_reset</field>
     </record>
 </data>
 </openerp>

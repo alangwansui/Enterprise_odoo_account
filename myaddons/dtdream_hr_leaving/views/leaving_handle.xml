@@ -25,8 +25,9 @@
         <form>
           <header>
               <button name="btn_submit" type="workflow" states="0,3,5" string="提交" class="oe_highlight"></button>
-              <button name="btn_reset" type="workflow" states="-1" string="重置为草稿" class="oe_highlight"></button>
-              <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" states="1,2,4,6,7" string="审批" class="oe_highlight"></button>
+              <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" states="1,2,4,6,7" string="审批" class="oe_highlight"
+                      context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"></button>
+              <button name="btn_reject" type="workflow" states="3,5" string="返回上一步" class="oe_highlight"></button>
               <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,99" widget="statusbar"></field>
           </header>
           <sheet>
@@ -38,13 +39,17 @@
               <field name="post" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="entry_day"/>
               <field name="leave_date" attrs="{'readonly':[('state', '!=','0')]}"/>
+              <field name="actual_leavig_date" readonly="True" states="5,6,7,99"/>
             </group>
             <notebook>
               <page string="离岗前环节" states="3,4,5,6,7,99">
                 <field name="leaving_handle_process_ids1" >
                   <tree editable="bottom" create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
+                    <field name="process_approver" readonly="True"></field>
                     <field name="is_finish"></field>
+                    <field name="is_other"></field>
+                    <field name="remark"></field>
                   </tree>
                 </field>
                 <field name="is_finish1" invisible="True"/>
@@ -53,13 +58,16 @@
                 <field name="leaving_handle_process_ids2" >
                   <tree editable="bottom" create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
+                    <field name="process_approver" readonly="True"></field>
                     <field name="is_finish"></field>
+                    <field name="is_other"></field>
+                    <field name="remark"></field>
                   </tree>
                 </field>
               </page>
             </notebook>
             <notebook>
-              <page string="审批记录" states="1,2,3,4,5,6,7,99">
+              <page string="审批记录" states="2,3,4,5,6,7,99">
                 <field name="opinion_ids" readonly="True">
                   <tree editable="bottom" default_order="create_date desc">
                       <field name="name" />
@@ -72,6 +80,10 @@
               </page>
             </notebook>
           </sheet>
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
         </form>
       </field>
     </record>
