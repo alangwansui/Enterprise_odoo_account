@@ -30,8 +30,8 @@ class dtdream_account(models.Model):
         "different types of accounts: liquidity type is for cash or bank accounts"\
         ", payable/receivable is for vendor/customer accounts.")
 
-class dtdream_account_move(models.Model):
-    _inherit = "account.move"
+class dtdream_account_move_line(models.Model):
+    _inherit = "account.move.line"
 
     @api.depends('dept_id')
     def _compute_dept(self):

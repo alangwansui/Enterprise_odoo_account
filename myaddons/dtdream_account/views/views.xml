@@ -5,18 +5,18 @@
       <field name="model">account.move</field>
       <field name="inherit_id" ref="account.view_move_form"/>
       <field name="arch" type="xml">
-            <field name="partner_id" position="after">
-                <field name="dept_id"></field>
+            <field name="account_id" position="before">
                 <field name="company"></field>
-                <field name="region"></field>
-                <field name="sale_mode"></field>
-                <field name="other"></field>
-            </field>
-            <field name="ref" position="after">
+                <field name="dept_id"></field>
                 <field name="dept_code"></field>
+            </field>
+            <field name="account_id" position="after">
                 <field name="product"></field>
+                <field name="region"></field>
                 <field name="bussiness_mode"></field>
+                <field name="sale_mode"></field>
                 <field name="rel_company"></field>
+                <field name="other"></field>
             </field>
       </field>
     </record>
