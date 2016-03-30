@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_dtdream_prod_appr_dtdream_prod_appr_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream_rd_prod.dtdream_prod_appr.wizard.form</field>
+        <field name="model">dtdream_rd_prod.dtdream_prod_appr.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <!--<field name="liyou"/>-->
+                        <div>确定进入下一步？</div>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+                    或
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="act_lixiang_wizard" model="ir.actions.act_window">
+        <field name="name">项目立项</field>
+        <field name="res_model">dtdream_rd_prod.dtdream_prod_appr.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <record id="view_dtdream_prod_appr_dtdream_rd_version_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream_rd_prod.dtdream_rd_version.wizard.form</field>
+        <field name="model">dtdream_rd_prod.dtdream_rd_version.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <!--<field name="liyou"/>-->
+                        <div>确定进入下一步？</div>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_version_submit" type="object"
+                            string="确认" class="oe_highlight"/>
+                    或
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="act_version_wizard" model="ir.actions.act_window">
+        <field name="name">项目版本</field>
+        <field name="res_model">dtdream_rd_prod.dtdream_rd_version.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    </data>
+</openerp>

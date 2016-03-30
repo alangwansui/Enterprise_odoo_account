@@ -23,10 +23,13 @@
 
     # always loaded
     'data': [
+         'wizard/lixiang_wizard.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'workflow/workflow.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [
