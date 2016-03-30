@@ -57,36 +57,34 @@ class dtdream_prod_appr(models.Model):
     #     return result
 
     @api.model
-    def create(self, vals):
-        vals['state']='state_00'
-        result = super(dtdream_prod_appr, self).create(vals)
-        return result
+    def wkf_draft(self):
+        self.write({'state': 'state_00'})
 
     @api.multi
-    def btn_submit(self):
+    def wkf_lixiang(self):
         lg = len(self.version_ids)
         if lg<=0:
             raise ValidationError("提交项目时必须至少有一个版本")
         self.write({'state': 'state_01'})
 
     @api.multi
-    def btn_next(self):
-        print self.state
-        if self.state=='state_01':
-            self.write({'state': 'state_02'})
-        elif self.state=='state_02':
-            self.write({'state': 'state_03'})
-        elif self.state=='state_03':
-            # versions = self.version_ids
-            # for version in versions:
-            #     if version.version_state=='Development' or version.version_state=='initialization':
-            #          raise ValidationError("尚有版本在开发中或初始化状态，确定提交验证发布")
-            self.write({'state': 'state_04'})
+    def wkf_ztsj(self):
+        self.write({'state': 'state_02'})
 
     @api.multi
-    def btn_end(self):
-        self.write({'state': 'state_05'})
+    def wkf_ddkf(self):
+        self.write({'state': 'state_03'})
 
+    @api.multi
+    def wkf_yzfb(self):
+        versions = self.version_ids
+        # for version in versions:
+            # if version.version_state =='initialization' or version.version_state =='Development':
+        self.write({'state': 'state_04'})
+
+    @api.multi
+    def wkf_jieshu(self):
+        self.write({'state': 'state_05'})
 
 
 class dtdream_rd_version(models.Model):
@@ -125,14 +123,23 @@ class dtdream_rd_version(models.Model):
     Material =fields.Text('版本发布材料')
 
 
-    @api.multi
-    def version_btn_next(self):
-        if self.version_state=='initialization':
-            self.write({'version_state': 'Development'})
-        elif self.version_state=='Development':
-            self.write({'version_state': 'pending'})
-        elif self.version_state=='pending':
-            self.write({'version_state': 'released'})
+    @api.model
+    def wkf_draft(self):
+        self.write({'version_state': 'initialization'})
+
+    @api.model
+    def wkf_kaifa(self):
+        self.write({'version_state': 'Development'})
+
+    @api.model
+    def wkf_dfb(self):
+        self.write({'version_state': 'pending'})
+
+    @api.model
+    def wkf_yfb(self):
+        self.write({'version_state': 'released'})
+
+
 
 class dtdream_rd_config(models.Model):
     _name = 'dtdream_rd_prod.dtdream_rd_config'

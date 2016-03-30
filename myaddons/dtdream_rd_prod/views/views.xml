@@ -110,9 +110,12 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                         <button name="btn_submit" string="提交"  type="object" states="state_00"/>
-                         <button name="btn_next" string="下一步"  type="object" states="state_01,state_02,state_03"/>
-                         <button name="btn_end" string="结束"  type="object" states="state_04"/>
+                         <!--<button name="btn_submit" string="提交"  type="object" states="state_00"/>
+                        <button name="btn_next" string="下一步"  type="object" states="state_01,state_02,state_03"/>
+                         <button name="btn_end" string="结束"  type="object" states="state_04"/>-->
+                        <button name="%(dtdream_rd_prod.act_lixiang_wizard)d" string="提交" type="action" states="state_00"/>
+                        <button name="%(dtdream_rd_prod.act_lixiang_wizard)d"  string="下一步"  type="action" states="state_01,state_02,state_03"/>
+                         <button name="%(dtdream_rd_prod.act_lixiang_wizard)d"  string="结束"  type="action" states="state_04"/>
                          <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
                     </header>
                     <sheet>
@@ -194,7 +197,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                     <button name="version_btn_next" string="下一步"  type="object" version_states="initialization,Development,pending"/>
+                     <button name="%(dtdream_rd_prod.act_version_wizard)d" string="下一步"  type="action" version_states="initialization,Development,pending"/>
                      <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
                 </header>
                 <sheet>

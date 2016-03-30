@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="rd_product_workflow" model="workflow">
+            <field name="name">研发项目立项工作流</field>
+            <field name="osv">dtdream_rd_prod.dtdream_prod_appr</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="activity_draft" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="flow_start">True</field>
+            <field name="name">创建草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="activity_lixiang" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">审批立项</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_lixiang()</field>
+        </record>
+
+        <record id="activity_ztsj" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">审批总体设计</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_ztsj()</field>
+        </record>
+
+         <record id="activity_ddkf" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">审批迭代开发</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_ddkf()</field>
+        </record>
+
+        <record id="activity_yzfb" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">审批验证发布</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_yzfb()</field>
+        </record>
+
+        <record id="activity_jieshu" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">结束</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_jieshu()</field>
+        </record>
+
+        <record id="trans_a_b" model="workflow.transition">
+            <field name="act_from" ref="activity_draft"/>
+            <field name="act_to" ref="activity_lixiang"/>
+            <field name="signal">btn_to_lixiang</field>
+        </record>
+
+        <record id="trans_b_c" model="workflow.transition">
+            <field name="act_from" ref="activity_lixiang"/>
+            <field name="act_to" ref="activity_ztsj"/>
+            <field name="signal">btn_to_ztsj</field>
+        </record>
+
+        <record id="trans_c_d" model="workflow.transition">
+            <field name="act_from" ref="activity_ztsj"/>
+            <field name="act_to" ref="activity_ddkf"/>
+            <field name="signal">btn_to_ddkf</field>
+        </record>
+
+         <record id="trans_d_e" model="workflow.transition">
+            <field name="act_from" ref="activity_ddkf"/>
+            <field name="act_to" ref="activity_yzfb"/>
+            <field name="signal">btn_to_yzfb</field>
+        </record>
+
+        <record id="trans_e_f" model="workflow.transition">
+            <field name="act_from" ref="activity_yzfb"/>
+            <field name="act_to" ref="activity_jieshu"/>
+            <field name="signal">btn_to_jieshu</field>
+        </record>
+
+
+        <!--ssssssssssssssssssssssssss版本流程ssssssssssssssssssssssss-->
+
+        <record id="rd_product_version_workflow" model="workflow">
+            <field name="name">研发产品版本工作流</field>
+            <field name="osv">dtdream_rd_prod.dtdream_rd_version</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="activity_draft" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_version_workflow"/>
+            <field name="flow_start">True</field>
+            <field name="name">创建草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="activity_kaifa" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_version_workflow"/>
+            <field name="name">审批开发</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_kaifa()</field>
+        </record>
+
+        <record id="activity_dfb" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_version_workflow"/>
+            <field name="name">审批待发布</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_dfb()</field>
+        </record>
+
+         <record id="activity_yfb" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_version_workflow"/>
+            <field name="name">审批已发布</field>
+             <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_yfb()</field>
+        </record>
+
+        <record id="trans_a_b" model="workflow.transition">
+            <field name="act_from" ref="activity_draft"/>
+            <field name="act_to" ref="activity_kaifa"/>
+            <field name="signal">btn_to_kaifa</field>
+        </record>
+
+        <record id="trans_b_c" model="workflow.transition">
+            <field name="act_from" ref="activity_kaifa"/>
+            <field name="act_to" ref="activity_dfb"/>
+            <field name="signal">btn_to_dfb</field>
+        </record>
+
+        <record id="trans_c_d" model="workflow.transition">
+            <field name="act_from" ref="activity_dfb"/>
+            <field name="act_to" ref="activity_yfb"/>
+            <field name="signal">btn_to_yfb</field>
+        </record>
+
+
+    </data>
+</openerp>
