@@ -52,12 +52,12 @@
       </record>
 
 
-<!--      <record model="ir.ui.view" id="view_dtdream_prod_appr_kanban">
+     <!-- <record model="ir.ui.view" id="view_dtdream_prod_appr_kanban">
             <field name="name">view.dtdream.prod.appr.kanban</field>
             <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
             <field name="arch" type="xml">
-                <kanban default_group_by="state" class="o_kanban_small_column">
-                    <field name="state"/>
+                <kanban default_group_by="state_id">
+                    <field name="state_id"/>
                     <field name="color"/>
                     <field name="active"/>
                     <templates>
@@ -109,10 +109,12 @@
             <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
             <field name="arch" type="xml">
                 <form>
-                    <!--<header>
-                         <button name="btn_submit" string="提交" type="workflow" states="state_01"/>
-                         <field name="state" widget="statusbar" statusbar_visible="state_01,state_02,state_03" clickable="True"/>
-                    </header>-->
+                    <header>
+                         <button name="btn_submit" string="提交"  type="object" states="state_00"/>
+                         <button name="btn_next" string="下一步"  type="object" states="state_01,state_02,state_03"/>
+                         <button name="btn_end" string="结束"  type="object" states="state_04"/>
+                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
+                    </header>
                     <sheet>
                         <group>
                             <field name="name" />
@@ -122,7 +124,7 @@
                                 <group>
                                     <group>
                                         <field name="department" domain="[('parent_id.parent_id','=',False),('child_ids','!=',False)]"/>
-                                         <field name="state" />
+                                         <!--<field name="state" />-->
                                     </group>
                                     <group>
                                         <field name="department_2" domain="[('parent_id.parent_id.parent_id','=',False)]"/>
@@ -141,10 +143,10 @@
                                         <field name="overall_plan_time"/>
                                     </group>
                                     <group>
-                                        <field name="overall_actual_time"/>
+                                        <field name="overall_actual_time" attrs="{'readonly':[('state','not in',('state_02'))]}"/>
                                     </group>
                                 </group>
-                                 <field name="version_ids">   <!--context="{'default_proName':id}"-->
+                                 <field name="version_ids" context="{'default_proName':id}">   <!--context="{'default_proName':id}"-->
                                 <tree>
                                     <field name="proName"/>
                                     <field name="version_numb"/>
@@ -158,13 +160,10 @@
                             </field>
                             </page>
                         </notebook>
-
                     </sheet>
                 </form>
           </field>
     </record>
-
-
 
 
 <!--版本-->
@@ -194,47 +193,52 @@
         <field name="model">dtdream_rd_prod.dtdream_rd_version</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                     <button name="version_btn_next" string="下一步"  type="object" version_states="initialization,Development,pending"/>
+                     <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
+                </header>
                 <sheet>
                     <group>
                         <group>
                             <field name="name" invisible="1"/>
+                            <!--<field name="proState" invisible="1"/>-->
                             <field name="proName" />
                             <field name="pro_flag" />
                         </group>
                         <group>
                             <field name="version_numb" />
-                             <field name="version_state" />
+                             <!--<field name="version_state" />-->
                         </group>
                     </group>
                     <notebook>
                         <page  string="版本计划">
                             <group>
-                                <field name="plan_dev_time" />
-                                <field name="plan_check_pub_time" />
-                                <field name="plan_pub_time" />
-                                <field name="plan_mater" />
+                                <field name="plan_dev_time" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
+                                <field name="plan_check_pub_time" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
+                                <field name="plan_pub_time" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
+                                <field name="plan_mater" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
                             </group>
                         </page>
-                        <page string="版本开发">
+                        <page string="版本开发" attrs="{'invisible':[('version_state','in',('initialization'))]}">
                             <group>
-                                <field name="actual_dev_time" />
-                                <field name="dev_mater" />
+                                <field name="actual_dev_time" attrs="{'readonly':[('version_state','not in',('Development'))]}"/>
+                                <field name="dev_mater" attrs="{'readonly':[('version_state','not in',('Development'))]}"/>
                             </group>
                         </page>
-                        <page string="版本发布">
+                        <page string="版本发布" attrs="{'invisible':[('version_state','in',('Development','initialization'))]}">
                             <group>
                                 <group>
                                     <group>
-                                        <field name="actual_check_pub_time" />
+                                        <field name="actual_check_pub_time" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
                                     </group>
                                     <group>
-                                        <field name="actual_pub_time" />
+                                        <field name="actual_pub_time" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
                                     </group>
                                 </group>
                             </group>
                              <group>
-                                    <field name="place" />
-                                    <field name="Material" />
+                                    <field name="place" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
+                                    <field name="Material" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
                                 </group>
                         </page>
                      </notebook>
