@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dtdream_account_dtdream_account,dtdream_account.dtdream_account,model_dtdream_account_dtdream_account,,1,0,0,0
+access_dtdream_company,dtdream.company,model_dtdream_company,,1,1,1,1
