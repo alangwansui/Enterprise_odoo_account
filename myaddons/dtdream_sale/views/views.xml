@@ -27,10 +27,10 @@
                   <field name="remark" />
               </field>
               <xpath expr="//page[@name='sales']" position="after">
-                  <page name="discount" string="折扣">
+                  <page name="discount" string="折扣" groups="dtdream_sale.group_dtdream_sale_read">
                       <group>
                           <group>
-                              <field name="list_price" />
+                              <field name="list_price" string="目录价"/>
                               <field name="office_manager_discount" />
                               <field name="market_president_discount" />
                           </group>
@@ -79,7 +79,7 @@
                     <field name="industry_id"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
-                    <field name="user_id" string="营销责任人"/>
+                    <field name="user_id" string="营销责任人" on_change="on_change_user(user_id, context)" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads'], 'team_id': team_id}"/>
                 </field>
                 <field name="create_date" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -115,10 +115,14 @@
                     <field name="project_number"/>
                     <field name="project_leave" string="项目级别"/>
                     <field name="office_id"/>
-                    <field name="industry_id"/>
+                    <field name="system_department_id" domain="[('parent_id','=',False)]"/>
+                    <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
+                    <field name="pre_implementation_time"/>
+                    <field name="pre_check_time"/>
                     <field name="project_detail"/>
+                    <field name="sale_channel"/>
                 </field>
                 <field name="partner_id" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -132,20 +136,25 @@
                 <div class="o_address_format" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </div>
-                <field name="partner_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
+                <div class="o_address_format" position="replace">
+                </div>
                 <field name="partner_name" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="partner_name" position="replace">
+                </field>
                 <label for="street" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </label>
+                <label for="street" position="replace">
                 </label>
                 <field name="date_deadline" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
                 <field name="team_id" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </field>
+                <field name="team_id" position="replace">
                 </field>
                 <field name="user_id" position="after">
                     <field name="team_id" domain="[('use_leads','=',True)]"/>
@@ -177,6 +186,8 @@
                 <field name="contact_name" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="contact_name" position="replace">
+                </field>
                 <field name="title" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -186,19 +197,20 @@
                 <field name="mobile" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="mobile" position="replace">
+                </field>
                 <field name="date_deadline" position="after">
                     <field name="partner_id" string="客户"
                            on_change="on_change_partner_id(partner_id)"
-                           options='{"create_name_field": "name"}'
                            context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}"/>
                     <field name="partner_name" string="公司名称"/>
                     <label for="street" string="地址"/>
                     <div class="o_address_format">
-                        <field name="street" placeholder="Street..." class="o_address_street"/>
-                        <field name="city" placeholder="City" class="o_address_city"/>
-                        <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
-                        <field name="zip" placeholder="ZIP" class="o_address_zip"/>
-                        <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                        <field name="street" placeholder="街道..." class="o_address_street"/>
+                        <field name="city" placeholder="城市" class="o_address_city"/>
+                        <field name="state_id" class="o_address_state" placeholder="省份" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
+                        <field name="zip" placeholder="邮编" class="o_address_zip"/>
+                        <field name="country_id" placeholder="国家" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
                     </div>
                     <label for="contact_name"/>
                     <div class="o_row">
@@ -210,6 +222,14 @@
                     <field name="phone" widget="phone"/>
                     <field name="mobile"/>
                 </field>
+                <div class="o_row mr16" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </div>
+                <label for="next_activity_id" position="replace">
+                    <attribute name="invisible"></attribute>
+                </label>
+                <!--<xpath expr="//page[@name='lead']" position="replace">-->
+                <!--</xpath>-->
             </field>
       </record>
 
@@ -347,10 +367,14 @@
                   <field name="project_number"/>
                   <field name="project_leave" string="项目级别"/>
                   <field name="office_id"/>
-                  <field name="industry_id"/>
+                  <field name="system_department_id" domain="[('parent_id','=',False)]"/>
+                  <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
                   <field name="bidding_time"/>
                   <field name="supply_time"/>
+                  <field name="pre_implementation_time"/>
+                  <field name="pre_check_time"/>
                   <field name="project_detail"/>
+                  <field name="sale_channel"/>
               </field>
               <div class="o_address_format" position="attributes">
                   <attribute name="invisible">1</attribute>
@@ -365,6 +389,7 @@
                   <attribute name="invisible">1</attribute>
               </label>
               <label for="contact_name" position="before">
+                  <!--<field name = "child_ids"></field>-->
                   <field name="partner_id" string="客户"
                          on_change="on_change_partner_id(partner_id)"
                          options='{"create_name_field": "name"}'
@@ -372,22 +397,29 @@
                   <field name="partner_name" string="公司名称"/>
                   <label for="street" string="地址"/>
                   <div class="o_address_format">
-                      <field name="street" placeholder="Street..." class="o_address_street"/>
-                      <field name="city" placeholder="City" class="o_address_city"/>
-                      <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
-                      <field name="zip" placeholder="ZIP" class="o_address_zip"/>
-                      <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                      <field name="street" placeholder="街道..." class="o_address_street"/>
+                      <field name="city" placeholder="城市" class="o_address_city"/>
+                      <field name="state_id" class="o_address_state" placeholder="省份" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
+                      <field name="zip" placeholder="邮编" class="o_address_zip"/>
+                      <field name="country_id" placeholder="国家" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
                   </div>
               </label>
-              <field name="team_id" position="attributes">
+              <field name="fax" position="attributes">
                   <attribute name="invisible">1</attribute>
+              </field>
+              <field name="user_id" position="replace">
+                  <field name="user_id" on_change="on_change_user(user_id, context)"
+                                context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads'], 'team_id': team_id}"
+                                domain="[('login','!=','admin')]"/>
+              </field>
+              <field name="team_id" position="replace">
               </field>
               <field name="user_id" position="after">
                   <field name="team_id" domain="[('use_leads','=',True)]"/>
               </field>
-              <field name="fax" position="attributes">
+              <xpath expr="//page[@name='extra']" position="attributes">
                   <attribute name="invisible">1</attribute>
-              </field>
+              </xpath>
           </field>
       </record>
 
@@ -406,5 +438,33 @@
       <!--新增产品类别菜单-->
       <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />
 
+      <menuitem id="crm.crm_lead_menu_activities" name="Next Activities" sequence="5"
+        parent="base.menu_sales" action="crm.crm_lead_action_activities" groups="base.group_no_one"/>
+      <!--<menuitem id="base.menu_invoiced" name="Invoicing" parent="base.menu_aftersale" sequence="1" groups="base.group_no_one"/>-->
+      //开票
+      <menuitem name="Invoicing"
+            id="sale.menu_sale_invoicing" parent="base.menu_base_partner"
+            sequence="5" groups="base.group_no_one"/>
+      <menuitem action="sale.action_orders_to_invoice"
+            id="sale.menu_sale_order_invoice" parent="sale.menu_sale_invoicing"
+            sequence="2" groups="base.group_no_one"/>
+      <menuitem action="sale.action_orders_upselling"
+            id="sale.menu_sale_order_upselling" parent="sale.menu_sale_invoicing"
+            sequence="5" groups="base.group_no_one"/>
+      //报价
+      <menuitem id="sale.menu_sale_quotations"
+            action="sale.action_quotations" parent="base.menu_sales"
+            sequence="11" groups="base.group_no_one"/>
+      //销售订单
+      <record id="sale.menu_sale_order" model="ir.ui.menu">
+          <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+      </record>
+      //销售顶级菜单
+      <menuitem name="Sales"
+            id="base.menu_base_partner"
+            web_icon="sale,static/description/icon.png"
+            groups="base.group_sale_salesman,base.group_sale_manager,group_dtdream_sale_read" sequence="6"/>
+      //仪表盘
+      <menuitem id="sales_team.menu_sales_team_act" action="sales_team.crm_team_salesteams_act" sequence="1" parent="base.menu_base_partner" name="Dashboard" groups="base.group_no_one"/>
   </data>
 </openerp>
