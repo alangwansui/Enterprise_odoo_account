@@ -23,7 +23,7 @@
 
     # always loaded
     'data': [
-        'security/security.xml',
+        'security/dtdream_sale_security.xml',
         'security/ir.model.access.csv',
         'sale_sequence.xml',
         'views/views.xml',

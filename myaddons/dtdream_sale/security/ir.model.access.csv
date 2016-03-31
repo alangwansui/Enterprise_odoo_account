@@ -2,3 +2,12 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_product_pro_type_user,product.pro.type.user,model_product_pro_type,base.group_user,1,1,1,1
 access_product_dtdream_office,product.dtdream.office,model_dtdream_office,base.group_user,1,1,1,1
 access_product_dtdream_industry,product.dtdream.industry,model_dtdream_industry,base.group_user,1,1,1,1
+access_product_template,product.template,model_product_template,group_dtdream_sale_read,1,1,1,1
+access_crm_lead,crm.lead,model_crm_lead,group_dtdream_sale_read,1,0,0,0
+access_res_partner,res.partner.crm.user,base.model_res_partner,group_dtdream_sale_read,1,1,1,0
+access_res_partner_category,res.partner.category.crm.user,base.model_res_partner_category,group_dtdream_sale_read,1,1,1,0
+mail_mailgate_thread,mail.thread,mail.model_mail_thread,group_dtdream_sale_read,1,1,1,1
+
+
+access_product_product,product.product,product.model_product_product,group_dtdream_sale_read,1,1,1,1
+access_product_product_price_history,product.price.history,product.model_product_price_history,group_dtdream_sale_read,1,1,1,1

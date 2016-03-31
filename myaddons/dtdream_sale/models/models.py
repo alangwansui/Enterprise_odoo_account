@@ -64,12 +64,39 @@ class dtdream_sale(models.Model):
         ('department_leave', '部门级'),
         ('normal_leave', '一般项目'),
     ],required=True)
+    system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True)
     industry_id = fields.Many2one("dtdream.industry", string="行业",required=True)
     office_id = fields.Many2one("dtdream.office", string="办事处",required=True)
     bidding_time = fields.Date("招标时间",required=True,default=datetime.today())
     supply_time = fields.Date("供货时间",required=True,default=datetime.today() + relativedelta(months=1))
+    pre_implementation_time = fields.Date("预计开始实施时间",required=True,default=datetime.today()+ relativedelta(months=2))
+    pre_check_time = fields.Date("预计验收时间",required=True,default=datetime.today() + relativedelta(months=3))
+    sale_channel = fields.Char("渠道",required=True)
+
     partner_id = fields.Many2one(required=True)
+    # child_ids = fields.One2many('res.partner', 'parent_id', 'Contacts', domain=[('active','=',True)])
+    # partner_name = fields.Char(readonly=True)
+    # email_form = fields.Char(readonly=True)
+    # function = fields.Char(readonly=True)
+    # phone = fields.Char(readonly=True)
+    # mobile = fields.Char(readonly=True)
+
+
     project_detail = fields.Text("项目详情")
+
+    @api.onchange("system_department_id")
+    def onchange_system_department(self):
+        if self.system_department_id:
+            return {
+                'domain': {
+                    "industry_id":[('parent_id','=',self.system_department_id.id)]
+                }
+            }
+
+    @api.onchange("industry_id")
+    def onchange_industry_id(self):
+        if self.industry_id:
+            self.system_department_id = self.industry_id.parent_id
 
     @api.model
     def create(self, vals):
@@ -84,16 +111,16 @@ class dtdream_sale(models.Model):
 class dtdream_industry(models.Model):
     _name = 'dtdream.industry'
 
-    @api.multi
-    def name_get(self):
-        def get_names(cat):
-            """ Return the list [cat.name, cat.parent_id.name, ...] """
-            res = []
-            while cat:
-                res.append(cat.name)
-                cat = cat.parent_id
-            return res
-        return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
+    # @api.multi
+    # def name_get(self):
+    #     def get_names(cat):
+    #         """ Return the list [cat.name, cat.parent_id.name, ...] """
+    #         res = []
+    #         while cat:
+    #             res.append(cat.name)
+    #             cat = cat.parent_id
+    #         return res
+    #     return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
 
     name = fields.Char(string='行业名称',required=True)
     code = fields.Char(string='行业编码',required=True)
