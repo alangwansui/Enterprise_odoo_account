@@ -7,7 +7,7 @@
             <field name="on_create">True</field>
         </record>
 
-        <record id="activity_draft" model="workflow.activity">
+        <record id="rd_activity_draft" model="workflow.activity">
             <field name="wkf_id" ref="rd_product_workflow"/>
             <field name="flow_start">True</field>
             <field name="name">创建草稿</field>
@@ -52,7 +52,7 @@
         </record>
 
         <record id="trans_a_b" model="workflow.transition">
-            <field name="act_from" ref="activity_draft"/>
+            <field name="act_from" ref="rd_activity_draft"/>
             <field name="act_to" ref="activity_lixiang"/>
             <field name="signal">btn_to_lixiang</field>
         </record>
@@ -120,19 +120,19 @@
             <field name="action">wkf_yfb()</field>
         </record>
 
-        <record id="trans_a_b" model="workflow.transition">
+        <record id="ver_trans_a_b" model="workflow.transition">
             <field name="act_from" ref="activity_draft"/>
             <field name="act_to" ref="activity_kaifa"/>
             <field name="signal">btn_to_kaifa</field>
         </record>
 
-        <record id="trans_b_c" model="workflow.transition">
+        <record id="ver_trans_b_c" model="workflow.transition">
             <field name="act_from" ref="activity_kaifa"/>
             <field name="act_to" ref="activity_dfb"/>
             <field name="signal">btn_to_dfb</field>
         </record>
 
-        <record id="trans_c_d" model="workflow.transition">
+        <record id="ver_trans_c_d" model="workflow.transition">
             <field name="act_from" ref="activity_dfb"/>
             <field name="act_to" ref="activity_yfb"/>
             <field name="signal">btn_to_yfb</field>
