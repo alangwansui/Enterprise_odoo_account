@@ -120,7 +120,8 @@ class CompanyLDAP(models.Model):
         for mapping in this.group_mappings:
             operator = getattr(op_obj, mapping.operator)
             logger.debug('checking mapping %s' % mapping)
-            if operator(ldap_entry, mapping['ldap_attribute'],
+            # operator
+            if (ldap_entry, mapping['ldap_attribute'],
                         mapping['value'], conf, self, logger):
                 logger.debug('adding user %d to group %s' %
                              (user_id, mapping.group.name))
