@@ -33,13 +33,13 @@ class dtdream_account(models.Model):
 class dtdream_account_move_line(models.Model):
     _inherit = "account.move.line"
 
-    @api.depends('dept_id')
+    @api.onchange('dept_id')
     def _compute_dept(self):
         for rec in self.dept_id:
             self.dept_code = rec.code
 
     dept_id = fields.Many2one('hr.department',string="部门")
-    dept_code = fields.Char(compute=_compute_dept, string="部门编码")
+    dept_code = fields.Char(default="000000", string="部门编码")
     company = fields.Many2one('dtdream.company',string="公司")
     product = fields.Char(string="产品",default="0000000")
     region = fields.Char(string="区域",default="0000")
