@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem name="出差" id="menu_top_odoo_travel"></menuitem>
+
+        <menuitem name="出差申请" id="menu_chucha_shenqing" parent="menu_top_odoo_travel"></menuitem>
+
+         <menuitem name="提交申请" id="menu_dtdream_travel" parent="menu_chucha_shenqing"
+            sequence="10"
+            action="act_dtdream_travel_chucha_shenqing"></menuitem>
+
+    </data>
+</openerp>

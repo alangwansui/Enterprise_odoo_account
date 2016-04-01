@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_dtdream_travel_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream_travel.wizard.form</field>
+        <field name="model">dtdream_travel.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="liyou"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_chucha_wizard" model="ir.actions.act_window">
+        <field name="name">出差审批</field>
+        <field name="res_model">dtdream_travel.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    </data>
+</openerp>
