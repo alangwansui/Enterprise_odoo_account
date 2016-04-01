@@ -1,0 +1,95 @@
+<openerp>
+  <data>
+    <record id="act_dtdream_hr_business" model="ir.actions.act_window">
+        <field name="name">外出公干</field>
+        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('name.user_id', '=', uid)]</field>
+    </record>
+
+    <record id="act_dtdream_hr_business_deal" model="ir.actions.act_window">
+        <field name="name">外出公干</field>
+        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">['|','|','|','|',('approver_fir.user_id', '=', uid),('approver_sec.user_id', '=', uid),('approver_thr.user_id', '=', uid),('approver_fou.user_id', '=', uid),('approver_fif.user_id', '=', uid)]</field>
+    </record>
+
+     <record model="ir.ui.view" id="business_tree">
+      <field name="name">business_tree</field>
+      <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="title"/>
+        </tree>
+      </field>
+     </record>
+
+    <!--form视图-->
+    <record model="ir.ui.view" id="business_form">
+      <field name="name">business_form</field>
+      <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="btn_submit" type="workflow" states="-1" string="提交" class="oe_highlight" attrs="{'invisible':[('is_shenqingren','=',False)]}"></button>
+            <button name="btn_restart" type="workflow" states="99" string="重启流程" class="oe_highlight"></button>
+            <button name="btn_next" type="workflow" states="0,1,2,3,4" string="批准" class="oe_highlight"></button>
+            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" states="0,1,2,3,4" string="拒绝" class="oe_highlight"></button>
+            <field name="state" statusbar_visible="-1,0,1,2,3,4,5,99" widget="statusbar"></field>
+          </header>
+          <sheet>
+            <group>
+              <group string="基本信息">
+                <field name="name"/>
+                <field name="job_number"/>
+                <field name="department"/>
+                <field name="create_time"/>
+                <field name="is_shenpiren"/>
+                <field name="is_shenqingren"/>
+              </group>
+              <group string="节点设定">
+                <field name="approver_fir"/>
+                <field name="approver_sec"/>
+                <field name="approver_thr"/>
+                <field name="approver_fou"/>
+                <field name="approver_fif"/>
+              </group>
+            </group>
+            <group>
+              <div>
+                  <p>流程描述</p>
+                  <p>第一审批人：部门行政助理</p>
+                  <p>第二审批人：部门主管</p>
+                  <p><font color="red">注：有费用(如在途费，住宿费)发生的公干，请走出差申请流程;审批人请按顺序填写</font></p>
+              </div>
+            </group>
+              <group>
+                <field name="detail_ids">
+                  <tree editable="bottom">
+                    <field name="place"/>
+                    <field name="startTime"/>
+                    <field name="endTime"/>
+                    <field name="reason"/>
+                  </tree>
+                </field>
+              </group>
+          </sheet>
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+
+     <menuitem name="外出公干" sequence="16" id="dtdream_hr_business" parent="hr.menu_hr_root"></menuitem>
+     <menuitem name="我的申请" sequence="16" id="hr_business_apply" parent="dtdream_hr_business" action="act_dtdream_hr_business"></menuitem>
+     <menuitem name="我的处理" sequence="16" id="hr_business_deal" parent="dtdream_hr_business" action="act_dtdream_hr_business_deal"></menuitem>
+  </data>
+</openerp>
