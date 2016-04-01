@@ -1,0 +1,183 @@
+// ------------------------------------------------------------------
+// Typography
+// ------------------------------------------------------------------
+a {
+    color: @odoo-brand-optional;
+    &:hover {
+        color: darken(@odoo-brand-optional, 10%);
+    }
+}
+
+div.o_checkbox {
+    @odoo-checkbox-size: 15px;
+
+    display: inline-block;
+    position: relative;
+    vertical-align: sub;
+
+    > input {
+        width: @odoo-checkbox-size;
+        height: @odoo-checkbox-size;
+        margin: 0; // bootstrap override
+
+        opacity: 0;
+        .o-position-absolute();
+        cursor: pointer;
+
+        + span {
+            display: block;
+            width: @odoo-checkbox-size;
+            height: @odoo-checkbox-size;
+            border: 1px solid @odoo-brand-secondary;
+            background-color: white;
+        }
+
+        &:checked + span {
+            background-repeat: no-repeat;
+            background-image: url(../img/checked.svg);
+            background-position: center center;
+        }
+
+        &:disabled + span {
+            opacity: 0.7;
+            border: 1px solid @odoo-brand-lightsecondary;
+        }
+
+        &:focus + span {
+            outline: 1px solid @odoo-brand-optional;
+        }
+    }
+}
+
+// ------------------------------------------------------------------
+//  General
+// ------------------------------------------------------------------
+.o_text_overflow {
+    .o-text-overflow();
+}
+.o_hidden {
+    display: none!important;
+}
+.o-input() {
+    border: 1px solid @odoo-form-lightsecondary;
+    border-top-style: none;
+    border-right-style: none;
+    border-left-style: none;
+}
+input[type="text"], input[type="password"], input[type="number"], textarea, select {
+    .o-input();
+
+    width: 100%;
+    outline: none;
+    display: block;
+}
+select { // FIXME buggy 'padding-left'
+    cursor: pointer;
+    background-color: transparent;
+    min-width: 50px;
+
+    .o-appearance(none);
+    background-image: url("/web/static/src/img/down-arrow.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+
+    color: transparent; // This is a hack to remove the outline in FF
+    text-shadow: 0 0 0 @odoo-main-text-color;
+    > option {
+        color: @odoo-main-text-color;
+    }
+}
+
+.o-placeholder() { // Rules below need to be separeted. Otherwise all browsers will discard the whole rule.
+    color: @odoo-brand-secondary;
+    opacity: 0.5;
+}
+::-webkit-input-placeholder { // WebKit, Blink, Edge
+    .o-placeholder();
+}
+::-moz-placeholder { // Mozilla Firefox 19+
+    .o-placeholder();
+}
+:-ms-input-placeholder { // Internet Explorer 10-11
+    .o-placeholder();
+}
+
+// ------------------------------------------------------------------
+// Layout
+// ------------------------------------------------------------------
+.o_web_client {
+    background-color: @odoo-webclient-background-color;
+
+    @media (max-width: @screen-xs-max) {
+        font-size: @odoo-font-size-base-touch; // Then every font-size which should grow must be fixed with em and not px!
+    }
+}
+
+// ------------------------------------------------------------------
+// Misc. widgets
+// ------------------------------------------------------------------
+.o_loading {
+    background-color: @odoo-brand-primary;
+    color: white;
+    padding: 4px;
+}
+
+@notification-error-bg-color: #F16567;
+@notification-info-bg-color: #FCFBEA;
+.o_notification_manager {
+    width: 300px;
+    max-width: 100%;
+
+    .o-position-absolute(@navbar-height, 0px);
+    z-index: 1100; // Bootstrap modal z-index is 1050
+
+    .o_notification {
+        padding: 0;
+        margin: 5px 0 0 0;
+
+        opacity: 0;
+
+        background-color: @notification-info-bg-color;
+        box-shadow: 0px 0px 5px 1px @odoo-main-text-color;
+
+        position: relative;
+        .o_close {
+            .o-position-absolute(5px, 5px);
+            color: rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+
+        .o_notification_title {
+            .o-flex-display();
+            .o-align-items(center);
+
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 10px 10px 10px 20px;
+
+            font-weight: bold;
+
+            .o_icon {
+                display: inline-block;
+                margin-right: 20px;
+                color: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .o_notification_content {
+            padding: 10px;
+        }
+
+        &.o_error {
+            color: white;
+            background-color: @notification-error-bg-color;
+        }
+    }
+}
+
+// Buttons containing only an icon
+.o_icon_button {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    outline: none;
+}

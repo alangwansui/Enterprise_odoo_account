@@ -1,0 +1,100 @@
+// --------------------------------------------------------------------------
+// This file contains rules applying on elements shared between views
+// --------------------------------------------------------------------------
+.o_view_manager_content {
+    .oe_view_nocontent {
+        margin: 10px @odoo-horizontal-padding;
+        padding: 15px 10px 10px 10px;
+        color: white;
+        background-color: darken(@odoo-brand-secondary, 15%);
+        max-width: 500px;
+        .oe_view_nocontent_create {
+            font-weight: bold;
+            position: relative;
+            &:before {
+                content: " ";
+                display: block;
+                border-bottom: 25px solid darken(@odoo-brand-secondary, 15%);
+                border-top: none;
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+
+                position: absolute;
+                bottom: 100%;
+                left: 0;
+            }
+        }
+    }
+    .o_cannot_create .oe_view_nocontent_create {
+       display: none;
+    }
+    // Hide view_nocontent in x2many fields
+    &.o_form_field .oe_view_nocontent {
+        display: none;
+    }
+}
+
+
+// Many2many tags
+.o_form_field_many2manytags {
+    .o_tag_color_0 {
+        background-color: #B6BBBF;
+    }
+    .o_tag_color_1 {
+        background-color: #61BD4F;
+    }
+    .o_tag_color_2 {
+        background-color: #F2D600;
+    }
+    .o_tag_color_3 {
+        background-color: #FFAB4A;
+    }
+    .o_tag_color_4 {
+        background-color: #EB5A46;
+    }
+    .o_tag_color_5 {
+        background-color: #A24689;
+    }
+    .o_tag_color_6 {
+        background-color: #0079BF;
+    }
+    .o_tag_color_7 {
+        background-color: #00C2E0;
+    }
+    .o_tag_color_8 {
+        background-color: #4CD98E;
+    }
+    .o_tag_color_9 {
+        background-color: #FF80CE;
+    }
+    .o_tag_color_10 {
+        background-color: #4D4D4D;
+    }
+}
+
+// Stars
+.o_priority {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+    > .o_priority_star {
+        display: inline-block;
+        font-size: 1.35em;
+        &:hover, &:focus {
+            text-decoration: none;
+            outline: none;
+        }
+
+        + .o_priority_star {
+            padding-left: 5px;
+        }
+
+        &.fa-star-o {
+            color: @odoo-main-color-muted;
+        }
+        &.fa-star {
+            color: gold;
+        }
+    }
+}

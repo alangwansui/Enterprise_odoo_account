@@ -1,0 +1,59 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * account_bank_statement_import_qif
+# 
+# Translators:
+# xlu <xlu@seznam.cz>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 9.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-07 14:51+0000\n"
+"PO-Revision-Date: 2015-10-26 16:25+0000\n"
+"Last-Translator: xlu <xlu@seznam.cz>\n"
+"Language-Team: Czech (http://www.transifex.com/odoo/odoo-9/language/cs/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#. module: account_bank_statement_import_qif
+#: model:ir.model.fields,help:account_bank_statement_import_qif.field_account_bank_statement_import_journal_id
+msgid ""
+"Accounting journal related to the bank statement you're importing. It has be"
+" be manually chosen for statement formats which doesn't allow automatic "
+"journal detection (QIF for example)."
+msgstr "Účetní denník vztažený k bankovnímu výpisu který importujete. Byl manuálně vybrán pro formáty výpisů, které neumožňují automatickou detekci deníku (například QIF)."
+
+#. module: account_bank_statement_import_qif
+#: code:addons/account_bank_statement_import_qif/account_bank_statement_import_qif.py:47
+#, python-format
+msgid "Could not decipher the QIF file."
+msgstr "Nemohu přečíst QIF soubor."
+
+#. module: account_bank_statement_import_qif
+#: model:ir.model.fields,field_description:account_bank_statement_import_qif.field_account_bank_statement_import_hide_journal_field
+msgid "Hide the journal field in the view"
+msgstr "Skrýt pole deníku v pohledu."
+
+#. module: account_bank_statement_import_qif
+#: model:ir.model,name:account_bank_statement_import_qif.model_account_bank_statement_import
+msgid "Import Bank Statement"
+msgstr "Importovat bankovní výpis"
+
+#. module: account_bank_statement_import_qif
+#: model:ir.model.fields,field_description:account_bank_statement_import_qif.field_account_bank_statement_import_journal_id
+msgid "Journal"
+msgstr "Deník"
+
+#. module: account_bank_statement_import_qif
+#: model:ir.ui.view,arch_db:account_bank_statement_import_qif.account_bank_statement_import_qif
+msgid "Quicken Interchange Format (.QIF)"
+msgstr "Quicken Interchange Format (.QIF)"
+
+#. module: account_bank_statement_import_qif
+#: code:addons/account_bank_statement_import_qif/account_bank_statement_import_qif.py:82
+#, python-format
+msgid "This file is either not a bank statement or is not correctly formed."
+msgstr "Soubor není bankovní výpis nebo není správně formátován"

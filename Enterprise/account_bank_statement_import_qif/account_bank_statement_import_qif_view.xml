@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <record id="account_bank_statement_import_view_inherited" model="ir.ui.view">
+            <field name="name">Import Bank Statements Inherited</field>
+            <field name="model">account.bank.statement.import</field>
+            <field name="priority" eval="20"/>
+            <field name="inherit_id" ref="account_bank_statement_import.account_bank_statement_import_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='data_file']" position="after">
+                    <field name="hide_journal_field" invisible="1"/>
+                    <group attrs="{'invisible': [('hide_journal_field', '=', True)]}">
+                        <field name="journal_id" domain="[('type', '=', 'bank')]" context="{'default_type':'bank'}"/>
+                    </group>
+                    <field name="show_qif_date_format" invisible="1"/>
+                    <group attrs="{'invisible': [('show_qif_date_format', '=', False)]}">
+                        <p class="oe_form_box_info" colspan="2">
+                            The QIF format is ambiguous about dates: please check with your financial institution whether they format it with month or day first.<br/>
+                        </p>
+                        <field name="qif_date_format" widget="radio"/>
+                    </group>
+                </xpath>
+                <xpath expr="//button[@name='import_file']" position="replace">
+                    <div attrs="{'invisible': [('qif_date_format', '=', 'day_first')]}">
+                        <button name="import_file" string="_Import" type="object" class="btn-primary" />
+                    </div>
+                    <div attrs="{'invisible': [('qif_date_format', '!=', 'day_first')]}">
+                        <button name="import_file" string="_Import" type="object" class="btn-primary" context="{'qif_date_format': 'day_first'}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
+

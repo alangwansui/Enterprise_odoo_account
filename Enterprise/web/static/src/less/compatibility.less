@@ -1,0 +1,29 @@
+// This file is necessary to make the enterprise edition work with older templates.
+// The better way to fix this should be to update every templates using this to use bootstrap, and to remove
+// our custom code in web client
+.oe_dropdown_toggle {
+    float: right;
+    position: relative;
+
+    .oe_dropdown_menu {
+        display: none;
+        position: absolute;
+        min-width: 160px;
+        background: white;
+        border: 1px solid gray;
+        z-index: 3;
+
+        &.oe_opened {
+            display: block;
+        }
+    }
+}
+
+.oe_clear {
+    clear: both;
+}
+
+// This rule should not be, but some templates much be edited not to use a p in this box
+.oe_form_box_info > p {
+    margin: auto;
+}

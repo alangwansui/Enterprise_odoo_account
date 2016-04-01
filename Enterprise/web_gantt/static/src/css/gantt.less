@@ -1,0 +1,127 @@
+@iterations: 5;
+
+.mixin-simple-loop (@color, @i) when (@i >= 0) {
+    .o_gantt_@{color}_@{i}{
+        background-color: fade((@@color), 100% - 10 * @i);
+        &.gantt_task_inline_color{
+            border-color: fade((@@color), 100% - 10 * @i);
+        }
+    }
+
+    .mixin-simple-loop(@color, @i - 1);
+}
+
+@color0: hsl(41, 77%, 81%);
+@color1: hsl(0, 0%, 100%);
+@color2: hsl(309, 20%, 87%);
+@color3: hsl(56, 53%, 84%);
+@color4: hsl(62, 62%, 69%);
+@color5: hsl(168, 32%, 75%);
+@color6: hsl(186, 51%, 82%);
+@color7: hsl(41, 77%, 81%);
+@color8: hsl(304, 12%, 44%);
+@color9: hsl(309, 20%, 81%);
+@color10: hsl(135, 50%, 52%);
+@colorgreen: hsl(120, 100%, 25%);
+
+.o_gantt_view {
+    .gantt_container {
+        .mixin-simple-loop(color0, @iterations);
+        .mixin-simple-loop(color1, @iterations);
+        .mixin-simple-loop(color2, @iterations);
+        .mixin-simple-loop(color3, @iterations);
+        .mixin-simple-loop(color4, @iterations);
+        .mixin-simple-loop(color5, @iterations);
+        .mixin-simple-loop(color6, @iterations);
+        .mixin-simple-loop(color7, @iterations);
+        .mixin-simple-loop(color8, @iterations);
+        .mixin-simple-loop(color9, @iterations);
+        .mixin-simple-loop(color10, @iterations);
+        .mixin-simple-loop(colorgreen, @iterations);
+        .o_gantt_color_transparent {
+            background-color: "transparent";
+        }
+        .o_gantt_color_red {
+            background-color: #CB1C1C;
+        }
+
+        .gantt_task_line{
+            border: 0px;
+            &.has_child .gantt_task_drag {
+                &.task_right, &.task_left {
+                    display: none;
+                }
+            }
+            &.consolidation {
+                &.has_child {
+                    background-color: transparent;
+                    height: 30px !important;
+                    line-height: 30px !important;
+                    border-radius: 0px;
+                    border: none;
+                    cursor: default;
+                    pointer-events: none;
+                    .inside_task_bar {
+                        position: absolute;
+                        text-align: left;
+                        color: black;
+                        height: 100%;
+                        margin-top: -2px;
+                        overflow: hidden;
+                        &.exclude {
+                            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwb2x5Z29uIG9wYWNpdHk9Ii44IiBmaWxsPSIjRDEyMDI3IiBwb2ludHM9IjAsOCA4LDAgNiwwIC0yLDgiLz48cG9seWdvbiBvcGFjaXR5PSIuOCIgZmlsbD0iI0QxMjAyNyIgcG9pbnRzPSI1LDExIDEzLDMgMTEsMyAzLDExIi8+PC9zdmc+');
+                        }
+                    }
+                }
+            }
+            &.is_leaf {
+                height: 20px !important;
+                line-height: 20px !important;
+                margin-top: 2px;
+                border: 0px;
+                .gantt_task_content {
+                    color: black;
+                    padding-left: 4px;
+                    text-align: left;
+                }
+            }
+            .gantt_task_content {
+                overflow: visible !important;
+            }
+            .half_opacity {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+            .gantt_task_progress {
+                background: transparent;
+            }
+            &.gantt_dependent_task {
+                display: none;
+            }
+        }
+    }
+    .today {
+        background: #FAF989;
+    }
+    .gantt_task_row {
+        .gantt_task_cell {
+            cursor: cell;
+        }
+        &.level_0, &.level_0.odd{
+            background-color: rgb(242, 242, 242);
+            &.gantt_selected {
+                background-color: #fff3a1;
+            }
+        }
+        &.level_1, &.level_1.odd{
+            background-color: rgb(249, 249, 249);
+            &.gantt_selected {
+                background-color: #fff3a1;
+            }
+        }
+    }
+}
+
+.o_gantt_button_dates {
+    display: inline-block;
+}

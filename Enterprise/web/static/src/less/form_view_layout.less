@@ -1,0 +1,509 @@
+.form-break-table() {
+    display: block;
+    margin-bottom: @odoo-form-spacing-unit * 4;
+
+    > tbody {
+        display: block;
+
+        > tr {
+            .o-flex-display();
+            .o-flex-flow(row, wrap);
+
+            > td {
+                .o-flex(1, 0, auto);
+                display: block;
+                max-width: 100%;
+                padding: 0;
+                
+                width: auto!important;  // !important is required to override the width computed in JS
+                &.o_td_label {
+                    width: 94%!important; // The label must be on its own line except if the form field is small enough (checkbox)
+                    line-height: @odoo-label-font-size-factor;
+                }
+
+                .o_form_field {
+                    margin-bottom: @odoo-form-spacing-unit * 2;
+                    &.o_form_field_boolean {
+                        margin-right: 0;
+                    }
+                }
+
+                .o_form_input_dropdown {
+                    width: auto;
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
+
+.o_form_view {
+    @media (min-width: @screen-sm-min) {
+        .o-flex-display();
+        .o-flex-flow(column, nowrap);
+        min-height: 100%;
+    }
+    &.o_form_nosheet {
+        display: block;
+        height: 100%;
+        .o-webclient-padding(@top: @odoo-sheet-vpadding, @bottom: @odoo-sheet-vpadding);
+        overflow: auto;
+
+        .o_form_statusbar {
+            margin: -@odoo-sheet-vpadding -@odoo-horizontal-padding 0 -@odoo-horizontal-padding;
+        }
+    }
+
+    .oe_inline {
+        width: auto!important;
+        @media (min-width: @screen-xs-min) {
+            &.o_inner_group {
+                width: 1px!important;
+            }
+        }
+    }
+    .oe_left {
+        .oe_inline;
+        float: left!important;
+    }
+    .oe_right {
+        .oe_inline;
+        float: right!important;
+    }
+
+    @media (min-width: @screen-xs-min) {
+        .o_row {
+            &, &.o_form_field { // Some field may want to use o_row as root and these rules must prevalue
+                .o-flex-display();
+                width: auto!important;
+            }
+
+            .o-align-items(baseline);
+            min-width: 50px;
+            margin: 0 -@odoo-form-spacing-unit/2;
+
+            > div, > span, > button, > label, > a, > input { // > * did not add a level of priority to the rule
+                .o-flex(0, 0, auto);
+                width: auto!important;
+                margin-right: @odoo-form-spacing-unit/2;
+                margin-left: @odoo-form-spacing-unit/2;
+            }
+
+            > .o_row {
+                margin: 0;
+            }
+            > .btn {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            > .o_form_field_boolean {
+                .o-align-self(center);
+            }
+        }
+
+        .o_row .o_form_field_many2one, .o_form_field_many2one.oe_inline {
+            &.o_with_button:not(:last-child) { // If invisible element as last child, this line has no effect but that's not very important
+                margin-right: (35px + (@odoo-form-spacing-unit/2));
+            }
+        }
+    }
+
+    .o_row > div > .o_form_field {
+        width: 100%;
+    }
+
+    // Readonly specific rules
+    &.o_form_readonly {
+        .o_row {
+            display: inline-block;
+            > div {
+                display: inline-block;
+            }
+        }
+    }
+
+    // Editable specific rules
+    &.o_form_editable {
+        @media (min-width: @screen-xs-min) {
+            .o_row {
+                > .o_form_field, > div {
+                    .o-flex(1, 1, auto);
+                    width: 0!important; // 3rd flex argument does not work with input (must be auto and real width 0)
+
+                    &.o_form_field_boolean, &.o_priority {
+                        .o-flex(0, 0, auto);
+                        width: auto!important;
+                    }
+                }
+            }
+        }
+
+        .oe_title {
+            max-width: @container-sm - (2 * @odoo-horizontal-padding);
+        }
+    }
+
+    // Header containing status/workflow buttons
+    .o_form_statusbar {
+        .o-flex(0, 0, auto);
+        .o-flex-display();
+        .o-justify-content(space-between);
+
+        padding-left: @odoo-horizontal-padding;
+
+        > .o_statusbar_buttons, > .o_statusbar_status {
+            .o-flex-display();
+            .o-align-items(center);
+            .o-align-content(space-around);
+        }
+
+        > .o_form_field {
+            .o-align-self(center);
+        }
+
+        > .o_statusbar_buttons {
+            .o-flex-flow(row, wrap);
+
+            > .btn {
+                margin: 2px 3px 2px 0;
+            }
+        }
+
+        > .o_statusbar_status {
+            .o-flex-flow(row-reverse, wrap-reverse);
+            .o-align-self(stretch);
+            .o-align-items(stretch);
+            overflow-x: hidden; // to prevent horizontal scroll due to last arrow
+        }
+
+        // Touch device mode
+        > .o_statusbar_buttons > .btn-group {
+            > .dropdown-toggle {
+                &:after {
+                    .o-caret-down();
+                    margin-left: @odoo-form-spacing-unit;
+                }
+            }
+
+            > .dropdown-menu {
+                padding: 5px 0 2px 0;
+                min-width: 100px;
+
+                > li > .btn {
+                    min-width: 100%;
+                    margin-bottom: 3px;
+                }
+            }
+        }
+    }
+
+    // Sheet
+    .o_form_sheet_bg {
+        .o-flex(1, 0, auto);
+        padding-bottom: 8px; // keep the padding-bottom in mobile to separate chatter from sheet
+        @media (min-width: @screen-sm-min) {
+            padding: 8px 0;
+        }
+        .o_form_sheet {
+            .container;
+            .o-webclient-padding(@top: 24px, @bottom: 24px);
+        }
+    }
+
+    // Chatter
+    .oe_chatter {
+        .o-flex(1000, 0, auto);
+        .o-webclient-padding(@top: 16px, @bottom: 16px);
+        .container;
+    }
+
+    // Button box
+    .oe_button_box {
+        margin: -@odoo-sheet-vpadding -@odoo-horizontal-padding @odoo-sheet-vpadding -@odoo-horizontal-padding;
+        text-align: right;
+
+        > .oe_stat_button, > .o_dropdown_more {
+            .o-flex(0, 0, auto);
+            width: percentage(1/3); // Adapt the number of visible buttons for each screen width
+            @media (min-width: @screen-sm-min) {
+                width: percentage(1/5);
+            }
+            @media (min-width: @screen-md-min) {
+                width: percentage(1/7);
+            }
+            @media (min-width: @screen-lg-min) {
+                width: percentage(1/8);
+            }
+        }
+
+        > .o_dropdown_more {
+            .o-position-absolute(100%, 0);
+            min-width: 0;
+            > li > .oe_stat_button {
+                width: 100%;
+            }
+        }
+    }
+
+    // Title & avatar
+    .oe_title {
+        @media (max-width: @screen-xxs-max) {
+            word-break: break-all;
+        }
+        @media (min-width: @screen-xs-min) {
+            padding-right: @odoo-innergroup-rpadding;
+        }
+        > h1, > h2, > h3 {
+            width: 100%; // Needed because inline-block when is a hx.o_row 
+            margin-top: 0;
+            margin-bottom: 0;
+            line-height: inherit;
+        }
+    }
+
+    .oe_avatar {
+        margin-bottom: 10px;
+        
+        > img {
+            max-width: @odoo-avatar-size;
+            max-height: @odoo-avatar-size;
+        }
+
+        + .oe_title {
+            padding-right: @odoo-avatar-size + 10;
+        }
+    }
+
+    // Groups
+    .o_group {
+        display: inline-block;
+        width: 100%;
+        margin: 10px 0;
+
+        // o_group contains nested groups
+        .o-generate-groups(@odoo-form-group-cols);
+        .o-generate-groups(@n, @i: 1) when (@i =< @n) {
+            .o_group_col_@{i} {
+                display: inline-block;
+                width: floor(100% / 12 * @i);
+                vertical-align: top;
+                @media (max-width: @screen-sm-max) {
+                    width: 100%;
+                }
+            }
+            .o-generate-groups(@n, @i + 1);
+        }
+
+        &.o_inner_group {
+            display: inline-table;
+
+            > tbody > tr > td {
+                padding: 0 @odoo-innergroup-rpadding 0 0;
+                &.o_td_label {
+                    width: 0%;
+                    padding: 0 15px 0 0;
+                    min-width: 150px;
+                }
+                vertical-align: top;
+
+                span, .o_form_field_boolean, .oe_avatar, .o_form_uri {
+                    &.o_form_field {
+                        width: auto;
+                    }
+                }
+            }
+
+            @media (max-width: @screen-xxs-max) { // Not xs max to keep sm layout a bit further
+                .form-break-table();
+            }
+        }
+
+        .o_form_field {
+            width: 100%;
+
+            @media (min-width: @screen-xs-min) {
+                &.o_text_overflow {
+                    width: 1px!important; // hack to make the table layout believe it is a small element (so that the table does not grow too much) ...
+                    min-width: 100%;      // ... but in fact it takes the whole table space
+                }
+            }
+
+            > .btn {
+                .o-flex(0, 0, auto);
+                padding: 0 10px;
+            }
+        }
+
+        @media (min-width: @screen-xs-min) {
+            .o_form_label {
+                margin-bottom: @odoo-form-spacing-unit;
+            }
+        }
+    }
+
+    // Labels
+    .o_form_label {
+        margin: 0;
+
+        @media (max-width: @screen-xxs-max) {
+            margin-top: 3px;
+
+            &.o_form_label_empty {
+                display: none;
+            }
+        }
+    }
+
+    // Form fields
+    .o_form_field {
+        display: inline-block;
+        margin-bottom: @odoo-form-spacing-unit;
+    }
+
+    // Block fields
+    .note-editor, .oe_form_field_html, .oe_form_field_html_text, .oe_form_field_text, .o_view_manager_content {
+        display: block;
+    }
+
+    // Flex fields
+    .o_form_field_many2one, .o_form_field_radio, .o_form_field_many2manytags, .o_form_field_percent_pie, .o_form_field_monetary, .o_form_field_binary_file {
+        .o-inline-flex-display();
+        > span, > button {
+            .o-flex(0, 0, auto);
+        }
+    }
+
+    .o_form_field, .btn, .o_form_statusbar {
+        .o_form_field {
+            margin-bottom: 0px;
+        }
+    }
+
+    // Input in field
+    .o_form_field {
+        .o_form_input_dropdown {
+            width: 100%;
+        }
+        .o_form_input {
+            display: inline-block;
+        }
+    }
+
+    // Textarea
+    .o_form_textarea {
+        white-space: pre-wrap;
+        width: 100%;
+        &.oe_inline {
+            width: 100%!important;
+            @media (min-width: @screen-xs-min) {
+                width: 45%!important;
+            }
+        }
+    }
+
+    // Radio buttons
+    .o_form_field_radio {
+        .o_radio_item {
+            .o-flex(0, 0, auto);
+            .o-flex-display();
+            .o-align-items(center);
+
+            > input {
+                .o-flex(0, 0, auto);
+                margin: 0 @odoo-form-spacing-unit 0 0;
+            }
+            > label {
+                margin: 0;
+            }
+        }
+
+        &.o_horizontal {
+            .o_radio_item {
+                margin-right: @odoo-form-spacing-unit * 2;
+            }
+        }
+
+        &.o_vertical {
+            .o-flex-flow(column, nowrap);
+            .o_radio_item {
+                margin-bottom: @odoo-form-spacing-unit;
+            }
+        }
+    }
+
+    // One2Many, Many2Many outside of group
+    .o_form_field {
+        &.o_view_manager_content, &.o_form_field_one2many, &.o_form_field_many2many {
+            width: 100%;
+            > div {
+                width: 100%;
+            }
+        }
+    }
+
+    // Many2many tags
+    .o_form_field_many2manytags {
+        .o-flex-flow(row, wrap);
+        .o-align-items(baseline);
+        .badge {
+            .o-flex(0, 0, auto);
+            > .o_badge_text {
+                .o-text-overflow(inline-block);
+                max-width: 200px;
+            }
+        }
+    }
+
+    // Percent pie
+    .o_form_field_percent_pie {
+        .o-align-items(center);
+        > .o_pie {
+            margin-right: 10px;
+        }
+    }
+
+    // Kanban selection
+    .o_form_sheet > .o_kanban_selection {
+        float: right;
+    }
+
+    // Specific style classes
+    .o_group.o_inner_group.oe_subtotal_footer {
+        .oe_right;
+    }
+}
+
+// Overriden style when form view in modal
+.modal .modal-dialog {
+    .o_form_view {
+        .o_form_sheet_bg {
+            padding: 0;
+        }
+        .oe_chatter {
+            display: none;
+        }
+
+        @media (max-width: @screen-sm-max) {
+            .o_group.o_inner_group > tbody > tr > td.o_td_label {
+                min-width: 100px;
+            }
+        }
+    }
+    &:not(.modal-lg) .o_form_view {
+        .o_group {
+            width: 100%;
+        }
+    }
+
+    &.modal-sm .o_form_view {
+        .o_group {
+            .form-break-table();    
+        }
+    }
+}
+
+@media print {
+    .o_form_statusbar, .oe_button_box {
+        display: none !important;
+    }
+}

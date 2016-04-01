@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- remove me in master - kept for backwards compatibility -->
+        <record id="account_config_settings_inherit" model="ir.ui.view">
+            <field name="name">account.config.settings.inherited</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="model">account.config.settings</field>
+            <field name="arch" type="xml">
+                <data></data>
+            </field>
+        </record>
+    </data>
+</openerp>

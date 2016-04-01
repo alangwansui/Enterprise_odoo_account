@@ -1,0 +1,45 @@
+
+.o_application_switcher {
+    background: transparent url("../img/application-switcher-bg.jpg") no-repeat scroll center center;
+    .o-background-size(cover);
+
+    font-size: @odoo-font-size-base-touch;
+
+    .o_apps {
+        .user-select(none);
+
+        .o_app {
+            background: transparent;
+            text-decoration: none;
+            text-align: center;
+            outline: none;
+
+            .o_app_icon {
+                width: 80%;
+                max-width: 80px;
+                border-radius: 8%;
+            }
+
+            .o_caption {
+                .o-text-overflow(block);
+                color: @odoo-brand-lightsecondary;
+                margin-top: 8px;
+            }
+        }
+    }
+
+    .o_application_switcher_footer {
+        .user-select(none);
+        > img {
+            width: 130px;
+        }
+    }
+}
+
+.database_expiration_panel {
+    text-align: center;
+}
+
+.oe_instance_register_form, .oe_instance_success, .oe_instance_error {
+    display: none;
+}
