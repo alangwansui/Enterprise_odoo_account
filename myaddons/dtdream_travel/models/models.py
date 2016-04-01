@@ -11,7 +11,8 @@ class dtdream_travel(models.Model):
         for rec in self:
             rec.total = rec.traveling_fee + rec.incity_fee + rec.hotel_expense + rec.other_expense
 
-    @api.one
+    @api.multi
+    @api.onchange("state")
     def _compute_has_next(self):
         if self.state == "1":
             self.has_next = True
@@ -23,20 +24,28 @@ class dtdream_travel(models.Model):
             self.has_next = True
         else:
             self.has_next = False
+        print "----------------------------->11"
+        print self.state
+        print self.has_next
 
-    @api.one
-    def _compute_has_next(self):
-        if self.state == "1" and self.shenpiren_second.id:
-            self.has_next = True
-        elif self.state == "2" and self.shenpi_third.id:
-            self.has_next = True
-        elif self.state == "3" and self.shenpi_fourth.id:
-            self.has_next = True
-        elif self.state == "4" and self.shenpi_fifth.id:
-            self.has_next = True
+    @api.multi
+    @api.onchange("state")
+    def _compute_is_shenpiren(self):
+        if self.state == "1" and self.env.user.id == self.shenpi_first.id:
+            self.is_shenpiren = True
+        elif self.state == "2" and self.env.user.id == self.shenpi_second.id:
+            self.is_shenpiren = True
+        elif self.state == "3" and self.self.env.user.id == self.shenpi_third.id:
+            self.is_shenpiren = True
+        elif self.state == "4" and self.env.user.id == self.shenpi_fourth.id:
+            self.is_shenpiren = True
+        elif self.state == "5" and self.env.user.id == self.shenpi_fifth.id:
+            self.is_shenpiren = True
         else:
-            self.has_next = False
-            self.write({'state': '99', "shenpiren": ''})
+            self.is_shenpiren = False
+        print "------------------------------>222"
+        print self.env.user.id
+        print self.state
 
     name = fields.Char(string="申请人", default=lambda self: self.env["hr.employee"].search(
         [("login", "=", self.env.user.login)]).name, readonly=True)
