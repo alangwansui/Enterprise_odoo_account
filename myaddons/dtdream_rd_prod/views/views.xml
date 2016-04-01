@@ -130,7 +130,7 @@
                                          <!--<field name="state" />-->
                                     </group>
                                     <group>
-                                        <field name="department_2" domain="[('parent_id.parent_id.parent_id','=',False)]"/>
+                                        <field name="department_2" domain="[('parent_id.parent_id','=',False)]"/>
                                     </group>
                                 </group>
                             </page>
