@@ -41,7 +41,7 @@
               <field name="leave_date" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="actual_leavig_date" readonly="True" states="5,6,7,99"/>
             </group>
-            <notebook>
+            <notebook states="3,4,5,6,7,99">
               <page string="离岗前环节" states="3,4,5,6,7,99">
                 <field name="leaving_handle_process_ids1" >
                   <tree editable="bottom" create="false" delete="false">
@@ -66,8 +66,8 @@
                 </field>
               </page>
             </notebook>
-            <notebook>
-              <page string="审批记录" states="2,3,4,5,6,7,99">
+            <notebook states="2,3,4,5,6,7,99">
+              <page string="审批记录">
                 <field name="opinion_ids" readonly="True">
                   <tree editable="bottom" default_order="create_date asc">
                       <field name="name" />
