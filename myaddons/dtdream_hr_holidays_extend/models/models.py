@@ -20,6 +20,7 @@ from openerp.exceptions import ValidationError
 #     @api.constrains("number")
 #     def chuangjian_number(self):
 #         print self.number
+#         print self.number
 #         if self.number > 0:
 #             raise ValidationError('您已经有审批人配置，请编辑原有记录。')
 
@@ -32,32 +33,63 @@ class dtdream_hr_holidays_extend(models.Model):
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
     create_time= fields.Datetime(string='申请时间',default=datetime.today()- relativedelta(hours=8),readonly=1)
 
-    shenpiren1=fields.Many2one('hr.employee',string="第一审批人",
-                               )
+    shenpiren1=fields.Many2one('hr.employee',string="第一审批人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).department_id.assitant_id)
     shenpiren2=fields.Many2one('hr.employee',string="第二审批人")
     shenpiren3=fields.Many2one('hr.employee',string="第三审批人")
     shenpiren4=fields.Many2one('hr.employee',string="第四审批人")
     shenpiren5=fields.Many2one('hr.employee',string="第五审批人")
 
+    is_confirm2approved=fields.Boolean(default=False)
+    is_confirm22approved=fields.Boolean(default=False)
+    is_confirm32approved=fields.Boolean(default=False)
+    is_confirm42approved=fields.Boolean(default=False)
+    @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5')
+    def change(self):
+        if not self.shenpiren2:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm2approved=True
+        elif not self.shenpiren3:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm22approved=True
+        elif not self.shenpiren4:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm32approved=True
+        elif not self.shenpiren5:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm42approved=True
+        print self.is_confirm2approved
+        print self.is_confirm22approved
+        print self.is_confirm32approved
+        print self.is_confirm42approved
+
+
+
+
     # current_shenpiren_id=fields.Integer(default=lambda self:self.shenpiren.search([('create_uid','=',self.env.user.id)]).shenpiren1,string='当前审批人员工id')
     current_shenpiren_id=fields.Integer()
-
+    current_shenpiren=fields.Many2one('hr.employee',string='当前审批人')
     list=fields.Boolean(default=True)
     state=fields.Selection([('draft', '草稿'), ('cancel', 'Cancelled'),('confirm', '一级审批'),
                             ('confirm2', '二级审批'),('confirm3', '三级审批'),('confirm4', '四级审批'),
                             ('confirm5', '五级审批'), ('refuse', 'Refused'), ('validate1', 'Second Approval'), ('validate', 'Approved')],
                            'Status', readonly=True, track_visibility='onchange', copy=False,default='draft')
 
-
-    @api.constrains(shenpiren1)
-    def un(self):
-        print self.env['hr.department'].search([('id','=',self.department_id.id)])
-
-
     @api.one
     def _compute_is_shenpiren(self):
-        if self.current_shenpiren_id==self.env['hr.employee'].search([('login','=',self.env.user.login)]).id:
+        if (self.shenpiren1.user_id.id==self.env.user.id) and self.state=='confirm':
             self.is_shenpiren=True
+        elif (self.shenpiren2.user_id.id==self.env.user.id) and self.state=='confirm2':
+            self.is_shenpiren=True
+            print "confirm2"
+        elif (self.shenpiren3.user_id.id==self.env.user.id) and self.state=='confirm3':
+            self.is_shenpiren=True
+            print "confirm3"
+        elif (self.shenpiren4.user_id.id==self.env.user.id) and self.state=='confirm4':
+            self.is_shenpiren=True
+            print "confirm4"
+        elif (self.shenpiren5.user_id.id==self.env.user.id) and self.state=='confirm5':
+            self.is_shenpiren=True
+            print "confirm5"
         else:
             self.is_shenpiren=False
 
@@ -70,43 +102,48 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
-    def holidays_confirm(self, cr, uid, ids, context=None):
-        print "holidays_confirm"
-        print cr
-        print uid
-        print ids
-        return self.write(cr, uid, ids, {'state': 'confirm'})
 
-    def holidays_confirm2(self, cr, uid, ids, context=None):
-        print "holidays_confirm2"
-        print cr
-        print uid
-        print ids
-        return self.write(cr, uid, ids, {'state': 'confirm2'})
+    @api.multi
+    def holidays_confirm(self):
+        self.write({'state':'confirm','current_shenpiren':self.shenpiren1.id})
 
-    def holidays_confirm3(self, cr, uid, ids, context=None):
-        print "holidays_confirm3"
-        print cr
-        print uid
-        print ids
-        return self.write(cr, uid, ids, {'state': 'confirm3'})
+    @api.multi
+    def holidays_confirm2(self):
+        # if self.is_confirm2approved:
+        #     self.write({'state':'validate','current_shenpiren':''})
+        # else:
+            self.write({'state':'confirm2','current_shenpiren':self.shenpiren2.id})
 
-    def holidays_confirm4(self, cr, uid, ids, context=None):
-        print "holidays_confirm4"
-        print cr
-        print uid
-        print ids
-        print set(ids)
-        return self.write(cr, uid, ids, {'state': 'confirm4'})
+    @api.multi
+    def holidays_confirm3(self):
+         # if self.is_confirm22approved:
+         #    self.write({'state':'validate','current_shenpiren':''})
+         # else:
+            self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
 
-    def holidays_confirm5(self, cr, uid, ids, context=None):
-        return self.write(cr, uid, ids, {'state': 'confirm5'})
+    @api.multi
+    def holidays_confirm4(self):
+         # if self.is_confirm32approved:
+         #    self.write({'state':'validate','current_shenpiren':''})
+         # else:
+            self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
+
+    @api.multi
+    def holidays_confirm5(self):
+         # if self.is_confirm42approved:
+         #    self.write({'state':'validate','current_shenpiren':''})
+         # else:
+            self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
+
+
 
     def holidays_reset(self, cr, uid, ids, context=None):#重写该方法，开放重置按钮权限
-        self.write(cr, openerp.SUPERUSER_ID, ids, {
+        print "123"
+        self.write(cr, uid, ids, {
             'state': 'draft',
             'manager_id': False,
             'manager_id2': False,
+            'current_shenpiren':""
         })
         to_unlink = []
         for record in self.browse(cr, uid, ids, context=context):
@@ -117,12 +154,17 @@ class dtdream_hr_holidays_extend(models.Model):
             self.unlink(cr, uid, to_unlink, context=context)
         return True
 
+    # @api.multi
+    # def holidays_reset(self):
+    #     print "1111111111"
+    #     self.write({'state':'draft','current_shenpiren':''})
+
 
     def holidays_validate(self, cr, uid, ids, context=None):
         obj_emp = self.pool.get('hr.employee')
         ids2 = obj_emp.search(cr, uid, [('user_id', '=', uid)])
         manager = ids2 and ids2[0] or False
-        self.write(cr, uid, ids, {'state': 'validate'}, context=context)
+        self.write(cr, uid, ids, {'state': 'validate','current_shenpiren':""}, context=context)
         data_holiday = self.browse(cr, uid, ids)
         for record in data_holiday:
             if record.double_validation:

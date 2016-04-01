@@ -19,7 +19,7 @@
                             <field name="create_time"></field>
                         </field>
                       <field name="name" position="before">
-                            <field name="current_shenpiren_id"></field>
+                            <field name="current_shenpiren"></field>
                       </field>
                       <field name="name" position="before">
                             <field name="is_shenpiren"></field>
@@ -35,15 +35,18 @@
                         <xpath expr='//button[@name="confirm"]' position="replace">
                              <button string="提交" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
                         </xpath>
-                        <xpath expr='//button[@name="refuse"]' position="attributes">
-                            <attribute name="groups">base.group_user</attribute>
-                        </xpath>
                         <xpath expr='//button[@name="reset"]' position="replace">
                              <button string="Reset to Draft" name="reset" type="workflow"
                                      attrs="{'invisible': ['|', ('can_reset', '=', False), ('state', 'not in', ['refuse'])]}"/>
                         </xpath>
                         <xpath expr='//button[@name="validate"]' position="replace">
-                            <button string="Approve" name="validate"  type="workflow"  groups="base.group_user" class="oe_highlight" attrs="{'invisible':[('state','not in','confirm')]}"/>
+                            <button string="Approve" name="validate"  type="workflow"  groups="base.group_user" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
+                        </xpath>
+                        <xpath expr='//button[@name="refuse"]' position="replace">
+                            <button string="Refuse" name="refuse" type="workflow" groups="base.group_user" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
+                        </xpath>
+                        <xpath expr='//field[@name="state"]' position="attributes">
+                             <attribute name="statusbar_visible">draft,validate</attribute>
                         </xpath>
 
 
@@ -96,10 +99,27 @@
                         <field name="res_model">hr.holidays</field>
                         <field name="view_type">form</field>
                         <field name="view_mode">tree,form,calendar</field>
-                        <field name="context">{ 'search_default_approve':1}</field>
-                        <field name="domain">[('type','=','remove')]</field>
+                        <field name="context">{}</field>
+                        <field name="domain">[('type','=','remove'),('current_shenpiren.user_id','=',uid)]</field>
                         <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
+                  <act_window
+            id="hr_holidays.act_hr_leave_request_to_meeting"
+            name="Leave Meetings"
+            src_model="hr.holidays"
+            res_model="calendar.event"
+            view_mode="tree,form,calendar"
+            view_type="form"/>
+                  <!--<record model="ir.ui.view" id="hr_holidays.view_holiday_allocation_tree_inher">
+                        <field name="name">hr.holidays.allocation.tree.inher</field>
+                        <field name="model">hr.holidays</field>
+                        <field name="inherit_id" ref="hr_holidays.view_holiday_allocation_tree"></field>
+                        <field name="arch" type="xml">
+                            <field name="name" position="before">
+                                <field name="is_shenpiren"></field>
+                            </field>
+                        </field>
+                  </record>-->
 
 
                 <menuitem parent="hr_holidays.menu_hr_holidays_my_leaves" id="hr_holidays.menu_open_ask_holidays_new" action="hr_holidays.open_ask_holidays" sequence="22"/>

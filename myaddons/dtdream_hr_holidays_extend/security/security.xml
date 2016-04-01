@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data>
 
         <!--重写规则，使能看到所有人记录-->
         <record id="hr_holidays.property_rule_holidays_employee" model="ir.rule">
@@ -10,6 +10,14 @@
             <field name="perm_create" eval="False"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_holidays.property_rule_holidays_employee_write" model="ir.rule">
+            <field name="name">Employee Holidays Create, Write, Unlink inher</field>
+            <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
+            <field name="domain_force">[('state', 'in', ['draft', 'confirm','confirm2','confirm3','confirm4','confirm5', 'refuse'])]</field>
+            <field name="perm_read" eval="False"/>
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
         </record>
 

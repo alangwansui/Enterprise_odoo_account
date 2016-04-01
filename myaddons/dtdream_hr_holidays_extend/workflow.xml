@@ -56,35 +56,43 @@
 
 
     <!--      ============================================-confirm============================================                 -->
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm2refuse"> <!-- 2. submitted->refused (refuse signal) -->
+
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm2confirm2">
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_confirm2" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm2approved==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm2refuse">
         <field name="act_from" ref="hr_holidays.act_confirm" />
         <field name="act_to" ref="hr_holidays.act_refuse" />
         <field name="signal">refuse</field>
         <field name="condition">True</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm2confirm2"> <!-- 2. submitted->refused (refuse signal) -->
-        <field name="act_from" ref="hr_holidays.act_confirm" />
-        <field name="act_to" ref="hr_holidays.act_confirm2" />
-        <field name="signal">validate</field>
-        <field name="condition">True</field>
-        <field name="group_id" ref="base.group_user"/>
-    </record>
-  <record model="workflow.transition" id="hr_holidays.holiday_confirm2validate"> <!-- 2. submitted->accepted (validate signal) if not double_validation-->
+  <record model="workflow.transition" id="hr_holidays.holiday_confirm2validate">
         <field name="act_from" ref="hr_holidays.act_confirm" />
         <field name="act_to" ref="hr_holidays.act_validate" />
         <field name="signal">validate</field>
-        <field name="condition">False</field>
+        <field name="condition">is_confirm2approved</field>
         <field name="group_id" ref="base.group_user"/>
   </record>
 
+  <record model="workflow.transition" id="hr_holidays.holiday_confirm2draft"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_draft" />
+        <field name="signal"></field>
+        <field name="condition">False</field>
+        <field name="group_id" ref="base.group_user"/>
+  </record>
 
     <!--      ============================================-confirm2============================================                 -->
     <record model="workflow.transition" id="hr_holidays.holiday_confirm22confirm3">
         <field name="act_from" ref="hr_holidays.act_confirm2" />
         <field name="act_to" ref="hr_holidays.act_confirm3" />
         <field name="signal">validate</field>
-        <field name="condition">True</field>
+        <field name="condition">is_confirm22approved==False</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
     <record model="workflow.transition" id="hr_holidays.holiday_confirm22refuse">
@@ -98,68 +106,68 @@
         <field name="act_from" ref="hr_holidays.act_confirm2" />
         <field name="act_to" ref="hr_holidays.act_validate" />
         <field name="signal">validate</field>
-        <field name="condition">False</field>
+        <field name="condition">is_confirm22approved</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
 
 
     <!--      ============================================-confirm3============================================                 -->
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm32confirm4"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm32confirm4">
         <field name="act_from" ref="hr_holidays.act_confirm3" />
         <field name="act_to" ref="hr_holidays.act_confirm4" />
         <field name="signal">validate</field>
-        <field name="condition">True</field>
+        <field name="condition">is_confirm32approved==False</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm32refuse"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm32refuse">
         <field name="act_from" ref="hr_holidays.act_confirm3" />
         <field name="act_to" ref="hr_holidays.act_refuse" />
         <field name="signal">refuse</field>
         <field name="condition">True</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm32validate"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm32validate">
         <field name="act_from" ref="hr_holidays.act_confirm3" />
         <field name="act_to" ref="hr_holidays.act_validate" />
         <field name="signal">validate</field>
-        <field name="condition">False</field>
+        <field name="condition">is_confirm32approved</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
 
 
     <!--      ============================================-confirm4============================================                 -->
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm42confirm5"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm42confirm5">
         <field name="act_from" ref="hr_holidays.act_confirm4" />
         <field name="act_to" ref="hr_holidays.act_confirm5" />
         <field name="signal">validate</field>
-        <field name="condition">True</field>
+        <field name="condition">is_confirm42approved==False</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm42refuse"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm42refuse">
         <field name="act_from" ref="hr_holidays.act_confirm4" />
         <field name="act_to" ref="hr_holidays.act_refuse" />
         <field name="signal">refuse</field>
         <field name="condition">True</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm42validate"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm42validate">
         <field name="act_from" ref="hr_holidays.act_confirm4" />
         <field name="act_to" ref="hr_holidays.act_validate" />
         <field name="signal">validate</field>
-        <field name="condition">False</field>
+        <field name="condition">is_confirm42approved</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
 
 
     <!--      ============================================-confirm5============================================                 -->
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm52refuse"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm52refuse">
         <field name="act_from" ref="hr_holidays.act_confirm5" />
         <field name="act_to" ref="hr_holidays.act_refuse" />
         <field name="signal">refuse</field>
         <field name="condition">True</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="hr_holidays.holiday_confirm52validate"> <!-- 2. submitted->refused (refuse signal) -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm52validate">
         <field name="act_from" ref="hr_holidays.act_confirm5" />
         <field name="act_to" ref="hr_holidays.act_validate" />
         <field name="signal">validate</field>
@@ -167,7 +175,7 @@
         <field name="group_id" ref="base.group_user"/>
     </record>
 
-  <record model="workflow.transition" id="hr_holidays.holiday_refuse2draft"> <!-- 5. refused->draft (reset signal) -->
+  <record model="workflow.transition" id="hr_holidays.holiday_refuse2draft">
         <field name="act_from" ref="hr_holidays.act_refuse" />
         <field name="act_to" ref="hr_holidays.act_draft" />
         <field name="signal">reset</field>
