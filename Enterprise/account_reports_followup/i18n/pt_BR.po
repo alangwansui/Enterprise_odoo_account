@@ -1,0 +1,526 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * account_reports_followup
+# 
+# Translators:
+# Grazziano Duarte <g.negocios@outlook.com.br>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 9.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-22 13:06+0000\n"
+"PO-Revision-Date: 2016-03-03 15:11+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/odoo/odoo-9/language/pt_BR/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line3
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"Despite several reminders, your account is still not settled.\n"
+"\n"
+"Unless full payment is made in next 8 days, then legal action for the recovery of the debt will be taken without further notice.\n"
+"\n"
+"I trust that this action will prove unnecessary and details of due payments is printed below.\n"
+"\n"
+"In case of any queries concerning this matter, do not hesitate to contact our accounting department.\n"
+"\n"
+"Best Regards,\n"
+msgstr "\nPrezado %(partner_name)s,\n\nApesar de diversas mensagens, sua pendência de pagamento ainda não foi resolvida.\n\nA menos que o pagamento total seja providenciado nos próximos dias, as ações legais necessárias para recuperar esse débito serão tomadas sem outro aviso prévio\n\nEsperamos que essa ação não seja necessária, os detalhes da fatura em aberto encontram-se abaixo.\n\nEm caso de dúvidas com relação a esta questão, não deixe de entrar em contato com nosso departamento financeiro.\n\nAtenciosamente,\n"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line4
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line5
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"Despite several reminders, your account is still not settled.\n"
+"\n"
+"Unless full payment is made in next 8 days, then legal action for the recovery of the debt will be taken without further notice.\n"
+"\n"
+"I trust that this action will prove unnecessary and details of due payments is printed below.\n"
+"\n"
+"In case of any queries concerning this matter, do not hesitate to contact our accounting department.\n"
+"\n"
+"Best Regards,\n"
+"            "
+msgstr "\nCaro %(partner_name)s,\n\nApesar de várias insistências, sua pendência ainda não está resolvida.\n\nA menos que o pagamento integral seja feito nos próximos dias, então a ação legal para a cobrança da dívida será tomada sem aviso prévio.\n\nEspero que esta ação será desnecessária e detalhes de pagamentos devidos estão impresso abaixo.\nEm caso de dúvidas relativas a este assunto, não hesite em contactar o nosso departamento financeiro.\n\nAtenciosamente,\n            "
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line1
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"Exception made if there was a mistake of ours, it seems that the following amount stays unpaid. Please, take appropriate measures in order to carry out this payment in the next 8 days.\n"
+"\n"
+"Would your payment have been carried out after this mail was sent, please ignore this message. Do not hesitate to contact our accounting department.  \n"
+"\n"
+"Best Regards,\n"
+msgstr "\nPrezado ${object.name},\n\nConstam em nossos registros uma fatura não paga. Por favor, providencie o pagamento nos próximos dias.\nSe o pagamento foi efetuado após o envio desta mensagem, queira nos desculpas.\nEm caso de dúvidas não deixe de entrar em contato conosco.\n\nAtenciosamente,\n"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line2
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"We are disappointed to see that despite sending a reminder, that your account is now seriously overdue.\n"
+"\n"
+"It is essential that immediate payment is made, otherwise we will have to consider placing a stop on your account which means that we will no longer be able to supply your company with (goods/services).\n"
+"Please, take appropriate measures in order to carry out this payment in the next 8 days.\n"
+"\n"
+"If there is a problem with paying invoice that we are not aware of, do not hesitate to contact our accounting department, so that we can resolve the matter quickly.\n"
+"\n"
+"Details of due payments is printed below.\n"
+"\n"
+"Best Regards,\n"
+msgstr "\nCaro %(partner_name)s,\n\nEstamos decepcionados ao ver que, apesar de enviar um lembrete, sua conta está seriamente atrasada.\n\nÉ essencial que o pagamento imediato seja efetuado, caso contrário seremos forçados a cancelar seu registro significando a interrupção de fornecimento de produtos/serviços para sua empresa.\nPor favor, adote as medidas cabíveis para conduzir este pagamento nos próximos 8 dias.\n\nSe existe algum problema com a fatura do qual não temos conhecimento, não hesite em contatar o nosso departamento financeiro, para que possamos resolver o mais rápido possível.\n\nOs detalhes do pagamento estão descritos abaixo.\n\nCordialmente,\n"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid ""
+"<b>%(partner_name)s</b>: Partner Name\n"
+"                                <b>%(date)s</b>: Current Date\n"
+"                                <b>%(user_signature)s</b>: User Name\n"
+"                                <b>%(company_name)s</b>: User's Company Name"
+msgstr "<b>%(partner_name)s</b>: Nome do Parceiro\n<b>%(date)s</b>: Data Atual\n<b>%(user_signature)s</b>: Nome de Usuário\n<b>%(company_name)s</b>: Nome de usuário da Empresa"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "<i class=\"fa fa-circle\" style=\"color: green;\"/> Good Debtor"
+msgstr "<i class=\"fa fa-circle\" style=\"color: green;\"/> Devedor Bom"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "<i class=\"fa fa-circle\" style=\"color: grey;\"/> Normal Debtor"
+msgstr "<i class=\"fa fa-circle\" style=\"color: grey;\"/> Devedor Normal"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "<i class=\"fa fa-circle\" style=\"color: red;\"/> Bad Debtor"
+msgstr "<i class=\"fa fa-circle\" style=\"color: red;\"/> Devedor Ruim"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_report_context_followup
+msgid "A particular context for the followup report"
+msgstr "Um contexto particular para o relatório de acompanhamento"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_report_context_followup_all
+msgid "A progress bar for followup reports"
+msgstr "Uma barra de progresso para os relatórios de acompanhamento"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_followup_followup
+msgid "Account Follow-up"
+msgstr "Acompanhamento de Contas"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_manual_action_note
+msgid "Action To Do"
+msgstr "Ação a ser feita"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "After"
+msgstr "Depois"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_manual_action_responsible_id
+msgid "Assign a Responsible"
+msgstr "Associar a um Responsável"
+
+#. module: account_reports_followup
+#: selection:res.partner,trust:0
+msgid "Bad Debtor"
+msgstr "Devedor Ruim"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_move_line_result
+msgid "Balance"
+msgstr "Saldo"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line3
+msgid "Call the customer on the phone"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:ir.actions.act_window,help:account_reports_followup.action_account_followup_definition_form
+msgid "Click to define follow-up levels and their related actions."
+msgstr "Clique para definir os níveis de acompanhamento e suas ações relacionadas."
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_company_id
+msgid "Company"
+msgstr "Empresa"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_name
+msgid "Company Name"
+msgstr "Nome da Empresa"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_config_settings_inherit
+msgid "Configure your follow-up levels"
+msgstr "Configure o nível de cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_create_uid
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_create_uid
+msgid "Created by"
+msgstr "Criado por"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_create_date
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_create_date
+msgid "Created on"
+msgstr "Criado em"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_res_partner_payment_note
+msgid "Customer Payment Promise"
+msgstr "Promessa de Pagamento do Cliente"
+
+#. module: account_reports_followup
+#: sql_constraint:account_followup.followup.line:0
+msgid "Days of the follow-up levels must be different"
+msgstr "Os dias dos níveis de cobrança devem ser diferentes"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_res_partner_trust
+msgid "Degree of trust you have in this debtor"
+msgstr "Grau de confiança que você tem neste devedor"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_display_name
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_display_name
+msgid "Display Name"
+msgstr "Nome de Exibição"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Do it Later"
+msgstr "Fazer isso mais tarde"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Done"
+msgstr "Concluído"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_delay
+msgid "Due Days"
+msgstr "Dias em Atraso"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_followup_id
+msgid "Follow Ups"
+msgstr "Cobranças"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_name
+msgid "Follow-Up Action"
+msgstr "Ação de Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_followup_line_ids
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_form
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_tree
+msgid "Follow-up"
+msgstr "Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_followup_followup_line
+msgid "Follow-up Criteria"
+msgstr "Critérios de Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_move_line_followup_line_id
+msgid "Follow-up Level"
+msgstr "Nível de Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.ui.menu,name:account_reports_followup.account_followup_menu
+msgid "Follow-up Levels"
+msgstr "Níveis de Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_res_partner_payment_responsible_id
+msgid "Follow-up Responsible"
+msgstr "Responsável pela Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_tree
+msgid "Follow-up Steps"
+msgstr "Passos da Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.actions.act_window,help:account_reports_followup.action_account_followup_definition_form
+msgid ""
+"For each step, specify the actions to be taken and delay in days. It is\n"
+"                possible to use print and e-mail templates to send specific messages to\n"
+"                the customer."
+msgstr "Para cada etapa, especificar as ações a serem tomadas e atraso em dias. É\npossível usar modelos de impressão e e-mail para enviar mensagens específicas para\no cliente."
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_sequence
+msgid "Gives the sequence order when displaying a list of follow-up lines."
+msgstr "Define a sequência ao mostrar a lista de linhas de cobrança."
+
+#. module: account_reports_followup
+#: selection:res.partner,trust:0
+msgid "Good Debtor"
+msgstr "Devedor Bom"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_id
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_id
+msgid "ID"
+msgstr "ID"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_move_line
+msgid "Journal Item"
+msgstr "Item de Diário"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup___last_update
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line___last_update
+msgid "Last Modified on"
+msgstr "Última modificação em"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_write_uid
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_write_uid
+msgid "Last Updated by"
+msgstr "Última atualização por"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_write_date
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_write_date
+msgid "Last Updated on"
+msgstr "Última atualização em"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_move_line_followup_date
+msgid "Latest Follow-up"
+msgstr "Última Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_report_context_followup_level
+msgid "Level"
+msgstr "Nível"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Log a Note"
+msgstr "Deixar nota"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_manual_action
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "Manual Action"
+msgstr "Ação Manual"
+
+#. module: account_reports_followup
+#: code:addons/account_reports_followup/account_followup_report.py:57
+#, python-format
+msgid "Manual action done\n"
+msgstr ""
+
+#. module: account_reports_followup
+#: code:addons/account_reports_followup/account_followup.py:107
+#, python-format
+msgid ""
+"No follow-up is defined for the company \"%s\".\n"
+" Please define one."
+msgstr ""
+
+#. module: account_reports_followup
+#: selection:res.partner,trust:0
+msgid "Normal Debtor"
+msgstr "Devedor Normal"
+
+#. module: account_reports_followup
+#: sql_constraint:account_followup.followup:0
+msgid "Only one follow-up per company is allowed"
+msgstr "Apenas uma cobrança por empresa é permitida"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_res_partner_payment_responsible_id
+msgid ""
+"Optionally you can assign a user to this field, which will make him "
+"responsible for the action."
+msgstr "Opcionalmente você pode definir um usuário neste campo, que o fará responsável pela ação."
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_res_partner
+msgid "Partner"
+msgstr "Parceiro"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.account_move_line_partner_tree
+msgid "Partner entries"
+msgstr "Lançamentos do parceiro"
+
+#. module: account_reports_followup
+#: model:ir.actions.act_window,name:account_reports_followup.action_account_followup_definition_form
+msgid "Payment Follow-ups"
+msgstr "Acompanhamento dos Pagamentos"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_res_partner_payment_note
+msgid "Payment Note"
+msgstr "Obs do Pagamento"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Print Letter"
+msgstr "Imprimir Carta"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_description
+msgid "Printed Message"
+msgstr "Mensagem Impressa"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_filter
+msgid "Search Follow-up"
+msgstr "Procurar Cobrança"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_send_letter
+msgid "Send a Letter"
+msgstr "Enviar uma Carta"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "Send a Letter or Email"
+msgstr "Enviar uma Carta ou E-mail"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_send_email
+msgid "Send an Email"
+msgstr "Enviar um Email"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Send by email"
+msgstr "Enviar por e-mail"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line1
+msgid "Send first reminder email"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line2
+msgid "Send reminder letter and email"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_sequence
+msgid "Sequence"
+msgstr "Seqüência"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_delay
+msgid ""
+"The number of days after the due date of the invoice to wait before sending "
+"the reminder.  Could be negative if you want to send a polite alert "
+"beforehand."
+msgstr "O número de dias após a data de vencimento da fatura para esperar antes de enviar o lembrete. Pode ser negativo se você quiser enviar um aviso educado de antemão."
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_form
+msgid ""
+"To remind customers of paying their invoices, you can\n"
+"                        define different actions depending on how severely\n"
+"                        overdue the customer is. These actions are bundled\n"
+"                        into follow-up levels that are triggered when the due\n"
+"                        date of an invoice has passed a certain\n"
+"                        number of days. If there are other overdue invoices for the \n"
+"                        same customer, the actions of the most \n"
+"                        overdue invoice will be executed."
+msgstr "Para lembrar os clientes de pagar as suas faturas, você pode\n                         definir ações diferentes, dependendo de quanto tempo\n                         o cliente está em atraso. Essas ações são agrupadas\n                         em níveis de acompanhamento que são acionados quando a \n                         data de vencimento de uma fatura já está em atraso um certo\n                         número de dias. Se houver outras faturas vencidas para o\n                         mesmo cliente, a ação da fatura mais antiga será executada."
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.account_move_line_partner_tree
+msgid "Total credit"
+msgstr "Total de crédito"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.account_move_line_partner_tree
+msgid "Total debit"
+msgstr "Débito Total"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line4
+msgid "Urging reminder email"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line5
+msgid "Urging reminder letter"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_send_letter
+msgid "When processing, it will print a letter"
+msgstr "Quando processado, irá imprimir uma carta"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_send_email
+msgid "When processing, it will send an email"
+msgstr "Quando executado, irá enviar um email"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_manual_action
+msgid ""
+"When processing, it will set the manual action to be taken for that "
+"customer. "
+msgstr "Quando executado, irá definir uma ação manual a ser tomada para este cliente. "
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid ""
+"Write here the introduction in the letter,\n"
+"                            according to the level of the follow-up. You can\n"
+"                            use the following keywords in the text. Don't\n"
+"                            forget to translate in all languages you installed\n"
+"                            using to top right icon."
+msgstr "Escreva aqui a introdução na carta,\n                             de acordo com o nível da cobrança. você pode\n                             utilizar as seguintes palavras-chave no texto. não\n                             esqueça de traduzir em todos os idiomas instalados\n                             usando o ícone superior direito."
+
+#. module: account_reports_followup
+#: code:addons/account_reports_followup/account_followup.py:58
+#, python-format
+msgid ""
+"Your description is invalid, use the right legend or %% if you want to use "
+"the percent character."
+msgstr "Sua descrição é inválida, use a legenda correta ou%%, se você quiser usar o caractere de porcentagem."
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_config_settings
+msgid "account.config.settings"
+msgstr "account.config.settings"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "days overdue, do the following actions:"
+msgstr "Dias em atraso, executar as seguintes ações"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "e.g. Call the customer, check if it's paid, ..."
+msgstr "ex: Telefonar para o cliente, verificar se foi pago, ..."

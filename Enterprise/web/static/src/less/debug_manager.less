@@ -1,0 +1,36 @@
+@debug-manager-background: @odoo-main-text-color;
+
+.o_debug_manager {
+    background-color: @debug-manager-background;
+    border-color: darken(@debug-manager-background, 10%);
+    border-width: 1px 0 0 0;
+    .box-shadow(none);
+    .user-select(none);
+
+    .navbar-brand {
+        padding-left: 16px;
+    }
+
+    .navbar-brand:last-child {
+        margin-right: 8px;
+    }
+}
+
+.o_debug_manager_overlay {
+    // view switcher buttons have a z-index of 2 because `.btn-group>.btn.active`
+    z-index: 50;
+    // height + border
+    background-color: fadeout(@debug-manager-background, 5%);
+    color: @navbar-inverse-color;
+    overflow: auto;
+
+    div.o_debug_tooltip {
+        display: none;
+        color: @odoo-main-text-color;
+        padding: 5px;
+        background-color: white;
+        border: 1px solid black;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Call Function to hide Old Accounting report menu -->
+    <function model="ir.ui.menu" name="unlink" eval="[ref('account.menu_account_report_tree_hierarchy'), ref('account.menu_account_financial_reports_tree'), ref('account.menu_account_reports'), ref('account.menu_general_ledger'), ref('account.menu_general_Balance_report'), ref('account.menu_account_report_pl'), ref('account.menu_account_report'), ref('account.menu_account_report_bs'), ref('account.menu_aged_trial_balance'), ref('account.menu_finance_legal_statement')], {'install_mode': True}"/>
+
+    <function model="ir.actions.report.xml" name="unlink" eval="[ref('account.action_report_print_overdue')], {'install_mode': True}"/>
+
+</odoo>

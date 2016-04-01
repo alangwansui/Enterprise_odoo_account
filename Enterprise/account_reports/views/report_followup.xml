@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+<record model="mail.message.subtype" id="followup_logged_action">
+    <field name="name">Logged followup action</field>
+    <field name="description">Messages created after a followup action has been executed</field>
+    <field name="res_model">res.partner</field>
+</record>
+    <record forcecreate="True" id="property_account_payment_next_action_date" model="ir.property">
+        <field name="name">payment_next_action_date</field>
+        <field name="fields_id" search="[('model','=','res.partner'),('name','=','payment_next_action_date')]"/>
+        <field eval="False" name="value"/>
+    </record>
+
+<template id="report_followup_line" inherit_id="account_reports.report_financial_line" primary="True">
+    <xpath expr="//tr" position="attributes">
+        <attribute name="t-att-bgcolor">a.get('blocked') and 'LightGray' or 'white'</attribute>
+    </xpath>
+    <xpath expr="//div[@class='dropdown']" position="replace">
+        <a t-if="a['type'] == 'payment' and mode != 'print'">
+            <span style="font-style: italic;" t-att-data-active-id="context.env['account.move.line'].browse(int(a.get('id'))).payment_id.id" data-res-model="account.payment" class="o_account_reports_web_action"><t t-esc="a.get('name')"/></span>
+        </a>
+        <div class="dropdown" t-if="a['type'] == 'unreconciled_aml' and mode != 'print'">
+            <a data-toggle="dropdown">
+                <span style="font-style: italic;" t-att-class="' '.join([a['type'], str(a['id'])])">
+                    <t t-esc="a.get('name')"/>
+                </span>
+                <span class="caret"></span>
+            </a>
+            <t t-call="account_reports.report_financial_footnote_sup" />
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li role="presentation"><a role="menuitem" tabindex="-1" t-att-data-active-id="a.get('action')[1]" t-att-data-res-model="a.get('action')[0]" class="o_account_reports_web_action"><t t-esc="a.get('action')[2]" /></a></li>           
+                <li role="presentation" t-if="a.get('action')[0] != 'account.move'"><a role="menuitem" tabindex="-1" t-att-data-active-id="a.get('move_id')" data-res-model="account.move" class="o_account_reports_web_action">View Journal Entry</a></li>           
+                <li role="presentation"><a role="menuitem" tabindex="-1" class="change_exp_date">Change expected payment date/note</a></li>
+            </ul>
+        </div>
+    </xpath>
+    <xpath expr="//tr/t/t[@t-set='column']" position="after">
+        <t t-set="tooltip" t-value="''" />
+        <t t-if="column == 4 and a['type'] == 'unreconciled_aml' and not context.env.context.get('public')"><t t-set="tooltip" t-value="c[1]" /><t t-set="c" t-value="c[0]" /></t>
+    </xpath>
+    <xpath expr="//tr/t/td/span" position="attributes">
+        <attribute name="t-if">column != 5 or a['type'] != 'unreconciled_aml' or context.env.context.get('public')</attribute>
+    </xpath>
+    <xpath expr="//tr/t/td/span" position="after">
+        <span t-att-class='align' t-if="column == 5 and a['type'] == 'unreconciled_aml'">
+            <input t-if="c == False" type="checkbox" name="blocked" value="True" />
+            <input t-if="c == True" type="checkbox" name="blocked" value="True" checked="checked" />
+        </span>
+    </xpath>
+    <xpath expr="//span[@class='annotable']" position="attributes">
+        <attribute name="data-toggle">tooltip</attribute>
+        <attribute name="data-placement">bottom</attribute>
+        <attribute name="t-att-title">tooltip</attribute>
+    </xpath>
+</template>
+<template id="report_followup_line_public" inherit_id="account_reports.report_followup_line" primary="True">
+    <xpath expr="//ul[@class='dropdown-menu']" position="replace"></xpath>
+    <xpath expr="//div[@class='dropdown']/a" position="replace"> <!-- used to go to the invoice report in the website -->
+        <a t-att-href="'/report/pdf/account.report_invoice/'+str(context.env['account.move.line'].browse(int(a.get('id'))).invoice_id.id)"><t t-esc="a.get('name')"/></a>
+    </xpath>
+</template>
+<template id="report_followup_body" inherit_id="account_reports.report_financial_body" primary="True">
+    <xpath expr="//h2" position="after">
+        <div t-if="mode != 'print' and not context.env.context.get('public')">
+            <div class='pull-right' id='history'>
+                <div t-if='context.get_history()' class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        History <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right o_account_reports_history" role="menu">
+                        <t t-foreach="context.get_history()" t-as='msg'>
+                            <li role="presentation" style='margin-left: 5px'><t t-esc='msg.date' /> (<t t-esc='msg.author_id.name' />) : <t t-raw='msg.body' /></li>
+                            <li role="presentation" class="divider"></li>
+                        </t>
+                    </ul>
+                </div>
+            </div>
+            <p class='o_account_reports_contact_info'>
+                <t t-if='context.invoice_address_id.phone'><i class='fa fa-phone fa-fw' /><t t-esc="context.invoice_address_id.phone" /><br /></t>
+                <t t-if='context.invoice_address_id.mobile'><i class='fa fa-mobile fa-fw' /><t t-esc="context.invoice_address_id.mobile" /><br /></t>
+                <t t-if='context.invoice_address_id.fax'><i class='fa fa-fax fa-fw' /><t t-esc="context.invoice_address_id.fax" /><br /></t>
+                <t t-if='context.invoice_address_id.email'>
+                    <a t-att-href="'mailto:' + context.invoice_address_id.email">
+                        <i class='fa fa-envelope' /><t t-esc="' ' + context.invoice_address_id.email" />
+                    </a>
+                </t>
+            </p>
+        </div>
+    </xpath>
+    <xpath expr='//th' position='replace'>
+        <th class="text-left">Reference number</th>
+    </xpath>
+    <xpath expr="//thead/tr/th" position="attributes">
+        <attribute name="width"></attribute>
+    </xpath>
+    <xpath expr="//h2" position="replace">
+       <h2 t-if="not context.env.context.get('public')">
+           <span><a t-att-data-active-id="context.partner_id.id" data-res-model="res.partner" class="o_account_reports_web_action"><t t-esc='context.partner_id.name' /></a></span>
+           <span t-if="context.partner_id.country_id"><small>(<t t-esc='context.partner_id.country_id.name' />)</small></span>
+       </h2>
+    </xpath>
+    <xpath expr="//h4" position="replace" />
+    <xpath expr="//t[@t-call='account_reports.report_financial_line']" position="replace">
+        <t t-call='account_reports.report_followup_line' />
+    </xpath>
+    <xpath expr="//div[@class='o_account_reports_summary']" position="before">
+        <div t-if="mode != 'print' and not context.env.context.get('public')">
+            <span id='action-buttons' class='o_account_reports_followup_not_clicked'>
+                <button data-primary='1' class="btn btn-primary followup-letter" t-att-data-target="'/account_reports/followup_report/' + str(context.partner_id.id) + '/'" t-att-data-partner="str(context.partner_id.id)">Print Letter</button>
+                <button data-primary='1' class="btn btn-primary followup-email" t-att-data-context="str(context.id)">Send by email</button>
+                <button data-time='none' class="btn btn-default o_account_reports_followup-set-next-action" t-att-data-partner="str(context.partner_id.id)">Log a Note</button>
+                <button class="btn btn-primary o_account_reports_followup_done" t-att-data-partner="str(context.partner_id.id)">Done</button>
+                <button class="btn btn-default o_account_reports_followup_skip" t-att-data-partner="str(context.partner_id.id)">Do it Later</button>
+            </span>
+            <div class='pull-right' id='followup-mode'>
+                Next Reminder:
+                <div class='btn-group'>
+                    <button t-att-class="'btn o_account_reports_followup-auto ' + (context.partner_id.payment_next_action_date &lt;= today and 'btn-info' or 'btn-default')">Auto</button>
+                    <button t-att-class="'btn o_account_reports_followup-manual o_account_reports_followup-set-next-action ' + (context.partner_id.payment_next_action_date &lt;= today and 'btn-default' or 'btn-info')" t-att-data-partner="str(context.partner_id.id)">Manual</button>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+<template id="report_followup" inherit_id="account_reports.report_financial" primary="True">
+    <xpath expr="//t[@t-call='account_reports.report_financial_body']" position="replace">
+        <t t-if="mode != 'print' and context and not context.env.context.get('public')">
+            <div class="alert alert-warning o_account_reports_followup-no-action" id='no-action' role="alert" t-if="context and context.partner_id not in context.env['res.partner'].get_partners_in_need_of_action()">
+                <p><strong>Warning!</strong> No action needs to be taken for this partner. <a t-if='context.partner_id.payment_next_action_date &gt; today' class='o_account_reports_followup-auto'>Put back in the list</a></p>
+            </div>
+        </t>
+        <t t-call='account_reports.report_followup_body' />
+    </xpath>
+</template>
+<template id="report_followup_letter_body" inherit_id="account_reports.report_followup_body" primary="True">
+    <xpath expr="//div[@class='o_account_reports_saved_summary']" position="attributes">
+        <attribute name="t-if"></attribute>
+        <attribute name="class"></attribute>
+        <attribute name="style">padding-top: 15px; padding-bottom: 15px;</attribute>
+    </xpath>
+    <xpath expr="//h2" position="replace">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-7" style='margin-top: 15px;'>
+                <div t-field="context.partner_id" 
+                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone", "fax"], "no_marker": true}'/>
+                <span t-field="context.partner_id.vat"/>
+            </div>
+        </div>
+        <p style='margin-top: 35px;'>
+            Document: Customer account statement<br/>
+            Date: <span t-esc="today"/><br/>
+            Customer ref: <span t-field="context.partner_id.ref"/>
+        </p>
+    </xpath>
+    <xpath expr="//t[@t-call='account_reports.report_followup_line']" position="attributes">
+        <attribute name="t-call">account_reports.report_followup_line_public</attribute>
+    </xpath>
+</template>
+<template id="report_followup_public" inherit_id="account_reports.report_followup" primary="True">
+    <xpath expr="//t[@t-call='account_reports.report_followup_body']" position="replace">
+        <t t-call='account_reports.report_followup_public_body' />
+    </xpath>
+    <xpath expr="//div[@id='no-action']" position='replace'>
+    </xpath>
+</template>
+<template id="report_followup_public_body" inherit_id="account_reports.report_followup_body" primary="True">
+    <xpath expr="//div[@id='history']" position="replace"></xpath>
+    <xpath expr="//span[@id='action-buttons']" position='replace'></xpath>
+    <xpath expr="//div[@class='o_account_reports_summary']" position="replace"></xpath>
+    <xpath expr="//div[@class='o_account_reports_saved_summary']" position="replace"></xpath>
+    <xpath expr="//div[@class='o_account_reports_summary mt32']" position="replace"></xpath>
+    <xpath expr="//t[@t-call='account_reports.report_followup_line']" position="attributes">
+        <attribute name="t-call">account_reports.report_followup_line_public</attribute>
+    </xpath>
+    <xpath expr="//table" position='attributes'> <!-- Adding the bootstrap classes for the front end view -->
+        <attribute name='class'>table</attribute>
+    </xpath>
+    <xpath expr="//thead/tr" position='attributes'>
+        <attribute name='class'>active</attribute>
+    </xpath>
+    <xpath expr="//h2" position="replace">
+        <h3 class="page-header">Your Statement</h3>
+    </xpath>
+</template>
+<template id="assets_followup_report" inherit_id="assets_financial_report" primary="True">
+    <xpath expr="." position="inside">
+        <link rel="stylesheet" href="/account_reports/static/src/less/account_followup_letter.less" />
+    </xpath>
+</template>
+<template id="report_followup_letter">
+    <t t-raw="'&lt;base href=%s&gt;' % base_url"/>
+    <t t-call="report.html_container">
+        <t t-call-assets="web.assets_common" t-css="false" />
+        <t t-call-assets="account_reports.assets_followup_report" />
+        <t t-call="account_reports.report_followup_letter_body" />
+    </t>
+</template>
+<template id="report_followup_all" inherit_id="account_reports.report_followup" primary="True">
+    <xpath expr="//t[@t-call='account_reports.report_followup_body']" position="replace">
+        <t t-if="all_partners_done">
+            <div class="container">
+                <div class="row mt32">
+                    <div class="alert alert-success" role="alert" id='o_account_reports_final-summary'>
+                        <p><i class='fa fa-thumbs-o-up fa-4x'></i></p>
+                        <p><strong>Good job!</strong> All followup letters and emails have been sent.</p>
+                        <p>You have sent <t t-esc="context_all.valuenow" /> reports in <t t-esc="context_all.get_total_time()" />s<br />
+                        That means you have spent on average <t t-esc="context_all.get_time_per_report()" />s per report.</p>
+                    </div>
+                    <div class="alert alert-danger" role="alert" t-if='emails_not_sent'>
+                        <p><strong>Warning!</strong> The following emails have not been sent :<br />
+                        <t t-foreach='emails_not_sent' t-as='email_not_sent'>
+                            <a t-att-data-active-id="email_not_sent.partner_id.id" data-res-model="res.partner"><t t-esc='email_not_sent.partner_id.name' /></a><br />
+                        </t>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+        <div t-if="len(reports) != 0 or page > 1">
+            <t t-foreach="context_all.get_alerts()" t-as="alert">
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&amp;times;</span></button>
+                    <b t-esc="alert['title']" /> <t t-esc="alert['message']" />
+                </div>
+            </t>
+        </div>
+        <t t-foreach='reports' t-as='data'>
+            <t t-set='context' t-value="data['context']" />
+            <t t-set='lines' t-value="data['lines']" />
+            <t t-call='account_reports.report_followup_body' />
+            <p></p>
+            <p></p>
+            <p></p>
+        </t>
+        <t t-if="len(reports) == 0 and page == 1">
+            <div class="container" t-if="just_arrived">
+                <div class="row mt32">
+                    <div class="alert alert-info" role="alert">
+                        No followup to send !
+                    </div>
+                </div>
+            </div>
+        </t>
+    </xpath>
+</template>
+</data>
+</openerp>

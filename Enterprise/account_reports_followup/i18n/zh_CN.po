@@ -1,0 +1,528 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * account_reports_followup
+# 
+# Translators:
+# Connie Xiao <connie.xiao@elico-corp.com>, 2015
+# fausthuang, 2015
+# liulixia <liu.lixia@elico-corp.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 9.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-22 13:06+0000\n"
+"PO-Revision-Date: 2016-03-12 01:56+0000\n"
+"Last-Translator: Joroy <13637815@qq.com>\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/odoo/odoo-9/language/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line3
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"Despite several reminders, your account is still not settled.\n"
+"\n"
+"Unless full payment is made in next 8 days, then legal action for the recovery of the debt will be taken without further notice.\n"
+"\n"
+"I trust that this action will prove unnecessary and details of due payments is printed below.\n"
+"\n"
+"In case of any queries concerning this matter, do not hesitate to contact our accounting department.\n"
+"\n"
+"Best Regards,\n"
+msgstr "\n亲爱的 %(partner_name)：\n\n不知道您是否有收到我公司的多次对账提醒？贵公司任有超期余款未付，请贵司于8日内将附件清单所示余款项结清。如超期仍未结清， 我公司不排除付诸法律流程。我相\n信这些都不是大家所希望的。相关未结款清单附于邮件附件。如有任何疑问，请立即\n联系我公司会计部门。\n\n致\n"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line4
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line5
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"Despite several reminders, your account is still not settled.\n"
+"\n"
+"Unless full payment is made in next 8 days, then legal action for the recovery of the debt will be taken without further notice.\n"
+"\n"
+"I trust that this action will prove unnecessary and details of due payments is printed below.\n"
+"\n"
+"In case of any queries concerning this matter, do not hesitate to contact our accounting department.\n"
+"\n"
+"Best Regards,\n"
+"            "
+msgstr "\n亲爱的 %(partner_name)s,\n\n经过多次提醒，您的余款我们至今仍未收到。\n\n如果贵公司不在8天内付清所有的货款，那么我们将直接通过法律途径来解决，\n\n我相信我们没有必要用这样的方式，下面列出的是应付款的明细。\n\n如果对此有任何疑问，您可以随时联系我们的会计部门。\n\n诚挚的问候，\n            "
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line1
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"Exception made if there was a mistake of ours, it seems that the following amount stays unpaid. Please, take appropriate measures in order to carry out this payment in the next 8 days.\n"
+"\n"
+"Would your payment have been carried out after this mail was sent, please ignore this message. Do not hesitate to contact our accounting department.  \n"
+"\n"
+"Best Regards,\n"
+msgstr "\n亲爱的 %(partner_name),\n\n如果这不是一个误会的话,看来您的应付款依然没有支付。\n请在8天内采取有效的措施来完成付款。\n\n如果您已经在收到邮件前付款，请忽略这个信息。请不要犹豫联系我们的会计部门。\n\n致以诚挚的问候,\n"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,description:account_reports_followup.demo_followup_line2
+msgid ""
+"\n"
+"Dear %(partner_name)s,\n"
+"\n"
+"We are disappointed to see that despite sending a reminder, that your account is now seriously overdue.\n"
+"\n"
+"It is essential that immediate payment is made, otherwise we will have to consider placing a stop on your account which means that we will no longer be able to supply your company with (goods/services).\n"
+"Please, take appropriate measures in order to carry out this payment in the next 8 days.\n"
+"\n"
+"If there is a problem with paying invoice that we are not aware of, do not hesitate to contact our accounting department, so that we can resolve the matter quickly.\n"
+"\n"
+"Details of due payments is printed below.\n"
+"\n"
+"Best Regards,\n"
+msgstr "\n亲爱的 %(partner_name),\n\n我们失望的发现尽管我们发了提醒给您,不过您的应付款依然超过了额度。\n\n请立即付款, 不然我们会考虑停止与您的账目往来,这意味着贵公司将不再得到我们的良好的技术支持。\n\n在接下来的8天里，请采取适当的措施来落实这次付款。\n\n如果是因为我们未注意到的发票问题影响支付, 请毫不犹豫的联系我们的会计部门, 我们会快速解决这个问题。\n\n下面是超期超额的应付款。\n\n致以诚挚的问候，\n"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid ""
+"<b>%(partner_name)s</b>: Partner Name\n"
+"                                <b>%(date)s</b>: Current Date\n"
+"                                <b>%(user_signature)s</b>: User Name\n"
+"                                <b>%(company_name)s</b>: User's Company Name"
+msgstr "<b>%(业务伙伴_名称)s</b>: 业务伙伴名称\n                                <b>%(日期)s</b>: 当前日期\n                                <b>%(用户_签名)s</b>: 用户名称\n                                <b>%(公司_名称)s</b>: 用户的公司名称"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "<i class=\"fa fa-circle\" style=\"color: green;\"/> Good Debtor"
+msgstr "<i class=\"fa fa-circle\" style=\"color: green;\"/> 优质债务人"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "<i class=\"fa fa-circle\" style=\"color: grey;\"/> Normal Debtor"
+msgstr "<i class=\"fa fa-circle\" style=\"color: grey;\"/> 一般债务人"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "<i class=\"fa fa-circle\" style=\"color: red;\"/> Bad Debtor"
+msgstr "<i class=\"fa fa-circle\" style=\"color: red;\"/>　劣质债务人"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_report_context_followup
+msgid "A particular context for the followup report"
+msgstr "一个特定的催款报表的上下文"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_report_context_followup_all
+msgid "A progress bar for followup reports"
+msgstr "一个催款报表的进度条"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_followup_followup
+msgid "Account Follow-up"
+msgstr "催款"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_manual_action_note
+msgid "Action To Do"
+msgstr "待办的行动"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "After"
+msgstr "之后"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_manual_action_responsible_id
+msgid "Assign a Responsible"
+msgstr "指定负责人员"
+
+#. module: account_reports_followup
+#: selection:res.partner,trust:0
+msgid "Bad Debtor"
+msgstr "信用差的债务人"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_move_line_result
+msgid "Balance"
+msgstr "余额"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line3
+msgid "Call the customer on the phone"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:ir.actions.act_window,help:account_reports_followup.action_account_followup_definition_form
+msgid "Click to define follow-up levels and their related actions."
+msgstr "点击定义催款等级和相关功能"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_company_id
+msgid "Company"
+msgstr "公司"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_name
+msgid "Company Name"
+msgstr "公司名称"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_config_settings_inherit
+msgid "Configure your follow-up levels"
+msgstr "设置您的跟进催款等级"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_create_uid
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_create_uid
+msgid "Created by"
+msgstr "创建者"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_create_date
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_create_date
+msgid "Created on"
+msgstr "创建于"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_res_partner_payment_note
+msgid "Customer Payment Promise"
+msgstr "客户付款承诺"
+
+#. module: account_reports_followup
+#: sql_constraint:account_followup.followup.line:0
+msgid "Days of the follow-up levels must be different"
+msgstr "后续行动等级中的天数必须是不同的"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_res_partner_trust
+msgid "Degree of trust you have in this debtor"
+msgstr "债务人对你的信用额度"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_display_name
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Do it Later"
+msgstr "稍后做"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Done"
+msgstr "完成"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_delay
+msgid "Due Days"
+msgstr "截止天数"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_followup_id
+msgid "Follow Ups"
+msgstr "催款"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_name
+msgid "Follow-Up Action"
+msgstr "后续动作"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_followup_line_ids
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_form
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_tree
+msgid "Follow-up"
+msgstr "催款"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_followup_followup_line
+msgid "Follow-up Criteria"
+msgstr "催款准则"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_move_line_followup_line_id
+msgid "Follow-up Level"
+msgstr "催款等级"
+
+#. module: account_reports_followup
+#: model:ir.ui.menu,name:account_reports_followup.account_followup_menu
+msgid "Follow-up Levels"
+msgstr "催款等级"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_res_partner_payment_responsible_id
+msgid "Follow-up Responsible"
+msgstr "催款责任人"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_tree
+msgid "Follow-up Steps"
+msgstr "催款步骤"
+
+#. module: account_reports_followup
+#: model:ir.actions.act_window,help:account_reports_followup.action_account_followup_definition_form
+msgid ""
+"For each step, specify the actions to be taken and delay in days. It is\n"
+"                possible to use print and e-mail templates to send specific messages to\n"
+"                the customer."
+msgstr "对于每一步, 定义需要的功能和推迟的天数。 可以通过打印或邮件将这些信息发给客户。"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_sequence
+msgid "Gives the sequence order when displaying a list of follow-up lines."
+msgstr "输入序列用于显示催款列表"
+
+#. module: account_reports_followup
+#: selection:res.partner,trust:0
+msgid "Good Debtor"
+msgstr "信用好的债务人"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_id
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_id
+msgid "ID"
+msgstr "ID"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_move_line
+msgid "Journal Item"
+msgstr "分类账项目"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup___last_update
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line___last_update
+msgid "Last Modified on"
+msgstr "最后修改日"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_write_uid
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_write_uid
+msgid "Last Updated by"
+msgstr "最后更新"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_write_date
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_write_date
+msgid "Last Updated on"
+msgstr "最后更新"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_move_line_followup_date
+msgid "Latest Follow-up"
+msgstr "最近的催款"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_report_context_followup_level
+msgid "Level"
+msgstr "级别"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Log a Note"
+msgstr "记录一个笔记"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_manual_action
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "Manual Action"
+msgstr "手动操作"
+
+#. module: account_reports_followup
+#: code:addons/account_reports_followup/account_followup_report.py:57
+#, python-format
+msgid "Manual action done\n"
+msgstr ""
+
+#. module: account_reports_followup
+#: code:addons/account_reports_followup/account_followup.py:107
+#, python-format
+msgid ""
+"No follow-up is defined for the company \"%s\".\n"
+" Please define one."
+msgstr ""
+
+#. module: account_reports_followup
+#: selection:res.partner,trust:0
+msgid "Normal Debtor"
+msgstr "普通债务人"
+
+#. module: account_reports_followup
+#: sql_constraint:account_followup.followup:0
+msgid "Only one follow-up per company is allowed"
+msgstr "每个公司只允许一个催款单"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_res_partner_payment_responsible_id
+msgid ""
+"Optionally you can assign a user to this field, which will make him "
+"responsible for the action."
+msgstr "你可以随意指定一个用户到这个字段，将使他负责这个动作"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_res_partner
+msgid "Partner"
+msgstr "业务伙伴"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.account_move_line_partner_tree
+msgid "Partner entries"
+msgstr "业务伙伴凭证"
+
+#. module: account_reports_followup
+#: model:ir.actions.act_window,name:account_reports_followup.action_account_followup_definition_form
+msgid "Payment Follow-ups"
+msgstr "催款后续行动"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_res_partner_payment_note
+msgid "Payment Note"
+msgstr "催款注解"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Print Letter"
+msgstr "打印信"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_description
+msgid "Printed Message"
+msgstr "已打印消息"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_filter
+msgid "Search Follow-up"
+msgstr "搜索催款"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_send_letter
+msgid "Send a Letter"
+msgstr "发送信函"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "Send a Letter or Email"
+msgstr "发送信函或邮件"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_send_email
+msgid "Send an Email"
+msgstr "发送电子邮件"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.report_followup_body
+msgid "Send by email"
+msgstr "以邮件形式发送"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line1
+msgid "Send first reminder email"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line2
+msgid "Send reminder letter and email"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:ir.model.fields,field_description:account_reports_followup.field_account_followup_followup_line_sequence
+msgid "Sequence"
+msgstr "序号"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_delay
+msgid ""
+"The number of days after the due date of the invoice to wait before sending "
+"the reminder.  Could be negative if you want to send a polite alert "
+"beforehand."
+msgstr "依据欠款的天数，决定是否发出提醒。在实际操做时，要确认发出的是一个有礼貌的警告，不然会产生负面作用。"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_form
+msgid ""
+"To remind customers of paying their invoices, you can\n"
+"                        define different actions depending on how severely\n"
+"                        overdue the customer is. These actions are bundled\n"
+"                        into follow-up levels that are triggered when the due\n"
+"                        date of an invoice has passed a certain\n"
+"                        number of days. If there are other overdue invoices for the \n"
+"                        same customer, the actions of the most \n"
+"                        overdue invoice will be executed."
+msgstr "提醒客户支付他们的发票,\n                        您可以根客户据逾期的严重程度定义不同的操作。\n                         到期发票超期一定天数后，\n                         就会触发由绑定的催款等级定义的动作。\n                        如果同一客户有多张逾期发票,\n                        将按逾期天数最多的发票被执行相应动作。"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.account_move_line_partner_tree
+msgid "Total credit"
+msgstr "贷方总计"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.account_move_line_partner_tree
+msgid "Total debit"
+msgstr "借方总计"
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line4
+msgid "Urging reminder email"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:account_followup.followup.line,name:account_reports_followup.demo_followup_line5
+msgid "Urging reminder letter"
+msgstr ""
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_send_letter
+msgid "When processing, it will print a letter"
+msgstr "当进行时，会打印一封信"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_send_email
+msgid "When processing, it will send an email"
+msgstr "处理时，将发出一个email"
+
+#. module: account_reports_followup
+#: model:ir.model.fields,help:account_reports_followup.field_account_followup_followup_line_manual_action
+msgid ""
+"When processing, it will set the manual action to be taken for that "
+"customer. "
+msgstr "当进行时，会将此客户设为手动操作。 "
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid ""
+"Write here the introduction in the letter,\n"
+"                            according to the level of the follow-up. You can\n"
+"                            use the following keywords in the text. Don't\n"
+"                            forget to translate in all languages you installed\n"
+"                            using to top right icon."
+msgstr "这里写下介绍,\n                            根据催款的等级，您可以  \n                            使用下列关键字，不要\n                            忘记使用右上方的图标\n                            翻译成各种语言 ."
+
+#. module: account_reports_followup
+#: code:addons/account_reports_followup/account_followup.py:58
+#, python-format
+msgid ""
+"Your description is invalid, use the right legend or %% if you want to use "
+"the percent character."
+msgstr "描述有误，请使用正确的标识或百分数。"
+
+#. module: account_reports_followup
+#: model:ir.model,name:account_reports_followup.model_account_config_settings
+msgid "account.config.settings"
+msgstr "会计.配置.设定"
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "days overdue, do the following actions:"
+msgstr "天过期，做下列动作："
+
+#. module: account_reports_followup
+#: model:ir.ui.view,arch_db:account_reports_followup.view_account_followup_followup_line_form
+msgid "e.g. Call the customer, check if it's paid, ..."
+msgstr "例如，打电话给客户，确认是否付款,..."

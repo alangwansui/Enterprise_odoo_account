@@ -1,0 +1,114 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * account_extension
+# 
+# Translators:
+# Connie Xiao <connie.xiao@elico-corp.com>, 2015
+# fausthuang, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 9.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-07 14:51+0000\n"
+"PO-Revision-Date: 2015-12-18 02:39+0000\n"
+"Last-Translator: fausthuang\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/odoo/odoo-9/language/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: account_extension
+#: model:ir.ui.view,arch_db:account_extension.account_config_settings_inherit
+msgid "Bank Statements"
+msgstr "银行对账单"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_plaid
+msgid ""
+"Get your bank statements from you bank and import them through plaid.com.\n"
+"-that installs the module account_plaid."
+msgstr "需要安装模块account_plaid从银行得到银行对账单然后从plaid.com导入"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_yodlee
+msgid ""
+"Get your bank statements from you bank and import them through yodlee.com.\n"
+"-that installs the module account_yodlee."
+msgstr "拿到你的银行对账单然后用过yodlee.com导入系统这个需要安装模块： account_yodlee"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_bank_statement_import_ofx
+msgid ""
+"Get your bank statements from your bank and import them in Odoo in the .OFX format.\n"
+"This installs the module account_bank_statement_import_ofx."
+msgstr "需要安装模块account_bank_statement_import_ofx从银行得到银行对账单然后用.OFX格式导入"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_bank_statement_import_qif
+msgid ""
+"Get your bank statements from your bank and import them in Odoo in the .QIF format.\n"
+"This installs the module account_bank_statement_import_qif."
+msgstr "需要安装模块account_bank_statement_import_qif从银行得到银行对账单然后用.QIF格式导入"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_sepa
+msgid ""
+"If you check this box, you will be able to register your payment using SEPA.\n"
+"-This installs the module account_sepa."
+msgstr "安装模块：account_sepa，选用了这个方框就能用SEPA登记付款"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_plaid
+msgid "Import of Bank Statements from Plaid."
+msgstr "从 Plaid导入银行对账单"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_yodlee
+msgid "Import of Bank Statements from Yodlee."
+msgstr "从 Plaid导入银行对账单"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_bank_statement_import_ofx
+msgid "Import of Bank Statements in .OFX Format"
+msgstr "用.OFX 格式导入银行对账单"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_bank_statement_import_qif
+msgid "Import of Bank Statements in .QIF Format."
+msgstr "用.QIF 格式导入银行对账单"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_reports_followup
+msgid "Manage customer payment follow-ups"
+msgstr "管理客户付款 催款"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_reports_followup
+msgid ""
+"This allows to automate letters for unpaid invoices, with multi-level recalls.\n"
+"-This installs the module account_reports_followup."
+msgstr "能够给未付发票多层次的重新自动发邮件需要安装模块：account_reports_followup"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_batch_deposit
+msgid ""
+"This allows you to group received checks before you deposit them to the bank.\n"
+"-This installs the module account_batch_deposit."
+msgstr "能够让你在存入银行之前合并收到支票需要安装模块：module account_batch_deposit"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_batch_deposit
+msgid "Use batch deposit"
+msgstr "用批量存款"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_sepa
+msgid "Use sepa payment"
+msgstr "用 sepa 付款"
+
+#. module: account_extension
+#: model:ir.model,name:account_extension.model_account_config_settings
+msgid "account.config.settings"
+msgstr "会计.配置.设定"
