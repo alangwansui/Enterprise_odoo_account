@@ -27,7 +27,7 @@
               <button name="btn_submit" type="workflow" states="0,3,5" string="提交" class="oe_highlight"></button>
               <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" states="1,2,4,6,7" string="审批" class="oe_highlight"
                       context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"></button>
-              <button name="btn_reject" type="workflow" states="3,5" string="返回上一步" class="oe_highlight"></button>
+              <button name="btn_reject" type="workflow" states="3,5" string="驳回到上一步" class="oe_highlight"></button>
               <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,99" widget="statusbar"></field>
           </header>
           <sheet>
@@ -41,7 +41,7 @@
               <field name="leave_date" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="actual_leavig_date" readonly="True" states="5,6,7,99"/>
             </group>
-            <notebook>
+            <notebook states="3,4,5,6,7,99">
               <page string="离岗前环节" states="3,4,5,6,7,99">
                 <field name="leaving_handle_process_ids1" >
                   <tree editable="bottom" create="false" delete="false">
@@ -66,10 +66,10 @@
                 </field>
               </page>
             </notebook>
-            <notebook>
-              <page string="审批记录" states="2,3,4,5,6,7,99">
+            <notebook states="2,3,4,5,6,7,99">
+              <page string="审批记录">
                 <field name="opinion_ids" readonly="True">
-                  <tree editable="bottom" default_order="create_date desc">
+                  <tree editable="bottom" default_order="create_date asc">
                       <field name="name" />
                       <field name="result" string="审批结果"/>
                       <field name="opinion" />

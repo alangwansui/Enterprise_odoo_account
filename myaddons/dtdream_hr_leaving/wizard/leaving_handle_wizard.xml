@@ -18,8 +18,8 @@
                 </group>
                 <footer>
                     <button name="btn_agree" type="object" string="同意" class="oe_highlight oe_edit_only"/>
-                    <button name="btn_reject" type="object" string="返回上一步" class="oe_highlight oe_edit_only"/>
                     <button name="btn_other" type="object" string="不涉及" class="oe_highlight oe_edit_only"/>
+                    <button name="btn_reject" type="object" string="驳回到上一步" class="oe_highlight oe_edit_only"/>
                     <button special="cancel" string="取消" class="oe_edit_only"/>
                 </footer>
             </form>

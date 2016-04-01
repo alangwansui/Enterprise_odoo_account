@@ -1,0 +1,110 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * web_gantt
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 9.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-04 09:44+0000\n"
+"PO-Revision-Date: 2016-03-04 13:15+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Italian (http://www.transifex.com/odoo/odoo-9/language/it/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:814
+#: code:addons/web_gantt/static/src/js/gantt.js:834
+#, python-format
+msgid "Close"
+msgstr "Chiudi"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:829
+#, python-format
+msgid "Create"
+msgstr "Crea"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/xml/web_gantt.xml:22
+#, python-format
+msgid "Day"
+msgstr "Giorno"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:806
+#, python-format
+msgid "Delete"
+msgstr "Elimina"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:16
+#, python-format
+msgid "Gantt"
+msgstr "Gantt"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:43
+#, python-format
+msgid "Gantt View"
+msgstr "Visualizzazione Gantt"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/xml/web_gantt.xml:24
+#, python-format
+msgid "Month"
+msgstr "Mese"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:801
+#, python-format
+msgid "Save"
+msgstr "Salva"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/xml/web_gantt.xml:14
+#, python-format
+msgid "Today"
+msgstr "Oggi"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/xml/web_gantt.xml:23
+#, python-format
+msgid "Week"
+msgstr "Settimana"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/xml/web_gantt.xml:25
+#, python-format
+msgid "Year"
+msgstr "Anno"
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:818
+#, python-format
+msgid "You are trying to write on a read-only field!"
+msgstr ""
+
+#. module: web_gantt
+#. openerp-web
+#: code:addons/web_gantt/static/src/js/gantt.js:823
+#, python-format
+msgid "You have no date_stop field defined!"
+msgstr ""

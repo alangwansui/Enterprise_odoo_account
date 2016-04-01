@@ -107,6 +107,18 @@ class leaving_handle_process(models.Model):
         for rec in self:
             rec.process_approver = rec.process_id.approver.name
 
+    @api.onchange("is_finish")
+    def is_finish_change(self):
+        for rec in self:
+            if rec.is_finish and rec.is_other:
+                rec.is_other = False
+
+    @api.onchange("is_other")
+    def is_other_change(self):
+        for rec in self:
+            if rec.is_other and rec.is_finish:
+                rec.is_finish = False
+
     name = fields.Char("名称")
     is_finish = fields.Boolean("办理完成")
     is_other = fields.Boolean("不涉及")

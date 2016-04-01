@@ -1,0 +1,30 @@
+
+.o_application_switcher {
+    padding-top: @odoo-navbar-height;
+    @media (max-width: @screen-xs-max) {
+        padding-top: 15px;
+    }
+
+    height: 100%;
+    overflow: auto;
+    .o-flex-display();
+    .o-flex-flow(column, nowrap);
+    .o-justify-content(space-between);
+    .o-align-items(center);
+
+    .o_apps {
+        .o-flex(0, 0, auto);
+        width: 100%;
+        max-width: @screen-sm-min;
+        .clearfix();
+
+        .o_app {
+            float: left;
+            margin: 0 1.5% 15px;
+            width: 13.66%; // +3% margin = 6 apps per line
+            @media (max-width: @screen-xs-max) {
+                width: 22%; // +3% margin = 4 apps per line
+            }
+        }
+    }
+}

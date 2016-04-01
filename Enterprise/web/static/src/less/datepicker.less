@@ -1,0 +1,56 @@
+.o_datepicker {
+    position: relative;
+
+    .o_datepicker_input {
+        width: 100%;
+    }
+
+    .o_datepicker_button {
+        &:after {
+            .o-caret-down;
+        }
+
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
+.datepicker {
+    .table-condensed {
+        > thead {
+            color: white;
+            background-color: @odoo-brand-primary;
+
+            > tr {
+                &:first-child {
+                    th:hover {
+                        color: white;
+                        background-color: darken(@odoo-brand-primary, 10%);
+                    }
+                }
+
+                &:last-child {
+                    color: @odoo-brand-secondary;
+                    background-color: lighten(@odoo-brand-secondary, 30%);
+                }
+            }
+        }
+
+        > tbody {
+            > tr {
+                > td {
+                    &.active, .active {
+                        background-color: @odoo-brand-optional;
+                        border-radius: 100px;
+                    }
+
+                    &.today:before {
+                        border-bottom-color: @odoo-brand-optional;
+                    }
+                }
+            }
+        }
+    } 
+}
