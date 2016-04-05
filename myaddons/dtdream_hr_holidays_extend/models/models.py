@@ -57,6 +57,8 @@ class dtdream_hr_holidays_extend(models.Model):
         elif not self.shenpiren5:
             self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
             self.is_confirm42approved=True
+        else:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
         print self.is_confirm2approved
         print self.is_confirm22approved
         print self.is_confirm32approved
