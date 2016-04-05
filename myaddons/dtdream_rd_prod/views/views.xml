@@ -126,7 +126,7 @@
                             <page name="public" string="基本信息">
                                 <group>
                                     <group>
-                                        <field name="department" domain="[('parent_id.parent_id','=',False),('child_ids','!=',False)]"/>
+                                        <field name="department" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
                                          <!--<field name="state" />-->
                                     </group>
                                     <group>
