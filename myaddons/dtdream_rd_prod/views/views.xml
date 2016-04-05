@@ -289,8 +289,8 @@
       </record>
 
 <!--菜单-->
-    <menuitem id="menu_finance_rd" name="研发" groups ="group_dtdream_rd_user"/>
-    <!--<menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod" groups="group_dtdream_rd_user"/>-->
+    <menuitem id="menu_finance_rd" name="研发" groups ="base.group_user"/>
+    <!--<menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod" groups="group_dtdream_rd_qa"/>-->
     <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"  action="act_dtdream_prod_appr"/>
     <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
     <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
