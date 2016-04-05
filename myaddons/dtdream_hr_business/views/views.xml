@@ -6,17 +6,9 @@
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('name.user_id', '=', uid)]</field>
+        <field name="domain">['|','|','|','|','|',('approver_fir.user_id', '=', uid),('approver_sec.user_id', '=', uid),('approver_thr.user_id', '=', uid),('approver_fou.user_id', '=', uid),('approver_fif.user_id', '=', uid),('name.user_id', '=', uid)]</field>
     </record>
 
-    <record id="act_dtdream_hr_business_deal" model="ir.actions.act_window">
-        <field name="name">外出公干</field>
-        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="domain">['|','|','|','|',('approver_fir.user_id', '=', uid),('approver_sec.user_id', '=', uid),('approver_thr.user_id', '=', uid),('approver_fou.user_id', '=', uid),('approver_fif.user_id', '=', uid)]</field>
-    </record>
 
      <record model="ir.ui.view" id="business_tree">
       <field name="name">business_tree</field>
@@ -36,28 +28,28 @@
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="btn_submit" type="workflow" states="-1" string="提交" class="oe_highlight" attrs="{'invisible':[('is_shenqingren','=',False)]}"></button>
-            <button name="btn_restart" type="workflow" states="99" string="重启流程" class="oe_highlight"></button>
-            <button name="btn_next" type="workflow" states="0,1,2,3,4" string="批准" class="oe_highlight"></button>
-            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" states="0,1,2,3,4" string="拒绝" class="oe_highlight"></button>
+            <button name="btn_submit" type="workflow" string="提交" class="oe_highlight" attrs="{'invisible':['|',('is_shenqingren','=',False),('state','not in',('-1'))]}"></button>
+            <button name="btn_restart" type="workflow" string="重启流程" class="oe_highlight" attrs="{'invisible':['|',('is_shenqingren','=',False),('state','not in',('99'))]}"></button>
+            <button name="btn_next" type="workflow"  string="批准" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
+            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" string="拒绝" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
             <field name="state" statusbar_visible="-1,0,1,2,3,4,5,99" widget="statusbar"></field>
           </header>
           <sheet>
             <group>
               <group string="基本信息">
-                <field name="name"/>
+                <field name="name" attrs="{'readonly':['|',('is_shenqingren','=',False),('state','not in',('-1'))]}"/>
                 <field name="job_number"/>
                 <field name="department"/>
                 <field name="create_time"/>
-                <field name="is_shenpiren"/>
-                <field name="is_shenqingren"/>
+                <field name="is_shenpiren" invisible="1"/>
+                <field name="is_shenqingren" invisible="1"/>
               </group>
               <group string="节点设定">
                 <field name="approver_fir"/>
-                <field name="approver_sec"/>
-                <field name="approver_thr"/>
-                <field name="approver_fou"/>
-                <field name="approver_fif"/>
+                <field name="approver_sec" attrs="{'readonly':['|',('is_shenpiren','=',False),('state','in',('1','2','3','4','5'))]}"/>
+                <field name="approver_thr" attrs="{'readonly':['|',('is_shenpiren','=',False),('state','in',('2','3','4','5'))]}"/>
+                <field name="approver_fou" attrs="{'readonly':['|',('is_shenpiren','=',False),('state','in',('3','4','5'))]}"/>
+                <field name="approver_fif" attrs="{'readonly':['|',('is_shenpiren','=',False),('state','in',('4','5'))]}"/>
               </group>
             </group>
             <group>
@@ -69,7 +61,7 @@
               </div>
             </group>
               <group>
-                <field name="detail_ids">
+                <field name="detail_ids"  attrs="{'readonly':['|',('is_shenqingren','=',False),('state','not in',('-1','99'))]}">
                   <tree editable="bottom">
                     <field name="place"/>
                     <field name="startTime"/>
@@ -88,8 +80,6 @@
     </record>
 
 
-     <menuitem name="外出公干" sequence="16" id="dtdream_hr_business" parent="hr.menu_hr_root"></menuitem>
-     <menuitem name="我的申请" sequence="16" id="hr_business_apply" parent="dtdream_hr_business" action="act_dtdream_hr_business"></menuitem>
-     <menuitem name="我的处理" sequence="16" id="hr_business_deal" parent="dtdream_hr_business" action="act_dtdream_hr_business_deal"></menuitem>
+     <menuitem name="外出公干" sequence="16" id="dtdream_hr_business" parent="hr.menu_hr_root"  action="act_dtdream_hr_business"></menuitem>
   </data>
 </openerp>

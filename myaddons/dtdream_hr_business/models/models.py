@@ -42,11 +42,11 @@ class dtdream_hr_business(models.Model):
             self.is_shenpiren = False
 
 
-    is_shenpiren = fields.Boolean(compute=_compute_is_shenpiren, string="是否审批人")
+    is_shenpiren = fields.Boolean(compute=_compute_is_shenpiren, string="当前用户是否审批人",default=True)
 
-    is_shenqingren = fields.Boolean(compute=_compute_is_shenpiren, string="是否申请人")
+    is_shenqingren = fields.Boolean(compute=_compute_is_shenpiren, string="当前用户是否申请人",default=True)
 
-    state = fields.Selection([('-1','草稿'),('0','第一审批人审批'),('1','第二审批人审批'),('2','第三审批人审批'),('3','第四审批人审批'),('4','第五审批人审批'),('5','通过'),('99','拒绝')])
+    state = fields.Selection([('-1','草稿'),('0','第一审批人审批'),('1','第二审批人审批'),('2','第三审批人审批'),('3','第四审批人审批'),('4','第五审批人审批'),('5','通过'),('99','拒绝')],default='-1')
 
     @api.depends('name','create_time')
     def _compute_title(self):
@@ -76,12 +76,13 @@ class dtdream_hr_business(models.Model):
         if lg<=0:
             raise ValidationError("请至少填写一条明细")
         self.write({'state': '0'})
-        self.write({'current_approver':self.approver_fir})
+        self.write({'current_approver':self.approver_fir.id})
 
     @api.model
     def wkf_sec(self):                                      #第一审批人批准
         if self.approver_sec:
             self.write({'state': '1'})
+            self.write({'current_approver':self.approver_sec.id})
         else:
             raise ValidationError("配置第二审批人")
 
@@ -89,6 +90,7 @@ class dtdream_hr_business(models.Model):
     def wkf_thr(self):                                      #第二审批人批准
         if self.approver_thr:
             self.write({'state': '2'})
+            self.write({'current_approver':self.approver_thr.id})
         else:
             self.write({'state': '5'})
 
@@ -96,6 +98,7 @@ class dtdream_hr_business(models.Model):
     def wkf_fou(self):                                       #第三审批人批准
         if self.approver_fou:
             self.write({'state': '3'})
+            self.write({'current_approver':self.approver_fou.id})
         else:
             self.write({'state': '5'})
 
@@ -104,6 +107,7 @@ class dtdream_hr_business(models.Model):
     def wkf_fif(self):                                       #第四审批人批准
         if self.approver_fif:
             self.write({'state': '4'})
+            self.write({'current_approver':self.approver_fif.id})
         else:
             self.write({'state': '5'})
 
@@ -115,6 +119,7 @@ class dtdream_hr_business(models.Model):
     @api.model
     def wkf_refuse(self):                                       #各审批人拒绝
         self.write({'state': '99'})
+        self.write({'current_approver':self.name.id})
 
 class business_detail(models.Model):
     _name = "dtdream_hr_business.business_detail"

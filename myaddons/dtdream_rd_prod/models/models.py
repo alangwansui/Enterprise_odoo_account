@@ -42,9 +42,10 @@ class dtdream_prod_appr(models.Model):
         domain = {}
         if self.department:
             if self.department.child_ids:
+                self.department_2 =  self.department.child_ids[0]
                 domain['department_2'] = [('parent_id', '=', self.department.id)]
         else:
-            domain['department_2'] = [('parent_id.parent_id.parent_id', '=', False)]
+            domain['department_2'] = [('parent_id.parent_id', '=', False)]
         return {'domain': domain}
 
     # @api.model
