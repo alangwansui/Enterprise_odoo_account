@@ -628,7 +628,7 @@ var ActionManager = Widget.extend({
             });
         }
 
-        return this[type](action, options).then(function() {
+        return $.when(this[type](action, options)).then(function() {
             return action;
         });
     },
