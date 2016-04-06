@@ -7,7 +7,6 @@
             <field name="arch" type="xml">
                 <search >
                     <filter string="待审批" name="current_approver" domain="[('current_approver','=',uid)]"/>
-                    <!--<filter string="" name="inactive" domain="[('active','=',False)]"/>-->
                 </search>
              </field>
          </record>
@@ -44,8 +43,8 @@
             <button name="btn_submit" type="workflow" string="提交" class="oe_highlight" attrs="{'invisible':['|',('is_shenqingren','=',False),('state','not in',('-1'))]}"></button>
             <button name="btn_restart" type="workflow" string="重启流程" class="oe_highlight" attrs="{'invisible':['|',('is_shenqingren','=',False),('state','not in',('99'))]}"></button>
             <button name="btn_next" type="workflow"  string="批准" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
-            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" string="拒绝" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
-            <field name="state" statusbar_visible="-1,0,1,2,3,4,5,99" widget="statusbar"></field>
+            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" string="驳回" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
+            <field name="state" statusbar_visible="-1,0,5" widget="statusbar"></field>
           </header>
           <sheet>
             <group>
