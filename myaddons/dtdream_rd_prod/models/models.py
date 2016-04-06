@@ -16,7 +16,7 @@ class dtdream_prod_appr(models.Model):
     name=fields.Char('产品名称',required=True)
     # code = fields.Char('项目编码')
 
-    state = fields.Selection([('state_00','初始化'),('state_01','立项'),('state_02','总体设计'),('state_03','迭代开发'),('state_04','验证发布'),('state_05','结束')],'产品状态',readonly=True)
+    state = fields.Selection([('state_00','初始化'),('state_01','立项'),('state_02','总体设计'),('state_03','迭代开发'),('state_04','验证发布'),('state_05','结束')],'产品状态',readonly=True,default='state_00')
 
     # state_id = fields.Many2one('dtdream_rd_prod.state','产品状态', track_visibility='onchange')
 
@@ -26,6 +26,9 @@ class dtdream_prod_appr(models.Model):
     pro_time = fields.Date('立项时间')
     overall_plan_time = fields.Date('总体设计计划开始时间')
     overall_actual_time = fields.Date('总体设计实际开始时间')
+
+    start_pro_mar = fields.Text('立项材料')
+    overall_mar = fields.Text('总体设计材料')
 
 
     color = fields.Integer('Color Index')
