@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Odoo 9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-07 14:40+0000\n"
-"PO-Revision-Date: 2016-03-04 16:21+0000\n"
+"PO-Revision-Date: 2016-03-12 01:56+0000\n"
 "Last-Translator: Joroy <13637815@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/odoo/odoo-9/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -38,7 +38,7 @@ msgid ""
 "            a letter, assigning to a team, etc. These activities are triggered\n"
 "            from specific situations; contact form, 10 days after first\n"
 "            contact, if a lead is not closed yet, etc."
-msgstr "一个活动可以有许多小的活动，例如发送邮件，打印信件，分配给一个团队等等\n这些晓得活动在一些特定情景中被触发；在第一个合同完成１０天后，如果机会点还没有被关闭的话合同生成"
+msgstr "一个活动可以有许多小的活动，例如发送邮件，打印信件，分配给一个团队等等\n这些晓得活动在一些特定情景中被触发；在第一个合同完成１０天后，如果线索还没有被关闭的话合同生成"
 
 #. module: marketing_campaign
 #: model:ir.model.fields,field_description:marketing_campaign.field_marketing_campaign_activity_server_action_id
@@ -254,7 +254,7 @@ msgstr "国家"
 #: model:ir.model.fields,field_description:marketing_campaign.field_marketing_campaign_transition_create_uid
 #: model:ir.model.fields,field_description:marketing_campaign.field_marketing_campaign_workitem_create_uid
 msgid "Created by"
-msgstr "创建于"
+msgstr "创建者"
 
 #. module: marketing_campaign
 #: model:ir.model.fields,field_description:marketing_campaign.field_marketing_campaign_activity_create_date
@@ -512,7 +512,7 @@ msgid ""
 "segments will only avoid selecting the same record again if it entered the "
 "campaign previously. Only easily comparable fields like textfields, "
 "integers, selections or single relationships may be used."
-msgstr "如果指定了某个字段，当渠道运作在“无重复”的模式下时，避免选择两条相同的记录。相同的记录是指这个唯一字段的值相同的记录。例如，把CRM机会点的“邮箱”字段设置为唯一，就可以避免同一个营销邮件多次发送给相同邮箱。如果没有指定，“无重复”模式只能避免在输入营销活动时插入之前加过的记录。这里应该选择一个容易比较的字段，例如文本字段、整数、下拉列表或简单的关系字段。"
+msgstr "如果指定了某个字段，当渠道运作在“无重复”的模式下时，避免选择两条相同的记录。相同的记录是指这个唯一字段的值相同的记录。例如，把CRM线索的“邮箱”字段设置为唯一，就可以避免同一个营销邮件多次发送给相同邮箱。如果没有指定，“无重复”模式只能避免在输入营销活动时插入之前加过的记录。这里应该选择一个容易比较的字段，例如文本字段、整数、下拉列表或简单的关系字段。"
 
 #. module: marketing_campaign
 #: model:ir.ui.view,arch_db:marketing_campaign.view_marketing_campaign_activity_form
@@ -595,7 +595,7 @@ msgstr "发起月份"
 #. module: marketing_campaign
 #: model:ir.ui.menu,name:marketing_campaign.menu_marketing_campaign_root
 msgid "Lead Automation"
-msgstr "机会点自动化"
+msgstr "线索自动化"
 
 #. module: marketing_campaign
 #: model:ir.ui.view,arch_db:marketing_campaign.view_marketing_campaign_search
@@ -734,7 +734,7 @@ msgid ""
 "Odoo's marketing campaign allows you to automate communication\n"
 "            to your prospects. You can define a segment (set of conditions) on\n"
 "            your leads and partners to fullfil the campaign."
-msgstr "Odoo的市场营销能让你自动的和潜在客户进行沟通，你可以在机会点和业务伙伴上定义一个环节（条件设定）来实现营销"
+msgstr "Odoo的市场营销能让你自动的和潜在客户进行沟通，你可以在线索和业务伙伴上定义一个环节（条件设定）来实现营销"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.segment,sync_mode:0
