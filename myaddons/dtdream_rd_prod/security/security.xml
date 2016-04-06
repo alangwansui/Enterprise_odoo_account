@@ -7,10 +7,17 @@
             <field name="description">关于研发菜单的组</field>
             <field name="sequence">2</field>
         </record>
-        <record id="group_dtdream_rd_user" model="res.groups">
+        <!--<record id="group_dtdream_rd_user" model="res.groups">
             <field name="name">研发人员</field>
             <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
             <field name="category_id" ref="module_rd_prod_group"/>
+        </record>-->
+
+        <record id="group_dtdream_rd_qa" model="res.groups">
+            <field name="name">研发QA</field>
+            <!--<field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>-->
+            <field name="category_id" ref="module_rd_prod_group"/>
         </record>
+
         </data>
     </openerp>

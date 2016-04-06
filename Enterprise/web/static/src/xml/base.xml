@@ -73,9 +73,11 @@
           </a>
         </t>
     </div>
+    <!--
     <div class="o_application_switcher_footer">
         <img src="/web/static/src/img/odoo.png" alt="Odoo"/>
     </div>
+    -->
 </div>
 
 <!-- <div t-name="WebClient.database_expiration_panel">
