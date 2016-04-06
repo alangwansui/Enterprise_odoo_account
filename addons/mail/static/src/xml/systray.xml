@@ -2,7 +2,7 @@
 <templates>
 
     <t t-name="mail.chat.InboxItem">
-        <li class="o_mail_navbar_item" style="display: none1">
+        <li class="o_mail_navbar_item">
             <a href="#" title="Inbox">
                 <i class="fa fa-at"/> <span class="o_notification_counter"/>
             </a>

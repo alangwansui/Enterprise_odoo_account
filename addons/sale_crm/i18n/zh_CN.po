@@ -141,12 +141,12 @@ msgstr "它表明会员的状态。\n                    -非会员：业务伙�
 #. module: sale_crm
 #: model:ir.model,name:sale_crm.model_crm_lead
 msgid "Lead/Opportunity"
-msgstr "机会点/项目管理"
+msgstr "线索/商机"
 
 #. module: sale_crm
 #: model:ir.ui.view,arch_db:sale_crm.sale_view_inherit123
 msgid "Log in the chatter from which opportunity the order originates"
-msgstr "登录到订单所属项目管理的会话"
+msgstr "登录到订单所属商机的会话"
 
 #. module: sale_crm
 #: model:ir.model.fields,field_description:sale_crm.field_sale_order_medium_id
@@ -186,7 +186,7 @@ msgstr "报价单的数量"
 #. module: sale_crm
 #: model:ir.model.fields,field_description:sale_crm.field_sale_order_opportunity_id
 msgid "Opportunity"
-msgstr "项目管理"
+msgstr "商机"
 
 #. module: sale_crm
 #: model:ir.model.fields,field_description:sale_crm.field_crm_lead_order_ids
