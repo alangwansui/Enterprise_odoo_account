@@ -84,6 +84,6 @@
                 </tree>
             </field>
        </record>
-
+        <delete id="mail.menu_contacts" model="ir.ui.menu"/>
   </data>
 </openerp>
