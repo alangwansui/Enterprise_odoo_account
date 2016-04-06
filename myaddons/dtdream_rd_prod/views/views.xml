@@ -162,6 +162,16 @@
                                 </tree>
                             </field>
                             </page>
+                            <page string="立项材料" attrs="{'invisible':[('state','in',('state_00'))]}">
+                                <group>
+                                    <field name="start_pro_mar" attrs="{'readonly':[('state','not in',('state_01'))]}"/>
+                                </group>
+                            </page>
+                            <page string="总体设计材料" attrs="{'invisible':[('state','in',('state_00','state_01'))]}">
+                                <group>
+                                    <field name="overall_mar" attrs="{'readonly':[('state','not in',('state_02'))]}"/>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
