@@ -173,6 +173,8 @@ class dtdream_sale(models.Model):
     @api.onchange("system_department_id")
     def onchange_system_department(self):
         if self.system_department_id:
+            if self.industry_id.parent_id != self.system_department_id:
+                self.industry_id = ""
             return {
                 'domain': {
                     "industry_id":[('parent_id','=',self.system_department_id.id)]
