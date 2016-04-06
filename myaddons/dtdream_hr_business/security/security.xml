@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data >
+        <record id="business_rule_01" model="ir.rule">
+            <field name="name">全局规则：外出公干编辑</field>
+            <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">[('is_shenpiren','=',False)]</field>
+        </record>
+
+         <record id="business_rule_02" model="ir.rule">
+            <field name="name">全局规则：外出公干编辑2</field>
+            <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+        </record>
+
+        <!--<record id="business_rule_02" model="ir.rule">
+            <field name="name">全局规则：外出公干删除</field>
+            <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('is_shenqingren','=',True),('state','=','-1')]</field>
+        </record>-->
+
+    </data>
+</openerp>

@@ -3,7 +3,7 @@
 from openerp import models, fields, api
 from datetime import datetime
 from openerp.exceptions import ValidationError
-from lxml import etree
+# from lxml import etree
 
 class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
@@ -18,6 +18,7 @@ class dtdream_hr_business(models.Model):
             rec.full_name=rec.name.full_name
             rec.department=rec.name.department_id.complete_name
             rec.approver_fir = rec.name.department_id.assitant_id
+            rec.current_approver = rec.name
 
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
@@ -29,7 +30,7 @@ class dtdream_hr_business(models.Model):
     approver_fou = fields.Many2one("hr.employee",string="第四审批人")
     approver_fif = fields.Many2one("hr.employee",string="第五审批人")
 
-    current_approver = fields.Many2one("hr.employee" ,string="当前审批人",store=True)
+    current_approver = fields.Many2one("hr.employee" ,compute=_compute_employee,string="当前审批人",store=True)
 
     @api.one
     def _compute_is_shenpiren(self):
@@ -116,37 +117,19 @@ class dtdream_hr_business(models.Model):
     def wkf_accept(self):                                        #第五审批人批准
         self.write({'state': '5'})
 
-
-    # @api.model
-    # def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-    #     def get_view_id(xid, name):
-    #         view = self.env['ir.ui.view'].search([('name', '=',name)], limit=1)
-    #         if not view:
-    #             return False
-    #         return view.id
-    #
-    #     context = self._context
-    #     view_id = get_view_id('invoice_tree', 'business_form')
-    #     res =  super(dtdream_hr_business, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-    #
-    #     doc = etree.XML(res['arch'])
-    #     doc.xpath("//form")[0].set("delete","false")
-    #     res['arch']=etree.tostring(doc)
-    #     return res
-
     @api.model
     def wkf_refuse(self):                                       #各审批人拒绝
         self.write({'state': '99'})
         self.write({'current_approver':self.name.id})
 
 
-    @api.multi
-    def unlink(self):
-        for record in self:
-            if record.state != '-1' or record.name.id != self.user.id:
-                raise ValidationError("您不是申请人或该流程已提交审批")
-            record.detail_ids.unlink()
-        return super(dtdream_hr_business, self).unlink()
+    # @api.multi
+    # def unlink(self):
+    #     for record in self:
+    #         if record.state != '-1' or record.name.id != self.user.id:
+    #             raise ValidationError("您不是申请人或该流程已提交审批")
+    #         record.detail_ids.unlink()
+    #     return super(dtdream_hr_business, self).unlink()
 
 class business_detail(models.Model):
     _name = "dtdream_hr_business.business_detail"

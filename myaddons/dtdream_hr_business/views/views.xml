@@ -53,8 +53,8 @@
                 <field name="job_number"/>
                 <field name="department"/>
                 <field name="create_time"/>
-                <field name="is_shenpiren" invisible="1"/>
-                <field name="is_shenqingren" invisible="1"/>
+                <field name="is_shenpiren" />
+                <field name="is_shenqingren" />
               </group>
               <group string="节点设定">
                 <field name="approver_fir"/>
