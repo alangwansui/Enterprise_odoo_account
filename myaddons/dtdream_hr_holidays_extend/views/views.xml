@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
         <openerp>
             <data>
+ <!--=======================================================================================view===================================================================-->
                 <record id="edit_holiday_new_inher" model="ir.ui.view">
                   <field name="name">edit.holiday.new.inher</field>
                   <field name="model">hr.holidays</field>
@@ -18,18 +19,90 @@
                         <field name="name" position="before">
                             <field name="create_time"></field>
                         </field>
+                      <field name="name" position="before">
+                            <field name="current_shenpiren" attrs="{'invisible':'(1==1)'}"></field>
+                      </field>
+                      <field name="name" position="before">
+                            <field name="is_shenpiren" attrs="{'invisible':'(1==1)'}"></field>
+                      </field>
+                      <field name="holiday_type" position="before">
+                          <field name="shenpiren1" readonly="1"></field>
+                          <field name="shenpiren2" attrs="{'readonly': ['|','&amp;',('state','in','confirm'),('is_shenpiren', '=', False),('state','not in',('draft','confirm'))]}"/>
+                          <field name="shenpiren3" attrs="{'readonly': ['|','&amp;',('state','in',('confirm','confirm2')),('is_shenpiren', '=', False),('state','not in',('draft','confirm','confirm2'))]}"></field>
+                          <field name="shenpiren4" attrs="{'readonly': ['|','&amp;',('state','in',('confirm','confirm2','confirm3')),('is_shenpiren', '=', False),('state','not in',('draft','confirm','confirm2','confirm3'))]}"></field>
+                          <field name="shenpiren5" attrs="{'readonly': ['|','&amp;',('state','in',('confirm','confirm2','confirm3','confirm4')),('is_shenpiren', '=', False),('state','not in',('draft','confirm','confirm2','confirm3','confirm4'))]}"></field>
+
+                      </field>
+                        <xpath expr='//field[@name="name"]' position="attributes">
+                             <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+                        </xpath>
+                        <xpath expr='//field[@name="holiday_status_id"]' position="attributes">
+                             <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+                        </xpath>
+                        <xpath expr='//field[@name="date_from"]' position="attributes">
+                             <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+                        </xpath>
+                        <xpath expr='//field[@name="date_to"]' position="attributes">
+                             <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+                        </xpath>
+                        <xpath expr='//field[@name="number_of_days_temp"]' position="attributes">
+                             <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+                        </xpath>
+                        <xpath expr='//button[@name="confirm"]' position="replace">
+                             <button string="提交" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
+                        </xpath>
+                        <xpath expr='//button[@name="reset"]' position="replace">
+                             <button string="Reset to Draft" name="reset" type="workflow"
+                                     attrs="{'invisible': ['|', ('can_reset', '=', False), ('state', 'not in', ['refuse'])]}"/>
+                        </xpath>
+                        <xpath expr='//button[@name="validate"]' position="replace">
+                            <button string="通过" name="validate"  type="workflow"  groups="base.group_user" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
+                        </xpath>
+                        <xpath expr='//button[@name="refuse"]' position="replace">
+                            <button string="驳回" name="refuse" type="workflow" groups="base.group_user" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
+                        </xpath>
+                        <xpath expr='//field[@name="state"]' position="attributes">
+                             <attribute name="statusbar_visible">draft,validate</attribute>
+                        </xpath>
+
+
                   </field>
                 </record>
 
 
-                  <record id="act_shenpiren_config" model="ir.actions.act_window">
-                      <field name="name">审批人配置</field>
-                      <field name="res_model">dtdream.hr.holidays.extend.new.menu</field>
-                      <field name="type">ir.actions.act_window</field>
-                      <field name="view_type">form</field>
-                      <field name="view_mode">tree,form</field>
-                  </record>
-                  <record id="view_dtdream_hr_holidays_extend_new_menu_form" model="ir.ui.view">
+                <record id="view_set_nianxiujia_form" model="ir.ui.view">
+                    <field name="name">view.set.nianxiujia.form</field>
+                    <field name="model">dtdream.nianjia</field>
+                    <field name="arch" type="xml">
+                        <form>
+                            <sheet>
+                                <group>
+                                    <field name="employee"/>
+                                    <field name="name"/>
+                                    <field name="number_of_days"/>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                </record>
+
+                <record id="view_set_nianxiujia_tree" model="ir.ui.view">
+                    <field name="name">view.set.nianxiujia.tree</field>
+                    <field name="model">dtdream.nianjia</field>
+                    <field name="arch" type="xml">
+                        <tree>
+
+
+                                    <field name="employee"/>
+                                    <field name="name" widget="selection"/>
+                                    <field name="number_of_days"/>
+
+                        </tree>
+                    </field>
+                </record>
+
+
+                 <!-- <record id="view_dtdream_hr_holidays_extend_new_menu_form" model="ir.ui.view">
                     <field name="name">view.dtdream.hr.holidays.extend.new.menu.form</field>
                     <field name="model">dtdream.hr.holidays.extend.new.menu</field>
                     <field name="arch" type="xml">
@@ -42,6 +115,7 @@
                                   <field name="shenpiren3"></field>
                                   <field name="shenpiren4"></field>
                                   <field name="shenpiren5"></field>
+
                                 </group>
                                 <group>
                                   <div>
@@ -65,23 +139,89 @@
 
                         </form>
                     </field>
+                  </record>-->
+
+<!--=============================================================================act_window====================================================================================-->
+                  <record model="ir.actions.act_window" id="hr_holidays.open_department_holidays_approve"><!--待审批休假-->
+                        <field name="name">Department Leaves</field>
+                        <field name="res_model">hr.holidays</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form,calendar</field>
+                        <field name="context">{}</field>
+                        <field name="domain">[('type','=','remove'),('current_shenpiren.user_id','=',uid)]</field>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
-                  <record id="view_dtdream_hr_holidays_extend_new_menu_tree" model="ir.ui.view">
-                        <field name="name">view.dtdream.hr.holidays.extend.new.menu.tree</field>
-                        <field name="model">dtdream.hr.holidays.extend.new.menu</field>
-                        <field name="arch" type="xml">
-                            <tree>
-                                <field name="shenpiren1"></field>
-                                <field name="shenpiren2"></field>
-                                <field name="shenpiren3"></field>
-                                <field name="shenpiren4"></field>
-                                <field name="shenpiren5"></field>
-                            </tree>
+                  <record model="ir.actions.act_window" id="hr_holidays.open_company_allocation"><!--请假摘要-->
+                        <field name="name">Leaves Summary</field>
+                        <field name="res_model">hr.holidays</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form</field>
+                        <!--<field name="view_id" eval="hr_holidays.view_holiday_simple"></field>-->
+                        <field name="context">{
+                            'search_default_group_type': 1,
+                            'search_default_year': 1 ,
+                            'search_default_my_leaves': 1,
+                            'needaction_menu_ref':
+                            [
+                                'hr_holidays.menu_open_ask_holidays_new',
+                                'hr_holidays.menu_open_allocation_holidays',
+                                'hr_holidays.menu_request_approve_allocation',
+                                'hr_holidays.menu_open_employee_leave',
+                            ]
+                        }</field>
+                        <field name="domain">[('holiday_type','=','employee')]</field>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+                  </record>
+
+                  <record model="ir.actions.act_window" id="hr_holidays.open_ask_holidays"><!--请假申请-->
+                        <field name="name">Leaves Request</field>
+                        <field name="res_model">hr.holidays</field>
+                        <field name="view_type">form</field>
+                        <field name="view_id" ref="hr_holidays.edit_holiday_new"/>
+                        <field name="context">{
+                            'default_type': 'remove',
+                            'search_default_my_leaves':1,
+                            'needaction_menu_ref':
+                            [
+                                'hr_holidays.menu_open_company_allocation',
+                            ]
+                        }</field>
+                        <field name="domain">[('type','=','remove'),('employee_id.user_id','=',uid)]</field>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+                        <field name="help" type="html">
+                          <p class="oe_view_nocontent_create">
+                            Click to create a new leave request.
+                          </p><p>
+                            Once you have recorded your leave request, it will be sent
+                            to a manager for validation. Be sure to set the right leave
+                            type (recuperation, legal holidays, sickness) and the exact
+                            number of open days related to your leave.
+                          </p>
                         </field>
                   </record>
-                 <menuitem name="审批人配置" id="shenpiren_config" parent="hr_holidays.menu_hr_holidays_root" sequence="500" action="act_shenpiren_config"></menuitem>
+
+                  <record model="ir.actions.act_window" id="open_set_nianxiujia">
+                        <field name="name">设置年休假</field>
+                        <field name="res_model">dtdream.nianjia</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form</field>
+                  </record>
+
+                  <!--<record model="ir.ui.view" id="hr_holidays.view_holiday_allocation_tree_inher">
+                        <field name="name">hr.holidays.allocation.tree.inher</field>
+                        <field name="model">hr.holidays</field>
+                        <field name="inherit_id" ref="hr_holidays.view_holiday_allocation_tree"></field>
+                        <field name="arch" type="xml">
+                            <field name="name" position="before">
+                                <field name="is_shenpiren"></field>
+                            </field>
+                        </field>
+                  </record>-->
+
+<!--=======================================================================================menu===================================================================-->
+                 <menuitem parent="hr_holidays.menu_hr_holidays_my_leaves" id="hr_holidays.menu_open_ask_holidays_new" action="hr_holidays.open_ask_holidays" sequence="22"/>
                  <menuitem name="Leaves to Approve" id="hr_holidays.menu_hr_holidays_approvals" parent="hr_holidays.menu_hr_holidays_root" sequence="3" groups="base.group_user"/>
                  <menuitem name="Leaves" parent="hr_holidays.menu_hr_holidays_approvals" id="hr_holidays.menu_open_department_leave_approve" groups="base.group_hr_manager,base.group_hr_user,base.group_user" action="hr_holidays.open_department_holidays_approve" sequence="1"/>
-
+                 <menuitem name="年休假设定" parent="hr_holidays.menu_hr_holidays_root" id="menu_open_set_nianxiujia" action="open_set_nianxiujia" sequence="22"/>
             </data>
         </openerp>

@@ -1,10 +1,13 @@
-<!--<?xml version="1.0" encoding="UTF-8" ?>-->
-            <!--<openerp>-->
-                <!--<data>-->
-                    <!--<record id="config_01" model="dtdream.hr.holidays.extend.new.menu">-->
-                        <!--<field name="chuangjian">example</field>-->
+<?xml version="1.0" encoding="UTF-8" ?>
+            <openerp>
+                <data>
+                    <delete id = "hr_holidays.holiday_status_cl" model="hr.holidays.status"/>
+                    <!-- Casual leave -->
+                    <record model="hr.holidays.status" id="holiday_status_cl">
+                        <field name="name" eval="'年休假 '"/>
+                        <field name="limit" eval="False"/>
+                        <field name="color_name">black</field>
+                    </record>
 
-                    <!--</record>-->
-
-                <!--</data>-->
-            <!--</openerp>-->
+                </data>
+            </openerp>
