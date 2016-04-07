@@ -17,7 +17,8 @@
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">['|','|','|','|','|',('approver_fir.user_id', '=', uid),('approver_sec.user_id', '=', uid),('approver_thr.user_id', '=', uid),('approver_fou.user_id', '=', uid),('approver_fif.user_id', '=', uid),('name.user_id', '=', uid)]</field>
+        <field name="domain">['|','|','|','|','|',('approver_fir.user_id', '=', uid),('approver_sec.user_id', '=', uid),
+            ('approver_thr.user_id', '=', uid),('approver_fou.user_id', '=', uid),('approver_fif.user_id', '=', uid),('name.user_id', '=', uid)]</field>
         <field name="search_view_id" ref="view_business_filter"/>
     </record>
 

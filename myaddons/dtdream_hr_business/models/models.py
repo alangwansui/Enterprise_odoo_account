@@ -140,3 +140,4 @@ class business_detail(models.Model):
     reason = fields.Text("事由",required="1")
 
     business = fields.Many2one("dtdream_hr_business.dtdream_hr_business")
+
