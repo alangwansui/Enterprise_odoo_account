@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_hr_business",
+    'name': "外出公干",
 
     'summary': """
     外出公干，外出公干的审批""",
@@ -34,4 +34,5 @@
     'demo': [
         'demo/demo.xml',
     ],
+    'application': True,
 }
