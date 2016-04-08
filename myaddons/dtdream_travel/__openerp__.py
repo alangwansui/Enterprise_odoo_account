@@ -5,7 +5,7 @@
     'summary': """出差申请""",
 
     'description': """
-        Long description of module's purpose
+        出差申请,
     """,
 
     'author': "jsz",
@@ -24,6 +24,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
+        'wizard/chucha_wizard.xml',
         'views/views.xml',
         'views/templates.xml',
         'views/actions.xml',
