@@ -78,7 +78,7 @@
                             <sheet>
                                 <group>
                                     <field name="employee"/>
-                                    <field name="name"/>
+                                    <field name="year"/>
                                     <field name="number_of_days"/>
                                 </group>
                             </sheet>
@@ -94,7 +94,7 @@
 
 
                                     <field name="employee"/>
-                                    <field name="name" widget="selection"/>
+                                    <field name="year"/>
                                     <field name="number_of_days"/>
 
                         </tree>

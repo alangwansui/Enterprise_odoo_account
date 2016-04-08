@@ -50,6 +50,7 @@ class dtdream_hr_holidays_extend(models.Model):
     is_confirm22approved=fields.Boolean(default=False)
     is_confirm32approved=fields.Boolean(default=False)
     is_confirm42approved=fields.Boolean(default=False)
+    year=fields.Integer(string="年休假年份")
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5')
     def change(self):
         if not self.shenpiren2:
@@ -240,14 +241,14 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
-    def unlink(self, cr, uid, ids, context=None):
-        print self
-        for rec in self.browse(cr, uid, ids, context=context):
-            if rec.state not in ['draft', 'cancel', 'confirm','confirm1','confirm2','confirm3','confirm4','confirm5','refuse']:
-                # raise UserError(_('You cannot delete a leave which is in %s state.') % (rec.state,))
-                print "error"
-
-        return super(hr_holidays,self).unlink(cr, uid, ids, context)
+    # def unlink(self, cr, uid, ids, context=None):
+    #     print self
+    #     for rec in self.browse(cr, uid, ids, context=context):
+    #         if rec.state not in ['draft', 'cancel', 'confirm','confirm1','confirm2','confirm3','confirm4','confirm5','refuse']:
+    #             # raise UserError(_('You cannot delete a leave which is in %s state.') % (rec.state,))
+    #             print "error"
+    #
+    #     return super(hr_holidays, self).unlink(cr, uid, ids, context)
 
 
 
@@ -256,20 +257,28 @@ class dtdream_nianjia(models.Model):
 
     employee = fields.Many2one('hr.employee',string="选择员工")
     number_of_days = fields.Integer(string="分配的天数")
-    name = fields.Date(string="年份")
+    year = fields.Integer(string="年休假年份")
+    hr_holidays_id=fields.Integer(string="对应hr_holidays的ID")
 
     @api.model
     def create(self, vals):
-        print "-----------"
-        print self.number_of_days
-        print vals['number_of_days']
-        print vals['name']
+     
         nianjia=self.env['hr.holidays']
         print nianjia
-        tec =  nianjia.create({'employee_id':vals['employee'],'state':'validate','type':'add','name':vals['name'],'holiday_status_id':'5','number_of_days_temp':vals['number_of_days']})
+        tec =  nianjia.create({'employee_id':vals['employee'],'state':'validate','type':'add','year':vals['year'],'holiday_status_id':5,'number_of_days_temp':vals['number_of_days']})
+        print tec.id
         tec.write({'state':'validate'})
-        print tec.state
         return super(dtdream_nianjia,self).create(vals)
+
+    @api.model
+    def unlink(self, vals):
+        employee=self.env['dtdream.nianjia'].search([('id','=',vals[0])]).employee
+        year=self.env['dtdream.nianjia'].search([('id','=',vals[0])]).year
+
+        nianjia=self.env['hr.holidays'].search([('employee_id','=',employee.id),('year','=',year)])
+
+        nianjia.write({'number_of_days_temp':0})
+        return super(dtdream_nianjia,self).unlink()
 
 
 
