@@ -155,7 +155,11 @@ class dtdream_sale(models.Model):
     project_space = fields.Char('项目空间')
     partner_id = fields.Many2one(required=True)
     ali_division = fields.Selection([
-        ('1','数据中国/部委事业部/金融/央企/其他'),
+        ('1','数据中国'),
+        ('2','部委事业部'),
+        ('3','金融'),
+        ('4','央企'),
+        ('5','其他'),
     ],'阿里对应事业部')
     ali_saleman = fields.Char('阿里对应销售')
 
