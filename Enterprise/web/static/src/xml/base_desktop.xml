@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-name="FieldStatus.content.desktop">
+    <t t-foreach="widget.selection.unfolded" t-as="i">
+        <t t-call="FieldStatus.content.button"/>
+    </t>
+    <t t-if="widget.selection.folded.length">
+        <ul class="dropdown-menu o-status-more" role="menu">
+            <li t-foreach="widget.selection.folded" t-as="i">
+                <t t-call="FieldStatus.content.button"/>
+            </li>
+        </ul>
+        <button type="button" class="btn btn-sm o_arrow_button btn-default dropdown-toggle" data-toggle="dropdown">More <span class="caret"/></button>
+    </t>
+</t>
+
+</templates>

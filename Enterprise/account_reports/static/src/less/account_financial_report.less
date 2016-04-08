@@ -1,0 +1,175 @@
+.o_account_reports_i_fa_toggle {
+    i.fa {
+        visibility: hidden;
+    }
+    &:hover i.fa {
+        visibility: visible;
+    }
+}
+.o_account_reports_lines(@border-width: 5px, @color: inherit, @font-weight: inherit, @border-top-style: initial, @border-bottom-style: initial) {
+    border-width: @border-width;
+    border-left-style: hidden;
+    border-right-style: hidden;
+    color: @color;
+    font-weight: @font-weight;
+    border-top-style: @border-top-style;
+    border-bottom-style: @border-bottom-style;
+}
+.o_account_reports_body_print {
+    background-color: white;
+    color: black;
+    .o_account_reports_level0 {
+        .o_account_reports_lines(@border-width: 5px, @font-weight: bold, @border-top-style: double, @border-bottom-style: hidden);
+    }
+}
+
+.o_account_reports_page {
+    background-color: @odoo-view-background-color;
+    color: @odoo-main-text-color;
+    &.o_account_reports_no_print {
+        padding-bottom: 125px;
+        margin: @odoo-horizontal-padding auto;
+        .o-webclient-padding(@top: @odoo-sheet-vpadding, @bottom: @odoo-sheet-vpadding);
+        .o_account_reports_level0 {
+            .o_account_reports_lines(@border-width: 5px, @color: @odoo-brand-primary, @font-weight: bold, @border-top-style: double, @border-bottom-style: hidden);
+        }
+        .o_account_reports_table {
+            white-space: nowrap;
+            margin-bottom: 128px;
+        }
+    }
+    p.o_account_reports_contact_info {
+        min-height: 30px;
+    }
+    .o_form_input {
+        width: 70%;
+    }
+    .o_account_reports_edit_summary_pencil {
+        font-size: 16px;
+        margin-left: -15px;
+        position: absolute;
+    }
+    table > tbody > tr > td ~ td > span {
+        margin-left: 10px;
+    }
+    .o_account_reports_summary {
+        padding-bottom: 40px;
+        padding-top: 15px;
+        .o_account_reports_i_fa_toggle;
+    }
+    .o_account_reports_unfolded td + td {
+        visibility: hidden;
+    }
+    div.o_account_reports_saved_summary {
+        padding-left: 5px;
+    }
+    div.o_account_reports_summary, .o_account_reports_web_action, .changeTrust,
+    span.o_account_reports_web_action, i.fa, div.o_account_reports_saved_summary span,
+    td.o_account_reports_unfoldable, td.o_account_reports_foldable, span.partner_id, span.move_line_id, input[type=checkbox] {
+        cursor: pointer;
+    }
+    p.footnote > .o_account_reports_footnote_icons, p.o_account_reports_footnote_edit > .o_account_reports_footnote_icons {
+        visibility: hidden;
+    }
+    p.footnote:hover > .o_account_reports_footnote_icons {
+        visibility: visible;
+    }
+    .o_account_reports_footnote_icons {
+        position: absolute;
+        margin-left: 3px;
+    }
+    .o_account_reports_caret_icon {
+        position: absolute;
+        margin-left: -3px;
+    }
+    .o_account_reports_pencil_icon {
+        position: absolute;
+        margin-left: -15px;
+        color: @odoo-main-text-color;
+    }
+    .o_account_reports_domain_line_1 {
+        margin-left: 65px;
+    }
+    .o_account_reports_domain_line_2 {
+        margin-left: 75px;
+    }
+    .o_account_reports_domain_line_3 {
+        margin-left: 85px;
+    }
+    tr.o_account_reports_domain_total {
+        font-weight: bold;
+    }
+    .unreconciled_aml {
+        font-style: : italic;
+    }
+    th {
+        border-bottom: thin groove;
+    }
+    b.o_account_reports_footnote_sup {
+        margin-top: 10px;
+        color: @odoo-main-text-color;
+    }
+    ul.o_account_reports_domain_dropdown {
+        margin-left: 70px
+    }
+    .total {
+        font-weight: bold;
+        color: @odoo-main-text-color;
+    }
+    .o_account_reports_level0 {
+        border-collapse: separate;
+        &.line td {
+            padding-bottom: 45px;
+        }
+        &.total td {
+            padding-bottom: 10px;
+        }
+    }
+    .o_account_reports_level1 {
+        .o_account_reports_lines(@border-width: 2px, @border-top-style: hidden, @border-bottom-style: solid);
+        &.total {
+            border-top-style: solid;
+            td {
+                padding-bottom: 25px;
+            }
+        }
+    }
+    .o_account_reports_level2 {
+        .o_account_reports_lines(@border-width: 1px, @border-top-style: solid, @border-bottom-style: solid);
+        > td > span:last-child {
+            margin-left: 25px;
+        }
+        &.total td {
+            padding-bottom: 50px;
+        }
+    }
+    .o_account_reports_default_style {
+        .o_account_reports_lines(@border-width: 0px, @border-top-style: solid, @border-bottom-style: solid);
+        > td > span:last-child {
+            margin-left: 50px;
+        }
+    }
+    .o_account_reports_followup_not_clicked {
+        .o_account_reports_followup_skip {
+            display: inline-block;
+        }
+        .o_account_reports_followup_done {
+            display: none;
+        }
+    }
+    .o_account_reports_followup_clicked {
+        .o_account_reports_followup_skip {
+            display: none;
+        }
+        .o_account_reports_followup_done {
+            display: inline-block;
+        }
+    }
+    .o_account_reports_history {
+        min-width: 300px;
+    }
+}
+
+.o_account-progress-bar-content {
+    color: black;
+}

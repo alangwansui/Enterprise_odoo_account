@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record id="view_dtdream_travel_chucha_form" model="ir.ui.view">
+        <field name="name">view.dtdream.travel.chucha.form</field>
+        <field name="model">dtdream.travel.chucha</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','0')]}"/>
+                    <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
+                    attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('1','2','3','4','5'))]}"/>
+                    <button name="%(act_chucha_wizard)d" string="驳回" type="action" class="oe_highlight"
+                    attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('1','2','3','4','5'))]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,1,2,3,4,5,99"/>
+                </header>
+              <sheet>
+                  <group>
+                      <group string="基本信息">
+                          <field name="name"/>
+                          <field name="workid"/>
+                          <field name="deperment"/>
+                          <field name="traveling_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="incity_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="other_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="total"/>
+                      </group>
+                      <group string="节点流程">
+                          <field name="shenpi_first" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="shenpi_second" attrs="{'readonly':[('state','not in',('0','1'))]}"/>
+                          <field name="shenpi_third" attrs="{'readonly':[('state','not in',('0','1','2'))]}"/>
+                          <field name="shenpi_fourth" attrs="{'readonly':[('state','not in',('0','1','2','3'))]}"/>
+                          <field name="shenpi_fifth" attrs="{'readonly':[('state','not in',('0','1','2','3','4'))]}"/>
+                          <field name="is_shenpiren" invisible="True"/>
+                      </group>
+                  </group>
+
+                  <group string="流程描述">
+                      <div>
+                          <p>第一审批人：部门行政助理</p>
+                          <p>第二审批人：部门主管</p>
+                          <p>第三审批人：受益部门权签人</p>
+                      </div>
+                  </group>
+
+                  <notebook>
+                        <page string="行程">
+                            <field name="journey_id" attrs="{'readonly':[('state', '!=','0')]}">
+                                <tree editable="bottom">
+                                    <field name="startaddress"/>
+                                    <field name="endaddress"/>
+                                    <field name="starttime"/>
+                                    <field name="endtime"/>
+                                    <field name="reason"/>
+                                </tree>
+                            </field>
+                        </page>
+                  </notebook>
+              </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_travel_chucha_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.travel.chucha.tree</field>
+        <field name="model">dtdream.travel.chucha</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="workid"/>
+              <field name="deperment"/>
+              <field name="create_time"/>
+              <field name="state"/>
+            </tree>
+        </field>
+    </record>
+  </data>
+</openerp>

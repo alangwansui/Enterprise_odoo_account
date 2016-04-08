@@ -2,12 +2,29 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_product_pro_type_user,product.pro.type.user,model_product_pro_type,base.group_user,1,1,1,1
 access_product_dtdream_office,product.dtdream.office,model_dtdream_office,base.group_user,1,1,1,1
 access_product_dtdream_industry,product.dtdream.industry,model_dtdream_industry,base.group_user,1,1,1,1
-access_product_template,product.template,model_product_template,group_dtdream_sale_read,1,1,1,1
+access_product_template,product.template,model_product_template,group_dtdream_sale_read,1,0,0,0
+access_product_template_product_query,product.template ,model_product_template,group_product_query,1,0,0,0
+access_product_product_product_query,product.product ,product.model_product_product,group_product_query,1,0,0,0
+access_product_template_product_manage,product.template ,model_product_template,group_product_manage,1,1,1,1
+access_product_product_product_manage,product.product ,product.model_product_product,group_product_manage,1,1,1,1
+access_product_dtdream_product_line,dtdream.product.line,dtdream_sale.model_dtdream_product_line,base.group_sale_salesman,1,1,1,1
+access_product_dtdream_product_line_sale_read,dtdream.product.line.sale.read,dtdream_sale.model_dtdream_product_line,group_dtdream_sale_read,1,1,1,1
+
+access_product_template_sale_manager,product.template salemanager,model_product_template,base.group_sale_manager,1,0,0,0
+access_product_product_sale_manager,product.product salemanager,product.model_product_product,base.group_sale_manager,1,0,0,0
+
 access_crm_lead,crm.lead,model_crm_lead,group_dtdream_sale_read,1,0,0,0
 access_res_partner,res.partner.crm.user,base.model_res_partner,group_dtdream_sale_read,1,1,1,0
 access_res_partner_category,res.partner.category.crm.user,base.model_res_partner_category,group_dtdream_sale_read,1,1,1,0
 mail_mailgate_thread,mail.thread,mail.model_mail_thread,group_dtdream_sale_read,1,1,1,1
 
+access_res_sale_order,sale.order,sale.model_sale_order,group_dtdream_sale_read,1,1,1,1
+
 
 access_product_product,product.product,product.model_product_product,group_dtdream_sale_read,1,1,1,1
 access_product_product_price_history,product.price.history,product.model_product_price_history,group_dtdream_sale_read,1,1,1,1
+
+
+access_crm_team_user,crm.team.user,model_crm_team,base.group_sale_salesman,1,1,1,1
+
+

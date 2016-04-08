@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Odoo 9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-07 14:41+0000\n"
-"PO-Revision-Date: 2016-03-04 16:07+0000\n"
+"PO-Revision-Date: 2016-03-12 01:56+0000\n"
 "Last-Translator: Joroy <13637815@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/odoo/odoo-9/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -81,7 +81,7 @@ msgstr "颜色索引"
 #: model:ir.model.fields,field_description:website_forum_doc.field_forum_documentation_stage_create_uid
 #: model:ir.model.fields,field_description:website_forum_doc.field_forum_documentation_toc_create_uid
 msgid "Created by"
-msgstr "创建于"
+msgstr "创建者"
 
 #. module: website_forum_doc
 #: model:ir.model.fields,field_description:website_forum_doc.field_forum_documentation_stage_create_date
@@ -253,7 +253,7 @@ msgstr "最后更新"
 #. module: website_forum_doc
 #: model:forum.documentation.toc,name:website_forum_doc.toc_crm_lead
 msgid "Lead & Opportunity"
-msgstr "机会点/项目管理"
+msgstr "线索/商机"
 
 #. module: website_forum_doc
 #: model:ir.model.fields,field_description:website_forum_doc.field_forum_documentation_toc_parent_left
@@ -428,7 +428,7 @@ msgstr "官方文档被提供的问题和答案必须满足一下条件："
 msgid ""
 "Tracks leads, boost opportunities and close deals.\n"
 "                    This serie of how-to will help you develop your business."
-msgstr "跟踪机会点，提升机会和完成交易。如何处理这个系列将帮助你发展你的业务。"
+msgstr "跟踪线索，提升机会和完成交易。如何处理这个系列将帮助你发展你的业务。"
 
 #. module: website_forum_doc
 #: model:forum.documentation.toc,name:website_forum_doc.toc_website

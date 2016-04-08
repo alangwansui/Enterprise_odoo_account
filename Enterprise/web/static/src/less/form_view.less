@@ -1,0 +1,744 @@
+.o_form_view {
+    background-color: @odoo-view-background-color;
+
+    .o-stat-value() {
+        font-weight: 700;
+        color: @odoo-brand-primary;
+    }
+
+    // Utility classes (+ oe_edit_only, oe_read_only, o_label_nowrap, o_text_overflow)
+    .o_form_invisible, .o_form_field_empty {
+        display: none!important;
+    }
+    .oe_form_box_info {
+        .bg-info;
+        .o-webclient-padding(@top: 5px, @bottom: 5px);
+    }
+    .oe_text_center {
+        text-align: center;
+    }
+    .oe_link {
+        .btn-link;
+    }
+    .oe_grey {
+        opacity: 0.5;
+    }
+
+    // Readonly specific rules
+    &.o_form_readonly {
+        .oe_edit_only {
+            .o_form_invisible;
+        }
+
+        .o_form_uri { // FIXME maybe global?
+            display: inline-block;
+
+            color: @odoo-main-text-color;
+            &:first-line {
+                color: @link-color;
+            }
+            &:hover {
+                color: darken(@odoo-main-text-color, 1%); // hack required on chrome
+                &:first-line {
+                    color: darken(@link-color, 15%);
+                }
+            }
+        }
+    }
+
+    // Editable specific rules
+    &.o_form_editable {
+        .oe_read_only {
+            .o_form_invisible;
+        }
+
+        .o_form_field_many2manytags {
+            .o-input();
+
+            > .o_form_field {
+                .o-flex(1, 0, 100px);
+                max-width: 100%;
+                
+                > .o_form_input_dropdown > .o_form_input {
+                    border-style: none!important;
+                }
+            }
+        }
+
+        .o_form_field_monetary {
+            .o-input();
+            .o-align-items(baseline);
+
+            > .o_form_input {
+                border-style: none!important;
+                width: 100px;
+                .o-flex(1, 0, auto);
+            }
+        }
+    }
+
+    // Header containing status/workflow buttons
+    .o_form_statusbar {
+        background-color: @odoo-view-background-color;
+        position: relative; // Needed for the "More" dropdown
+        border-bottom: 1px solid @odoo-brand-secondary;
+
+        > .o_statusbar_status {
+            > .o_arrow_button {
+                min-height: @odoo-statusbar-height;
+
+                position: relative;
+                padding-left: @odoo-statusbar-arrow-width*2;
+                
+                &:active {
+                    box-shadow: none;
+                }
+
+                &.disabled {
+                    opacity: 1.0;
+                    cursor: auto;
+                    pointer-events: auto;
+                    color: @odoo-main-color-muted;
+                }
+
+                &:before, &:after {
+                    content: " ";
+                    display: block;
+                    .o-position-absolute(0, -@odoo-statusbar-arrow-width + 1);
+
+                    border-top: @odoo-statusbar-height/2 solid transparent;
+                    border-bottom: @odoo-statusbar-height/2 solid transparent;
+                    border-right: none;
+                    border-left: @odoo-statusbar-arrow-width solid @odoo-view-background-color;
+                    -moz-transform: scale(0.9999); // Smooth the triangle on firefox
+                }
+
+                &:not(.disabled) {
+                    &:hover, &:active, &:focus {
+                        &:after {
+                            border-left-color: #E6E6E6; // FIXME
+                        }
+                    }
+                }
+
+                &:before {
+                    right: -@odoo-statusbar-arrow-width;
+                    border-left-color: rgba(128, 128, 128, 0.5);
+                }
+
+                &.btn-primary.disabled {
+                    color: white;
+                    background-color: @odoo-brand-optional-disabled; // Copy bootstrap opacity
+
+                    &:before {
+                        border-left-color: @odoo-brand-optional;
+                    }
+                    &:after {
+                        border-left-color: @odoo-brand-optional-disabled;
+                    }
+                }
+            }
+            .o-status-more {
+                .o-position-absolute(100%, 0);
+                min-width: 100px;
+                > li > button {
+                    width: 100%;
+                    text-align: left;
+                }
+            }
+        }
+    }
+
+    // Form with no sheet
+    &.o_form_nosheet {
+        background-color: @odoo-view-background-color;
+    }
+
+    // Sheet
+    .o_form_sheet_bg {
+        background-color: @odoo-webclient-background-color;
+        .o_form_sheet {
+            background-color: @odoo-view-background-color;
+        }
+    }
+
+    // Button box
+    .oe_button_box {
+        position: relative;
+        background-color: @odoo-brand-lightsecondary;
+
+        &.o_full .oe_stat_button:not(.o_form_invisible) ~ .oe_stat_button {
+            border-left: 1px solid @odoo-webclient-background-color;
+        }
+        &.o_not_full .oe_stat_button {
+            border-left: 1px solid @odoo-webclient-background-color;
+        }
+
+        .btn.oe_stat_button {
+            height: @odoo-statbutton-height;
+            padding: @odoo-statbutton-vpadding @odoo-statbutton-spacing @odoo-statbutton-vpadding 0; // padding-left will be achieved through margin-left of content
+            text-align: left;
+            background-color: transparent;
+            &:hover, &:focus {
+                background-color: darken(@odoo-brand-lightsecondary, 10%);
+                color: inherit;
+            }
+
+            > .o_button_icon {
+                margin-left: @odoo-statbutton-spacing; // To create the button padding left (firefox bug)
+                display: inline-block;
+                vertical-align: middle;
+                &:before {
+                    font-size: x-large;
+                    vertical-align: middle;
+                }
+
+                width: 30%;
+            }
+
+            > .o_form_field_percent_pie {
+                margin-left: @odoo-statbutton-spacing; // To create the button padding left (firefox bug)
+            }
+
+            > .o_stat_info { // contains the value and text
+                display: inline-block;
+                vertical-align: middle;
+
+                max-width: 70%;
+                padding-right: @odoo-statbutton-spacing;
+                line-height: 1.2;
+
+                .o_stat_value {
+                    .o-text-overflow(block);
+                    .o-stat-value();
+                }
+                > .o_stat_text {
+                    .o-text-overflow(block);
+
+                    .o_stat_value {
+                        display: inline;
+                    }
+                }
+            }
+
+            // Some buttons only display text and directly use the WidgetButton template instead of StatInfo
+            > span {
+                .o-text-overflow(block);
+                .o_stat_info; // layout
+                white-space: normal; // text on several lines if needed
+            }
+
+            &:not(:hover) .o_stat_info > .o_hover {
+                display: none !important;
+            }
+            &:hover .o_stat_info > .o_not_hover {
+                display: none !important;
+            }
+
+            &.o_button_more {
+                text-align: center;
+                &:after {
+                    margin-left: 5px;
+                    .o-caret-down;
+                }
+            }
+        }
+
+        > .o_dropdown_more {
+            background-color: @odoo-brand-lightsecondary;
+            border: none;
+            border-top: 1px solid @odoo-webclient-background-color;
+            border-left: 1px solid @odoo-webclient-background-color;
+            margin: 0;
+            padding: 0;
+            > li {
+                padding: 0;
+                > .btn.oe_stat_button {
+                    border: none;
+                    border-bottom: 1px solid @odoo-webclient-background-color;
+                }
+            }
+        }
+    }
+
+    // Title & avatar
+    .oe_avatar {
+        float: right;
+
+        > img {
+            vertical-align: top;
+            border: 1px solid @odoo-main-color-muted;
+        }
+    }
+
+    .oe_title {
+        .o_priority > .o_priority_star {
+            font-size: inherit;
+        }
+    }  
+
+    // Groups
+    .o_group {
+        @media (min-width: @screen-md-min) {
+            &.o_label_nowrap {
+                .o_form_label {
+                    white-space: nowrap;
+                }
+            }
+        }
+
+        .o_form_label {
+            font-weight: normal;
+        }
+        .o_td_label .o_form_label {
+            @media (min-width: @screen-xs-min) {
+                font-weight: bold;
+            }
+            margin-right: 0px;
+        }
+    }
+    &.oe_form_configuration {
+        .o_group .o_form_label {
+            white-space: nowrap;
+        }
+    }
+
+    // Separators
+    .o_horizontal_separator {
+        font-size: @font-size-h2;
+        margin: @odoo-form-spacing-unit 0;
+        &:empty {
+            height: @odoo-form-spacing-unit * 2;
+        }
+    }
+
+    // Notebooks
+    .o_notebook {
+        margin-top: @odoo-form-spacing-unit * 2;
+        clear: both; // For the notebook not to have alongside floating elements
+
+        > ul.nav-tabs {
+            border-bottom: 1px solid @odoo-brand-secondary;
+
+            > li {
+                > a {
+                    text-transform: uppercase;
+                    color: @odoo-main-color-muted;
+                    border: none;
+                    background-color: transparent;
+                    &:hover, &:focus, &:active {
+                        outline: none;
+                        color: @odoo-main-text-color;
+                    }
+                }
+                &:not(.active) {
+                    margin-bottom: 0; // Override bootstrap negative margin so that active and non-active tab have same height
+                }
+                &.active > a {
+                    border-bottom: 1px solid @odoo-brand-primary;
+                    &, &:hover, &:focus, &:active {
+                        color: @odoo-brand-primary;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+
+        .nav-tabs {
+            border: none;
+            > .tab-pane {
+                min-height: 100px;
+
+                > :first-child {
+                    .oe_pad_content, .note-editor { // Remove the border-top of note editor when first-child of
+                        border-top: none;           // a tab (as it will be right under the tabs border-bottom)
+                    }
+                }
+            }
+        }
+    }
+
+    // Labels
+    .o_form_label {
+        font-size: @font-size-base; // The label muse have the same size whatever their position
+        line-height: @line-height-base;
+        @media (max-width: @screen-xs-max) {
+            font-size: @odoo-font-size-base-touch;
+        }
+        @media (max-width: @screen-xxs-max) {
+            font-size: @odoo-label-font-size-factor * @odoo-font-size-base-touch;
+        }
+        margin-right: @odoo-form-spacing-unit;
+
+        &.o_form_invalid {
+            color: @brand-danger;
+        }
+        &.o_form_label_empty, &.o_form_label_false {
+            opacity: 0.5;
+            font-weight: normal;
+        }
+
+        @media (max-width: @screen-xxs-max) {
+            font-weight: normal;
+            color: @odoo-brand-secondary;
+        }
+    }
+
+    // Tags
+    .o_form_field_many2manytags {
+        .badge {
+            cursor: pointer;
+            color: white;
+            font-size: 12px;
+            border: 0;
+
+            > ul {
+                @colored-tag-width: 45px;
+                width: 5*@colored-tag-width + 3px;
+                > li {
+                    float: left;
+                    color: black;
+                    > span {
+                        border-radius: 6px;
+                        width: @colored-tag-width;
+                        height: 30px;
+                        display: inline-block;
+                        border: 2px solid white;
+                        cursor: pointer;
+                        padding: 0;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
+                    }
+                }
+                > li:last-child {
+                    margin-top: 7px;
+                    cursor: auto;
+                }
+            }
+        }
+    }
+
+    // All form fields
+    .o_form_required {
+        &.o_form_input, .o_form_input, &.o_form_textarea, .o_form_textarea {
+            border-width: 2px;
+            border-color: @odoo-main-text-color;
+        }
+    }
+
+    .o_form_invalid {
+        &.o_form_input, .o_form_input, &.o_form_textarea, .o_form_textarea {
+            border-color: @brand-danger;
+        }
+    }
+
+    // Boolean
+    .o_form_field_boolean {
+        margin: 0 @odoo-form-spacing-unit 0 0;
+    }
+
+    // Radio buttons
+    .o_form_field_radio .o_form_radio {
+        outline: none;
+    }
+    
+    // Translate icons
+    .o_field_translate {
+        padding: 0;
+        display: none;
+        cursor: pointer;
+        width: 12px;
+        margin-left: -12px;
+        vertical-align: top;
+        &::before { // seems to be useful for some old browser
+            position: relative;
+        }
+
+        &.o_translate_active {
+            display: inline-block;
+        }
+    }
+
+    // Dropdowns input (many2one, ...)
+    .o_form_input_dropdown {
+        .o-flex(1, 0, auto);
+        position: relative;
+
+        > input {
+            padding-right: 15px;
+            cursor: pointer;
+        }
+
+        .o_dropdown_button {
+            .o-position-absolute(0, 0);
+            pointer-events: none;
+            &:after {
+                .o-caret-down;
+            }
+        }
+    }
+
+    // Many2many tags
+    .badge .o_delete {
+        cursor: pointer;
+    }
+
+    // Image
+    .o_form_field_image {
+        position: relative;
+
+        .o_form_image_controls {
+            .o-position-absolute(0, 0);
+            width: 100%;
+
+            color: white;
+            background-color: @odoo-brand-optional;
+            opacity: 0;
+            transition: opacity ease 400ms;
+
+            > .fa {
+                margin: 5px;
+                cursor: pointer;
+            }
+        }
+
+        &:hover .o_form_image_controls {
+            opacity: 0.8;
+        }
+    }
+
+    // Input loading/file
+    .o_form_binary_progress, .o_hidden_input_file .o_form_input_file {
+        display: none;
+    }
+
+    // Timezone widget warning
+    .o_tz_warning {
+        color: @brand-danger;
+        cursor: pointer;
+    }
+
+    // One2Many Kanban views
+    .o_form_field .o_kanban_view.o_kanban_ungrouped {
+        padding: 0;
+        .o_kanban_record {
+            box-shadow: none;
+        }
+    }
+
+    // One2Many List views
+    .o_form_field .o_list_view {
+        margin-bottom: 10px;
+        border: none;
+
+        > thead {
+            background: transparent;
+            border-bottom: 1px solid @odoo-form-lightsecondary;
+        }
+
+        > tfoot > tr > td {
+            padding: 0;
+            color: @odoo-main-text-color;
+            background-color: @odoo-list-grey;
+        }
+    }
+    &.o_form_editable .o_form_field .o_list_view {
+        td.o_readonly {
+            background-color: lightgrey;  // Readonly fields on edit mode
+        }
+    }
+    &.o_form_readonly .o_form_field .o_list_view .o_row_handle {
+        display: none;  // Hide the handler in non-edit mode
+    }
+
+    // Percent pie field
+    .o_form_field_percent_pie {
+        @pie-dimension: @odoo-statbutton-height - 2 * @odoo-statbutton-vpadding;
+        @pie-ring-width: 4px;
+        .o_pie {
+            position: relative;
+            width: @pie-dimension;
+            height: @pie-dimension;
+            border-radius: 100%;
+            overflow: hidden;
+            background-color: @odoo-brand-optional;
+
+            &:after { // Outside pie border to go over border-radius irregularities
+                content: " ";
+                .o-position-absolute(0, 0);
+                width: 100%;
+                height: 100%;
+                border: 1px solid @odoo-brand-secondary;
+                border-radius: 100%;
+            }
+
+            .o_mask {
+                .o-position-absolute(0, 0);
+                .o-transform-origin(0);
+                width: 50%;
+                height: 100%;
+                background-color: @odoo-view-background-color;
+                &.o_full {
+                    background-color: inherit;
+                }
+            }
+
+            .o_pie_value {
+                .o-flex-display();
+                .o-justify-content(center);
+                .o-align-items(center);
+
+                .o-position-absolute(@pie-ring-width, @pie-ring-width);
+                width: @pie-dimension - 2 * @pie-ring-width;
+                height: @pie-dimension - 2 * @pie-ring-width;
+                border-radius: 100%;
+                background-color: @odoo-brand-lightsecondary;
+                border: 1px solid @odoo-brand-secondary;
+
+                .o-stat-value();
+            }
+        }
+    }
+
+    // Attachments
+    .oe_attachment {
+        display: inline-block;
+        border: 1px solid @odoo-brand-lightsecondary;
+        margin: 0 @odoo-form-spacing-unit @odoo-form-spacing-unit 0;
+        padding: @odoo-form-spacing-unit;
+    }
+
+    // Specific style classes
+    .o_group.o_inner_group.oe_subtotal_footer {
+        border-top: 1px solid @odoo-brand-secondary;
+
+        > tbody > tr > td {
+            padding: 0;
+
+            &.o_td_label {
+                text-align: right;
+            }
+
+            .o_form_label {
+                padding-right: 20px;
+
+                min-width: 0;
+                white-space: nowrap;
+                &:after {
+                    content: ":";
+                }
+            }
+
+            .o_form_field {
+                text-align: right;
+                width: 100%;
+            }
+        }
+
+        .oe_subtotal_footer_separator {
+            width: 100%;
+            text-align: right;
+            border-top: 1px solid @odoo-brand-secondary;
+            font-weight: bold;
+            font-size: 1.3em;   
+        }
+    }
+
+    .o_address_format {
+        width: 100%;
+        .o_address_street, .o_address_country {
+            .o-flex-display;
+        }
+
+        .o_address_city {
+            margin-right: 2%;
+        }
+        .o_address_state {
+            margin-right: 2%;
+        }
+        &.o_zip_city {
+            .o_address_zip {
+                margin-right: 2%;
+            }
+            .o_address_city {
+                margin-right: 0;
+            }
+            .o_address_state {
+                display: block;
+                margin-right: 0;
+            }
+        }
+        &.o_city_state {
+            .o_address_state {
+                margin-right: 0;
+            }
+            .o_address_zip {
+                display: block;
+                margin-right: 0;
+            }
+        }
+        > span.o_form_field {
+            width: auto;
+        }
+    }
+    &.o_form_editable .o_address_format {
+        input.o_address_city {
+            width: 38%;
+        }
+        div.o_address_state {
+            width: 33%;
+        }
+        input.o_address_zip {
+            width: 25%;
+        }
+        &.o_zip_city {
+            .o_address_zip {
+                width: 38%;
+            }
+            .o_address_city {
+                width: 60%;
+            }
+            .o_address_state {
+                width: 100%;
+            }
+        }
+        &.o_city_state {
+            .o_address_city {
+                width: 50%;
+            }
+            .o_address_state {
+                width: 48%;
+            }
+            .o_address_zip {
+                width: 100%;
+            }
+        }
+    }
+}
+
+// Overriden style when form view in modal
+.modal .modal-dialog {
+    .o_form_view {
+        .o_form_sheet {
+            box-shadow: none;
+            width: 100%;
+            margin: 0 auto;
+        }
+    }
+
+    .o_form_invisible {
+        display: none!important;
+    }
+}
+
+// FIXME bootstrap modal : 1050
+.ui-autocomplete {
+    z-index: 1051;
+}
+
+// Buttons in ControlPanel
+.o_control_panel .o_form_buttons_view > button:first-child {
+    float: left; // Unfortunately needed for the bounce effect
+}

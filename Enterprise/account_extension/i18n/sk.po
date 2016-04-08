@@ -1,0 +1,113 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * account_extension
+# 
+# Translators:
+# Jaroslav Bosansky <jaro.bosansky@ekoenergo.sk>, 2016
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 9.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-07 14:51+0000\n"
+"PO-Revision-Date: 2016-02-02 20:47+0000\n"
+"Last-Translator: Jaroslav Bosansky <jaro.bosansky@ekoenergo.sk>\n"
+"Language-Team: Slovak (http://www.transifex.com/odoo/odoo-9/language/sk/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: sk\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#. module: account_extension
+#: model:ir.ui.view,arch_db:account_extension.account_config_settings_inherit
+msgid "Bank Statements"
+msgstr "Bankové výpisy"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_plaid
+msgid ""
+"Get your bank statements from you bank and import them through plaid.com.\n"
+"-that installs the module account_plaid."
+msgstr "Získajte svoje bankové výpisy a importujte ich cez plaid.com.\n-to nainštaluje modul account_plaid."
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_yodlee
+msgid ""
+"Get your bank statements from you bank and import them through yodlee.com.\n"
+"-that installs the module account_yodlee."
+msgstr "Získajte výkazy z vašej banky a importujte ich cez yodlee.com.\n-to nainštaluje modul account_yodlee."
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_bank_statement_import_ofx
+msgid ""
+"Get your bank statements from your bank and import them in Odoo in the .OFX format.\n"
+"This installs the module account_bank_statement_import_ofx."
+msgstr "Získajte svoje bankové výpisy a importujte ich do odoo v .OFX formáte.\nToto nainštaluje modul account_bank_statement_import_ofx."
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_bank_statement_import_qif
+msgid ""
+"Get your bank statements from your bank and import them in Odoo in the .QIF format.\n"
+"This installs the module account_bank_statement_import_qif."
+msgstr "Získajte svoje bankové výpisy a importujte ich do odoo v .QIF formáte.\nToto nainštaluje modul account_bank_statement_import_qif."
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_sepa
+msgid ""
+"If you check this box, you will be able to register your payment using SEPA.\n"
+"-This installs the module account_sepa."
+msgstr "Ak zaškrtnete toto políčko, budete môcť registrovať svoju platbu použitím SEPA.\n-Toto nainštaluje modul account_sepa."
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_plaid
+msgid "Import of Bank Statements from Plaid."
+msgstr "Import bankových výpisov z Plaid."
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_yodlee
+msgid "Import of Bank Statements from Yodlee."
+msgstr "Import bankových výpisov z Yodlee."
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_bank_statement_import_ofx
+msgid "Import of Bank Statements in .OFX Format"
+msgstr "Import bankových výpisov v .OFX formáte"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_bank_statement_import_qif
+msgid "Import of Bank Statements in .QIF Format."
+msgstr "Import bankových výpisov v .QIF formáte."
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_reports_followup
+msgid "Manage customer payment follow-ups"
+msgstr "Spravujte naväzovanie na zákaznícke platby"
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_reports_followup
+msgid ""
+"This allows to automate letters for unpaid invoices, with multi-level recalls.\n"
+"-This installs the module account_reports_followup."
+msgstr "Toto umožňuje automatizovať listy pre neuhradené faktúry, s viacúrovňovými upomienkami.\n-Toto nainštaluje modul account_reports_followup."
+
+#. module: account_extension
+#: model:ir.model.fields,help:account_extension.field_account_config_settings_module_account_batch_deposit
+msgid ""
+"This allows you to group received checks before you deposit them to the bank.\n"
+"-This installs the module account_batch_deposit."
+msgstr "Toto vám umožní zoskupiť obdržané šeky pred ich vložením do banky.\n-Toto nainštaluje modul account_batch_deposit."
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_batch_deposit
+msgid "Use batch deposit"
+msgstr "Použiť depozit várky"
+
+#. module: account_extension
+#: model:ir.model.fields,field_description:account_extension.field_account_config_settings_module_account_sepa
+msgid "Use sepa payment"
+msgstr "Použiť sepa platbu"
+
+#. module: account_extension
+#: model:ir.model,name:account_extension.model_account_config_settings
+msgid "account.config.settings"
+msgstr "account.config.settings"

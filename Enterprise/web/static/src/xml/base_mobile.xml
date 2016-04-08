@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-name="FormRenderingStatusBar_DropDown">
+    <div class="btn-group">
+        <a class="btn btn-sm btn-primary dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Action</a>
+        <ul class="dropdown-menu" role="menu"/>
+    </div>
+</t>
+
+<t t-name="FieldStatus.content.mobile">
+    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown">
+        <t t-foreach="widget.selection.unfolded" t-as="i">
+            <t t-if="i[0] === widget.get('value')">
+                <t t-esc="i[1]"/>
+            </t>
+        </t>
+    </button>
+    <ul class="dropdown-menu o-status-more" role="menu">
+        <li t-foreach="widget.selection.unfolded" t-as="i">
+            <t t-call="FieldStatus.content.button"/>
+        </li>
+        <li t-foreach="widget.selection.folded" t-as="i">
+            <t t-call="FieldStatus.content.button"/>
+        </li>
+    </ul>
+</t>
+
+</templates>

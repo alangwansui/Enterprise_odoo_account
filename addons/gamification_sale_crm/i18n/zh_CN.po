@@ -30,7 +30,7 @@ msgstr "订单完成天数"
 #. module: gamification_sale_crm
 #: model:gamification.challenge,name:gamification_sale_crm.challenge_crm_marketing
 msgid "Lead Acquisition"
-msgstr "获取机会点"
+msgstr "获取线索"
 
 #. module: gamification_sale_crm
 #: model:gamification.challenge,name:gamification_sale_crm.challenge_crm_sale
@@ -40,12 +40,12 @@ msgstr "月销售目标"
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,name:gamification_sale_crm.definition_crm_nbr_new_leads
 msgid "New Leads"
-msgstr "新机会点"
+msgstr "新线索"
 
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,name:gamification_sale_crm.definition_crm_nbr_new_opportunities
 msgid "New Opportunities"
-msgstr "新项目管理"
+msgstr "新商机"
 
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,name:gamification_sale_crm.definition_crm_nbr_sale_order_created
@@ -60,7 +60,7 @@ msgstr "支付交易"
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,name:gamification_sale_crm.definition_crm_lead_delay_open
 msgid "Time to Qualify a Lead"
-msgstr "评估机会点所需时间"
+msgstr "评估线索所需时间"
 
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,name:gamification_sale_crm.definition_crm_tot_customer_refunds
@@ -91,12 +91,12 @@ msgstr "发票"
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,suffix:gamification_sale_crm.definition_crm_nbr_new_leads
 msgid "leads"
-msgstr "机会点"
+msgstr "线索"
 
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,suffix:gamification_sale_crm.definition_crm_nbr_new_opportunities
 msgid "opportunities"
-msgstr "项目管理"
+msgstr "商机"
 
 #. module: gamification_sale_crm
 #: model:gamification.goal.definition,suffix:gamification_sale_crm.definition_crm_nbr_paid_sale_order
