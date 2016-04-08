@@ -7,7 +7,8 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="btn_submit" string="提交" type="workflow" states="0" class="oe_highlight"/>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','0')]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
                     attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('1','2','3','4','5'))]}"/>
                     <button name="%(act_chucha_wizard)d" string="驳回" type="action" class="oe_highlight"

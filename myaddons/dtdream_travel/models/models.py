@@ -71,21 +71,20 @@ class dtdream_travel(models.Model):
             }
             return {'warning': warning}
 
-
     name = fields.Char(string="申请人", default=lambda self: self.env["hr.employee"].search(
         [("login", "=", self.env.user.login)]).name, readonly=True)
     shenpi_first = fields.Many2one('res.users', string="第一审批人", help="部门行政助理", required=True,
-        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)]).shenpi_first)
+        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)], limit=1, order="id desc").shenpi_first)
     shenpi_second = fields.Many2one('res.users', string="第二审批人", help="部门主管",
-        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)]).shenpi_second)
+        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)], limit=1, order="id desc").shenpi_second)
     shenpi_third = fields.Many2one('res.users', string="第三审批人", help="受益部门权签人(当受益部门与权签部门不一致时)",
-        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)]).shenpi_third)
+        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)], limit=1, order="id desc").shenpi_third)
     shenpi_fourth = fields.Many2one('res.users', string="第四审批人",
-        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)]).shenpi_fourth)
+        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)], limit=1, order="id desc").shenpi_fourth)
     shenpi_fifth = fields.Many2one('res.users', string="第五审批人",
-        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)]).shenpi_fifth)
+        default=lambda self: self.env["dtdream.travel.chucha"].search([("create_uid", "=", self.env.user.login)], limit=1, order="id desc").shenpi_fifth)
     shenpiren = fields.Many2one('res.users', string="是否当前审批人")
-    is_shenpiren = fields.Boolean(compute="_compute_is_shenpiren", string="是否审批人")
+    is_shenpiren = fields.Boolean(compute=_compute_is_shenpiren, string="是否审批人")
     workid = fields.Char(string="工号", readonly=True, default=lambda self: self.env["hr.employee"].search(
         [("login", "=", self.env.user.login)]).job_number)
     deperment = fields.Char(string="部门", readonly=True, default=lambda self: self.env["hr.employee"].search(
