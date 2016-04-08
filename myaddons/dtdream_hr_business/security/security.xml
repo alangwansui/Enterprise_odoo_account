@@ -34,6 +34,5 @@
             <field name="domain_force">['|',('his_app','=',user.id),('name.user_id', '=', user.id)]</field>
              <field name="groups" eval="[(4, ref('base.group_user'))]"/>
         </record>
-
     </data>
 </openerp>
