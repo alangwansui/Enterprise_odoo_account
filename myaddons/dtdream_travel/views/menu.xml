@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <menuitem name="出差申请" id="menu_dtdream_travel" parent="hr.menu_hr_root" sequence="10"
+            action="act_dtdream_travel_chucha_shenqing"></menuitem>
+    </data>
+</openerp>

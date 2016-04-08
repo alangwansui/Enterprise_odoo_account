@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <record model="ir.module.category" id="module_dtdream_travel_group">
+            <field name="name">出差申请</field>
+            <field name="description">出差申请</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="dtdream_travel_rule_100" model="ir.rule">
+            <field name="name">只能看到需要自己审批的记录, 自己创建的记录</field>
+            <field name="model_id" ref="model_dtdream_travel_chucha"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">['|',('create_uid','=',user.id),('shenpiren.id', '=', user.id)]</field>
+        </record>
+
+        <record id="dtdream_travel_rule_200" model="ir.rule">
+            <field name="name">出差申请只能草稿状态且创建者自己能删除</field>
+            <field name="model_id" ref="model_dtdream_travel_chucha"/>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('state','in', ('0','99')),('create_uid','=',user.id)]</field>
+        </record>
+
+    </data>
+</openerp>

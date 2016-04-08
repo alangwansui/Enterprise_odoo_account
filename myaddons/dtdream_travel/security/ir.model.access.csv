@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_travel_dtdream_travel_chucha,dtdream_travel.dtdream_travel_chucha,model_dtdream_travel_chucha,,1,1,1,1
+access_dtdream_travel_dtdream_travel_journey,dtdream_travel.dtdream_travel_journey,model_dtdream_travel_journey,,1,1,1,1

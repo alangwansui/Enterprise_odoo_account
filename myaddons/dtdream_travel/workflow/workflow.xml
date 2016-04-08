@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="workflow_chucha_handle" model="workflow">
+        <field name="name">出差工作流</field>
+        <field name="osv">dtdream.travel.chucha</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record id="act_draft" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="flow_start">True</field>
+        <field name="name">提交申请</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_draft()</field>
+    </record>
+
+    <record id="act_approve1" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="name">第一审批人</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve1()</field>
+    </record>
+
+    <record id="act_approve2" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="name">第二审批人</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve2()</field>
+    </record>
+
+    <record id="act_approve3" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="name">第三审批人</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve3()</field>
+    </record>
+
+    <record id="act_approve4" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="name">第四审批人</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve4()</field>
+    </record>
+
+    <record id="act_approve5" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="name">第五审批人</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve5()</field>
+    </record>
+
+    <record id="act_done" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_chucha_handle"/>
+        <field name="name">通过</field>
+        <field name="flow_stop">True</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="act_reject" model="workflow.activity" > <!-- 审批驳回 -->
+        <field name="wkf_id" ref="workflow_chucha_handle" />
+        <field name="name">驳回</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_reject()</field>
+     </record>
+
+    <record id="trans_draft_approve1" model="workflow.transition">
+        <field name="act_from" ref="act_draft"/>
+        <field name="act_to" ref="act_approve1"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_approve1_approve2" model="workflow.transition">
+        <field name="act_from" ref="act_approve1"/>
+        <field name="act_to" ref="act_approve2"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve1_done" model="workflow.transition">
+        <field name="act_from" ref="act_approve1"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve2_approve3" model="workflow.transition">
+        <field name="act_from" ref="act_approve2"/>
+        <field name="act_to" ref="act_approve3"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve2_done" model="workflow.transition">
+        <field name="act_from" ref="act_approve2"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve3_approve4" model="workflow.transition">
+        <field name="act_from" ref="act_approve3"/>
+        <field name="act_to" ref="act_approve4"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve3_done" model="workflow.transition">
+        <field name="act_from" ref="act_approve3"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve4_approve5" model="workflow.transition">
+        <field name="act_from" ref="act_approve4"/>
+        <field name="act_to" ref="act_approve5"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve4_done" model="workflow.transition">
+        <field name="act_from" ref="act_approve4"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve5_done" model="workflow.transition">
+        <field name="act_from" ref="act_approve5"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_approve</field>
+    </record>
+
+    <record id="trans_approve1_draft" model="workflow.transition">
+        <field name="act_from" ref="act_approve1"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_approve2_draft" model="workflow.transition">
+        <field name="act_from" ref="act_approve2"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_approve3_draft" model="workflow.transition">
+        <field name="act_from" ref="act_approve3"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_approve4_draft" model="workflow.transition">
+        <field name="act_from" ref="act_approve4"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_approve5_draft" model="workflow.transition">
+        <field name="act_from" ref="act_approve5"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    </data>
+</openerp>
