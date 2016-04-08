@@ -1,0 +1,129 @@
+<openerp>
+  <data>
+
+      <record id="view_business_filter" model="ir.ui.view">
+            <field name="name">business</field>
+            <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+            <field name="arch" type="xml">
+                <search >
+                    <filter string="待审批" name="current_approver" domain="[('current_approver.user_id','=',uid)]"/>
+                </search>
+             </field>
+         </record>
+
+    <record id="act_dtdream_hr_business" model="ir.actions.act_window">
+        <field name="name">外出公干</field>
+        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="search_view_id" ref="view_business_filter"/>
+        <field name="context">{'search_default_current_approver':1}</field>
+    </record>
+
+
+     <record model="ir.ui.view" id="business_tree">
+      <field name="name">business_tree</field>
+      <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="job_number"/>
+          <field name="name"/>
+          <field name="department"/>
+          <field name="title"/>
+            <field name="state"/>
+        </tree>
+      </field>
+     </record>
+
+    <!--form视图-->
+    <record model="ir.ui.view" id="business_form">
+      <field name="name">business_form</field>
+      <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="btn_submit" type="workflow" string="提交" class="oe_highlight" attrs="{'invisible':['|',('is_shenqingren','=',False),('state','not in',('-1'))]}"></button>
+            <button name="btn_restart" type="workflow" string="重启流程" class="oe_highlight" attrs="{'invisible':['|',('is_shenqingren','=',False),('state','not in',('99'))]}"></button>
+            <button name="btn_next" type="workflow"  string="批准" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
+            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" string="驳回" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
+            <field name="state" statusbar_visible="-1,0,5" widget="statusbar"></field>
+          </header>
+          <sheet>
+            <group>
+              <group string="基本信息">
+                <field name="name" attrs="{'readonly':['|',('is_shenqingren','=',False),('state','not in',('-1'))]}"/>
+                <field name="job_number"/>
+                <field name="department"/>
+                <field name="create_time"/>
+                <field name="is_shenpiren" invisible="1"/>
+                <field name="is_shenqingren" invisible="1"/>
+                <field name="is_admin" invisible="1"/>
+              </group>
+              <group string="节点设定">
+                <field name="approver_fir"/>
+                <field name="approver_sec" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('1','2','3','4','5'))]}"/>
+                <field name="approver_thr" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('2','3','4','5'))]}"/>
+                <field name="approver_fou" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('3','4','5'))]}"/>
+                <field name="approver_fif" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('4','5'))]}"/>
+              </group>
+            </group>
+            <group>
+              <div>
+                  <p>流程描述</p>
+                  <p>第一审批人：部门行政助理</p>
+                  <p>第二审批人：部门主管</p>
+                  <p><font color="red">注：有费用(如在途费，住宿费)发生的公干，请走出差申请流程;审批人请按顺序填写</font></p>
+              </div>
+            </group>
+              <!--<group>-->
+                <field name="detail_ids"  attrs="{'readonly':[('is_admin','=',False),'|',('is_shenqingren','=',False),('state','not in',('-1','99'))]}">
+                  <tree>
+                    <field name="place"/>
+                    <field name="startTime"/>
+                    <field name="endTime"/>
+                    <field name="reason"/>
+                  </tree>
+                </field>
+              <!--</group>-->
+          </sheet>
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="business_detail_form">
+      <field name="name">business_detail_form</field>
+      <field name="model">dtdream_hr_business.business_detail</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+              <group>
+                  <field name="place"/>
+              </group>
+              <group>
+                    <group>
+                        <field name="startTime"/>
+                    </group>
+                    <group>
+                        <field name="endTime"/>
+                        <field name="business" invisible="1"/>
+                        <field name="name" invisible="1"/>
+                    </group>
+              </group>
+            <group>
+              <field name="reason"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+     <menuitem name="外出公干" sequence="16" id="dtdream_hr_business" parent="hr.menu_hr_root"  action="act_dtdream_hr_business"></menuitem>
+  </data>
+</openerp>

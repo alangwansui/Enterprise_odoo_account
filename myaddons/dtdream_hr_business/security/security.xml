@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+         <record id="business_rule_01" model="ir.rule">
+             <field name="name">全局规则：外出公干删除</field>
+             <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="domain_force">[('is_shenqingren','=',True),('state','=','-1')]</field>
+         </record>
+
+        <record id="business_rule_02" model="ir.rule">
+            <field name="name">全局规则：外出公干编辑</field>
+            <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">[('is_shenpiren','=',True)]</field>
+        </record>
+
+
+        <record id="business_rule_03" model="ir.rule">
+            <field name="name">普通员工外出公干查看</field>
+            <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="domain_force">['|','|','|','|','|',('approver_fir.user_id', '=', user.id),('approver_sec.user_id', '=', user.id),-->
+            <!--('approver_thr.user_id', '=', user.id),('approver_fou.user_id', '=', user.id),('approver_fif.user_id', '=', user.id),('name.user_id', '=', user.id)]</field>-->
+            <field name="domain_force">['|',('his_app','=',user.id),('name.user_id', '=', user.id)]</field>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</openerp>
