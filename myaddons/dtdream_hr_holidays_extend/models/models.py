@@ -5,7 +5,10 @@ from datetime import datetime,time
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import ValidationError
+<<<<<<< HEAD
 from openerp.exceptions import UserError, AccessError
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
 
 # class dtdream_hr_holidays_extend_new_menu(models.Model):
 #     _name="dtdream.hr.holidays.extend.new.menu"
@@ -35,6 +38,7 @@ class dtdream_hr_holidays_extend(models.Model):
     gonghao=fields.Char(string="工号",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).job_number,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
     create_time= fields.Datetime(string='申请时间',default=datetime.today()- relativedelta(hours=8),readonly=1)
+<<<<<<< HEAD
     shenpiren1=fields.Many2one('hr.employee',string="第一审批人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).department_id.assitant_id)
     shenpiren2=fields.Many2one('hr.employee',string="第二审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren2)
     shenpiren3=fields.Many2one('hr.employee',string="第三审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren3)
@@ -72,6 +76,40 @@ class dtdream_hr_holidays_extend(models.Model):
         print self.is_confirm32approved
         print self.is_confirm42approved
 
+=======
+
+    shenpiren1=fields.Many2one('hr.employee',string="第一审批人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).department_id.assitant_id)
+    shenpiren2=fields.Many2one('hr.employee',string="第二审批人")
+    shenpiren3=fields.Many2one('hr.employee',string="第三审批人")
+    shenpiren4=fields.Many2one('hr.employee',string="第四审批人")
+    shenpiren5=fields.Many2one('hr.employee',string="第五审批人")
+
+    is_confirm2approved=fields.Boolean(default=False)
+    is_confirm22approved=fields.Boolean(default=False)
+    is_confirm32approved=fields.Boolean(default=False)
+    is_confirm42approved=fields.Boolean(default=False)
+    @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5')
+    def change(self):
+        if not self.shenpiren2:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm2approved=True
+        elif not self.shenpiren3:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm22approved=True
+        elif not self.shenpiren4:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm32approved=True
+        elif not self.shenpiren5:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+            self.is_confirm42approved=True
+        else:
+            self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
+        print self.is_confirm2approved
+        print self.is_confirm22approved
+        print self.is_confirm32approved
+        print self.is_confirm42approved
+
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
 
 
 
@@ -115,7 +153,10 @@ class dtdream_hr_holidays_extend(models.Model):
 
     @api.multi
     def holidays_confirm(self):
+<<<<<<< HEAD
         self.shenpiren_his1=self.shenpiren1.user_id
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
         self.write({'state':'confirm','current_shenpiren':self.shenpiren1.id})
 
     @api.multi
@@ -123,9 +164,12 @@ class dtdream_hr_holidays_extend(models.Model):
         # if self.is_confirm2approved:
         #     self.write({'state':'validate','current_shenpiren':''})
         # else:
+<<<<<<< HEAD
             self.shenpiren_his2=self.shenpiren2.user_id
             print self.employee_id
             print "1111111111111111"
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
             self.write({'state':'confirm2','current_shenpiren':self.shenpiren2.id})
 
     @api.multi
@@ -133,8 +177,11 @@ class dtdream_hr_holidays_extend(models.Model):
          # if self.is_confirm22approved:
          #    self.write({'state':'validate','current_shenpiren':''})
          # else:
+<<<<<<< HEAD
             self.shenpiren_his3=self.shenpiren3.user_id
             print "12"
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
             self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
 
     @api.multi
@@ -142,7 +189,10 @@ class dtdream_hr_holidays_extend(models.Model):
          # if self.is_confirm32approved:
          #    self.write({'state':'validate','current_shenpiren':''})
          # else:
+<<<<<<< HEAD
             self.shenpiren_his4=self.shenpiren4.user_id
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
             self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
 
     @api.multi
@@ -150,7 +200,10 @@ class dtdream_hr_holidays_extend(models.Model):
          # if self.is_confirm42approved:
          #    self.write({'state':'validate','current_shenpiren':''})
          # else:
+<<<<<<< HEAD
             self.shenpiren_his5=self.shenpiren5.user_id
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
             self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
 
 
@@ -179,7 +232,10 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
     def holidays_validate(self, cr, uid, ids, context=None):
+<<<<<<< HEAD
 
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
         obj_emp = self.pool.get('hr.employee')
         ids2 = obj_emp.search(cr, uid, [('user_id', '=', uid)])
         manager = ids2 and ids2[0] or False
@@ -241,6 +297,7 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
+<<<<<<< HEAD
     # def unlink(self, cr, uid, ids, context=None):
     #     print self
     #     for rec in self.browse(cr, uid, ids, context=context):
@@ -282,5 +339,7 @@ class dtdream_nianjia(models.Model):
 
 
 
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
 
 

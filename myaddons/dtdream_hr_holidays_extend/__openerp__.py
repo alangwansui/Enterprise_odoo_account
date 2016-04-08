@@ -28,7 +28,11 @@
         'views/views.xml',
         'security/security.xml',
         'views/templates.xml',
+<<<<<<< HEAD
         'data/data.xml',
+=======
+        # 'data/data.xml',
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
         'workflow.xml',
 
     ],

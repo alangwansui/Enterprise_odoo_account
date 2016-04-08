@@ -26,11 +26,19 @@
                             <field name="is_shenpiren" attrs="{'invisible':'(1==1)'}"></field>
                       </field>
                       <field name="holiday_type" position="before">
+<<<<<<< HEAD
                           <field name="shenpiren1" readonly="1"></field>
                           <field name="shenpiren2" attrs="{'readonly': ['|','&amp;',('state','in','confirm'),('is_shenpiren', '=', False),('state','not in',('draft','confirm'))]}"/>
                           <field name="shenpiren3" attrs="{'readonly': ['|','&amp;',('state','in',('confirm','confirm2')),('is_shenpiren', '=', False),('state','not in',('draft','confirm','confirm2'))]}"></field>
                           <field name="shenpiren4" attrs="{'readonly': ['|','&amp;',('state','in',('confirm','confirm2','confirm3')),('is_shenpiren', '=', False),('state','not in',('draft','confirm','confirm2','confirm3'))]}"></field>
                           <field name="shenpiren5" attrs="{'readonly': ['|','&amp;',('state','in',('confirm','confirm2','confirm3','confirm4')),('is_shenpiren', '=', False),('state','not in',('draft','confirm','confirm2','confirm3','confirm4'))]}"></field>
+=======
+                          <field name="shenpiren1" attrs="{'readonly': [('state','not in','draft'),('is_shenpiren', '=', False)]}" help="&lt;div&gt;123&lt;/div&gt;"></field>
+                          <field name="shenpiren2" attrs="{'readonly': [('state','not in','draft'),('is_shenpiren', '=', False)]}"></field>
+                          <field name="shenpiren3" attrs="{'readonly': [('state','not in','draft'),('is_shenpiren', '=', False)]}"></field>
+                          <field name="shenpiren4" attrs="{'readonly': [('state','not in','draft'),('is_shenpiren', '=', False)]}"></field>
+                          <field name="shenpiren5" attrs="{'readonly': [('state','not in','draft'),('is_shenpiren', '=', False)]}"></field>
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
 
                       </field>
                         <xpath expr='//field[@name="name"]' position="attributes">
@@ -59,7 +67,11 @@
                             <button string="通过" name="validate"  type="workflow"  groups="base.group_user" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
                         </xpath>
                         <xpath expr='//button[@name="refuse"]' position="replace">
+<<<<<<< HEAD
                             <button string="驳回" name="refuse" type="workflow" groups="base.group_user" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
+=======
+                            <button string="拒绝" name="refuse" type="workflow" groups="base.group_user" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','in',['draft','refuse','validate'])]}"/>
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
                         </xpath>
                         <xpath expr='//field[@name="state"]' position="attributes">
                              <attribute name="statusbar_visible">draft,validate</attribute>
@@ -72,6 +84,7 @@
 
                 <record id="view_set_nianxiujia_form" model="ir.ui.view">
                     <field name="name">view.set.nianxiujia.form</field>
+<<<<<<< HEAD
                     <field name="model">dtdream.nianjia</field>
                     <field name="arch" type="xml">
                         <form>
@@ -82,10 +95,20 @@
                                     <field name="number_of_days"/>
                                 </group>
                             </sheet>
+=======
+                    <field name="model">hr.holidays.status</field>
+                    <field name="arch" type="xml">
+                        <form>
+                            <field name="name"/>
+                            <field name="max_leaves"/>
+                            <field name="leaves_taken"/>
+                            <field name="remaining_leaves"/>
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
                         </form>
                     </field>
                 </record>
 
+<<<<<<< HEAD
                 <record id="view_set_nianxiujia_tree" model="ir.ui.view">
                     <field name="name">view.set.nianxiujia.tree</field>
                     <field name="model">dtdream.nianjia</field>
@@ -101,6 +124,8 @@
                     </field>
                 </record>
 
+=======
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
 
                  <!-- <record id="view_dtdream_hr_holidays_extend_new_menu_form" model="ir.ui.view">
                     <field name="name">view.dtdream.hr.holidays.extend.new.menu.form</field>
@@ -142,7 +167,11 @@
                   </record>-->
 
 <!--=============================================================================act_window====================================================================================-->
+<<<<<<< HEAD
                   <record model="ir.actions.act_window" id="hr_holidays.open_department_holidays_approve"><!--待审批休假-->
+=======
+                  <record model="ir.actions.act_window" id="hr_holidays.open_department_holidays_approve">
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
                         <field name="name">Department Leaves</field>
                         <field name="res_model">hr.holidays</field>
                         <field name="view_type">form</field>
@@ -151,7 +180,11 @@
                         <field name="domain">[('type','=','remove'),('current_shenpiren.user_id','=',uid)]</field>
                         <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
+<<<<<<< HEAD
                   <record model="ir.actions.act_window" id="hr_holidays.open_company_allocation"><!--请假摘要-->
+=======
+                  <record model="ir.actions.act_window" id="hr_holidays.open_company_allocation">
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
                         <field name="name">Leaves Summary</field>
                         <field name="res_model">hr.holidays</field>
                         <field name="view_type">form</field>
@@ -169,11 +202,19 @@
                                 'hr_holidays.menu_open_employee_leave',
                             ]
                         }</field>
+<<<<<<< HEAD
                         <field name="domain">[('holiday_type','=','employee')]</field>
                         <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
 
                   <record model="ir.actions.act_window" id="hr_holidays.open_ask_holidays"><!--请假申请-->
+=======
+                        <field name="domain">[('holiday_type','=','employee'),('employee_id.user_id','=',uid)]</field>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+                  </record>
+
+                  <record model="ir.actions.act_window" id="hr_holidays.open_ask_holidays">
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
                         <field name="name">Leaves Request</field>
                         <field name="res_model">hr.holidays</field>
                         <field name="view_type">form</field>
@@ -199,6 +240,7 @@
                           </p>
                         </field>
                   </record>
+<<<<<<< HEAD
 
                   <record model="ir.actions.act_window" id="open_set_nianxiujia">
                         <field name="name">设置年休假</field>
@@ -207,6 +249,24 @@
                         <field name="view_mode">tree,form</field>
                   </record>
 
+=======
+                  <record model="ir.actions.act_window" id="open_set_nianxiujia">
+                        <field name="name">设置年休假</field>
+                        <field name="res_model">hr.holidays.status</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form</field>
+                        <field name="view_id" ref="view_set_nianxiujia_form"/>
+                  </record>
+
+
+                  <act_window
+            id="hr_holidays.act_hr_leave_request_to_meeting"
+            name="Leave Meetings"
+            src_model="hr.holidays"
+            res_model="calendar.event"
+            view_mode="tree,form,calendar"
+            view_type="form"/>
+>>>>>>> 35f453f0959037e124d7ed1fd5875ee096d4a5d3
                   <!--<record model="ir.ui.view" id="hr_holidays.view_holiday_allocation_tree_inher">
                         <field name="name">hr.holidays.allocation.tree.inher</field>
                         <field name="model">hr.holidays</field>
