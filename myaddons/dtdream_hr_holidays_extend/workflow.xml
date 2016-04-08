@@ -1,0 +1,187 @@
+<?xml version="1.0" ?>
+<openerp>
+<data>
+
+
+    <record model="workflow" id="hr_holidays.wkf_holidays">
+        <field name="name">hr.wkf.holidays</field>
+        <field name="osv">hr.holidays</field>
+        <field name="on_create">True</field>
+    </record>
+
+     <record model="workflow.activity" id="hr_holidays.act_draft"> <!-- draft -->
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">draft</field>
+        <field name="flow_start" eval="True"/>
+        <field name="kind">function</field>
+        <field name="action">holidays_reset()</field>
+    </record>
+
+    <record model="workflow.activity" id="hr_holidays.act_confirm"> <!-- submitted --><!--源代码是confirm是工作流开始-->
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm</field>
+        <field name="flow_start" eval="False"/><!--源代码这里是true-->
+        <field name="kind">function</field>
+        <field name="action">holidays_confirm()</field>
+        <field name="split_mode">OR</field>
+    </record>
+    <record model="workflow.activity" id="hr_holidays.act_confirm2">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm2</field>
+        <field name="flow_start" eval="False"/>
+        <field name="kind">function</field>
+        <field name="action">holidays_confirm2()</field>
+    </record>
+    <record model="workflow.activity" id="hr_holidays.act_confirm3">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm3</field>
+        <field name="flow_start" eval="False"/>
+        <field name="kind">function</field>
+        <field name="action">holidays_confirm3()</field>
+    </record>
+    <record model="workflow.activity" id="hr_holidays.act_confirm4">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm4</field>
+        <field name="flow_start" eval="False"/>
+        <field name="kind">function</field>
+        <field name="action">holidays_confirm4()</field>
+    </record>
+    <record model="workflow.activity" id="hr_holidays.act_confirm5">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm5</field>
+        <field name="flow_start" eval="False"/>
+        <field name="kind">function</field>
+        <field name="action">holidays_confirm5()</field>
+    </record>
+
+
+    <!--      ============================================-confirm============================================                 -->
+
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm2confirm2">
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_confirm2" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm2approved==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm2refuse">
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+  <record model="workflow.transition" id="hr_holidays.holiday_confirm2validate">
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_validate" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm2approved</field>
+        <field name="group_id" ref="base.group_user"/>
+  </record>
+
+  <record model="workflow.transition" id="hr_holidays.holiday_confirm2draft"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_draft" />
+        <field name="signal"></field>
+        <field name="condition">False</field>
+        <field name="group_id" ref="base.group_user"/>
+  </record>
+
+    <!--      ============================================-confirm2============================================                 -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm22confirm3">
+        <field name="act_from" ref="hr_holidays.act_confirm2" />
+        <field name="act_to" ref="hr_holidays.act_confirm3" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm22approved==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm22refuse">
+        <field name="act_from" ref="hr_holidays.act_confirm2" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm22validate">
+        <field name="act_from" ref="hr_holidays.act_confirm2" />
+        <field name="act_to" ref="hr_holidays.act_validate" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm22approved</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+
+    <!--      ============================================-confirm3============================================                 -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm32confirm4">
+        <field name="act_from" ref="hr_holidays.act_confirm3" />
+        <field name="act_to" ref="hr_holidays.act_confirm4" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm32approved==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm32refuse">
+        <field name="act_from" ref="hr_holidays.act_confirm3" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm32validate">
+        <field name="act_from" ref="hr_holidays.act_confirm3" />
+        <field name="act_to" ref="hr_holidays.act_validate" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm32approved</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+
+    <!--      ============================================-confirm4============================================                 -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm42confirm5">
+        <field name="act_from" ref="hr_holidays.act_confirm4" />
+        <field name="act_to" ref="hr_holidays.act_confirm5" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm42approved==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm42refuse">
+        <field name="act_from" ref="hr_holidays.act_confirm4" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm42validate">
+        <field name="act_from" ref="hr_holidays.act_confirm4" />
+        <field name="act_to" ref="hr_holidays.act_validate" />
+        <field name="signal">validate</field>
+        <field name="condition">is_confirm42approved</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+
+    <!--      ============================================-confirm5============================================                 -->
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm52refuse">
+        <field name="act_from" ref="hr_holidays.act_confirm5" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="hr_holidays.holiday_confirm52validate">
+        <field name="act_from" ref="hr_holidays.act_confirm5" />
+        <field name="act_to" ref="hr_holidays.act_validate" />
+        <field name="signal">validate</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+  <record model="workflow.transition" id="hr_holidays.holiday_refuse2draft">
+        <field name="act_from" ref="hr_holidays.act_refuse" />
+        <field name="act_to" ref="hr_holidays.act_draft" />
+        <field name="signal">reset</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+</data>
+</openerp>
