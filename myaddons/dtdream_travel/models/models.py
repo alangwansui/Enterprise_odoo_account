@@ -71,6 +71,17 @@ class dtdream_travel(models.Model):
             }
             return {'warning': warning}
 
+    @api.multi
+    def unlink(self):
+        # from openerp.exceptions import ValidationError
+        # raise ValidationError("12333333333333333333")
+        warning = {
+                'title': '提示',
+                'message': '审批人必须按顺序填写!',
+         }
+        return {'warning': warning}
+
+
     name = fields.Char(string="申请人", default=lambda self: self.env["hr.employee"].search(
         [("login", "=", self.env.user.login)]).name, readonly=True)
     shenpi_first = fields.Many2one('res.users', string="第一审批人", help="部门行政助理", required=True,
