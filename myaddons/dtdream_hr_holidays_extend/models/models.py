@@ -5,6 +5,8 @@ from datetime import datetime,time
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import ValidationError
+from openerp.exceptions import UserError, AccessError
+
 # class dtdream_hr_holidays_extend_new_menu(models.Model):
 #     _name="dtdream.hr.holidays.extend.new.menu"
 #     related_user=fields.Many2one("res.users")
@@ -33,7 +35,6 @@ class dtdream_hr_holidays_extend(models.Model):
     gonghao=fields.Char(string="工号",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).job_number,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
     create_time= fields.Datetime(string='申请时间',default=datetime.today()- relativedelta(hours=8),readonly=1)
-
     shenpiren1=fields.Many2one('hr.employee',string="第一审批人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).department_id.assitant_id)
     shenpiren2=fields.Many2one('hr.employee',string="第二审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren2)
     shenpiren3=fields.Many2one('hr.employee',string="第三审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren3)
@@ -114,7 +115,7 @@ class dtdream_hr_holidays_extend(models.Model):
 
     @api.multi
     def holidays_confirm(self):
-
+        self.shenpiren_his1=self.shenpiren1.user_id
         self.write({'state':'confirm','current_shenpiren':self.shenpiren1.id})
 
     @api.multi
@@ -122,7 +123,9 @@ class dtdream_hr_holidays_extend(models.Model):
         # if self.is_confirm2approved:
         #     self.write({'state':'validate','current_shenpiren':''})
         # else:
-
+            self.shenpiren_his2=self.shenpiren2.user_id
+            print self.employee_id
+            print "1111111111111111"
             self.write({'state':'confirm2','current_shenpiren':self.shenpiren2.id})
 
     @api.multi
@@ -130,7 +133,8 @@ class dtdream_hr_holidays_extend(models.Model):
          # if self.is_confirm22approved:
          #    self.write({'state':'validate','current_shenpiren':''})
          # else:
-
+            self.shenpiren_his3=self.shenpiren3.user_id
+            print "12"
             self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
 
     @api.multi
@@ -138,7 +142,7 @@ class dtdream_hr_holidays_extend(models.Model):
          # if self.is_confirm32approved:
          #    self.write({'state':'validate','current_shenpiren':''})
          # else:
-
+            self.shenpiren_his4=self.shenpiren4.user_id
             self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
 
     @api.multi
@@ -146,7 +150,7 @@ class dtdream_hr_holidays_extend(models.Model):
          # if self.is_confirm42approved:
          #    self.write({'state':'validate','current_shenpiren':''})
          # else:
-
+            self.shenpiren_his5=self.shenpiren5.user_id
             self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
 
 
@@ -237,7 +241,6 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
-
     # def unlink(self, cr, uid, ids, context=None):
     #     print self
     #     for rec in self.browse(cr, uid, ids, context=context):
@@ -245,7 +248,7 @@ class dtdream_hr_holidays_extend(models.Model):
     #             # raise UserError(_('You cannot delete a leave which is in %s state.') % (rec.state,))
     #             print "error"
     #
-    #     return super(hr_holidays, self).unlink(cr, uid, ids, context)
+    #     return super(hr_holidays,self).unlink(cr, uid, ids, context)
 
 
 
@@ -255,11 +258,10 @@ class dtdream_nianjia(models.Model):
     employee = fields.Many2one('hr.employee',string="选择员工")
     number_of_days = fields.Integer(string="分配的天数")
     year = fields.Integer(string="年休假年份")
-    hr_holidays_id=fields.Integer(string="对应hr_holidays的ID")
 
     @api.model
     def create(self, vals):
-     
+
         nianjia=self.env['hr.holidays']
         print nianjia
         tec =  nianjia.create({'employee_id':vals['employee'],'state':'validate','type':'add','year':vals['year'],'holiday_status_id':5,'number_of_days_temp':vals['number_of_days']})
@@ -276,6 +278,7 @@ class dtdream_nianjia(models.Model):
 
         nianjia.write({'number_of_days_temp':0})
         return super(dtdream_nianjia,self).unlink()
+
 
 
 
