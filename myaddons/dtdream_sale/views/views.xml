@@ -9,6 +9,18 @@
               <field name="list_price" position="attributes">
                   <attribute name="invisible">1</attribute>
               </field>
+              <group name="group_lots_and_weight" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </group>
+              <label for="standard_price" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </label>
+              <div name="standard_price_uom" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </div>
+              <field name="categ_id" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
               <field name="name" position="attributes">
                   <attribute name="string">产品型号</attribute>
               </field>
@@ -18,6 +30,9 @@
                   <field name="pro_status" string="状态"/>
               </field>
               <field name="uom_po_id" position="after">
+                  <field name="categ_id"/>
+                  <field name="list_price" string="目录价"/>
+                  <field name="ref_discount" />
                   <field name="pro_description" />
               </field>
               <field name="list_price" position="before">
@@ -27,17 +42,14 @@
                   <field name="remark" />
               </field>
               <xpath expr="//page[@name='sales']" position="after">
-                  <page name="discount" string="折扣" groups="dtdream_sale.group_dtdream_sale_read">
+                  <page name="discount" string="授权折扣" groups="dtdream_sale.group_product_query,dtdream_sale.group_product_manage">
                       <group>
                           <group>
-                              <field name="list_price" string="目录价"/>
                               <field name="office_manager_discount" />
                               <field name="market_president_discount" />
                           </group>
                           <group>
-                              <field name="ref_discount" />
                               <field name="system_department_discount" />
-                              <field name="company_president_discount" />
                           </group>
                       </group>
                   </page>
@@ -200,6 +212,10 @@
                 <field name="mobile" position="replace">
                 </field>
                 <field name="date_deadline" position="after">
+                    <field name="project_master_degree"/>
+                    <field name="project_space"/>
+                    <field name="ali_division"/>
+                    <field name="ali_saleman"/>
                     <field name="partner_id" string="客户"
                            on_change="on_change_partner_id(partner_id)"
                            context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}"/>
@@ -228,8 +244,32 @@
                 <label for="next_activity_id" position="replace">
                     <attribute name="invisible"></attribute>
                 </label>
-                <!--<xpath expr="//page[@name='lead']" position="replace">-->
-                <!--</xpath>-->
+                <xpath expr="//page[@name='lead']" position="after">
+                    <page string="产品配置">
+                            <field name="product_line" mode="tree">
+                                <tree string="产品配置" editable="bottom" >
+                                    <field name="product_id" string="产品" widget="selection"/>
+                                    <field name="bom" string="BOM" />
+                                    <field name="pro_type" string="产品类别"/>
+                                    <field name="pro_description" string="产品描述"/>
+                                    <field name="pro_name" string="产品名称"/>
+                                    <field name="list_price" string="目录价"/>
+                                    <field name="ref_discount" string="参考折扣"/>
+                                    <field name="apply_discount" string="申请折扣"/>
+                                    <field name="pro_num" string="数量"/>
+                                    <field name="config_set" string="配置组"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" name="product_total">
+                                <field name="total_list_price"  class="oe_subtotal_footer_separator"/>
+                                <field name="total_ref_price" class="oe_subtotal_footer_separator"/>
+                                <field name="total_apply_price" class="oe_subtotal_footer_separator"/>
+                            </group>
+                    </page>
+                </xpath>
+                <xpath expr="//page[@name='lead']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
       </record>
 
@@ -390,6 +430,10 @@
               </label>
               <label for="contact_name" position="before">
                   <!--<field name = "child_ids"></field>-->
+                  <field name="project_master_degree"/>
+                  <field name="project_space"/>
+                  <field name="ali_division"/>
+                  <field name="ali_saleman"/>
                   <field name="partner_id" string="客户"
                          on_change="on_change_partner_id(partner_id)"
                          options='{"create_name_field": "name"}'
@@ -434,6 +478,36 @@
                </field>
           </field>
       </record>
+
+      <!--销售团队字段修改-->
+      <record model="ir.ui.view" id="dtdream_sale.crm_team_view_form">
+            <field name="name">crm.team.form</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
+            <field name="arch" type="xml">
+                <field name="member_ids" position="replace">
+                    <field name="res_member_ids" widget="many2many_kanban" options="{'not_delete': True}">
+                        <kanban quick_create="false" create="true" delete="true">
+                            <field name="name"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click" style="position: relative">
+                                        <a t-if="! read_only_mode" type="delete" style="position: absolute; right: 0; padding: 4px; diplay: inline-block">X</a>
+                                        <div class="oe_module_vignette">
+                                            <img t-att-src="kanban_image('res.users', 'image_small', record.id.value)" class="oe_avatar oe_kanban_avatar_smallbox"/>
+                                            <div class="oe_module_desc">
+                                                <field name="name"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </field>
+            </field>
+      </record>
+
 
       <!--新增产品类别菜单-->
       <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />

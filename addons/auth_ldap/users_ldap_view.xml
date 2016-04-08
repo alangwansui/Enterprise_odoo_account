@@ -9,8 +9,9 @@
                 <xpath expr="//group[@name='account_grp']" position="after">
                     <group string="LDAP Parameters">
                         <field name="ldaps" nolabel="1" colspan="4">
-                            <form string="LDAP Configuration" >
+                            <form string="LDAP Configuration">
                                 <group name="user_ldap_group">
+
 
                                 </group>
                                 <group col="4">

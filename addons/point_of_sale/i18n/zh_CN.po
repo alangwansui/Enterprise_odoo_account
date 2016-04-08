@@ -6,17 +6,18 @@
 # fausthuang, 2015
 # fausthuang, 2015
 # jeffery chen fan <jeffery9@gmail.com>, 2016
-# Joroy <13637815@qq.com>, 2016
-# Joroy <13637815@qq.com>, 2016
-# Joroy <13637815@qq.com>, 2016
-# 珠海-老天 <liangjia@qq.com>, 2015
+# Joray <13637815@qq.com>, 2016
+# Joray <13637815@qq.com>, 2016
+# Joray <13637815@qq.com>, 2016
+# Joray <13637815@qq.com>, 2016
+# liAnGjiA <liangjia@qq.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-09 09:18+0000\n"
-"PO-Revision-Date: 2016-03-04 15:58+0000\n"
-"Last-Translator: Joroy <13637815@qq.com>\n"
+"PO-Revision-Date: 2016-03-24 13:51+0000\n"
+"Last-Translator: Joray <13637815@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/odoo/odoo-9/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1185,7 +1186,7 @@ msgstr "国家"
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_line_create_uid
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_session_create_uid
 msgid "Created by"
-msgstr "创建于"
+msgstr "创建者"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_category_create_date
@@ -1737,7 +1738,7 @@ msgstr "让你的客户访问他们的单据"
 msgid ""
 "Gives the probability to assign a lead to this partner. (0 means no "
 "assignation.)"
-msgstr "为机会点指定一个业务伙伴的概率（0表示没指派）"
+msgstr "为线索指定一个业务伙伴的概率（0表示没指派）"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_category_sequence
@@ -2843,13 +2844,13 @@ msgstr "POS商店"
 #. module: point_of_sale
 #: model:ir.ui.view,arch_db:point_of_sale.product_pos_category_form_view
 msgid "Pos Categories"
-msgstr "PoS类别"
+msgstr "POS类别"
 
 #. module: point_of_sale
 #: model:ir.actions.act_window,name:point_of_sale.product_pos_category_action
 #: model:ir.ui.menu,name:point_of_sale.menu_product_pos_category
 msgid "Pos Product Categories"
-msgstr "POS产品分类"
+msgstr "POS产品类别"
 
 #. module: point_of_sale
 #: model:ir.ui.view,arch_db:point_of_sale.view_pos_confirm
@@ -2897,7 +2898,7 @@ msgstr "价格"
 #: code:addons/point_of_sale/point_of_sale.py:1601
 #, python-format
 msgid "Priced Product"
-msgstr "标价的产品"
+msgstr "标价产品"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config_pricelist_id
@@ -2950,7 +2951,7 @@ msgstr "产品"
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order_product_categ_id
 #: model:ir.ui.view,arch_db:point_of_sale.view_report_pos_order_search
 msgid "Product Category"
-msgstr "产品分类"
+msgstr "产品类别"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_report_transaction_pos_product_nb
@@ -2960,7 +2961,7 @@ msgstr "产品号"
 #. module: point_of_sale
 #: model:ir.ui.view,arch_db:point_of_sale.product_pos_category_tree_view
 msgid "Product Product Categories"
-msgstr "产品分类"
+msgstr "产品类别"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order_product_qty
@@ -3085,7 +3086,7 @@ msgstr "重新打印"
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_session_rescue
 msgid "Rescue session"
-msgstr "抢救会话"
+msgstr "恢复会话"
 
 #. module: point_of_sale
 #. openerp-web
@@ -3208,7 +3209,7 @@ msgstr "用户月销售情况"
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_user_id
 #: model:ir.ui.view,arch_db:point_of_sale.view_pos_order_filter
 msgid "Salesman"
-msgstr "营销责任人"
+msgstr "销售员"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_details_user_ids
@@ -3219,7 +3220,7 @@ msgstr "售货员"
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order_user_id
 #: model:ir.ui.view,arch_db:point_of_sale.view_report_pos_order_search
 msgid "Salesperson"
-msgstr "营销责任人"
+msgstr "销售员"
 
 #. module: point_of_sale
 #: model:product.product,name:point_of_sale.san_pellegrino_1l
@@ -3384,7 +3385,7 @@ msgstr "会话:"
 #: model:ir.ui.menu,name:point_of_sale.menu_pos_session_all
 #: model:ir.ui.view,arch_db:point_of_sale.view_pos_config_kanban
 msgid "Sessions"
-msgstr "会话记录"
+msgstr "会话"
 
 #. module: point_of_sale
 #. openerp-web

@@ -106,7 +106,7 @@ class account_invoice(osv.osv):
         return []
 
     def _prepare_refund(self, cr, uid, invoice, date_invoice=None, date=None, description=None, journal_id=None, context=None):
-        invoice_data = super(account_invoice, self)._prepare_refund(cr, uid, invoice, date, date,
+        invoice_data = super(account_invoice, self)._prepare_refund(cr, uid, invoice, date_invoice, date,
                                                                     description, journal_id, context=context)
         #for anglo-saxon accounting
         if invoice.company_id.anglo_saxon_accounting and invoice.type == 'in_invoice':
@@ -337,7 +337,7 @@ class stock_quant(osv.osv):
         move_obj = self.pool.get('account.move')
         for cost, qty in quant_cost_qty.items():
             move_lines = self._prepare_account_move_line(cr, uid, move, qty, cost, credit_account_id, debit_account_id, context=context)
-            date = context.get('force_period_date', move.date)
+            date = context.get('force_period_date', fields.date.context_today(self, cr, uid, context=context))
             new_move = move_obj.create(cr, uid, {'journal_id': journal_id,
                                       'line_ids': move_lines,
                                       'date': date,
