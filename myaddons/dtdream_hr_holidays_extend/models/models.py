@@ -30,11 +30,12 @@ class dtdream_hr_holidays_extend(models.Model):
     # _name = "dtdream.hr.holidays.extend"
     _inherit = "hr.holidays"
 
-
+    create_type=fields.Char(string="创建类型")
     shenqingren=fields.Char( string="申请人",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,readonly=1)
     gonghao=fields.Char(string="工号",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).job_number,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
     create_time= fields.Datetime(string='申请时间',default=datetime.today()- relativedelta(hours=8),readonly=1)
+    # create_time=openerp.fields.Datetime.now()
     shenpiren1=fields.Many2one('hr.employee',string="第一审批人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).department_id.assitant_id)
     shenpiren2=fields.Many2one('hr.employee',string="第二审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren2)
     shenpiren3=fields.Many2one('hr.employee',string="第三审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren3)
@@ -45,7 +46,6 @@ class dtdream_hr_holidays_extend(models.Model):
     shenpiren_his3=fields.Integer()
     shenpiren_his4=fields.Integer()
     shenpiren_his5=fields.Integer()
-    shenpiren_history2 = fields.Many2many('hr.employee')
     is_confirm2approved=fields.Boolean(default=False)
     is_confirm22approved=fields.Boolean(default=False)
     is_confirm32approved=fields.Boolean(default=False)
@@ -72,7 +72,28 @@ class dtdream_hr_holidays_extend(models.Model):
         print self.is_confirm32approved
         print self.is_confirm42approved
 
-
+    def onchange_employee(self, cr, uid, ids, employee_id):
+        new_id=0
+        print "test--------+++++++++++onchange"
+        print employee_id
+        new_ids=self.search(cr,uid,[('employee_id','=',employee_id)],order="id desc",limit=1)
+        for x in new_ids:
+            new_id=x
+        print self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
+        result = {'value': {'department_id': False}}
+        if employee_id:
+            employee = self.pool.get('hr.employee').browse(cr, uid, employee_id)
+            shenpiren2=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren2
+            shenpiren3=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
+            shenpiren4=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren4
+            shenpiren5=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren5
+            result['value'] = {'department_id': employee.department_id.id,'gonghao':employee.job_number,
+                                'shenpiren1':employee.department_id.assitant_id,
+                                'shenpiren2':shenpiren2,
+                                'shenpiren3':shenpiren3,
+                                'shenpiren4':shenpiren4,
+                                'shenpiren5':shenpiren5,}
+        return result
 
 
     # current_shenpiren_id=fields.Integer(default=lambda self:self.shenpiren.search([('create_uid','=',self.env.user.id)]).shenpiren1,string='当前审批人员工id')
@@ -82,7 +103,7 @@ class dtdream_hr_holidays_extend(models.Model):
     state=fields.Selection([('draft', '草稿'), ('cancel', 'Cancelled'),('confirm', '一级审批'),
                             ('confirm2', '二级审批'),('confirm3', '三级审批'),('confirm4', '四级审批'),
                             ('confirm5', '五级审批'), ('refuse', 'Refused'), ('validate1', 'Second Approval'), ('validate', 'Approved')],
-                           'Status', readonly=True, track_visibility='onchange', copy=False,default='draft')
+                           'Status', readonly=True, track_visibility='onchange',default='draft')
 
     @api.one
     def _compute_is_shenpiren(self):
@@ -241,14 +262,16 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
-    # def unlink(self, cr, uid, ids, context=None):
-    #     print self
-    #     for rec in self.browse(cr, uid, ids, context=context):
-    #         if rec.state not in ['draft', 'cancel', 'confirm','confirm1','confirm2','confirm3','confirm4','confirm5','refuse']:
-    #             # raise UserError(_('You cannot delete a leave which is in %s state.') % (rec.state,))
-    #             print "error"
-    #
-    #     return super(hr_holidays,self).unlink(cr, uid, ids, context)
+    def unlink(self, cr, uid, ids, context=None):
+        print "unlink"
+        print ids
+        print self
+        for rec in self.browse(cr, uid, ids, context=context):
+            if rec.state not in ['draft', 'cancel', 'confirm','confirm1','confirm2','confirm3','confirm4','confirm5','refuse']:
+                # raise UserError(_('You cannot delete a leave which is in %s state.') % (rec.state,))
+                print "error"
+
+        return models.Model.unlink(self, cr, uid, ids, context=None)
 
 
 
@@ -258,7 +281,11 @@ class dtdream_nianjia(models.Model):
     employee = fields.Many2one('hr.employee',string="选择员工")
     number_of_days = fields.Integer(string="分配的天数")
     year = fields.Integer(string="年休假年份")
+    # new =fields.Selection([('1',time.strftime("%Y-%m-%d %H:%M:%S")),('2','2')])
 
+    # @api.multi
+    # def batch_approval(self):
+    #     print self
     @api.model
     def create(self, vals):
 
@@ -267,17 +294,36 @@ class dtdream_nianjia(models.Model):
         tec =  nianjia.create({'employee_id':vals['employee'],'state':'validate','type':'add','year':vals['year'],'holiday_status_id':5,'number_of_days_temp':vals['number_of_days']})
         print tec.id
         tec.write({'state':'validate'})
+
         return super(dtdream_nianjia,self).create(vals)
 
-    @api.model
-    def unlink(self, vals):
-        employee=self.env['dtdream.nianjia'].search([('id','=',vals[0])]).employee
-        year=self.env['dtdream.nianjia'].search([('id','=',vals[0])]).year
+    @api.multi
+    def unlink(self):
+        print fields.Date.context_today(self)
+        # print datetime.time.strftime("%Y-%m-%d %H:%M:%S")
+        print self
 
+        print self.ids
+        for id in self.ids:
+            print id
+        employee=self.env['dtdream.nianjia'].search([('id','=',self.id)]).employee
+        year=self.env['dtdream.nianjia'].search([('id','=',self.id)]).year
         nianjia=self.env['hr.holidays'].search([('employee_id','=',employee.id),('year','=',year)])
-
+        print nianjia
         nianjia.write({'number_of_days_temp':0})
         return super(dtdream_nianjia,self).unlink()
+
+
+class batch_approval(models.Model):
+    _name = "batch.approval"
+
+    @api.multi
+    def batch_approval(self):
+        print "1111111111111"
+        print self
+        context = dict(self._context or {})
+        active_ids = context.get('active_ids', []) or []
+        print active_ids
 
 
 
