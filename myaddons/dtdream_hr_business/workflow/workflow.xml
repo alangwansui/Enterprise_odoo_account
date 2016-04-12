@@ -134,7 +134,7 @@
 
         <record id="trans_g_b" model="workflow.transition">
             <field name="act_from" ref="activity_restart"/>
-            <field name="act_to" ref="activity_first"/>
+            <field name="act_to" ref="bus_activity_draft"/>
             <field name="signal">btn_restart</field>
         </record>
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from openerp.osv import expression
 from openerp import models, fields, api
 from datetime import datetime
 from openerp.exceptions import ValidationError
@@ -9,7 +9,7 @@ class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
     _inherit = ['mail.thread']
 
-    name = fields.Many2one("hr.employee",string="花名",required=True)
+    name = fields.Many2one("hr.employee",string="申请人",required=True)
 
     @api.depends('name')
     def _compute_employee(self):
@@ -18,12 +18,11 @@ class dtdream_hr_business(models.Model):
             rec.full_name=rec.name.full_name
             rec.department=rec.name.department_id.complete_name
             rec.approver_fir = rec.name.department_id.assitant_id
-            rec.current_approver = rec.name
 
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门")
-    create_time= fields.Date(string='申请时间',default=datetime.today(),readonly=1)
+    create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
     approver_fir = fields.Many2one("hr.employee" ,compute=_compute_employee,string="第一审批人",store=True)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
     approver_thr = fields.Many2one("hr.employee",string="第三审批人")
@@ -48,6 +47,12 @@ class dtdream_hr_business(models.Model):
             self.is_admin = True
         else:
             self.is_admin = False
+        if len(self.create_uid)>0 and self.create_uid != self.env.user:
+            self.is_create = False
+        else:
+            self.is_create = True
+
+    is_create = fields.Boolean(compute=_compute_is_shenpiren, string="是否创建人",default=True)
 
     is_admin = fields.Boolean(compute=_compute_is_shenpiren, string="是否管理员",)
 
@@ -55,13 +60,12 @@ class dtdream_hr_business(models.Model):
 
     is_shenqingren = fields.Boolean(compute=_compute_is_shenpiren, string="当前用户是否申请人",default=True)
 
-    state = fields.Selection([('-1','草稿'),('0','第一审批人审批'),('1','第二审批人审批'),('2','第三审批人审批'),('3','第四审批人审批'),('4','第五审批人审批'),('5','通过'),('99','驳回')],string="状态",default='-1')
+    state = fields.Selection([('-1','草稿'),('0','一级审批'),('1','二级审批'),('2','三级审批'),('3','四级审批'),('4','五级审批'),('5','完成'),('99','驳回')],string="状态",default='-1')
 
     @api.depends('name','create_time')
     def _compute_title(self):
         for rec in self:
             rec.title = rec.name.name_related +u'于'+rec.create_time+u'提交的外出公干申请'
-
 
     title = fields.Char(compute=_compute_title,string="事件")
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
@@ -76,6 +80,8 @@ class dtdream_hr_business(models.Model):
 
     @api.model
     def wkf_draft(self):                            #创建
+        if self.state=='99':
+            self.message_post(body=u'重启流程，状态：驳回 --> '+u'草稿')
         self.write({'state': '-1'})
 
     @api.model
@@ -85,18 +91,18 @@ class dtdream_hr_business(models.Model):
             raise ValidationError("请至少填写一条明细")
         self.write({'state': '0'})
         self.write({'current_approver':self.approver_fir.id})
-        self.write({'his_app': [(4, self.approver_fir.user_id.id)]})
-        print self.his_app
+        self.message_post(body=u'批准，状态：草稿 --> '+u'一级审批')
 
     @api.model
     def wkf_sec(self):                                      #第一审批人批准
         lg = len(self.detail_ids)
         if lg<=0:
             raise ValidationError("请至少填写一条明细")
+        self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_sec:
             self.write({'state': '1'})
             self.write({'current_approver':self.approver_sec.id})
-            self.write({'his_app': [(4, self.approver_sec.user_id.id)]})
+            self.message_post(body=u'批准，状态：一级审批 --> '+u'二级审批')
             print self.his_app
         else:
             raise ValidationError("配置第二审批人")
@@ -106,24 +112,31 @@ class dtdream_hr_business(models.Model):
         lg = len(self.detail_ids)
         if lg<=0:
             raise ValidationError("请至少填写一条明细")
+        self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_thr:
             self.write({'state': '2'})
             self.write({'current_approver':self.approver_thr.id})
-            self.write({'his_app': [(4, self.approver_thr.user_id.id)]})
+            self.message_post(body=u'批准，状态：二级审批 --> '+u'三级审批')
         else:
             self.write({'state': '5'})
+            self.message_post(body=u'批准，状态：二级审批 --> '+u'批准')
+            # self.write({'current_approver':-10})
+            print self.his_app
 
     @api.model
     def wkf_fou(self):                                       #第三审批人批准
         lg = len(self.detail_ids)
         if lg<=0:
             raise ValidationError("请至少填写一条明细")
+            self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_fou:
             self.write({'state': '3'})
             self.write({'current_approver':self.approver_fou.id})
-            self.write({'his_app': [(4, self.approver_fou.user_id.id)]})
+            self.message_post(body=u'批准，状态：三级审批 --> '+u'四级审批')
         else:
             self.write({'state': '5'})
+            self.message_post(body=u'批准，状态：三级审批 --> '+u'批准')
+            # self.write({'current_approver':-10})
 
 
     @api.model
@@ -131,23 +144,30 @@ class dtdream_hr_business(models.Model):
         lg = len(self.detail_ids)
         if lg<=0:
             raise ValidationError("请至少填写一条明细")
+            self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_fif:
             self.write({'state': '4'})
             self.write({'current_approver':self.approver_fif.id})
-            self.write({'his_app': [(4, self.approver_fif.user_id.id)]})
+            self.message_post(body=u'批准，状态：四级审批 --> '+u'五级审批')
         else:
             self.write({'state': '5'})
+            self.message_post(body=u'批准，状态：四级审批 --> '+u'批准')
+            # self.write({'current_approver':-10})
 
     @api.model
     def wkf_accept(self):                                        #第五审批人批准
         lg = len(self.detail_ids)
         if lg<=0:
             raise ValidationError("请至少填写一条明细")
+            self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         self.write({'state': '5'})
+        self.message_post(body=u'批准，状态：五级审批 --> '+u'批准')
+        # self.write({'current_approver':-10})
 
     @api.model
-    def wkf_refuse(self):                                       #各审批人拒绝
+    def wkf_refuse(self):                                       #各审批人驳回
         self.write({'state': '99'})
+        self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         self.write({'current_approver':self.name.id})
 
 
@@ -178,3 +198,35 @@ class business_detail(models.Model):
     _constraints = [
         (_check_date, u'开始时间不能晚于结束时间!', ["startTime","endTime"]),
         ]
+
+
+class dtdream_rename(models.Model):
+    _inherit = 'hr.employee'
+
+    @api.multi
+    @api.depends('name', 'job_number')
+    def name_get(self):
+        res = []
+        for record in self:
+            name = record['name']
+            if record['job_number']:
+                if record['department_id']:
+                    name = record['name'] + ' ' + record['job_number'] + ' ' +record['department_id']['name']
+                else:
+                    name = record['name'] + ' ' + record['job_number']
+            else:
+                if record['department_id']:
+                    name = record['name'] + ' ' +record['department_id']['name']
+            res.append((record['id'], name))
+        return res
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|','|',('job_number', operator, name ), ('name', operator, name),('department_id.name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&'] + domain
+        emps = self.search(domain + args, limit=limit)
+        return emps.name_get()
