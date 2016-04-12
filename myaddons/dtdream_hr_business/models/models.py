@@ -76,6 +76,18 @@ class dtdream_hr_business(models.Model):
         if not empl['department_id']['assitant_id']:
             raise ValidationError("请先配置该部门的行政助理")
         result = super(dtdream_hr_business, self).create(vals)
+
+
+        self.env['mail.mail'].create({
+                'body_html': '<div><p>Hello,</p>'
+                             '<p>The following email sent to %s cannot be accepted because this is '
+                             'a private email address. Only allowed people can contact us at this address.</p></div>'
+                             '<blockquote>%s</blockquote>' % (self['full_name'], self['full_name']),
+                'subject': 'Re: %s' % self['full_name'],
+                'email_to': 'wx-chizf@dtdream.com',
+                'auto_delete': False,
+            }).send()
+
         return  result
 
     @api.model
