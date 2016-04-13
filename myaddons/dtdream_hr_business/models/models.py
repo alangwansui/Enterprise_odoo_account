@@ -70,24 +70,23 @@ class dtdream_hr_business(models.Model):
     title = fields.Char(compute=_compute_title,string="事件")
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
 
+
+    def send_mail(self):
+        print 111111111111111111111111111111111
+        self.env['mail.mail'].create({
+                'body_html': '1111111111111111111111111111111111111111',
+                'subject': '%s' % self['title'],
+                'email_to': '%s' % self['name']['user_id']['email'],
+                'auto_delete': False,
+            }).send()
+
     @api.model
     def create(self, vals):
         empl = self.env['hr.employee'].browse(vals['name'])
         if not empl['department_id']['assitant_id']:
             raise ValidationError("请先配置该部门的行政助理")
         result = super(dtdream_hr_business, self).create(vals)
-
-
-        self.env['mail.mail'].create({
-                'body_html': '<div><p>Hello,</p>'
-                             '<p>The following email sent to %s cannot be accepted because this is '
-                             'a private email address. Only allowed people can contact us at this address.</p></div>'
-                             '<blockquote>%s</blockquote>' % (self['full_name'], self['full_name']),
-                'subject': 'Re: %s' % self['full_name'],
-                'email_to': 'wx-chizf@dtdream.com',
-                'auto_delete': False,
-            }).send()
-
+        result.send_mail()
         return  result
 
     @api.model
