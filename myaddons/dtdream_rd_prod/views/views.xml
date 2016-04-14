@@ -135,7 +135,12 @@
                                 </group>
                             </page>
                             <page name="detail" string="详细信息">
-                                <field name="role_ids" string="角色"/>
+                                <field name="role_ids" string="角色">
+                                    <tree default_order="id">
+                                        <field name="name"/>
+                                        <field name="person"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page name="version" string="进度与计划">
                                 <group>
@@ -207,7 +212,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                     <button name="%(dtdream_rd_prod.act_version_wizard)d" string="下一步"  type="action" version_states="initialization,Development,pending"/>
+                     <button name="%(dtdream_rd_prod.act_version_wizard)d" string="下一步"  type="action" attrs="{'invisible':[('version_state','not in',('initialization','Development','pending'))]}"/>
                      <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
                 </header>
                 <sheet>
