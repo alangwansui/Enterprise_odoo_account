@@ -86,7 +86,7 @@ class dtdream_hr_business(models.Model):
         if not empl['department_id']['assitant_id']:
             raise ValidationError("请先配置该部门的行政助理")
         result = super(dtdream_hr_business, self).create(vals)
-        result.send_mail()
+        # result.send_mail()
         return  result
 
     @api.model
@@ -209,35 +209,3 @@ class business_detail(models.Model):
     _constraints = [
         (_check_date, u'开始时间不能晚于结束时间!', ["startTime","endTime"]),
         ]
-
-
-class dtdream_rename(models.Model):
-    _inherit = 'hr.employee'
-
-    @api.multi
-    @api.depends('name', 'job_number')
-    def name_get(self):
-        res = []
-        for record in self:
-            name = record['name']
-            if record['job_number']:
-                if record['department_id']:
-                    name = record['name'] + ' ' + record['job_number'] + ' ' +record['department_id']['name']
-                else:
-                    name = record['name'] + ' ' + record['job_number']
-            else:
-                if record['department_id']:
-                    name = record['name'] + ' ' +record['department_id']['name']
-            res.append((record['id'], name))
-        return res
-
-    @api.model
-    def name_search(self, name, args=None, operator='ilike', limit=100):
-        args = args or []
-        domain = []
-        if name:
-            domain = ['|','|',('job_number', operator, name ), ('name', operator, name),('department_id.name', operator, name)]
-            if operator in expression.NEGATIVE_TERM_OPERATORS:
-                domain = ['&'] + domain
-        emps = self.search(domain + args, limit=limit)
-        return emps.name_get()

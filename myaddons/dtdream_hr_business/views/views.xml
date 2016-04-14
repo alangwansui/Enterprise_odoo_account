@@ -1,5 +1,27 @@
 <openerp>
   <data>
+
+   <!--<record model="ir.actions.act_window" id="action_dtdream_hr_business_dashboard">
+        <field name="name">所有申请</field>
+        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">calendar</field>
+   </record>
+
+    <record id="view_holiday_new_calendar" model="ir.ui.view">
+            <field name="name">Leave Request</field>
+            <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+            <field name="arch" type="xml">
+                <calendar string="Leave Request" color="name"
+                          date_start="startTime" date_stop="endTime"
+                          mode="month"
+                          quick_add="False" avatar_model="hr.employee">
+                    <field name="name"/>
+                    <field name="state"/>
+                </calendar>
+            </field>
+        </record>-->
+
     <record id="act_dtdream_hr_business" model="ir.actions.act_window">
         <field name="name">我的申请</field>
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
@@ -37,17 +59,17 @@
     </record>
 
      <record model="ir.ui.view" id="business_tree">
-      <field name="name">business_tree</field>
-      <field name="model">dtdream_hr_business.dtdream_hr_business</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="job_number"/>
-          <field name="name"/>
-          <field name="department"/>
-          <field name="title"/>
-            <field name="state"/>
-        </tree>
-      </field>
+          <field name="name">business_tree</field>
+          <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="job_number"/>
+              <field name="name"/>
+              <field name="department"/>
+              <field name="title"/>
+                <field name="state"/>
+            </tree>
+         </field>
      </record>
 
     <!--form视图-->
@@ -129,18 +151,19 @@
                         <field name="name" invisible="1"/>
                     </group>
               </group>
-            <group>
-              <field name="reason"/>
-            </group>
+              <group>
+                  <field name="reason"/>
+              </group>
           </sheet>
         </form>
       </field>
     </record>
 
     <menuitem name="外出公干" id="dtdream_hr_business_root"   action="act_dtdream_hr_business"></menuitem>
+    <!--<menuitem name="仪表盘" id="dtdream_hr_business_dashboard" parent="dtdream_hr_business_root" sequence="1" action="action_dtdream_hr_business_dashboard"/>-->
     <menuitem name="我的外出公干" sequence="10" id="dtdream_hr_business" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business" ></menuitem>
     <menuitem name="待审批的申请" sequence="20" id="dtdream_hr_business_wait" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_wait"></menuitem>
     <menuitem name="已审批的申请" sequence="30" id="dtdream_hr_business_deal" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_deal"></menuitem>
-    <menuitem name="报告" sequence="30" id="dtdream_hr_business_report" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_report" groups="base.group_hr_manager"></menuitem>
+    <menuitem name="报告" sequence="40" id="dtdream_hr_business_report" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_report" groups="base.group_hr_manager"></menuitem>
   </data>
 </openerp>
