@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_rd_prod",
+    'name': "外出公干",
 
     'summary': """
-        研发产品""",
+    外出公干，外出公干的审批""",
 
     'description': """
-        该模块是新创建的，不继承原有模块，主要解决研发产品的立项审批与进度跟踪
+        外出公干，外出公干的审批
     """,
 
     'author': "小池",
-    'website': "http://www.dtdream.com/",
+    'website': "http://www.dtdream.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
@@ -19,20 +19,20 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','hr'],
+    'depends': ['hr','mail','base'],
 
     # always loaded
     'data': [
-         'wizard/lixiang_wizard.xml',
-        'security/security.xml',
         'security/ir.model.access.csv',
+         'security/security.xml',
+        'wizard/business_wizard.xml',
         'views/views.xml',
         'views/templates.xml',
         'workflow/workflow.xml',
-
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
+    'application': True,
 }

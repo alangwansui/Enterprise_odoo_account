@@ -28,7 +28,10 @@
         'views/views.xml',
         'security/security.xml',
         'views/templates.xml',
-        # 'data/data.xml',
+
+        'data/data.xml',
+
+        'workflow.xml',
 
     ],
     # only loaded in demonstration mode

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="hr_business_workflow" model="workflow">
+            <field name="name">外出公干工作流</field>
+            <field name="osv">dtdream_hr_business.dtdream_hr_business</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="bus_activity_draft" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">创建草稿</field>
+            <field name="flow_start">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="activity_first" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">第一审批人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_first()</field>
+        </record>
+
+        <record id="activity_sec" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">第二审批人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_sec()</field>
+        </record>
+
+        <record id="activity_thr" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">第三审批人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_thr()</field>
+        </record>
+
+        <record id="activity_fou" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">第四审批人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_fou()</field>
+        </record>
+
+        <record id="activity_fif" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">第五审批人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_fif()</field>
+        </record>
+
+        <record id="activity_accept" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">批准</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_accept()</field>
+        </record>
+
+        <record id="activity_restart" model="workflow.activity">
+            <field name="wkf_id" ref="hr_business_workflow"/>
+            <field name="name">拒绝</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_refuse()</field>
+        </record>
+
+        <record id="trans_o_a" model="workflow.transition">
+            <field name="act_from" ref="bus_activity_draft"/>
+            <field name="act_to" ref="activity_first"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_b_c" model="workflow.transition">
+            <field name="act_from" ref="activity_first"/>
+            <field name="act_to" ref="activity_sec"/>
+            <field name="signal">btn_next</field>
+        </record>
+
+        <record id="trans_c_d" model="workflow.transition">
+            <field name="act_from" ref="activity_sec"/>
+            <field name="act_to" ref="activity_thr"/>
+            <field name="signal">btn_next</field>
+        </record>
+
+        <record id="trans_d_e" model="workflow.transition">
+            <field name="act_from" ref="activity_thr"/>
+            <field name="act_to" ref="activity_fou"/>
+            <field name="signal">btn_next</field>
+        </record>
+
+        <record id="trans_e_f" model="workflow.transition">
+            <field name="act_from" ref="activity_fou"/>
+            <field name="act_to" ref="activity_fif"/>
+            <field name="signal">btn_next</field>
+        </record>
+
+        <record id="trans_f_t" model="workflow.transition">
+            <field name="act_from" ref="activity_fif"/>
+            <field name="act_to" ref="activity_accept"/>
+            <field name="signal">btn_next</field>
+        </record>
+
+        <record id="trans_b_g" model="workflow.transition">
+            <field name="act_from" ref="activity_first"/>
+            <field name="act_to" ref="activity_restart"/>
+            <field name="signal">wizard_refuse</field>
+        </record>
+
+        <record id="trans_c_g" model="workflow.transition">
+            <field name="act_from" ref="activity_sec"/>
+            <field name="act_to" ref="activity_restart"/>
+            <field name="signal">wizard_refuse</field>
+        </record>
+
+        <record id="trans_d_g" model="workflow.transition">
+            <field name="act_from" ref="activity_thr"/>
+            <field name="act_to" ref="activity_restart"/>
+            <field name="signal">wizard_refuse</field>
+        </record>
+
+
+        <record id="trans_e_g" model="workflow.transition">
+            <field name="act_from" ref="activity_fou"/>
+            <field name="act_to" ref="activity_restart"/>
+            <field name="signal">wizard_refuse</field>
+        </record>
+
+        <record id="trans_f_g" model="workflow.transition">
+            <field name="act_from" ref="activity_fif"/>
+            <field name="act_to" ref="activity_restart"/>
+            <field name="signal">wizard_refuse</field>
+        </record>
+
+
+        <record id="trans_g_b" model="workflow.transition">
+            <field name="act_from" ref="activity_restart"/>
+            <field name="act_to" ref="bus_activity_draft"/>
+            <field name="signal">btn_restart</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

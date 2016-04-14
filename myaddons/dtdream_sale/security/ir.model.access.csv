@@ -27,4 +27,8 @@ access_product_product_price_history,product.price.history,product.model_product
 
 access_crm_team_user,crm.team.user,model_crm_team,base.group_sale_salesman,1,1,1,1
 
+access_product_template_list_query,product.template listquery,model_product_template,group_product_list_query,1,0,0,0
+access_product_product_list_query,product.product listquery,product.model_product_product,group_product_list_query,1,0,0,0
+
+access_crm_stage_salesman,crm.stage salesman,crm.model_crm_stage,base.group_sale_salesman,1,1,1,0
 
