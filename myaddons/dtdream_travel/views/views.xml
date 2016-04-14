@@ -8,20 +8,24 @@
             <form>
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':['|',('state','!=','0')]}"/>
+                            attrs="{'invisible':[('state','!=','0')]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
-                    attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('1','2','3','4','5'))]}"/>
+                    attrs="{'invisible':['|',('is_current','=',False),('state','not in',('1','2','3','4','5'))]}"/>
                     <button name="%(act_chucha_wizard)d" string="驳回" type="action" class="oe_highlight"
-                    attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('1','2','3','4','5'))]}"/>
+                    attrs="{'invisible':['|',('is_current','=',False),('state','not in',('1','2','3','4','5'))]}"/>
+                    <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('can_restart','=',False),('state','!=','-1')]}"/>
                     <field name="state"  widget="statusbar"
-                           statusbar_visible="0,1,2,3,4,5,99"/>
+                           statusbar_visible="0,1,99"/>
                 </header>
               <sheet>
                   <group>
                       <group string="基本信息">
-                          <field name="name"/>
+                          <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="workid"/>
-                          <field name="deperment"/>
+                          <field name="department"/>
+                          <field name="department_shouyi" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="create_time"></field>
                           <field name="traveling_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="incity_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
@@ -30,11 +34,13 @@
                       </group>
                       <group string="节点流程">
                           <field name="shenpi_first" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="shenpi_second" attrs="{'readonly':[('state','not in',('0','1'))]}"/>
-                          <field name="shenpi_third" attrs="{'readonly':[('state','not in',('0','1','2'))]}"/>
-                          <field name="shenpi_fourth" attrs="{'readonly':[('state','not in',('0','1','2','3'))]}"/>
-                          <field name="shenpi_fifth" attrs="{'readonly':[('state','not in',('0','1','2','3','4'))]}"/>
-                          <field name="is_shenpiren" invisible="True"/>
+                          <field name="shenpi_second" attrs="{'readonly':['|',('state','not in',('0','1')),('has_edit','=',False)]}"/>
+                          <field name="shenpi_third" attrs="{'readonly':['|',('state','not in',('0','1','2')),('has_edit','=',False)]}"/>
+                          <field name="shenpi_fourth" attrs="{'readonly':['|',('state','not in',('0','1','2','3')),('has_edit','=',False)]}"/>
+                          <field name="shenpi_fifth" attrs="{'readonly':['|',('state','not in',('0','1','2','3','4')),('has_edit','=',False)]}"/>
+                          <field name="has_edit" invisible="True"/>
+                          <field name="is_current" invisible="True"/>
+                          <field name="can_restart" invisible="True"/>
                       </group>
                   </group>
 
@@ -48,7 +54,7 @@
 
                   <notebook>
                         <page string="行程">
-                            <field name="journey_id" attrs="{'readonly':[('state', '!=','0')]}">
+                            <field name="journey_id" attrs="{'readonly':['|',('state', '!=','0')]}">
                                 <tree editable="bottom">
                                     <field name="startaddress"/>
                                     <field name="endaddress"/>
@@ -76,7 +82,7 @@
             <tree>
               <field name="name"/>
               <field name="workid"/>
-              <field name="deperment"/>
+              <field name="department"/>
               <field name="create_time"/>
               <field name="state"/>
             </tree>

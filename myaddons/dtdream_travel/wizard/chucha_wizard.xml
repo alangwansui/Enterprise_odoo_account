@@ -23,7 +23,7 @@
     </record>
 
     <record id="act_chucha_wizard" model="ir.actions.act_window">
-        <field name="name">出差审批</field>
+        <field name="name">驳回</field>
         <field name="res_model">dtdream.travel.wizard</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
