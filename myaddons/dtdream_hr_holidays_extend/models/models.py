@@ -32,15 +32,26 @@ class dtdream_hr_holidays_extend(models.Model):
 
     create_type=fields.Char(string="创建类型")
     shenqingren=fields.Char( string="申请人",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,readonly=1)
-    gonghao=fields.Char(string="工号",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).job_number,readonly=1)
+    @api.one
+    def _compute_gonghao(self):
+        self.gonghao=self.employee_id.job_number
+    gonghao=fields.Char(string="工号",compute=_compute_gonghao,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
     create_time= fields.Datetime(string='申请时间',default=datetime.today()- relativedelta(hours=8),readonly=1)
     # create_time=openerp.fields.Datetime.now()
-    shenpiren1=fields.Many2one('hr.employee',string="第一审批人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).department_id.assitant_id)
-    shenpiren2=fields.Many2one('hr.employee',string="第二审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren2)
-    shenpiren3=fields.Many2one('hr.employee',string="第三审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren3)
-    shenpiren4=fields.Many2one('hr.employee',string="第四审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren4)
-    shenpiren5=fields.Many2one('hr.employee',string="第五审批人",default=lambda self:self.env['hr.holidays'].search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).shenpiren5)
+    # approver1_auto = fields.Many2one("hr.employee",string="第一审批人(只用于显示)",compute=_compute_approver1)
+
+
+    shenpiren1=fields.Many2one('hr.employee',string="第一审批人")
+    # shenpiren1=fields.related('employee_id', 'department_id', string='Department', type='many2one', relation='hr.department', readonly=True, store=True)
+    # _column={
+    #     'shenpiren1':fields.related('employee_id', 'department_id', string='Department', type='many2one', relation='hr.department', readonly=True, store=True)
+    # }
+
+    shenpiren2=fields.Many2one('hr.employee',string="第二审批人")
+    shenpiren3=fields.Many2one('hr.employee',string="第三审批人")
+    shenpiren4=fields.Many2one('hr.employee',string="第四审批人")
+    shenpiren5=fields.Many2one('hr.employee',string="第五审批人")
     shenpiren_his1=fields.Integer()
     shenpiren_his2=fields.Integer()
     shenpiren_his3=fields.Integer()
@@ -50,9 +61,12 @@ class dtdream_hr_holidays_extend(models.Model):
     is_confirm22approved=fields.Boolean(default=False)
     is_confirm32approved=fields.Boolean(default=False)
     is_confirm42approved=fields.Boolean(default=False)
-    year=fields.Integer(string="年休假年份")
+    year=fields.Date(string="年休假年份")
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5')
     def change(self):
+        print "-----------------------------change"
+        print self.env['hr.employee']
+        print self
         if not self.shenpiren2:
             self.is_confirm2approved=self.is_confirm22approved=self.is_confirm32approved=self.is_confirm42approved=False
             self.is_confirm2approved=True
@@ -72,28 +86,72 @@ class dtdream_hr_holidays_extend(models.Model):
         print self.is_confirm32approved
         print self.is_confirm42approved
 
-    def onchange_employee(self, cr, uid, ids, employee_id):
-        new_id=0
-        print "test--------+++++++++++onchange"
-        print employee_id
-        new_ids=self.search(cr,uid,[('employee_id','=',employee_id)],order="id desc",limit=1)
-        for x in new_ids:
-            new_id=x
-        print self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
-        result = {'value': {'department_id': False}}
-        if employee_id:
-            employee = self.pool.get('hr.employee').browse(cr, uid, employee_id)
-            shenpiren2=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren2
-            shenpiren3=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
-            shenpiren4=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren4
-            shenpiren5=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren5
-            result['value'] = {'department_id': employee.department_id.id,'gonghao':employee.job_number,
-                                'shenpiren1':employee.department_id.assitant_id,
-                                'shenpiren2':shenpiren2,
-                                'shenpiren3':shenpiren3,
-                                'shenpiren4':shenpiren4,
-                                'shenpiren5':shenpiren5,}
-        return result
+
+    # def onchange_employee(self, cr, uid,ids,employee_id):
+    #     new_id=0
+    #     print "--------------------------------------------onchange_employ33333ee"
+    #     print ids
+    #     print uid
+    #     print cr
+    #     print employee_id
+    #     new_ids=self.search(cr,uid,[('employee_id','=',employee_id)],order="id desc",limit=1)
+    #     for x in new_ids:
+    #         new_id=x
+    #     print self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
+    #     result = {'value': {'department_id': False}}
+    #     if employee_id:
+    #         employee = self.pool.get('hr.employee').browse(cr, uid, employee_id)
+    #         print employee
+    #         shenpiren2=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren2
+    #         shenpiren3=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
+    #         shenpiren4=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren4
+    #         shenpiren5=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren5
+    #         result['value'] = {'department_id': employee.department_id.id,
+    #                             'gonghao':employee.job_number,
+    #                             'shenpiren1':employee.department_id.assitant_id,
+    #                             'shenpiren2':shenpiren2,
+    #                             'shenpiren3':shenpiren3,
+    #                             'shenpiren4':shenpiren4,
+    #                             'shenpiren5':shenpiren5,}
+    #     return result
+
+
+
+    @api.onchange('employee_id')
+    def onchange_employee1(self):
+        print "---------------------------onchange_employe4344e"
+        print self.create_type
+        # result = {'value': {'department_id': False}}
+        print self.env['hr.employee']
+        print self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.name
+        print self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id)],order="id desc",limit=1).shenpiren2
+        if self.employee_id:
+            self.gonghao=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).job_number
+            self.department_id=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.id
+            if not self.create_type:
+                self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
+                self.shenpiren2=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren2
+                self.shenpiren3=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren3
+                self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren4
+                self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren5
+            elif self.create_type:
+                self.shenpiren1=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren1
+                self.shenpiren2=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren2
+                self.shenpiren3=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren3
+                self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren4
+                self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren5
+
+        # if self.employee_id:
+        #     result['value'] = {'department_id': self.env['hr.employee'].search([('employee_id','=',self.employee_id)]).department_id.id,
+        #                         'gonghao': self.env['hr.employee'].search([('employee_id','=',self.employee_id)]).job_number,
+        #                         'shenpiren1':self.env['hr.employee'].search([('employee_id','=',self.employee_id)]).department_id.assitant_id,
+        #                         'shenpiren2':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren2,
+        #                         'shenpiren3':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren3,
+        #                         'shenpiren4':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren4,
+        #                         'shenpiren5':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren5,}
+        #     return result
+
+
 
 
     # current_shenpiren_id=fields.Integer(default=lambda self:self.shenpiren.search([('create_uid','=',self.env.user.id)]).shenpiren1,string='当前审批人员工id')
@@ -206,6 +264,7 @@ class dtdream_hr_holidays_extend(models.Model):
         manager = ids2 and ids2[0] or False
         self.write(cr, uid, ids, {'state': 'validate','current_shenpiren':""}, context=context)
         data_holiday = self.browse(cr, uid, ids)
+        print data_holiday
         for record in data_holiday:
             if record.double_validation:
                 self.write(cr, uid, [record.id], {'manager_id2': manager})
@@ -213,6 +272,7 @@ class dtdream_hr_holidays_extend(models.Model):
                 self.write(cr, openerp.SUPERUSER_ID, [record.id], {'manager_id': manager})
                 print "2222222222222222222222"
             if record.holiday_type == 'employee' and record.type == 'remove':
+                print "2222222222233333333333333"
                 meeting_obj = self.pool.get('calendar.event')
                 meeting_vals = {
                     'name': record.display_name,
@@ -228,14 +288,18 @@ class dtdream_hr_holidays_extend(models.Model):
                 }
                 #Add the partner_id (if exist) as an attendee
                 if record.user_id and record.user_id.partner_id:
+                    print "333333333333322222222222222222"
                     meeting_vals['partner_ids'] = [(4,record.user_id.partner_id.id)]
 
+
                 ctx_no_email = dict(context or {}, no_email=True)
-                meeting_id = meeting_obj.create(cr, uid, meeting_vals, context=ctx_no_email)
+                print "asdasdasdasdasdasdasd"
+                # meeting_id = meeting_obj.create(cr, uid, meeting_vals, context=ctx_no_email)
+
                 print "33333333333333333333333333333"
                 self._create_resource_leave(cr, openerp.SUPERUSER_ID, [record], context=context)
                 print "44444444444444444444444444444444444"
-                self.write(cr, openerp.SUPERUSER_ID, ids, {'meeting_id': meeting_id})
+                # self.write(cr, openerp.SUPERUSER_ID, ids, {'meeting_id': meeting_id})
                 print "5555555555555555555"
             elif record.holiday_type == 'category':
                 emp_ids = record.category_id.employee_ids.ids
@@ -319,11 +383,17 @@ class batch_approval(models.Model):
 
     @api.multi
     def batch_approval(self):
-        print "1111111111111"
+        print "------------batch_approval"
         print self
         context = dict(self._context or {})
         active_ids = context.get('active_ids', []) or []
         print active_ids
+        for record in self.env['hr.holidays'].browse(active_ids):
+            if record.state in ('draft'):
+                record.signal_workflow('confirm')
+            elif record.state in ('confirm'):
+                record.signal_workflow('validate')
+        return {'type': 'ir.actions.act_window_close'}
 
 
 
