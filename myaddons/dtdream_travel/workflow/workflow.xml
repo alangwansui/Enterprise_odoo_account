@@ -128,32 +128,38 @@
 
     <record id="trans_approve1_draft" model="workflow.transition">
         <field name="act_from" ref="act_approve1"/>
-        <field name="act_to" ref="act_draft"/>
+        <field name="act_to" ref="act_reject"/>
         <field name="signal">btn_reject</field>
     </record>
 
     <record id="trans_approve2_draft" model="workflow.transition">
         <field name="act_from" ref="act_approve2"/>
-        <field name="act_to" ref="act_draft"/>
+        <field name="act_to" ref="act_reject"/>
         <field name="signal">btn_reject</field>
     </record>
 
     <record id="trans_approve3_draft" model="workflow.transition">
         <field name="act_from" ref="act_approve3"/>
-        <field name="act_to" ref="act_draft"/>
+        <field name="act_to" ref="act_reject"/>
         <field name="signal">btn_reject</field>
     </record>
 
     <record id="trans_approve4_draft" model="workflow.transition">
         <field name="act_from" ref="act_approve4"/>
-        <field name="act_to" ref="act_draft"/>
+        <field name="act_to" ref="act_reject"/>
         <field name="signal">btn_reject</field>
     </record>
 
     <record id="trans_approve5_draft" model="workflow.transition">
         <field name="act_from" ref="act_approve5"/>
-        <field name="act_to" ref="act_draft"/>
+        <field name="act_to" ref="act_reject"/>
         <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_reject_draft" model="workflow.transition">
+        <field name="act_from" ref="act_reject"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_restart</field>
     </record>
 
     </data>

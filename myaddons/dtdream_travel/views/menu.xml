@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-         <menuitem name="出差申请" id="menu_dtdream_travel" parent="hr.menu_hr_root" sequence="10"
-            action="act_dtdream_travel_chucha_shenqing"></menuitem>
+        <menuitem name="出差" id="menu_dtdream_travel_root"/>
+        <menuitem name="我的申请" id="menu_dtdream_travel_shenqing" parent="menu_dtdream_travel_root" sequence="12"
+                  action="act_dtdream_travel_chucha_shenqing_01"/>
+
+        <menuitem name="待批准申请" id="menu_dtdream_travel_shenqing_wait" parent="menu_dtdream_travel_root" sequence="14"
+                  action="act_dtdream_travel_chucha_shenqing_02"/>
+
+        <menuitem name="已批准申请" id="menu_dtdream_travel_shenqing_done" parent="menu_dtdream_travel_root" sequence="16"
+                   action="act_dtdream_travel_chucha_shenqing_03"/>
+
+        <menuitem name="报告" id="menu_dtdream_travel_shenqing_report" parent="menu_dtdream_travel_root" sequence="18"
+                   action="act_dtdream_travel_chucha_shenqing_04" groups="base.group_hr_manager"/>
     </data>
 </openerp>
