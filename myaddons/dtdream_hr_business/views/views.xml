@@ -79,9 +79,9 @@
               <group string="节点设定">
                 <field name="approver_fir"/>
                 <field name="approver_sec" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('1','2','3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
-                <field name="approver_thr" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('2','3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
-                <field name="approver_fou" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
-                <field name="approver_fif" attrs="{'readonly':[('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
+                <field name="approver_thr" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('2','3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
+                <field name="approver_fou" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
+                <field name="approver_fif" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
               </group>
             </group>
             <group>
