@@ -3,7 +3,10 @@ from openerp.osv import expression
 from openerp import models, fields, api
 from datetime import datetime
 from openerp.exceptions import ValidationError
-# from lxml import etree
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+from werkzeug import url_encode
 
 class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
@@ -70,13 +73,80 @@ class dtdream_hr_business(models.Model):
     title = fields.Char(compute=_compute_title,string="事件")
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
 
+    def get_base_url(self,cr,uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
 
-    def send_mail(self):
-        print 111111111111111111111111111111111
+
+# 代提申请 通知申请人
+    def send_mail_gen(self):
+        base_url = self.get_base_url()
+        link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
+        url = base_url+link
+        email_to=self.name.user_id.email
+        app_time=  self.create_time[:10]
+        subject = '%s于%s帮您提交了外出公干申请，请您查看！' %(self.env.user.name,app_time)
+        appellation= self.name.user_id.name+u'，您好：'
+        content =  '%s于%s帮您提交了外出公干申请，请您注意查看！' %(self.env.user.name,self.create_time)
         self.env['mail.mail'].create({
-                'body_html': '1111111111111111111111111111111111111111',
-                'subject': '%s' % self['title'],
-                'email_to': '%s' % self['name']['user_id']['email'],
+                'body_html': '<p>%s</p>'
+                             '<p>%s</p>'
+                             '<p>请点击链接进入查看:</p>'
+                             '<ul><li><a href="%s">%s</a></li></ul>'
+                             '<pre>'
+                             '<p>数梦企业应用平台<p>'
+                             '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+#提交审批邮件通知
+    def send_mail(self):
+        base_url = self.get_base_url()
+        link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
+        url = base_url+link
+        email_to=self.current_approver.user_id.email
+        app_time=  self.create_time[:10]
+        subject = '%s于%s提交外出公干申请，请您审批！' %(self.name.user_id.name,app_time)
+        print self.current_approver.user_id
+        appellation= self.current_approver.user_id.name+u'，您好：'
+        content = self['title']+u'正等待您的审批'
+        self.env['mail.mail'].create({
+                'body_html': '<p>%s</p>'
+                             '<p>%s</p>'
+                             '<p> 请点击链接进入审批:</p>'
+                             '<ul><li><a href="%s">%s</a></li></ul>'
+                             '<pre>'
+                             '<p>数梦企业应用平台<p>'
+                             '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+#申请通过/驳回通知申请人
+    def send_mail_to_app(self):
+        base_url = self.get_base_url()
+        link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
+        url = base_url+link
+        email_to=self.name.user_id.email
+        app_time=  self.create_time[:10]
+        subject = '%s您于%s提交外出公干申请已被批准，请您查看！' %(self.name.user_id.name,app_time)
+        if self.state=='99':
+            subject = '%s您于%s提交外出公干申请已被驳回，请您查看！' %(self.name.user_id.name,app_time)
+        appellation= self.current_approver.user_id.name+u'，您好：'
+        content = '%s您于%s提交外出公干申请已被批准，请您查看！' %(self.name.user_id.name,self.create_time)
+        self.env['mail.mail'].create({
+                'body_html': '<p>%s</p>'
+                             '<p>%s</p>'
+                             '<p> 请点击链接进入查看:</p>'
+                             '<ul><li><a href="%s">%s</a></li></ul>'
+                             '<pre>'
+                             '<p>数梦企业应用平台<p>'
+                             '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_to': '%s' % email_to,
                 'auto_delete': False,
             }).send()
 
@@ -86,7 +156,6 @@ class dtdream_hr_business(models.Model):
         if not empl['department_id']['assitant_id']:
             raise ValidationError("请先配置该部门的行政助理")
         result = super(dtdream_hr_business, self).create(vals)
-        # result.send_mail()
         return  result
 
     @api.model
@@ -103,6 +172,9 @@ class dtdream_hr_business(models.Model):
         self.write({'state': '0'})
         self.write({'current_approver':self.approver_fir.id})
         self.message_post(body=u'批准，状态：草稿 --> '+u'一级审批')
+        if self.name.user_id.id != self.env.user.id:
+            self.send_mail_gen()
+        self.send_mail()
 
     @api.model
     def wkf_sec(self):                                      #第一审批人批准
@@ -114,7 +186,7 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '1'})
             self.write({'current_approver':self.approver_sec.id})
             self.message_post(body=u'批准，状态：一级审批 --> '+u'二级审批')
-            print self.his_app
+            self.send_mail()
         else:
             raise ValidationError("配置第二审批人")
 
@@ -128,11 +200,12 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '2'})
             self.write({'current_approver':self.approver_thr.id})
             self.message_post(body=u'批准，状态：二级审批 --> '+u'三级审批')
+            self.send_mail()
         else:
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：二级审批 --> '+u'批准')
+            self.send_mail_to_app()
             # self.write({'current_approver':-10})
-            print self.his_app
 
     @api.model
     def wkf_fou(self):                                       #第三审批人批准
@@ -144,9 +217,11 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '3'})
             self.write({'current_approver':self.approver_fou.id})
             self.message_post(body=u'批准，状态：三级审批 --> '+u'四级审批')
+            self.send_mail()
         else:
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：三级审批 --> '+u'批准')
+            self.send_mail_to_app()
             # self.write({'current_approver':-10})
 
 
@@ -160,9 +235,11 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '4'})
             self.write({'current_approver':self.approver_fif.id})
             self.message_post(body=u'批准，状态：四级审批 --> '+u'五级审批')
+            self.send_mail()
         else:
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：四级审批 --> '+u'批准')
+            self.send_mail_to_app()
             # self.write({'current_approver':-10})
 
     @api.model
@@ -173,6 +250,7 @@ class dtdream_hr_business(models.Model):
             self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         self.write({'state': '5'})
         self.message_post(body=u'批准，状态：五级审批 --> '+u'批准')
+        self.send_mail_to_app()
         # self.write({'current_approver':-10})
 
     @api.model
@@ -180,6 +258,7 @@ class dtdream_hr_business(models.Model):
         self.write({'state': '99'})
         self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         self.write({'current_approver':self.name.id})
+        self.send_mail_to_app()
 
 
     # @api.multi
