@@ -2,7 +2,7 @@
 
 from openerp import models, fields, api
 from openerp.osv import osv
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 
 
@@ -122,7 +122,7 @@ class dtdream_travel(models.Model):
 
     def unlink(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids, context=context):
-            if rec.state != '0' and uid != 1:
+            if (rec.state != '0' and uid != 1) or (rec.state != '99' and uid == 1):
                 raise osv.except_osv(u'审批流程中的出差申请单无法删除!')
             return super(dtdream_travel, self).unlink(cr, uid, ids, context)
 
@@ -140,8 +140,11 @@ class dtdream_travel(models.Model):
         else:
             self.can_restart = False
 
+    @staticmethod
+    def _get_current_time(*args):
+        return (datetime.now() + timedelta(hours=8)).strftime("%m/%d/%Y %H:%M:%S")
 
-    name = fields.Many2one('hr.employee', string="申请人")
+    name = fields.Many2one('hr.employee', string="申请人", required=True)
     shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True, default=_compute_shenpi_person)
     shenpi_second = fields.Many2one('hr.employee', string="第二审批人", help="部门主管", default=_compute_shenpi_person)
     shenpi_third = fields.Many2one('hr.employee', string="第三审批人", help="受益部门权签人(当受益部门与权签部门不一致时)", default=_compute_shenpi_person)
@@ -154,7 +157,7 @@ class dtdream_travel(models.Model):
     workid = fields.Char(string="工号", compute=_compute_shenpi_person)
     department = fields.Char(string="部门", compute=_compute_shenpi_person)
     department_shouyi = fields.Many2one('hr.department', string="受益部门")
-    create_time = fields.Char(string="申请时间", default=lambda self: datetime.now().strftime("%m/%d/%Y %H:%M:%S"), readonly=True)
+    create_time = fields.Char(string="申请时间", default=lambda self: self._get_current_time(), readonly=True)
     traveling_fee = fields.Char(string="在途交通费", required=True)
     incity_fee = fields.Char(string="市内交通费", required=True)
     hotel_expense = fields.Char(string="住宿费", required=True)
@@ -176,21 +179,21 @@ class dtdream_travel(models.Model):
     def wkf_draft(self):
         if self.state == "-1":
             self.message_post(body=u'重启流程,驳回 --> 草稿 '+u'下一审批人:'+self.shenpi_first.name + u" 操作时间:" +
-                                   datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+                                   self._get_current_time())
         self.write({'state': '0', "shenpiren": ''})
 
     @api.multi
     def wkf_approve1(self):
         self.write({'state': '1', "shenpiren": self.shenpi_first.id})
         self.message_post(body=u'提交,草稿 --> 一级审批 '+u'下一审批人:' + self.shenpi_first.name + u" 操作时间:" +
-                               datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+                               self._get_current_time())
 
     @api.multi
     def wkf_approve2(self):
         if self.shenpi_second.id:
             self.write({'state': '2', "shenpiren": self.shenpi_second.id, "approve": [(4, self.shenpi_first.id)]})
             self.message_post(body=u'批准,一级审批 --> 二级审批 '+u'下一审批人:' + self.shenpi_second.name +
-                                   u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+                                   u" 操作时间:" + self._get_current_time())
         else:
             raise osv.except_osv(u'第二审批人不能为空!')
 
@@ -199,37 +202,37 @@ class dtdream_travel(models.Model):
         if self.shenpi_third.id:
             self.write({'state': '3', "shenpiren": self.shenpi_third.id, "approve": [(4, self.shenpi_second.id)]})
             self.message_post(body=u' 批准,二级审批 --> 三级审批 '+u'下一审批人:' + self.shenpi_third.name +
-                                   u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+                                   u" 操作时间:" + self._get_current_time())
         elif self.department_shouyi:
             raise osv.except_osv(u'第三审批人不能为空!')
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_second.id)]})
-            self.message_post(body=u' 批准,二级审批 --> 完成 '+u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+            self.message_post(body=u' 批准,二级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
 
     @api.multi
     def wkf_approve4(self):
         if self.shenpi_fourth.id:
             self.write({'state': '4', "shenpiren": self.shenpi_fourth.id, "approve": [(4, self.shenpi_third.id)]})
             self.message_post(body=u' 批准,三级审批 --> 四级审批 '+u'下一审批人:' + self.shenpi_fourth.name +
-                                   u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+                                   u" 操作时间:" + self._get_current_time())
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_third.id)]})
-            self.message_post(body=u' 批准,三级审批 --> 完成 '+u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+            self.message_post(body=u' 批准,三级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
 
     @api.multi
     def wkf_approve5(self):
         if self.shenpi_fifth.id:
             self.write({'state': '5', "shenpiren": self.shenpi_fifth.id, "approve": [(4, self.shenpi_fourth.id)]})
             self.message_post(body=u' 批准,四级审批 --> 五级审批 '+u'下一审批人:' + self.shenpi_fifth.name +
-                                   u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+                                   u" 操作时间:" + self._get_current_time())
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fourth.id)]})
-            self.message_post(body=u' 批准,四级审批 --> 完成 '+u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+            self.message_post(body=u' 批准,四级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
 
     @api.multi
     def wkf_done(self):
         self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fifth.id)]})
-        self.message_post(body=u' 批准,五级审批 --> 完成 '+u" 操作时间:" + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+        self.message_post(body=u' 批准,五级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
 
     @api.multi
     def wkf_reject(self):
