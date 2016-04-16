@@ -125,7 +125,7 @@ class dtdream_hr_business(models.Model):
                 'auto_delete': False,
             }).send()
 
-#申请通过/驳回通知申请人
+#申请通过/驳回通知申请人 
     def send_mail_to_app(self):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
