@@ -141,8 +141,40 @@ class dtdream_travel(models.Model):
             self.can_restart = False
 
     @staticmethod
-    def _get_current_time(*args):
+    def _get_current_time(state=False):
+        if state:
+            return (datetime.now() + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S")
         return (datetime.now() + timedelta(hours=8)).strftime("%m/%d/%Y %H:%M:%S")
+
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def send_mail(self, subject, content):
+        base_url = self.get_base_url()
+        link = '/web#id=%s&view_type=form&model=dtdream.travel.chucha' % self.id
+        url = base_url+link
+        email_to = self.name.user_id.email
+        if self.name.user_id != self.create_uid:
+            email_cc = self.create_uid.email
+        else:
+            email_cc = ""
+        subject = subject
+        appellation = u'您好：'
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': '''<p>%s</p>
+                                <p>%s</p>
+                                <p>点击链接进入查看:</p>
+                                <ul><li><a href="%s">%s</a></li></ul>
+                                <pre>
+                                <p>数梦企业应用平台<p>
+                                <p>%s<p></pre>''' % (appellation, content, url, url, self._get_current_time(state=True)),
+                'subject': '%s' % subject,
+                'email_to': '%s' % email_to,
+                'email_cc': '%s' % email_cc,
+                'auto_delete': False,
+            }).send()
 
     name = fields.Many2one('hr.employee', string="申请人", required=True)
     shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True, default=_compute_shenpi_person)
@@ -184,6 +216,8 @@ class dtdream_travel(models.Model):
 
     @api.multi
     def wkf_approve1(self):
+        content = u'您于%s提交了出差申请！<p>申请单创建人:%s</p>' % (self._get_current_time(state=True), self.create_uid.name)
+        self.send_mail(subject=u'出差申请提交', content=content, draft=True)
         self.write({'state': '1', "shenpiren": self.shenpi_first.id})
         self.message_post(body=u'提交,草稿 --> 一级审批 '+u'下一审批人:' + self.shenpi_first.name + u" 操作时间:" +
                                self._get_current_time())
@@ -191,6 +225,8 @@ class dtdream_travel(models.Model):
     @api.multi
     def wkf_approve2(self):
         if self.shenpi_second.id:
+            content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_first.name, self._get_current_time(state=True), self.shenpi_second.name)
+            self.send_mail(subject=u'出差申请审批通过', content=content)
             self.write({'state': '2', "shenpiren": self.shenpi_second.id, "approve": [(4, self.shenpi_first.id)]})
             self.message_post(body=u'批准,一级审批 --> 二级审批 '+u'下一审批人:' + self.shenpi_second.name +
                                    u" 操作时间:" + self._get_current_time())
@@ -208,6 +244,8 @@ class dtdream_travel(models.Model):
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_second.id)]})
             self.message_post(body=u' 批准,二级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
+        content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_second.name, self._get_current_time(state=True), self.shenpi_third.name)
+        self.send_mail(subject=u'出差申请审批通过', content=content)
 
     @api.multi
     def wkf_approve4(self):
@@ -218,6 +256,8 @@ class dtdream_travel(models.Model):
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_third.id)]})
             self.message_post(body=u' 批准,三级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
+        content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_third.name, self._get_current_time(state=True), self.shenpi_fourth.name)
+        self.send_mail(subject=u'出差申请审批通过', content=content)
 
     @api.multi
     def wkf_approve5(self):
@@ -228,14 +268,20 @@ class dtdream_travel(models.Model):
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fourth.id)]})
             self.message_post(body=u' 批准,四级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
+        content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_fourth.name, self._get_current_time(state=True), self.shenpi_fifth.name)
+        self.send_mail(subject=u'出差申请审批通过', content=content)
 
     @api.multi
     def wkf_done(self):
+        content = u'%s于%s批准了您的出差申请,审批已完成！' % (self.shenpi_fifth.name, self._get_current_time(state=True))
+        self.send_mail(subject=u'出差申请审批通过', content=content)
         self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fifth.id)]})
         self.message_post(body=u' 批准,五级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
 
     @api.multi
     def wkf_reject(self):
+        content = u'%s于%s驳回了您的出差申请！' % (self.shenpiren.name, self._get_current_time(state=True))
+        self.send_mail(subject=u'出差申请审批驳回', content=content)
         self.write({'state': '-1', "shenpiren": ''})
 
 
