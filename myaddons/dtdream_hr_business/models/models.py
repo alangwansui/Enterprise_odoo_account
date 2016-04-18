@@ -6,7 +6,6 @@ from openerp.exceptions import ValidationError
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from werkzeug import url_encode
 
 class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
@@ -25,7 +24,8 @@ class dtdream_hr_business(models.Model):
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门")
-    create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
+    # create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
+    create_time = fields.Char(string='申请时间',default=lambda self: datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
     approver_fir = fields.Many2one("hr.employee" ,compute=_compute_employee,string="第一审批人",store=True)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
     approver_thr = fields.Many2one("hr.employee",string="第三审批人")
@@ -125,7 +125,7 @@ class dtdream_hr_business(models.Model):
                 'auto_delete': False,
             }).send()
 
-#申请通过/驳回通知申请人
+#申请通过/驳回通知申请人 
     def send_mail_to_app(self):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
@@ -171,7 +171,7 @@ class dtdream_hr_business(models.Model):
             raise ValidationError("请至少填写一条明细")
         self.write({'state': '0'})
         self.write({'current_approver':self.approver_fir.id})
-        self.message_post(body=u'批准，状态：草稿 --> '+u'一级审批')
+        self.message_post(body=u'提交，状态：草稿 --> '+u'一级审批')
         if self.name.user_id.id != self.env.user.id:
             self.send_mail_gen()
         self.send_mail()
@@ -260,14 +260,6 @@ class dtdream_hr_business(models.Model):
         self.write({'current_approver':self.name.id})
         self.send_mail_to_app()
 
-
-    # @api.multi
-    # def unlink(self):
-    #     for record in self:
-    #         if record.state != '-1' or record.name.id != self.user.id:
-    #             raise ValidationError("您不是申请人或该流程已提交审批")
-    #         record.detail_ids.unlink()
-    #     return super(dtdream_hr_business, self).unlink()
 
 class business_detail(models.Model):
     _name = "dtdream_hr_business.business_detail"
