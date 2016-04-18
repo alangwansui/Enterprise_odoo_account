@@ -47,6 +47,7 @@ class dtdream_hr_holidays_extend(models.Model):
     is_confirm42approved=fields.Boolean(default=False,string="四审批后直接通过")
 
     year= fields.Selection([
+        ('0',datetime.strftime(datetime.today()+relativedelta(years=1),"%Y")),
         ('1',datetime.strftime(datetime.today(),"%Y")),
         ('2',datetime.strftime(datetime.today()-relativedelta(years=1),"%Y")),
         ('3',datetime.strftime(datetime.today()-relativedelta(years=2),"%Y")),
@@ -96,10 +97,6 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
 
-
-
-
-
     @api.onchange('employee_id')
     def onchange_employee1(self):
 
@@ -119,21 +116,13 @@ class dtdream_hr_holidays_extend(models.Model):
                 self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren4
                 self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren5
 
-        # if self.employee_id:
-        #     result['value'] = {'department_id': self.env['hr.employee'].search([('employee_id','=',self.employee_id)]).department_id.id,
-        #                         'gonghao': self.env['hr.employee'].search([('employee_id','=',self.employee_id)]).job_number,
-        #                         'shenpiren1':self.env['hr.employee'].search([('employee_id','=',self.employee_id)]).department_id.assitant_id,
-        #                         'shenpiren2':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren2,
-        #                         'shenpiren3':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren3,
-        #                         'shenpiren4':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren4,
-        #                         'shenpiren5':self.env['hr.holidays'].search([('employee_id','=',self.employee_id)],order="id desc",limit=1).shenpiren5,}
-        #     return result
+
 
 
     current_shenpiren=fields.Many2one('hr.employee',string='当前审批人')
     state=fields.Selection([('draft', '草稿'), ('cancel', 'Cancelled'),('confirm', '一级审批'),
                             ('confirm2', '二级审批'),('confirm3', '三级审批'),('confirm4', '四级审批'),
-                            ('confirm5', '五级审批'), ('refuse', 'Refused'), ('validate1', 'Second Approval'), ('validate', 'Approved')],
+                            ('confirm5', '五级审批'), ('refuse', 'Refused'), ('validate1', 'Second Approval'), ('validate', '完成')],
                            'Status', readonly=True, track_visibility='onchange',default='draft')
 
     @api.one
@@ -176,14 +165,16 @@ class dtdream_hr_holidays_extend(models.Model):
         # 邮件通知
         link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
         url=self.get_base_url()+link
-
-        self.env['mail.mail'].create({
+        if self.create_type==False:
+            self.env['mail.mail'].create({
                  'subject': u'%s 请假'%self.employee_id.name,
                 'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
                 'email_from': 'postmaster-odoo@dtdream.com',
 
                 'email_to': self.shenpiren1.work_email,
             }).send()
+
+
 
 
     @api.multi
@@ -316,46 +307,119 @@ class dtdream_hr_holidays_extend(models.Model):
         # 邮件通知
         link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
         url=self.get_base_url()+link
-        state=''
-        if self.state=='confirm':
-            state=u"一级审批"
-        elif self.state=='confirm2':
-            state=u"二级审批"
-        elif self.state=='confirm3':
-            state=u"三级审批"
-        elif self.state=='confirm4':
-            state=u"四级审批"
-        elif self.state=='confirm5':
-            state=u"五级审批"
-
-        self.env['mail.mail'].create({
+        state=dict(self.env['hr.holidays']._columns['state'].selection)[self.state]
+        state_code=unicode(state,'utf-8')
+        if self.create_type==False:
+            self.env['mail.mail'].create({
                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 驳回,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,state,url),
+                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 驳回,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,state_code,url),
                     'email_from': 'postmaster-odoo@dtdream.com',
 
                     'email_to': self.employee_id.work_email,
                 }).send()
+
 
 
         self.write({'state':'refuse','current_shenpiren':""})
 
-    @api.multi
-    def holidays_validate(self):
-        if self.state=='confirm' and self.shenpiren2.id==False and self.create_type==False:
-            raise ValidationError('请先填写第二审批人')
-        self.write({'state':'validate','current_shenpiren':""})
+    def holidays_validate(self, cr, uid, ids, context=None):
+        this_self=''
+        for id in ids:
+            this_self=self.pool.get('hr.holidays').browse(cr, uid,id)
+            if self.pool.get('hr.holidays').browse(cr, uid,id).state=='confirm' and self.pool.get('hr.holidays').browse(cr, uid,id).shenpiren2.id==False and self.pool.get('hr.holidays').browse(cr, uid,id).create_type==False:
+                raise ValidationError('请先填写第二审批人')
 
 
         # 邮件通知
-        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-        url=self.get_base_url()+link
-        self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单已经批准,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%this_self.id
+        url=this_self.get_base_url()+link
+        state=dict(this_self.env['hr.holidays']._columns['state'].selection)[this_self.state]
+        state_code=unicode(state,'utf-8')
+        if this_self.create_type==False:
+            this_self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%this_self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 完成,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,state_code,url),
                     'email_from': 'postmaster-odoo@dtdream.com',
 
-                    'email_to': self.employee_id.work_email,
+                    'email_to': this_self.employee_id.work_email,
                 }).send()
+        elif this_self.create_type=='manage':
+            this_self.env['mail.mail'].create({
+                    'subject': u'%s 年休假'%this_self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': this_self.employee_id.work_email,
+                }).send()
+
+
+        obj_emp = self.pool.get('hr.employee')
+        ids2 = obj_emp.search(cr, uid, [('user_id', '=', uid)])
+        manager = ids2 and ids2[0] or False
+        self.write(cr, uid, ids, {'state': 'validate','current_shenpiren':""}, context=context)
+        data_holiday = self.browse(cr, uid, ids)
+        for record in data_holiday:
+            if record.double_validation:
+                self.write(cr, uid, [record.id], {'manager_id2': manager})
+            else:
+                self.write(cr, openerp.SUPERUSER_ID, [record.id], {'manager_id': manager})
+
+            if record.holiday_type == 'employee' and record.type == 'remove':
+
+                meeting_obj = self.pool.get('calendar.event')
+                meeting_vals = {
+                    'name': record.display_name,
+                    'categ_ids': record.holiday_status_id.categ_id and [(6,0,[record.holiday_status_id.categ_id.id])] or [],
+                    'duration': record.number_of_days_temp * 8,
+                    'description': record.notes,
+                    'user_id': record.user_id.id,
+                    'start': record.date_from,
+                    'stop': record.date_to,
+                    'allday': False,
+                    'state': 'open',            # to block that meeting date in the calendar
+                    'class': 'confidential'
+                }
+                #Add the partner_id (if exist) as an attendee
+                if record.user_id and record.user_id.partner_id:
+
+                    meeting_vals['partner_ids'] = [(4,record.user_id.partner_id.id)]
+
+
+                ctx_no_email = dict(context or {}, no_email=True)
+
+                # meeting_id = meeting_obj.create(cr, uid, meeting_vals, context=ctx_no_email)
+
+
+                self._create_resource_leave(cr, openerp.SUPERUSER_ID, [record], context=context)
+
+                # self.write(cr, openerp.SUPERUSER_ID, ids, {'meeting_id': meeting_id})
+
+            elif record.holiday_type == 'category':
+                emp_ids = record.category_id.employee_ids.ids
+                leave_ids = []
+                batch_context = dict(context, mail_notify_force_send=False)
+                for emp in obj_emp.browse(cr, uid, emp_ids, context=context):
+                    vals = {
+                        'name': record.name,
+                        'type': record.type,
+                        'holiday_type': 'employee',
+                        'holiday_status_id': record.holiday_status_id.id,
+                        'date_from': record.date_from,
+                        'date_to': record.date_to,
+                        'notes': record.notes,
+                        'number_of_days_temp': record.number_of_days_temp,
+                        'parent_id': record.id,
+                        'employee_id': emp.id
+                    }
+                    leave_ids.append(self.create(cr, uid, vals, context=batch_context))
+                for leave_id in leave_ids:
+                    # TODO is it necessary to interleave the calls?
+                    for sig in ('confirm', 'validate', 'second_validate'):
+                        self.signal_workflow(cr, uid, [leave_id], sig)
+        return True
+
+
+
 
 
 

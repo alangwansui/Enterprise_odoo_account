@@ -66,7 +66,7 @@
 
                         </xpath>
                         <xpath expr='//field[@name="state"]' position="attributes">
-                             <attribute name="statusbar_visible">draft,confirm,validate</attribute>
+                             <attribute name="statusbar_visible">draft,validate</attribute>
                         </xpath>
 
 
