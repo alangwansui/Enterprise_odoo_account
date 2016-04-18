@@ -54,7 +54,14 @@
         <field name="action">holidays_confirm5()</field>
     </record>
 
-
+    <!--      ============================================-draft============================================                 -->
+    <record model="workflow.transition" id="hr_holidays.holiday_draft2confirm"> <!-- 1. draft->submitted (confirm signal) -->
+        <field name="act_from" ref="hr_holidays.act_draft" />
+        <field name="act_to" ref="hr_holidays.act_confirm" />
+        <field name="signal">confirm</field>
+        <field name="condition">True</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
     <!--      ============================================-confirm============================================                 -->
 
     <record model="workflow.transition" id="hr_holidays.holiday_confirm2confirm2">
