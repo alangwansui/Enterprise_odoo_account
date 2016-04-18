@@ -58,7 +58,7 @@ class dtdream_hr_holidays_extend(models.Model):
 
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5','employee_id','holiday_status_id','number_of_days_temp')
     def change(self):
-        print "-----------------------------change"
+
         nianjia=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('holiday_status_id','=',5),('state','!=','draft')],order="id desc")
         length=len(nianjia)
         remain_nianjia_days=0
@@ -96,44 +96,13 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
 
-    # def onchange_employee(self, cr, uid,ids,employee_id):
-    #     new_id=0
-    #     print "--------------------------------------------onchange_employ33333ee"
-    #     print ids
-    #     print uid
-    #     print cr
-    #     print employee_id
-    #     new_ids=self.search(cr,uid,[('employee_id','=',employee_id)],order="id desc",limit=1)
-    #     for x in new_ids:
-    #         new_id=x
-    #     print self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
-    #     result = {'value': {'department_id': False}}
-    #     if employee_id:
-    #         employee = self.pool.get('hr.employee').browse(cr, uid, employee_id)
-    #         print employee
-    #         shenpiren2=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren2
-    #         shenpiren3=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren3
-    #         shenpiren4=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren4
-    #         shenpiren5=self.pool.get('hr.holidays').browse(cr, uid,new_id).shenpiren5
-    #         result['value'] = {'department_id': employee.department_id.id,
-    #                             'gonghao':employee.job_number,
-    #                             'shenpiren1':employee.department_id.assitant_id,
-    #                             'shenpiren2':shenpiren2,
-    #                             'shenpiren3':shenpiren3,
-    #                             'shenpiren4':shenpiren4,
-    #                             'shenpiren5':shenpiren5,}
-    #     return result
+
 
 
 
     @api.onchange('employee_id')
     def onchange_employee1(self):
-        print "---------------------------onchange_employe4344e"
-        print self.create_type
-        # result = {'value': {'department_id': False}}
-        print self.env['hr.employee']
-        print self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.name
-        print self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id)],order="id desc",limit=1).shenpiren2
+
         if self.employee_id:
             self.gonghao=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).job_number
             self.department_id=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.id
@@ -173,16 +142,16 @@ class dtdream_hr_holidays_extend(models.Model):
             self.is_shenpiren=True
         elif (self.shenpiren2.user_id.id==self.env.user.id) and self.state=='confirm2':
             self.is_shenpiren=True
-            print "confirm2"
+
         elif (self.shenpiren3.user_id.id==self.env.user.id) and self.state=='confirm3':
             self.is_shenpiren=True
-            print "confirm3"
+
         elif (self.shenpiren4.user_id.id==self.env.user.id) and self.state=='confirm4':
             self.is_shenpiren=True
-            print "confirm4"
+
         elif (self.shenpiren5.user_id.id==self.env.user.id) and self.state=='confirm5':
             self.is_shenpiren=True
-            print "confirm5"
+
         else:
             self.is_shenpiren=False
 
@@ -195,12 +164,27 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
-
+    def get_base_url(self,cr,uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
     @api.multi
     def holidays_confirm(self):
-        print "holidays_confirm"
+
         self.shenpiren_his1=self.shenpiren1.user_id
         self.write({'state':'confirm','current_shenpiren':self.shenpiren1.id})
+
+        # 邮件通知
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+
+        self.env['mail.mail'].create({
+                 'subject': u'%s 请假'%self.employee_id.name,
+                'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
+                'email_from': 'postmaster-odoo@dtdream.com',
+
+                'email_to': self.shenpiren1.work_email,
+            }).send()
+
 
     @api.multi
     def holidays_confirm2(self):
@@ -208,39 +192,109 @@ class dtdream_hr_holidays_extend(models.Model):
                 raise ValidationError('请先填写第二审批人')
             else:
                 self.shenpiren_his2=self.shenpiren2.user_id
-                print self.employee_id
-                print "1111111111111111"
                 self.write({'state':'confirm2','current_shenpiren':self.shenpiren2.id})
+
+            # 邮件通知
+            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+            url=self.get_base_url()+link
+
+            self.env['mail.mail'].create({
+                     'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren2.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.shenpiren2.work_email,
+                }).send()
+
+            self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单状态：一级审批 -> 二级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.employee_id.work_email,
+                }).send()
 
     @api.multi
     def holidays_confirm3(self):
-         # if self.is_confirm22approved:
-         #    self.write({'state':'validate','current_shenpiren':''})
-         # else:
             self.shenpiren_his3=self.shenpiren3.user_id
-            print "12"
             self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
+
+            # 邮件通知
+            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+            url=self.get_base_url()+link
+
+            self.env['mail.mail'].create({
+                     'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren3.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.shenpiren3.work_email,
+                }).send()
+
+            self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单状态：二级审批 -> 三级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.employee_id.work_email,
+                }).send()
 
     @api.multi
     def holidays_confirm4(self):
-         # if self.is_confirm32approved:
-         #    self.write({'state':'validate','current_shenpiren':''})
-         # else:
+
             self.shenpiren_his4=self.shenpiren4.user_id
             self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
 
+            # 邮件通知
+            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+            url=self.get_base_url()+link
+
+            self.env['mail.mail'].create({
+                     'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren4.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.shenpiren2.work_email,
+                }).send()
+
+            self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单状态：三级审批 -> 四级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.employee_id.work_email,
+                }).send()
+
     @api.multi
     def holidays_confirm5(self):
-         # if self.is_confirm42approved:
-         #    self.write({'state':'validate','current_shenpiren':''})
-         # else:
+
             self.shenpiren_his5=self.shenpiren5.user_id
             self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
+
+            # 邮件通知
+            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+            url=self.get_base_url()+link
+
+            self.env['mail.mail'].create({
+                     'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren5.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.shenpiren2.work_email,
+                }).send()
+
+            self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单状态：四级审批 -> 五级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.employee_id.work_email,
+                }).send()
 
 
 
     def holidays_reset(self, cr, uid, ids, context=None):#重写该方法，开放重置按钮权限
-        print "123"
+
         self.write(cr, uid, ids, {
             'state': 'draft',
             'manager_id': False,
@@ -256,93 +310,63 @@ class dtdream_hr_holidays_extend(models.Model):
             self.unlink(cr, uid, to_unlink, context=context)
         return True
 
+    @api.multi
+    def holidays_refuse(self):
+
+        # 邮件通知
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+        state=''
+        if self.state=='confirm':
+            state=u"一级审批"
+        elif self.state=='confirm2':
+            state=u"二级审批"
+        elif self.state=='confirm3':
+            state=u"三级审批"
+        elif self.state=='confirm4':
+            state=u"四级审批"
+        elif self.state=='confirm5':
+            state=u"五级审批"
+
+        self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 驳回,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,state,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.employee_id.work_email,
+                }).send()
+
+
+        self.write({'state':'refuse','current_shenpiren':""})
+
+    @api.multi
+    def holidays_validate(self):
+        if self.state=='confirm' and self.shenpiren2.id==False and self.create_type==False:
+            raise ValidationError('请先填写第二审批人')
+        self.write({'state':'validate','current_shenpiren':""})
+
+
+        # 邮件通知
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+        self.env['mail.mail'].create({
+                    'subject': u'%s 请假'%self.employee_id.name,
+                    'body_html': u'<p>%s</p><p>您的请假单已经批准,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
+                    'email_from': 'postmaster-odoo@dtdream.com',
+
+                    'email_to': self.employee_id.work_email,
+                }).send()
 
 
 
-    def holidays_validate(self, cr, uid, ids, context=None):
-        # print cr.execute("""select create_type from hr_holidays where id=19""")
-        print "------------------holidays_validate"
-        for id in ids:
-            print self.pool.get('hr.holidays').browse(cr, uid,id).create_type
-            if self.pool.get('hr.holidays').browse(cr, uid,id).state=='confirm' and self.pool.get('hr.holidays').browse(cr, uid,id).shenpiren2.id==False and self.pool.get('hr.holidays').browse(cr, uid,id).create_type==False:
-                raise ValidationError('请先填写第二审批人')
-
-        obj_emp = self.pool.get('hr.employee')
-        # print obj_emp.search(cr, uid, [('user_id', '=', -1)])
-        ids2 = obj_emp.search(cr, uid, [('user_id', '=', uid)])
-        manager = ids2 and ids2[0] or False
-        self.write(cr, uid, ids, {'state': 'validate','current_shenpiren':""}, context=context)
-        data_holiday = self.browse(cr, uid, ids)
-        print data_holiday
-        for record in data_holiday:
-            if record.double_validation:
-                self.write(cr, uid, [record.id], {'manager_id2': manager})
-            else:
-                self.write(cr, openerp.SUPERUSER_ID, [record.id], {'manager_id': manager})
-
-            if record.holiday_type == 'employee' and record.type == 'remove':
-
-                meeting_obj = self.pool.get('calendar.event')
-                meeting_vals = {
-                    'name': record.display_name,
-                    'categ_ids': record.holiday_status_id.categ_id and [(6,0,[record.holiday_status_id.categ_id.id])] or [],
-                    'duration': record.number_of_days_temp * 8,
-                    'description': record.notes,
-                    'user_id': record.user_id.id,
-                    'start': record.date_from,
-                    'stop': record.date_to,
-                    'allday': False,
-                    'state': 'open',            # to block that meeting date in the calendar
-                    'class': 'confidential'
-                }
-                #Add the partner_id (if exist) as an attendee
-                if record.user_id and record.user_id.partner_id:
-
-                    meeting_vals['partner_ids'] = [(4,record.user_id.partner_id.id)]
-
-
-                ctx_no_email = dict(context or {}, no_email=True)
-
-                # meeting_id = meeting_obj.create(cr, uid, meeting_vals, context=ctx_no_email)
-
-
-                self._create_resource_leave(cr, openerp.SUPERUSER_ID, [record], context=context)
-
-                # self.write(cr, openerp.SUPERUSER_ID, ids, {'meeting_id': meeting_id})
-
-            elif record.holiday_type == 'category':
-                emp_ids = record.category_id.employee_ids.ids
-                leave_ids = []
-                batch_context = dict(context, mail_notify_force_send=False)
-                for emp in obj_emp.browse(cr, uid, emp_ids, context=context):
-                    vals = {
-                        'name': record.name,
-                        'type': record.type,
-                        'holiday_type': 'employee',
-                        'holiday_status_id': record.holiday_status_id.id,
-                        'date_from': record.date_from,
-                        'date_to': record.date_to,
-                        'notes': record.notes,
-                        'number_of_days_temp': record.number_of_days_temp,
-                        'parent_id': record.id,
-                        'employee_id': emp.id
-                    }
-                    leave_ids.append(self.create(cr, uid, vals, context=batch_context))
-                for leave_id in leave_ids:
-                    # TODO is it necessary to interleave the calls?
-                    for sig in ('confirm', 'validate', 'second_validate'):
-                        self.signal_workflow(cr, uid, [leave_id], sig)
-        return True
 
 
     def unlink(self, cr, uid, ids, context=None):
-        print "unlink"
-        print ids
-        print self
+
         for rec in self.browse(cr, uid, ids, context=context):
             if rec.state not in ['draft', 'cancel', 'confirm','confirm1','confirm2','confirm3','confirm4','confirm5','refuse']:
                 # raise UserError(_('You cannot delete a leave which is in %s state.') % (rec.state,))
-                print "error"
+                print "pass"
 
         return models.Model.unlink(self, cr, uid, ids, context=None)
 
@@ -393,35 +417,26 @@ class dtdream_nianjia(models.Model):
     employee = fields.Many2one('hr.employee',string="选择员工")
     number_of_days = fields.Integer(string="分配的天数")
     year = fields.Integer(string="年休假年份")
-    # new =fields.Selection([('1',time.strftime("%Y-%m-%d %H:%M:%S")),('2','2')])
 
-    # @api.multi
-    # def batch_approval(self):
-    #     print self
     @api.model
     def create(self, vals):
 
         nianjia=self.env['hr.holidays']
-        print nianjia
+
         tec =  nianjia.create({'employee_id':vals['employee'],'state':'validate','type':'add','year':vals['year'],'holiday_status_id':5,'number_of_days_temp':vals['number_of_days']})
-        print tec.id
+
         tec.write({'state':'validate'})
 
         return super(dtdream_nianjia,self).create(vals)
 
     @api.multi
     def unlink(self):
-        print fields.Date.context_today(self)
-        # print datetime.time.strftime("%Y-%m-%d %H:%M:%S")
-        print self
 
-        print self.ids
-        for id in self.ids:
-            print id
+
         employee=self.env['dtdream.nianjia'].search([('id','=',self.id)]).employee
         year=self.env['dtdream.nianjia'].search([('id','=',self.id)]).year
         nianjia=self.env['hr.holidays'].search([('employee_id','=',employee.id),('year','=',year)])
-        print nianjia
+
         nianjia.write({'number_of_days_temp':0})
         return super(dtdream_nianjia,self).unlink()
 
@@ -431,11 +446,10 @@ class batch_approval(models.Model):
 
     @api.multi
     def batch_approval(self):
-        print "------------batch_approval"
-        print self
+
         context = dict(self._context or {})
         active_ids = context.get('active_ids', []) or []
-        print active_ids
+
         for record in self.env['hr.holidays'].browse(active_ids):
             if record.create_type=="manage":
                 if record.state in ('draft'):
@@ -461,7 +475,7 @@ class hr_holidays_status_extend(osv.osv):
     _inherit = "hr.holidays.status"
 
     def get_days(self, cr, uid, ids, employee_id, context=None):
-        print "-------------------hr_holidays_status_extend"
+
         result = dict((id, dict(max_leaves=0, leaves_taken=0, remaining_leaves=0,
                                 virtual_remaining_leaves=0)) for id in ids)
         holiday_ids = self.pool['hr.holidays'].search(cr, uid, [('employee_id', '=', employee_id),
