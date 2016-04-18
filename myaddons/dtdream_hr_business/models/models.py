@@ -111,7 +111,7 @@ class dtdream_hr_business(models.Model):
         subject = '%s于%s提交外出公干申请，请您审批！' %(self.name.user_id.name,app_time)
         print self.current_approver.user_id
         appellation= self.current_approver.user_id.name+u'，您好：'
-        content = self['title']+u'正等待您的审批'
+        content = '%s于%s提交外出公干申请，正等待您的审批！' %(self.name.user_id.name,self.create_time)
         self.env['mail.mail'].create({
                 'body_html': '<p>%s</p>'
                              '<p>%s</p>'
