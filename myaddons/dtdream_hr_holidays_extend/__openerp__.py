@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_hr_holidays_extend",
+    'name': "dtdream请假",
 
     'summary': """
         继承dtdream_hr_holidays""",
@@ -25,8 +25,10 @@
     'data': [
         'security/ir.model.access.csv',
 
-        'views/views.xml',
+
         'security/security.xml',
+        'hr_holidays_wizard.xml',
+        'views/views.xml',
         'views/templates.xml',
 
         'data/data.xml',
