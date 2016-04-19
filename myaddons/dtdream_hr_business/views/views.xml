@@ -46,7 +46,7 @@
               <field name="name"/>
               <field name="department"/>
               <field name="title"/>
-                <field name="state"/>
+              <field name="state"/>
             </tree>
          </field>
      </record>
@@ -77,7 +77,7 @@
                 <field name="is_create" invisible="1"/>
               </group>
               <group string="节点设定">
-                <field name="approver_fir"/>
+                <field name="approver_fir" placeholder="自动获取部门行政助理，如有异常请联系HR"/>
                 <field name="approver_sec" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('1','2','3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
                 <field name="approver_thr" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('2','3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
                 <field name="approver_fou" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenpiren','=',False),('state','in',('3','4','5','99')),'|',('is_create','=',False),('state','not in',('-1'))]}"/>
