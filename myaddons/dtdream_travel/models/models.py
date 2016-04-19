@@ -2,7 +2,7 @@
 
 from openerp import models, fields, api
 from openerp.osv import osv
-from datetime import datetime, timedelta
+from datetime import datetime
 import re
 
 
@@ -81,7 +81,6 @@ class dtdream_travel(models.Model):
     @api.depends("name")
     def _compute_shenpi_person(self):
         for rec in self:
-            rec.shenpi_first = rec.name.department_id.assitant_id
             rec.workid = rec.name.job_number
             rec.department = rec.name.department_id.complete_name
             cr = rec.env["dtdream.travel.chucha"].search([("name.id", "=", rec.name.id)], limit=1, order="id desc")
@@ -143,8 +142,8 @@ class dtdream_travel(models.Model):
     @staticmethod
     def _get_current_time(state=False):
         if state:
-            return (datetime.now() + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M:%S")
-        return (datetime.now() + timedelta(hours=8)).strftime("%m/%d/%Y %H:%M:%S")
+            return datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+        return datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
     def get_base_url(self, cr, uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
@@ -154,7 +153,7 @@ class dtdream_travel(models.Model):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream.travel.chucha' % self.id
         url = base_url+link
-        email_to = self.name.user_id.email
+        email_to = self.name.work_email
         if self.name.user_id != self.create_uid:
             email_cc = self.create_uid.email
         else:
@@ -176,8 +175,22 @@ class dtdream_travel(models.Model):
                 'auto_delete': False,
             }).send()
 
+    @api.onchange('name')
+    def _shenpi_first_domain(self):
+        assitand = self.name.department_id.assitant_id
+        ancestors = []
+        if assitand:
+            self.shenpi_first = assitand[0]
+            if len(assitand) > 1:
+                for x in assitand:
+                    ancestors.append(x.id)
+                return {'domain': {'shenpi_first': [('id', 'in', ancestors)]}}
+        else:
+            self.shenpi_first = False
+            return {'domain': {'shenpi_first': [('id', '=', False)]}}
+
     name = fields.Many2one('hr.employee', string="申请人", required=True)
-    shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True, default=_compute_shenpi_person)
+    shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True)
     shenpi_second = fields.Many2one('hr.employee', string="第二审批人", help="部门主管", default=_compute_shenpi_person)
     shenpi_third = fields.Many2one('hr.employee', string="第三审批人", help="受益部门权签人(当受益部门与权签部门不一致时)", default=_compute_shenpi_person)
     shenpi_fourth = fields.Many2one('hr.employee', string="第四审批人", default=_compute_shenpi_person)
