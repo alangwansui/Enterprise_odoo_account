@@ -230,7 +230,7 @@ class dtdream_travel(models.Model):
     @api.multi
     def wkf_approve1(self):
         content = u'您于%s提交了出差申请！<p>申请单创建人:%s</p>' % (self._get_current_time(state=True), self.create_uid.name)
-        self.send_mail(subject=u'出差申请提交', content=content, draft=True)
+        self.send_mail(subject=u'出差申请提交', content=content)
         self.write({'state': '1', "shenpiren": self.shenpi_first.id})
         self.message_post(body=u'提交,草稿 --> 一级审批 '+u'下一审批人:' + self.shenpi_first.name + u" 操作时间:" +
                                self._get_current_time())
