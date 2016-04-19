@@ -88,7 +88,8 @@ class dtdream_hr_business(models.Model):
     @api.depends('name','create_time')
     def _compute_title(self):
         for rec in self:
-            rec.title = rec.name.name_related +u'于'+rec.create_time+u'提交的外出公干申请'
+            # print rec.name.name
+            rec.title = rec.name.name +u'于'+rec.create_time+u'提交的外出公干申请'
 
     title = fields.Char(compute=_compute_title,string="事件")
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
