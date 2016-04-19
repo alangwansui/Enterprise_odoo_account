@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+    <!--list视图-->
+    <record model="ir.ui.view" id="leaving_handle_approver_list">
+      <field name="name">leaving.handle.approver.list</field>
+      <field name="model">leaving.handle.approver</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="approver"/>
+        </tree>
+      </field>
+    </record>
+    <!--form视图-->
+    <record model="ir.ui.view" id="leaving_handle_approver_form">
+      <field name="name">leaving.handle.approver.form</field>
+      <field name="model">leaving.handle.approver</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group col="4">
+              <field name="name"/>
+              <field name="approver" widget="many2many_tags"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+  </data>
+</openerp>
