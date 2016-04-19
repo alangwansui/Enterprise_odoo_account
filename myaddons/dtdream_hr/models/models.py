@@ -6,7 +6,7 @@ class dtdream_hr(models.Model):
     _inherit = 'hr.department'
 
     code = fields.Char("部门编码")
-    assitant_id = fields.Many2one("hr.employee",string="行政助理")
+    assitant_id = fields.Many2many("hr.employee",string="行政助理")
 
 
 

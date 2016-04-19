@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <record model="ir.module.category" id="module_dtdream_holiday_group">
+            <field name="name">dtdream_holiday</field>
+            <field name="discription">dtdream_holiday</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="group_dtdream_holiday" model="res.groups">
+            <field name="name">dtdream_holiday_no_one</field>
+        </record>
 
 
         <delete id = "hr_holidays.property_rule_holidays_employee" model="ir.rule"/>
@@ -36,12 +44,22 @@
         <record id="hr_holidays.property_rule_holidays_employee_write" model="ir.rule">
             <field name="name">Employee Holidays Create, Write, Unlink rewrite</field>
             <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
-            <field name="domain_force">['&amp;','&amp;',('state', 'in', ['draft', 'confirm','confirm2','confirm3','confirm4','confirm5', 'refuse']),('type','=','remove'),('create_type','not in',['manage'])]</field>
+            <field name="domain_force">['&amp;','&amp;','&amp;',('state', 'in', ['draft', 'confirm','confirm2','confirm3','confirm4','confirm5', 'refuse']),('type','=','remove'),('create_type','not in',['manage']),'|','|',('create_uid','=',user.id),('employee_id.user_id','=',user.id),('current_shenpiren.user_id','=',user.id)]</field>
             <field name="perm_read" eval="False"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_unlink" eval="False"/>
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+        <record id="hr_holidays.property_rule_holidays_hr_write" model="ir.rule">
+            <field name="name">Employee Holidays hr Write</field>
+            <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
+            <field name="domain_force">['&amp;',('create_type','in',['manage']),'|',('state','in',['draft']),('current_shenpiren.user_id','=',user.id)]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4,ref('base.group_hr_user'))]"/>
         </record>
                                             <!--员工删除权限-->
         <record id="hr_holidays.property_rule_holidays_employee_unlink" model="ir.rule">

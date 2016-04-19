@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_hr_holidays_extend",
+    'name': "dtdream请假",
 
     'summary': """
-        继承dtdream_hr_holidays""",
+        数梦请假工作流""",
 
     'description': """
         改写成适合本公司请假流程
@@ -25,8 +25,10 @@
     'data': [
         'security/ir.model.access.csv',
 
-        'views/views.xml',
+
         'security/security.xml',
+        'hr_holidays_wizard.xml',
+        'views/views.xml',
         'views/templates.xml',
 
         'data/data.xml',

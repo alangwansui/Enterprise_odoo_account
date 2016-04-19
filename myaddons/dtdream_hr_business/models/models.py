@@ -6,7 +6,6 @@ from openerp.exceptions import ValidationError
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from werkzeug import url_encode
 
 class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
@@ -20,13 +19,34 @@ class dtdream_hr_business(models.Model):
             rec.job_number=rec.name.job_number
             rec.full_name=rec.name.full_name
             rec.department=rec.name.department_id.complete_name
-            rec.approver_fir = rec.name.department_id.assitant_id
+            # rec.approver_fir = rec.name.department_id.assitant_id
+
+
+    @api.onchange('name')
+    def _chang_approver_fir(self):
+        domain = {}
+        assitand = self.name.department_id.assitant_id
+        ancestors = []
+        if assitand:
+            if len(assitand)>1:
+                self.approver_fir = None
+                for x in assitand:
+                    ancestors +=[x.id]
+                domain['approver_fir'] = [('id', 'in',ancestors)]
+                return {'domain': domain}
+            else:
+                 self.approver_fir = assitand[0]
+        else:
+            self.approver_fir = None
+            domain['approver_fir'] = [('id', 'in',ancestors)]
+            return {'domain': domain}
 
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门")
-    create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
-    approver_fir = fields.Many2one("hr.employee" ,compute=_compute_employee,string="第一审批人",store=True)
+    # create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
+    create_time = fields.Char(string='申请时间',default=lambda self: datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+    approver_fir = fields.Many2one("hr.employee" ,string="第一审批人",store=True,required=True)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
     approver_thr = fields.Many2one("hr.employee",string="第三审批人")
     approver_fou = fields.Many2one("hr.employee",string="第四审批人")
@@ -68,7 +88,8 @@ class dtdream_hr_business(models.Model):
     @api.depends('name','create_time')
     def _compute_title(self):
         for rec in self:
-            rec.title = rec.name.name_related +u'于'+rec.create_time+u'提交的外出公干申请'
+            # print rec.name.name
+            rec.title = rec.name.name +u'于'+rec.create_time+u'提交的外出公干申请'
 
     title = fields.Char(compute=_compute_title,string="事件")
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
@@ -83,7 +104,7 @@ class dtdream_hr_business(models.Model):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
         url = base_url+link
-        email_to=self.name.user_id.email
+        email_to=self.name.work_email
         app_time=  self.create_time[:10]
         subject = '%s于%s帮您提交了外出公干申请，请您查看！' %(self.env.user.name,app_time)
         appellation= self.name.user_id.name+u'，您好：'
@@ -106,12 +127,12 @@ class dtdream_hr_business(models.Model):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
         url = base_url+link
-        email_to=self.current_approver.user_id.email
+        email_to=self.current_approver.work_email
         app_time=  self.create_time[:10]
         subject = '%s于%s提交外出公干申请，请您审批！' %(self.name.user_id.name,app_time)
         print self.current_approver.user_id
         appellation= self.current_approver.user_id.name+u'，您好：'
-        content = self['title']+u'正等待您的审批'
+        content = '%s于%s提交外出公干申请，正等待您的审批！' %(self.name.user_id.name,self.create_time)
         self.env['mail.mail'].create({
                 'body_html': '<p>%s</p>'
                              '<p>%s</p>'
@@ -125,12 +146,12 @@ class dtdream_hr_business(models.Model):
                 'auto_delete': False,
             }).send()
 
-#申请通过/驳回通知申请人
+#申请通过/驳回通知申请人 
     def send_mail_to_app(self):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream_hr_business.dtdream_hr_business' % self.id
         url = base_url+link
-        email_to=self.name.user_id.email
+        email_to=self.name.work_email
         app_time=  self.create_time[:10]
         subject = '%s您于%s提交外出公干申请已被批准，请您查看！' %(self.name.user_id.name,app_time)
         if self.state=='99':
@@ -155,6 +176,8 @@ class dtdream_hr_business(models.Model):
         empl = self.env['hr.employee'].browse(vals['name'])
         if not empl['department_id']['assitant_id']:
             raise ValidationError("请先配置该部门的行政助理")
+        if not vals['approver_fir']:
+            raise ValidationError("请先配置该部门的行政助理")
         result = super(dtdream_hr_business, self).create(vals)
         return  result
 
@@ -171,7 +194,7 @@ class dtdream_hr_business(models.Model):
             raise ValidationError("请至少填写一条明细")
         self.write({'state': '0'})
         self.write({'current_approver':self.approver_fir.id})
-        self.message_post(body=u'批准，状态：草稿 --> '+u'一级审批')
+        self.message_post(body=u'提交，状态：草稿 --> '+u'一级审批')
         if self.name.user_id.id != self.env.user.id:
             self.send_mail_gen()
         self.send_mail()
@@ -260,14 +283,6 @@ class dtdream_hr_business(models.Model):
         self.write({'current_approver':self.name.id})
         self.send_mail_to_app()
 
-
-    # @api.multi
-    # def unlink(self):
-    #     for record in self:
-    #         if record.state != '-1' or record.name.id != self.user.id:
-    #             raise ValidationError("您不是申请人或该流程已提交审批")
-    #         record.detail_ids.unlink()
-    #     return super(dtdream_hr_business, self).unlink()
 
 class business_detail(models.Model):
     _name = "dtdream_hr_business.business_detail"

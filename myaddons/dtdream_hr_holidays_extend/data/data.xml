@@ -1,15 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" ?>
             <openerp>
-                <data>
+                <data noupdate="0">
 
                     <delete id = "hr_holidays.holiday_status_cl" model="hr.holidays.status"/>
                     <!-- Casual leave -->
-                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_cl">
+
+                     <record model="hr.holidays.status" id="hr_holidays.holiday_status_cl1">
                         <field name="name" eval="'年休假 '"/>
                         <field name="limit" eval="False"/>
                         <field name="color_name">black</field>
-                    </record>
-
+                     </record>
+                     <record model="hr.holidays.status" id="hr_holidays.holiday_status_cl2">
+                        <field name="name" eval="'事假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_hj">
+                        <field name="name" eval="'婚假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_hjj">
+                        <field name="name" eval="'婚检假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_sj">
+                        <field name="name" eval="'丧假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_cj">
+                        <field name="name" eval="'产假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_lcj">
+                        <field name="name" eval="'流产假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_wyj">
+                        <field name="name" eval="'晚育陪产假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_brj">
+                        <field name="name" eval="'哺乳假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_cjj">
+                        <field name="name" eval="'产检假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
+                    <record model="hr.holidays.status" id="hr_holidays.holiday_status_gsj">
+                        <field name="name" eval="'工伤假 '"/>
+                        <field name="limit" eval="True"/>
+                        <field name="color_name">black</field>
+                     </record>
 
                 </data>
             </openerp>

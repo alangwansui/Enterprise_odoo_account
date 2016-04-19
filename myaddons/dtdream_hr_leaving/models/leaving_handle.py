@@ -37,18 +37,20 @@ class leaving_handle(models.Model):
         self.is_finish2 = True
 
     @api.depends("state")
-    def _compute_is_approver(self):
+    def _compute_cur_approver(self):
+        cur_approver_ids = []
         for rec in self:
-            if rec.state == '2' and self.env.user == rec.manager_id.user_id:
+            if rec.state == '2':
+                rec.cur_approver = rec.manager_id.name
+                cur_approver_ids.append(rec.manager_id.user_id)
+            if self.env.user in cur_approver_ids:
                 rec.is_approver = True
-                return
-        self.is_approver = True
 
 
-    state_list = [('-1','驳回'),('0','离职办理申请'),('1','离职办理确认'),('2','工作交接确认'),('3','离岗前环节'),('4','员工离岗确认'),('5','离岗后环节'),('6','离职手续办理完毕确认'),('7','启动离职结算'),('99','审批完')]
+    state_list = [('0','草稿'),('1','离职办理确认'),('2','工作交接确认'),('3','离岗前环节'),('4','员工离岗确认'),('5','离岗后环节'),('6','离职手续办理完毕确认'),('7','启动离职结算'),('-1','驳回'),('99','完成')]
     state_dict = dict(state_list)
 
-    name = fields.Many2one("hr.employee",string="花名",required=True)
+    name = fields.Many2one("hr.employee",string="申请人",required=True)
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     post = fields.Char(string="岗位")
@@ -63,7 +65,8 @@ class leaving_handle(models.Model):
     state = fields.Selection(state_list, default="0",string="离职状态")
     is_finish1 = fields.Boolean(string="离岗前并且环节是否都通过",compute=_compute_process_ids1)
     is_finish2 = fields.Boolean(string="离岗后并且环节是否都通过",compute=_compute_process_ids2)
-    is_approver = fields.Boolean(string="判断当前登录人是否是该环节的审批人",compute=_compute_is_approver)
+    is_approver = fields.Boolean(string="判断当前登录人是否是该环节的审批人",compute=_compute_cur_approver)
+    cur_approver = fields.Char("当前处理人",compute=_compute_cur_approver)
 
     @api.multi
     def wkf_draft(self):
@@ -163,15 +166,13 @@ class process_process(models.Model):
     name = fields.Char("名称")
     parent_process = fields.Selection([('3','离岗前环节'),('5','离岗后环节')],string="所属环节")
     approver = fields.Many2one("hr.employee",string="审批人")
-    handle_process_ids = fields.One2many("leaving.handle.process","process_id",string="环节")
 
 #离职交接办理环节审批人配置
 class leaving_handle_approver(models.Model):
     _name="leaving.handle.approver"
 
-    name = fields.Char("审批人配置")
-    state1_approver = fields.Many2many("hr.employee",string="离职办理")
-    state6_approver = fields.Many2many("hr.employee",string="离职手续办理完毕确认")
+    name = fields.Char("环节名称")
+    approver = fields.Many2many("hr.employee",string="审批人")
 
 
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <!--<record model="leaving.handle.approver" id="leaving_handle_approver_1">-->
+      <!--<field name="name">离职办理确认</field>-->
+    <!--</record>-->
+    <!--<record model="leaving.handle.approver" id="leaving_handle_approver_1">-->
+      <!--<field name="name">离职办理确认</field>-->
+    <!--</record>-->
+    <!--<record model="leaving.handle.approver" id="leaving_handle_approver_1">-->
+      <!--<field name="name">离职办理确认</field>-->
+    <!--</record>-->
+    <!--<record model="leaving.handle.approver" id="leaving_handle_approver_1">-->
+      <!--<field name="name">离职办理确认</field>-->
+    <!--</record>-->
+    <!--<record model="leaving.handle.approver" id="leaving_handle_approver_1">-->
+      <!--<field name="name">离职办理确认</field>-->
+    <!--</record>-->
+
+  </data>
+</openerp>

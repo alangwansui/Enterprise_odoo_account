@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <openerp>
+            <data>
+                <record id="view_hr_holidays_wizard" model="ir.ui.view">
+                    <field name="name">view.hr.holidays.wizard</field>
+                    <field name="model">hr.holidays.wizard</field>
+                    <field name="arch" type="xml">
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="deny_reason"></field>
+                                </group>
+                            </group>
+                            <footer>
+                                <button name="btn_confirm" type="object" string="确定" class="oe_highlight" style="border-radius:5px"></button>
+                            </footer>
+                        </form>
+
+                    </field>
+                </record>
+                <record id="act_hr_holidays_wizard" model="ir.actions.act_window">
+                    <field name="name">填写拒绝理由</field>
+                    <field name="res_model">hr.holidays.wizard</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">form</field>
+                    <field name="target">new</field>
+                </record>
+            </data>
+
+        </openerp>
