@@ -174,6 +174,14 @@ class dtdream_hr_holidays_extend(models.Model):
                 'email_to': self.shenpiren1.work_email,
             }).send()
 
+            self.env['mail.mail'].create({
+                 'subject': u'%s 请假'%self.employee_id.name,
+                'body_html': u'<p>%s</p><p>您提交了一个请假单,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
+                'email_from': 'postmaster-odoo@dtdream.com',
+
+                'email_to': self.employee_id.work_email,
+            }).send()
+
 
 
 
@@ -345,7 +353,7 @@ class dtdream_hr_holidays_extend(models.Model):
                 }).send()
         elif this_self.create_type=='manage':
             this_self.env['mail.mail'].create({
-                    'subject': u'%s 年休假'%this_self.employee_id.name,
+                    'subject': u'%s 年休假分配'%this_self.employee_id.name,
                     'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
                     'email_from': 'postmaster-odoo@dtdream.com',
 
