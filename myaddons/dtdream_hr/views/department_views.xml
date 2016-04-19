@@ -19,7 +19,7 @@
                             <field name="name"/>
                             <field name="code"/>
                             <field name="manager_id" string="主管"/>
-                            <field name="assitant_id"/>
+                            <field name="assitant_id" widget="many2many_tags"/>
                             <field name="parent_id"/>
                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                         </group>
