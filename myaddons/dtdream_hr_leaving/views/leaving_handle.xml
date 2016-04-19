@@ -14,6 +14,7 @@
           <field name="department"/>
           <field name="leave_date"/>
           <field name="state"/>
+          <field name="cur_approver"/>
         </tree>
       </field>
     </record>
@@ -90,14 +91,5 @@
         </form>
       </field>
     </record>
-
-    <!-- actions opening views on models -->
-    <!---->
-    <record model="ir.actions.act_window" id="leaving_handle_action_window">
-      <field name="name">leaving_handle window</field>
-      <field name="res_model">leaving.handle</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
   </data>
 </openerp>

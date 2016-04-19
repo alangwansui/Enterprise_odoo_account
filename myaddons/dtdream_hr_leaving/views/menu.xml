@@ -13,7 +13,7 @@
             <field name="res_model">process.process</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree</field>
         </record>
         <record id="act_dtdream_process_approver" model="ir.actions.act_window">
             <field name="name">离职办理审批人配置</field>
