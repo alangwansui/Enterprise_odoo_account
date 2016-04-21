@@ -26,11 +26,6 @@
                           <field name="department"/>
                           <field name="department_shouyi" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="create_time"></field>
-                          <field name="traveling_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="incity_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="other_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="total"/>
                       </group>
                       <group string="节点流程">
                           <field name="shenpi_first" attrs="{'readonly':[('state', '!=','0')]}"/>
@@ -43,13 +38,22 @@
                           <field name="can_restart" invisible="True"/>
                       </group>
                   </group>
-
-                  <group string="流程描述">
-                      <div>
-                          <p>第一审批人：部门行政助理</p>
-                          <p>第二审批人：部门主管</p>
-                          <p>第三审批人：受益部门权签人</p>
-                      </div>
+                  <group>
+                      <group string="费用预算">
+                          <field name="traveling_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="incity_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="other_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="total"/>
+                      </group>
+                      <group string="流程描述">
+                          <div>
+                              <br/>
+                              <p>第一审批人：部门行政助理</p>
+                              <p>第二审批人：部门主管</p>
+                              <p>第三审批人：受益部门权签人</p>
+                          </div>
+                      </group>
                   </group>
 
                   <notebook>
