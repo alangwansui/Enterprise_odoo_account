@@ -45,6 +45,8 @@
                           <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="other_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="total"/>
+                          <field name="date_from"/>
+                          <field name="date_to"/>
                       </group>
                       <group string="流程描述">
                           <div>
@@ -92,5 +94,15 @@
             </tree>
         </field>
     </record>
+
+    <record id="view_dtdream_travel_chucha_calendar" model="ir.ui.view">
+            <field name="name">dtdream.travel.chucha.calendar</field>
+            <field name="model">dtdream.travel.chucha</field>
+            <field name="arch" type="xml">
+                <calendar string="出差申请" date_start="date_from" date_stop="date_to" mode="month" quick_add="False">
+                    <field name="name"/>
+                </calendar>
+            </field>
+        </record>
   </data>
 </openerp>

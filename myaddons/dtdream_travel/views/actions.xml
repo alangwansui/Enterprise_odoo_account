@@ -2,6 +2,14 @@
 <openerp>
     <data>
 
+        <record id="act_dtdream_travel_chucha_shenqing_00" model="ir.actions.act_window">
+            <field name="name">仪表盘</field>
+            <field name="res_model">dtdream.travel.chucha</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">calendar</field>
+        </record>
+
         <record id="act_dtdream_travel_chucha_shenqing_01" model="ir.actions.act_window">
             <field name="name">我的申请</field>
             <field name="res_model">dtdream.travel.chucha</field>
