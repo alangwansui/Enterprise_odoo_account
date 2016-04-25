@@ -20,6 +20,8 @@ class dtdream_hr_holidays_extend(models.Model):
     attachment_name=fields.Char(string="附件名")
     create_type=fields.Char(string="创建类型")
     shenqingren=fields.Char( string="申请人",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,readonly=1)
+    log_name = fields.Many2one('hr.employee', default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]), store=True)
+    employ = fields.Many2one("hr.employee", string="员工")
     @api.one
     def _compute_gonghao(self):
         self.gonghao=self.employee_id.job_number
@@ -31,7 +33,6 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
     shenpiren1=fields.Many2one('hr.employee',string="第一审批人")
-
     shenpiren2=fields.Many2one('hr.employee',string="第二审批人")
     shenpiren3=fields.Many2one('hr.employee',string="第三审批人")
     shenpiren4=fields.Many2one('hr.employee',string="第四审批人")
@@ -59,7 +60,6 @@ class dtdream_hr_holidays_extend(models.Model):
 
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5','employee_id','holiday_status_id','number_of_days_temp')
     def change(self):
-
         nianjia=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('holiday_status_id','=',5),('state','!=','draft')],order="id desc")
         length=len(nianjia)
         remain_nianjia_days=0
@@ -104,17 +104,26 @@ class dtdream_hr_holidays_extend(models.Model):
             self.gonghao=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).job_number
             self.department_id=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.id
             if not self.create_type:
-                self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
+                # self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
                 self.shenpiren2=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren2
                 self.shenpiren3=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren3
                 self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren4
                 self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren5
+                if len(self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id)==1:
+                    self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
+
+                return {
+                    'domain': {
+                        "shenpiren1":[('id','in',[x.id for x in self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id])]
+                    }
+                }
             elif self.create_type:
                 self.shenpiren1=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren1
                 self.shenpiren2=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren2
                 self.shenpiren3=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren3
                 self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren4
                 self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren5
+
 
 
 
@@ -176,7 +185,7 @@ class dtdream_hr_holidays_extend(models.Model):
 
             self.env['mail.mail'].create({
                  'subject': u'%s 请假'%self.employee_id.name,
-                'body_html': u'<p>%s</p><p>您提交了一个请假单,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
+                'body_html': u'<p>%s</p><p>您提交了一个请假单,点击<a href="%s">此处查看</p>'%(self.employee_id.name,url),
                 'email_from': 'postmaster-odoo@dtdream.com',
 
                 'email_to': self.employee_id.work_email,

@@ -3,10 +3,6 @@
     <data>
         <menuitem name="出差" id="menu_dtdream_travel_root"  icon="fa-user"
             web_icon="dtdream_travel,static/description/icon.png"/>
-
-        <menuitem name="仪表盘" id="menu_dtdream_travel_compass" parent="menu_dtdream_travel_root" sequence="10"
-                  action="act_dtdream_travel_chucha_shenqing_00"/>
-
         <menuitem name="我的申请" id="menu_dtdream_travel_shenqing" parent="menu_dtdream_travel_root" sequence="12"
                   action="act_dtdream_travel_chucha_shenqing_01"/>
 

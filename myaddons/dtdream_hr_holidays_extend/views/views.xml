@@ -68,6 +68,30 @@
                         <xpath expr='//field[@name="state"]' position="attributes">
                              <attribute name="statusbar_visible">draft,validate</attribute>
                         </xpath>
+                        <field name="notes" position="attributes">
+                            <attribute name="invisible">1</attribute>
+                        </field>
+                        <xpath expr='//field[@name="report_note"]/parent::div' position="replace">
+                             <div class="o_group_col_12" style="font-family:微软雅黑, 'Microsoft Yahei', 'Hiragino Sans GB', tahoma, arial, 宋体, sans-serif;" attrs="{'invisible':['|',('state','not in','draft'),('create_type','in','manage')]}">
+                                 <p style="text-align:center">请假说明</p>
+                                 <p>一、事假说明：</p>
+                                 <p>1、事假期间不包含公休日和法定节假日。</p>
+                                 <p>2、请事假最小单位为半小时</p>
+                                 <p>3．请事假时如有年休假余额的，优先从年休假余额中抵扣相应的事假时间。</p>
+                                 <p>二、年休假说明：</p>
+                                 <p>1、年休假余额在员工自助处查询，本次请假天数不能超出当前余额。</p>
+                                 <p>2、年休假期间不包含公休日和法定节假日。</p>
+                                 <p>3、年休假休假要求：</p>
+                                 <p>（1）年休假最小单位为半天。</p>
+                                 <p>（2）公司配给的年休假必须在配给年度的次年2月底休完。</p>
+                                 <p>（3）年休假仅适用于已通过试用期的公司正式员工。</p>
+                                 <p>三、病假说明：</p>
+                                 <p>1、连续病休2天以上的必须提供医院有效证明；2天及以内的病假不需提供医院证明，但每月这样的病假最多一次。</p>
+                                 <p>2、病假期间包含公休日、法定节假日。</p>
+                                 <p>3、请病假最小单位为半天。</p>
+                                 <p>四、其它假别注意事项请查看考勤制度规定。查询路径：OA平台－文档中心－人力资源－人力发文－人字[2015]001数梦工场考勤管理制度</p>
+                             </div>
+                        </xpath>
 
 
                   </field>

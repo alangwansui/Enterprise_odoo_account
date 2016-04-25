@@ -11,7 +11,7 @@ class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
     _inherit = ['mail.thread']
 
-    name = fields.Many2one("hr.employee",string="申请人",required=True)
+    name = fields.Many2one("hr.employee",string="申请人",required=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
 
     @api.depends('name')
     def _compute_employee(self):
@@ -36,17 +36,40 @@ class dtdream_hr_business(models.Model):
                 return {'domain': domain}
             else:
                  self.approver_fir = assitand[0]
+                 domain['approver_fir'] = [('id', 'in',ancestors)]
+                 return {'domain': domain}
         else:
             self.approver_fir = None
             domain['approver_fir'] = [('id', 'in',ancestors)]
             return {'domain': domain}
 
+    @api.one
+    def _get_appFir(self):
+        domain = {}
+        ids = self.env["hr.employee"].search([("user_id", "=", self.env.user.id)])
+        assitand = ids.department_id.assitant_id
+        ancestors = []
+        if assitand:
+            if len(assitand)>1:
+                for x in assitand:
+                    ancestors +=[x.id]
+                domain['approver_fir'] = [('id', 'in',ancestors)]
+                return {'domain': domain}
+            else:
+                 self.approver_fir = assitand[0]
+                 domain['approver_fir'] = [('id', 'in',ancestors)]
+                 return {'domain': domain}
+        else:
+            domain['approver_fir'] = [('id', 'in',ancestors)]
+            return {'domain': domain}
+
     full_name = fields.Char(compute=_compute_employee,string="姓名")
+    employ = fields.Many2one("hr.employee", string="员工")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门")
     # create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
-    create_time = fields.Char(string='申请时间',default=lambda self: datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
-    approver_fir = fields.Many2one("hr.employee" ,string="第一审批人",store=True,required=True)
+    create_time = fields.Char(string='申请时间',default=lambda self: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),readonly=True)
+    approver_fir = fields.Many2one("hr.employee" ,string="第一审批人",store=True,required=True,default=_get_appFir)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
     approver_thr = fields.Many2one("hr.employee",string="第三审批人")
     approver_fou = fields.Many2one("hr.employee",string="第四审批人")
@@ -112,8 +135,8 @@ class dtdream_hr_business(models.Model):
         self.env['mail.mail'].create({
                 'body_html': '<p>%s</p>'
                              '<p>%s</p>'
-                             '<p>请点击链接进入查看:</p>'
-                             '<ul><li><a href="%s">%s</a></li></ul>'
+                             '<p>请点击链接进入查看:'
+                             '<a href="%s">%s</a></p>'
                              '<pre>'
                              '<p>数梦企业应用平台<p>'
                              '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
@@ -130,14 +153,14 @@ class dtdream_hr_business(models.Model):
         email_to=self.current_approver.work_email
         app_time=  self.create_time[:10]
         subject = '%s于%s提交外出公干申请，请您审批！' %(self.name.user_id.name,app_time)
-        print self.current_approver.user_id
+        # print self.current_approver.user_id
         appellation= self.current_approver.user_id.name+u'，您好：'
         content = '%s于%s提交外出公干申请，正等待您的审批！' %(self.name.user_id.name,self.create_time)
         self.env['mail.mail'].create({
                 'body_html': '<p>%s</p>'
                              '<p>%s</p>'
-                             '<p> 请点击链接进入审批:</p>'
-                             '<ul><li><a href="%s">%s</a></li></ul>'
+                             '<p> 请点击链接进入审批:'
+                             '<a href="%s">%s</a></p>'
                              '<pre>'
                              '<p>数梦企业应用平台<p>'
                              '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
@@ -161,8 +184,8 @@ class dtdream_hr_business(models.Model):
         self.env['mail.mail'].create({
                 'body_html': '<p>%s</p>'
                              '<p>%s</p>'
-                             '<p> 请点击链接进入查看:</p>'
-                             '<ul><li><a href="%s">%s</a></li></ul>'
+                             '<p> 请点击链接进入查看:'
+                             '<a href="%s">%s</a></p>'
                              '<pre>'
                              '<p>数梦企业应用平台<p>'
                              '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
@@ -174,10 +197,10 @@ class dtdream_hr_business(models.Model):
     @api.model
     def create(self, vals):
         empl = self.env['hr.employee'].browse(vals['name'])
-        if not empl['department_id']['assitant_id']:
-            raise ValidationError("请先配置该部门的行政助理")
-        if not vals['approver_fir']:
-            raise ValidationError("请先配置该部门的行政助理")
+        # if not empl['department_id']['assitant_id']:
+        #     raise ValidationError("请先配置该部门的行政助理")
+        # if not vals['approver_fir']:
+        #     raise ValidationError("请先配置该部门的行政助理")
         result = super(dtdream_hr_business, self).create(vals)
         return  result
 
@@ -195,8 +218,8 @@ class dtdream_hr_business(models.Model):
         self.write({'state': '0'})
         self.write({'current_approver':self.approver_fir.id})
         self.message_post(body=u'提交，状态：草稿 --> '+u'一级审批')
-        if self.name.user_id.id != self.env.user.id:
-            self.send_mail_gen()
+        # if self.name.user_id.id != self.env.user.id:
+            # self.send_mail_gen()
         self.send_mail()
 
     @api.model
@@ -295,6 +318,9 @@ class business_detail(models.Model):
 
 
     def _check_date(self, cr, uid, ids, context=None):
+        # print  1111111111111111111111
+        # print self.browse(cr, uid, ids, context=context).business
+        # print ddddddddddd
         for event in self.browse(cr, uid, ids, context=context):
             if event.endTime < event.startTime:
                 return False

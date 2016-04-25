@@ -61,5 +61,30 @@
             <field name="name">模型</field>
             <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form" name='value'/>
         </record>
+
+        <record id="act_dtdream_travel_chucha_log" model="ir.actions.act_window">
+        <field name="name">出差记录</field>
+        <field name="res_model">dtdream.travel.chucha</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="act_dtdream_hr_business_log" model="ir.actions.act_window">
+        <field name="name">外出公干记录</field>
+        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="act_dtdream_hr_holidays_log" model="ir.actions.act_window">
+        <field name="name">休假记录</field>
+        <field name="res_model">hr.holidays</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        </record>
+
   </data>
 </openerp>
