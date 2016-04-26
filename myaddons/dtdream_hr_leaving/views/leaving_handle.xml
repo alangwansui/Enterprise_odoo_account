@@ -11,10 +11,10 @@
           <field name="name"/>
           <field name="full_name"/>
           <field name="job_number"/>
-          <field name="department"/>
+          <field name="department_id"/>
           <field name="leave_date"/>
           <field name="state"/>
-          <field name="cur_approver"/>
+          <field name="cur_approvers"/>
         </tree>
       </field>
     </record>
@@ -25,52 +25,64 @@
       <field name="arch" type="xml">
         <form>
           <header>
-              <button name="btn_submit" type="workflow" states="0,3,5" string="提交" class="oe_highlight"></button>
-              <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" string="审批" class="oe_highlight" states="1,2,4,6,7"
+              <button name="btn_submit"
+                      type="workflow" states="0" string="提交" class="oe_highlight"></button>
+              <button name="btn_submit"
+                      attrs="{'invisible':['|',('state','not in',('3','5')),('is_approver','!=',True)]}"
+                      type="workflow" string="提交" class="oe_highlight"></button>
+              <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" string="审批" class="oe_highlight"
+                      attrs="{'invisible':['|',('state','not in',('1','2','4','6', '7','8')),('is_approver','!=',True)]}"
                       context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"></button>
-            <!--attrs="{'invisible':[('state','not in',(1,2,4,6,7)),('is_approver','=',False)]}"-->
-              <button name="btn_reject" type="workflow" states="3,5" string="驳回到上一步" class="oe_highlight"></button>
-              <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,99" widget="statusbar"></field>
+              <button name="btn_reject"
+                      attrs="{'invisible':['|',('state','not in',('3','5')),('is_approver','!=',True)]}"
+                      type="workflow" string="驳回到上一步" class="oe_highlight"></button>
+
+              <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,8,99" widget="statusbar"></field>
           </header>
           <sheet>
             <group  col="4">
               <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="full_name"/>
               <field name="job_number"/>
-              <field name="department"/>
-              <field name="manager_id" invisible="True"/>
-              <field name="is_approver" invisible="True"/>
+              <field name="department_id"/>
               <field name="post" attrs="{'readonly':[('state', '!=','0')]}"/>
               <field name="entry_day"/>
               <field name="leave_date" attrs="{'readonly':[('state', '!=','0')]}"/>
-              <field name="actual_leavig_date" readonly="True" states="5,6,7,99"/>
+              <field name="actual_leavig_date" readonly="True" states="5,6,7,8,99"/>
+              <field name="cur_approver_users" widget="many2many_tags" invisible="True"/>
+              <field name="cur_approvers" widget="many2many_tags" invisible="True"/>
+              <field name="is_approver" invisible="True"/>
+              <field name="manager_id" invisible="True"/>
+              <field name="assistant_id" invisible="True"/>
             </group>
-            <notebook states="3,4,5,6,7,99">
-              <page string="离岗前环节" states="3,4,5,6,7,99">
+            <notebook states="3,4,5,6,7,8,99">
+              <page string="离岗前环节" states="3,4,5,6,7,8,99">
                 <field name="leaving_handle_process_ids1" >
                   <tree editable="bottom" create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
                     <field name="process_approver" readonly="True"></field>
-                    <field name="is_finish"></field>
-                    <field name="is_other"></field>
-                    <field name="remark"></field>
+                    <field name="is_finish" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="is_other" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="remark" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="can_edit" invisible="True"></field>
                   </tree>
                 </field>
                 <field name="is_finish1" invisible="True"/>
               </page>
-               <page string="离岗后环节" states="5,6,7,99">
+               <page string="离岗后环节" states="5,6,7,8,99">
                 <field name="leaving_handle_process_ids2" >
                   <tree editable="bottom" create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
                     <field name="process_approver" readonly="True"></field>
-                    <field name="is_finish"></field>
-                    <field name="is_other"></field>
-                    <field name="remark"></field>
+                    <field name="is_finish" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="is_other" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="remark" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="can_edit" invisible="True"></field>
                   </tree>
                 </field>
               </page>
             </notebook>
-            <notebook states="2,3,4,5,6,7,99">
+            <notebook  attrs="{'invisible':[('state','=','0')]}">
               <page string="审批记录">
                 <field name="opinion_ids" readonly="True">
                   <tree editable="bottom" default_order="create_date asc">

@@ -10,6 +10,8 @@
                 <group>
                     <group>
                         <field name="actual_leavig_date" attrs="{'invisible':[('current_state','!=','4')]}" />
+                        <field name="manager_id" attrs="{'invisible':[('current_state','!=','1')]}" />
+                        <field name="assistant_id" attrs="{'invisible':[('current_state','!=','1')]}" />
                         <field name="opinion"/>
                         <field name="mail_ccs" widget="many2many_tags"/>
                         <field name="current_state" invisible="True"/>

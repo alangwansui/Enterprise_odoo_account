@@ -9,6 +9,7 @@
       <field name="arch" type="xml">
         <tree editable="bottom">
           <field name="parent_process"/>
+          <field name="code"/>
           <field name="name"/>
           <field name="approver"/>
         </tree>

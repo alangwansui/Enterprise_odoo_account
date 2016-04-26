@@ -20,8 +20,7 @@ class dtdream_hr_holidays_extend(models.Model):
     attachment_name=fields.Char(string="附件名")
     create_type=fields.Char(string="创建类型")
     shenqingren=fields.Char( string="申请人",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,readonly=1)
-    log_name = fields.Many2one('hr.employee', default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]), store=True)
-    employ = fields.Many2one("hr.employee", string="员工")
+    log = fields.Many2one('hr.employee', string="员工")
     @api.one
     def _compute_gonghao(self):
         self.gonghao=self.employee_id.job_number

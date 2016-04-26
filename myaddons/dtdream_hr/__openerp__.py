@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','hr', 'dtdream_travel', 'dtdream_hr_business', 'hr.holidays'],
+    'depends': ['base','hr', 'dtdream_travel', 'dtdream_hr_business', 'dtdream_hr_holidays_extend'],
 
     # always loaded
     'data': [

@@ -25,12 +25,13 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'views/menu.xml',
         'wizard/leaving_handle_wizard.xml',
         'views/leaving_handle.xml',
         'views/leaving_process.xml',
         'views/leaving_handle_approver.xml',
-        # 'data/data.xml',
+        'data/data.xml',
         'workflow/workflow.xml',
         'views/templates.xml',
     ],
