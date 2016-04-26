@@ -64,7 +64,6 @@ class dtdream_hr_business(models.Model):
             return {'domain': domain}
 
     full_name = fields.Char(compute=_compute_employee,string="姓名")
-    employ = fields.Many2one("hr.employee", string="员工")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门")
     # create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)

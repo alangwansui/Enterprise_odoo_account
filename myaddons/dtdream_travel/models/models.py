@@ -322,7 +322,7 @@ class dtdream_travel_journey(models.Model):
             raise ValidationError(u"出发地,目的地,出差时间,结束时间为必填项!")
 
     travel_id = fields.Many2one("dtdream.travel.chucha", string="申请人")
-    #name = fields.Char(related="travel_id.name.full_name", string="姓名")
+    name = fields.Char(related="travel_id.name.full_name", string="姓名")
     starttime = fields.Date(default=fields.Date.today, string="出差时间")
     endtime = fields.Date(string="结束时间")
     startaddress = fields.Char(string="出发地")
@@ -332,4 +332,24 @@ class dtdream_travel_journey(models.Model):
     _sql_constraints = [
         ("date_check", "CHECK(starttime < endtime)", u'结束时间必须大于出差时间')
     ]
+
+
+class dtdream_hr(models.Model):
+    _inherit = 'hr.employee'
+
+    @api.depends("travel_ids")
+    def _compute_chucha_log(self):
+        cr = self.env["dtdream.travel.chucha"].search([("name.id", "=", self.id)])
+        self.chucha_log_nums = len(cr)
+
+    @api.one
+    def _compute_has_view(self):
+        if self.user_id == self.env.user or self.env.user.id == 1:
+            self.can_view = True
+        else:
+            self.can_view = False
+
+    can_view = fields.Boolean(compute= "_compute_has_view")
+    travel_ids = fields.One2many("dtdream.travel.chucha", "employ", string="出差")
+    chucha_log_nums = fields.Integer(compute='_compute_chucha_log', string="出差记录")
 
