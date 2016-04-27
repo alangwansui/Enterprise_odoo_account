@@ -141,14 +141,14 @@ class leaving_handle(models.Model):
 
     @api.multi
     def wkf_reject(self):
-        self.write({"state":"-1"})
+        pass
 
 # 审批记录
 class leaving_handle_approve_record(models.Model):
     _name = "leaving.handle.approve.record"
 
     name = fields.Char("审批环节")
-    result = fields.Selection([("agree","同意"),("reject","返回上一步"),("other","不涉及")])
+    result = fields.Selection([("agree","同意"),("reject","返回上一步"),("other","不涉及")],string="审批结果")
     opinion = fields.Text("意见", required=True)
     actual_leavig_date = fields.Date("实际离岗时间")
     leaving_handle_id = fields.Many2one("leaving.handle",string="离职交接申请")

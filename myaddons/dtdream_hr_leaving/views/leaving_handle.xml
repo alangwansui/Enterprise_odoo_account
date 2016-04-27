@@ -89,6 +89,7 @@
                       <field name="name" />
                       <field name="result" string="审批结果"/>
                       <field name="opinion" />
+                      <field name="mail_ccs" />
                       <field name="create_uid" string="审批人"/>
                       <field name="create_date" string="审批时间"/>
                   </tree>

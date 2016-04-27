@@ -344,12 +344,11 @@ class dtdream_hr(models.Model):
 
     @api.one
     def _compute_has_view(self):
-        if self.user_id == self.env.user or self.env.user.id == 1:
+        if self.user_id == self.env.user:
             self.can_view = True
         else:
             self.can_view = False
 
-    can_view = fields.Boolean(compute= "_compute_has_view")
+    can_view = fields.Boolean(compute="_compute_has_view")
     travel_ids = fields.One2many("dtdream.travel.chucha", "employ", string="出差")
     chucha_log_nums = fields.Integer(compute='_compute_chucha_log', string="出差记录")
-

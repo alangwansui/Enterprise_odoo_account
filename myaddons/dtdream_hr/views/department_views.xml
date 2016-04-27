@@ -61,6 +61,5 @@
             <field name="name">模型</field>
             <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form" name='value'/>
         </record>
-
   </data>
 </openerp>

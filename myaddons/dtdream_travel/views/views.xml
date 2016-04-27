@@ -94,7 +94,7 @@
     </record>
 
     <record id="act_dtdream_travel_chucha_log" model="ir.actions.act_window">
-        <field name="name">出差记录</field>
+        <field name="name">出差申请</field>
         <field name="res_model">dtdream.travel.chucha</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -107,22 +107,14 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
         <field name="arch" type="xml">
-            <div class="oe_button_box" name="button_box" position="replace">
-                <div class="oe_button_box" name="button_box" attrs="{'invisible':[('can_view','=',False)]}">
-                   <button class="oe_stat_button" type="action" name="%(act_dtdream_travel_chucha_log)d"
-                    icon="fa-strikethrough">
-                    <field string="出差" name="chucha_log_nums" widget="statinfo"/>
-                   </button>
-                   <button name="toggle_active" type="object"
-                            class="oe_stat_button" icon="fa-archive" groups="base.group_hr_user">
-                        <field name="active" widget="boolean_button"
-                            options='{"terminology": "archive"}'/>
-                   </button>
-                    <field name="can_view" invisible="True"/>
-                </div>
-            </div>
+            <button name="toggle_active" position="before">
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_travel_chucha_log)d"
+                icon="fa-strikethrough" attrs="{'invisible':[('can_view','=',False)]}">
+                <field string="出差" name="chucha_log_nums" widget="statinfo"/>
+               </button>
+               <field name="can_view" invisible="True"/>
+            </button>
         </field>
     </record>
-
   </data>
 </openerp>
