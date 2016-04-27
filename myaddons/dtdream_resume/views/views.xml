@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record id="view_employee_form_resume_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.resume.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[2]" position="replace">
+              <page string="基本信息" groups="base.group_hr_user">
+                <group>
+                  <group>
+                      <field name="duties"/>
+                      <field name="post"/>
+                      <field name="gender"/>
+                      <field name="education"/>
+                  </group>
+                  <group>
+                      <field name="home_address"/>
+                      <field name="entry_day"/>
+                      <field name="Inaugural_state"/>
+                  </group>
+                </group>
+              </page>
+            </xpath>
+        </field>
+    </record>
+
+  </data>
+</openerp>
