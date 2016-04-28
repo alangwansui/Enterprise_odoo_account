@@ -72,11 +72,45 @@
                 </notebook>
 
                 <group string="社保公积金">
-                  <field name="registered"/>
+                    <group>
+                        <field name="registered"/>
+                        <field name="state"/>
+                    </group>
                 </group>
               </page>
             </xpath>
         </field>
     </record>
+
+    <record id="view_dtdream_hr_province_form" model="ir.ui.view">
+        <field name="name">省份</field>
+        <field name="model">dtdream.hr.province</field>
+        <field name="priority">2</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                     <group>
+                        <field name="name"/>
+                     </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_state_form" model="ir.ui.view">
+        <field name="name">市区</field>
+        <field name="model">dtdream.hr.state</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                     <group>
+                        <field name="province"/>
+                        <field name="name"/>
+                     </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
   </data>
 </openerp>

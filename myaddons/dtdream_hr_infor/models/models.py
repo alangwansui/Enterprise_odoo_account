@@ -6,6 +6,11 @@ from openerp import models, fields, api
 class dtdream_hr_infor(models.Model):
     _inherit = "hr.employee"
 
+    @api.onchange('registered')
+    def _dtream_hr_state_domain(self):
+        ids = self.registered.id
+        return {'domain': {'state': [('province', '=', ids)]}}
+
     account = fields.Char(string="账号", required=True)
     byname = fields.Char(string="等价花名")
     num = fields.Char(string="工号", required=True)
@@ -23,7 +28,8 @@ class dtdream_hr_infor(models.Model):
     Birthplace = fields.Char(string="籍贯", required=True)
     graduate = fields.Boolean(string="是否应届生")
     family = fields.One2many("hr.employee.family", "employee_id", string="family")
-    registered = fields.Many2one("res.country.state", string="省份")
+    registered = fields.Many2one("dtdream.hr.province", string="省份")
+    state = fields.Many2one("dtdream.hr.state", string="市区")
 
 
 class dtdream_hr_family(models.Model):
@@ -38,6 +44,25 @@ class dtdream_hr_family(models.Model):
     mail = fields.Char(string="邮箱", required=True)
     tel = fields.Char(string="联系电话", required=True)
     emergency = fields.Boolean(string="紧急联系人")
+
+
+class dtdream_hr_province(models.Model):
+    _name = "dtdream.hr.province"
+
+    name = fields.Char(string="省份", required=True)
+    code = fields.Char(string="简称")
+    state = fields.One2many("dtdream.hr.state", "province", string="市区")
+
+    _sql_constraints = [
+        ("name_unique", "UNIQUE(name)", u'省份必须是唯一的'),
+    ]
+
+
+class dtdream_hr_state(models.Model):
+    _name = "dtdream.hr.state"
+
+    name = fields.Char(string="市区", required=True)
+    province = fields.Many2one("dtdream.hr.province", string="省份", required=True)
 
 
 
