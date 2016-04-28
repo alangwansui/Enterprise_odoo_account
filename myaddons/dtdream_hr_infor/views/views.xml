@@ -1,0 +1,82 @@
+<openerp>
+  <data>
+    <record id="view_employee_form_infor_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.infor.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="mobile_phone" position="replace">
+              <field name="mobile_phone" string="手机号" invisible="True"/>
+            </field>
+            <xpath expr="//notebook/page[2]" position="replace">
+              <page string="基础信息">
+                <group>
+                    <group>
+                      <field name="account"/>
+                      <field name="gender" required="True"/>
+                      <field name="duties" required="True"/>
+                      <field name="post" required="True"/>
+                      <field name="Inaugural_state" required="True"/>
+                      <field name="entry_day" required="True"/>
+                  </group>
+                  <group>
+                      <field name="education" required="True"/>
+                      <field name="recruit"/>
+                      <field name="recruit_place"/>
+                      <field name="work_place"/>
+                      <field name="expatriate"/>
+                  </group>
+                  <div>
+                    <p>*<b>填写说明</b>：以上信息由人力资源部录入。如需修改，请与人力资源部联系</p>
+                  </div>
+                </group>
+              </page>
+            </xpath>
+
+            <xpath expr="//notebook/page[2]" position="after">
+              <page string="自助信息">
+                <group string="个人信息" name="personal">
+                    <group>
+                      <field name="byname"/>
+                      <field name="Birthplace"/>
+                      <field name="birthday"/>
+                      <field name="mobile_phone" string="手机号" required="True"/>
+                      <field name="icard"/>
+                      <field name="postcode"/>
+                    </group>
+                    <group>
+                      <field name="nation"/>
+                      <field name="political"/>
+                      <field name="marry"/>
+                      <field name="child"/>
+                      <field name="home_address" required="True"/>
+                      <field name="graduate"/>
+                    </group>
+                </group>
+
+                <notebook>
+                  <page string="家庭成员">
+                    <field name="family">
+                       <tree editable="bottom">
+                          <field name="relation"/>
+                          <field name="name"/>
+                          <field name="company"/>
+                          <field name="address"/>
+                          <field name="postcode"/>
+                          <field name="mail"/>
+                          <field name="tel"/>
+                          <field name="emergency"/>
+                       </tree>
+                    </field>
+                  </page>
+                </notebook>
+
+                <group string="社保公积金">
+                  <field name="registered"/>
+                </group>
+              </page>
+            </xpath>
+        </field>
+    </record>
+  </data>
+</openerp>
