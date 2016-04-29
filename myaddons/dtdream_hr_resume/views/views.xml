@@ -91,5 +91,46 @@
         </field>
     </record>
 
+    <record id="view_dtdream_hr_degree_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.degree.tree</field>
+        <field name="model">dtdream.hr.degree</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="has_degree"/>
+                <field name="depertment"/>
+                <field name="entry_time"/>
+                <field name="leave_time"/>
+                <field name="school"/>
+                <field name="major"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_title_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.title.tree</field>
+        <field name="model">dtdream.hr.title</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="depertment"/>
+                <field name="date"/>
+                <field name="remark"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_language_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.language.tree</field>
+        <field name="model">dtdream.hr.language</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="langange"/>
+                <field name="cerdit"/>
+                <field name="result"/>
+                <field name="remark"/>
+            </tree>
+        </field>
+    </record>
+
   </data>
 </openerp>
