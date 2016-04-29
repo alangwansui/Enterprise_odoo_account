@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record id="view_dtdream_hr_resume_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.resume.form</field>
+        <field name="model">dtdream.hr.resume</field>
+        <field name="arch" type="xml">
+            <form>
+               <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"/>
+                    <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"/>
+                    <button name="%(act_resume_wizard)d" string="驳回" type="action" class="oe_highlight"/>
+                    <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,99"/>
+                </header>
+              <sheet>
+                <group string="工作经历">
+                    <p>入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
+                    <group>
+                      <field name="experince">
+                        <field name="start_time"/>
+                        <field name="end_time"/>
+                        <field name="age_work"/>
+                        <field name="company"/>
+                        <field name="post"/>
+                        <field name="remark"/>
+                      </field>
+                    </group>
+                </group>
+
+                <group string="职称信息">
+                    <p>所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
+                    <group>
+                      <field name="title">
+                        <field name="name"/>
+                        <field name="depertment"/>
+                        <field name="date"/>
+                        <field name="remark"/>
+                      </field>
+                    </group>
+                </group>
+
+                <group string="学历信息">
+                    <group>
+                      <field name="degree">
+                        <field name="has_degree"/>
+                        <field name="depertment"/>
+                        <field name="entry_time"/>
+                        <field name="leave_time"/>
+                        <field name="school"/>
+                        <field name="major"/>
+                      </field>
+                    </group>
+                </group>
+
+                <group string="外语信息">
+                    <group>
+                      <field name="language">
+                        <field name="langange"/>
+                        <field name="cerdit"/>
+                        <field name="result"/>
+                        <field name="remark"/>
+                      </field>
+                    </group>
+                </group>
+                <p>*<b>填写说明</b>:以上信息修改后，需『提交』至人力资源部审核后才生效</p>
+              </sheet>
+
+              <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+              </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_experience_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.experience.tree</field>
+        <field name="model">dtdream.hr.experience</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="start_time"/>
+              <field name="end_time"/>
+              <field name="age_work"/>
+              <field name="company"/>
+              <field name="post"/>
+              <field name="remark"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

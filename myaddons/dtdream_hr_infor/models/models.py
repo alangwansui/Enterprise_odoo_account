@@ -6,11 +6,6 @@ from openerp import models, fields, api
 class dtdream_hr_infor(models.Model):
     _inherit = "hr.employee"
 
-    @api.onchange('registered')
-    def _dtream_hr_state_domain(self):
-        ids = self.registered.id
-        return {'domain': {'state': [('province', '=', ids)]}}
-
     account = fields.Char(string="账号", required=True)
     byname = fields.Char(string="等价花名")
     num = fields.Char(string="工号", required=True)
@@ -28,8 +23,19 @@ class dtdream_hr_infor(models.Model):
     Birthplace = fields.Char(string="籍贯", required=True)
     graduate = fields.Boolean(string="是否应届生")
     family = fields.One2many("hr.employee.family", "employee_id", string="family")
-    registered = fields.Many2one("dtdream.hr.province", string="省份")
-    state = fields.Many2one("dtdream.hr.state", string="市区")
+    province_hukou = fields.Many2one("dtdream.hr.province", required=True)
+    state_hukou = fields.Many2one("dtdream.hr.state", required=True)
+    nature_hukou = fields.Selection([("0", "城镇"), ("1", "农村")], string="户口性质", required=True)
+    endtime_shebao = fields.Date(string="上家单位社保缴纳截止月份", required=True)
+    endtime_gongjijin = fields.Date(string="上家单位公积金缴纳截止月份", required=True)
+    ahead_prov = fields.Many2one("dtdream.hr.province", required=True)
+    ahead_state = fields.Many2one("dtdream.hr.state", required=True)
+    now_prov = fields.Many2one("dtdream.hr.province", required=True)
+    now_state = fields.Many2one("dtdream.hr.state", required=True)
+    shebao_prov = fields.Many2one("dtdream.hr.province", required=True)
+    gongjijin_state = fields.Many2one("dtdream.hr.state", required=True)
+    oil_card = fields.Char(string="油卡编号")
+    has_oil = fields.Boolean(string="已办理中大一卡通")
 
 
 class dtdream_hr_family(models.Model):
@@ -63,6 +69,16 @@ class dtdream_hr_state(models.Model):
 
     name = fields.Char(string="市区", required=True)
     province = fields.Many2one("dtdream.hr.province", string="省份", required=True)
+
+
+class dtdream_hr_contract(models.Model):
+    _name = "dtdream.hr.contract"
+
+    deperment = fields.Char(string="部门", required=True)
+    name = fields.Char(string="花名", required=True)
+    num = fields.Char(string="工号", required=True)
+    date_start = fields.Date(string="合同开始日期", required=True)
+    date_stop = fields.Date(string="合同结束日期", required=True)
 
 
 

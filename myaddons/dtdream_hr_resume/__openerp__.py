@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_hr_infor",
+    'name': "dtdream_hr_resume",
 
-    'summary': """员工基础信息,员工自助信息""",
+    'summary': """员工个人履历信息管理""",
 
     'description': """
-        员工基础信息,员工自助信息
+        employee personal resume manage!
     """,
 
     'author': "jinshuzhao",
@@ -18,7 +18,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr'],
+    'depends': ['base', "hr"],
 
     # always loaded
     'data': [

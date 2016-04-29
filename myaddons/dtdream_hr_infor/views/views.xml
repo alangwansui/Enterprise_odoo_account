@@ -54,63 +54,69 @@
                     </group>
                 </group>
 
-                <notebook>
-                  <page string="家庭成员">
-                    <field name="family">
-                       <tree editable="bottom">
-                          <field name="relation"/>
-                          <field name="name"/>
-                          <field name="company"/>
-                          <field name="address"/>
-                          <field name="postcode"/>
-                          <field name="mail"/>
-                          <field name="tel"/>
-                          <field name="emergency"/>
-                       </tree>
-                    </field>
-                  </page>
-                </notebook>
+                <group string="家庭成员">
+                  <notebook>
+                      <page>
+                        <field name="family">
+                           <tree editable="bottom">
+                              <field name="relation"/>
+                              <field name="name"/>
+                              <field name="company"/>
+                              <field name="address"/>
+                              <field name="postcode"/>
+                              <field name="mail"/>
+                              <field name="tel"/>
+                              <field name="emergency"/>
+                           </tree>
+                        </field>
+                      </page>
+                    </notebook>
+                </group>
 
                 <group string="社保公积金">
                     <group>
-                        <field name="registered"/>
-                        <field name="state"/>
+                        <div style="margin-right:-15px">
+                            <label for="province_hukou" string="户口所在地(省)" style="font-weight:bold"/>
+                            <field name="province_hukou" class="oe_inline"  placeholder="请选择省份"/>
+                            <label for="state_hukou" string="(市)" style="font-weight:bold"/>
+                            <field name="state_hukou" class="oe_inline" placeholder=" 请选择市区" />
+
+                            <label for="ahead_prov" string="原社保缴纳地(省)" style="font-weight:bold"/>
+                            <field name="ahead_prov" class="oe_inline"  placeholder="请选择省份"/>
+                            <label for="ahead_state" string="(市)" style="font-weight:bold"/>
+                            <field name="ahead_state" class="oe_inline" placeholder=" 请选择市区"/>
+
+                            <label for="shebao_prov" string="原公积金缴纳地(省)" style="font-weight:bold"/>
+                            <field name="shebao_prov" class="oe_inline" placeholder="请选择省份"/>
+                            <label for="gongjijin_state" string="(市)" style="font-weight:bold"/>
+                            <field name="gongjijin_state" class="oe_inline" placeholder=" 请选择市区"/>
+
+                            <label for="now_prov" string="申请社保缴纳地(省)" style="font-weight:bold"/>
+                            <field name="now_prov" class="oe_inline"  placeholder="请选择省份"/>
+                            <label for="now_state" string="(市)" style="font-weight:bold"/>
+                            <field name="now_state" class="oe_inline" placeholder=" 请选择市区"/>
+                        </div>
+                    </group>
+                    <group>
+                         <field name="nature_hukou"/>
+                         <field name="endtime_gongjijin"/>
+                         <field name="endtime_shebao"/>
                     </group>
                 </group>
+
+                <group string="其它信息">
+                    <group>
+                       <field name="oil_card"/>
+                    </group>
+                    <group>
+                       <field name="has_oil"/>
+                    </group>
+                </group>
+
+                <p>*<b>填写说明</b>：以上信息修改即生效，无需HR审核。该处信息将被报销系统、社保金积金系统、微信、钉钉、油卡充值系统等多个系统引用。请谨慎填写，保证相关业务的准确性</p>
               </page>
             </xpath>
         </field>
     </record>
-
-    <record id="view_dtdream_hr_province_form" model="ir.ui.view">
-        <field name="name">省份</field>
-        <field name="model">dtdream.hr.province</field>
-        <field name="priority">2</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                     <group>
-                        <field name="name"/>
-                     </group>
-                </group>
-            </form>
-        </field>
-    </record>
-
-    <record id="view_dtdream_hr_state_form" model="ir.ui.view">
-        <field name="name">市区</field>
-        <field name="model">dtdream.hr.state</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                     <group>
-                        <field name="province"/>
-                        <field name="name"/>
-                     </group>
-                </group>
-            </form>
-        </field>
-    </record>
-
   </data>
 </openerp>
