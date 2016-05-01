@@ -14,56 +14,86 @@
                     <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,99"/>
-                </header>
+               </header>
               <sheet>
-                <group string="工作经历">
-                    <p>入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
+                <group string="基本信息">
                     <group>
-                      <field name="experince">
-                        <field name="start_time"/>
-                        <field name="end_time"/>
-                        <field name="age_work"/>
-                        <field name="company"/>
-                        <field name="post"/>
-                        <field name="remark"/>
-                      </field>
+                        <field name="name"/>
+                        <field name="department"/>
                     </group>
+                    <group>
+                        <field name="workid"/>
+                        <field name="has_title"/>
+                    </group>
+                </group>
+                <group string="工作经历">
+                    <div>
+                         <p style="padding-left: 40px">入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
+                        <notebook>
+                            <page>
+                              <field name="experince">
+                                  <tree editable="bottom">
+                                     <field name="start_time"/>
+                                     <field name="end_time"/>
+                                     <field name="age_work"/>
+                                     <field name="company"/>
+                                     <field name="post"/>
+                                     <field name="remark"/>
+                                  </tree>
+                              </field>
+                            </page>
+                        </notebook>
+                    </div>
                 </group>
 
                 <group string="职称信息">
-                    <p>所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
-                    <group>
-                      <field name="title">
-                        <field name="name"/>
-                        <field name="depertment"/>
-                        <field name="date"/>
-                        <field name="remark"/>
-                      </field>
-                    </group>
+                    <div>
+                        <p style="padding-left: 40px">所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
+                        <notebook>
+                            <page>
+                                  <field name="title">
+                                      <tree editable="bottom">
+                                          <field name="name"/>
+                                          <field name="depertment"/>
+                                          <field name="date"/>
+                                          <field name="remark"/>
+                                      </tree>
+                                  </field>
+                            </page>
+                        </notebook>
+                    </div>
                 </group>
 
                 <group string="学历信息">
-                    <group>
-                      <field name="degree">
-                        <field name="has_degree"/>
-                        <field name="depertment"/>
-                        <field name="entry_time"/>
-                        <field name="leave_time"/>
-                        <field name="school"/>
-                        <field name="major"/>
-                      </field>
-                    </group>
+                    <notebook>
+                        <page>
+                            <field name="degree">
+                              <tree editable="bottom">
+                                 <field name="degree"/>
+                                 <field name="has_degree"/>
+                                 <field name="entry_time"/>
+                                 <field name="leave_time"/>
+                                 <field name="school"/>
+                                 <field name="major"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
                 </group>
 
                 <group string="外语信息">
-                    <group>
-                      <field name="language">
-                        <field name="langange"/>
-                        <field name="cerdit"/>
-                        <field name="result"/>
-                        <field name="remark"/>
-                      </field>
-                    </group>
+                    <notebook>
+                        <page>
+                            <field name="language">
+                              <tree editable="bottom">
+                                  <field name="langange"/>
+                                  <field name="cerdit"/>
+                                  <field name="result"/>
+                                  <field name="remark"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
                 </group>
                 <p>*<b>填写说明</b>:以上信息修改后，需『提交』至人力资源部审核后才生效</p>
               </sheet>
@@ -76,59 +106,38 @@
         </field>
     </record>
 
-    <record id="view_dtdream_hr_experience_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.hr.experience.tree</field>
-        <field name="model">dtdream.hr.experience</field>
-        <field name="arch" type="xml">
-            <tree>
-              <field name="start_time"/>
-              <field name="end_time"/>
-              <field name="age_work"/>
-              <field name="company"/>
-              <field name="post"/>
-              <field name="remark"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_dtdream_hr_degree_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.hr.degree.tree</field>
-        <field name="model">dtdream.hr.degree</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="has_degree"/>
-                <field name="depertment"/>
-                <field name="entry_time"/>
-                <field name="leave_time"/>
-                <field name="school"/>
-                <field name="major"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_dtdream_hr_title_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.hr.title.tree</field>
-        <field name="model">dtdream.hr.title</field>
+    <record id="view_dtdream_hr_resume_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.resume.tree</field>
+        <field name="model">dtdream.hr.resume</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="depertment"/>
-                <field name="date"/>
-                <field name="remark"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
 
-    <record id="view_dtdream_hr_language_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.hr.language.tree</field>
-        <field name="model">dtdream.hr.language</field>
+    <record id="act_dtdream_hr_resume" model="ir.actions.act_window">
+        <field name="name">履历</field>
+        <field name="res_model">dtdream.hr.resume</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('name.id','=',active_id)]</field>
+    </record>
+
+    <record id="view_employee_form_resume_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.resume.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
         <field name="arch" type="xml">
-            <tree>
-                <field name="langange"/>
-                <field name="cerdit"/>
-                <field name="result"/>
-                <field name="remark"/>
-            </tree>
+            <button name="toggle_active" position="before">
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_hr_resume)d"
+                icon="fa-strikethrough" string="履历">
+               </button>
+            </button>
         </field>
     </record>
 

@@ -1,142 +1,2238 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
-        <record id="state_BJ" model="dtdream.hr.province">
-            <field name="name">北京市</field>
-            <field name="code">京</field>
-        </record>
-        <record id="state_SH" model="dtdream.hr.province">
-            <field name="name">上海市</field>
-            <field name="code">沪</field>
-        </record>
-        <record id="state_ZJ" model="dtdream.hr.province">
-            <field name="name">浙江省</field>
-            <field name="code">浙</field>
-        </record>
-        <record id="state_TJ" model="dtdream.hr.province">
-            <field name="name">天津市</field>
-            <field name="code">津</field>
-        </record>
+    <data noupdate="1">
         <record id="state_AH" model="dtdream.hr.province">
             <field name="name">安徽省</field>
             <field name="code">皖</field>
+            <field name="abbre">AH</field>
+        </record>
+        <record id="state_BJ" model="dtdream.hr.province">
+            <field name="name">北京市</field>
+            <field name="code">京</field>
+             <field name="abbre">BJ</field>
+        </record>
+         <record id="state_CQ" model="dtdream.hr.province">
+            <field name="name">重庆市</field>
+            <field name="code">渝 </field>
+            <field name="abbre">CQ</field>
         </record>
         <record id="state_FJ" model="dtdream.hr.province">
             <field name="name">福建省</field>
             <field name="code">闽</field>
+            <field name="abbre">FJ</field>
         </record>
-        <record id="state_CQ" model="dtdream.hr.province">
-            <field name="name">重庆市</field>
-            <field name="code">渝 </field>
-        </record>
-        <record id="state_JX" model="dtdream.hr.province">
-            <field name="name">江西省</field>
-            <field name="code">赣</field>
-        </record>
-        <record id="state_SD" model="dtdream.hr.province">
-            <field name="name">山东省</field>
-            <field name="code">鲁</field>
-        </record>
-        <record id="state_HA" model="dtdream.hr.province">
-            <field name="name">河南省</field>
-            <field name="code">豫</field>
-        </record>
-        <record id="state_NM" model="dtdream.hr.province">
-            <field name="name">内蒙古自治区</field>
-            <field name="code">蒙</field>
-        </record>
-        <record id="state_HB" model="dtdream.hr.province">
-            <field name="name">湖北省</field>
-            <field name="code">鄂</field>
-        </record>
-        <record id="state_XJ" model="dtdream.hr.province">
-            <field name="name">新疆维吾尔自治区</field>
-            <field name="code">新</field>
-        </record>
-        <record id="state_HN" model="dtdream.hr.province">
-            <field name="name">湖南省</field>
-            <field name="code">湘</field>
-        </record>
-        <record id="state_NX" model="dtdream.hr.province">
-            <field name="name">宁夏回族自治区</field>
-            <field name="code">宁</field>
-        </record>
-        <record id="state_GD" model="dtdream.hr.province">
+         <record id="state_GD" model="dtdream.hr.province">
             <field name="name">广东省</field>
             <field name="code">粤</field>
-        </record>
-        <record id="state_XZ" model="dtdream.hr.province">
-            <field name="name">西藏自治区</field>
-            <field name="code">藏</field>
-        </record>
-        <record id="state_HI" model="dtdream.hr.province">
-            <field name="name">海南省</field>
-            <field name="code">琼</field>
-        </record>
-        <record id="state_GX" model="dtdream.hr.province">
-            <field name="name">广西壮族自治区</field>
-            <field name="code">桂</field>
-        </record>
-        <record id="state_SC" model="dtdream.hr.province">
-            <field name="name">四川省</field>
-            <field name="code">蜀</field>
-        </record>
-        <record id="state_HE" model="dtdream.hr.province">
-            <field name="name">河北省</field>
-            <field name="code">冀</field>
-        </record>
-        <record id="state_GZ" model="dtdream.hr.province">
-            <field name="name">贵州省</field>
-            <field name="code">黔</field>
-        </record>
-        <record id="state_SX" model="dtdream.hr.province">
-            <field name="name">山西省</field>
-            <field name="code">晋</field>
-        </record>
-        <record id="state_YN" model="dtdream.hr.province">
-            <field name="name">云南省</field>
-            <field name="code">滇</field>
-        </record>
-        <record id="state_LN" model="dtdream.hr.province">
-            <field name="name">辽宁省</field>
-            <field name="code">辽</field>
-        </record>
-        <record id="state_SN" model="dtdream.hr.province">
-            <field name="name">陕西省</field>
-            <field name="code">陕</field>
-        </record>
-        <record id="state_JL" model="dtdream.hr.province">
-            <field name="name">吉林省</field>
-            <field name="code">吉</field>
+            <field name="abbre">GD</field>
         </record>
         <record id="state_GS" model="dtdream.hr.province">
             <field name="name">甘肃省</field>
             <field name="code">甘</field>
+            <field name="abbre">GS</field>
+        </record>
+        <record id="state_GX" model="dtdream.hr.province">
+            <field name="name">广西省</field>
+            <field name="code">桂</field>
+            <field name="abbre">GX</field>
+        </record>
+        <record id="state_GZ" model="dtdream.hr.province">
+            <field name="name">贵州省</field>
+            <field name="code">黔</field>
+            <field name="abbre">GZ</field>
+        </record>
+        <record id="state_HA" model="dtdream.hr.province">
+            <field name="name">河南省</field>
+            <field name="code">豫</field>
+            <field name="abbre">HN</field>
+        </record>
+        <record id="state_HB" model="dtdream.hr.province">
+            <field name="name">湖北省</field>
+            <field name="code">鄂</field>
+            <field name="abbre">HB</field>
+        </record>
+        <record id="state_HE" model="dtdream.hr.province">
+            <field name="name">河北省</field>
+            <field name="code">冀</field>
+            <field name="abbre">HB</field>
+        </record>
+        <record id="state_HK" model="dtdream.hr.province">
+            <field name="name">香港</field>
+            <field name="code">港</field>
+            <field name="abbre">HK</field>
         </record>
         <record id="state_HL" model="dtdream.hr.province">
             <field name="name">黑龙江省</field>
             <field name="code">黑</field>
+            <field name="abbre">HLJ</field>
+        </record>
+        <record id="state_HN" model="dtdream.hr.province">
+            <field name="name">湖南省</field>
+            <field name="code">湘</field>
+            <field name="abbre">HN</field>
+        </record>
+        <record id="state_HI" model="dtdream.hr.province">
+            <field name="name">海南省</field>
+            <field name="code">琼</field>
+            <field name="abbre">HN</field>
+        </record>
+        <record id="state_JL" model="dtdream.hr.province">
+            <field name="name">吉林省</field>
+            <field name="code">吉</field>
+            <field name="abbre">JL</field>
+         </record>
+         <record id="state_JS" model="dtdream.hr.province">
+            <field name="name">江苏省</field>
+            <field name="code">苏</field>
+            <field name="abbre">JS</field>
+         </record>
+        <record id="state_JX" model="dtdream.hr.province">
+            <field name="name">江西省</field>
+            <field name="code">赣</field>
+            <field name="abbre">JX</field>
+        </record>
+        <record id="state_LN" model="dtdream.hr.province">
+            <field name="name">辽宁省</field>
+            <field name="code">辽</field>
+            <field name="abbre">LN</field>
+        </record>
+        <record id="state_MO" model="dtdream.hr.province">
+            <field name="name">澳门</field>
+            <field name="code">澳</field>
+            <field name="abbre">AM</field>
+        </record>
+        <record id="state_NM" model="dtdream.hr.province">
+            <field name="name">内蒙古</field>
+            <field name="code">蒙</field>
+            <field name="abbre">NM</field>
+        </record>
+        <record id="state_NX" model="dtdream.hr.province">
+            <field name="name">宁夏</field>
+            <field name="code">宁</field>
+            <field name="abbre">NX</field>
         </record>
         <record id="state_QH" model="dtdream.hr.province">
             <field name="name">青海省</field>
             <field name="code">青</field>
+            <field name="abbre">QH</field>
         </record>
-        <record id="state_JS" model="dtdream.hr.province">
-            <field name="name">江苏省</field>
-            <field name="code">苏</field>
+        <record id="state_SC" model="dtdream.hr.province">
+            <field name="name">四川省</field>
+            <field name="code">蜀</field>
+            <field name="abbre">SC</field>
         </record>
-
+        <record id="state_SD" model="dtdream.hr.province">
+            <field name="name">山东省</field>
+            <field name="code">鲁</field>
+            <field name="abbre">SD</field>
+        </record>
+        <record id="state_SH" model="dtdream.hr.province">
+            <field name="name">上海市</field>
+            <field name="code">沪</field>
+            <field name="abbre">SH</field>
+        </record>
+        <record id="state_SN" model="dtdream.hr.province">
+            <field name="name">陕西省</field>
+            <field name="code">陕</field>
+            <field name="abbre">SX</field>
+        </record>
+        <record id="state_SX" model="dtdream.hr.province">
+            <field name="name">山西省</field>
+            <field name="code">晋</field>
+            <field name="abbre">SX</field>
+        </record>
+        <record id="state_TJ" model="dtdream.hr.province">
+            <field name="name">天津市</field>
+            <field name="code">津</field>
+            <field name="abbre">TJ</field>
+        </record>
         <record id="state_TW" model="dtdream.hr.province">
             <field name="name">台湾省</field>
             <field name="code">台</field>
+            <field name="abbre">TW</field>
         </record>
-        <record id="state_HK" model="dtdream.hr.province">
+        <record id="state_XJ" model="dtdream.hr.province">
+            <field name="name">新疆</field>
+            <field name="code">新</field>
+            <field name="abbre">XJ</field>
+        </record>
+        <record id="state_XZ" model="dtdream.hr.province">
+            <field name="name">西藏</field>
+            <field name="code">藏</field>
+            <field name="abbre">XZ</field>
+        </record>
+        <record id="state_YN" model="dtdream.hr.province">
+            <field name="name">云南省</field>
+            <field name="code">滇</field>
+            <field name="abbre">YN</field>
+        </record>
+        <record id="state_ZJ" model="dtdream.hr.province">
+            <field name="name">浙江省</field>
+            <field name="code">浙</field>
+            <field name="abbre">ZJ</field>
+        </record>
+
+
+        <record id="state_Z_HZ" model="dtdream.hr.state">
+            <field name="name">杭州市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_HZS" model="dtdream.hr.state">
+            <field name="name">湖州市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_JH" model="dtdream.hr.state">
+            <field name="name">金华市</field>
+            <field name="abbre">JH</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_JX" model="dtdream.hr.state">
+            <field name="name">嘉兴市</field>
+            <field name="abbre">JX</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_JZ" model="dtdream.hr.state">
+            <field name="name">衢州市</field>
+            <field name="abbre">JZ</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_LS" model="dtdream.hr.state">
+            <field name="name">丽水市</field>
+            <field name="abbre">LS</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_NB" model="dtdream.hr.state">
+            <field name="name">宁波市</field>
+            <field name="abbre">NB</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_SX" model="dtdream.hr.state">
+            <field name="name">绍兴市</field>
+            <field name="abbre">SX</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_TZ" model="dtdream.hr.state">
+            <field name="name">台州市</field>
+            <field name="abbre">TZ</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_WZ" model="dtdream.hr.state">
+            <field name="name">温州市</field>
+            <field name="abbre">WZ</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+        <record id="state_Z_ZS" model="dtdream.hr.state">
+            <field name="name">舟山市</field>
+            <field name="abbre">ZS</field>
+            <field name="pro_name">浙江省</field>
+        </record>
+
+
+        <record id="state_B_CP" model="dtdream.hr.state">
+            <field name="name">昌平区</field>
+            <field name="abbre">CP</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_CY" model="dtdream.hr.state">
+            <field name="name">朝阳区</field>
+            <field name="abbre">CY</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_DC" model="dtdream.hr.state">
+            <field name="name">东城区</field>
+            <field name="abbre">DC</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_DX" model="dtdream.hr.state">
+            <field name="name">大兴区</field>
+            <field name="abbre">DX</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_FS" model="dtdream.hr.state">
+            <field name="name">房山区</field>
+            <field name="abbre">FS</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_FT" model="dtdream.hr.state">
+            <field name="name">丰台区</field>
+            <field name="abbre">FT</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_HD" model="dtdream.hr.state">
+            <field name="name">海淀区</field>
+            <field name="abbre">HD</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_HR" model="dtdream.hr.state">
+            <field name="name">怀柔区</field>
+            <field name="abbre">HR</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_MTG" model="dtdream.hr.state">
+            <field name="name">门头沟区</field>
+            <field name="abbre">MTG</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_PG" model="dtdream.hr.state">
+            <field name="name">平谷区</field>
+            <field name="abbre">PG</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_SJS" model="dtdream.hr.state">
+            <field name="name">石景山区</field>
+            <field name="abbre">SJS</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_SY" model="dtdream.hr.state">
+            <field name="name">顺义区</field>
+            <field name="abbre">SY</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_TZ" model="dtdream.hr.state">
+            <field name="name">通州区</field>
+            <field name="abbre">TZ</field>
+            <field name="pro_name">北京市</field>
+        </record>
+        <record id="state_B_XC" model="dtdream.hr.state">
+            <field name="name">西城区</field>
+            <field name="abbre">XC</field>
+            <field name="pro_name">北京市</field>
+        </record>
+
+
+        <record id="state_S_BS" model="dtdream.hr.state">
+            <field name="name">宝山区</field>
+            <field name="abbre">BS</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_CN" model="dtdream.hr.state">
+            <field name="name">长宁区</field>
+            <field name="abbre">CN</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_FX" model="dtdream.hr.state">
+            <field name="name">奉贤区</field>
+            <field name="abbre">FX</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_HK" model="dtdream.hr.state">
+            <field name="name">虹口区</field>
+            <field name="abbre">HK</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_HP" model="dtdream.hr.state">
+            <field name="name">黄浦区</field>
+            <field name="abbre">HP</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_JA" model="dtdream.hr.state">
+            <field name="name">静安区</field>
+            <field name="abbre">JA</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_JD" model="dtdream.hr.state">
+            <field name="name">嘉定区</field>
+            <field name="abbre">JD</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_JS" model="dtdream.hr.state">
+            <field name="name">金山区</field>
+            <field name="abbre">JS</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_MX" model="dtdream.hr.state">
+            <field name="name">闵行区</field>
+            <field name="abbre">MX</field>
+            <field name="pro_name">上海市</field>
+        </record>
+         <record id="state_S_PDX" model="dtdream.hr.state">
+            <field name="name">浦东新区</field>
+            <field name="abbre">PD</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_PT" model="dtdream.hr.state">
+            <field name="name">普陀区</field>
+            <field name="abbre">PT</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_QP" model="dtdream.hr.state">
+            <field name="name">青浦区</field>
+            <field name="abbre">QP</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_SJ" model="dtdream.hr.state">
+            <field name="name">松江区</field>
+            <field name="abbre">SJ</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_XH" model="dtdream.hr.state">
+            <field name="name">徐汇区</field>
+            <field name="abbre">XH</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_YP" model="dtdream.hr.state">
+            <field name="name">杨浦区</field>
+            <field name="abbre">YP</field>
+            <field name="pro_name">上海市</field>
+        </record>
+        <record id="state_S_ZB" model="dtdream.hr.state">
+            <field name="name">闸北区</field>
+            <field name="abbre">ZB</field>
+            <field name="pro_name">上海市</field>
+        </record>
+
+        <record id="state_T_BC" model="dtdream.hr.state">
+            <field name="name">北辰区</field>
+            <field name="abbre">BC</field>
+            <field name="pro_name">天津市</field>
+        </record>
+         <record id="state_T_BD" model="dtdream.hr.state">
+            <field name="name">宝坻区</field>
+            <field name="abbre">BD</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_DL" model="dtdream.hr.state">
+            <field name="name">东丽区</field>
+            <field name="abbre">DL</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_HB" model="dtdream.hr.state">
+            <field name="name">河北区</field>
+            <field name="abbre">HB</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_HD" model="dtdream.hr.state">
+            <field name="name">河东区</field>
+            <field name="abbre">HD</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_HP" model="dtdream.hr.state">
+            <field name="name">和平区</field>
+            <field name="abbre">HP</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_HQ" model="dtdream.hr.state">
+            <field name="name">红桥区</field>
+            <field name="abbre">HQ</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_HX" model="dtdream.hr.state">
+            <field name="name">河西区</field>
+            <field name="abbre">HX</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_JN" model="dtdream.hr.state">
+            <field name="name">津南区</field>
+            <field name="abbre">JN</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_NK" model="dtdream.hr.state">
+            <field name="name">南开区</field>
+            <field name="abbre">NK</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_WQ" model="dtdream.hr.state">
+            <field name="name">武清区</field>
+            <field name="abbre">WQ</field>
+            <field name="pro_name">天津市</field>
+        </record>
+        <record id="state_T_XQ" model="dtdream.hr.state">
+            <field name="name">西青区</field>
+             <field name="abbre">XQ</field>
+            <field name="pro_name">天津市</field>
+        </record>
+
+
+        <record id="state_A_AQ" model="dtdream.hr.state">
+            <field name="name">安庆市</field>
+            <field name="abbre">AQ</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_BB" model="dtdream.hr.state">
+            <field name="name">蚌埠市</field>
+            <field name="abbre">BB</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_CZ" model="dtdream.hr.state">
+            <field name="name">池州市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_CZ" model="dtdream.hr.state">
+            <field name="name">滁州市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_FY" model="dtdream.hr.state">
+            <field name="name">阜阳市</field>
+            <field name="abbre">FY</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_HB" model="dtdream.hr.state">
+            <field name="name">淮北市</field>
+            <field name="abbre">HB</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_HF" model="dtdream.hr.state">
+            <field name="name">合肥市</field>
+            <field name="abbre">HF</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_HN" model="dtdream.hr.state">
+            <field name="name">淮南市</field>
+            <field name="abbre">HN</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_HS" model="dtdream.hr.state">
+            <field name="name">黄山市</field>
+            <field name="abbre">HS</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_HZ" model="dtdream.hr.state">
+            <field name="name">亳州市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_LA" model="dtdream.hr.state">
+            <field name="name">六安市</field>
+            <field name="abbre">LA</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_MAS" model="dtdream.hr.state">
+            <field name="name">马鞍山市</field>
+            <field name="abbre">MAS</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_SZ" model="dtdream.hr.state">
+            <field name="name">宿州市</field>
+            <field name="abbre">SZ</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_TL" model="dtdream.hr.state">
+            <field name="name">铜陵市</field>
+            <field name="abbre">TL</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_WH" model="dtdream.hr.state">
+            <field name="name">芜湖市</field>
+            <field name="abbre">WH</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+        <record id="state_A_XC" model="dtdream.hr.state">
+            <field name="name">宣城市</field>
+            <field name="abbre">XC</field>
+            <field name="pro_name">安徽省</field>
+        </record>
+
+
+        <record id="state_F_FZ" model="dtdream.hr.state">
+            <field name="name">福州市</field>
+            <field name="abbre">FZ</field>
+            <field name="pro_name">福建省</field>
+        </record>
+         <record id="state_F_LY" model="dtdream.hr.state">
+            <field name="name">龙岩市</field>
+            <field name="abbre">LY</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_ND" model="dtdream.hr.state">
+            <field name="name">宁德市</field>
+            <field name="abbre">ND</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_NP" model="dtdream.hr.state">
+            <field name="name">南平市</field>
+            <field name="abbre">NP</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_PT" model="dtdream.hr.state">
+            <field name="name">莆田市</field>
+            <field name="abbre">PT</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_QZ" model="dtdream.hr.state">
+            <field name="name">泉州市</field>
+            <field name="abbre">QZ</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_SM" model="dtdream.hr.state">
+            <field name="name">三明市</field>
+            <field name="abbre">SM</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_XM" model="dtdream.hr.state">
+            <field name="name">厦门市</field>
+            <field name="abbre">XM</field>
+            <field name="pro_name">福建省</field>
+        </record>
+        <record id="state_F_ZZ" model="dtdream.hr.state">
+            <field name="name">漳州市</field>
+            <field name="abbre">ZZ</field>
+            <field name="pro_name">福建省</field>
+        </record>
+
+
+        <record id="state_C_BB" model="dtdream.hr.state">
+            <field name="name">北碚区</field>
+            <field name="abbre">BB</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_BS" model="dtdream.hr.state">
+            <field name="name">璧山区</field>
+            <field name="abbre">BS</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_BN" model="dtdream.hr.state">
+            <field name="name">巴南区</field>
+            <field name="abbre">BN</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_CS" model="dtdream.hr.state">
+            <field name="name">长寿区</field>
+            <field name="abbre">CS</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_DDK" model="dtdream.hr.state">
+            <field name="name">大渡口区</field>
+            <field name="abbre">DDK</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_DZ" model="dtdream.hr.state">
+            <field name="name">大足区</field>
+            <field name="abbre">DZ</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_FL" model="dtdream.hr.state">
+            <field name="name">涪陵区</field>
+            <field name="abbre">FL</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_HC" model="dtdream.hr.state">
+            <field name="name">合川区</field>
+            <field name="abbre">HC</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_JB" model="dtdream.hr.state">
+            <field name="name">江北区</field>
+            <field name="abbre">JB</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_JJ" model="dtdream.hr.state">
+            <field name="name">江津区</field>
+            <field name="abbre">JJ</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_JLP" model="dtdream.hr.state">
+            <field name="name">九龙坡区</field>
+            <field name="abbre">JLP</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_NA" model="dtdream.hr.state">
+            <field name="name">南岸区</field>
+            <field name="abbre">NA</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_NC" model="dtdream.hr.state">
+            <field name="name">南川区</field>
+            <field name="abbre">NC</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_QJ" model="dtdream.hr.state">
+            <field name="name">綦江区</field>
+            <field name="abbre">QJ</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_QJ" model="dtdream.hr.state">
+            <field name="name">黔江区</field>
+            <field name="abbre">QJ</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_SPB" model="dtdream.hr.state">
+            <field name="name">沙坪坝区</field>
+            <field name="abbre">SPB</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_TL" model="dtdream.hr.state">
+            <field name="name">铜梁区</field>
+            <field name="abbre">TL</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_WZ" model="dtdream.hr.state">
+            <field name="name">万州区</field>
+            <field name="abbre">WZ</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_YB" model="dtdream.hr.state">
+            <field name="name">渝北区</field>
+            <field name="abbre">YB</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_YC" model="dtdream.hr.state">
+            <field name="name">永川区</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+        <record id="state_C_YZ" model="dtdream.hr.state">
+            <field name="name">渝中区</field>
+            <field name="abbre">YZ</field>
+            <field name="pro_name">重庆市</field>
+        </record>
+
+
+
+        <record id="state_J_FZ" model="dtdream.hr.state">
+            <field name="name">抚州市</field>
+            <field name="abbre">FZ</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_GZ" model="dtdream.hr.state">
+            <field name="name">赣州市</field>
+            <field name="abbre">GZ</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_JA" model="dtdream.hr.state">
+            <field name="name">吉安市</field>
+            <field name="abbre">JA</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_JDZ" model="dtdream.hr.state">
+            <field name="name">景德镇市</field>
+            <field name="abbre">JDZ</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_JJ" model="dtdream.hr.state">
+            <field name="name">九江市</field>
+            <field name="abbre">JJ</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_NC" model="dtdream.hr.state">
+            <field name="name">南昌市</field>
+            <field name="abbre">NC</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_PX" model="dtdream.hr.state">
+            <field name="name">萍乡市</field>
+            <field name="abbre">PX</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_SR" model="dtdream.hr.state">
+            <field name="name">上饶市</field>
+            <field name="abbre">SR</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_XY" model="dtdream.hr.state">
+            <field name="name">新余市</field>
+            <field name="abbre">XY</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_YC" model="dtdream.hr.state">
+            <field name="name">宜春市</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">江西省</field>
+        </record>
+        <record id="state_J_YT" model="dtdream.hr.state">
+            <field name="name">鹰潭市</field>
+            <field name="abbre">YT</field>
+            <field name="pro_name">江西省</field>
+        </record>
+
+
+        <record id="state_S_BZ" model="dtdream.hr.state">
+            <field name="name">滨州市</field>
+            <field name="abbre">BZ</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_DZ" model="dtdream.hr.state">
+            <field name="name">德州市</field>
+            <field name="abbre">DZ</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_DY" model="dtdream.hr.state">
+            <field name="name">东营市</field>
+            <field name="abbre">DY</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_HZ" model="dtdream.hr.state">
+            <field name="name">菏泽市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_JN" model="dtdream.hr.state">
+            <field name="name">济南市</field>
+            <field name="abbre">JN</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_JN" model="dtdream.hr.state">
+            <field name="name">济宁市</field>
+            <field name="abbre">JN</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_LC" model="dtdream.hr.state">
+            <field name="name">聊城市</field>
+            <field name="abbre">LC</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_LW" model="dtdream.hr.state">
+            <field name="name">莱芜市</field>
+            <field name="abbre">LW</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_LY" model="dtdream.hr.state">
+            <field name="name">临沂市</field>
+            <field name="abbre">LY</field>
+            <field name="pro_name">山东省</field>
+        </record>
+       <record id="state_S_QD" model="dtdream.hr.state">
+            <field name="name">青岛市</field>
+            <field name="abbre">QD</field>
+            <field name="pro_name">山东省</field>
+       </record>
+        <record id="state_S_RZ" model="dtdream.hr.state">
+            <field name="name">日照市</field>
+            <field name="abbre">RZ</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_TA" model="dtdream.hr.state">
+            <field name="name">泰安市</field>
+            <field name="abbre">TA</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_WF" model="dtdream.hr.state">
+            <field name="name">潍坊市</field>
+            <field name="abbre">WF</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_WH" model="dtdream.hr.state">
+            <field name="name">威海市</field>
+            <field name="abbre">WH</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_YT" model="dtdream.hr.state">
+            <field name="name">烟台市</field>
+            <field name="abbre">YT</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_ZB" model="dtdream.hr.state">
+            <field name="name">淄博市</field>
+            <field name="abbre">ZB</field>
+            <field name="pro_name">山东省</field>
+        </record>
+        <record id="state_S_ZZ" model="dtdream.hr.state">
+            <field name="name">枣庄市</field>
+            <field name="abbre">ZZ</field>
+            <field name="pro_name">山东省</field>
+        </record>
+
+
+        <record id="state_H_AY" model="dtdream.hr.state">
+            <field name="name">安阳市</field>
+            <field name="abbre">AY</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_HB" model="dtdream.hr.state">
+            <field name="name">鹤壁市</field>
+            <field name="abbre">HB</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_JZ" model="dtdream.hr.state">
+            <field name="name">焦作市</field>
+            <field name="abbre">JZ</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_KF" model="dtdream.hr.state">
+            <field name="name">开封市</field>
+            <field name="abbre">KF</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_LH" model="dtdream.hr.state">
+            <field name="name">漯河市</field>
+            <field name="abbre">LH</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_LY" model="dtdream.hr.state">
+            <field name="name">洛阳市</field>
+            <field name="abbre">LY</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_NY" model="dtdream.hr.state">
+            <field name="name">南阳市</field>
+            <field name="abbre">NY</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_PDS" model="dtdream.hr.state">
+            <field name="name">平顶山市</field>
+            <field name="abbre">PDS</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_PY" model="dtdream.hr.state">
+            <field name="name">濮阳市</field>
+            <field name="abbre">PY</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_SMX" model="dtdream.hr.state">
+            <field name="name">三门峡市</field>
+            <field name="abbre">SMX</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_SQ" model="dtdream.hr.state">
+            <field name="name">商丘市</field>
+            <field name="abbre">SQ</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_XC" model="dtdream.hr.state">
+            <field name="name">许昌市</field>
+            <field name="abbre">XC</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_XX" model="dtdream.hr.state">
+            <field name="name">新乡市</field>
+            <field name="abbre">XX</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_XY" model="dtdream.hr.state">
+            <field name="name">信阳市</field>
+            <field name="abbre">XY</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_ZK" model="dtdream.hr.state">
+            <field name="name">周口市</field>
+            <field name="abbre">ZK</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_ZMD" model="dtdream.hr.state">
+            <field name="name">驻马店市</field>
+            <field name="abbre">ZMD</field>
+            <field name="pro_name">河南省</field>
+        </record>
+        <record id="state_H_ZZ" model="dtdream.hr.state">
+            <field name="name">郑州市</field>
+            <field name="abbre">ZZ</field>
+            <field name="pro_name">河南省</field>
+        </record>
+
+
+        <record id="state_N_AL" model="dtdream.hr.state">
+            <field name="name">阿拉善盟</field>
+            <field name="abbre">ALSM</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_BT" model="dtdream.hr.state">
+            <field name="name">包头市</field>
+            <field name="abbre">BT</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_BY" model="dtdream.hr.state">
+            <field name="name">巴彦淖尔市</field>
+            <field name="abbre">BY</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_CF" model="dtdream.hr.state">
+            <field name="name">赤峰市</field>
+            <field name="abbre">CF</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_EE" model="dtdream.hr.state">
+            <field name="name">鄂尔多斯市</field>
+            <field name="abbre">EEDS</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_HH" model="dtdream.hr.state">
+            <field name="name">呼和浩特市</field>
+            <field name="abbre">HHHT</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_HL" model="dtdream.hr.state">
+            <field name="name">呼伦贝尔市</field>
+            <field name="abbre">HLBE</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_TL" model="dtdream.hr.state">
+            <field name="name">通辽市</field>
+            <field name="abbre">TL</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_WH" model="dtdream.hr.state">
+            <field name="name">乌海市</field>
+            <field name="abbre">WH</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_WL" model="dtdream.hr.state">
+            <field name="name">乌兰察布市</field>
+            <field name="abbre">WLCB</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_XA" model="dtdream.hr.state">
+            <field name="name">兴安盟</field>
+            <field name="abbre">XAM</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+        <record id="state_N_XL" model="dtdream.hr.state">
+            <field name="name">锡林郭勒盟</field>
+            <field name="abbre">XLGLM</field>
+            <field name="pro_name">内蒙古</field>
+        </record>
+
+
+        <record id="state_H_ES" model="dtdream.hr.state">
+            <field name="name">恩施土家族苗族自治州</field>
+            <field name="abbre">ES</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_EZ" model="dtdream.hr.state">
+            <field name="name">鄂州市</field>
+            <field name="abbre">EZ</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_HG" model="dtdream.hr.state">
+            <field name="name">黄冈市</field>
+            <field name="abbre">HG</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_HS" model="dtdream.hr.state">
+            <field name="name">黄石市</field>
+            <field name="abbre">HS</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_JM" model="dtdream.hr.state">
+            <field name="name">荆门市</field>
+            <field name="abbre">JM</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_JZ" model="dtdream.hr.state">
+            <field name="name">荆州市</field>
+            <field name="abbre">JZ</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_SY" model="dtdream.hr.state">
+            <field name="name">十堰市</field>
+            <field name="abbre">SY</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_SZ" model="dtdream.hr.state">
+            <field name="name">随州市</field>
+            <field name="abbre">SZ</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_WH" model="dtdream.hr.state">
+            <field name="name">武汉市</field>
+            <field name="abbre">WH</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_XG" model="dtdream.hr.state">
+            <field name="name">孝感市</field>
+            <field name="abbre">XG</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_XN" model="dtdream.hr.state">
+            <field name="name">咸宁市</field>
+            <field name="abbre">XN</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_XY" model="dtdream.hr.state">
+            <field name="name">襄阳市</field>
+            <field name="abbre">XY</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+        <record id="state_H_YC" model="dtdream.hr.state">
+            <field name="name">宜昌市</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">湖北省</field>
+        </record>
+
+
+        <record id="state_X_AKS" model="dtdream.hr.state">
+            <field name="name">阿克苏地区</field>
+            <field name="abbre">AKS</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_ALT" model="dtdream.hr.state">
+            <field name="name">阿勒泰地区</field>
+            <field name="abbre">ALT</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_BETLMG" model="dtdream.hr.state">
+            <field name="name">博尔塔拉蒙古自治州</field>
+            <field name="abbre">BETL</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_BYGLMG" model="dtdream.hr.state">
+            <field name="name">巴音郭楞蒙古自治州</field>
+            <field name="abbre">BYGL</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_CJHZ" model="dtdream.hr.state">
+            <field name="name">昌吉回族自治州</field>
+            <field name="abbre">CJHZ</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_HM" model="dtdream.hr.state">
+            <field name="name">哈密地区</field>
+            <field name="abbre">HM</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_HT" model="dtdream.hr.state">
+            <field name="name">和田地区</field>
+            <field name="abbre">HT</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_KS" model="dtdream.hr.state">
+            <field name="name">喀什地区</field>
+            <field name="abbre">KS</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_KLMY" model="dtdream.hr.state">
+            <field name="name">克拉玛依市</field>
+            <field name="abbre">KLMY</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_KZLSKEKZ" model="dtdream.hr.state">
+            <field name="name">克孜勒苏柯尔克孜自治州</field>
+            <field name="abbre">KZLSKEKZ</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_TC" model="dtdream.hr.state">
+            <field name="name">塔城地区</field>
+            <field name="abbre">TC</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_TLF" model="dtdream.hr.state">
+            <field name="name">吐鲁番地区</field>
+            <field name="abbre">TLF</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_WLMQ" model="dtdream.hr.state">
+            <field name="name">乌鲁木齐市</field>
+            <field name="abbre">WLMQ</field>
+            <field name="pro_name">新疆</field>
+        </record>
+        <record id="state_X_YLHSK" model="dtdream.hr.state">
+            <field name="name">伊犁哈萨克自治州</field>
+            <field name="abbre">YLHSK</field>
+            <field name="pro_name">新疆</field>
+        </record>
+
+
+        <record id="state_H_CS" model="dtdream.hr.state">
+            <field name="name">长沙市</field>
+            <field name="abbre">CS</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_CZ" model="dtdream.hr.state">
+            <field name="name">郴州市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_CD" model="dtdream.hr.state">
+            <field name="name">常德市</field>
+            <field name="abbre">CD</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_HH" model="dtdream.hr.state">
+            <field name="name">怀化市</field>
+            <field name="abbre">HH</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_HY" model="dtdream.hr.state">
+            <field name="name">衡阳市</field>
+            <field name="abbre">HY</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_LD" model="dtdream.hr.state">
+            <field name="name">娄底市</field>
+            <field name="abbre">LD</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_SY" model="dtdream.hr.state">
+            <field name="name">邵阳市</field>
+            <field name="abbre">SY</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_XT" model="dtdream.hr.state">
+            <field name="name">湘潭市</field>
+            <field name="abbre">XT</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_XXTJZ" model="dtdream.hr.state">
+            <field name="name">湘西土家族苗族自治州</field>
+            <field name="abbre">XXTJZ</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_YY" model="dtdream.hr.state">
+            <field name="name">益阳市</field>
+            <field name="abbre">YY</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_YY" model="dtdream.hr.state">
+            <field name="name">岳阳市</field>
+            <field name="abbre">YY</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_YZ" model="dtdream.hr.state">
+            <field name="name">永州市</field>
+            <field name="abbre">YZ</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_ZJJ" model="dtdream.hr.state">
+            <field name="name">张家界市</field>
+            <field name="abbre">ZJJ</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+        <record id="state_H_ZZ" model="dtdream.hr.state">
+            <field name="name">株洲市</field>
+            <field name="abbre">ZZ</field>
+            <field name="pro_name">湖南省</field>
+        </record>
+
+
+        <record id="state_N_GY" model="dtdream.hr.state">
+            <field name="name">固原市</field>
+            <field name="abbre">GY</field>
+            <field name="pro_name">宁夏</field>
+        </record>
+        <record id="state_N_SZS" model="dtdream.hr.state">
+            <field name="name">石嘴山市</field>
+            <field name="abbre">SZS</field>
+            <field name="pro_name">宁夏</field>
+        </record>
+        <record id="state_N_WZ" model="dtdream.hr.state">
+            <field name="name">吴忠市</field>
+            <field name="abbre">WZ</field>
+            <field name="pro_name">宁夏</field>
+        </record>
+        <record id="state_N_YC" model="dtdream.hr.state">
+            <field name="name">银川市</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">宁夏</field>
+        </record>
+        <record id="state_N_ZW" model="dtdream.hr.state">
+            <field name="name">中卫市</field>
+            <field name="abbre">ZW</field>
+            <field name="pro_name">宁夏</field>
+        </record>
+
+
+        <record id="state_G_CZ" model="dtdream.hr.state">
+            <field name="name">潮州市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_DW" model="dtdream.hr.state">
+            <field name="name">东莞市</field>
+            <field name="abbre">DW</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_FS" model="dtdream.hr.state">
+            <field name="name">佛山市</field>
+            <field name="abbre">FS</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_GZ" model="dtdream.hr.state">
+            <field name="name">广州市</field>
+            <field name="abbre">GZ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_HY" model="dtdream.hr.state">
+            <field name="name">河源市</field>
+            <field name="abbre">HY</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_HZ" model="dtdream.hr.state">
+            <field name="name">惠州市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_JM" model="dtdream.hr.state">
+            <field name="name">江门市</field>
+            <field name="abbre">JM</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_JY" model="dtdream.hr.state">
+            <field name="name">揭阳市</field>
+            <field name="abbre">JY</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_MM" model="dtdream.hr.state">
+            <field name="name">茂名市</field>
+            <field name="abbre">MM</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_MZ" model="dtdream.hr.state">
+            <field name="name">梅州市</field>
+            <field name="abbre">MZ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_QY" model="dtdream.hr.state">
+            <field name="name">清远市</field>
+            <field name="abbre">QY</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_SG" model="dtdream.hr.state">
+            <field name="name">韶关市</field>
+            <field name="abbre">SG</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_ST" model="dtdream.hr.state">
+            <field name="name">汕头市</field>
+            <field name="abbre">ST</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_SW" model="dtdream.hr.state">
+            <field name="name">汕尾市</field>
+            <field name="abbre">SW</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_SZ" model="dtdream.hr.state">
+            <field name="name">深圳市</field>
+            <field name="abbre">SZ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_YF" model="dtdream.hr.state">
+            <field name="name">云浮市</field>
+            <field name="abbre">YF</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_YJ" model="dtdream.hr.state">
+            <field name="name">阳江市</field>
+            <field name="abbre">YJ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_ZH" model="dtdream.hr.state">
+            <field name="name">珠海市</field>
+            <field name="abbre">ZH</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_ZJ" model="dtdream.hr.state">
+            <field name="name">湛江市</field>
+            <field name="abbre">ZJ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_ZQ" model="dtdream.hr.state">
+            <field name="name">肇庆市</field>
+            <field name="abbre">ZQ</field>
+            <field name="pro_name">广东省</field>
+        </record>
+        <record id="state_G_ZS" model="dtdream.hr.state">
+            <field name="name">中山市</field>
+            <field name="abbre">ZS</field>
+            <field name="pro_name">广东省</field>
+        </record>
+
+
+        <record id="state_G_BY" model="dtdream.hr.state">
+            <field name="name">白银市</field>
+            <field name="abbre">BY</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_DX" model="dtdream.hr.state">
+            <field name="name">定西市</field>
+            <field name="abbre">DX</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_GNZZ" model="dtdream.hr.state">
+            <field name="name">甘南藏族</field>
+            <field name="abbre">GNZZ</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_JC" model="dtdream.hr.state">
+            <field name="name">金昌市</field>
+            <field name="abbre">JC</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_JQ" model="dtdream.hr.state">
+            <field name="name">酒泉市</field>
+            <field name="abbre">JQ</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_JYG" model="dtdream.hr.state">
+            <field name="name">嘉峪关市</field>
+            <field name="abbre">JYG</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_LN" model="dtdream.hr.state">
+            <field name="name">陇南市</field>
+            <field name="abbre">LN</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_LXHZ" model="dtdream.hr.state">
+            <field name="name">临夏回族</field>
+            <field name="abbre">LXHZ</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_LZ" model="dtdream.hr.state">
+            <field name="name">兰州市</field>
+            <field name="abbre">LZ</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_PL" model="dtdream.hr.state">
+            <field name="name">平凉市</field>
+            <field name="abbre">PL</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_QY" model="dtdream.hr.state">
+            <field name="name">庆阳市</field>
+            <field name="abbre">QY</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_TS" model="dtdream.hr.state">
+            <field name="name">天水市</field>
+            <field name="abbre">TS</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_WW" model="dtdream.hr.state">
+            <field name="name">武威市</field>
+            <field name="abbre">WW</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+        <record id="state_G_ZY" model="dtdream.hr.state">
+            <field name="name">张掖市</field>
+            <field name="abbre">ZY</field>
+            <field name="pro_name">甘肃省</field>
+        </record>
+
+
+        <record id="state_G_BH" model="dtdream.hr.state">
+            <field name="name">北海市</field>
+            <field name="abbre">BH</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_BS" model="dtdream.hr.state">
+            <field name="name">百色市</field>
+            <field name="abbre">BS</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_CZ" model="dtdream.hr.state">
+            <field name="name">崇左市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_FCG" model="dtdream.hr.state">
+            <field name="name">防城港市</field>
+            <field name="abbre">FCG</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_GG" model="dtdream.hr.state">
+            <field name="name">贵港市</field>
+            <field name="abbre">GG</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_GL" model="dtdream.hr.state">
+            <field name="name">桂林市</field>
+            <field name="abbre">GL</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_HC" model="dtdream.hr.state">
+            <field name="name">河池市</field>
+            <field name="abbre">HC</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_HZ" model="dtdream.hr.state">
+            <field name="name">贺州市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_LB" model="dtdream.hr.state">
+            <field name="name">来宾市</field>
+            <field name="abbre">LB</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_LZ" model="dtdream.hr.state">
+            <field name="name">柳州市</field>
+            <field name="abbre">LZ</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_NN" model="dtdream.hr.state">
+            <field name="name">南宁市</field>
+            <field name="abbre">NN</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_QZ" model="dtdream.hr.state">
+            <field name="name">钦州市</field>
+            <field name="abbre">QZ</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_WZ" model="dtdream.hr.state">
+            <field name="name">梧州市</field>
+            <field name="abbre">WZ</field>
+            <field name="pro_name">广西省</field>
+        </record>
+        <record id="state_G_YL" model="dtdream.hr.state">
+            <field name="name">玉林市</field>
+            <field name="abbre">YL</field>
+            <field name="pro_name">广西省</field>
+        </record>
+
+
+        <record id="state_G_AS" model="dtdream.hr.state">
+            <field name="name">安顺市</field>
+            <field name="abbre">AS</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_BJ" model="dtdream.hr.state">
+            <field name="name">毕节市</field>
+            <field name="abbre">BJ</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_GY" model="dtdream.hr.state">
+            <field name="name">贵阳市</field>
+            <field name="abbre">GY</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_LPS" model="dtdream.hr.state">
+            <field name="name">六盘水市</field>
+            <field name="abbre">LPS</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_QX" model="dtdream.hr.state">
+            <field name="name">黔西南布依族苗族自治州</field>
+            <field name="abbre">QXNBYZ</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_QD" model="dtdream.hr.state">
+            <field name="name">黔东南苗族侗族自治州</field>
+            <field name="abbre">QDNMZ</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_QN" model="dtdream.hr.state">
+            <field name="name">黔南布依族苗族自治州</field>
+            <field name="abbre">QNBYZ</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_TR" model="dtdream.hr.state">
+            <field name="name">铜仁市</field>
+            <field name="abbre">TR</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+        <record id="state_G_ZY" model="dtdream.hr.state">
+            <field name="name">遵义市</field>
+            <field name="abbre">ZY</field>
+            <field name="pro_name">贵州省</field>
+        </record>
+
+
+        <record id="state_H_BD" model="dtdream.hr.state">
+            <field name="name">保定市</field>
+            <field name="abbre">BD</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_CD" model="dtdream.hr.state">
+            <field name="name">承德市</field>
+            <field name="abbre">CD</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_CZ" model="dtdream.hr.state">
+            <field name="name">沧州市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_HD" model="dtdream.hr.state">
+            <field name="name">邯郸市</field>
+            <field name="abbre">HD</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_HS" model="dtdream.hr.state">
+            <field name="name">衡水市</field>
+            <field name="abbre">HS</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_LF" model="dtdream.hr.state">
+            <field name="name">廊坊市</field>
+            <field name="abbre">LF</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_QHD" model="dtdream.hr.state">
+            <field name="name">秦皇岛市</field>
+            <field name="abbre">QHD</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_SJZ" model="dtdream.hr.state">
+            <field name="name">石家庄市</field>
+            <field name="abbre">SJZ</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_TS" model="dtdream.hr.state">
+            <field name="name">唐山市</field>
+            <field name="abbre">TS</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_XT" model="dtdream.hr.state">
+            <field name="name">邢台市</field>
+            <field name="abbre">XT</field>
+            <field name="pro_name">河北省</field>
+        </record>
+        <record id="state_H_ZJK" model="dtdream.hr.state">
+            <field name="name">张家口市</field>
+            <field name="abbre">ZJK</field>
+            <field name="pro_name">河北省</field>
+        </record>
+
+        <record id="state_S_XG" model="dtdream.hr.state">
             <field name="name">香港特别行政区</field>
-            <field name="code">港</field>
+            <field name="abbre">XG</field>
+            <field name="pro_name">香港</field>
         </record>
-        <record id="state_MO" model="dtdream.hr.province">
+
+
+        <record id="state_H_DQ" model="dtdream.hr.state">
+            <field name="name">大庆市</field>
+            <field name="abbre">DQ</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_DXAL" model="dtdream.hr.state">
+            <field name="name">大兴安岭</field>
+            <field name="abbre">DXAL</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_HEB" model="dtdream.hr.state">
+            <field name="name">哈尔滨市</field>
+            <field name="abbre">HEB</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_HG" model="dtdream.hr.state">
+            <field name="name">鹤岗市</field>
+            <field name="abbre">HG</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_HH" model="dtdream.hr.state">
+            <field name="name">黑河市</field>
+            <field name="abbre">HH</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_JJHE" model="dtdream.hr.state">
+            <field name="name">齐齐哈尔市</field>
+            <field name="abbre">JJHE</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_JX" model="dtdream.hr.state">
+            <field name="name">鸡西市</field>
+            <field name="abbre">JX</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_JMS" model="dtdream.hr.state">
+            <field name="name">佳木斯市</field>
+            <field name="abbre">JMS</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_MDJ" model="dtdream.hr.state">
+            <field name="name">牡丹江市</field>
+            <field name="abbre">MDJ</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_QTH" model="dtdream.hr.state">
+            <field name="name">七台河市</field>
+            <field name="abbre">QTH</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_SH" model="dtdream.hr.state">
+            <field name="name">绥化市</field>
+            <field name="abbre">SH</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_SYS" model="dtdream.hr.state">
+            <field name="name">双鸭山市</field>
+            <field name="abbre">SYS</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+        <record id="state_H_YC" model="dtdream.hr.state">
+            <field name="name">伊春市</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">黑龙江省</field>
+        </record>
+
+
+        <record id="state_H_HK" model="dtdream.hr.state">
+            <field name="name">海口市</field>
+            <field name="abbre">HK</field>
+            <field name="pro_name">海南省</field>
+        </record>
+        <record id="state_H_SY" model="dtdream.hr.state">
+            <field name="name">三亚市</field>
+            <field name="abbre">SY</field>
+            <field name="pro_name">海南省</field>
+        </record>
+        <record id="state_H_SS" model="dtdream.hr.state">
+            <field name="name">三沙市</field>
+            <field name="abbre">SS</field>
+            <field name="pro_name">海南省</field>
+        </record>
+        <record id="state_H_ZZ" model="dtdream.hr.state">
+            <field name="name">儋州市</field>
+            <field name="abbre">ZZ</field>
+            <field name="pro_name">海南省</field>
+        </record>
+
+
+        <record id="state_J_BS" model="dtdream.hr.state">
+            <field name="name">白山市</field>
+            <field name="abbre">BS</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_BC" model="dtdream.hr.state">
+            <field name="name">白城市</field>
+            <field name="abbre">BC</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_CC" model="dtdream.hr.state">
+            <field name="name">长春市</field>
+            <field name="abbre">CC</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_JL" model="dtdream.hr.state">
+            <field name="name">吉林市</field>
+            <field name="abbre">JL</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_LY" model="dtdream.hr.state">
+            <field name="name">辽源市</field>
+            <field name="abbre">LY</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_SP" model="dtdream.hr.state">
+            <field name="name">四平市</field>
+            <field name="abbre">SP</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_SY" model="dtdream.hr.state">
+            <field name="name">松原市</field>
+            <field name="abbre">SY</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_TH" model="dtdream.hr.state">
+            <field name="name">通化市</field>
+            <field name="abbre">TH</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+        <record id="state_J_YBCXZ" model="dtdream.hr.state">
+            <field name="name">延边朝鲜族自治区</field>
+            <field name="abbre">YBCXZ</field>
+            <field name="pro_name">吉林省</field>
+        </record>
+
+
+        <record id="state_J_CZ" model="dtdream.hr.state">
+            <field name="name">常州市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_HA" model="dtdream.hr.state">
+            <field name="name">淮安市</field>
+            <field name="abbre">HA</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_LYG" model="dtdream.hr.state">
+            <field name="name">连云港市</field>
+            <field name="abbre">LYG</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_NJ" model="dtdream.hr.state">
+            <field name="name">南京市</field>
+            <field name="abbre">NJ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_NT" model="dtdream.hr.state">
+            <field name="name">南通市</field>
+            <field name="abbre">NT</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_SZ" model="dtdream.hr.state">
+            <field name="name">苏州市</field>
+            <field name="abbre">SZ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_SQ" model="dtdream.hr.state">
+            <field name="name">宿迁市</field>
+            <field name="abbre">SQ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_TZ" model="dtdream.hr.state">
+            <field name="name">泰州市</field>
+            <field name="abbre">TZ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_WX" model="dtdream.hr.state">
+            <field name="name">无锡市</field>
+            <field name="abbre">WX</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_XZ" model="dtdream.hr.state">
+            <field name="name">徐州市</field>
+            <field name="abbre">XZ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_YZ" model="dtdream.hr.state">
+            <field name="name">扬州市</field>
+            <field name="abbre">YZ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_YC" model="dtdream.hr.state">
+            <field name="name">盐城市</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+        <record id="state_J_ZJ" model="dtdream.hr.state">
+            <field name="name">镇江市</field>
+            <field name="abbre">ZJ</field>
+            <field name="pro_name">江苏省</field>
+        </record>
+
+
+        <record id="state_L_AS" model="dtdream.hr.state">
+            <field name="name">鞍山市</field>
+            <field name="abbre">AS</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_BX" model="dtdream.hr.state">
+            <field name="name">本溪市</field>
+            <field name="abbre">BX</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_CY" model="dtdream.hr.state">
+            <field name="name">朝阳市</field>
+            <field name="abbre">CY</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_DD" model="dtdream.hr.state">
+            <field name="name">丹东市</field>
+            <field name="abbre">DD</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_DL" model="dtdream.hr.state">
+            <field name="name">大连市</field>
+            <field name="abbre">DL</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_FS" model="dtdream.hr.state">
+            <field name="name">抚顺市</field>
+            <field name="abbre">FS</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_FX" model="dtdream.hr.state">
+            <field name="name">阜新市</field>
+            <field name="abbre">FX</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_HLD" model="dtdream.hr.state">
+            <field name="name">葫芦岛市</field>
+            <field name="abbre">HLD</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_LY" model="dtdream.hr.state">
+            <field name="name">辽阳市</field>
+            <field name="abbre">LY</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_PJ" model="dtdream.hr.state">
+            <field name="name">盘锦市</field>
+            <field name="abbre">PJ</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_SY" model="dtdream.hr.state">
+            <field name="name">沈阳市</field>
+            <field name="abbre">SY</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_TL" model="dtdream.hr.state">
+            <field name="name">铁岭市</field>
+            <field name="abbre">TL</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+        <record id="state_L_YK" model="dtdream.hr.state">
+            <field name="name">营口市</field>
+            <field name="abbre">YK</field>
+            <field name="pro_name">辽宁省</field>
+        </record>
+
+
+        <record id="state_S_AM" model="dtdream.hr.state">
             <field name="name">澳门特别行政区</field>
-            <field name="code">澳</field>
+            <field name="abbre">AM</field>
+            <field name="pro_name">澳门</field>
         </record>
+
+
+        <record id="state_Q_GL" model="dtdream.hr.state">
+            <field name="name">果洛藏族</field>
+            <field name="abbre">GL</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_HD" model="dtdream.hr.state">
+            <field name="name">海东市</field>
+            <field name="abbre">HD</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_HB" model="dtdream.hr.state">
+            <field name="name">海北藏族</field>
+            <field name="abbre">HB</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_HN" model="dtdream.hr.state">
+            <field name="name">黄南藏族</field>
+            <field name="abbre">HN</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_HN" model="dtdream.hr.state">
+            <field name="name">海南藏族</field>
+            <field name="abbre">HN</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_HX" model="dtdream.hr.state">
+            <field name="name">海西蒙古族</field>
+            <field name="abbre">HX</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_XN" model="dtdream.hr.state">
+            <field name="name">西宁市</field>
+            <field name="abbre">XN</field>
+            <field name="pro_name">青海省</field>
+        </record>
+        <record id="state_Q_YS" model="dtdream.hr.state">
+            <field name="name">玉树藏族</field>
+            <field name="abbre">YS</field>
+            <field name="pro_name">青海省</field>
+        </record>
+
+
+        <record id="state_S_ABZZ" model="dtdream.hr.state">
+            <field name="name">阿坝藏族羌族</field>
+            <field name="abbre">ABZZ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_BZ" model="dtdream.hr.state">
+            <field name="name">巴中市</field>
+            <field name="abbre">BZ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_CD" model="dtdream.hr.state">
+            <field name="name">成都市</field>
+            <field name="abbre">CD</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_DY" model="dtdream.hr.state">
+            <field name="name">德阳市</field>
+            <field name="abbre">DY</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_DZ" model="dtdream.hr.state">
+            <field name="name">达州市</field>
+            <field name="abbre">DZ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_GA" model="dtdream.hr.state">
+            <field name="name">广安市</field>
+            <field name="abbre">GA</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_GZZZ" model="dtdream.hr.state">
+            <field name="name">甘孜藏族</field>
+            <field name="abbre">GZZZ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_GY" model="dtdream.hr.state">
+            <field name="name">广元市</field>
+            <field name="abbre">GY</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_LSYZ" model="dtdream.hr.state">
+            <field name="name">凉山彝族</field>
+            <field name="abbre">LSYZ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_LS" model="dtdream.hr.state">
+            <field name="name">乐山市</field>
+            <field name="abbre">LS</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_LZ" model="dtdream.hr.state">
+            <field name="name">泸州市</field>
+            <field name="abbre">LZ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_MY" model="dtdream.hr.state">
+            <field name="name">绵阳市</field>
+            <field name="abbre">MY</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_MS" model="dtdream.hr.state">
+            <field name="name">眉山市</field>
+            <field name="abbre">MS</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_NC" model="dtdream.hr.state">
+            <field name="name">南充市</field>
+            <field name="abbre">NC</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_NJ" model="dtdream.hr.state">
+            <field name="name">内江市</field>
+            <field name="abbre">NJ</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_SN" model="dtdream.hr.state">
+            <field name="name">遂宁市</field>
+            <field name="abbre">SN</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_PZH" model="dtdream.hr.state">
+            <field name="name">攀枝花市</field>
+            <field name="abbre">PZH</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_YB" model="dtdream.hr.state">
+            <field name="name">宜宾市</field>
+            <field name="abbre">YB</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_YA" model="dtdream.hr.state">
+            <field name="name">雅安市</field>
+            <field name="abbre">YA</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_ZG" model="dtdream.hr.state">
+            <field name="name">自贡市</field>
+            <field name="abbre">ZG</field>
+            <field name="pro_name">四川省</field>
+        </record>
+        <record id="state_S_ZY" model="dtdream.hr.state">
+            <field name="name">资阳市</field>
+            <field name="abbre">ZY</field>
+            <field name="pro_name">四川省</field>
+        </record>
+
+
+        <record id="state_S_AK" model="dtdream.hr.state">
+            <field name="name">安康市</field>
+            <field name="abbre">AK</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_BJ" model="dtdream.hr.state">
+            <field name="name">宝鸡市</field>
+            <field name="abbre">BJ</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_HZ" model="dtdream.hr.state">
+            <field name="name">汉中市</field>
+            <field name="abbre">HZ</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_SL" model="dtdream.hr.state">
+            <field name="name">商洛市</field>
+            <field name="abbre">SL</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_TC" model="dtdream.hr.state">
+            <field name="name">铜川市</field>
+            <field name="abbre">TC</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_WN" model="dtdream.hr.state">
+            <field name="name">渭南市</field>
+            <field name="abbre">WN</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_XA" model="dtdream.hr.state">
+            <field name="name">西安市</field>
+            <field name="abbre">XA</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_XY" model="dtdream.hr.state">
+            <field name="name">咸阳市</field>
+            <field name="abbre">XY</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_YA" model="dtdream.hr.state">
+            <field name="name">延安市</field>
+            <field name="abbre">YA</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+        <record id="state_S_YL" model="dtdream.hr.state">
+            <field name="name">榆林市</field>
+            <field name="abbre">YL</field>
+            <field name="pro_name">陕西省</field>
+        </record>
+
+
+        <record id="state_S_CZ" model="dtdream.hr.state">
+            <field name="name">长治市</field>
+            <field name="abbre">CZ</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_DT" model="dtdream.hr.state">
+            <field name="name">大同市</field>
+            <field name="abbre">DT</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_JC" model="dtdream.hr.state">
+            <field name="name">晋城市</field>
+            <field name="abbre">JC</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_JZ" model="dtdream.hr.state">
+            <field name="name">晋中市</field>
+            <field name="abbre">JZ</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_LF" model="dtdream.hr.state">
+            <field name="name">临汾市</field>
+            <field name="abbre">LF</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_LL" model="dtdream.hr.state">
+            <field name="name">吕梁市</field>
+            <field name="abbre">LL</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_SZ" model="dtdream.hr.state">
+            <field name="name">朔州市</field>
+            <field name="abbre">SZ</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_TY" model="dtdream.hr.state">
+            <field name="name">太原市</field>
+            <field name="abbre">TY</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_XZ" model="dtdream.hr.state">
+            <field name="name">忻州市</field>
+            <field name="abbre">XZ</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_YQ" model="dtdream.hr.state">
+            <field name="name">阳泉市</field>
+            <field name="abbre">YQ</field>
+            <field name="pro_name">山西省</field>
+        </record>
+        <record id="state_S_YC" model="dtdream.hr.state">
+            <field name="name">运城市</field>
+            <field name="abbre">YC</field>
+            <field name="pro_name">山西省</field>
+        </record>
+
+
+        <record id="state_S_TW" model="dtdream.hr.state">
+            <field name="name">台湾</field>
+            <field name="abbre">TW</field>
+            <field name="pro_name">台湾省</field>
+        </record>
+
+
+        <record id="state_X_AL" model="dtdream.hr.state">
+            <field name="name">阿里地区</field>
+            <field name="abbre">AL</field>
+            <field name="pro_name">西藏</field>
+        </record>
+        <record id="state_X_CD" model="dtdream.hr.state">
+            <field name="name">昌都地区</field>
+            <field name="abbre">CD</field>
+            <field name="pro_name">西藏</field>
+        </record>
+        <record id="state_X_LS" model="dtdream.hr.state">
+            <field name="name">拉萨市</field>
+            <field name="abbre">LS</field>
+            <field name="pro_name">西藏</field>
+        </record>
+        <record id="state_X_LZ" model="dtdream.hr.state">
+            <field name="name">林芝地区</field>
+            <field name="abbre">LZ</field>
+            <field name="pro_name">西藏</field>
+        </record>
+        <record id="state_X_RKZ" model="dtdream.hr.state">
+            <field name="name">日喀则市</field>
+            <field name="abbre">RKZ</field>
+            <field name="pro_name">西藏</field>
+        </record>
+        <record id="state_X_SN" model="dtdream.hr.state">
+            <field name="name">山南地区</field>
+            <field name="abbre">SN</field>
+            <field name="pro_name">西藏</field>
+        </record>
+        <record id="state_X_NQ" model="dtdream.hr.state">
+            <field name="name">那曲地区</field>
+            <field name="abbre">NQ</field>
+            <field name="pro_name">西藏</field>
+        </record>
+
+
+        <record id="state_Y_BS" model="dtdream.hr.state">
+            <field name="name">保山市</field>
+            <field name="abbre">BS</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_CXYZ" model="dtdream.hr.state">
+            <field name="name">楚雄彝族</field>
+            <field name="abbre">CXYZ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_DLBZ" model="dtdream.hr.state">
+            <field name="name">大理白族</field>
+            <field name="abbre">DLBZ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_DHDZ" model="dtdream.hr.state">
+            <field name="name">德宏傣族景颇族</field>
+            <field name="abbre">DHDZ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_DQZZ" model="dtdream.hr.state">
+            <field name="name">迪庆藏族</field>
+            <field name="abbre">DQZZ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_HHHNZ" model="dtdream.hr.state">
+            <field name="name">红河哈尼族彝族</field>
+            <field name="abbre">HHHNZ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_KM" model="dtdream.hr.state">
+            <field name="name">昆明市</field>
+            <field name="abbre">KM</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_LC" model="dtdream.hr.state">
+            <field name="name">临沧市</field>
+            <field name="abbre">LC</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_LJ" model="dtdream.hr.state">
+            <field name="name">丽江市</field>
+            <field name="abbre">LJ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_NJLS" model="dtdream.hr.state">
+            <field name="name">怒江傈僳族</field>
+            <field name="abbre">NJLS</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_PE" model="dtdream.hr.state">
+            <field name="name">普洱市</field>
+            <field name="abbre">PE</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_QJ" model="dtdream.hr.state">
+            <field name="name">曲靖市</field>
+            <field name="abbre">QJ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_ST" model="dtdream.hr.state">
+            <field name="name">昭通市</field>
+            <field name="abbre">ST</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_WSZZ" model="dtdream.hr.state">
+            <field name="name">文山壮族苗族</field>
+            <field name="abbre">WSZZ</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_XSBN" model="dtdream.hr.state">
+            <field name="name">西双版纳傣族</field>
+            <field name="abbre">XSBN</field>
+            <field name="pro_name">云南省</field>
+        </record>
+        <record id="state_Y_YX" model="dtdream.hr.state">
+            <field name="name">玉溪市</field>
+            <field name="abbre">YX</field>
+            <field name="pro_name">云南省</field>
+        </record>
+
     </data>
 </openerp>

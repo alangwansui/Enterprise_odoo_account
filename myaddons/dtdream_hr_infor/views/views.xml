@@ -59,13 +59,13 @@
                       <page>
                         <field name="family">
                            <tree editable="bottom">
-                              <field name="relation"/>
-                              <field name="name"/>
-                              <field name="company"/>
-                              <field name="address"/>
-                              <field name="postcode"/>
-                              <field name="mail"/>
-                              <field name="tel"/>
+                              <field name="relation" required="True"/>
+                              <field name="name" required="True"/>
+                              <field name="company" required="True"/>
+                              <field name="address" required="True"/>
+                              <field name="postcode" required="True"/>
+                              <field name="mail" required="True"/>
+                              <field name="tel" required="True"/>
                               <field name="emergency"/>
                            </tree>
                         </field>
@@ -75,32 +75,19 @@
 
                 <group string="社保公积金">
                     <group>
-                        <div style="margin-right:-15px">
-                            <label for="province_hukou" string="户口所在地(省)" style="font-weight:bold"/>
-                            <field name="province_hukou" class="oe_inline"  placeholder="请选择省份"/>
-                            <label for="state_hukou" string="(市)" style="font-weight:bold"/>
-                            <field name="state_hukou" class="oe_inline" placeholder=" 请选择市区" />
-
-                            <label for="ahead_prov" string="原社保缴纳地(省)" style="font-weight:bold"/>
-                            <field name="ahead_prov" class="oe_inline"  placeholder="请选择省份"/>
-                            <label for="ahead_state" string="(市)" style="font-weight:bold"/>
-                            <field name="ahead_state" class="oe_inline" placeholder=" 请选择市区"/>
-
-                            <label for="shebao_prov" string="原公积金缴纳地(省)" style="font-weight:bold"/>
-                            <field name="shebao_prov" class="oe_inline" placeholder="请选择省份"/>
-                            <label for="gongjijin_state" string="(市)" style="font-weight:bold"/>
-                            <field name="gongjijin_state" class="oe_inline" placeholder=" 请选择市区"/>
-
-                            <label for="now_prov" string="申请社保缴纳地(省)" style="font-weight:bold"/>
-                            <field name="now_prov" class="oe_inline"  placeholder="请选择省份"/>
-                            <label for="now_state" string="(市)" style="font-weight:bold"/>
-                            <field name="now_state" class="oe_inline" placeholder=" 请选择市区"/>
-                        </div>
+                        <field name="province_hukou"/>
+                        <field name="state_hukou"/>
+                        <field name="shebao_prov"/>
+                        <field name="gongjijin_state"/>
+                        <field name="ahead_prov"/>
+                        <field name="ahead_state"/>
                     </group>
                     <group>
-                         <field name="nature_hukou"/>
-                         <field name="endtime_gongjijin"/>
-                         <field name="endtime_shebao"/>
+                        <field name="now_prov"/>
+                        <field name="now_state"/>
+                        <field name="nature_hukou"/>
+                        <field name="endtime_gongjijin"/>
+                        <field name="endtime_shebao"/>
                     </group>
                 </group>
 
@@ -118,5 +105,126 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_dtdream_hr_provinve_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.province.tree</field>
+        <field name="model">dtdream.hr.province</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_provinve_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.province.form</field>
+        <field name="model">dtdream.hr.province</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="abbre" placeholder="例如,浙江省的缩写:ZJ"/>
+                        </group>
+                        <group>
+                            <field name="code"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_state_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.state.tree</field>
+        <field name="model">dtdream.hr.state</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="pro_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_state_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.state.form</field>
+        <field name="model">dtdream.hr.state</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="province" required="True"/>
+                            <field name="abbre" placeholder="例如,杭州市的缩写:HZ"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_contract_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.contract.tree</field>
+        <field name="model">dtdream.hr.contract</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="num"/>
+                <field name="department"/>
+                <field name="date_start"/>
+                <field name="date_stop"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_contract_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.contract.form</field>
+        <field name="model">dtdream.hr.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="num"/>
+                            <field name="date_stop"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="date_start"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_dtdream_hr_contract" model="ir.actions.act_window">
+        <field name="name">合同</field>
+        <field name="res_model">dtdream.hr.contract</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('name.id','=',active_id)]</field>
+    </record>
+
+    <record id="view_employee_form_contract_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.contract.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_hr_contract)d"
+                icon="fa-strikethrough" string="合同">
+               </button>
+            </button>
+        </field>
+    </record>
+
   </data>
 </openerp>
