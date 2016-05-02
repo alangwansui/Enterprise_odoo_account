@@ -115,6 +115,10 @@ class dtdream_hr_contract(models.Model):
     date_start = fields.Date(string="合同开始日期", required=True)
     date_stop = fields.Date(string="合同结束日期", required=True)
 
+    _sql_constraints = [
+        ("date_check", "CHECK(date_start < date_stop)", u'合同结束日期必须大于合同开始日期')
+    ]
+
 
 
 

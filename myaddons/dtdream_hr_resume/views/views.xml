@@ -8,12 +8,16 @@
         <field name="arch" type="xml">
             <form>
                <header>
-                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"/>
-                    <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"/>
-                    <button name="%(act_resume_wizard)d" string="驳回" type="action" class="oe_highlight"/>
-                    <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"/>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','0')]}"/>
+                    <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','1')]}"/>
+                    <button name="%(act_resume_wizard)d" string="驳回" type="action" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','1')]}"/>
+                    <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','-1')]}"/>
                     <field name="state"  widget="statusbar"
-                           statusbar_visible="0,99"/>
+                           statusbar_visible="0,1,99"/>
                </header>
               <sheet>
                 <group string="基本信息">
@@ -135,7 +139,7 @@
         <field name="arch" type="xml">
             <button name="toggle_active" position="before">
                <button class="oe_stat_button" type="action" name="%(act_dtdream_hr_resume)d"
-                icon="fa-strikethrough" string="履历">
+                icon="fa-graduation-cap" string="履历">
                </button>
             </button>
         </field>

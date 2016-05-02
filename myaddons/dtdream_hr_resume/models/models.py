@@ -28,6 +28,22 @@ class dtdream_hr_resume(models.Model):
          ("99", "完成"),
          ("-1", "驳回")], string="状态", default="0")
 
+    @api.multi
+    def wkf_draft(self):
+        self.write({'state': '0'})
+
+    @api.multi
+    def wkf_approve(self):
+        self.write({'state': '1'})
+
+    @api.multi
+    def wkf_done(self):
+        self.write({'state': '99'})
+
+    @api.multi
+    def wkf_reject(self):
+        self.write({'state': '-1'})
+
 
 class dtdream_hr_experience(models.Model):
     _name = "hr.employee.experience"
@@ -39,6 +55,10 @@ class dtdream_hr_experience(models.Model):
     company = fields.Char(string="工作单位", required=True)
     post = fields.Char(string="职位", required=True)
     remark = fields.Char(string="备注")
+
+    _sql_constraints = [
+        ("date_check", "CHECK(start_time < end_time)", u'结束日期必须大于开始日期')
+    ]
 
 
 class dtdream_hr_title(models.Model):
@@ -61,6 +81,10 @@ class dtdream_hr_degree(models.Model):
     leave_time = fields.Date(string="在校时间(止)", required=True)
     school = fields.Char(string="学校", required=True)
     major = fields.Char(string="专业", required=True)
+
+    _sql_constraints = [
+        ("date_check", "CHECK(entry_time < leave_time)", u'结束日期必须大于开始日期')
+    ]
 
 
 class dtdream_hr_language(models.Model):
