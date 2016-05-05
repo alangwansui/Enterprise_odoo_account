@@ -28,9 +28,10 @@
                     <group>
                         <field name="workid"/>
                         <field name="has_title"/>
+                        <field name="is_graduate" invisible="True"/>
                     </group>
                 </group>
-                <group string="工作经历">
+                <group string="工作经历" attrs="{'invisible':[('is_graduate','=',True)]}">
                     <div>
                          <p style="padding-left: 40px">入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
                         <notebook>

@@ -50,6 +50,7 @@ class leaving_handle(models.Model):
                         cur_approver_ids.append(process.process_approver.id)
                 rec.cur_approvers = self.env["hr.employee"].browse(cur_approver_ids)
             elif rec.state =='5':
+                cur_approver_ids = []
                 for process in rec.leaving_handle_process_ids2:
                     if not (process.is_finish or process.is_other):
                         cur_approver_ids.append(process.process_approver.id)
@@ -64,6 +65,10 @@ class leaving_handle(models.Model):
 
     def _default_current_employee(self):
         return self.env["hr.employee"].search([("login","=",self.env.user.login)])
+
+    @api.depends("name")
+    def _compute_is_admin(self):
+        self.is_admin = self.user_has_groups('dtdream_hr_leaving.group_dtdream_leaving_admin')
 
     state_list = [('0','草稿'),('1','离职办理确认'),('2','工作交接确认'),('3','离岗前环节'),('4','员工离岗确认'),('5','离岗后环节'),('6','离职手续办理完毕确认'),('7','启动离职结算'),('8','离职结算支付确认'),('-1','驳回'),('99','完成')]
     state_dict = dict(state_list)
@@ -87,68 +92,158 @@ class leaving_handle(models.Model):
     cur_approver_users = fields.Many2many("res.users",string="当前处理人",compute=_compute_cur_approver,store=True)
     manager_id = fields.Many2one("hr.employee",string="主管")
     assistant_id = fields.Many2one('hr.employee', string="行政助理")
+    is_admin = fields.Boolean("是否管理员",compute=_compute_is_admin)
+
+
+    def get_base_url(self,cr,uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
 
     @api.multi
     def wkf_draft(self):
-        temp1 = self.env['leaving.handle.process'].search([('leaving_handle_id1','=',self.id)])
-        temp2 = self.env['leaving.handle.process'].search([('leaving_handle_id2','=',self.id)])
-        if len(temp1)+len(temp2) == 0:
-            records1 = self.env['process.process'].search([('parent_process','=','3')])
-            for record in records1:
-                self.env['leaving.handle.process'].create({"process_id":record.id, "leaving_handle_id1":self.id})
-            records2 = self.env['process.process'].search([('parent_process','=','5')])
-            for record in records2:
-                self.env['leaving.handle.process'].create({"process_id":record.id, "leaving_handle_id2":self.id})
+        self.write({"state": "0"})
 
+    # 审批时发送的邮件
+    def approver_mail(self):
+        subject = '%s的离职办理已经进入%s，请您审批' % (self.name.user_id.name, self.state_dict[self.state])
+        email_to = "";
+        for employee in self.cur_approvers:
+            email_to += employee.work_email+";"
+        if email_to:
+            base_url = self.get_base_url()
+            link = '/web#id=%s&view_type=form&model=leaving.handle' % self.id
+            url = base_url + link
 
-        self.write({"state":"0"})
+            self.env['mail.mail'].create({
+                'body_html': '<p>您好</p>'
+                             '<p>%s的离职办理等待您的审批</p>'
+                             '<p>请点击链接进入审批:'
+                             '<a href="%s">%s</a></p>'
+                             '<p>dodo</p>'
+                             '<p>万千业务，简单有do</p>'
+                             '<p>%s<p>' % (self.name.user_id.name, url, url, self.write_date[:10]),
+                'subject': subject,
+                'email_to': email_to,
+                'auto_delete': False,
+            }).send()
+
+    # 驳回到上一步时发送的邮件
+    def reject_mail(self):
+        subject = '%s的离职办理被驳回至%s，请您审批' % (self.name.user_id.name, self.state_dict[self.state])
+        email_to = "";
+        for employee in self.cur_approvers:
+            email_to += employee.work_email + ";"
+        if email_to:
+            base_url = self.get_base_url()
+            link = '/web#id=%s&view_type=form&model=leaving.handle' % self.id
+            url = base_url + link
+
+            self.env['mail.mail'].create({
+                'body_html': '<p>您好</p>'
+                             '<p>%s的离职办理等待您的审批</p>'
+                             '<p>请点击链接进入审批:'
+                             '<a href="%s">%s</a></p>'
+                             '<p>dodo</p>'
+                             '<p>万千业务，简单有do</p>'
+                             '<p>%s<p>' % (self.name.user_id.name, url, url, self.write_date[:10]),
+                'subject': subject,
+                'email_to': email_to,
+                'auto_delete': False,
+            }).send()
 
     @api.multi
     def wkf_approve1(self):
+        origin_state = self.state
         self.write({"state":"1"})
+        if origin_state == "0":
+            self.approver_mail()
+        elif origin_state == "2":
+            self.reject_mail()
 
     @api.multi
     def wkf_approve2(self):
+        origin_state = self.state
         self.write({"state":"2"})
+        if origin_state == "1":
+            self.approver_mail()
+        elif origin_state == "3":
+            self.reject_mail()
 
     @api.multi
     def wkf_approve3(self):
+        origin_state = self.state
         self.write({"state":"3"})
+        if origin_state == "2":
+            self.env['leaving.handle.process'].search([('leaving_handle_id1', '=', self.id)]).unlink()
+            records = self.env['process.process'].search([('parent_process', '=', '3')])
+            for record in records:
+                self.env['leaving.handle.process'].create({"process_id": record.id, "leaving_handle_id1": self.id})
+
+            self.approver_mail()
+        elif origin_state == "4":
+            self.reject_mail()
 
     @api.multi
     def wkf_approve4(self):
+        origin_state = self.state
         self.write({"state":"4"})
+        if origin_state == "3":
+            self.approver_mail()
+        elif origin_state == "5":
+            self.reject_mail()
 
     @api.multi
     def wkf_approve5(self):
+        origin_state = self.state
         self.write({"state":"5"})
+        if origin_state == "4":
+            self.env['leaving.handle.process'].search([('leaving_handle_id2', '=', self.id)]).unlink()
+            records = self.env['process.process'].search([('parent_process', '=', '5')])
+            for record in records:
+                self.env['leaving.handle.process'].create({"process_id": record.id, "leaving_handle_id2": self.id})
+
+            self.approver_mail()
+        elif origin_state == "6":
+            self.reject_mail()
+
 
     @api.multi
     def wkf_approve6(self):
+        origin_state = self.state
         self.write({"state":"6"})
+        if origin_state == "5":
+            self.approver_mail()
+        elif origin_state == "7":
+            self.reject_mail()
 
     @api.multi
     def wkf_approve7(self):
+        origin_state = self.state
         self.write({"state":"7"})
+        if origin_state == "6":
+            self.approver_mail()
+        elif origin_state == "8":
+            self.reject_mail()
 
     @api.multi
     def wkf_approve8(self):
+        origin_state = self.state
         self.write({"state": "8"})
+        if origin_state == "7":
+            self.approver_mail()
+        elif origin_state == "9":
+            self.reject_mail()
 
     @api.multi
     def wkf_done(self):
         self.write({"state":"99"})
-
-    @api.multi
-    def wkf_reject(self):
-        pass
 
 # 审批记录
 class leaving_handle_approve_record(models.Model):
     _name = "leaving.handle.approve.record"
 
     name = fields.Char("审批环节")
-    result = fields.Selection([("agree","同意"),("reject","返回上一步"),("other","不涉及")],string="审批结果")
+    result = fields.Selection([("agree","同意"),("reject","驳回到上一步"),("other","不涉及")],string="审批结果")
     opinion = fields.Text("意见", required=True)
     actual_leavig_date = fields.Date("实际离岗时间")
     leaving_handle_id = fields.Many2one("leaving.handle",string="离职交接申请")
@@ -204,6 +299,7 @@ class process_process(models.Model):
     code = fields.Char("环节编码")
     parent_process = fields.Selection([('3','离岗前环节'),('5','离岗后环节')],string="所属环节")
     approver = fields.Many2one("hr.employee",string="审批人")
+    is_assistant = fields.Boolean("是否行政助理审批")
 
 #离职交接办理环节审批人配置
 class leaving_handle_approver(models.Model):

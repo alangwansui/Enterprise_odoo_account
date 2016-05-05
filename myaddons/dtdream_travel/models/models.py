@@ -127,7 +127,7 @@ class dtdream_travel(models.Model):
 
     def unlink(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids, context=context):
-            if rec.state != '0':
+            if rec.state != '0'and rec.env.user.id != 1:
                 raise osv.except_osv(u'审批流程中的出差申请单无法删除!')
             return super(dtdream_travel, self).unlink(cr, uid, ids, context)
 
@@ -155,23 +155,31 @@ class dtdream_travel(models.Model):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
         return base_url
 
-    def send_mail(self, subject, content, email_to, email_cc=""):
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream.travel.chucha' % self.id
         url = base_url+link
         email_to = email_to
         email_cc = "" if email_cc == email_to else email_cc
         subject = subject
-        appellation = u'您好：'
+        if wait:
+            appellation = u'{0},您好：'.format(self.name.user_id.name)
+        else:
+            appellation = u'{0},您好：'.format(self.shenpiren.user_id.name)
         content = content
         self.env['mail.mail'].create({
                 'body_html': '''<p>%s</p>
                                 <p>%s</p>
-                                <p>点击链接进入查看:</p>
-                                <ul><li><a href="%s">%s</a></li></ul>
-                                <pre>
-                                <p>数梦企业应用平台<p></pre>''' % (appellation, content, url, url),
+                                <p>点击链接进入查看:
+                                <a href="%s">%s</a></p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, url, self.write_date[:10]),
                 'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
                 'email_cc': '%s' % email_cc,
                 'auto_delete': False,
@@ -248,16 +256,20 @@ class dtdream_travel(models.Model):
     def wkf_approve1(self):
         self.write({'state': '1', "shenpiren": self.shenpi_first.id})
         self.message_post(body=u'提交,草稿 --> 一级审批 '+u'下一审批人:' + self.shenpi_first.name)
-        self.send_mail(u"出差申请待审批", u"{0}提交了出差申请,等待您的审批".format(self.name.name), email_to= self.shenpi_first.work_email)
+        self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                       u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_first.work_email)
 
     @api.multi
     def wkf_approve2(self):
         if self.shenpi_second.id:
             if self.department_shouyi != self.name.department_id and not self.shenpi_third:
                 raise osv.except_osv(u'申请人与受益部门不是同一部门，请填写第三审批人!')
-            content = u'%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_first.name, self.shenpi_second.name)
-            self.send_mail(subject=u'出差申请审批通过', content=content, email_to=self.name.work_email, email_cc=self.create_uid.email)
-            self.send_mail(u"出差申请待审批", u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_second.work_email)
+            content = u'%s批准了您的出差申请！' % self.shenpi_first.name
+            self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+                self.name.name, self.create_time[:10], self.shenpi_first.name), content=content,
+                email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_second.work_email)
             self.write({'state': '2', "shenpiren": self.shenpi_second.id, "approve": [(4, self.shenpi_first.id)]})
             self.message_post(body=u'批准,一级审批 --> 二级审批 '+u'下一审批人:' + self.shenpi_second.name)
         else:
@@ -268,48 +280,61 @@ class dtdream_travel(models.Model):
         if self.shenpi_third.id:
             self.write({'state': '3', "shenpiren": self.shenpi_third.id, "approve": [(4, self.shenpi_second.id)]})
             self.message_post(body=u' 批准,二级审批 --> 三级审批 '+u'下一审批人:' + self.shenpi_third.name)
-            self.send_mail(u"出差申请待审批", u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_third.work_email)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_third.work_email)
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_second.id)]})
             self.message_post(body=u' 批准,二级审批 --> 完成 ')
-        content = u'%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_second.name, self.shenpi_third.name)
-        self.send_mail(subject=u'出差申请审批通过', content=content, email_to=self.name.work_email, email_cc=self.create_uid.email)
+        content = u'%s批准了您的出差申请！' % self.shenpi_second.name
+        self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+            self.name.name, self.create_time[:10], self.shenpi_second.name), content=content,
+            email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
 
     @api.multi
     def wkf_approve4(self):
         if self.shenpi_fourth.id:
             self.write({'state': '4', "shenpiren": self.shenpi_fourth.id, "approve": [(4, self.shenpi_third.id)]})
             self.message_post(body=u' 批准,三级审批 --> 四级审批 '+u'下一审批人:' + self.shenpi_fourth.name)
-            self.send_mail(u"出差申请待审批", u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_fourth.work_email)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_fourth.work_email)
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_third.id)]})
             self.message_post(body=u' 批准,三级审批 --> 完成 ')
-        content = u'%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_third.name, self.shenpi_fourth.name)
-        self.send_mail(subject=u'出差申请审批通过', content=content, email_to=self.name.work_email, email_cc=self.create_uid.email)
+        content = u'%s批准了您的出差申请！' % self.shenpi_third.name
+        self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+            self.name.name, self.create_time[:10], self.shenpi_third.name), content=content,
+            email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
 
     @api.multi
     def wkf_approve5(self):
         if self.shenpi_fifth.id:
             self.write({'state': '5', "shenpiren": self.shenpi_fifth.id, "approve": [(4, self.shenpi_fourth.id)]})
             self.message_post(body=u' 批准,四级审批 --> 五级审批 '+u'下一审批人:' + self.shenpi_fifth.name)
-            self.send_mail(u"出差申请待审批", u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_fifth.work_email)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_fifth.work_email)
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fourth.id)]})
             self.message_post(body=u' 批准,四级审批 --> 完成 ')
-        content = u'%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_fourth.name, self.shenpi_fifth.name)
-        self.send_mail(subject=u'出差申请审批通过', content=content, email_to=self.name.work_email, email_cc=self.create_uid.email)
+        content = u'%s批准了您的出差申请！' % self.shenpi_fourth.name
+        self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+            self.name.name, self.create_time[:10], self.shenpi_fourth.name), content=content,
+            email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
 
     @api.multi
     def wkf_done(self):
         content = u'%s批准了您的出差申请,审批已完成！' % self.shenpi_fifth.name
-        self.send_mail(subject=u'出差申请审批通过', content=content, email_to=self.name.work_email, email_cc=self.create_uid.email)
+        self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+            self.name.name, self.create_time[:10], self.shenpi_fifth.name), content=content,
+            email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
         self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fifth.id)]})
         self.message_post(body=u' 批准,五级审批 --> 完成 ')
 
     @api.multi
     def wkf_reject(self):
         content = u'%s驳回了您的出差申请！' % self.shenpiren.name
-        self.send_mail(subject=u'出差申请审批驳回', content=content, email_to=self.name.work_email, email_cc=self.create_uid.email)
+        self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}驳回,请您查看!".format(
+            self.name.name, self.create_time[:10], self.shenpiren.name), content=content,
+            email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
         self.write({'state': '-1', "shenpiren": ''})
 
 

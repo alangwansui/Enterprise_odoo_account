@@ -92,13 +92,6 @@
         <field name="action">wkf_done()</field>
      </record>
 
-    <record model="workflow.activity" id="act_reject"> <!-- 审批驳回 -->
-        <field name="wkf_id" ref="wkf_leaving_handle" />
-        <field name="name">驳回</field>
-        <field name="kind">function</field>
-        <field name="action">wkf_reject()</field>
-     </record>
-
     <!--
         workflow transition
     -->

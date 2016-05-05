@@ -24,8 +24,8 @@
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
         'security/security.xml',
+        'security/ir.model.access.csv',
         'views/menu.xml',
         'wizard/leaving_handle_wizard.xml',
         'views/leaving_handle.xml',

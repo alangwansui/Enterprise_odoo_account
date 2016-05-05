@@ -9,7 +9,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
-          <field name="approver"/>
+          <field name="approver" widget="many2many_tags"/>
         </tree>
       </field>
     </record>

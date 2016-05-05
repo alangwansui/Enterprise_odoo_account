@@ -17,111 +17,133 @@
       <field name="parent_process">3</field>
       <field name="code">101</field>
       <field name="name">资产交接</field>
+      <field name="is_assistant" eval="True"></field>
     </record>
     <record model="process.process" id="process_process_3_2">
       <field name="parent_process">3</field>
       <field name="code">102</field>
       <field name="name">资产交接监督</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_3">
       <field name="parent_process">3</field>
       <field name="code">103</field>
       <field name="name">借用备归还</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_4">
       <field name="parent_process">3</field>
       <field name="code">104</field>
       <field name="name">公司借货审计</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_5">
       <field name="parent_process">3</field>
       <field name="code">105</field>
       <field name="name">个人户口转出</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_6">
       <field name="parent_process">3</field>
       <field name="code">106</field>
       <field name="name">档案转出（杭州）</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_7">
       <field name="parent_process">3</field>
       <field name="code">107</field>
       <field name="name">档案转出（北京）</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_8">
       <field name="parent_process">3</field>
       <field name="code">108</field>
       <field name="name">居住证注销（北京）</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_9">
       <field name="parent_process">3</field>
       <field name="code">109</field>
       <field name="name">党组织关系转出</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_3_10">
       <field name="parent_process">3</field>
       <field name="code">110</field>
       <field name="name">工卡归还</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_1">
       <field name="parent_process">5</field>
       <field name="code">201</field>
       <field name="name">考勤截止</field>
+      <field name="is_assistant" eval="True"></field>
     </record>
     <record model="process.process" id="process_process_5_2">
       <field name="parent_process">5</field>
       <field name="code">202</field>
       <field name="name">考勤确认</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_3">
       <field name="parent_process">5</field>
       <field name="code">203</field>
       <field name="name">社保停缴</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_4">
       <field name="parent_process">5</field>
       <field name="code">204</field>
       <field name="name">住房公积金停缴</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_5">
       <field name="parent_process">5</field>
       <field name="code">205</field>
       <field name="name">域账号关闭</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_6">
       <field name="parent_process">5</field>
       <field name="code">206</field>
       <field name="name">邮箱关闭</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_7">
       <field name="parent_process">5</field>
       <field name="code">207</field>
       <field name="name">OA状态调整</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_8">
       <field name="parent_process">5</field>
       <field name="code">208</field>
       <field name="name">钉钉关闭</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_9">
       <field name="parent_process">5</field>
       <field name="code">209</field>
       <field name="name">微信关闭</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_10">
       <field name="parent_process">5</field>
       <field name="code">210</field>
       <field name="name">论坛关闭</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_11">
       <field name="parent_process">5</field>
       <field name="code">211</field>
       <field name="name">数梦学堂关闭</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
     <record model="process.process" id="process_process_5_12">
       <field name="parent_process">5</field>
       <field name="code">212</field>
       <field name="name">dodo账号注销</field>
+      <field name="is_assistant" eval="False"></field>
     </record>
   </data>
 </openerp>

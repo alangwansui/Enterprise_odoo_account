@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class dtdream_hr_infor(models.Model):
@@ -13,6 +14,11 @@ class dtdream_hr_infor(models.Model):
             "ahead_state": ['|', ('pro_name', '=', self.ahead_prov.name), ('province', "=", self.ahead_prov.id)],
             "now_state": ['|', ('pro_name', '=', self.now_prov.name), ('province', "=", self.now_prov.id)],
             "gongjijin_state": ['|', ('pro_name', '=', self.shebao_prov.name), ('province', "=", self.shebao_prov.id)]}}
+
+    @api.constrains("family")
+    def _check_family_null(self):
+        if not len(self.family):
+            raise ValidationError(u"请至少设置一名紧急联系人")
 
     account = fields.Char(string="账号", required=True)
     byname = fields.Char(string="等价花名")
@@ -33,14 +39,14 @@ class dtdream_hr_infor(models.Model):
     province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)", required=True)
     state_hukou = fields.Many2one("dtdream.hr.state", string="户口所在地(市)", required=True)
     nature_hukou = fields.Selection([("0", "城镇"), ("1", "农村")], string="户口性质", required=True)
-    endtime_shebao = fields.Date(string="上家单位社保缴纳截止月份", required=True)
-    endtime_gongjijin = fields.Date(string="上家单位公积金缴纳截止月份", required=True)
-    ahead_prov = fields.Many2one("dtdream.hr.province", string="原社保缴纳地(省)", required=True)
-    ahead_state = fields.Many2one("dtdream.hr.state", string="原社保缴纳地(市)", required=True)
-    now_prov = fields.Many2one("dtdream.hr.province", string="申请社保缴纳地(省)",  required=True)
+    endtime_shebao = fields.Date(string="上家单位社保缴纳截止月份")
+    endtime_gongjijin = fields.Date(string="上家单位公积金缴纳截止月份")
+    ahead_prov = fields.Many2one("dtdream.hr.province", string="原社保缴纳地(省)")
+    ahead_state = fields.Many2one("dtdream.hr.state", string="原社保缴纳地(市)")
+    now_prov = fields.Many2one("dtdream.hr.province", string="申请社保缴纳地(省)", required=True)
     now_state = fields.Many2one("dtdream.hr.state", string="申请社保缴纳地(市)", required=True)
-    shebao_prov = fields.Many2one("dtdream.hr.province", string="原公积金缴纳地(省)", required=True)
-    gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)", required=True)
+    shebao_prov = fields.Many2one("dtdream.hr.province", string="原公积金缴纳地(省)")
+    gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)")
     oil_card = fields.Char(string="油卡编号")
     has_oil = fields.Boolean(string="已办理中大一卡通")
     contract = fields.One2many("dtdream.hr.contract", "name", string="合同")

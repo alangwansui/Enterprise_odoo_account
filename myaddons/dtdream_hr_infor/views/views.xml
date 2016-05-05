@@ -76,18 +76,18 @@
                 <group string="社保公积金">
                     <group>
                         <field name="province_hukou"/>
-                        <field name="state_hukou"/>
-                        <field name="shebao_prov"/>
-                        <field name="gongjijin_state"/>
-                        <field name="ahead_prov"/>
-                        <field name="ahead_state"/>
+                        <field name="now_prov"/>
+                        <field name="shebao_prov" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}"/>
+                        <field name="ahead_prov" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}"/>
+                        <field name="endtime_gongjijin" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}"/>
+                        <field name="nature_hukou"/>
                     </group>
                     <group>
-                        <field name="now_prov"/>
+                        <field name="state_hukou"/>
                         <field name="now_state"/>
-                        <field name="nature_hukou"/>
-                        <field name="endtime_gongjijin"/>
-                        <field name="endtime_shebao"/>
+                        <field name="gongjijin_state" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}"/>
+                        <field name="ahead_state" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}"/>
+                        <field name="endtime_shebao" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}"/>
                     </group>
                 </group>
 

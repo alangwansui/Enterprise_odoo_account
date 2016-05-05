@@ -52,7 +52,10 @@
         <menuitem name="待我审批" sequence="20" id="dtdream_hr_leaving_approving" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_approving"></menuitem>
         <menuitem name="我已审批" sequence="30" id="dtdream_hr_leaving_approved" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_approved"></menuitem>
         <menuitem name="所有单据" sequence="40" id="dtdream_hr_leaving_all" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_all"></menuitem>
-        <menuitem name="离职办理环节配置" sequence="15" id="dtdream_process_process" parent="hr.menu_human_resources_configuration" action="act_dtdream_process_process"></menuitem>
-        <menuitem name="离职办理审批人配置" sequence="20" id="dtdream_process_approver" parent="hr.menu_human_resources_configuration" action="act_dtdream_process_approver"></menuitem>
+        <menuitem id="hr.menu_human_resources_configuration" name="配置" parent="hr.menu_hr_root" sequence="100" groups="base.group_configuration,base.group_hr_manager,group_dtdream_leaving_admin"/>
+        <menuitem name="离职办理环节配置" sequence="15" id="dtdream_process_process" parent="hr.menu_human_resources_configuration" action="act_dtdream_process_process" groups="group_dtdream_leaving_admin"></menuitem>
+        <menuitem name="离职办理审批人配置" sequence="20" id="dtdream_process_approver" parent="hr.menu_human_resources_configuration" action="act_dtdream_process_approver" groups="group_dtdream_leaving_admin"></menuitem>
+
+
     </data>
 </openerp>

@@ -15,6 +15,7 @@ class dtdream_hr_resume(models.Model):
 
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
+    is_graduate = fields.Boolean(related="name.graduate", string="是应届毕业生")
     workid = fields.Char(string="工号", compute=_compute_workid_department)
     department = fields.Char(string="部门", compute=_compute_workid_department)
     has_title = fields.Boolean(string="是否有职称信息", default=True)
