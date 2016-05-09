@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class dtdream_hr_resume(models.Model):
@@ -12,6 +13,32 @@ class dtdream_hr_resume(models.Model):
         for rec in self:
             rec.workid = rec.name.job_number
             rec.department = rec.name.department_id.complete_name
+
+    @api.constrains("experince")
+    def check_start_end_time(self):
+        start = ""
+        end = ""
+        for index, experince in enumerate(self.experince):
+            if index == 0:
+                start = experince.start_time
+                end = experince.end_time
+            else:
+                if not(experince.start_time > end or experince.end_time < start):
+                    raise ValidationError("工作经历时间填写不合理,时间段之间存在重合!")
+
+    @api.constrains("degree")
+    def check_entry_leave_time(self):
+        start = ""
+        end = ""
+        if not len(self.degree):
+            raise ValidationError("至少填写一条学历信息!")
+        for index, degree in enumerate(self.degree):
+            if index == 0:
+                start = degree.entry_time
+                end = degree.leave_time
+            else:
+                if not(degree.entry_time > end or degree.leave_time < start):
+                    raise ValidationError("学历信息时间填写不合理,时间段之间存在重合!")
 
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
@@ -77,14 +104,14 @@ class dtdream_hr_degree(models.Model):
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     degree = fields.Char(string="专科及以上学历", required=True)
-    has_degree = fields.Boolean(string="是否获得学位", required=True)
+    has_degree = fields.Selection([("0", "是"), ("1", "否")], string="是否获得学位", required=True)
     entry_time = fields.Date(string="在校时间(始)", required=True)
     leave_time = fields.Date(string="在校时间(止)", required=True)
     school = fields.Char(string="学校", required=True)
     major = fields.Char(string="专业", required=True)
 
     _sql_constraints = [
-        ("date_check", "CHECK(entry_time < leave_time)", u'结束日期必须大于开始日期')
+        ("date_check", "CHECK(entry_time < leave_time)", u'在校时间(止)必须大于在校时间(始)')
     ]
 
 

@@ -7,18 +7,46 @@ from openerp.exceptions import ValidationError
 class dtdream_hr_infor(models.Model):
     _inherit = "hr.employee"
 
-    @api.onchange("province_hukou", "ahead_prov", "now_prov", "shebao_prov")
+    @api.onchange("Birthplace_province")
+    def _state_birthday_domain(self):
+        self.Birthplace_state = False
+        return {"domain": {"Birthplace_state": ['|', ('pro_name', '=', self.Birthplace_province.name),
+                                                ('province', "=", self.Birthplace_province.id)]}}
+
+    @api.onchange("province_hukou")
     def _state_hukou_domain(self):
-        return {"domain": {
-            "state_hukou": ['|', ('pro_name', '=', self.province_hukou.name), ('province', "=", self.province_hukou.id)],
-            "ahead_state": ['|', ('pro_name', '=', self.ahead_prov.name), ('province', "=", self.ahead_prov.id)],
-            "now_state": ['|', ('pro_name', '=', self.now_prov.name), ('province', "=", self.now_prov.id)],
-            "gongjijin_state": ['|', ('pro_name', '=', self.shebao_prov.name), ('province', "=", self.shebao_prov.id)]}}
+        self.state_hukou = False
+        return {"domain": {"state_hukou": ['|', ('pro_name', '=', self.province_hukou.name),
+                                           ('province', "=", self.province_hukou.id)]}}
+
+    @api.onchange("ahead_prov")
+    def _state_ahead_domain(self):
+        self.ahead_state = False
+        return {"domain": {"ahead_state": ['|', ('pro_name', '=', self.ahead_prov.name),
+                                           ('province', "=", self.ahead_prov.id)]}}
+
+    @api.onchange("now_prov")
+    def _state_now_domain(self):
+        self.now_state = False
+        return {"domain": {"now_state": ['|', ('pro_name', '=', self.now_prov.name),
+                                         ('province', "=", self.now_prov.id)]}}
+
+    @api.onchange("shebao_prov")
+    def _state_shebao_domain(self):
+        self.gongjijin_state = False
+        return {"domain": {"gongjijin_state": ['|', ('pro_name', '=', self.shebao_prov.name),
+                                               ('province', "=", self.shebao_prov.id)]}}
 
     @api.constrains("family")
     def _check_family_null(self):
-        if not len(self.family):
-            raise ValidationError(u"请至少设置一名紧急联系人")
+        for emergency in self.family:
+            if self.family.emergency:
+                return
+        raise ValidationError(u"请至少设置一名紧急联系人")
+
+    @api.onchange("mobile_self")
+    def _change_mobile_num(self):
+        self.mobile_phone = self.mobile_self
 
     account = fields.Char(string="账号", required=True)
     byname = fields.Char(string="等价花名")
@@ -33,7 +61,9 @@ class dtdream_hr_infor(models.Model):
     icard = fields.Char(string="身份证", required=True)
     postcode = fields.Char(string="邮编", required=True)
     birthday = fields.Date(string="出生日期", required=True)
-    Birthplace = fields.Char(string="籍贯", required=True)
+    mobile_self = fields.Char(string="手机号")
+    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯", required=True)
+    Birthplace_state = fields.Many2one("dtdream.hr.state", required=True)
     graduate = fields.Boolean(string="是否应届生")
     family = fields.One2many("hr.employee.family", "employee", string="家庭成员")
     province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)", required=True)
@@ -115,7 +145,8 @@ class dtdream_hr_contract(models.Model):
             rec.num = rec.name.job_number
             rec.department = rec.name.department_id.complete_name
 
-    name = fields.Many2one("hr.employee", string="花名", required=True)
+    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
+        [("id", "=", self.env.context.get('active_id'))]), readonly="True")
     num = fields.Char(string="工号", compute=_compute_num_department)
     department = fields.Char(string="部门", compute=_compute_num_department)
     date_start = fields.Date(string="合同开始日期", required=True)
