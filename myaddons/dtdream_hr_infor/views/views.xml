@@ -37,8 +37,8 @@
                       <field name="byname" placeholder="花名格式:花名1|花名2"/>
                       <label for="Birthplace_province" string="籍贯"/>
                       <div class="o_row">
-                          <field name="Birthplace_province" options="{'no_open': True}" string="省份" placeholder="请选择省份"/>
-                          <field name="Birthplace_state" options="{'no_open': True}" string="市区" placeholder="请选择市区"/>
+                          <field name="Birthplace_province" options="{'no_open': True,'no_create': True}" string="省份" placeholder="请选择省份"/>
+                          <field name="Birthplace_state" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"/>
                       </div>
                       <field name="birthday"/>
                       <field name="mobile_self" string="手机号" required="True"/>
@@ -81,23 +81,23 @@
                     <group>
                         <label for="hukou" string="户口所在地"/>
                         <div class="o_row">
-                            <field name="province_hukou" options="{'no_open': True}" string="省份" placeholder="请选择省份"/>
-                            <field name="state_hukou" options="{'no_open': True}" string="市区" placeholder="请选择市区"/>
+                            <field name="province_hukou" options="{'no_open': True, 'no_create': True}" string="省份" placeholder="请选择省份"/>
+                            <field name="state_hukou" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"/>
                         </div>
                         <label for="now" string="申请社保缴纳地"/>
                         <div class="o_row">
-                            <field name="now_prov" options="{'no_open': True}" string="省份" placeholder="请选择省份"/>
-                            <field name="now_state" options="{'no_open': True}" string="市区" placeholder="请选择市区"/>
+                            <field name="now_prov" options="{'no_open': True, 'no_create': True}" string="省份" placeholder="请选择省份"/>
+                            <field name="now_state" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"/>
                         </div>
                         <label for="shebao" string="原公积金缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
                         <div class="o_row">
-                            <field name="shebao_prov" options="{'no_open': True}" string="省份" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
-                            <field name="gongjijin_state" options="{'no_open': True}" string="市区" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                            <field name="shebao_prov" options="{'no_open': True, 'no_create': True}" string="省份" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                            <field name="gongjijin_state" options="{'no_open': True, 'no_create': True}" string="市区" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
                         </div>
                         <label for="ahead" string="原社保缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
                         <div class="o_row">
-                            <field name="ahead_prov" options="{'no_open': True}" string="省份" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
-                            <field name="ahead_state" options="{'no_open': True}" string="市区" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                            <field name="ahead_prov" options="{'no_open': True, 'no_create': True}" string="省份" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                            <field name="ahead_state" options="{'no_open': True, 'no_create': True}" string="市区" attrs="{'required':[('graduate','!=',True)], 'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
                         </div>
                     </group>
                     <group>
@@ -225,7 +225,7 @@
         <field name="res_model">dtdream.hr.contract</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">form</field>
         <field name="domain">[('name.id','=',active_id)]</field>
     </record>
 

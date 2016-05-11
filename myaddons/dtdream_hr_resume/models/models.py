@@ -2,10 +2,12 @@
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from datetime import datetime
 
 
 class dtdream_hr_resume(models.Model):
     _name = "dtdream.hr.resume"
+    _description = u"员工详细信息"
     _inherit = ['mail.thread']
 
     @api.depends('name')
@@ -40,6 +42,13 @@ class dtdream_hr_resume(models.Model):
                 if not(degree.entry_time > end or degree.leave_time < start):
                     raise ValidationError("学历信息时间填写不合理,时间段之间存在重合!")
 
+    @api.depends("experince")
+    def _compute_total_work(self):
+        total = 0
+        for rec in self.experince:
+            total += rec.age_work
+            self.total_work = total
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
     is_graduate = fields.Boolean(related="name.graduate", string="是应届毕业生")
@@ -47,6 +56,7 @@ class dtdream_hr_resume(models.Model):
     department = fields.Char(string="部门", compute=_compute_workid_department)
     has_title = fields.Boolean(string="是否有职称信息", default=True)
     experince = fields.One2many("hr.employee.experience", "resume", "工作经历")
+    total_work = fields.Float(string="合计工龄", compute=_compute_total_work)
     title = fields.One2many("hr.employee.title", "resume", "职称信息")
     degree = fields.One2many("hr.employee.degree", "resume", "学历信息")
     language = fields.One2many("hr.employee.language", "resume", "外语信息")
@@ -76,10 +86,19 @@ class dtdream_hr_resume(models.Model):
 class dtdream_hr_experience(models.Model):
     _name = "hr.employee.experience"
 
+    @api.depends("start_time", "end_time")
+    def _compute_age_work(self):
+        time_format = "%Y-%m-%d"
+        for rec in self:
+            if not rec.end_time or not rec.start_time:
+                continue
+            rec.age_work = round((datetime.strptime(rec.end_time, time_format) -
+                            datetime.strptime(rec.start_time, time_format)).days / 365.0, 2)
+
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     start_time = fields.Date(string="开始日期", required=True)
     end_time = fields.Date(string="结束日期", required=True)
-    age_work = fields.Float(string="工龄")
+    age_work = fields.Float(string="工龄", compute=_compute_age_work)
     company = fields.Char(string="工作单位", required=True)
     post = fields.Char(string="职位", required=True)
     remark = fields.Char(string="备注")
@@ -125,10 +144,26 @@ class dtdream_hr_language(models.Model):
     remark = fields.Char(string="备注")
 
 
+class dtdream_hr_resume_approve(models.Model):
+    _name = "hr.resume.approve"
+
+    name = fields.Char(default="履历信息审批人")
+    approve = fields.Many2many("hr.employve", string="履历信息审人")
+
+
+class dtdream_hr_remind_mobile(models.Model):
+    _name = "hr.remind.mobile"
+
+    name = fields.Char(default="员工手机号码变更通知人员配置")
+    remind = fields.Many2many("hr.employee", string="员工手机号码变更通知人员配置")
+
+
 class dtdream_hr_employee(models.Model):
     _inherit = 'hr.employee'
 
-    resume = fields.One2many("dtdream.hr.resume", "name", string="履历")
+    resume = fields.One2many("dtdream.hr.resume", "name", string="批人")
+
+
 
 
 

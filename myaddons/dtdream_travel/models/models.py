@@ -9,6 +9,7 @@ import re
 
 class dtdream_travel(models.Model):
     _name = 'dtdream.travel.chucha'
+    _description = u"出差"
     _inherit = ['mail.thread']
 
     warning_digit = {
@@ -171,7 +172,7 @@ class dtdream_travel(models.Model):
             appellation = u'{0},您好：'.format(self.shenpiren.user_id.name)
         content = content
         self.env['mail.mail'].create({
-                'body_html': '''<p>%s</p>
+                'body_html': u'''<p>%s</p>
                                 <p>%s</p>
                                 <p>点击链接进入查看:
                                 <a href="%s">%s</a></p>
@@ -181,7 +182,6 @@ class dtdream_travel(models.Model):
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
-                'email_cc': '%s' % email_cc,
                 'auto_delete': False,
             }).send()
 
@@ -201,18 +201,25 @@ class dtdream_travel(models.Model):
 
     @api.constrains("journey_id")
     def _check_start_end_time(self):
-        """检查各行程间时间是否冲突，或者与外出公干时间冲突"""
+        """检查各行程间时间是否冲突，是否与外出公干时间冲突,是否与之前提交的出差申请时间冲突"""
         min_start = ""
         cr = self.env["dtdream_hr_business.business_detail"].search([("business.name.id", "=", self.name.id),
-                                                                     ("business.state", "!=", "-1")])
+                                                                     ("business.state", "not in", (0, -1))])
+        crr = self.env["dtdream.travel.journey"].search([("travel_id.name.id", "=", self.name.id)])
         for journey in self.journey_id:
-            for detail in cr:
-                if detail.startTime[:10] < journey.starttime < detail.endTime[:10] or \
-                                        detail.startTime[:10] < journey.endtime < detail.endTime[:10]:
-                    raise ValidationError("{0}到{1}时间与外出公干时间重合".format(journey.starttime, journey.endtime))
             if journey.starttime < min_start:
                 raise ValidationError("出差时间与结束时间填写不合理,各行程间时间存在冲突!")
             min_start = journey.endtime
+            for travel in crr:
+                if travel.id == journey.id:
+                    continue
+                if travel.starttime[:10] <= journey.starttime < travel.endtime[:10] or \
+                                        travel.starttime[:10] < journey.endtime <= travel.endtime[:10]:
+                    raise ValidationError("{0}到{1}时间与之前提交的出差申请时间冲突!".format(journey.starttime, journey.endtime))
+            for detail in cr:
+                if detail.startTime[:10] <= journey.starttime < detail.endTime[:10] or \
+                                        detail.startTime[:10] < journey.endtime <= detail.endTime[:10]:
+                    raise ValidationError("{0}到{1}时间与外出公干时间重合".format(journey.starttime, journey.endtime))
 
     name = fields.Many2one('hr.employee', string="申请人", required=True, default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
     shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True)
@@ -335,16 +342,16 @@ class dtdream_travel(models.Model):
         self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}驳回,请您查看!".format(
             self.name.name, self.create_time[:10], self.shenpiren.name), content=content,
             email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
-        self.write({'state': '-1', "shenpiren": ''})
+        self.write({'state': '-1', "shenpiren": '', "approve": [(4, self.shenpiren.id)]})
 
 
 class dtdream_travel_journey(models.Model):
     _name = "dtdream.travel.journey"
 
-    @api.constrains("startaddress", "endaddress", "starttime", "endtime")
+    @api.constrains("startaddress", "endaddress", "starttime", "endtime", "reason")
     def _check_start_end_address(self):
-        if not self.startaddress or not self.endaddress or not self.starttime or not self.endtime:
-            raise ValidationError(u"出发地,目的地,出差时间,结束时间为必填项!")
+        if not self.startaddress or not self.endaddress or not self.starttime or not self.endtime or not self.reason:
+            raise ValidationError(u"出发地,目的地,出差时间,结束时间,出差原因为必填项!")
 
     travel_id = fields.Many2one("dtdream.travel.chucha", string="申请人")
     name = fields.Char(related="travel_id.name.full_name", string="姓名")

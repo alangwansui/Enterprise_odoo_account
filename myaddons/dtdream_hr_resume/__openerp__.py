@@ -24,6 +24,8 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/resume_wizard.xml',
+        'views/actions.xml',
+        'views/menu.xml',
         'views/views.xml',
         'views/templates.xml',
         'workflow/workflow.xml'

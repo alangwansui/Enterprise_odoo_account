@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_hr_resume" model="ir.actions.act_window">
+            <field name="name">履历</field>
+            <field name="res_model">dtdream.hr.resume</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="act_dtdream_hr_resume_approve" model="ir.actions.act_window">
+            <field name="name">履历信息审批人配置</field>
+            <field name="res_model">hr.resume.approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="act_dtdream_hr_remind_mobile" model="ir.actions.act_window">
+            <field name="name">员工手机号码变更通知人员配置</field>
+            <field name="res_model">hr.remind.mobile</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>
