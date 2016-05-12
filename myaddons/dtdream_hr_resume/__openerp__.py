@@ -23,6 +23,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'wizard/resume_wizard.xml',
         'views/actions.xml',
         'views/menu.xml',

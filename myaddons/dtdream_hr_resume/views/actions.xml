@@ -19,7 +19,7 @@
         </record>
 
         <record id="act_dtdream_hr_remind_mobile" model="ir.actions.act_window">
-            <field name="name">员工手机号码变更通知人员配置</field>
+            <field name="name">手机号码变更通知人员配置</field>
             <field name="res_model">hr.remind.mobile</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>

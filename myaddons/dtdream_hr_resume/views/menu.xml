@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <menuitem action="action_hr_resume" id="dtdream_hr_resume" parent="hr.menu_hr_root" name="履历" sequence="4" groups="base.group_hr_manager"/>
-        <menuitem name="员工履历信息审批人配置" sequence="5" id="dtdream_hr_approve" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
-        <menuitem name="员工手机号码变更通知人员配置" sequence="10" id="dtdream_hr_remind_mobile" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_remind_mobile" groups="base.group_hr_manager"/>
+        <menuitem name="履历信息审批人配置" sequence="5" id="dtdream_hr_approve" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
+        <menuitem name="手机号码变更通知人员配置" sequence="10" id="dtdream_hr_remind_mobile" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_remind_mobile" groups="base.group_hr_manager"/>
     </data>
 </openerp>

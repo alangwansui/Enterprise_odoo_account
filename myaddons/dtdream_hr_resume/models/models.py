@@ -148,20 +148,20 @@ class dtdream_hr_resume_approve(models.Model):
     _name = "hr.resume.approve"
 
     name = fields.Char(default="履历信息审批人")
-    approve = fields.Many2many("hr.employve", string="履历信息审人")
+    approve = fields.Many2many("hr.employee", string="履历信息审批人")
 
 
 class dtdream_hr_remind_mobile(models.Model):
     _name = "hr.remind.mobile"
 
-    name = fields.Char(default="员工手机号码变更通知人员配置")
-    remind = fields.Many2many("hr.employee", string="员工手机号码变更通知人员配置")
+    name = fields.Char(default="手机号码变更通知人员配置")
+    remind = fields.Many2many("hr.employee", string="手机号码变更通知人员")
 
 
 class dtdream_hr_employee(models.Model):
     _inherit = 'hr.employee'
 
-    resume = fields.One2many("dtdream.hr.resume", "name", string="批人")
+    resume = fields.One2many("dtdream.hr.resume", "name", string="履历")
 
 
 
