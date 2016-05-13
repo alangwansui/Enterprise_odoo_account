@@ -10,5 +10,6 @@
             <field name="company_id" eval="False" />
         </record>
 
+        <delete id="sales_team.team_sales_department" model="crm.team"/>
     </data>
 </openerp>

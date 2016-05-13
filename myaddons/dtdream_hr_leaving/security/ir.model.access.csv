@@ -5,3 +5,4 @@ access_leaving_handle_process,leaving.handle.process,model_leaving_handle_proces
 access_process_process,process.process,model_process_process,,1,1,1,1
 access_leaving_handle_approver,leaving.handle.approver,model_leaving_handle_approver,,1,1,1,1
 access_leaving_handle_approve_record,leaving.handle.approve.record,model_leaving_handle_approve_record,,1,1,1,1
+access_ir_mail_server,ir.mail_server all_user,base.model_ir_mail_server,,1,0,0,0

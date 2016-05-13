@@ -23,7 +23,7 @@
                     <field name="industry_id" />
                     <field name='office_id' />
                     <field name='name' />
-                    <field name='user_id' />
+                    <field name='partner_sale_apply_id' />
                 </tree>
             </field>
         </record>
@@ -43,34 +43,86 @@
                 <attribute name="placeholder">省份</attribute>
               </field>
 
+              <field name="website" position="attributes">
+                <attribute name="help">网站</attribute>
+                <attribute name="placeholder"></attribute>
+              </field>
+
               <field name="title" position="attributes">
-                <attribute name="string">头衔</attribute>
+                <attribute name="string">称谓</attribute>
               </field>
 
               <field name="user_id" position="attributes">
                 <attribute name="invisible">1</attribute>
               </field>
-              <field name="user_id" position="replace">
+
+              <field name="company_type" position="replace">
+                  <field name="company_type" widget="radio"
+                            class="oe_edit_only"
+                            options="{'horizontal': true}"/>
               </field>
 
               <field name="website" position="after">
-<!--                   <field name="partner_code" attrs="{'required' : [('is_company', '=', True),('customer', '=', True)],'invisible' : ['|',('is_company', '!=', True),('customer', '!=', True)]}"/>
-                  <field name="industry_id" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
-                  <field name="office_id" attrs="{'required' : [('is_company', '=', True),('customer', '=', True)],'invisible' : ['|',('is_company', '!=', True),('customer', '!=', True)]}"/>
-                  <field name="partner_important" attrs="{'required' : [('is_company', '=', True),('customer', '=', True)],'invisible' : ['|',('is_company', '!=', True),('customer', '!=', True)]}"/> -->
 
+                  <field name="compare_partner_name" invisible="True"/>
                   <field name="partner_code" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
-                  <field name="industry_id" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
+                  <field name="system_department_id" domain="[('parent_id','=',False)]" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
+                  <field name="industry_id" domain="[('parent_id.parent_id','=',False)]" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
                   <field name="office_id" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
                   <field name="partner_important" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : ['|',('company_type', '!=', 'company'),('customer', '!=', True)]}"/>
               </field>
-
               <field name="category_id" position="after">
-                  <field name="user_id" attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}"  string="营销责任人"/>
+                  <field name='partner_sale_apply_id' attrs="{'required' : [('company_type', '=', 'company'),('customer', '=', True)],'invisible' : [('customer', '!=', True)]}"/>
               </field>
-
           </field>
       </record>
 
+      <record id="base.action_partner_form" model="ir.actions.act_window">
+            <field name="name">客户</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('customer', '=', True),('company_type','=','company')]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+              </p><p>
+                Odoo helps you easily track all activities related to
+                a customer; discussions, history of business opportunities,
+                documents, etc.
+              </p>
+            </field>
+        </record>
+
+      <!--重写客户界面过滤-->
+      <record id="base.view_res_partner_filter" model="ir.ui.view">
+            <field name="name">res.partner.select</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Search Partner">
+                   <field name="name"
+                       filter_domain="['|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self)]"/>
+                   <separator/>
+                   <!--<filter string="公司类客户" name="customer" domain="[('customer','=',1), ('parent_id', '=', False),('company_type','=','company')]"/>-->
+                   <!--<separator/>-->
+                   <filter string="Vendors" name="supplier" domain="[('supplier','=',1), ('parent_id', '=', False)]"/>
+                   <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                   <separator/>
+                   <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>
+                   <field name="partner_sale_apply_id"/>
+                   <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>
+                   <group expand="0" name="group_by" string="Group By">
+                       <filter name="salesperson" string="营销责任人" domain="[]" context="{'group_by' : 'partner_sale_apply_id'}" />
+                       <filter string="Company" context="{'group_by': 'parent_id'}"/>
+                       <filter string="Country" context="{'group_by': 'country_id'}"/>
+                   </group>
+                </search>
+            </field>
+      </record>
+
+      <menuitem id="base.menu_partner_form" parent="base.menu_sales" action="base.action_partner_form" sequence="3"/>
   </data>
 </openerp>

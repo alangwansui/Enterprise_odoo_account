@@ -1,0 +1,83 @@
+<openerp>
+    <data>
+        <record id="act_dtdream_rd_version" model="ir.actions.act_window">
+          <field name="name">版本</field>
+          <field name="res_model">dtdream_rd_version</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+
+        <record id="view_dtdream_rd_version_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.version.tree</field>
+            <field name="model">dtdream_rd_version</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="proName"/>
+                    <field name="pro_flag" />
+                    <field name="version_numb"/>
+                    <field name="version_state" />
+                </tree>
+            </field>
+      </record>
+
+        <record id="view_dtdream_rd_version_form" model="ir.ui.view">
+        <field name="name">view.dtdream.rd.version.form</field>
+        <field name="model">dtdream_rd_version</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                     <button name="%(dtdream_rd_prod.act_version_wizard)d" string="下一步"  type="action"  attrs="{'invisible':[('version_state','not in',('initialization','Development','pending'))]}"/>
+                     <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" invisible="1"/>
+                            <field name="proName" />
+                            <field name="pro_flag" />
+                        </group>
+                        <group>
+                            <field name="version_numb" />
+                            <field name="is_Qa" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page  string="版本计划">
+                            <group>
+                                <field name="plan_dev_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('initialization'))]}" />
+                                <field name="plan_check_pub_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('initialization'))]}" />
+                                <field name="plan_pub_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('initialization'))]}" />
+                                <field name="plan_mater" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('initialization'))]}" />
+                            </group>
+                        </page>
+                        <page string="版本开发" attrs="{'invisible':['&amp;',('is_Qa','=',False),('version_state','in',('initialization'))]}">
+                            <group>
+                                <field name="actual_dev_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('Development'))]}"/>
+                                <field name="dev_mater" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('Development'))]}"/>
+                            </group>
+                        </page>
+                        <page string="版本发布" attrs="{'invisible':['&amp;',('is_Qa','=',False),('version_state','in',('Development','initialization'))]}">
+                            <group>
+                                <group>
+                                    <group>
+                                        <field name="actual_check_pub_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('pending'))]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="actual_pub_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('pending'))]}"/>
+                                    </group>
+                                </group>
+                            </group>
+                             <group>
+                                    <field name="place" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('pending'))]}"/>
+                                    <field name="Material" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('pending'))]}"/>
+                                </group>
+                        </page>
+                     </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+    </data>
+</openerp>

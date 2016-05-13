@@ -18,7 +18,7 @@ class leaving_handle_wizard(models.TransientModel):
 
 
     name = fields.Char("审批环节")
-    result = fields.Selection([("agree","同意"),("reject","驳回到上一步"),("other","不涉及")])
+    result = fields.Selection([("agree",u"同意"),("reject",u"驳回到上一步"),("other",u"不涉及")])
     opinion = fields.Text("意见", required=True)
     actual_leavig_date = fields.Date("实际离岗时间")
     leaving_handle_id = fields.Many2one("leaving.handle",string="离职交接申请")
@@ -27,9 +27,12 @@ class leaving_handle_wizard(models.TransientModel):
     manager_id = fields.Many2one('hr.employee',string="主管",default=_default_manager_id)
     assistant_id = fields.Many2one('hr.employee',string="行政助理",default=_default_assistant_id)
 
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
     # 给抄送人发送的邮件
     def cc_mail(self, current_leaving_handle):
-        subject = '%s的离职办理已经启动，请您知悉' % current_leaving_handle.name.user_id.name
+        subject = u'%s的离职办理已经启动，请您知悉' % current_leaving_handle.name.user_id.name
         email_cc = "";
         for record in self.mail_ccs:
             email_cc += record.work_email + ";"
@@ -38,17 +41,18 @@ class leaving_handle_wizard(models.TransientModel):
             link = '/web#id=%s&view_type=form&model=leaving.handle' % current_leaving_handle.id
             url = base_url + link
             self.env['mail.mail'].create({
-                'body_html': '<p>您好</p>'
-                             '<p>%s的离职办理已经启动</p>'
-                             '<p>请点击链接进入查看:'
-                             '<a href="%s">%s</a></p>'
-                             '<p>dodo</p>'
-                             '<p>万千业务，简单有do</p>'
-                             '<p>%s<p>' % (
+                'body_html': u'<p>您好</p>'
+                             u'<p>%s的离职办理已经启动</p>'
+                             u'<p>请点击链接进入查看:'
+                             u'<a href="%s">%s</a></p>'
+                             u'<p>dodo</p>'
+                             u'<p>万千业务，简单有do</p>'
+                             u'<p>%s<p>' % (
                                 current_leaving_handle.name.user_id.name, url, url, self.write_date[:10]),
                 'subject': subject,
                 'email_to': email_cc,
                 'auto_delete': False,
+                'email_from': self.get_mail_server_name(),
             }).send()
 
     @api.one

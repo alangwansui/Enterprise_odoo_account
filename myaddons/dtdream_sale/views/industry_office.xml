@@ -6,7 +6,7 @@
         <record id="view_dtdream_industry_tree" model="ir.ui.view">
             <field name="name">view.dtdream.industry.tree</field>
             <field name="model">dtdream.industry</field>
-            <field name="field_parent">children_ids</field>
+            <!--<field name="field_parent">children_ids</field>-->
             <field name="arch" type="xml">
                 <tree>
                     <field name="name" />
@@ -35,13 +35,28 @@
             </field>
         </record>
 
+        <record id="view_dtdream_industry_search" model="ir.ui.view">
+            <field name="name">view.dtdream.industry.search</field>
+            <field name="model">dtdream.industry</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="上级行业" context="{'group_by':'parent_id'}" name="group_by_parent_id"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="act_dtdream_industry" model="ir.actions.act_window">
             <field name="name">行业</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">dtdream.industry</field>
-            <field name="view_type">tree</field>
-            <field name="view_mode">tree,list,form</field>
-            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!--<field name="domain">[('parent_id.parent_id','=',False)]</field>-->
+            <field name="search_view_id" ref="view_dtdream_industry_search"></field>
+            <field name="context">{'search_default_group_by_parent_id':'parent_id'}</field>
         </record>
 
         <!-- 让tree视图里的记录也可双击修改 -->

@@ -28,5 +28,17 @@
         </form>
       </field>
     </record>
+    <record model="ir.ui.view" id="leaving_handle_process_form">
+      <field name="name">leaving.handle.process.form</field>
+      <field name="model">leaving.handle.process</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group col="4">
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
   </data>
 </openerp>

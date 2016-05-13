@@ -4,11 +4,17 @@
       <record id="view_res_product_template_form_inherit" model="ir.ui.view">
           <field name="name">view.res.product.template.form.inherit</field>
           <field name="model">product.template</field>
-          <field name="inherit_id" ref="product.product_template_form_view" />
+          <field name="inherit_id" ref="product.product_template_only_form_view" />
           <field name="arch" type="xml">
               <field name="list_price" position="attributes">
                   <attribute name="invisible">1</attribute>
               </field>
+              <field name="name" position="replace">
+                  <field name="name" placeholder="产品型号" string="产品型号"/>
+              </field>
+              <label for="name" position="attributes">
+                  <attribute name="string">产品型号</attribute>
+              </label>
               <group name="group_lots_and_weight" position="attributes">
                   <attribute name="invisible">1</attribute>
               </group>
@@ -18,41 +24,105 @@
               <div name="standard_price_uom" position="attributes">
                   <attribute name="invisible">1</attribute>
               </div>
-              <field name="categ_id" position="attributes">
-                  <attribute name="invisible">1</attribute>
+              <field name="categ_id" position="replace">
+                  <attribute name="invisible"></attribute>
               </field>
-              <field name="name" position="attributes">
-                  <attribute name="string">产品型号</attribute>
+              <group name="stock_property" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </group>
+              <field name="default_code" position="attributes">
+                  <attribute name="invisible">1</attribute>
               </field>
               <field name="type" position="before">
                   <field name="bom" />
-                  <field name="pro_version" />
-                  <field name="pro_status" string="状态"/>
-              </field>
-              <field name="uom_po_id" position="after">
+                  <field name="is_temporary_bom"/>
                   <field name="categ_id"/>
-                  <field name="list_price" string="目录价"/>
-                  <field name="ref_discount" />
-                  <field name="pro_description" />
-              </field>
-              <field name="list_price" position="before">
                   <field name="pro_type" />
+                  <field name="pro_description_out" />
+                  <field name="pro_description" />
+                  <!--<field name="pro_parent_id" string="上级BOM" widget="many2many_tags"/>-->
               </field>
-              <field name="invoice_policy" position="after">
-                  <field name="remark" />
+              <field name="uom_id" position="before">
+                  <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
               </field>
-              <xpath expr="//page[@name='sales']" position="after">
-                  <page name="discount" string="授权折扣" groups="dtdream_sale.group_product_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_banshichu_query">
-                      <group>
-                          <group>
-                              <field name="office_manager_discount" />
-                              <field name="market_president_discount" groups="dtdream_sale.group_product_query,dtdream_sale.group_product_manage"/>
-                          </group>
-                          <group>
-                              <field name="system_department_discount" groups="dtdream_sale.group_product_query,dtdream_sale.group_product_manage"/>
-                          </group>
-                      </group>
-                  </page>
+              <field name="uom_id" position="after">
+                  <field name="pro_version" />
+                  <field name="pro_source" />
+                  <field name="pro_status" string="状态"/>
+                  <field name="effect_time"/>
+              </field>
+              <field name="uom_po_id" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <group name="description" position="before">
+                  <separator string="备注" colspan="4"/>
+                  <field name="remark" colspan="4" nolabel="1"/>
+              </group>
+              <field name="invoice_policy" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="type" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="barcode" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <group name="group_lots_and_weight" position="after">
+                  <group>
+                      <field name="type"></field>
+                  </group>
+              </group>
+              <field name="route_ids" position="after">
+                  <field name="uom_po_id"></field>
+              </field>
+              <xpath expr="//page[@name='sales']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="//group[@name='properties']/parent::page" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="//group[@name='group_general']/parent::group" position="after">
+                  <label for="pro_child_ids" string="叶子BOM"/>
+                  <field name="pro_child_ids" string="下级BOM" mode="tree" options="{'no_create': True}">
+                      <tree string="产品配置" editable="bottom">
+                          <field name="dtdream_child_product_id" string="产品型号"/>
+                          <field name="child_categ_id" string="产品分类" />
+                          <field name="child_bom" string="BOM" />
+                          <field name="child_pro_type" string="产品类别"/>
+                          <field name="child_pro_description_out" string="产品对外中文描述"/>
+                          <field name="child_is_temporary_bom" string="是否临时BOM"/>
+                          <field name="child_pro_status" string="状态"/>
+                          <field name="child_effect_time" string="生效日期"/>
+                          <field name="child_write_uid" string="最后更新人"/>
+                          <field name="child_write_date" string="最后更新时间"/>
+                          <field name="child_pro_num" string="数量"/>
+                      </tree>
+                      <form>
+                          <sheet>
+                              <group>
+                                  <group>
+                                      <field name="dtdream_child_product_id" string="产品型号"/>
+                                      <field name="child_categ_id" string="产品分类" />
+                                      <field name="child_bom" string="BOM" />
+                                      <field name="child_pro_type" string="产品类别"/>
+                                      <field name="child_pro_description_out" string="产品对外中文描述"/>
+                                      <field name="child_is_temporary_bom" string="是否临时BOM"/>
+                                  </group>
+                                  <group>
+                                      <field name="child_pro_status" string="状态"/>
+                                      <field name="child_effect_time" string="生效日期"/>
+                                      <field name="child_write_uid" string="最后更新人"/>
+                                      <field name="child_write_date" string="最后更新时间"/>
+                                      <field name="child_pro_num" string="数量"/>
+                                  </group>
+                              </group>
+                          </sheet>
+                      </form>
+                  </field>
               </xpath>
           </field>
       </record>
@@ -60,22 +130,158 @@
       <record id="view_res_product_template_tree_view" model="ir.ui.view">
           <field name="name">view.res.product.template.tree</field>
           <field name="model">product.template</field>
+          <field name="field_parent">pro_child_ids</field>
           <field name="priority">13</field>
           <field name="arch" type="xml">
               <tree string="Product">
                   <field name="categ_id"/>
-                  <field name="pro_type"/>
                   <field name="bom"/>
-                  <field name="name" string="产品名称"/>
-                  <field name="uom_id"/>
-                  <field name="pro_description"/>
-                  <field name="seller_ids"/>
+                  <field name="name" string="产品型号"/>
+                  <field name="pro_type"/>
+                  <field name="pro_description_out" />
+                  <field name="is_temporary_bom"/>
+                  <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
                   <field name="pro_status" string="状态"/>
-                  <field name="pro_version"/>
-                  <field name="write_date"/>
+                  <field name="effect_time"/>
+                  <field name="write_uid" string="最后更新人"/>
+                  <field name="write_date" string="最后更新时间"/>
               </tree>
           </field>
       </record>
+
+      <!--<record id="action_product_tree_view" model="ir.actions.act_window">-->
+          <!--<field name="name">产品层级图</field>-->
+          <!--<field name="type">ir.actions.act_window</field>-->
+          <!--<field name="res_model">product.template</field>-->
+          <!--<field name="view_mode">tree,form</field>-->
+          <!--<field name="view_type">tree</field>-->
+          <!--<field name="view_id" ref="view_res_product_template_tree_view"/>-->
+          <!--<field name="context">{"search_default_filter_to_sell":1}</field>-->
+          <!--<field name="domain">[('pro_parent_id','=',False)]</field>-->
+          <!--<field name="help" type="html">-->
+              <!--<p class="oe_view_nocontent_create">-->
+                  <!--Click to define a new product.-->
+              <!--</p>-->
+              <!--<p>-->
+                  <!--You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to  customers.-->
+              <!--</p>-->
+              <!--<p>-->
+                  <!--The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc.-->
+              <!--</p>-->
+          <!--</field>-->
+      <!--</record>-->
+
+      <!-- 让tree视图里的记录也可双击修改 -->
+      <record id="act_dtdream_product_form" model="ir.actions.act_window">
+          <field name="name">产品</field>
+          <field name="res_model">product.template</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="view_id" ref="view_res_product_template_tree_view"/>
+          <field name="domain">[('id','=',active_id)]</field>
+      </record>
+
+      <record id="ir_open_product" model="ir.values">
+          <field name='key2'>tree_but_open</field>
+          <field name='model'>product.template</field>
+          <field name="name">产品</field>
+          <field eval="'ir.actions.act_window,%d'%act_dtdream_product_form" name='value'/>
+      </record>
+
+      <record id="view_res_product_template_tree_list_view" model="ir.ui.view">
+          <field name="name">view.res.product.template.tree.list</field>
+          <field name="model">product.template</field>
+          <field name="priority">12</field>
+          <field name="arch" type="xml">
+              <tree string="Product">
+                  <field name="categ_id"/>
+                  <field name="bom"/>
+                  <field name="name" string="产品型号"/>
+                  <field name="pro_type"/>
+                  <field name="pro_description_out" />
+                  <field name="is_temporary_bom"/>
+                  <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query"/>
+                  <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <field name="pro_status" string="状态"/>
+                  <field name="effect_time"/>
+                  <field name="write_uid" string="最后更新人"/>
+                  <field name="write_date" string="最后更新时间"/>
+              </tree>
+          </field>
+      </record>
+
+      <record id="product.product_template_kanban_view" model="ir.ui.view">
+          <field name="name">Product.template.product.kanban</field>
+          <field name="model">product.template</field>
+          <field name="arch" type="xml">
+              <kanban>
+                  <field name="image_small"/>
+                  <field name="lst_price"/>
+                  <field name="is_product_variant"/>
+                  <field name="product_variant_count"/>
+                  <field name="product_variant_ids"/>
+                  <field name="currency_id"/>
+                  <templates>
+                      <t t-name="kanban-box">
+                          <div class="oe_kanban_global_click">
+                              <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                              <div class="oe_kanban_details">
+                                  <strong>
+                                      <span t-if="record.default_code.value">[<field name="default_code"/>]</span>
+                                      <field name="name"/>
+                                  </strong>
+                                  <div t-if="record.product_variant_count.value &gt; 1">
+                                      <strong>
+                                          <t t-esc="record.product_variant_count.value"/> Variants
+                                      </strong>
+                                  </div>
+                                  <div name="tags"/>
+                                  <ul>
+                                      <li invisible="True">Price: <field name="lst_price" widget="monetary"></field></li>
+                                      <li><strong>bom:</strong><field name="bom"></field></li>
+                                      <li><strong>产品对外中文描述:</strong><field name="pro_description_out"></field></li>
+                                  </ul>
+                                  <div name="tags"/>
+                              </div>
+                          </div>
+                      </t>
+                  </templates>
+              </kanban>
+          </field>
+      </record>
+
+      <record id="product.product_template_action" model="ir.actions.act_window">
+          <field name="name">产品列表</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">product.template</field>
+          <field name="view_mode">tree,kanban,form</field>
+          <field name="view_type">form</field>
+          <field name="view_id" ref="view_res_product_template_tree_list_view"/>
+          <field name="search_view_id" ref="product.product_template_search_view"/>
+          <field name="context">{"search_default_filter_to_sell":1}</field>
+          <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                  Click to define a new product.
+              </p>
+              <p>
+                  You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to  customers.
+              </p>
+              <p>
+                  The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc.
+              </p>
+          </field>
+      </record>
+
       <!--重写机会点tree视图-->
       <record id="view_res_product_leads_tree_view" model="ir.ui.view">
             <field name="name">view.res.product.leads.tree</field>
@@ -91,7 +297,8 @@
                     <field name="industry_id"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
-                    <field name="user_id" string="营销责任人" on_change="on_change_user(user_id, context)" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads'], 'team_id': team_id}"/>
+                    <field name="sale_apply_id"/>
+                    <field name="user_id" string="创建人" invisible="True" on_change="on_change_user(user_id, context)" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'dtdream_sale.group_dtdream_sale_salesman_all_leads'], 'team_id': team_id}"/>
                 </field>
                 <field name="create_date" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -125,22 +332,32 @@
             <field name="arch" type="xml">
                 <field name="partner_id" position="before">
                     <field name="project_number"/>
+                    <field name="sale_apply_id_uid" invisible="True"/>
                     <field name="project_leave" string="项目级别"/>
+                    <field name="project_place"/>
+                    <field name="project_province"/>
                     <field name="office_id"/>
                     <field name="system_department_id" domain="[('parent_id','=',False)]"/>
                     <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
-                    <field name="bidding_time"/>
-                    <field name="supply_time"/>
-                    <field name="pre_implementation_time"/>
-                    <field name="pre_check_time"/>
                     <field name="project_detail"/>
                     <field name="sale_channel"/>
+                    <field name="product_category_type_id" widget="many2many_tags"/>
                 </field>
+                <xpath expr="//header/child::button[2]" position="replace">
+                    <button name="%(crm.crm_lead_lost_action)d" string="标记为失去"
+                            type="action" class="oe_highlight"
+                            context="{'default_lead_id': active_id}"
+                            groups="dtdream_sale.group_dtdream_sale_manager"
+                    />
+                </xpath>
                 <field name="partner_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
                 <field name="email_from" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </field>
+                <field name="name" position="attributes">
+                    <attribute name="string">项目名称</attribute>
                 </field>
                 <field name="phone" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -158,8 +375,6 @@
                 <label for="street" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </label>
-                <label for="street" position="replace">
-                </label>
                 <field name="date_deadline" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -169,11 +384,12 @@
                 <field name="team_id" position="replace">
                 </field>
                 <field name="user_id" position="after">
-                    <field name="team_id" domain="[('use_leads','=',True)]"/>
+                    <field name="team_id" domain="[('user_id','=',-99)]"/>
                 </field>
                 <field name="user_id" position="replace">
-                      <field name="user_id" on_change="on_change_user(user_id, context)"
-                                    context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads'], 'team_id': team_id}"
+                      <field name="sale_apply_id"/>
+                      <field name="user_id" on_change="on_change_user(user_id, context)" invisible="True"
+                                    context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'dtdream_sale.group_dtdream_sale_salesman_all_leads'], 'team_id': team_id}"
                                     domain="[('login','!=','admin')]"/>
                   </field>
                 <h2 position="attributes">
@@ -203,10 +419,10 @@
                 <field name="contact_name" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="contact_name" position="replace">
-                </field>
                 <field name="title" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </field>
+                <field name="title" position="replace">
                 </field>
                 <div class="o_row" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -216,33 +432,22 @@
                 </field>
                 <field name="mobile" position="replace">
                 </field>
+                <field name="priority" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
                 <field name="date_deadline" position="after">
+                    <field name="bidding_time"/>
+                    <field name="supply_time"/>
+                    <field name="pre_implementation_time"/>
+                    <field name="pre_check_time"/>
                     <field name="project_master_degree"/>
                     <field name="project_space"/>
                     <field name="ali_division"/>
                     <field name="ali_saleman"/>
                     <field name="partner_id" string="客户"
-                           on_change="on_change_partner_id(partner_id)"
-                           domain="[('customer','=','True')]"
-                           context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}"/>
-                    <field name="partner_name" string="公司名称"/>
-                    <label for="street" string="地址"/>
-                    <div class="o_address_format">
-                        <field name="street" placeholder="街道..." class="o_address_street"/>
-                        <field name="city" placeholder="城市" class="o_address_city"/>
-                        <field name="state_id" class="o_address_state" placeholder="省份" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
-                        <field name="zip" placeholder="邮编" class="o_address_zip"/>
-                        <field name="country_id" placeholder="国家" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
-                    </div>
-                    <label for="contact_name"/>
-                    <div class="o_row">
-                        <field name="contact_name"/>
-                        <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
-                    </div>
-                    <field name="email_from" widget="email"/>
-                    <field name="function"/>
-                    <field name="phone" widget="phone"/>
-                    <field name="mobile"/>
+                           domain="[('customer','=','True')]"/>
+                    <field name="dt_contact_name"/>
+                    <field name="dt_mobile"/>
                 </field>
                 <div class="o_row mr16" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -253,18 +458,36 @@
                 <xpath expr="//page[@name='lead']" position="after">
                     <page string="产品配置">
                             <field name="product_line" mode="tree">
-                                <tree string="产品配置" editable="bottom" >
-                                    <field name="product_id" string="产品" widget="selection"/>
+                                <tree string="产品配置" editable="bottom">
+                                    <field name="product_id" string="产品型号"/>
                                     <field name="bom" string="BOM" />
                                     <field name="pro_type" string="产品类别"/>
-                                    <field name="pro_description" string="产品描述"/>
-                                    <field name="pro_name" string="产品名称"/>
+                                    <field name="pro_description" string="产品对内中文描述"/>
                                     <field name="list_price" string="目录价"/>
-                                    <field name="ref_discount" string="参考折扣"/>
-                                    <field name="apply_discount" string="申请折扣"/>
+                                    <field name="ref_discount" string="参考折扣(%)"/>
+                                    <field name="apply_discount" string="申请折扣(%)"/>
                                     <field name="pro_num" string="数量"/>
                                     <field name="config_set" string="配置组"/>
                                 </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="product_id" string="产品型号"/>
+                                                <field name="bom" string="BOM" />
+                                                <field name="pro_type" string="产品类别"/>
+                                                <field name="pro_description" string="产品对内中文描述"/>
+                                                <field name="list_price" string="目录价"/>
+                                            </group>
+                                            <group>
+                                                <field name="ref_discount" string="参考折扣(%)"/>
+                                                <field name="apply_discount" string="申请折扣(%)"/>
+                                                <field name="pro_num" string="数量"/>
+                                                <field name="config_set" string="配置组"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
                             </field>
                             <group class="oe_subtotal_footer oe_right" name="product_total">
                                 <field name="total_list_price"  class="oe_subtotal_footer_separator"/>
@@ -273,12 +496,32 @@
                             </group>
                     </page>
                 </xpath>
+                <xpath expr="//header/child::button[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//page[@name='lead']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
       </record>
 
+      <delete model="ir.values" id="crm.action_mark_as_lost"/>
+      <record id="crm.action_mark_as_lost" model="ir.actions.server">
+          <field name="name">Mark As Lost</field>
+          <field name="model_id" ref="model_crm_lead"/>
+          <field name="state">code</field>
+          <field name="code">
+              if context.get('active_model') == 'crm.lead' and context.get('active_ids'):
+              self.case_mark_lost(cr, uid, context['active_ids'], context=context)
+          </field>
+      </record>
+
+      <delete model="ir.values" id="crm.ir_mark_as_lost"/>
+      <record id="crm.ir_mark_as_lost" model="ir.values">
+          <field eval="'client_action_multi'" name="key2"/>
+          <field eval="'crm.lead'" name="model"/>
+          <field name="name">Mark As Lost</field>
+      </record>
       <!--重写项目管理tree视图-->
       <record id="view_res_product_oppr_tree" model="ir.ui.view">
             <field name="name">view.res.product.oppr.tree</field>
@@ -294,6 +537,9 @@
                     <field name="industry_id"/>
                     <field name="bidding_time"/>
                     <field name="supply_time"/>
+                </field>
+                <field name="user_id" position="replace">
+                    <field name="sale_apply_id"/>
                 </field>
                 <field name="create_date" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -371,7 +617,27 @@
                       </field>
                   </page>
                   <page name="access_industry" string="行业">
-                      <field name="user_access_industry" widget="many2many_kanban">
+                      <field name="user_access_industry" widget="many2many_kanban" domain="[('parent_id.parent_id','=',False)]" context="{'search_default_group_by_parent_id':'parent_id'}">
+                          <kanban create="true"  delete="true" >
+                              <field name="name"/>
+                              <templates>
+                                  <t t-name="kanban-box">
+                                      <div class="oe_kanban_global_click" style="position: relative">
+                                          <a t-if="! read_only_mode" type="delete" style="position: absolute; right: 0; padding: 4px; diplay: inline-block">X</a>
+                                          <div class="oe_module_vignette">
+                                              <img t-att-src="kanban_image('res.users', 'image_small', record.id.value)" class="oe_avatar oe_kanban_avatar_smallbox"/>
+                                              <div class="oe_module_desc">
+                                                  <field name="name"/>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </t>
+                              </templates>
+                          </kanban>
+                      </field>
+                  </page>
+                  <page name="access_product_type" string="产品类">
+                      <field name="user_access_product_type" widget="many2many_kanban">
                           <kanban quick_create="false" create="true" delete="true">
                               <field name="name"/>
                               <templates>
@@ -410,63 +676,96 @@
           <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
           <field name="arch" type="xml">
               <field name="partner_id" position="before">
+                  <field name="sale_apply_id_uid" invisible="True"/>
                   <field name="project_number"/>
                   <field name="project_leave" string="项目级别"/>
+                  <field name="project_place"/>
+                  <field name="project_province"/>
                   <field name="office_id"/>
                   <field name="system_department_id" domain="[('parent_id','=',False)]"/>
                   <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
-                  <field name="bidding_time"/>
-                  <field name="supply_time"/>
-                  <field name="pre_implementation_time"/>
-                  <field name="pre_check_time"/>
                   <field name="project_detail"/>
                   <field name="sale_channel"/>
+                  <field name="product_category_type_id" widget="many2many_tags"/>
+              </field>
+              <button name="action_set_lost" position="replace">
+                  <button name="action_set_lost" string="标记为失去"
+                            type="object" class="oe_highlight"
+                            groups="dtdream_sale.group_dtdream_sale_manager"
+                            />
+              </button>
+              <field name="name" position="replace">
+                  <field name="name" placeholder="项目名称"/>
               </field>
               <div class="o_address_format" position="attributes">
                   <attribute name="invisible">1</attribute>
               </div>
+              <div class="o_row" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </div>
+              <field name="title" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <label for="contact_name" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </label>
+              <field name="title" position="replace">
+              </field>
               <field name="partner_id" position="attributes">
                   <attribute name="invisible">1</attribute>
               </field>
+              <field name="email_from" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="function" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="phone" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="priority" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+
               <field name="partner_name" position="attributes">
                   <attribute name="invisible">1</attribute>
               </field>
               <label for="street" position="attributes">
                   <attribute name="invisible">1</attribute>
               </label>
-              <label for="contact_name" position="before">
+              <field name="mobile" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
+              <field name="mobile" position="before">
                   <!--<field name = "child_ids"></field>-->
+                  <field name="bidding_time"/>
+                  <field name="supply_time"/>
+                  <field name="pre_implementation_time"/>
+                  <field name="pre_check_time"/>
                   <field name="project_master_degree"/>
                   <field name="project_space"/>
                   <field name="ali_division"/>
                   <field name="ali_saleman"/>
                   <field name="partner_id" string="客户"
-                         on_change="on_change_partner_id(partner_id)"
                          options='{"create_name_field": "name"}'
-                         domain="[('customer','=','True')]"
-                         context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}"/>
-                  <field name="partner_name" string="公司名称"/>
-                  <label for="street" string="地址"/>
-                  <div class="o_address_format">
-                      <field name="street" placeholder="街道..." class="o_address_street"/>
-                      <field name="city" placeholder="城市" class="o_address_city"/>
-                      <field name="state_id" class="o_address_state" placeholder="省份" options='{"no_open": True}' on_change="onchange_state(state_id)"/>
-                      <field name="zip" placeholder="邮编" class="o_address_zip"/>
-                      <field name="country_id" placeholder="国家" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
-                  </div>
-              </label>
+                         domain="[('customer','=','True')]"/>
+                  <field name="dt_partner_name" string="公司名称"/>
+                  <field name="dt_contact_name"/>
+                  <field name="dt_mobile"/>
+              </field>
               <field name="fax" position="attributes">
                   <attribute name="invisible">1</attribute>
               </field>
               <field name="user_id" position="replace">
-                  <field name="user_id" on_change="on_change_user(user_id, context)"
-                                context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads'], 'team_id': team_id}"
+                  <field name="sale_apply_id"/>
+                  <field name="user_id" on_change="on_change_user(user_id, context)" invisible="True"
+                                context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'dtdream_sale.group_dtdream_sale_salesman_all_leads'], 'team_id': team_id}"
                                 domain="[('login','!=','admin')]"/>
               </field>
               <field name="team_id" position="replace">
               </field>
               <field name="user_id" position="after">
-                  <field name="team_id" domain="[('use_leads','=',True)]"/>
+                  <field name="team_id" domain="[('user_id','=',-99)]"/>
               </field>
               <xpath expr="//page[@name='extra']" position="attributes">
                   <attribute name="invisible">1</attribute>
@@ -474,17 +773,162 @@
           </field>
       </record>
 
-      <!--产品搜索界面增加产品分类分组-->
-      <record id="product_search_form_inherit_view" model="ir.ui.view">
-          <field name="name">product.template.search.inherit</field>
-          <field name="model">product.template</field>
-          <field name="inherit_id" ref="product.product_template_search_view"/>
+      <!-- CRM Lead Search View -->
+        <record id="crm.view_crm_case_leads_filter" model="ir.ui.view">
+            <field name="name">CRM - Leads Search</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <search string="Search Leads">
+                    <field name="name" string="Lead / Customer" filter_domain="['|','|','|',('partner_name','ilike',self),('email_from','ilike',self),('contact_name','ilike',self),('name','ilike',self)]"/>
+                    <field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>
+                    <field name="team_id"/>
+                    <field name="user_id"/>
+                    <field name="partner_id" operator="child_of" string="Customer"/>
+                    <field name="create_date"/>
+                    <field name="country_id"/>
+                    <separator />
+                    <filter string="My Leads"
+                            name="assigned_to_me"
+                            domain="[('sale_apply_id_uid','=',uid)]"
+                            help="Leads that are assigned to me"/>
+                    <filter string="Unassigned" name="unassigned"
+                            domain="[('user_id','=', False)]"
+                            help="No salesperson"/>
+                    <separator />
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                    <separator />
+                    <filter string="Exclude Opt Out"
+                            name='not_opt_out' domain="[('opt_out', '=', False)]"
+                            help="Leads that did not ask not to be included in mass mailing campaigns"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" name="groupby_salesperson" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Sales Team" name="groupby_team" domain="[]" context="{'group_by':'team_id'}"/>
+                        <filter string="Stage" name="groupby_stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                        <filter name="customer" string="Customer" help="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Campaign" name="groupby_campaign"  domain="[]" context="{'group_by':'campaign_id'}"/>
+                        <filter string="Source" name="groupby_source" domain="[]" context="{'group_by':'source_id'}"/>
+                        <filter string="Medium" name="groupby_channel" domain="[]" context="{'group_by':'medium_id'}"/>
+                        <filter string="Creation Month" name="groupby_createmonth" domain="[]" context="{'group_by':'create_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+      <!-- CRM Lead Kanban View  -->
+      <record model="ir.ui.view" id="crm.crm_case_kanban_view_leads">
+          <field name="name">CRM - Leads Kanban</field>
+          <field name="model">crm.lead</field>
           <field name="arch" type="xml">
-               <field name="pricelist_id" position="after">
-                  <filter string="产品分类" name="categ_id" context="{'group_by':'categ_id'}"/>
-               </field>
+              <kanban default_group_by="stage_id" class="o_kanban_small_column" quick_create="false">
+                  <field name="stage_id" options='{"group_by_tooltip": {"requirements": "Description", "legend_priority": "Use of stars"}}'/>
+                  <field name="color"/>
+                  <field name="priority"/>
+                  <field name="planned_revenue"/>
+                  <field name="user_email"/>
+                  <field name="user_id"/>
+                  <field name="partner_address_email"/>
+                  <field name="message_needaction_counter"/>
+                  <field name="tag_ids"/>
+                  <field name="partner_id"/>
+                  <field name="active"/>
+                  <field name="company_currency"/>
+                  <templates>
+                      <field name="date_deadline"/>
+                      <t t-name="kanban-box">
+                          <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                              <div class="o_dropdown_kanban dropdown">
+                                  <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" >
+                                      <span class="fa fa-bars fa-lg"/>
+                                  </a>
+                                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                      <t t-if="widget.editable"><li><a type="edit">Edit</a></li></t>
+                                      <t t-if="widget.deletable"><li><a type="delete">Delete</a></li></t>
+                                      <li t-if="! record.active.value"><a name="action_set_active" type="object">Unarchive</a></li>
+                                      <li t-if="record.active.value"><a name="action_set_unactive" type="object">Archive</a></li>
+                                      <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
+                                  </ul>
+                              </div>
+                              <div class="oe_kanban_content">
+                                  <div>
+                                      <field name="tag_ids"/>
+                                  </div>
+                                  <div>
+                                      <strong><field name="name"/></strong>
+                                  </div>
+                                  <div class="text-muted">
+                                      <t t-if="record.planned_revenue.raw_value"><field name="planned_revenue" widget="monetary" options="{'currency_field': 'company_currency'}"/></t> <span t-if="record.partner_id.value"> - <t t-esc="record.partner_id.value"/></span>
+                                  </div>
+                                  <div class="text-muted">
+                                      <t t-if="record.date_action.raw_value and record.date_action.raw_value lt (new Date())" t-set="red">oe_kanban_text_red</t>
+                                      <span t-attf-class="#{red || ''}">
+                                          <field name="date_action"/>
+                                          <t t-if="record.date_action.raw_value"> : </t>
+                                          <field name="next_activity_id"/>
+                                      </span>
+                                  </div>
+                                  <div class="o_kanban_footer">
+                                      <field name="priority" widget="priority" groups="base.group_user"/>
+                                      <t t-if="record.message_needaction_counter.raw_value">
+                                          <span class='oe_kanban_mail_new' title='Unread Messages'><i class='fa fa-comments'/><t t-raw="record.message_needaction_counter.raw_value"/></span>
+                                      </t>
+                                      <img t-att-src="kanban_image('res.users', 'image_small', record.user_id.raw_value)" t-att-title="record.user_id.value" width="24" height="24" class="oe_kanban_avatar pull-right"/>
+                                  </div>
+                              </div>
+                              <div class="oe_clear"></div>
+                          </div>
+                      </t>
+                  </templates>
+              </kanban>
           </field>
       </record>
+
+      <record id="product.product_template_search_view" model="ir.ui.view">
+          <field name="name">product.template.search</field>
+          <field name="model">product.template</field>
+          <field name="arch" type="xml">
+              <search string="Product">
+                  <field name="bom" string="BOM"/>
+                  <field name="name" string="产品型号"/>
+                  <field name="pro_type" string="产品类别"/>
+                  <field name="pro_description_out" string="产品对外中文描述"/>
+                  <field name="remark" string="备注"/>
+                  <filter string="产品分类" name="categ_id" context="{'group_by':'categ_id'}"/>
+                  <filter string="Services" name="services" domain="[('type','=','service')]" invisible="True"/>
+                  <filter string="Products" name="consumable" domain="[('type','=','consu')]" help="Products your store in the inventory" invisible="True"/>
+                  <filter string="Can be Sold" name="filter_to_sell" domain="[('sale_ok','=',1)]" invisible="True"/>
+                  <filter string="Archived" name="inactive" domain="[('active','=',False)]" invisible="True"/>
+                  <field string="Attributes" name="attribute_line_ids" invisible="True"/>
+                  <field name="pricelist_id" widget="selection" context="{'pricelist': self}" filter_domain="[]" groups="product.group_sale_pricelist" invisible="True"/> <!-- Keep widget=selection on this field to pass numeric `self` value, which is not the case for regular m2o widgets! -->
+
+              </search>
+          </field>
+      </record>
+
+      <!--产品搜索界面增加产品分类分组-->
+      <!--<record id="product_search_form_inherit_view" model="ir.ui.view">-->
+          <!--<field name="name">product.template.search.inherit</field>-->
+          <!--<field name="model">product.template</field>-->
+          <!--<field name="inherit_id" ref="product.product_template_search_view"/>-->
+          <!--<field name="arch" type="xml">-->
+               <!--<field name="pricelist_id" position="after">-->
+                  <!--<filter string="产品分类" name="categ_id" context="{'group_by':'categ_id'}"/>-->
+               <!--</field>-->
+          <!--</field>-->
+      <!--</record>-->
+
+      <!--机会点转项目-->
+      <record model="ir.ui.view" id="dtdream_sale.res_view_crm_lead2opportunity_partner">
+            <field name="name">crm.lead2opportunity.form</field>
+            <field name="model">crm.lead2opportunity.partner</field>
+            <field name="inherit_id" ref="crm.view_crm_lead2opportunity_partner"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="replace">
+                    <field name="sale_apply_id"/>
+                </field>
+            </field>
+      </record>
+
 
       <!--销售团队字段修改-->
       <record model="ir.ui.view" id="dtdream_sale.crm_team_view_form">
@@ -515,6 +959,66 @@
             </field>
       </record>
 
+      <!-- Opportunities Search View -->
+      <record id="crm.view_crm_case_opportunities_filter" model="ir.ui.view">
+          <field name="name">CRM - Opportunities Search</field>
+          <field name="model">crm.lead</field>
+          <field name="arch" type="xml">
+              <search string="Search Opportunities">
+                  <field name="name" string="Opportunity" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
+                  <field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>
+                  <field name="team_id"/>
+                  <field name="sale_apply_id"/>
+                  <field name="partner_id" operator="child_of" string="Customer"/>
+                  <field name="stage_id" domain="[]"/>
+                  <field name="lost_reason"/>
+                  <separator/>
+                  <filter string="我的项目" name="assigned_to_me"
+                            domain="[('sale_apply_id_uid','=',uid)]"
+                            help="营销责任人为我的项目"/>
+                  <separator/>
+                  <filter string="Won" name="won"
+                          domain="['&amp;', ('stage_id.probability', '=', 100), ('stage_id.fold', '=', True)]"/>
+                  <filter string="Lost" name="lost"
+                          domain="['&amp;', ('probability', '=', 0), ('active', '=', False)]"/>
+                  <separator/>
+                  <filter string="Archived" domain="[('active', '=', False)]"/>
+                  <group expand="0" string="Group By" colspan="16">
+                      <filter string="营销责任人" context="{'group_by':'sale_apply_id'}"/>
+                      <filter string="Sales Team" context="{'group_by':'team_id'}"/>
+                      <filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                      <filter name="stage" string="Stage" context="{'group_by':'stage_id'}"/>
+                      <filter string="Campaign" domain="[]" context="{'group_by':'campaign_id'}"/>
+                      <separator orientation="vertical" />
+                      <filter string="Creation Month" context="{'group_by':'create_date:month'}" name="month"/>
+                      <filter string="Expected Closing" context="{'group_by':'date_deadline'}"/>
+                      <filter string="Lost Reason" context="{'group_by':'lost_reason'}"/>
+                  </group>
+              </search>
+          </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="crm.crm_lead_opportunities_tree_view">
+        <field name="name">Your Pipeline</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,tree,graph,pivot,form,calendar</field>
+        <field name="domain">[('type','=','opportunity')]</field>
+        <field name="context">{
+                'stage_type': 'opportunity',
+                'default_type': 'opportunity',
+}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="help" type="html">
+            <p>
+                Odoo helps you keep track of your sales pipeline to follow
+                up potential sales and better forecast your future revenues.
+            </p><p>
+                You will be able to plan meetings and phone calls from
+                opportunities, convert them into quotations, attach related
+                documents, track all discussions, and much more.
+            </p>
+        </field>
+    </record>
 
       <!--新增产品类别菜单-->
       <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />
@@ -525,7 +1029,7 @@
       //开票
       <menuitem name="Invoicing"
             id="sale.menu_sale_invoicing" parent="base.menu_base_partner"
-            sequence="5" groups="group_menu_hide"/>
+            sequence="5" groups="group_menu_hide" />
       <menuitem action="sale.action_orders_to_invoice"
             id="sale.menu_sale_order_invoice" parent="sale.menu_sale_invoicing"
             sequence="2" groups="group_menu_hide"/>
@@ -544,8 +1048,27 @@
       <menuitem name="Sales"
             id="base.menu_base_partner"
             web_icon="sale,static/description/icon.png"
-            groups="base.group_sale_salesman,base.group_sale_manager,group_dtdream_sale_read" sequence="6"/>
+            groups="group_dtdream_sale_salesman_all_leads,group_dtdream_sale_salesman,group_dtdream_sale_manager,group_dtdream_sale_read" sequence="6"/>
       //仪表盘
       <menuitem id="sales_team.menu_sales_team_act" action="sales_team.crm_team_salesteams_act" sequence="1" parent="base.menu_base_partner" name="Dashboard" groups="group_menu_hide"/>
+
+      <menuitem id="base.menu_sales" name="Sales" parent="base.menu_base_partner" sequence="5" groups="group_menu_hide"/>
+
+      <menuitem name="联系人" id="dtdream_sale.menu_contacts" sequence="11" action="mail.action_contacts" parent="base.menu_base_partner" groups="group_menu_hide"/>
+
+      <menuitem action="product.product_template_action"
+            id="product.menu_product_template_action"
+            parent="base.menu_sales" sequence="13" groups="group_menu_hide"/>
+
+
+      <menuitem name="Leads" id="crm.menu_crm_leads" parent="base.menu_base_partner" sequence="3" action="crm.crm_lead_all_leads" groups="crm.group_use_lead"/>
+      <menuitem id="crm.menu_crm_opportunities" action="crm.action_your_pipeline" parent="base.menu_base_partner" sequence="4"/>
+      <menuitem id="base.menu_partner_form" parent="base.menu_base_partner" action="base.action_partner_form" sequence="1"/>
+
+      <menuitem name="产品" id="base.menu_top_dtdream_product" web_icon="dtdream_sale,static/description/product.png" action="product.product_template_action"/>
+
+      <!--<menuitem name="产品层级图" id="product_tree_view_menuitem" action="action_product_tree_view" parent="base.menu_top_dtdream_product" sequence="2"/>-->
+
+      <menuitem name="产品列表" id="product_list_view_menuitem" action="product.product_template_action" parent="base.menu_top_dtdream_product" sequence="1"/>
   </data>
 </openerp>

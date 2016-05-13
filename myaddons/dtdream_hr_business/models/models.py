@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-from openerp.osv import expression
 from openerp import models, fields, api
-from datetime import datetime
+from datetime import datetime,timedelta
 from openerp.exceptions import ValidationError
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
     _inherit = ['mail.thread']
-
+    _description = u"外出公干"
     name = fields.Many2one("hr.employee",string="申请人",required=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
 
     @api.depends('name')
@@ -65,7 +61,6 @@ class dtdream_hr_business(models.Model):
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门")
-    # create_time= fields.Datetime(string='申请时间',default=datetime.today(),readonly=1)
     create_time = fields.Datetime(string='申请时间',default=lambda self: datetime.now(),readonly=True)
     approver_fir = fields.Many2one("hr.employee" ,string="第一审批人",store=True,required=True,default=_get_appFir)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
@@ -108,29 +103,38 @@ class dtdream_hr_business(models.Model):
 
     employ = fields.Many2one("hr.employee", string="员工")
 
-
     @api.constrains("detail_ids")
     def _check_start_end_time(self):
-        """检查各行程间时间是否冲突，或者与外出公干时间冲突"""
+        """检查各行程间时间是否冲突，是否与出差时间冲突,是否与之前提交的出差申请时间冲突"""
         min_start = ""
         cr = self.env["dtdream.travel.journey"].search([("travel_id.name.id", "=", self.name.id),
-                                                                     ("travel_id.state", "!=", "0")])
-        for detail in self.detail_ids:
-            print detail.place
-            if detail.startTime < min_start:
-                raise ValidationError("外出开始时间与结束时间填写不合理,各行程间时间存在冲突!")
-            min_start = detail.endTime
-        # for journey in cr:
-        #     for detail in self.detail_ids:
-        #         if detail.startTime[:10] < journey.starttime < detail.endTime[:10] or \
-        #                                 detail.startTime[:10] < journey.endtime < detail.endTime[:10]:
-        #             raise ValidationError("{0}到{1}时间与出差时间重合".format(journey.starttime, journey.endtime))
+                                                                     ("travel_id.state", "not in", ("0","-1"))])
+
+        crr = self.env["dtdream_hr_business.business_detail"].search([("business.name.id", "=", self.name.id)])
+
+        for journey in self.detail_ids:
+            if journey.startTime < min_start:
+                raise ValidationError("外出时间与结束时间填写不合理,各行程间时间存在冲突!")
+            min_start = journey.endTime
+            for travel in crr:
+                if travel.id == journey.id:
+                    continue
+                if travel.startTime <= journey.startTime < travel.endTime or \
+                                        travel.startTime < journey.endTime <= travel.endTime:
+                    raise ValidationError("{0}到{1}时间与之前提交的外出申请时间冲突!".format(datetime.strptime(journey.startTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8), datetime.strptime(journey.endTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8)))
+            for detail in cr:
+                if detail.starttime <= journey.startTime[:10] < detail.endtime or \
+                                        detail.starttime < journey.endTime[:10] <= detail.endtime:
+                    raise ValidationError("{0}到{1}时间与外出公干时间重合".format(datetime.strptime(journey.startTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8), datetime.strptime(journey.endTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8)))
 
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
 
     def get_base_url(self,cr,uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
         return base_url
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
 #提交审批邮件通知
     def send_mail(self):
@@ -139,22 +143,21 @@ class dtdream_hr_business(models.Model):
         url = base_url+link
         email_to=self.current_approver.work_email
         app_time=  self.create_time[:10]
-        subject = '%s于%s提交外出公干申请，请您审批！' %(self.name.user_id.name,app_time)
+        subject = u'%s于%s提交外出公干申请，请您审批！' %(self.name.user_id.name,app_time)
         appellation= self.current_approver.user_id.name+u'，您好：'
-        content = '%s提交的外出公干申请正等待您的审批！' %(self.name.user_id.name)
+        content = u'%s提交的外出公干申请正等待您的审批！' %(self.name.user_id.name)
         self.env['mail.mail'].create({
-                'body_html': '<p>%s</p>'
-                             '<p>%s</p>'
-                             '<p> 请点击链接进入审批:'
-                             '<a href="%s">%s</a></p>'
-                             '<pre>'
-                              '<p>dodo<p>'
-                             '<p>万千业务，简单有do<p>'
-                             '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
+                'body_html': u'''<p>%s</p>
+                             <p>%s</p>
+                             <p> 请点击链接进入审批:
+                             <a href="%s">%s</a></p>
+                            <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_to': '%s' % email_to,
                 'auto_delete': False,
-                'email_from': 'postmaster-odoo@dtdream.com',
+                'email_from':self.get_mail_server_name(),
             }).send()
 
 #申请通过/驳回通知申请人 
@@ -164,25 +167,24 @@ class dtdream_hr_business(models.Model):
         url = base_url+link
         email_to=self.name.work_email
         app_time=  self.create_time[:10]
-        subject = '%s您于%s提交外出公干申请已被%s批准，请您查看！' %(self.name.user_id.name,app_time,self.current_approver.user_id.name)
-        content = '%s您提交的外出公干申请已被%s批准，请您查看！' %(self.name.user_id.name,self.current_approver.user_id.name)
+        subject = u'%s您于%s提交外出公干申请已被%s批准，请您查看！' %(self.name.user_id.name,app_time,self.current_approver.user_id.name)
+        content = u'%s您提交的外出公干申请已被%s批准，请您查看！' %(self.name.user_id.name,self.current_approver.user_id.name)
         if self.state=='99':
-            subject = '%s您于%s提交外出公干申请已被%s驳回，请您查看！' %(self.name.user_id.name,app_time,self.current_approver.user_id.name)
-            content = '%s您提交的外出公干申请已被%s驳回，请您查看！' %(self.name.user_id.name,self.current_approver.user_id.name)
+            subject = u'%s您于%s提交外出公干申请已被%s驳回，请您查看！' %(self.name.user_id.name,app_time,self.current_approver.user_id.name)
+            content = u'%s您提交的外出公干申请已被%s驳回，请您查看！' %(self.name.user_id.name,self.current_approver.user_id.name)
         appellation= self.name.user_id.name+u'，您好：'
         self.env['mail.mail'].create({
-                'body_html': '<p>%s</p>'
-                             '<p>%s</p>'
-                             '<p> 请点击链接进入查看:'
-                             '<a href="%s">%s</a></p>'
-                             '<pre>'
-                              '<p>dodo<p>'
-                             '<p>万千业务，简单有do<p>'
-                             '<p>%s<p></pre>' % (appellation,content, url,url,self.write_date[:10]),
+                'body_html': u'''<p>%s</p>
+                             <p>%s</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_to': '%s' % email_to,
                 'auto_delete': False,
-                'email_from': 'postmaster-odoo@dtdream.com',
+                'email_from':self.get_mail_server_name(),
             }).send()
 
     @api.model
@@ -255,7 +257,6 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：三级审批 --> '+u'批准')
             self.send_mail_to_app()
-
 
     @api.model
     def wkf_fif(self):                                       #第四审批人批准

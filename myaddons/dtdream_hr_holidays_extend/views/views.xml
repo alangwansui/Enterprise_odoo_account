@@ -36,7 +36,16 @@
 
 
                       </field>
-                        <xpath expr='//field[@name="name"]' position="attributes">
+                      <field name="number_of_days_temp" position="before">
+                          <field name="number_of_days_temp_char" class="oe_inline" attrs="{'readonly': [('state','not in','draft')],'required':[('type', '=', 'remove')]}"></field>
+                      </field>
+                        <xpath expr='//field[@name="payslip_status"]' position="attributes">
+                             <attribute name="invisible">True</attribute>
+                        </xpath>
+                      <xpath expr='//field[@name="holiday_type"]' position="attributes">
+                             <attribute name="invisible">True</attribute>
+                        </xpath>
+                      <xpath expr='//field[@name="name"]' position="attributes">
                              <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
                         </xpath>
                         <xpath expr='//field[@name="holiday_status_id"]' position="attributes">
@@ -49,13 +58,13 @@
                              <attribute name="attrs">{'readonly': [('state','not in','draft')],'required':[('type', '=', 'remove')]}</attribute>
                         </xpath>
                         <xpath expr='//field[@name="number_of_days_temp"]' position="attributes">
-                             <attribute name="attrs">{'readonly': [('state','not in','draft')],'required':[('type', '=', 'remove')]}</attribute>
+                             <attribute name="attrs">{'readonly': [('state','not in','draft')],'required':[('type', '=', 'remove')],'invisible':True}</attribute>
                         </xpath>
                         <xpath expr='//button[@name="confirm"]' position="replace">
                              <button string="提交" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
                         </xpath>
                         <xpath expr='//button[@name="reset"]' position="replace">
-                             <button string="Reset to Draft" name="reset" type="workflow"
+                             <button string="重置为草稿" name="reset" type="workflow"
                                      attrs="{'invisible': [('state', 'not in', ['refuse'])]}"/>
                         </xpath>
                         <xpath expr='//button[@name="validate"]' position="replace">
@@ -89,7 +98,7 @@
                                  <p>1、连续病休2天以上的必须提供医院有效证明；2天及以内的病假不需提供医院证明，但每月这样的病假最多一次。</p>
                                  <p>2、病假期间包含公休日、法定节假日。</p>
                                  <p>3、请病假最小单位为半天。</p>
-                                 <p>四、其它假别注意事项请查看考勤制度规定。查询路径：OA平台－文档中心－人力资源－人力发文－人字[2015]001数梦工场考勤管理制度</p>
+                                 <p>四、其它假别注意事项请查看考勤制度规定。<a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29951139">点击链接查看</a></p>
                              </div>
                         </xpath>
 
@@ -170,7 +179,7 @@
 
                   <record model="ir.actions.act_window" id="hr_holidays.open_department_holidays_approve2"><!--待批准休假-->
 
-                        <field name="name">待批准休假</field>
+                        <field name="name">待我批准休假</field>
                         <field name="res_model">hr.holidays</field>
                         <field name="view_type">form</field>
                         <field name="view_mode">tree,form,calendar</field>
@@ -181,7 +190,7 @@
                   </record>
                   <record model="ir.actions.act_window" id="hr_holidays.open_hr_holidays_approved"><!--已批准休假-->
 
-                        <field name="name">已批准休假</field>
+                        <field name="name">我已批准休假</field>
                         <field name="res_model">hr.holidays</field>
                         <field name="view_type">form</field>
                         <field name="view_mode">tree,form</field>
@@ -303,7 +312,6 @@
                       <field name="view_mode">tree,form</field>
                       <field name="view_id" ref="hr_holidays.view_employee_form_leave_inherit"></field>
                   </record>
-
                   <act_window
                           multi="True"
                           key2="client_action_multi"
@@ -316,7 +324,20 @@
                           target="new"
                           groups="base.group_hr_user"/>
 
-
+                    <record id="view_employee_form_holidays_inherit" model="ir.ui.view">
+                    <field name="name">hr.employee.holidays.form.inherit</field>
+                    <field name="model">hr.employee</field>
+                    <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+                    <field name="arch" type="xml">
+                        <button name="toggle_active" position="before">
+                            <field name="can_view_holidays" invisible="True"/>
+                           <button class="oe_stat_button" type="action" name="%(hr_holidays.open_ask_holidays)d"
+                            icon="fa-strikethrough" attrs="{'invisible':[('can_view_holidays','=',False)]}">
+                            <field string="休假" name="holidays_nums" widget="statinfo"/>
+                           </button>
+                        </button>
+                    </field>
+                </record>
 <!--=======================================================================================menuitem===================================================================-->
                  <!--分配申请-->
                  <delete id="hr_holidays.menu_open_allocation_holidays" model="ir.ui.menu"></delete>
@@ -332,11 +353,12 @@
                 <!--待批准休假-->
                  <delete id="hr_holidays.menu_hr_holidays_approvals" model="ir.ui.menu"></delete>
                  <menuitem name="Leaves to Approve" id="hr_holidays.menu_hr_holidays_approvals"  sequence="3" groups="base.group_user"/>
-                 <menuitem name="待批准休假" id="hr_holidays.menu_hr_holidays_approvals2" parent="hr_holidays.menu_hr_holidays_root" sequence="3" groups="base.group_user" action="hr_holidays.open_department_holidays_approve2"/>
-                 <menuitem name="已批准休假" id="hr_holidays.menu_hr_holidays_approvaled" parent="hr_holidays.menu_hr_holidays_root" sequence="10" groups="base.group_user" action="hr_holidays.open_hr_holidays_approved"/>
+                 <menuitem name="待我批准休假" id="hr_holidays.menu_hr_holidays_approvals2" parent="hr_holidays.menu_hr_holidays_root" sequence="3" groups="base.group_user" action="hr_holidays.open_department_holidays_approve2"/>
+                 <menuitem name="我已批准休假" id="hr_holidays.menu_hr_holidays_approvaled" parent="hr_holidays.menu_hr_holidays_root" sequence="10" groups="base.group_user" action="hr_holidays.open_hr_holidays_approved"/>
                  <menuitem name="年休假设定" parent="hr_holidays.menu_hr_holidays_root" id="menu_open_set_nianxiujia" sequence="22" groups="base.group_hr_user"/>
                  <menuitem name="年休假分配" parent="menu_open_set_nianxiujia" id="open_allocate_request" action="hr_holidays.open_allocation_holidays2" groups="base.group_hr_user,base.group_hr_manager"></menuitem>
                  <menuitem name="年休假扣除" parent="menu_open_set_nianxiujia" id="open_allocate_mini" action="hr_holidays.open_ask_holidays2" groups="base.group_hr_user,base.group_hr_manager"></menuitem>
+                <menuitem name="休假统计" parent="hr_holidays.menu_hr_holidays_my_leaves" id="hr_holidays.menu_open_company_allocation" action="hr_holidays.open_company_allocation" sequence="21"/>
 
             </data>
         </openerp>

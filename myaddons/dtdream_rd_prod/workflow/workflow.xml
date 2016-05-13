@@ -3,7 +3,7 @@
     <data>
         <record id="rd_product_workflow" model="workflow">
             <field name="name">研发项目立项工作流</field>
-            <field name="osv">dtdream_rd_prod.dtdream_prod_appr</field>
+            <field name="osv">dtdream_prod_appr</field>
             <field name="on_create">True</field>
         </record>
 
@@ -57,10 +57,28 @@
             <field name="signal">btn_to_lixiang</field>
         </record>
 
+        <record id="trans_b_a" model="workflow.transition">
+            <field name="act_from" ref="activity_lixiang"/>
+            <field name="act_to" ref="rd_activity_draft"/>
+            <field name="signal">lixiang_to_draft</field>
+        </record>
+
+        <record id="trans_c_a" model="workflow.transition">
+            <field name="act_from" ref="activity_ztsj"/>
+            <field name="act_to" ref="rd_activity_draft"/>
+            <field name="signal">ztsj_to_draft</field>
+        </record>
+
         <record id="trans_b_c" model="workflow.transition">
             <field name="act_from" ref="activity_lixiang"/>
             <field name="act_to" ref="activity_ztsj"/>
             <field name="signal">btn_to_ztsj</field>
+        </record>
+
+        <record id="trans_c_b" model="workflow.transition">
+            <field name="act_from" ref="activity_ztsj"/>
+            <field name="act_to" ref="activity_lixiang"/>
+            <field name="signal">ztsj_to_lixiang</field>
         </record>
 
         <record id="trans_c_d" model="workflow.transition">
@@ -69,10 +87,22 @@
             <field name="signal">btn_to_ddkf</field>
         </record>
 
+        <record id="trans_d_c" model="workflow.transition">
+            <field name="act_from" ref="activity_ddkf"/>
+            <field name="act_to" ref="activity_ztsj"/>
+            <field name="signal">ddkf_to_ztsj</field>
+        </record>
+
          <record id="trans_d_e" model="workflow.transition">
             <field name="act_from" ref="activity_ddkf"/>
             <field name="act_to" ref="activity_yzfb"/>
             <field name="signal">btn_to_yzfb</field>
+        </record>
+
+        <record id="trans_e_d" model="workflow.transition">
+            <field name="act_from" ref="activity_yzfb"/>
+            <field name="act_to" ref="activity_ddkf"/>
+            <field name="signal">yzfb_to_ddkf</field>
         </record>
 
         <record id="trans_e_f" model="workflow.transition">
@@ -81,12 +111,18 @@
             <field name="signal">btn_to_jieshu</field>
         </record>
 
+        <record id="trans_f_e" model="workflow.transition">
+            <field name="act_from" ref="activity_jieshu"/>
+            <field name="act_to" ref="activity_yzfb"/>
+            <field name="signal">js_to_yzfb</field>
+        </record>
+
 
         <!--ssssssssssssssssssssssssss版本流程ssssssssssssssssssssssss-->
 
         <record id="rd_product_version_workflow" model="workflow">
             <field name="name">研发产品版本工作流</field>
-            <field name="osv">dtdream_rd_prod.dtdream_rd_version</field>
+            <field name="osv">dtdream_rd_version</field>
             <field name="on_create">True</field>
         </record>
 

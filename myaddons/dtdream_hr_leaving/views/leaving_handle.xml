@@ -27,13 +27,15 @@
           <header>
               <button name="btn_submit"
                       type="workflow" states="0" string="提交" class="oe_highlight"></button>
-              <button name="btn_submit"
+              <button name="multi_process_btn_submit"
+                      confirm="是否确认提交？"
                       attrs="{'invisible':['|',('state','not in',('3','5')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"
-                      type="workflow" string="提交" class="oe_highlight"></button>
+                      type="object" string="提交" class="oe_highlight"></button>
               <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" string="审批" class="oe_highlight"
                       attrs="{'invisible':['|',('state','not in',('1','2','4','6', '7','8')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"
                       context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"></button>
               <button name="btn_reject"
+                      confirm="是否确认驳回？"
                       attrs="{'invisible':['|',('state','not in',('3','5')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"
                       type="workflow" string="驳回到上一步" class="oe_highlight"></button>
 
@@ -57,8 +59,20 @@
               <field name="is_admin" invisible="True"/>
             </group>
             <notebook states="3,4,5,6,7,8,99">
+              <page string="离岗后环节" states="5,6,7,8,99" >
+                <field name="leaving_handle_process_ids2" attrs="{'readonly':[('state','!=','5')]}">
+                  <tree editable="bottom" create="false" delete="false">
+                    <field name="process_id" readonly="True"></field>
+                    <field name="process_approver" readonly="True"></field>
+                    <field name="is_finish" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="is_other" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="remark" attrs="{'readonly':[('can_edit','=',False)]}"></field>
+                    <field name="can_edit" invisible="True"></field>
+                  </tree>
+                </field>
+              </page>
               <page string="离岗前环节" states="3,4,5,6,7,8,99">
-                <field name="leaving_handle_process_ids1" >
+                <field name="leaving_handle_process_ids1" attrs="{'readonly':[('state','!=','3')]}">
                   <tree editable="bottom" create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
                     <field name="process_approver" readonly="True"></field>
@@ -69,18 +83,6 @@
                   </tree>
                 </field>
                 <field name="is_finish1" invisible="True"/>
-              </page>
-               <page string="离岗后环节" states="5,6,7,8,99">
-                <field name="leaving_handle_process_ids2" >
-                  <tree editable="bottom" create="false" delete="false">
-                    <field name="process_id" readonly="True"></field>
-                    <field name="process_approver" readonly="True"></field>
-                    <field name="is_finish" attrs="{'readonly':[('can_edit','=',False)]}"></field>
-                    <field name="is_other" attrs="{'readonly':[('can_edit','=',False)]}"></field>
-                    <field name="remark" attrs="{'readonly':[('can_edit','=',False)]}"></field>
-                    <field name="can_edit" invisible="True"></field>
-                  </tree>
-                </field>
               </page>
             </notebook>
             <notebook  attrs="{'invisible':[('state','=','0')]}">

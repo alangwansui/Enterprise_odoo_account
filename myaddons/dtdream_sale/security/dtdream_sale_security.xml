@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="0">
+    <data noupdate="1">
         <!--机会点/项目管理权限控制组-->
+
+        <record model="ir.module.category" id="module_dtdream_category_sales_management">
+            <field name="name">销售授权</field>
+            <field name="description">销售授权</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="group_dtdream_sale_salesman" model="res.groups">
+            <field name="name">管理自己的机会点</field>
+            <field name="category_id" ref="module_dtdream_category_sales_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">the user will have access to his own data in the sales application.</field>
+        </record>
+
+        <record id="group_dtdream_sale_salesman_all_leads" model="res.groups">
+            <field name="name">查看所有机会点</field>
+            <field name="category_id" ref="module_dtdream_category_sales_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">the user will have access to all records of everyone in the sales application.</field>
+        </record>
+
+        <record id="group_dtdream_sale_manager" model="res.groups">
+            <field name="name">销售业务管理员</field>
+            <field name="comment">the user will have an access to the sales configuration as well as statistic reports.</field>
+            <field name="category_id" ref="module_dtdream_category_sales_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
         <record id="group_dtdream_sale_read" model="res.groups">
-            <field name="name">按行业/区域授权</field>
+            <field name="name">按行业/区域/产品类授权</field>
             <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
-            <field name="category_id" ref="base.module_category_sales_management"/>
+            <field name="category_id" ref="module_dtdream_category_sales_management"/>
         </record>
 
         <!--产品权限控制组-->
@@ -15,9 +44,8 @@
             <field name="sequence">2</field>
         </record>
 
-
         <record id="group_product_list_query" model="res.groups">
-            <field name="name">查看产品清单</field>
+            <field name="name">查看目录价</field>
             <field name="category_id" ref="module_product_group"/>
         </record>
 
@@ -27,8 +55,14 @@
             <field name="category_id" ref="module_product_group"/>
         </record>
 
-        <record id="group_product_query" model="res.groups">
-            <field name="name">查看系统部与市场部总裁折扣</field>
+        <record id="group_product_system_query" model="res.groups">
+            <field name="name">查看系统部折扣</field>
+            <field name="implied_ids" eval="[(4,ref('group_product_list_query'))]"/>
+            <field name="category_id" ref="module_product_group"/>
+        </record>
+
+        <record id="group_product_market_query" model="res.groups">
+            <field name="name">查看市场部总裁折扣</field>
             <field name="implied_ids" eval="[(4,ref('group_product_list_query'))]"/>
             <field name="category_id" ref="module_product_group"/>
         </record>
@@ -40,62 +74,42 @@
         </record>
 
         <record id="group_menu_hide" model="res.groups">
-            <field name="name">菜单隐藏组</field>
-            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+            <field name="name">隐藏组</field>
         </record>
 
         <!--机会点/项目管理权限控制规则-->
+
         <record id="dtdream_sale_read_rule_read" model="ir.rule">
-            <field name="name">按行业/区域授权规则:</field>
+            <field name="name">按行业/区域/产品类授权规则:</field>
             <field name="model_id" ref="model_crm_lead"/>
             <field name="perm_read" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="domain_force">[('office_id','in',[x.id for x in user.user_access_office]),('industry_id','in',[x.id for x in user.user_access_industry])]</field>
+            <field name="domain_force">['&amp;','&amp;',('office_id','in',[x.id for x in user.user_access_office]),('industry_id','in',[x.id for x in user.user_access_industry]),('product_category_type_id','in',[x.id for x in user.user_access_product_type])]</field>
             <field name="groups" eval="[(4,ref('group_dtdream_sale_read'))]"/>
         </record>
 
-        <!--销售经理产品权限控制-->
-        <record id="dtdream_sale_manager_rule" model="ir.rule">
-            <field name="name">销售经理产品权限控制:</field>
-            <field name="model_id" ref="model_product_template"/>
-            <field name="perm_read" eval="0"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('create_uid','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('base.group_sale_manager'))]"/>
-        </record>
-
-        <record id="crm.crm_rule_personal_lead" model="ir.rule">
+        <record id="dtdream_crm_rule_personal_lead" model="ir.rule">
             <field name="name">Personal Leads</field>
             <field ref="crm.model_crm_lead" name="model_id"/>
-            <field name="domain_force">['|','|',('user_id','=',user.id),('user_id','=',False),('team_id.res_member_ids','=',user.id)]</field>
-            <field name="groups" eval="[(4, ref('base.group_sale_salesman'))]"/>
-        </record>
-
-        <record id="dtdream_product_list_rule" model="ir.rule">
-            <field name="name">产品权限查看控制:</field>
-            <field name="model_id" ref="model_product_template"/>
             <field name="perm_read" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('create_uid','=','-99')]</field>
-            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+            <field name="domain_force">['|','|','|',('user_id','=',user.id),('user_id','=',False),('team_id.res_member_ids','=',user.id),('sale_apply_id.login','=',user.login)]</field>
+            <field name="groups" eval="[(4, ref('group_dtdream_sale_salesman'))]"/>
         </record>
 
-        <record id="dtdream_product_list_rule2" model="ir.rule">
-            <field name="name">产品权限查看控制2:</field>
-            <field name="model_id" ref="model_product_template"/>
+        <record id="dtdream_crm_rule_all_lead" model="ir.rule">
+            <field name="name">All Leads</field>
+            <field ref="crm.model_crm_lead" name="model_id"/>
             <field name="perm_read" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
             <field name="domain_force">[(1,'=',1)]</field>
-            <field name="groups" eval="[(4,ref('group_product_list_query'))]"/>
+            <field name="groups" eval="[(4, ref('group_dtdream_sale_salesman_all_leads'))]"/>
         </record>
-
     </data>
 </openerp>

@@ -6,5 +6,11 @@
             <field name="domain_force">[('Inaugural_state','=','Inaugural_state_01')]</field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"></field>
         </record>
+        <record id="dtdream_hr_employee_rule2" model="ir.rule">
+            <field name="name">HR Officer可以看到所有员工的信息</field>
+            <field name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('base.group_hr_user'))]"></field>
+        </record>
     </data>
 </openerp>

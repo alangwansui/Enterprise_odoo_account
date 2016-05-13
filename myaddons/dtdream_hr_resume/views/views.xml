@@ -205,11 +205,75 @@
         <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
         <field name="arch" type="xml">
             <button name="toggle_active" position="before">
+               <field name="resume_view" invisible="True"/>
                <button class="oe_stat_button" type="action" name="%(act_dtdream_hr_resume)d"
-                icon="fa-info" string="员工履历" groups="dtdream_hr_resume.group_hr_resume_view, dtdream_hr_resume.group_hr_resume_edit">
+                icon="fa-info" string="员工履历" attrs="{'invisible':[('resume_view','=',False)]}">
                </button>
-               <button class="oe_stat_button" type="action"  name="%(act_dtdream_hr_resume)d"
-                    icon="fa-info" string="员工履历" >
+            </button>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_contract_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.contract.tree</field>
+        <field name="model">dtdream.hr.contract</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="num"/>
+                <field name="department"/>
+                <field name="date_start"/>
+                <field name="date_stop"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_contract_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.contract.form</field>
+        <field name="model">dtdream.hr.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="num"/>
+                            <field name="date_stop"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="date_start"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="act_dtdream_hr_contract">
+        <field name="name">合同</field>
+        <field name="model_id" ref="model_dtdream_hr_contract"/>
+        <field name="code">
+            action = {
+            'name':'合同',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'dtdream.hr.contract',
+            'res_id': self.search(cr,uid,[('name.id','=', context.get("active_id"))],context=None)[0] if self.search(cr,uid,[('name.id','=', context.get("active_id"))],context=None) else "",
+            'context':context,
+            }
+        </field>
+    </record>
+
+    <record id="view_employee_form_contract_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.contract.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+               <field name="contract_view" invisible="True"/>
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_hr_contract)d"
+                icon="fa-edit" string="合同" attrs="{'invisible':[('resume_view','=',False)]}">
                </button>
             </button>
         </field>

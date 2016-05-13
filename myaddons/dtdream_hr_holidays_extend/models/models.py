@@ -4,18 +4,22 @@ from openerp import models, fields, api
 from datetime import datetime,time
 from openerp.osv import fields, osv
 from openerp import models,fields
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DF, re
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import ValidationError
 from openerp.exceptions import UserError, AccessError
-from openerp import tools
-import math
 
 
 class dtdream_hr_holidays_extend(models.Model):
     # _name = "dtdream.hr.holidays.extend"
     _inherit = "hr.holidays"
     # number_of_days_temp=fields.float('Allocation',default=123,required=1)
+    warning_digit = {
+        'title': "提示",
+        'message': "天数必须为数字"
+    }
+    name = fields.Char('说明', size=64,required=True)
+    number_of_days_temp_char = fields.Char("天数",required=True)
     attachment=fields.Binary(string="附件",store=True)
     attachment_name=fields.Char(string="附件名")
     create_type=fields.Char(string="创建类型")
@@ -25,7 +29,7 @@ class dtdream_hr_holidays_extend(models.Model):
         self.gonghao=self.employee_id.job_number
     gonghao=fields.Char(string="工号",compute=_compute_gonghao,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
-    create_time= fields.Char(string='申请时间',default=lambda self: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),readonly=1)
+    create_time= fields.Datetime(string='申请时间',default=lambda self: datetime.now(),readonly=1)
     # create_time=openerp.fields.Datetime.now()
     # approver1_auto = fields.Many2one("hr.employee",string="第一审批人(只用于显示)",compute=_compute_approver1)
 
@@ -56,15 +60,18 @@ class dtdream_hr_holidays_extend(models.Model):
 
     ],string="年休假年份")
 
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5','employee_id','holiday_status_id','number_of_days_temp')
     def change(self):
         nianjia=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('holiday_status_id','=',5),('state','!=','draft')],order="id desc")
         length=len(nianjia)
         remain_nianjia_days=0
         for record in nianjia:
-            if record.type=="add":
+            if record.type=="add" and record.state =="validate":
                 remain_nianjia_days +=record.number_of_days_temp
-            elif record.type=="remove":
+            elif record.type=="remove" and record.state =="validate":
                 remain_nianjia_days -=record.number_of_days_temp
         if remain_nianjia_days>0 and self.holiday_status_id.id==6:
             raise ValidationError("还有年休假余额，不能休事假！")
@@ -93,7 +100,14 @@ class dtdream_hr_holidays_extend(models.Model):
         if self.number_of_days_temp<=0:
             raise ValidationError('天数必须大于0')
 
-
+    @api.onchange('number_of_days_temp_char')
+    def onchange_number_of_days_temp_char(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if p.search(str(self.number_of_days_temp_char)):
+            self.number_of_days_temp = self.number_of_days_temp_char
+        elif self.number_of_days_temp_char:
+            self.number_of_days_temp_char = False
+            return {"warning": self.warning_digit}
 
     @api.onchange('employee_id')
     def onchange_employee1(self):
@@ -159,6 +173,19 @@ class dtdream_hr_holidays_extend(models.Model):
             return False
         return True
 
+    def create(self, cr, uid, values, context=None):
+        """ Override to avoid automatic logging of creation """
+        if context is None:
+            context = {}
+        employee_id = values.get('employee_id', False)
+        context = dict(context, mail_create_nolog=True, mail_create_nosubscribe=True)
+        if not self._check_state_access_right(cr, uid, values, context):
+            raise AccessError(('您不能分配年休假 \'%s\'. 请联系管理员') % values.get('state'))
+        if not values.get('name'):
+            values['name'] = " "
+        hr_holiday_id = super(dtdream_hr_holidays_extend, self).create(cr, uid, values, context=context)
+        self.add_follower(cr, uid, [hr_holiday_id], employee_id, context=context)
+        return hr_holiday_id
 
     def get_base_url(self,cr,uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
@@ -174,23 +201,19 @@ class dtdream_hr_holidays_extend(models.Model):
         url=self.get_base_url()+link
         if self.create_type==False:
             self.env['mail.mail'].create({
-                 'subject': u'%s 请假'%self.employee_id.name,
-                'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
-                'email_from': 'postmaster-odoo@dtdream.com',
+                'subject': u'%s于%s提交请假申请，请您审批！' %(self.employee_id.name,self.create_time[:10]),
+                'body_html': u'''
+                <p>%s，您好：</p>
+                <p>%s提交的请假申请正等待您的审批！</p>
+                <p> 请点击链接进入审批:
+                <a href="%s">%s</a></p>
+               <p>dodo</p>
+                <p>万千业务，简单有do</p>
+                <p>%s</p>''' % (self.shenpiren1.name, self.employee_id.name, url, url, self.write_date[:10]),
+                'email_from':self.get_mail_server_name(),
 
                 'email_to': self.shenpiren1.work_email,
             }).send()
-
-            self.env['mail.mail'].create({
-                 'subject': u'%s 请假'%self.employee_id.name,
-                'body_html': u'<p>%s</p><p>您提交了一个请假单,点击<a href="%s">此处查看</p>'%(self.employee_id.name,url),
-                'email_from': 'postmaster-odoo@dtdream.com',
-
-                'email_to': self.employee_id.work_email,
-            }).send()
-
-
-
 
     @api.multi
     def holidays_confirm2(self):
@@ -205,18 +228,29 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren2.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''
+                    <p>%s，您好：</p>
+                    <p>%s提交的请假申请正等待您的审批！</p>
+                    <p> 请点击链接进入审批:
+                    <a href="%s">%s</a></p>
+                   <p>dodo</p>
+                    <p>万千业务，简单有do</p>
+                    <p>%s</p>''' % (self.shenpiren2.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.shenpiren2.work_email,
                 }).send()
 
             self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：一级审批 -> 二级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s您于%s提交请假申请已被%s批准，请您查看！' % (self.employee_id.name, self.create_time[:10], self.shenpiren1.name),
+                    'body_html': u'''<p>%s，您好：</p>
+                             <p>您提交的请假申请已被%s批准，请您查看！</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.employee_id.name,self.shenpiren1.name, url,url,self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.employee_id.work_email,
                 }).send()
 
@@ -230,17 +264,29 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren3.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''
+                    <p>%s，您好：</p>
+                    <p>%s提交的请假申请正等待您的审批！</p>
+                    <p> 请点击链接进入审批:
+                    <a href="%s">%s</a></p>
+                   <p>dodo</p>
+                    <p>万千业务，简单有do</p>
+                    <p>%s</p>''' % (self.shenpiren3.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.shenpiren3.work_email,
                 }).send()
 
             self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：二级审批 -> 三级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                    'subject': u'%s您于%s提交请假申请已被%s批准，请您查看！' % (self.employee_id.name, self.create_time[:10], self.shenpiren2.name),
+                    'body_html': u'''<p>%s，您好：</p>
+                             <p>您提交的请假申请已被%s批准，请您查看！</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.employee_id.name,self.shenpiren2.name, url,url,self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
 
                     'email_to': self.employee_id.work_email,
                 }).send()
@@ -256,17 +302,29 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren4.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''
+                             <p>%s，您好：</p>
+                             <p>%s提交的请假申请正等待您的审批！</p>
+                             <p> 请点击链接进入审批:
+                             <a href="%s">%s</a></p>
+                            <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.shenpiren4.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.shenpiren2.work_email,
                 }).send()
 
             self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：三级审批 -> 四级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                    'subject': u'%s您于%s提交请假申请已被%s批准，请您查看！' % (self.employee_id.name, self.create_time[:10], self.shenpiren3.name),
+                    'body_html': u'''<p>%s，您好：</p>
+                             <p>您提交的请假申请已被%s批准，请您查看！</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.employee_id.name,self.shenpiren3.name, url,url,self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
 
                     'email_to': self.employee_id.work_email,
                 }).send()
@@ -282,17 +340,30 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren5.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                'body_html': u'''
+                         <p>%s，您好：</p>
+                         <p>%s提交的请假申请正等待您的审批！</p>
+                         <p> 请点击链接进入审批:
+                         <a href="%s">%s</a></p>
+                        <p>dodo</p>
+                         <p>万千业务，简单有do</p>
+                         <p>%s</p>''' % (self.shenpiren5.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
 
                     'email_to': self.shenpiren2.work_email,
                 }).send()
 
             self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：四级审批 -> 五级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                    'subject': u'%s您于%s提交请假申请已被%s批准，请您查看！' % (self.employee_id.name, self.create_time[:10], self.shenpiren4.name),
+                    'body_html': u'''<p>%s，您好：</p>
+                             <p>您提交的请假申请已被%s批准，请您查看！</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.employee_id.name,self.shenpiren4.name, url,url,self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
 
                     'email_to': self.employee_id.work_email,
                 }).send()
@@ -326,9 +397,15 @@ class dtdream_hr_holidays_extend(models.Model):
         state_code=unicode(state,'utf-8')
         if self.create_type==False:
             self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 驳回,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,state_code,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                    'subject': u'%s您于%s提交请假申请已被驳回，请您查看！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''<p>%s，您好：</p>
+                             <p>您提交的请假申请已被驳回，请您查看！</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.employee_id.name, url,url,self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
 
                     'email_to': self.employee_id.work_email,
                 }).send()
@@ -352,20 +429,26 @@ class dtdream_hr_holidays_extend(models.Model):
         state_code=unicode(state,'utf-8')
         if this_self.create_type==False:
             this_self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%this_self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 完成,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,state_code,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                    'subject': u'您于%s提交请假申请已经审批通过，请您查看！' % (this_self.create_time[:10]),
+                    'body_html': u'''<p>%s，您好：</p>
+                             <p>您提交的请假申请已经审批通过，请您查看！</p>
+                             <p> 请点击链接进入查看:
+                             <a href="%s">%s</a></p>
+                              <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (this_self.employee_id.name, url,url,this_self.write_date[:10]),
+                    'email_from':this_self.get_mail_server_name(),
 
                     'email_to': this_self.employee_id.work_email,
                 }).send()
-        elif this_self.create_type=='manage':
-            this_self.env['mail.mail'].create({
-                    'subject': u'%s 年休假分配'%this_self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
-                    'email_to': this_self.employee_id.work_email,
-                }).send()
+        # elif this_self.create_type=='manage':
+        #     this_self.env['mail.mail'].create({
+        #             'subject': u'%s 年休假分配'%this_self.employee_id.name,
+        #             'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
+        #             'email_from':self.get_mail_server_name(),
+        #
+        #             'email_to': this_self.employee_id.work_email,
+        #         }).send()
 
 
         obj_emp = self.pool.get('hr.employee')
@@ -459,15 +542,15 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
         result = {'value': {}}
-
-
-
+        #
+        #
+        #
         # Compute and update the number of days
-        if (date_to and date_from) and (date_from <= date_to):
-            diff_day = self._get_number_of_days(date_from, date_to)
-            result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
-        else:
-            result['value']['number_of_days_temp'] = 0
+        # if (date_to and date_from) and (date_from <= date_to):
+        #     diff_day = self._get_number_of_days(date_from, date_to)
+        #     result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
+        # else:
+        #     result['value']['number_of_days_temp'] = 0
 
         return result
 
@@ -481,11 +564,11 @@ class dtdream_hr_holidays_extend(models.Model):
         result = {'value': {}}
 
         # Compute and update the number of days
-        if (date_to and date_from) and (date_from <= date_to):
-            diff_day = self._get_number_of_days(date_from, date_to)
-            result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
-        else:
-            result['value']['number_of_days_temp'] = 0
+        # if (date_to and date_from) and (date_from <= date_to):
+        #     diff_day = self._get_number_of_days(date_from, date_to)
+        #     result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
+        # else:
+        #     result['value']['number_of_days_temp'] = 0
         return result
 
 
@@ -577,7 +660,21 @@ class hr_holidays_status_extend(osv.osv):
                     status_dict['leaves_taken'] += holiday.number_of_days_temp
                     status_dict['remaining_leaves'] -= holiday.number_of_days_temp
         return result
+class dtdream_holidays_hr(models.Model):
+    _inherit = 'hr.employee'
 
+    def _compute_holidays_nums(self):
+        cr = self.env["hr.holidays"].search([('type','=','remove'),("employee_id.id", "=", self.id)])
+        self.holidays_nums = len(cr)
+
+    @api.one
+    def _compute_has_holidays_view(self):
+        if self.user_id == self.env.user:
+            self.can_view_holidays = True
+        else:
+            self.can_view_holidays = False
+    can_view_holidays = fields.Boolean(compute=_compute_has_holidays_view)
+    holidays_nums = fields.Integer(compute=_compute_holidays_nums, string="休假记录",stroe=True)
 
 
 

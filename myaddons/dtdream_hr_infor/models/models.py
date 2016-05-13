@@ -79,7 +79,6 @@ class dtdream_hr_infor(models.Model):
     gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)")
     oil_card = fields.Char(string="油卡编号")
     has_oil = fields.Boolean(string="已办理中大一卡通")
-    contract = fields.One2many("dtdream.hr.contract", "name", string="合同")
 
 
 class dtdream_hr_family(models.Model):
@@ -135,26 +134,6 @@ class dtdream_hr_state(models.Model):
     pro_name = fields.Char(string="省份")
     province = fields.Many2one("dtdream.hr.province", string="省份")
 
-
-class dtdream_hr_contract(models.Model):
-    _name = "dtdream.hr.contract"
-
-    @api.depends('name')
-    def _compute_num_department(self):
-        for rec in self:
-            rec.num = rec.name.job_number
-            rec.department = rec.name.department_id.complete_name
-
-    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
-        [("id", "=", self.env.context.get('active_id'))]), readonly="True")
-    num = fields.Char(string="工号", compute=_compute_num_department)
-    department = fields.Char(string="部门", compute=_compute_num_department)
-    date_start = fields.Date(string="合同开始日期", required=True)
-    date_stop = fields.Date(string="合同结束日期", required=True)
-
-    _sql_constraints = [
-        ("date_check", "CHECK(date_start < date_stop)", u'合同结束日期必须大于合同开始日期')
-    ]
 
 
 

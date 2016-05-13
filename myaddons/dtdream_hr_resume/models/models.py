@@ -144,6 +144,27 @@ class dtdream_hr_language(models.Model):
     remark = fields.Char(string="备注")
 
 
+class dtdream_hr_contract(models.Model):
+    _name = "dtdream.hr.contract"
+
+    @api.depends('name')
+    def _compute_num_department(self):
+        for rec in self:
+            rec.num = rec.name.job_number
+            rec.department = rec.name.department_id.complete_name
+
+    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
+        [("id", "=", self.env.context.get('active_id'))]))
+    num = fields.Char(string="工号", compute=_compute_num_department)
+    department = fields.Char(string="部门", compute=_compute_num_department)
+    date_start = fields.Date(string="合同开始日期", required=True)
+    date_stop = fields.Date(string="合同结束日期", required=True)
+
+    _sql_constraints = [
+        ("date_check", "CHECK(date_start < date_stop)", u'合同结束日期必须大于合同开始日期')
+    ]
+
+
 class dtdream_hr_resume_approve(models.Model):
     _name = "hr.resume.approve"
 
@@ -161,7 +182,32 @@ class dtdream_hr_remind_mobile(models.Model):
 class dtdream_hr_employee(models.Model):
     _inherit = 'hr.employee'
 
-    resume = fields.One2many("dtdream.hr.resume", "name", string="履历")
+    def _compute_resume_view(self):
+        """计算员工是否有权限看到履历按钮"""
+        has_view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
+        has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
+        if has_view or has_edit:
+            self.resume_view = True
+        elif self.user_id == self.env.user:
+            self.resume_view = True
+        else:
+            self.resume_view = False
+
+    def _compute_contract_view(self):
+        """计算员工是否有权限看到合同按钮"""
+        has_view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
+        has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
+        if has_view or has_edit:
+            self.contract_view = True
+        elif self.user_id == self.env.user:
+            self.contract_view = True
+        else:
+            self.contract_view = False
+
+    # resume = fields.Many2one("dtdream.hr.resume", "name", string="履历")
+    resume_view = fields.Boolean(string="履历是否可见", compute=_compute_resume_view)
+    contract = fields.One2many("dtdream.hr.contract", "name", string="合同")
+    contract_view = fields.Boolean(string="合同是否可见", compute=_compute_contract_view)
 
 
 
