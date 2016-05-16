@@ -68,6 +68,15 @@
             <field name="domain">[('his_app_user','=',uid)]</field>
         </record>
 
+        <record id="act_dtdream_prod_appr_with_self" model="ir.actions.act_window">
+            <field name="name">与我相关</field>
+            <field name="res_model">dtdream_prod_appr</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]</field>
+        </record>
+
         <record id="act_dtdream_prod_appr_all" model="ir.actions.act_window">
             <field name="name">所有研发产品</field>
             <field name="res_model">dtdream_prod_appr</field>
@@ -360,12 +369,14 @@
         <menuitem id="menu_finance_prod_appr_my" name="我创建的" parent="menu_finance_prod_appr" sequence="100"  action="act_dtdream_prod_appr"/>
         <menuitem id="menu_finance_prod_appr_wait" name="待我审批的" parent="menu_finance_prod_appr" sequence="200"  action="act_dtdream_prod_appr_wait"/>
         <menuitem id="menu_finance_prod_appr_over" name="我已审批的" parent="menu_finance_prod_appr" sequence="300"  action="act_dtdream_prod_appr_over"/>
+        <menuitem id="menu_finance_prod_appr_with_self" name="与我相关" parent="menu_finance_prod_appr" sequence="400"  action="act_dtdream_prod_appr_with_self"/>
+
 
         <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
         <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
         <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="100"  action="act_dtdream_rd_Rconfig"/>
-        <menuitem id="menu_finance_rd_approver" name="审批人配置" parent="menu_finance_rd_config" sequence="200"  action="act_dtdream_rd_approver"/>
+        <menuitem id="menu_finance_rd_approver" name="产品审批人配置" parent="menu_finance_rd_config" sequence="200"  action="act_dtdream_rd_approver"/>
 
-        <menuitem id="menu_finance_prod_appr_all" name="所有" parent="menu_finance_rd" sequence="400" action="act_dtdream_prod_appr_all"/>
+        <menuitem id="menu_finance_prod_appr_all" name="所有" parent="menu_finance_rd" sequence="400" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
     </data>
 </openerp>

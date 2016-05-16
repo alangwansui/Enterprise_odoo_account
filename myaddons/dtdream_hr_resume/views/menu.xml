@@ -3,8 +3,11 @@
     <data>
         <delete id="hr_contract.hr_menu_contract" model="ir.ui.menu"/>
         <menuitem action="action_hr_infor_contract" id="hr_infor_contract" parent="hr.menu_hr_root" name="合同" sequence="4" groups="group_hr_resume_view,group_hr_resume_edit"/>
-        <menuitem action="action_hr_resume" id="dtdream_hr_resume" parent="hr.menu_hr_root" name="履历" sequence="4" groups="group_hr_resume_view,group_hr_resume_edit"/>
-        <menuitem name="履历信息审批人配置" sequence="5" id="dtdream_hr_approve" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
-        <menuitem name="手机号码变更通知人员配置" sequence="10" id="dtdream_hr_remind_mobile" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_remind_mobile" groups="base.group_hr_manager"/>
+        <menuitem id="dtdream_hr_resume" parent="hr.menu_hr_root" name="履历" sequence="4" groups="group_hr_resume_view,group_hr_resume_edit"/>
+        <menuitem action="action_hr_resume_wait" id="dtdream_hr_resume_wait" parent="dtdream_hr_resume" name="待我审批申请" sequence="2"/>
+        <menuitem action="action_hr_resume_done" id="dtdream_hr_resume_done" parent="dtdream_hr_resume" name="我已审批申请" sequence="4" />
+        <menuitem action="action_hr_resume_all" id="dtdream_hr_resume_all" parent="dtdream_hr_resume" name="所有单据" sequence="6" />
+
+        <menuitem name="履历信息人员配置" sequence="25" id="dtdream_hr_approve_resume" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
     </data>
 </openerp>

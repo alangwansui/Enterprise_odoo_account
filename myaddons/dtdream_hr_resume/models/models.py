@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from datetime import datetime
+from lxml import etree
 
 
 class dtdream_hr_resume(models.Model):
@@ -15,6 +16,7 @@ class dtdream_hr_resume(models.Model):
         for rec in self:
             rec.workid = rec.name.job_number
             rec.department = rec.name.department_id.complete_name
+            rec.is_graduate = rec.name.graduate
 
     @api.constrains("experince")
     def check_start_end_time(self):
@@ -28,30 +30,55 @@ class dtdream_hr_resume(models.Model):
                 if not(experince.start_time > end or experince.end_time < start):
                     raise ValidationError("工作经历时间填写不合理,时间段之间存在重合!")
 
-    @api.constrains("degree")
-    def check_entry_leave_time(self):
-        start = ""
-        end = ""
-        if not len(self.degree):
-            raise ValidationError("至少填写一条学历信息!")
-        for index, degree in enumerate(self.degree):
-            if index == 0:
-                start = degree.entry_time
-                end = degree.leave_time
-            else:
-                if not(degree.entry_time > end or degree.leave_time < start):
-                    raise ValidationError("学历信息时间填写不合理,时间段之间存在重合!")
+    # @api.constrains("degree")
+    # def check_entry_leave_time(self):
+    #     start = ""
+    #     end = ""
+    #     if not len(self.degree):
+    #         raise ValidationError("至少填写一条学历信息!")
+    #     for index, degree in enumerate(self.degree):
+    #         if index == 0:
+    #             start = degree.entry_time
+    #             end = degree.leave_time
+    #         else:
+    #             if not(degree.entry_time > end or degree.leave_time < start):
+    #                 raise ValidationError("学历信息时间填写不合理,时间段之间存在重合!")
 
-    @api.depends("experince")
+    def _compute_has_edit_resume(self):
+        if self.name.user_id == self.env.user and self.state == '0':
+            self.has_edit = True
+        elif (self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id) and self.state == "99":
+            self.has_edit = True
+        else:
+            self.has_edit = False
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        cr = self.env["dtdream.hr.resume"].search([("name.id", "=", self.env.context.get('active_id'))])
+        res = super(dtdream_hr_resume, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        if res['type'] == "form":
+            if len(cr):
+                doc = etree.XML(res['arch'])
+                doc.xpath("//form")[0].set("create", "false")
+                res['arch'] = etree.tostring(doc)
+        return res
+
     def _compute_total_work(self):
         total = 0
         for rec in self.experince:
             total += rec.age_work
             self.total_work = total
 
+    def _compute_name_equal_login(self):
+        if self.env.user == self.name.user_id:
+            self.is_login = True
+        else:
+            self.is_login = False
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
-    is_graduate = fields.Boolean(related="name.graduate", string="是应届毕业生")
+    is_graduate = fields.Boolean(string="是应届毕业生")
+    is_login = fields.Boolean(string="登入", compute=_compute_name_equal_login)
     workid = fields.Char(string="工号", compute=_compute_workid_department)
     department = fields.Char(string="部门", compute=_compute_workid_department)
     has_title = fields.Boolean(string="是否有职称信息", default=True)
@@ -60,6 +87,7 @@ class dtdream_hr_resume(models.Model):
     title = fields.One2many("hr.employee.title", "resume", "职称信息")
     degree = fields.One2many("hr.employee.degree", "resume", "学历信息")
     language = fields.One2many("hr.employee.language", "resume", "外语信息")
+    has_edit = fields.Boolean(string="是否有编辑权限", compute=_compute_has_edit_resume, default=True)
     state = fields.Selection(
         [("0", "草稿"),
          ("1", "人力资源部审批"),
@@ -93,7 +121,7 @@ class dtdream_hr_experience(models.Model):
             if not rec.end_time or not rec.start_time:
                 continue
             rec.age_work = round((datetime.strptime(rec.end_time, time_format) -
-                            datetime.strptime(rec.start_time, time_format)).days / 365.0, 2)
+                                  datetime.strptime(rec.start_time, time_format)).days / 365.0, 2)
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     start_time = fields.Date(string="开始日期", required=True)
@@ -168,14 +196,26 @@ class dtdream_hr_contract(models.Model):
 class dtdream_hr_resume_approve(models.Model):
     _name = "hr.resume.approve"
 
-    name = fields.Char(default="履历信息审批人")
-    approve = fields.Many2many("hr.employee", string="履历信息审批人")
+    @api.model
+    def create(self, vals):
+        cr = self.env["hr.resume.approve"].search([])
+        if len(cr):
+            raise ValidationError("已经存在一条配置,无法创建多条!")
+        return super(dtdream_hr_resume_approve, self).create(vals)
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        cr = self.env["hr.resume.approve"].search([])
+        res = super(dtdream_hr_resume_approve, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        if res['type'] == "form":
+            if cr:
+                doc = etree.XML(res['arch'])
+                doc.xpath("//form")[0].set("create", "false")
+                res['arch'] = etree.tostring(doc)
+        return res
 
-class dtdream_hr_remind_mobile(models.Model):
-    _name = "hr.remind.mobile"
-
-    name = fields.Char(default="手机号码变更通知人员配置")
+    name = fields.Char(default="履历信息人员配置")
+    approve = fields.Many2one("hr.employee", string="履历信息审批人")
     remind = fields.Many2many("hr.employee", string="手机号码变更通知人员")
 
 
@@ -204,9 +244,7 @@ class dtdream_hr_employee(models.Model):
         else:
             self.contract_view = False
 
-    # resume = fields.Many2one("dtdream.hr.resume", "name", string="履历")
     resume_view = fields.Boolean(string="履历是否可见", compute=_compute_resume_view)
-    contract = fields.One2many("dtdream.hr.contract", "name", string="合同")
     contract_view = fields.Boolean(string="合同是否可见", compute=_compute_contract_view)
 
 

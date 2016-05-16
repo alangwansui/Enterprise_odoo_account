@@ -176,7 +176,35 @@ class dtdream_prod_appr(models.Model):
     current_approver_user = fields.Many2many("res.users", "c_a_u_u",string="当前审批人用户")
 
     his_app_user = fields.Many2many("res.users" ,"h_a_u_u",string="历史审批人用户")
+
+    @api.constrains('message_follower_ids')
+    def _compute_follower(self):
+        self.followers_user = False
+        for foll in self.message_follower_ids:
+            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
+
+    followers_user = fields.Many2many("res.users" ,"f_u_u",string="关注者")
     is_appred = fields.Boolean(string="标识总体设计阶段提交按钮",default=False)
+
+    @api.multi
+    def message_unsubscribe(self, partner_ids=None, channel_ids=None,):
+        if not partner_ids and not channel_ids:
+            return True
+        user_pid = self.env.user.partner_id.id
+        if not channel_ids and set(partner_ids) == set([user_pid]):
+            self.check_access_rights('read')
+            self.check_access_rule('read')
+        else:
+            self.check_access_rights('write')
+            self.check_access_rule('write')
+        self.env['mail.followers'].sudo().search([
+            ('res_model', '=', self._name),
+            ('res_id', 'in', self.ids),
+            '|',
+            ('partner_id', 'in', partner_ids or []),
+            ('channel_id', 'in', channel_ids or [])
+        ]).unlink()
+        self._compute_follower()
 
     @api.model
     def _compute_create(self):
@@ -227,6 +255,8 @@ class dtdream_prod_appr(models.Model):
 
     @api.multi
     def wkf_lixiang(self):
+        print self.message_follower_ids[0]
+        self.message_follower_ids
         lg = len(self.version_ids)
         if self.state=="state_02":
             self.write({'is_appred':False})
