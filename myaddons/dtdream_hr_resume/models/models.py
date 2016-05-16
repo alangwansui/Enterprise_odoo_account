@@ -78,6 +78,11 @@ class dtdream_hr_resume(models.Model):
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
     is_graduate = fields.Boolean(string="是应届毕业生")
+    marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻", required=True)
+    child = fields.Integer(string="子女数")
+    icard = fields.Char(string="身份证", required=True)
+    mobile = fields.Char(string="手机号", required=True)
+    home_address = fields.Char(string="居住地址", required=True)
     is_login = fields.Boolean(string="登入", compute=_compute_name_equal_login)
     workid = fields.Char(string="工号", compute=_compute_workid_department)
     department = fields.Char(string="部门", compute=_compute_workid_department)
@@ -140,6 +145,7 @@ class dtdream_hr_title(models.Model):
     _name = "hr.employee.title"
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
+    resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
     name = fields.Char(string="职称名称", required=True)
     depertment = fields.Char(string="授予部门", required=True)
     date = fields.Date(string="授予年月", required=True)
@@ -150,6 +156,7 @@ class dtdream_hr_degree(models.Model):
     _name = "hr.employee.degree"
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
+    resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
     degree = fields.Char(string="专科及以上学历", required=True)
     has_degree = fields.Selection([("0", "是"), ("1", "否")], string="是否获得学位", required=True)
     entry_time = fields.Date(string="在校时间(始)", required=True)
@@ -246,6 +253,64 @@ class dtdream_hr_employee(models.Model):
 
     resume_view = fields.Boolean(string="履历是否可见", compute=_compute_resume_view)
     contract_view = fields.Boolean(string="合同是否可见", compute=_compute_contract_view)
+
+
+class dtdream_resume_modify(models.Model):
+    _name = 'dtdream.hr.resume.modify'
+    _description = u"修改员工详细信息"
+    _inherit = ['mail.thread']
+
+    @api.depends('name')
+    def _compute_workid_department(self):
+        for rec in self:
+            rec.workid = rec.name.job_number
+            rec.department = rec.name.department_id.complete_name
+            rec.is_graduate = rec.name.graduate
+
+    @api.onchange('child')
+    def _check_child_isdigit(self):
+        if self.child and not self.child.isdigit():
+            self.child = ""
+            warning = {
+                'title': u'提示',
+                'message': u'子女数必须我整数!',
+            }
+            return {"warning": warning}
+
+    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
+        [("id", "=", self.env.context.get('active_id'))]), readonly="True")
+    workid = fields.Char(string="工号", compute=_compute_workid_department)
+    department = fields.Char(string="部门", compute=_compute_workid_department)
+    marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻")
+    child = fields.Char(string="子女数")
+    icard = fields.Char(string="身份证")
+    mobile = fields.Char(string="手机号")
+    home_address = fields.Char(string="居住地址")
+    title = fields.One2many("hr.employee.title", "resume_modify", "职称信息")
+    degree = fields.One2many("hr.employee.degree", "resume_modify", "学历信息")
+    infor = fields.Text(string="备注")
+    state = fields.Selection(
+        [("0", "草稿"),
+         ("1", "人力资源部审批"),
+         ("99", "完成"),
+         ("-1", "驳回")], string="状态", default="0")
+
+    @api.multi
+    def wkf_draft(self):
+        self.write({'state': '0'})
+
+    @api.multi
+    def wkf_approve(self):
+        self.write({'state': '1'})
+
+    @api.multi
+    def wkf_done(self):
+        self.write({'state': '99'})
+
+    @api.multi
+    def wkf_reject(self):
+        self.write({'state': '-1'})
+
 
 
 

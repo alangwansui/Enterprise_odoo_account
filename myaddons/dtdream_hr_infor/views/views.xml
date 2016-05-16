@@ -41,16 +41,11 @@
                           <field name="Birthplace_state" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"/>
                       </div>
                       <field name="birthday"/>
-                      <field name="mobile_self" string="手机号" required="True"/>
-                      <field name="icard"/>
                       <field name="postcode"/>
                     </group>
                     <group>
                       <field name="nation"/>
                       <field name="political"/>
-                      <field name="marry"/>
-                      <field name="child"/>
-                      <field name="home_address" required="True"/>
                       <field name="graduate"/>
                     </group>
                 </group>

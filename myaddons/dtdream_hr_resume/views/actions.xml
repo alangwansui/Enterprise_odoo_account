@@ -50,5 +50,14 @@
             </field>
         </record>
 
+        <record id="act_dtdream_hr_resume_modify" model="ir.actions.act_window">
+            <field name="name">修改履历</field>
+            <field name="res_model">dtdream.hr.resume.modify</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('name.id','=',active_id)]</field>
+        </record>
+
     </data>
 </openerp>

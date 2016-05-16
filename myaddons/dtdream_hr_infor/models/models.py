@@ -44,10 +44,6 @@ class dtdream_hr_infor(models.Model):
                 return
         raise ValidationError(u"请至少设置一名紧急联系人")
 
-    @api.onchange("mobile_self")
-    def _change_mobile_num(self):
-        self.mobile_phone = self.mobile_self
-
     account = fields.Char(string="账号", required=True)
     byname = fields.Char(string="等价花名")
     recruit = fields.Selection([('0', "社会招聘"), ('1', "校园招聘")], string="招聘类型", required=True)
@@ -56,12 +52,8 @@ class dtdream_hr_infor(models.Model):
     expatriate = fields.Boolean(string="是否外派")
     nation = fields.Char(string="民族", required=True)
     political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌", required=True)
-    marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻", required=True)
-    child = fields.Integer(string="子女数")
-    icard = fields.Char(string="身份证", required=True)
     postcode = fields.Char(string="邮编", required=True)
     birthday = fields.Date(string="出生日期", required=True)
-    mobile_self = fields.Char(string="手机号")
     Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯", required=True)
     Birthplace_state = fields.Many2one("dtdream.hr.state", required=True)
     graduate = fields.Boolean(string="是否应届生")

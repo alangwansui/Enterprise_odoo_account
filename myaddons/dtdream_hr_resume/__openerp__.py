@@ -25,6 +25,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'wizard/resume_wizard.xml',
+        'wizard/resume_modify_wizard.xml',
         'views/actions.xml',
         'views/menu.xml',
         'views/views.xml',

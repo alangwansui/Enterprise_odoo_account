@@ -1,1 +1,1 @@
-from . import resume_wizard
+from . import resume_wizard, resume_modify_wizard
