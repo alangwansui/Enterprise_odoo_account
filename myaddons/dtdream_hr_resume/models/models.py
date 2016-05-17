@@ -55,11 +55,22 @@ class dtdream_hr_resume(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         cr = self.env["dtdream.hr.resume"].search([("name.id", "=", self.env.context.get('active_id'))])
+        view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
+        user_id = self._context.get('active_id', None)
         res = super(dtdream_hr_resume, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         if res['type'] == "form":
-            if len(cr):
+            if len(cr) or not user_id:
                 doc = etree.XML(res['arch'])
                 doc.xpath("//form")[0].set("create", "false")
+                if view:
+                    doc.xpath("//form")[0].set("edit", "false")
+                res['arch'] = etree.tostring(doc)
+        if res['type'] == "tree":
+            if not user_id:
+                doc = etree.XML(res['arch'])
+                doc.xpath("//tree")[0].set("create", "false")
+                if view:
+                    doc.xpath("//tree")[0].set("edit", "false")
                 res['arch'] = etree.tostring(doc)
         return res
 
@@ -240,6 +251,11 @@ class dtdream_hr_resume_approve(models.Model):
                 res['arch'] = etree.tostring(doc)
         return res
 
+    @api.constrains("approve")
+    def write_approve_to_resume(self):
+        self.env['dtdream.hr.resume'].search([('state', '=', '1')]).write({'resume_approve': self.approve.id})
+        self.env['dtdream.hr.resume.modify'].search([('state', '=', '1')]).write({'resume_approve': self.approve.id})
+
     name = fields.Char(default="履历信息人员配置")
     approve = fields.Many2one("hr.employee", string="履历信息审批人")
     remind = fields.Many2many("hr.employee", string="手机号码变更通知人员")
@@ -295,6 +311,13 @@ class dtdream_resume_modify(models.Model):
                 'message': u'子女数必须我整数!',
             }
             return {"warning": warning}
+        elif int(self.child) > 100:
+            self.child = ""
+            warning = {
+                'title': u'提示',
+                'message': u'子女数必须小于100!',
+            }
+            return {"warning": warning}
 
     def _compute_is_current(self):
         for rec in self:
@@ -309,6 +332,50 @@ class dtdream_resume_modify(models.Model):
                 rec.is_shenqingren = True
             else:
                 rec.is_shenqingren = False
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        user_id = self._context.get('active_id', None)
+        res = super(dtdream_resume_modify, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        if res['type'] == "form":
+            if not user_id:
+                doc = etree.XML(res['arch'])
+                doc.xpath("//form")[0].set("create", "false")
+                doc.xpath("//form")[0].set("edit", "false")
+                res['arch'] = etree.tostring(doc)
+        if res['type'] == "tree":
+            if not user_id:
+                doc = etree.XML(res['arch'])
+                doc.xpath("//tree")[0].set("create", "false")
+                doc.xpath("//tree")[0].set("edit", "false")
+                res['arch'] = etree.tostring(doc)
+        return res
+
+    def update_resume_record(self):
+        resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
+        if self.marry:
+            resume.write({'marry': self.marry})
+        if self.child:
+            resume.write({'child': self.child})
+        if self.icard:
+            resume.write({'icard': self.icard})
+        if self.mobile:
+            resume.write({'mobile': self.mobile})
+        if self.home_address:
+            resume.write({'home_address': self.home_address})
+        if len(self.title):
+            resume.title.unlink()
+            for title in self.title:
+                self.env['hr.employee.title'].create({'resume': resume.id, 'name': title.name,
+                                                     'depertment': title.depertment, 'date': title.date,
+                                                      'remark': title.remark})
+        if len(self.degree):
+            resume.degree.unlink()
+            for degree in self.degree:
+                self.env['hr.employee.degree'].create({'resume': resume.id, 'degree': degree.degree,
+                                                      'has_degree': degree.has_degree, 'entry_time': degree.entry_time,
+                                                       'leave_time': degree.leave_time, 'school': degree.school,
+                                                       'major': degree.major})
 
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
@@ -343,6 +410,7 @@ class dtdream_resume_modify(models.Model):
 
     @api.multi
     def wkf_done(self):
+        self.update_resume_record()
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
