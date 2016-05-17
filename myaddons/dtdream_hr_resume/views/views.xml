@@ -11,11 +11,11 @@
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
                             attrs="{'invisible':[('state','!=','0')]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','!=','1')]}"/>
+                            attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
                     <button name="%(act_resume_wizard)d" string="驳回" type="action" class="oe_highlight"
-                            attrs="{'invisible':[('state','!=','1')]}"/>
+                            attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
                     <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','!=','-1')]}"/>
+                            attrs="{'invisible':['|',('is_shenqingren','=',False),('state','!=','-1')]}"/>
                     <button name="%(act_dtdream_hr_resume_modify)d" string="履历信息修改" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','!=','99'),('is_login','=',False)]}"/>
                     <field name="state"  widget="statusbar"
@@ -38,6 +38,8 @@
                         <field name="is_graduate" invisible="True"/>
                         <field name="has_edit" invisible="True"/>
                         <field name="is_login" invisible="True"/>
+                        <field name="is_current" invisible="True"/>
+                        <field name="is_shenqingren" invisible="True"/>
                     </group>
                 </group>
                 <group string="工作经历" attrs="{'invisible':[('is_graduate','=',True)]}">
@@ -209,6 +211,8 @@
                         <field name="department"/>
                         <field name="mobile"/>
                         <field name="icard"/>
+                        <field name="is_current" invisible="True"/>
+                        <field name="is_shenqingren" invisible="True"/>
                     </group>
                     <group>
                         <field name="workid"/>

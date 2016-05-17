@@ -75,6 +75,20 @@ class dtdream_hr_resume(models.Model):
         else:
             self.is_login = False
 
+    def _compute_is_current(self):
+        for rec in self:
+            if rec.resume_approve and rec.resume_approve.user_id == rec.env.user:
+                rec.is_current = True
+            else:
+                rec.is_current = False
+
+    def _compute_is_shenqingren(self):
+        for rec in self:
+            if rec.name.user_id == rec.env.user:
+                rec.is_shenqingren = True
+            else:
+                rec.is_shenqingren = False
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
     is_graduate = fields.Boolean(string="是应届毕业生")
@@ -93,6 +107,10 @@ class dtdream_hr_resume(models.Model):
     degree = fields.One2many("hr.employee.degree", "resume", "学历信息")
     language = fields.One2many("hr.employee.language", "resume", "外语信息")
     has_edit = fields.Boolean(string="是否有编辑权限", compute=_compute_has_edit_resume, default=True)
+    resume_approve = fields.Many2one('hr.employee', string="当前审批人")
+    is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
+    is_shenqingren = fields.Boolean(string="是否申请人", compute=_compute_is_shenqingren)
+    approved = fields.Many2many("hr.employee", string="已批准的审批人")
     state = fields.Selection(
         [("0", "草稿"),
          ("1", "人力资源部审批"),
@@ -101,19 +119,20 @@ class dtdream_hr_resume(models.Model):
 
     @api.multi
     def wkf_draft(self):
-        self.write({'state': '0'})
+        self.write({'state': '0', 'resume_approve': ''})
 
     @api.multi
     def wkf_approve(self):
-        self.write({'state': '1'})
+        approve = self.env["hr.resume.approve"].search([], limit=1).approve
+        self.write({'state': '1', 'resume_approve': approve.id})
 
     @api.multi
     def wkf_done(self):
-        self.write({'state': '99'})
+        self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
     def wkf_reject(self):
-        self.write({'state': '-1'})
+        self.write({'state': '-1', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
 
 class dtdream_hr_experience(models.Model):
@@ -277,6 +296,20 @@ class dtdream_resume_modify(models.Model):
             }
             return {"warning": warning}
 
+    def _compute_is_current(self):
+        for rec in self:
+            if rec.resume_approve and rec.resume_approve.user_id == rec.env.user:
+                rec.is_current = True
+            else:
+                rec.is_current = False
+
+    def _compute_is_shenqingren(self):
+        for rec in self:
+            if rec.name.user_id == rec.env.user:
+                rec.is_shenqingren = True
+            else:
+                rec.is_shenqingren = False
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
     workid = fields.Char(string="工号", compute=_compute_workid_department)
@@ -289,6 +322,10 @@ class dtdream_resume_modify(models.Model):
     title = fields.One2many("hr.employee.title", "resume_modify", "职称信息")
     degree = fields.One2many("hr.employee.degree", "resume_modify", "学历信息")
     infor = fields.Text(string="备注")
+    resume_approve = fields.Many2one('hr.employee', string="当前审批人")
+    is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
+    is_shenqingren = fields.Boolean(string="是否申请人", compute=_compute_is_shenqingren)
+    approved = fields.Many2many("hr.employee", string="已批准的审批人")
     state = fields.Selection(
         [("0", "草稿"),
          ("1", "人力资源部审批"),
@@ -297,19 +334,20 @@ class dtdream_resume_modify(models.Model):
 
     @api.multi
     def wkf_draft(self):
-        self.write({'state': '0'})
+        self.write({'state': '0', 'resume_approve': ''})
 
     @api.multi
     def wkf_approve(self):
-        self.write({'state': '1'})
+        approve = self.env["hr.resume.approve"].search([], limit=1).approve
+        self.write({'state': '1', 'resume_approve': approve.id})
 
     @api.multi
     def wkf_done(self):
-        self.write({'state': '99'})
+        self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
     def wkf_reject(self):
-        self.write({'state': '-1'})
+        self.write({'state': '-1', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
 
 

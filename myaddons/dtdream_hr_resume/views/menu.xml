@@ -4,9 +4,18 @@
         <delete id="hr_contract.hr_menu_contract" model="ir.ui.menu"/>
         <menuitem action="action_hr_infor_contract" id="hr_infor_contract" parent="hr.menu_hr_root" name="合同" sequence="4" groups="group_hr_resume_view,group_hr_resume_edit"/>
         <menuitem id="dtdream_hr_resume" parent="hr.menu_hr_root" name="履历" sequence="4" groups="group_hr_resume_view,group_hr_resume_edit"/>
-        <menuitem action="action_hr_resume_wait" id="dtdream_hr_resume_wait" parent="dtdream_hr_resume" name="待我审批申请" sequence="2"/>
-        <menuitem action="action_hr_resume_done" id="dtdream_hr_resume_done" parent="dtdream_hr_resume" name="我已审批申请" sequence="4" />
-        <menuitem action="action_hr_resume_all" id="dtdream_hr_resume_all" parent="dtdream_hr_resume" name="所有单据" sequence="6" />
+
+        <menuitem id="dtdream_hr_resume_wait" parent="dtdream_hr_resume" name="待我审批申请" sequence="2"/>
+        <menuitem action="action_hr_resume_wait" id="dtdream_hr_resume_submit" parent="dtdream_hr_resume_wait" name="履历信息待审批" sequence="2"/>
+        <menuitem action="action_hr_resume_modify_wait" id="dtdream_hr_resume_modify_submit" parent="dtdream_hr_resume_wait" name="履历信息修改待审批" sequence="4"/>
+
+        <menuitem id="dtdream_hr_resume_done" parent="dtdream_hr_resume" name="我已审批申请" sequence="4" />
+        <menuitem action="action_hr_resume_done" id="dtdream_hr_resume_submit_done" parent="dtdream_hr_resume_done" name="履历信息已审批" sequence="2"/>
+        <menuitem action="action_hr_resume_modify_done" id="dtdream_hr_resume_modify_done" parent="dtdream_hr_resume_done" name="履历信息修改已审批" sequence="4"/>
+
+        <menuitem id="dtdream_hr_resume_all" parent="dtdream_hr_resume" name="所有单据" sequence="6" />
+        <menuitem action="action_hr_resume_all" id="dtdream_hr_resume_submit_all" parent="dtdream_hr_resume_all" name="履历信息所有单据" sequence="2"/>
+        <menuitem action="action_hr_resume_modify_all" id="dtdream_hr_resume_modify_all" parent="dtdream_hr_resume_all" name="履历信息修改所有单据" sequence="4"/>
 
         <menuitem name="履历信息人员配置" sequence="25" id="dtdream_hr_approve_resume" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
     </data>
