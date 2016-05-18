@@ -44,33 +44,67 @@ class dtdream_hr_infor(models.Model):
                 return
         raise ValidationError(u"请至少设置一名紧急联系人")
 
-    account = fields.Char(string="账号", required=True)
+    def _compute_basic_self_page(self):
+        has_view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
+        has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
+        if self.env.user == self.user_id or has_view or has_edit:
+            self.can_view = True
+        else:
+            self.can_view = False
+
+    def _compute_can_edit_public(self):
+        hr_user = self.env.ref("base.group_hr_user") in self.env.user.groups_id
+        hr_manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
+        if hr_user or hr_manager:
+            self.edit_public = True
+        else:
+            self.edit_public = False
+
+    def _compute_can_edit_basic(self):
+        has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
+        if has_edit:
+            self.edit_basic = True
+        else:
+            self.edit_basic = False
+
+    def _compute_can_edit_self(self):
+        has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
+        if has_edit or self.env.user == self.user_id:
+            self.edit_self = True
+        else:
+            self.edit_self = False
+
+    account = fields.Char(string="账号")
     byname = fields.Char(string="等价花名")
-    recruit = fields.Selection([('0', "社会招聘"), ('1', "校园招聘")], string="招聘类型", required=True)
-    work_place = fields.Char(string="常驻工作地", required=True)
-    recruit_place = fields.Char(string="招聘所在地", required=True)
+    recruit = fields.Selection([('0', "社会招聘"), ('1', "校园招聘")], string="招聘类型")
+    work_place = fields.Char(string="常驻工作地")
+    recruit_place = fields.Char(string="招聘所在地")
     expatriate = fields.Boolean(string="是否外派")
-    nation = fields.Char(string="民族", required=True)
-    political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌", required=True)
-    postcode = fields.Char(string="邮编", required=True)
-    birthday = fields.Date(string="出生日期", required=True)
-    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯", required=True)
-    Birthplace_state = fields.Many2one("dtdream.hr.state", required=True)
-    graduate = fields.Boolean(string="是否应届生")
+    nation = fields.Char(string="民族")
+    political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌")
+    postcode = fields.Char(string="邮编")
+    birthday = fields.Date(string="出生日期")
+    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯")
+    Birthplace_state = fields.Many2one("dtdream.hr.state")
+    graduate = fields.Boolean(string="是否应届生", default=lambda self: True)
     family = fields.One2many("hr.employee.family", "employee", string="家庭成员")
-    province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)", required=True)
-    state_hukou = fields.Many2one("dtdream.hr.state", string="户口所在地(市)", required=True)
-    nature_hukou = fields.Selection([("0", "城镇"), ("1", "农村")], string="户口性质", required=True)
+    province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)")
+    state_hukou = fields.Many2one("dtdream.hr.state", string="户口所在地(市)")
+    nature_hukou = fields.Selection([("0", "城镇"), ("1", "农村")], string="户口性质")
     endtime_shebao = fields.Date(string="上家单位社保缴纳截止月份")
     endtime_gongjijin = fields.Date(string="上家单位公积金缴纳截止月份")
     ahead_prov = fields.Many2one("dtdream.hr.province", string="原社保缴纳地(省)")
     ahead_state = fields.Many2one("dtdream.hr.state", string="原社保缴纳地(市)")
-    now_prov = fields.Many2one("dtdream.hr.province", string="申请社保缴纳地(省)", required=True)
-    now_state = fields.Many2one("dtdream.hr.state", string="申请社保缴纳地(市)", required=True)
+    now_prov = fields.Many2one("dtdream.hr.province", string="申请社保缴纳地(省)")
+    now_state = fields.Many2one("dtdream.hr.state", string="申请社保缴纳地(市)")
     shebao_prov = fields.Many2one("dtdream.hr.province", string="原公积金缴纳地(省)")
     gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)")
     oil_card = fields.Char(string="油卡编号")
     has_oil = fields.Boolean(string="已办理中大一卡通")
+    can_view = fields.Boolean(string="员工自助和基本信息是否可见", compute=_compute_basic_self_page)
+    edit_public = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public)
+    edit_basic = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic)
+    edit_self = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
 
 
 class dtdream_hr_family(models.Model):
