@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-    <record id="view_dtdream_resume_wizard_form" model="ir.ui.view">
+    <record id="view_dtdream_resume_wizard_modify_form" model="ir.ui.view">
         <field name="name">view.dtdream.resume.wizard.modify.form</field>
         <field name="model">dtdream.resume.modify.wizard</field>
         <field name="arch" type="xml">
@@ -23,7 +23,7 @@
     </record>
 
     <record id="act_resume_modify_wizard" model="ir.actions.act_window">
-        <field name="name">驳回</field>
+        <field name="name">修改履历驳回</field>
         <field name="res_model">dtdream.resume.modify.wizard</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>

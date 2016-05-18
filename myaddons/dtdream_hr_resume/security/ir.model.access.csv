@@ -10,3 +10,5 @@ access_dtdream_hr_resume_hr_employee_contract edit,dtdream_hr_resume.hr_employee
 access_dtdream_hr_resume_dtdream_hr_resume edit,dtdream_hr_resume.dtdream_hr_resume edit,model_dtdream_hr_resume,group_hr_resume_edit,1,1,1,1
 access_dtdream_hr_resume_dtdream_hr_resume_modify,dtdream_hr_resume.dtdream_hr_resume_modify,model_dtdream_hr_resume_modify,,1,1,1,1
 access_dtdream_hr_resume_hr_resume_approve,dtdream_hr_resume.hr_resume_approve,model_hr_resume_approve,,1,1,1,1
+access_hr_employee_edit,hr.employee edit,model_hr_employee,group_hr_resume_edit,1,1,0,0
+access_ir_mail_server,ir.mail_server all_user,base.model_ir_mail_server,,1,0,0,0

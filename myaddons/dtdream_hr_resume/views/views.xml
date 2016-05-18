@@ -28,12 +28,12 @@
                         <field name="department"/>
                         <field name="mobile" attrs="{'readonly':[('has_edit', '=',False)]}"/>
                         <field name="icard" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                        <field name="home_address" attrs="{'readonly':[('has_edit', '=',False)]}"/>
                     </group>
                     <group>
                         <field name="workid"/>
                         <field name="marry" attrs="{'readonly':[('has_edit', '=',False)]}"/>
                         <field name="child" attrs="{'readonly':[('has_edit', '=',False)]}"/>
-                        <field name="home_address" attrs="{'readonly':[('has_edit', '=',False)]}"/>
                         <field name="has_title" attrs="{'readonly':[('has_edit', '=',False)]}"/>
                         <field name="is_graduate" invisible="True"/>
                         <field name="has_edit" invisible="True"/>
@@ -197,7 +197,7 @@
                             attrs="{'invisible':[('state','!=','0')]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
-                    <button name="%(act_resume_wizard)d" string="驳回" type="action" class="oe_highlight"
+                    <button name="%(act_resume_modify_wizard)d" string="驳回" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
                     <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('is_shenqingren','=',False),('state','!=','-1')]}"/>

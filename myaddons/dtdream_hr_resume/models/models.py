@@ -100,6 +100,56 @@ class dtdream_hr_resume(models.Model):
             else:
                 rec.is_shenqingren = False
 
+    # @api.constrains('title')
+    # def constrains_title_record(self):
+    #     if self.has_title and not len(self.title):
+    #         raise ValidationError("请至少填写一条职称信息!")
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_mail_attend_mobile(self):
+        cr = self.env["hr.resume.approve"].search([])
+        for email in cr.remind:
+            email_to = email.work_email
+            appellation = u'{0},您好：'.format(email.full_name)
+            subject = u"手机号码变更通知"
+            content = u"%s,更改了员工信息手机号,请您知悉!"% self.name.full_name
+            self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                    <p>%s</p>
+                                    <p>dodo</p>
+                                    <p>万千业务，简单有do</p>
+                                    <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                    'subject': '%s' % subject,
+                    'email_from': self.get_mail_server_name(),
+                    'email_to': '%s' % email_to,
+                    'auto_delete': False,
+                }).send()
+
+    def send_mail_attend_resume(self, name, subject, content):
+        email_to = name.work_email
+        appellation = u'{0},您好：'.format(name.full_name)
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+    def update_mobile_number(self):
+        cr = self.env['hr.employee'].search([('id', '=', self.name.id)])
+        if cr.mobile_phone != self.mobile:
+            cr.write({"mobile_phone": self.mobile})
+            self.send_mail_attend_mobile()
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
     is_graduate = fields.Boolean(string="是应届毕业生")
@@ -135,14 +185,21 @@ class dtdream_hr_resume(models.Model):
     @api.multi
     def wkf_approve(self):
         approve = self.env["hr.resume.approve"].search([], limit=1).approve
+        self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息,请您审批!' % self.name.name,
+                                     content=u"%s提交了员工履历信息,等待您的审批!" % self.name.full_name)
         self.write({'state': '1', 'resume_approve': approve.id})
 
     @api.multi
     def wkf_done(self):
+        self.update_mobile_number()
+        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息已被批准,请您查看!' % self.name.name,
+                                     content=u"%s批准了您的员工履历信息审批!" % self.resume_approve.full_name)
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
     def wkf_reject(self):
+        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息已被驳回,请您查看!' % self.name.name,
+                                     content=u"%s驳回了您的员工履历信息审批!" % self.resume_approve.full_name)
         self.write({'state': '-1', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
 
@@ -351,6 +408,49 @@ class dtdream_resume_modify(models.Model):
                 res['arch'] = etree.tostring(doc)
         return res
 
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_mail_attend_mobile(self):
+        cr = self.env["hr.resume.approve"].search([])
+        for email in cr.remind:
+            email_to = email.work_email
+            appellation = u'{0},您好：'.format(email.full_name)
+            subject = u"手机号码变更通知"
+            content = u"%s,更改了员工信息手机号,请您知悉!" % self.name.full_name
+            self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                    <p>%s</p>
+                                    <p>dodo</p>
+                                    <p>万千业务，简单有do</p>
+                                    <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                    'subject': '%s' % subject,
+                    'email_from': self.get_mail_server_name(),
+                    'email_to': '%s' % email_to,
+                    'auto_delete': False,
+                }).send()
+
+    def send_mail_attend_resume(self, name, subject, content):
+        email_to = name.work_email
+        appellation = u'{0},您好：'.format(name.full_name)
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+    def update_mobile_number(self):
+        self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
+        self.send_mail_attend_mobile()
+
     def update_resume_record(self):
         resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
         if self.marry:
@@ -359,8 +459,9 @@ class dtdream_resume_modify(models.Model):
             resume.write({'child': self.child})
         if self.icard:
             resume.write({'icard': self.icard})
-        if self.mobile:
+        if self.mobile and self.mobile != resume.mobile:
             resume.write({'mobile': self.mobile})
+            self.update_mobile_number()
         if self.home_address:
             resume.write({'home_address': self.home_address})
         if len(self.title):
@@ -377,8 +478,8 @@ class dtdream_resume_modify(models.Model):
                                                        'leave_time': degree.leave_time, 'school': degree.school,
                                                        'major': degree.major})
 
-    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
-        [("id", "=", self.env.context.get('active_id'))]), readonly="True")
+    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['dtdream.hr.resume'].search(
+        [("id", "=", self.env.context.get('active_id'))]).name, readonly="True")
     workid = fields.Char(string="工号", compute=_compute_workid_department)
     department = fields.Char(string="部门", compute=_compute_workid_department)
     marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻")
@@ -406,15 +507,21 @@ class dtdream_resume_modify(models.Model):
     @api.multi
     def wkf_approve(self):
         approve = self.env["hr.resume.approve"].search([], limit=1).approve
+        self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息修改,请您审批!' % self.name.name,
+                                     content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.full_name)
         self.write({'state': '1', 'resume_approve': approve.id})
 
     @api.multi
     def wkf_done(self):
         self.update_resume_record()
+        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息修改已被批准,请您查看!' % self.name.name,
+                                     content=u"%s批准了您的员工履历信息修改审批!" % self.resume_approve.full_name)
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
     def wkf_reject(self):
+        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息修改已被驳回,请您查看!' % self.name.name,
+                                     content=u"%s驳回了您的员工履历信息修改审批!" % self.resume_approve.full_name)
         self.write({'state': '-1', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
 
