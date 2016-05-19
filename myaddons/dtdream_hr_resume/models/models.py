@@ -343,20 +343,29 @@ class dtdream_hr_employee(models.Model):
         else:
             self.contract_view = False
 
-    def _get_act_window_dict_infor(self, cr, uid, name, context=None):
-        mod_obj = self.pool['dtdream.hr.resume'].pool.get('ir.model.data')
-        act_obj = self.pool['dtdream.hr.resume'].pool.get('ir.actions.server')
-        result = mod_obj.xmlid_to_res_id(cr, uid, name, raise_if_not_found=True)
-        result = act_obj.read(cr, uid, [result], context=context)[0]
-        return result
+    # def _get_act_window_dict_infor(self, cr, uid, name, context=None):
+    #     mod_obj = self.pool.get('ir.model.data')
+    #     act_obj = self.pool.get('ir.actions.server')
+    #     result = mod_obj.xmlid_to_res_id(cr, uid, name, raise_if_not_found=True)
+    #     result = act_obj.read(cr, uid, [result], context=context)[0]
+    #     return result
 
     @api.multi
     def act_dtdream_hr_resume(self):
-        print "-------------------------->"
-        # crr = self.pool['dtdream.hr.resume'].search(cr, uid, [('name.id', '=', ids[0])])
-        # if not crr:
-        #     raise ValidationError("该员工还未创建履历信息!")
-        # return self._get_act_window_dict_infor(cr, uid, 'dtdream_hr_resume.act_dtdream_hr_resume', context=context)
+        cr = self.env['dtdream.hr.resume'].search([('name.id', '=', self.id)])
+        res_id = cr.id if cr else ''
+        if not cr and self.env.user != self.user_id:
+            raise ValidationError("该员工还未创建履历信息,暂时无法查看!")
+        action = {
+            'name': '员工履历',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'dtdream.hr.resume',
+            'res_id': res_id,
+            'context': self._context,
+            }
+        return action
 
     resume_view = fields.Boolean(string="履历是否可见", compute=_compute_resume_view)
     contract_view = fields.Boolean(string="合同是否可见", compute=_compute_contract_view)
@@ -380,7 +389,7 @@ class dtdream_resume_modify(models.Model):
             self.child = ""
             warning = {
                 'title': u'提示',
-                'message': u'子女数必须我整数!',
+                'message': u'子女数必须为整数!',
             }
             return {"warning": warning}
         elif int(self.child) > 100:
@@ -404,6 +413,12 @@ class dtdream_resume_modify(models.Model):
                 rec.is_shenqingren = True
             else:
                 rec.is_shenqingren = False
+
+    def _compute_name_equal_login(self):
+        if self.env.user == self.name.user_id:
+            self.is_login = True
+        else:
+            self.is_login = False
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -506,6 +521,7 @@ class dtdream_resume_modify(models.Model):
     degree = fields.One2many("hr.employee.degree", "resume_modify", "学历信息")
     infor = fields.Text(string="备注")
     resume_approve = fields.Many2one('hr.employee', string="当前审批人")
+    is_login = fields.Boolean(string="登入", compute=_compute_name_equal_login)
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
     is_shenqingren = fields.Boolean(string="是否申请人", compute=_compute_is_shenqingren)
     approved = fields.Many2many("hr.employee", string="已批准的审批人")

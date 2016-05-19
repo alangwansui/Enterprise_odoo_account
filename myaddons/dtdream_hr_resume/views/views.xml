@@ -157,22 +157,6 @@
         </field>
     </record>
 
-      <record model="ir.actions.server" id="act_dtdream_hr_resume">
-        <field name="name">员工履历</field>
-        <field name="model_id" ref="model_dtdream_hr_resume"/>
-        <field name="code">
-            action = {
-            'name':'员工履历',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'dtdream.hr.resume',
-            'res_id': self.search(cr,uid,[('name.id','=', context.get("active_id"))],context=None)[0] if self.search(cr,uid,[('name.id','=', context.get("active_id"))],context=None) else "",
-            'context':context,
-            }
-        </field>
-    </record>
-
     <record id="view_employee_form_resume_inherit" model="ir.ui.view">
         <field name="name">hr.employee.resume.form.inherit</field>
         <field name="model">hr.employee</field>
@@ -212,6 +196,7 @@
                         <field name="mobile" attrs="{'readonly':[('state','!=','0')]}"/>
                         <field name="icard" attrs="{'readonly':[('state','!=','0')]}"/>
                         <field name="is_current" invisible="True"/>
+                        <field name="is_login" invisible="True"/>
                         <field name="is_shenqingren" invisible="True"/>
                     </group>
                     <group>

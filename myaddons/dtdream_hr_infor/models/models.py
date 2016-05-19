@@ -44,13 +44,23 @@ class dtdream_hr_infor(models.Model):
                 return
         raise ValidationError(u"请至少设置一名紧急联系人")
 
-    def _compute_basic_self_page(self):
+    def _compute_basic_page(self):
+        hr_user = self.env.ref("base.group_hr_user") in self.env.user.groups_id
+        hr_manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
+        has_view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
+        has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
+        if self.env.user == self.user_id or has_view or has_edit or hr_manager or hr_user:
+            self.can_view_info_basic = True
+        else:
+            self.can_view_info_basic = False
+
+    def _compute_self_page(self):
         has_view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
         has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
         if self.env.user == self.user_id or has_view or has_edit:
-            self.can_view_info = True
+            self.can_view_info_self = True
         else:
-            self.can_view_info = False
+            self.can_view_info_self = False
 
     def _compute_can_edit_public(self):
         hr_user = self.env.ref("base.group_hr_user") in self.env.user.groups_id
@@ -61,8 +71,10 @@ class dtdream_hr_infor(models.Model):
             self.edit_public_info = False
 
     def _compute_can_edit_basic(self):
+        hr_user = self.env.ref("base.group_hr_user") in self.env.user.groups_id
+        hr_manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
         has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
-        if has_edit:
+        if has_edit or hr_user or hr_manager:
             self.edit_basic_info = True
         else:
             self.edit_basic_info = False
@@ -108,9 +120,10 @@ class dtdream_hr_infor(models.Model):
     oil_card = fields.Char(string="油卡编号")
     has_oil = fields.Boolean(string="已办理中大一卡通")
     login_info_employee = fields.Boolean(string="员工是否当前登入人", compute=_compute_login_equal_employee)
-    can_view_info = fields.Boolean(string="员工自助和基本信息是否可见", compute=_compute_basic_self_page)
-    edit_public_info = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public)
-    edit_basic_info = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic)
+    can_view_info_self = fields.Boolean(string="员工自助信息是否可见", compute=_compute_self_page)
+    can_view_info_basic = fields.Boolean(string="员工基本信息是否可见", compute=_compute_basic_page, default=True)
+    edit_public_info = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public, default=True)
+    edit_basic_info = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic, default=True)
     edit_self_info = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
 
 

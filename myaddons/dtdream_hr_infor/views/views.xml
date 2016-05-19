@@ -33,7 +33,7 @@
             </xpath>
 
             <xpath expr="//notebook/page[2]" position="replace">
-              <page string="基础信息" attrs="{'invisible':[('can_view_info','=',False)],'readonly':[('edit_basic_info','=',False)]}">
+              <page string="基础信息" attrs="{'invisible':[('can_view_info_basic','=',False)]}">
                 <group>
                     <group>
                       <field name="account" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
@@ -42,7 +42,8 @@
                       <field name="post" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
                       <field name="Inaugural_state" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
                       <field name="entry_day" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
-                      <field name="can_view_info" invisible="True"/>
+                      <field name="can_view_info_basic" invisible="True"/>
+                      <field name="can_view_info_self" invisible="True"/>
                       <field name="edit_basic_info" invisible="True"/>
                       <field name="login_info_employee" invisible="True"/>
                   </group>
@@ -61,7 +62,7 @@
             </xpath>
 
             <xpath expr="//notebook/page[2]" position="after">
-              <page string="自助信息" attrs="{'invisible':[('can_view_info','=',False)]}">
+              <page string="自助信息" attrs="{'invisible':[('can_view_info_self','=',False)]}">
                 <group string="个人信息" name="personal">
                     <group>
                       <field name="byname" placeholder="花名格式:花名1|花名2" attrs="{'readonly':[('edit_self_info','=',False)]}"/>

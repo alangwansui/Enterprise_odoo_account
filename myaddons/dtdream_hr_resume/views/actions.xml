@@ -39,7 +39,7 @@
         </record>
 
         <record id="action_hr_resume_modify_done" model="ir.actions.act_window">
-            <field name="name">履历信息修改待审批</field>
+            <field name="name">履历信息修改已审批</field>
             <field name="res_model">dtdream.hr.resume.modify</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -87,7 +87,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('name.id','=',active_id)]</field>
+            <field name="domain">[('name.user_id','=',uid)]</field>
         </record>
 
     </data>
