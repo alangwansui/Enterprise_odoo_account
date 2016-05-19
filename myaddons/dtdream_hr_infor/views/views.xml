@@ -7,9 +7,9 @@
         <field name="arch" type="xml">
             <xpath expr="//div[@class='oe_title']" position="replace">
                 <div class="oe_title">
-                    <label for="name" string="花名" class="oe_edit_only" attrs="{'invisible':[('edit_public','=',False)]}"/>
+                    <label for="name" string="花名" class="oe_edit_only" attrs="{'invisible':[('edit_public_info','=',False)]}"/>
                     <h1>
-                        <field name="name" placeholder="请输入花名" string="花名" attrs="{'readonly':[('edit_public','=',False)]}"/>
+                        <field name="name" placeholder="请输入花名" string="花名" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
                     </h1>
                 </div>
             </xpath>
@@ -18,39 +18,40 @@
                 <page name="public" string="公开信息">
                     <group>
                         <group>
-                            <field name="edit_public" invisible="True"/>
+                            <field name="edit_public_info" invisible="True"/>
                             <field name="nick_name" invisible="True"/>
-                             <field name="full_name" attrs="{'readonly':[('edit_public','=',False)]}"/>
-                            <field name="job_number" attrs="{'readonly':[('edit_public','=',False)]}"/>
-                            <field name="work_email" widget="email" attrs="{'readonly':[('edit_public','=',False)]}"/>
+                             <field name="full_name" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                            <field name="job_number" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                            <field name="work_email" widget="email" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
                         </group>
                         <group>
-                            <field name="department_id" on_change="onchange_department_id(department_id)" required="True" attrs="{'readonly':[('edit_public','=',False)]}"/>
-                            <field name="mobile_phone" string="手机号" attrs="{'readonly':[('edit_public','=',False)]}"/>
+                            <field name="department_id" on_change="onchange_department_id(department_id)" required="True" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                            <field name="mobile_phone" string="手机号" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
                         </group>
                     </group>
                 </page>
             </xpath>
 
             <xpath expr="//notebook/page[2]" position="replace">
-              <page string="基础信息" attrs="{'invisible':[('can_view','=',False)],'readonly':[('edit_basic','=',False)]}">
+              <page string="基础信息" attrs="{'invisible':[('can_view_info','=',False)],'readonly':[('edit_basic_info','=',False)]}">
                 <group>
                     <group>
-                      <field name="account" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="gender" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="duties" attrs="{'readonly':[('edit_basic','=',False)]}"/>
-                      <field name="post" attrs="{'readonly':[('edit_basic','=',False)]}"/>
-                      <field name="Inaugural_state" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="entry_day" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="can_view" invisible="True"/>
-                      <field name="edit_basic" invisible="True"/>
+                      <field name="account" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="gender" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="duties" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
+                      <field name="post" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
+                      <field name="Inaugural_state" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="entry_day" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="can_view_info" invisible="True"/>
+                      <field name="edit_basic_info" invisible="True"/>
+                      <field name="login_info_employee" invisible="True"/>
                   </group>
                   <group>
-                      <field name="education" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="recruit" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="recruit_place" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="work_place" attrs="{'readonly':[('edit_basic','=',False)],'required':[('edit_basic','=',True)]}"/>
-                      <field name="expatriate" attrs="{'readonly':[('edit_basic','=',False)]}"/>
+                      <field name="education" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="recruit" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="recruit_place" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="work_place" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="expatriate" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
                   </group>
                   <div>
                     <p>*<b>填写说明</b>：以上信息由人力资源部录入。如需修改，请与人力资源部联系</p>
@@ -60,25 +61,25 @@
             </xpath>
 
             <xpath expr="//notebook/page[2]" position="after">
-              <page string="自助信息" attrs="{'invisible':[('can_view','=',False)]}">
+              <page string="自助信息" attrs="{'invisible':[('can_view_info','=',False)]}">
                 <group string="个人信息" name="personal">
                     <group>
-                      <field name="byname" placeholder="花名格式:花名1|花名2" attrs="{'readonly':[('edit_self','=',False)]}"/>
+                      <field name="byname" placeholder="花名格式:花名1|花名2" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                       <label for="Birthplace_province" string="籍贯"/>
                       <div class="o_row">
-                          <field name="Birthplace_province" options="{'no_open': True,'no_create': True}" string="省份" placeholder="请选择省份"
-                          attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                          <field name="Birthplace_state" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"
-                          attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
+                          <field name="Birthplace_province" options="{'no_open': True,'no_create': True}" placeholder="请选择省份"
+                          attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                          <field name="Birthplace_state" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
+                          attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
                       </div>
-                      <field name="birthday" attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                      <field name="postcode" attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                      <field name="edit_self" invisible="True"/>
+                      <field name="birthday" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                      <field name="postcode" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                      <field name="edit_self_info" invisible="True"/>
                     </group>
                     <group>
-                      <field name="nation" attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                      <field name="political" attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                      <field name="graduate" attrs="{'readonly':[('edit_self','=',False)]}"/>
+                      <field name="nation" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                      <field name="political" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                      <field name="graduate" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                     </group>
                 </group>
 
@@ -87,8 +88,8 @@
                       <p style="padding-left: 40px">至少设置一名紧急联系人，紧急联系人各项信息需填写完整。信息不确定处可填『无』</p>
                       <notebook>
                           <page>
-                            <field name="family">
-                               <tree editable="bottom" attrs="{'readonly':[('edit_self','=',False)]}">
+                            <field name="family" attrs="{'readonly':[('edit_self_info','=',False)]}">
+                               <tree editable="bottom">
                                   <field name="relation" required="True"/>
                                   <field name="name" required="True"/>
                                   <field name="company" required="True"/>
@@ -100,7 +101,7 @@
                                </tree>
                             </field>
                           </page>
-                        </notebook>
+                      </notebook>
                   </div>
                 </group>
 
@@ -108,46 +109,46 @@
                     <group>
                         <label for="province_hukou" string="户口所在地"/>
                         <div class="o_row">
-                            <field name="province_hukou" options="{'no_open': True, 'no_create': True}" string="省份" placeholder="请选择省份"
-                            attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                            <field name="state_hukou" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"
-                            attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
+                            <field name="province_hukou" options="{'no_open': True, 'no_create': True}" placeholder="请选择省份"
+                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                            <field name="state_hukou" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
+                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
                         </div>
                         <label for="now_prov" string="申请社保缴纳地"/>
                         <div class="o_row">
-                            <field name="now_prov" options="{'no_open': True, 'no_create': True}" string="省份" placeholder="请选择省份"
-                            attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
-                            <field name="now_state" options="{'no_open': True, 'no_create': True}" string="市区" placeholder="请选择市区"
-                            attrs="{'readonly':[('edit_self','=',False)],'required':[('edit_self','=',True)]}"/>
+                            <field name="now_prov" options="{'no_open': True, 'no_create': True}" placeholder="请选择省份"
+                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                            <field name="now_state" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
+                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
                         </div>
                         <label for="shebao_prov" string="原公积金缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
                         <div class="o_row">
-                            <field name="shebao_prov" options="{'no_open': True, 'no_create': True}" string="省份"
-                                   attrs="{'required':['|',('graduate','!=',True),('edit_self','=',True)], 'readonly':[('edit_self','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
-                            <field name="gongjijin_state" options="{'no_open': True, 'no_create': True}" string="市区"
-                                   attrs="{'required':['|',('graduate','!=',True),('edit_self','=',True)], 'readonly':[('edit_self','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                            <field name="shebao_prov" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                            <field name="gongjijin_state" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
                         </div>
                         <label for="ahead_prov" string="原社保缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
                         <div class="o_row">
-                            <field name="ahead_prov" options="{'no_open': True, 'no_create': True}" string="省份"
-                                   attrs="{'required':['|',('graduate','!=',True),('edit_self','=',True)], 'readonly':[('edit_self','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
-                            <field name="ahead_state" options="{'no_open': True, 'no_create': True}" string="市区"
-                                   attrs="{'required':['|',('graduate','!=',True),('edit_self','=',True)], 'readonly':[('edit_self','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                            <field name="ahead_prov" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                            <field name="ahead_state" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
                         </div>
                     </group>
                     <group>
-                        <field name="nature_hukou" attrs="{'required':[('edit_self','=',True)], 'readonly':[('edit_self','=',False)]}"/>
-                        <field name="endtime_gongjijin" attrs="{'required':['|',('graduate','!=',True),('edit_self','=',True)], 'readonly':[('edit_self','=',False)],'invisible':[('graduate','=',True)]}"/>
-                        <field name="endtime_shebao" attrs="{'required':['|',('graduate','!=',True),('edit_self','=',True)], 'readonly':[('edit_self','=',False)],'invisible':[('graduate','=',True)]}"/>
+                        <field name="nature_hukou" attrs="{'required':[('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)]}"/>
+                        <field name="endtime_gongjijin" attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
+                        <field name="endtime_shebao" attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
                     </group>
                 </group>
 
                 <group string="其它信息">
                     <group>
-                       <field name="oil_card" attrs="{'readonly':[('edit_self','=',False)]}"/>
+                       <field name="oil_card" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                     </group>
                     <group>
-                       <field name="has_oil" attrs="{'readonly':[('edit_self','=',False)]}"/>
+                       <field name="has_oil" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                     </group>
                 </group>
 

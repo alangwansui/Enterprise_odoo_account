@@ -37,10 +37,10 @@ class dtdream_hr_infor(models.Model):
         return {"domain": {"gongjijin_state": ['|', ('pro_name', '=', self.shebao_prov.name),
                                                ('province', "=", self.shebao_prov.id)]}}
 
-    @api.constrains("family")
+    @api.constrains("family", "nation")
     def _check_family_null(self):
         for emergency in self.family:
-            if self.family.emergency:
+            if emergency.emergency or not self.login_info_employee:
                 return
         raise ValidationError(u"请至少设置一名紧急联系人")
 
@@ -48,31 +48,37 @@ class dtdream_hr_infor(models.Model):
         has_view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
         has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
         if self.env.user == self.user_id or has_view or has_edit:
-            self.can_view = True
+            self.can_view_info = True
         else:
-            self.can_view = False
+            self.can_view_info = False
 
     def _compute_can_edit_public(self):
         hr_user = self.env.ref("base.group_hr_user") in self.env.user.groups_id
         hr_manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
         if hr_user or hr_manager:
-            self.edit_public = True
+            self.edit_public_info = True
         else:
-            self.edit_public = False
+            self.edit_public_info = False
 
     def _compute_can_edit_basic(self):
         has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
         if has_edit:
-            self.edit_basic = True
+            self.edit_basic_info = True
         else:
-            self.edit_basic = False
+            self.edit_basic_info = False
 
     def _compute_can_edit_self(self):
         has_edit = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") in self.env.user.groups_id
         if has_edit or self.env.user == self.user_id:
-            self.edit_self = True
+            self.edit_self_info = True
         else:
-            self.edit_self = False
+            self.edit_self_info = False
+
+    def _compute_login_equal_employee(self):
+        if self.user_id == self.env.user:
+            self.login_info_employee = True
+        else:
+            self.login_info_employee = False
 
     account = fields.Char(string="账号")
     byname = fields.Char(string="等价花名")
@@ -84,9 +90,9 @@ class dtdream_hr_infor(models.Model):
     political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌")
     postcode = fields.Char(string="邮编")
     birthday = fields.Date(string="出生日期")
-    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯")
-    Birthplace_state = fields.Many2one("dtdream.hr.state")
-    graduate = fields.Boolean(string="是否应届生", default=lambda self: True)
+    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯(省)")
+    Birthplace_state = fields.Many2one("dtdream.hr.state", string="籍贯(市)")
+    graduate = fields.Boolean(string="是否应届生")
     family = fields.One2many("hr.employee.family", "employee", string="家庭成员")
     province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)")
     state_hukou = fields.Many2one("dtdream.hr.state", string="户口所在地(市)")
@@ -101,10 +107,11 @@ class dtdream_hr_infor(models.Model):
     gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)")
     oil_card = fields.Char(string="油卡编号")
     has_oil = fields.Boolean(string="已办理中大一卡通")
-    can_view = fields.Boolean(string="员工自助和基本信息是否可见", compute=_compute_basic_self_page)
-    edit_public = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public)
-    edit_basic = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic)
-    edit_self = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
+    login_info_employee = fields.Boolean(string="员工是否当前登入人", compute=_compute_login_equal_employee)
+    can_view_info = fields.Boolean(string="员工自助和基本信息是否可见", compute=_compute_basic_self_page)
+    edit_public_info = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public)
+    edit_basic_info = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic)
+    edit_self_info = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
 
 
 class dtdream_hr_family(models.Model):

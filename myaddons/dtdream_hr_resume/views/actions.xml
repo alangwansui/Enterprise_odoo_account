@@ -11,7 +11,7 @@
         </record>
 
         <record id="action_hr_resume_wait" model="ir.actions.act_window">
-            <field name="name">待我审批</field>
+            <field name="name">履历信息待审批</field>
             <field name="res_model">dtdream.hr.resume</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -21,7 +21,7 @@
         </record>
 
         <record id="action_hr_resume_modify_wait" model="ir.actions.act_window">
-            <field name="name">待我审批</field>
+            <field name="name">履历信息修改待审批</field>
             <field name="res_model">dtdream.hr.resume.modify</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -30,7 +30,7 @@
         </record>
 
         <record id="action_hr_resume_done" model="ir.actions.act_window">
-            <field name="name">我已审批</field>
+            <field name="name">履历信息已审批</field>
             <field name="res_model">dtdream.hr.resume</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -39,7 +39,7 @@
         </record>
 
         <record id="action_hr_resume_modify_done" model="ir.actions.act_window">
-            <field name="name">我已审批</field>
+            <field name="name">履历信息修改待审批</field>
             <field name="res_model">dtdream.hr.resume.modify</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -48,7 +48,7 @@
         </record>
 
          <record id="action_hr_resume_all" model="ir.actions.act_window">
-            <field name="name">所有单据</field>
+            <field name="name">履历信息所有单据</field>
             <field name="res_model">dtdream.hr.resume</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -57,7 +57,7 @@
         </record>
 
         <record id="action_hr_resume_modify_all" model="ir.actions.act_window">
-            <field name="name">所有单据</field>
+            <field name="name">履历信息修改所有单据</field>
             <field name="res_model">dtdream.hr.resume.modify</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>

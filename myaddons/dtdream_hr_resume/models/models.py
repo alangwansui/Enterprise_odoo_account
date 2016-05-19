@@ -30,19 +30,19 @@ class dtdream_hr_resume(models.Model):
                 if not(experince.start_time > end or experince.end_time < start):
                     raise ValidationError("工作经历时间填写不合理,时间段之间存在重合!")
 
-    # @api.constrains("degree")
-    # def check_entry_leave_time(self):
-    #     start = ""
-    #     end = ""
-    #     if not len(self.degree):
-    #         raise ValidationError("至少填写一条学历信息!")
-    #     for index, degree in enumerate(self.degree):
-    #         if index == 0:
-    #             start = degree.entry_time
-    #             end = degree.leave_time
-    #         else:
-    #             if not(degree.entry_time > end or degree.leave_time < start):
-    #                 raise ValidationError("学历信息时间填写不合理,时间段之间存在重合!")
+    @api.constrains("degree")
+    def check_entry_leave_time(self):
+        start = ""
+        end = ""
+        if not len(self.degree):
+            raise ValidationError("至少填写一条学历信息!")
+        for index, degree in enumerate(self.degree):
+            if index == 0:
+                start = degree.entry_time
+                end = degree.leave_time
+            else:
+                if not(degree.entry_time > end or degree.leave_time < start):
+                    raise ValidationError("学历信息时间填写不合理,时间段之间存在重合!")
 
     def _compute_has_edit_resume(self):
         if self.name.user_id == self.env.user and self.state == '0':
@@ -59,12 +59,12 @@ class dtdream_hr_resume(models.Model):
         user_id = self._context.get('active_id', None)
         res = super(dtdream_hr_resume, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         if res['type'] == "form":
+            doc = etree.XML(res['arch'])
             if len(cr) or not user_id:
-                doc = etree.XML(res['arch'])
                 doc.xpath("//form")[0].set("create", "false")
                 if view:
                     doc.xpath("//form")[0].set("edit", "false")
-                res['arch'] = etree.tostring(doc)
+            res['arch'] = etree.tostring(doc)
         if res['type'] == "tree":
             if not user_id:
                 doc = etree.XML(res['arch'])
@@ -100,10 +100,10 @@ class dtdream_hr_resume(models.Model):
             else:
                 rec.is_shenqingren = False
 
-    # @api.constrains('title')
-    # def constrains_title_record(self):
-    #     if self.has_title and not len(self.title):
-    #         raise ValidationError("请至少填写一条职称信息!")
+    @api.constrains('title')
+    def constrains_title_record(self):
+        if self.has_title and not len(self.title):
+            raise ValidationError("请至少填写一条职称信息!")
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
@@ -342,6 +342,21 @@ class dtdream_hr_employee(models.Model):
             self.contract_view = True
         else:
             self.contract_view = False
+
+    def _get_act_window_dict_infor(self, cr, uid, name, context=None):
+        mod_obj = self.pool['dtdream.hr.resume'].pool.get('ir.model.data')
+        act_obj = self.pool['dtdream.hr.resume'].pool.get('ir.actions.server')
+        result = mod_obj.xmlid_to_res_id(cr, uid, name, raise_if_not_found=True)
+        result = act_obj.read(cr, uid, [result], context=context)[0]
+        return result
+
+    @api.multi
+    def act_dtdream_hr_resume(self):
+        print "-------------------------->"
+        # crr = self.pool['dtdream.hr.resume'].search(cr, uid, [('name.id', '=', ids[0])])
+        # if not crr:
+        #     raise ValidationError("该员工还未创建履历信息!")
+        # return self._get_act_window_dict_infor(cr, uid, 'dtdream_hr_resume.act_dtdream_hr_resume', context=context)
 
     resume_view = fields.Boolean(string="履历是否可见", compute=_compute_resume_view)
     contract_view = fields.Boolean(string="合同是否可见", compute=_compute_contract_view)
