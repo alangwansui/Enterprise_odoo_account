@@ -25,29 +25,50 @@ class lxWizardappr(models.TransientModel):
     _name = 'dtdream_prod_appr.wizardappr'
     reason = fields.Char()
 
+#立项、总体设计阶段内部的提交
     @api.one
     def btn_confirm(self):
         current_lixiang = self.env['dtdream_prod_appr'].browse(self._context['active_id'])
-        current_lixiang.write({'is_appred':True})
-        current_lixiang.current_approver_user = [(5,)]
-        records = self.env['dtdream_rd_approver'].search([('pro_state','=','state_02'),('level','=','level_01')])           #审批人配置
-        rold_ids = []
-        for record in records:
-            rold_ids +=[record.name.id]
-        appro = self.env['dtdream_rd_role'].search([('role_id','=',current_lixiang.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
-        for record in appro:
-            self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":current_lixiang.id,'pro_state':'state_02','approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
-            current_lixiang.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-        processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',current_lixiang.id),('pro_state','=','state_02'),('level','=','level_01'),('is_new','=',True)])
-        if len(processes)==0:
-            ctd = self.env['dtdream_rd_approver'].search([('department','=',current_lixiang.department.id)],limit=1)
-            self.env['dtdream_rd_process'].create({"role":ctd.name.id,"ztsj_process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':current_lixiang.department.manager_id.id,'approver_old':current_lixiang.department.manager_id.id,'level':'level_02'})       #审批意见记录创建
+        if current_lixiang.state=="state_01":
+            current_lixiang.write({'is_lixiangappred':True})
             current_lixiang.current_approver_user = [(5,)]
-            current_lixiang.write({'current_approver_user': [(4, current_lixiang.department.manager_id.user_id.id)]})
+            records = self.env['dtdream_rd_approver'].search([('pro_state','=',current_lixiang.state),('level','=','level_01')])           #审批人配置
+            rold_ids = []
+            for record in records:
+                rold_ids +=[record.name.id]
+            appro = self.env['dtdream_rd_role'].search([('role_id','=',current_lixiang.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
+            self.current_approver_user = [(5,)]
+            for record in appro:
+                self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
+                self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+            processes = self.env['dtdream_rd_process'].search([('process_id','=',current_lixiang.id),('pro_state','=','state_01'),('level','=','level_01'),('is_new','=',True)])
+            if len(processes)==0:
+                ctd = self.env['dtdream_rd_approver'].search([('department','=',current_lixiang.department.id)],limit=1)
+                if not current_lixiang.department.manager_id:
+                    raise ValidationError(u"请配置%s的部门主管" %(current_lixiang.department.name))
+                self.env['dtdream_rd_process'].create({"role":ctd.name.id,"process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':current_lixiang.department.manager_id.id,'approver_old':current_lixiang.department.manager_id.id,'level':'level_02'})       #审批意见记录创建
+                self.current_approver_user = [(5,)]
+                self.write({'current_approver_user': [(4, current_lixiang.department.manager_id.user_id.id)]})
+        if current_lixiang.state=="state_02":
+            current_lixiang.write({'is_appred':True})
+            current_lixiang.current_approver_user = [(5,)]
+            records = self.env['dtdream_rd_approver'].search([('pro_state','=','state_02'),('level','=','level_01')])           #审批人配置
+            rold_ids = []
+            for record in records:
+                rold_ids +=[record.name.id]
+            appro = self.env['dtdream_rd_role'].search([('role_id','=',current_lixiang.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
+            for record in appro:
+                self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":current_lixiang.id,'pro_state':'state_02','approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
+                current_lixiang.write({'current_approver_user': [(4, record.person.user_id.id)]})
 
-
-
+            processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',current_lixiang.id),('pro_state','=','state_02'),('level','=','level_01'),('is_new','=',True)])
+            if len(processes)==0:
+                ctd = self.env['dtdream_rd_approver'].search([('department','=',current_lixiang.department.id)],limit=1)
+                if not current_lixiang.department.manager_id:
+                    raise ValidationError(u"请配置%s的部门主管" %(current_lixiang.department.name))
+                self.env['dtdream_rd_process'].create({"role":ctd.name.id,"ztsj_process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':current_lixiang.department.manager_id.id,'approver_old':current_lixiang.department.manager_id.id,'level':'level_02'})       #审批意见记录创建
+                current_lixiang.current_approver_user = [(5,)]
+                current_lixiang.write({'current_approver_user': [(4, current_lixiang.department.manager_id.user_id.id)]})
 
 class versionWizard(models.TransientModel):
     _name = 'dtdream_rd_version.wizard'
@@ -57,11 +78,51 @@ class versionWizard(models.TransientModel):
     def btn_version_submit(self):
         current_version = self.env['dtdream_rd_version'].browse(self._context['active_id'])
         state = current_version.version_state
+        current_version.current_approver_user = [(5,)]
         if state=='initialization':
-            current_version.signal_workflow('btn_to_kaifa')
+            process_01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
+            if len(process_01)==0:
+                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state)])           #产品审批配置
+                rold_ids = []
+                for record in records:
+                    rold_ids +=[record.name.id]
+                appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
+                if len(appro)==0:
+                    current_version.signal_workflow('btn_to_kaifa')
+                else:
+                    for record in appro:
+                        self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id})       #审批意见记录创建
+                        current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
         elif state=='Development':
-            current_version.signal_workflow('btn_to_dfb')
+            process_02 = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
+            if len(process_02)==0:
+                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state)])           #产品审批配置
+                rold_ids = []
+                for record in records:
+                    rold_ids +=[record.name.id]
+                appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
+                if len(appro)==0:
+                    current_version.signal_workflow('btn_to_dfb')
+                else:
+                    for record in appro:
+                        self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_02_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id})       #审批意见记录创建
+                        current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
         elif state=='pending':
-            current_version.signal_workflow('btn_to_yfb')
-
+            process_03 = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
+            if len(process_03)==0:
+                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state)])           #产品审批配置
+                rold_ids = []
+                for record in records:
+                    rold_ids +=[record.name.id]
+                appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
+                if len(appro)==0:
+                    if not current_version.proName.department.manager_id:
+                        raise ValidationError(u"请配置%s的部门主管" %(current_version.proName.department.name))
+                    ctd = self.env['dtdream_rd_approver_ver'].search([('department','=',current_version.proName.department.id)],limit=1)
+                    self.env['dtdream_rd_process_ver'].create({"role":ctd.name.id, "process_03_id":current_version.id,'ver_state':state,'approver':current_version.proName.department.manager_id.id,'approver_old':current_version.proName.department.manager_id.id,'level':'level_02'})       #审批意见记录创建
+                    current_version.write({'current_approver_user': [(4, current_version.proName.department.manager_id.user_id.id)]})
+                else:
+                    for record in appro:
+                        self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_03_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
+                        current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
 

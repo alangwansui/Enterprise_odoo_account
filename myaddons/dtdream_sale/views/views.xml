@@ -458,8 +458,8 @@
                 <xpath expr="//page[@name='lead']" position="after">
                     <page string="产品配置">
                             <field name="product_line" mode="tree">
-                                <tree string="产品配置" editable="bottom">
-                                    <field name="product_id" string="产品型号"/>
+                                <tree string="产品配置">
+                                    <field name="pro_name" string="产品型号" />
                                     <field name="bom" string="BOM" />
                                     <field name="pro_type" string="产品类别"/>
                                     <field name="pro_description" string="产品对内中文描述"/>
@@ -473,14 +473,15 @@
                                     <sheet>
                                         <group>
                                             <group>
+                                                <field name="pro_name" invisible="True"/>
                                                 <field name="product_id" string="产品型号"/>
-                                                <field name="bom" string="BOM" />
-                                                <field name="pro_type" string="产品类别"/>
-                                                <field name="pro_description" string="产品对内中文描述"/>
-                                                <field name="list_price" string="目录价"/>
+                                                <field name="bom" string="BOM" readonly="True"/>
+                                                <field name="pro_type" string="产品类别" readonly="True"/>
+                                                <field name="pro_description" string="产品对内中文描述" readonly="True"/>
+                                                <field name="list_price" string="目录价" readonly="True"/>
                                             </group>
                                             <group>
-                                                <field name="ref_discount" string="参考折扣(%)"/>
+                                                <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
                                                 <field name="apply_discount" string="申请折扣(%)"/>
                                                 <field name="pro_num" string="数量"/>
                                                 <field name="config_set" string="配置组"/>

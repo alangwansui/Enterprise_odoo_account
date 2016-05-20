@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_sale_business_report,dtdream_sale_business_report users,model_dtdream_sale_business_report,,1,1,0,0
+access_dtdream_shenpi_line,dtdream_shenpi_line users,model_dtdream_shenpi_line,,1,0,0,0
+access_dtdream_shenpi_config,dtdream_shenpi_config users,model_dtdream_shenpi_config,,1,0,0,0
+access_report_handle_approve_record,report_handle_approve_record users,model_report_handle_approve_record,,1,1,1,0
+

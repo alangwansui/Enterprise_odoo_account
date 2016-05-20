@@ -103,6 +103,35 @@ class dtdream_hr_business(models.Model):
 
     employ = fields.Many2one("hr.employee", string="员工")
 
+    followers_user = fields.Many2many("res.users" ,"bus_f_u_u",string="关注者")
+
+    @api.constrains('message_follower_ids')
+    def _compute_follower(self):
+        self.followers_user = False
+        for foll in self.message_follower_ids:
+            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
+
+    #关注者删除方法重写
+    # @api.multi
+    # def message_unsubscribe(self, partner_ids=None, channel_ids=None,):
+    #     if not partner_ids and not channel_ids:
+    #         return True
+    #     user_pid = self.env.user.partner_id.id
+    #     if not channel_ids and set(partner_ids) == set([user_pid]):
+    #         self.check_access_rights('read')
+    #         self.check_access_rule('read')
+    #     else:
+    #         self.check_access_rights('write')
+    #         self.check_access_rule('write')
+    #     self.env['mail.followers'].sudo().search([
+    #         ('res_model', '=', self._name),
+    #         ('res_id', 'in', self.ids),
+    #         '|',
+    #         ('partner_id', 'in', partner_ids or []),
+    #         ('channel_id', 'in', channel_ids or [])
+    #     ]).unlink()
+    #     self._compute_follower()
+
     @api.constrains("detail_ids")
     def _check_start_end_time(self):
         """检查各行程间时间是否冲突，是否与出差时间冲突,是否与之前提交的出差申请时间冲突"""
@@ -187,11 +216,53 @@ class dtdream_hr_business(models.Model):
                 'email_from':self.get_mail_server_name(),
             }).send()
 
-    @api.model
-    def create(self, vals):
-        empl = self.env['hr.employee'].browse(vals['name'])
-        result = super(dtdream_hr_business, self).create(vals)
+    def add_follower(self, cr, uid, ids, employee_id, context=None):
+        employee = self.pool.get('hr.employee').browse(cr, uid, employee_id, context=context)
+        if employee and employee.user_id:
+            self.message_subscribe_users(cr, uid, ids, user_ids=[employee.user_id.id], context=context)
+
+    def create(self, cr, uid, values, context=None):
+        empl = self.pool.get('hr.employee').browse(cr, uid,values['name'])
+        result = super(dtdream_hr_business, self).create(cr, uid, values, context=context)
+        if empl.user_id.id != uid:
+            self.add_follower(cr, uid,[result],empl.id,context=context)
+        if values['approver_fir']:
+            self.add_follower(cr, uid,[result],values['approver_fir'],context=context)
+        if values['approver_sec']:
+            self.add_follower(cr, uid,[result],values['approver_sec'],context=context)
+        if values['approver_thr']:
+            self.add_follower(cr, uid,[result],values['approver_thr'],context=context)
+        if values['approver_fou']:
+            self.add_follower(cr, uid,[result],values['approver_fou'],context=context)
+        if values['approver_fif']:
+            self.add_follower(cr, uid,[result],values['approver_fif'],context=context)
         return  result
+
+    @api.constrains('approver_fir')
+    def approver_fir_fol(self):
+        if self.approver_fir and self.approver_fir.user_id:
+            self.add_follower(employee_id=self.approver_fir.id)
+
+    @api.constrains('approver_sec')
+    def approver_sec_fol(self):
+        if self.approver_sec and self.approver_sec.user_id:
+            self.add_follower(employee_id=self.approver_sec.id)
+
+    @api.constrains('approver_thr')
+    def approver_thr_fol(self):
+        if self.approver_thr and self.approver_thr.user_id:
+            self.add_follower(employee_id=self.approver_thr.id)
+
+    @api.constrains('approver_fou')
+    def approver_fou_fol(self):
+        if self.approver_fou and self.approver_fou.user_id:
+            self.add_follower(employee_id=self.approver_fou.id)
+
+    @api.constrains('approver_fif')
+    def approver_fif_fol(self):
+        if self.approver_fif and self.approver_fif.user_id:
+            self.add_follower(employee_id=self.approver_fif.id)
+
 
     @api.model
     def wkf_draft(self):                            #创建
@@ -217,7 +288,7 @@ class dtdream_hr_business(models.Model):
         self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_sec:
             self.write({'state': '1'})
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
             self.write({'current_approver':self.approver_sec.id})
             self.message_post(body=u'批准，状态：一级审批 --> '+u'二级审批')
             self.send_mail()
@@ -232,14 +303,14 @@ class dtdream_hr_business(models.Model):
         self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_thr:
             self.write({'state': '2'})
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
             self.write({'current_approver':self.approver_thr.id})
             self.message_post(body=u'批准，状态：二级审批 --> '+u'三级审批')
             self.send_mail()
         else:
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：二级审批 --> '+u'批准')
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
 
     @api.model
     def wkf_fou(self):                                       #第三审批人批准
@@ -249,14 +320,14 @@ class dtdream_hr_business(models.Model):
             self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_fou:
             self.write({'state': '3'})
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
             self.write({'current_approver':self.approver_fou.id})
             self.message_post(body=u'批准，状态：三级审批 --> '+u'四级审批')
             self.send_mail()
         else:
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：三级审批 --> '+u'批准')
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
 
     @api.model
     def wkf_fif(self):                                       #第四审批人批准
@@ -266,14 +337,14 @@ class dtdream_hr_business(models.Model):
             self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         if self.approver_fif:
             self.write({'state': '4'})
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
             self.write({'current_approver':self.approver_fif.id})
             self.message_post(body=u'批准，状态：四级审批 --> '+u'五级审批')
             self.send_mail()
         else:
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：四级审批 --> '+u'批准')
-            self.send_mail_to_app()
+            # self.send_mail_to_app()
 
     @api.model
     def wkf_accept(self):                                        #第五审批人批准
@@ -283,13 +354,13 @@ class dtdream_hr_business(models.Model):
             self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         self.write({'state': '5'})
         self.message_post(body=u'批准，状态：五级审批 --> '+u'批准')
-        self.send_mail_to_app()
+        # self.send_mail_to_app()
 
     @api.model
     def wkf_refuse(self):                                       #各审批人驳回
         self.write({'state': '99'})
         self.write({'his_app': [(4, self.current_approver.user_id.id)]})
-        self.send_mail_to_app()
+        # self.send_mail_to_app()
         self.write({'current_approver':self.name.id})
 
 

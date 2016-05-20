@@ -42,12 +42,12 @@
 
 <!--研发产品-->
         <record id="act_dtdream_prod_appr" model="ir.actions.act_window">
-            <field name="name">我创建的</field>
+            <field name="name">所有</field>
             <field name="res_model">dtdream_prod_appr</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="domain">['|','|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('sameDept','=',True)]</field>
         </record>
 
         <record id="act_dtdream_prod_appr_wait" model="ir.actions.act_window">
@@ -59,23 +59,6 @@
             <field name="domain">[('current_approver_user','=',uid)]</field>
         </record>
 
-        <record id="act_dtdream_prod_appr_over" model="ir.actions.act_window">
-            <field name="name">我已审批的</field>
-            <field name="res_model">dtdream_prod_appr</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[('his_app_user','=',uid)]</field>
-        </record>
-
-        <record id="act_dtdream_prod_appr_with_self" model="ir.actions.act_window">
-            <field name="name">与我相关</field>
-            <field name="res_model">dtdream_prod_appr</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]</field>
-        </record>
 
         <record id="act_dtdream_prod_appr_all" model="ir.actions.act_window">
             <field name="name">所有研发产品</field>
@@ -106,8 +89,9 @@
                     <header>
 
                         <button name="%(dtdream_rd_prod.act_lixiang_wizard)d" string="提交" type="action" attrs="{'invisible':['|',('state','not in',('state_00')),('is_create','=',False)]}"/>
-                        <button name="do_back"  string="返回上一步"  type="object" confirm="是否确认返回上一步？" attrs="{'invisible':['&amp;',('is_Qa','=',False),'|',('state','in',('state_00')),('is_create','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_lixiang_wizardappr)d"  string="提交"  type="action" attrs="{'invisible':['|','|',('is_lixiangappred','=',True),('state','not in',('state_01')),('is_create','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_lixiang_wizardappr)d"  string="提交"  type="action" attrs="{'invisible':['|','|',('is_appred','=',True),('state','not in',('state_02')),('is_create','=',False)]}"/>
+                        <button name="do_back"  string="返回上一步"  type="object" confirm="是否确认返回上一步？" attrs="{'invisible':['&amp;',('is_Qa','=',False),'|',('state','in',('state_00')),('is_create','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_lixiang_wizard)d"  string="下一步"  type="action" attrs="{'invisible':['|',('state','not in',('state_03')),('is_create','=',False)]}"/>
                          <button name="%(dtdream_rd_prod.act_lixiang_wizard)d"  string="结束"  type="action" attrs="{'invisible':['|',('state','not in',('state_04')),('is_create','=',False)]}"/>
                          <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
@@ -125,6 +109,8 @@
                                  <field name="department" domain="[('parent_id','=',False),('child_ids','!=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                  <field name="is_create" invisible="1"/>
                                  <field name="is_appred" invisible="1"/>
+                                 <field name="is_lixiangappred" invisible="1"/>
+                                 <field name="sameDept" invisible="1"/>
                              </group>
                              <group>
                                  <field name="department_2" domain="[('parent_id.parent_id','=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
@@ -338,7 +324,7 @@
                                 <field name="name"/>
                                 <field name='pro_state'/>
                                 <field name='level'/>
-                                <field name='department'/>
+                                <field name='department' attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
                                 <field name="is_level" invisible="1"/>
                             </group>
                         </group>
@@ -363,20 +349,24 @@
 
 <!--菜单-->
 
-        <menuitem id="menu_finance_rd" name="研发"  icon="fa-user" web_icon="dtdream_rd_prod,static/description/rd.png"/>
+        <menuitem id="menu_finance_rd" name="研发"  icon="fa-user" web_icon="dtdream_rd_prod,static/description/rd.png" groups="group_dtdream_rd_qa,group_dtdream_rd_user,group_dtdream_rd_user_all"/>
+
         <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"/>
-
-        <menuitem id="menu_finance_prod_appr_my" name="我创建的" parent="menu_finance_prod_appr" sequence="100"  action="act_dtdream_prod_appr"/>
+        <menuitem id="menu_finance_prod_appr_my" name="所有" parent="menu_finance_prod_appr" sequence="100"  action="act_dtdream_prod_appr"/>
         <menuitem id="menu_finance_prod_appr_wait" name="待我审批的" parent="menu_finance_prod_appr" sequence="200"  action="act_dtdream_prod_appr_wait"/>
-        <menuitem id="menu_finance_prod_appr_over" name="我已审批的" parent="menu_finance_prod_appr" sequence="300"  action="act_dtdream_prod_appr_over"/>
-        <menuitem id="menu_finance_prod_appr_with_self" name="与我相关" parent="menu_finance_prod_appr" sequence="400"  action="act_dtdream_prod_appr_with_self"/>
 
 
-        <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
+        <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200"/>
+        <menuitem id="menu_finance_rd_version_my" name="所有" parent="menu_finance_rd_version" sequence="100" action="act_dtdream_rd_version"/>
+        <menuitem id="menu_finance_rd_version_wait" name="待我审批的" parent="menu_finance_rd_version" sequence="200" action="act_dtdream_prod_version_wait"/>
+
+
         <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
         <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="100"  action="act_dtdream_rd_Rconfig"/>
         <menuitem id="menu_finance_rd_approver" name="产品审批人配置" parent="menu_finance_rd_config" sequence="200"  action="act_dtdream_rd_approver"/>
 
-        <menuitem id="menu_finance_prod_appr_all" name="所有" parent="menu_finance_rd" sequence="400" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_prod_all" name="所有" parent="menu_finance_rd" sequence="400" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_prod_appr_all" name="所有产品" parent="menu_finance_prod_all" sequence="100" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_prod_version_all" name="所有版本" parent="menu_finance_prod_all" sequence="200" action="act_dtdream_prod_version_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
     </data>
 </openerp>

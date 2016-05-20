@@ -8,7 +8,7 @@ from lxml import etree
 
 class dtdream_hr_resume(models.Model):
     _name = "dtdream.hr.resume"
-    _description = u"员工详细信息"
+    _description = u"员工履历"
     _inherit = ['mail.thread']
 
     @api.depends('name')
@@ -55,7 +55,7 @@ class dtdream_hr_resume(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         cr = self.env["dtdream.hr.resume"].search([("name.id", "=", self.env.context.get('active_id'))])
-        view = self.env.ref("dtdream_hr_resume.group_hr_resume_view") in self.env.user.groups_id
+        view = self.env.ref("dtdream_hr_resume.group_hr_resume_edit") not in self.env.user.groups_id
         user_id = self._context.get('active_id', None)
         res = super(dtdream_hr_resume, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         if res['type'] == "form":
@@ -149,6 +149,13 @@ class dtdream_hr_resume(models.Model):
         if cr.mobile_phone != self.mobile:
             cr.write({"mobile_phone": self.mobile})
             self.send_mail_attend_mobile()
+
+    @api.model
+    def create(self, vals):
+        cr = self.env["dtdream.hr.resume"].search([('name.id', '=', self._context.get("active_id"))])
+        if len(cr):
+            raise ValidationError("履历信息已经存在,无法重复创建!")
+        return super(dtdream_hr_resume, self).create(vals)
 
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]), readonly="True")
@@ -343,13 +350,6 @@ class dtdream_hr_employee(models.Model):
         else:
             self.contract_view = False
 
-    # def _get_act_window_dict_infor(self, cr, uid, name, context=None):
-    #     mod_obj = self.pool.get('ir.model.data')
-    #     act_obj = self.pool.get('ir.actions.server')
-    #     result = mod_obj.xmlid_to_res_id(cr, uid, name, raise_if_not_found=True)
-    #     result = act_obj.read(cr, uid, [result], context=context)[0]
-    #     return result
-
     @api.multi
     def act_dtdream_hr_resume(self):
         cr = self.env['dtdream.hr.resume'].search([('name.id', '=', self.id)])
@@ -367,13 +367,23 @@ class dtdream_hr_employee(models.Model):
             }
         return action
 
+    def _compute_resume_log(self):
+        cr = self.env['dtdream.hr.resume'].search([("name.id", "=", self.id)])
+        self.resume_log_nums = len(cr)
+
+    def _compute_contract_log(self):
+        cr = self.env['dtdream.hr.contract'].search([("name.id", "=", self.id)])
+        self.contract_log_nums = len(cr)
+
+    resume_log_nums = fields.Integer(compute='_compute_resume_log', string="履历记录")
+    contract_log_nums = fields.Integer(compute='_compute_contract_log', string="合同记录")
     resume_view = fields.Boolean(string="履历是否可见", compute=_compute_resume_view)
     contract_view = fields.Boolean(string="合同是否可见", compute=_compute_contract_view)
 
 
 class dtdream_resume_modify(models.Model):
     _name = 'dtdream.hr.resume.modify'
-    _description = u"修改员工详细信息"
+    _description = u"修改员工履历"
     _inherit = ['mail.thread']
 
     @api.depends('name')

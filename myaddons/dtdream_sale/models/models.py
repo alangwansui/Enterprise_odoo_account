@@ -167,28 +167,57 @@ class dtdream_office(models.Model):
 class dtdream_product_line(models.Model):
     _name = 'dtdream.product.line'
 
-    @api.depends('product_id')
-    def _compute_fields(self):
-        for rec in self:
-            rec.bom = rec.product_id.bom
-            rec.pro_type = rec.product_id.pro_type.name
-            rec.pro_description = rec.product_id.pro_description
-            # rec.pro_name = rec.product_id.name
-            rec.ref_discount = rec.product_id.ref_discount
-            rec.list_price = rec.product_id.list_price
-
     product_line_id = fields.Many2one('crm.lead', string='产品', required=True, ondelete='cascade', index=True, copy=False)
-    product_id = fields.Many2one('product.template', string='产品',ondelete='restrict', required=True,track_visibility='onchange')
+    product_id = fields.Many2one('product.template', string='产品',ondelete='restrict',track_visibility='onchange')
 
-    bom = fields.Char('BOM',compute=_compute_fields)
-    pro_type = fields.Char('产品类别',compute=_compute_fields)
-    pro_description = fields.Char('产品描述',compute=_compute_fields)
-    pro_name = fields.Char('产品型号',compute=_compute_fields)
-    list_price = fields.Float('目录价',compute=_compute_fields)
-    ref_discount = fields.Float('参考折扣(%)',compute=_compute_fields)
+    bom = fields.Char('BOM')
+    pro_type = fields.Char('产品类别')
+    pro_description = fields.Char('产品描述')
+    pro_name = fields.Char('产品型号')
+    list_price = fields.Float('目录价')
+    ref_discount = fields.Float('参考折扣(%)')
     apply_discount = fields.Float('申请折扣(%)')
     pro_num = fields.Integer('数量')
     config_set = fields.Char('配置组')
+
+    @api.onchange("product_id")
+    def _onchange_product_id(self):
+        for rec in self:
+            if rec.product_id.id:
+                rec.bom = rec.product_id.bom
+                rec.pro_type = rec.product_id.pro_type.name
+                rec.pro_description = rec.product_id.pro_description
+                rec.pro_name = rec.product_id.name
+                rec.ref_discount = rec.product_id.ref_discount
+                rec.list_price = rec.product_id.list_price
+
+    @api.model
+    def create(self, vals):
+        if vals['product_id']:
+            rec = self.product_id.search([('id','=',vals['product_id'])])[0]
+            vals['bom'] = rec.bom
+            vals['pro_type'] = rec.pro_type.name
+            vals['pro_description'] = rec.pro_description
+            vals['pro_name'] = rec.name
+            vals['list_price'] = rec.list_price
+            vals['ref_discount'] = rec.ref_discount
+            vals['product_id'] = None
+        result = super(dtdream_product_line, self).create(vals)
+        return result
+
+    @api.multi
+    def write(self, vals):
+        if vals['product_id']:
+            rec = self.product_id.search([('id','=',vals['product_id'])])[0]
+            vals['bom'] = rec.bom
+            vals['pro_type'] = rec.pro_type.name
+            vals['pro_description'] = rec.pro_description
+            vals['pro_name'] = rec.name
+            vals['list_price'] = rec.list_price
+            vals['ref_discount'] = rec.ref_discount
+            vals['product_id'] = None
+        result = super(dtdream_product_line, self).write(vals)
+        return result
 
     @api.onchange("pro_num")
     def _onchange_pro_num(self):

@@ -11,7 +11,7 @@
     </record>
 
     <record id="act_dtdream_hr_business_wait" model="ir.actions.act_window">
-        <field name="name">待审批</field>
+        <field name="name">待我审批</field>
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -20,7 +20,16 @@
     </record>
 
     <record id="act_dtdream_hr_business_deal" model="ir.actions.act_window">
-        <field name="name">已审批</field>
+        <field name="name">我已审批</field>
+        <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">['|','|','|','|',('current_approver.user_id','=',uid),('name.user_id', '=', uid),('create_uid','=',uid),('followers_user','=',uid),('his_app','=',uid)]</field>
+    </record>
+
+      <record id="act_dtdream_hr_business_all" model="ir.actions.act_window">
+        <field name="name">所有单据</field>
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -168,8 +177,9 @@
     <menuitem name="外出公干" id="dtdream_hr_business_root" icon="fa-user"
             web_icon="dtdream_hr_business,static/description/wcgg.png"></menuitem>
     <menuitem name="我的申请" sequence="10" id="dtdream_hr_business" parent="dtdream_hr_business_root" action="act_dtdream_hr_business" ></menuitem>
-    <menuitem name="待我审批的申请" sequence="20" id="dtdream_hr_business_wait" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_wait"></menuitem>
-    <menuitem name="我已审批的申请" sequence="30" id="dtdream_hr_business_deal" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_deal"></menuitem>
+    <menuitem name="待我审批" sequence="20" id="dtdream_hr_business_wait" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_wait"></menuitem>
+    <menuitem name="我已审批" sequence="30" id="dtdream_hr_business_deal" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_deal"></menuitem>
+    <menuitem name="所有单据" sequence="40" id="dtdream_hr_business_all" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_all"></menuitem>
     <menuitem name="报告" sequence="40" id="dtdream_hr_business_report" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_report" groups="base.group_hr_manager,base.group_hr_user"></menuitem>
   </data>
 </openerp>
