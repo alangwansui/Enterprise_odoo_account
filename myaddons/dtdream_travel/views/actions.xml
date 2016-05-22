@@ -12,7 +12,7 @@
         </record>
 
         <record id="act_dtdream_travel_chucha_shenqing_02" model="ir.actions.act_window">
-            <field name="name">待批准申请</field>
+            <field name="name">待我审批</field>
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -21,7 +21,7 @@
         </record>
 
         <record id="act_dtdream_travel_chucha_shenqing_03" model="ir.actions.act_window">
-            <field name="name">已批准申请</field>
+            <field name="name">我已审批</field>
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -30,6 +30,15 @@
         </record>
 
         <record id="act_dtdream_travel_chucha_shenqing_04" model="ir.actions.act_window">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.travel.chucha</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_travel_chucha_shenqing_05" model="ir.actions.act_window">
             <field name="name">报告</field>
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
