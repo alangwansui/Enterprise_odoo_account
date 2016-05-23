@@ -29,13 +29,20 @@
             <field name="domain">[('approve.user_id','=',uid)]</field>
         </record>
 
-        <record id="act_dtdream_travel_chucha_shenqing_04" model="ir.actions.act_window">
+        <record model="ir.actions.server" id="act_dtdream_travel_chucha_shenqing_04">
             <field name="name">所有单据</field>
-            <field name="res_model">dtdream.travel.chucha</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="model_id" ref="model_dtdream_travel_chucha"/>
+            <field name="code">
+                action = {
+                'name':'所有单据',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'dtdream.travel.chucha',
+                'domain': ['|','|','|','|',('message_follower_ids.partner_id', '=', user.partner_id.id),('create_uid', '=', uid),('shenpiren.user_id','=',uid),('approve.user_id','=',uid),('name.user_id','=',uid)],
+                'context':context,
+                }
+            </field>
         </record>
 
         <record id="act_dtdream_travel_chucha_shenqing_05" model="ir.actions.act_window">

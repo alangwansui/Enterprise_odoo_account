@@ -201,14 +201,16 @@ class dtdream_travel(models.Model):
     @api.constrains("journey_id")
     def _check_start_end_time(self):
         """检查各行程间时间是否冲突，是否与外出公干时间冲突,是否与之前提交的出差申请时间冲突"""
-        min_start = ""
         cr = self.env["dtdream_hr_business.business_detail"].search([("business.name.id", "=", self.name.id),
                                                                      ("business.state", "not in", (0, -1))])
         crr = self.env["dtdream.travel.journey"].search([("travel_id.name.id", "=", self.name.id)])
+        for index, journey in enumerate(self.journey_id):
+            start = journey.starttime
+            end = journey.endtime
+            for j in range(index):
+                if not(self.journey_id[j].starttime > end or self.journey_id[j].endtime < start):
+                    raise ValidationError("出差时间与结束时间填写不合理,各行程间时间存在冲突!")
         for journey in self.journey_id:
-            if journey.starttime < min_start:
-                raise ValidationError("出差时间与结束时间填写不合理,各行程间时间存在冲突!")
-            min_start = journey.endtime
             for travel in crr:
                 if travel.id == journey.id:
                     continue
@@ -219,6 +221,14 @@ class dtdream_travel(models.Model):
                 if detail.startTime[:10] <= journey.starttime < detail.endTime[:10] or \
                                         detail.startTime[:10] < journey.endtime <= detail.endTime[:10]:
                     raise ValidationError("{0}到{1}时间与外出公干时间重合".format(journey.starttime, journey.endtime))
+
+    def create(self, cr, uid, values, context=None):
+        """申请人默认添加关注"""
+        name = self.pool.get('hr.employee').browse(cr, uid, values['name'])
+        result = super(dtdream_travel, self).create(cr, uid, values, context=context)
+        if uid != name.user_id.id:
+            self.message_subscribe_users(cr, uid, [result], user_ids=[name.user_id.id], context=context)
+        return result
 
     name = fields.Many2one('hr.employee', string="申请人", required=True, default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
     shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True)

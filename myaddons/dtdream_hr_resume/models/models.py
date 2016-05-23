@@ -20,14 +20,11 @@ class dtdream_hr_resume(models.Model):
 
     @api.constrains("experince")
     def check_start_end_time(self):
-        start = ""
-        end = ""
         for index, experince in enumerate(self.experince):
-            if index == 0:
-                start = experince.start_time
-                end = experince.end_time
-            else:
-                if not(experince.start_time > end or experince.end_time < start):
+            start = experince.start_time
+            end = experince.end_time
+            for j in range(index):
+                if not(self.experince[j].start_time > end or self.experince[j].end_time < start):
                     raise ValidationError("工作经历时间填写不合理,时间段之间存在重合!")
 
     @api.constrains("degree")

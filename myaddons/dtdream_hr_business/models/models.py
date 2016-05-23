@@ -112,25 +112,25 @@ class dtdream_hr_business(models.Model):
             self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
 
     #关注者删除方法重写
-    # @api.multi
-    # def message_unsubscribe(self, partner_ids=None, channel_ids=None,):
-    #     if not partner_ids and not channel_ids:
-    #         return True
-    #     user_pid = self.env.user.partner_id.id
-    #     if not channel_ids and set(partner_ids) == set([user_pid]):
-    #         self.check_access_rights('read')
-    #         self.check_access_rule('read')
-    #     else:
-    #         self.check_access_rights('write')
-    #         self.check_access_rule('write')
-    #     self.env['mail.followers'].sudo().search([
-    #         ('res_model', '=', self._name),
-    #         ('res_id', 'in', self.ids),
-    #         '|',
-    #         ('partner_id', 'in', partner_ids or []),
-    #         ('channel_id', 'in', channel_ids or [])
-    #     ]).unlink()
-    #     self._compute_follower()
+    @api.multi
+    def message_unsubscribe(self, partner_ids=None, channel_ids=None,):
+        if not partner_ids and not channel_ids:
+            return True
+        user_pid = self.env.user.partner_id.id
+        if not channel_ids and set(partner_ids) == set([user_pid]):
+            self.check_access_rights('read')
+            self.check_access_rule('read')
+        else:
+            self.check_access_rights('write')
+            self.check_access_rule('write')
+        self.env['mail.followers'].sudo().search([
+            ('res_model', '=', self._name),
+            ('res_id', 'in', self.ids),
+            '|',
+            ('partner_id', 'in', partner_ids or []),
+            ('channel_id', 'in', channel_ids or [])
+        ]).unlink()
+        self._compute_follower()
 
     @api.constrains("detail_ids")
     def _check_start_end_time(self):
