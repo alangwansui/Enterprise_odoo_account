@@ -20,6 +20,7 @@
                 attrs="{'invisible':['|',('is_current','=',False),('state','not in',('2','3','5','6','7','8','9'))]}"/>
                 <button name="btn_finish" string="完成" type="workflow" class="oe_highlight"
                 attrs="{'invisible':['|',('is_current','=',False),('state','not in',('7'))]}"/>
+                <field name="warn_text"  readonly="True" ></field>
                 <field name="state"  widget="statusbar"
                        statusbar_visible="0,done"/>
             </header>
@@ -194,6 +195,7 @@
               <group>
                 <field name="market_manager" options='{"no_open": True, "no_create": True}'></field>
                 <field name="company_manager" options='{"no_open": True, "no_create": True}'></field>
+                <field name="sale_grant_discount"></field>
               </group>
             </group>
              <notebook colspan="4">

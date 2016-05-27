@@ -226,42 +226,42 @@ class dtdream_hr_business(models.Model):
         result = super(dtdream_hr_business, self).create(cr, uid, values, context=context)
         if empl.user_id.id != uid:
             self.add_follower(cr, uid,[result],empl.id,context=context)
-        if values['approver_fir']:
-            self.add_follower(cr, uid,[result],values['approver_fir'],context=context)
-        if values['approver_sec']:
-            self.add_follower(cr, uid,[result],values['approver_sec'],context=context)
-        if values['approver_thr']:
-            self.add_follower(cr, uid,[result],values['approver_thr'],context=context)
-        if values['approver_fou']:
-            self.add_follower(cr, uid,[result],values['approver_fou'],context=context)
-        if values['approver_fif']:
-            self.add_follower(cr, uid,[result],values['approver_fif'],context=context)
+        # if values['approver_fir']:
+        #     self.add_follower(cr, uid,[result],values['approver_fir'],context=context)
+        # if values['approver_sec']:
+        #     self.add_follower(cr, uid,[result],values['approver_sec'],context=context)
+        # if values['approver_thr']:
+        #     self.add_follower(cr, uid,[result],values['approver_thr'],context=context)
+        # if values['approver_fou']:
+        #     self.add_follower(cr, uid,[result],values['approver_fou'],context=context)
+        # if values['approver_fif']:
+        #     self.add_follower(cr, uid,[result],values['approver_fif'],context=context)
         return  result
 
-    @api.constrains('approver_fir')
-    def approver_fir_fol(self):
-        if self.approver_fir and self.approver_fir.user_id:
-            self.add_follower(employee_id=self.approver_fir.id)
-
-    @api.constrains('approver_sec')
-    def approver_sec_fol(self):
-        if self.approver_sec and self.approver_sec.user_id:
-            self.add_follower(employee_id=self.approver_sec.id)
-
-    @api.constrains('approver_thr')
-    def approver_thr_fol(self):
-        if self.approver_thr and self.approver_thr.user_id:
-            self.add_follower(employee_id=self.approver_thr.id)
-
-    @api.constrains('approver_fou')
-    def approver_fou_fol(self):
-        if self.approver_fou and self.approver_fou.user_id:
-            self.add_follower(employee_id=self.approver_fou.id)
-
-    @api.constrains('approver_fif')
-    def approver_fif_fol(self):
-        if self.approver_fif and self.approver_fif.user_id:
-            self.add_follower(employee_id=self.approver_fif.id)
+    # @api.constrains('approver_fir')
+    # def approver_fir_fol(self):
+    #     if self.approver_fir and self.approver_fir.user_id:
+    #         self.add_follower(employee_id=self.approver_fir.id)
+    #
+    # @api.constrains('approver_sec')
+    # def approver_sec_fol(self):
+    #     if self.approver_sec and self.approver_sec.user_id:
+    #         self.add_follower(employee_id=self.approver_sec.id)
+    #
+    # @api.constrains('approver_thr')
+    # def approver_thr_fol(self):
+    #     if self.approver_thr and self.approver_thr.user_id:
+    #         self.add_follower(employee_id=self.approver_thr.id)
+    #
+    # @api.constrains('approver_fou')
+    # def approver_fou_fol(self):
+    #     if self.approver_fou and self.approver_fou.user_id:
+    #         self.add_follower(employee_id=self.approver_fou.id)
+    #
+    # @api.constrains('approver_fif')
+    # def approver_fif_fol(self):
+    #     if self.approver_fif and self.approver_fif.user_id:
+    #         self.add_follower(employee_id=self.approver_fif.id)
 
 
     @api.model

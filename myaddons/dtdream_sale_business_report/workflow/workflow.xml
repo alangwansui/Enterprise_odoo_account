@@ -164,6 +164,14 @@
             <field name="act_from" ref="act_approve8"/>
             <field name="act_to" ref="act_approve9"/>
             <field name="signal">btn_approve</field>
+            <field name="condition">if_out_grant=="1"</field>
+        </record>
+
+        <record id="trans_approve8_done" model="workflow.transition">
+            <field name="act_from" ref="act_approve8"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="signal">btn_approve</field>
+            <field name="condition">if_out_grant=="0"</field>
         </record>
 
         <record id="trans_approve9_done" model="workflow.transition">
@@ -202,7 +210,7 @@
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve4_approve5" model="workflow.transition">
+        <record id="trans_approve4_approve5_int" model="workflow.transition">
             <field name="act_from" ref="act_approve4"/>
             <field name="act_to" ref="act_approve5"/>
             <field name="signal">btn_to_interface</field>

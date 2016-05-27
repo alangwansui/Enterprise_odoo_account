@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 from datetime import datetime
 from lxml import etree
+from openerp .exceptions import ValidationError
 
 # 商务提前报备类
 class dtdream_sale_business_report(models.Model):
@@ -16,6 +17,11 @@ class dtdream_sale_business_report(models.Model):
             self.is_current = True
         else:
             self.is_current = False
+        if self.state == "7" and self.shenpiren.user_id == self.env.user:
+            if self.apply_discount < self.sale_grant_discount :
+                self.write({'warn_text':u'销售申请折扣（%s%%）,已超出您的授权折扣（%s%%）'%(self.apply_discount,self.sale_grant_discount)})
+        else :
+            self.write({'warn_text':""})
 
     name = fields.Char(default="商务提前报备")
     rep_pro_name = fields.Many2one('crm.lead', string="项目名称", required=True,track_visibility='onchange')
@@ -52,10 +58,15 @@ class dtdream_sale_business_report(models.Model):
     product_line = fields.One2many('dtdream.product.line', 'product_business_line_id', string='产品配置',copy=True)
     shenpiren = fields.Many2one('hr.employee', string="当前审批人")
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
+    apply_discount = fields.Float(string="销售申请折扣")
+    sale_grant_discount = fields.Float(string="营销管理部授权折扣")
+    market_grant_discount = fields.Float(string="市场部授权折扣")
+    if_out_grant = fields.Char(default=0)
 
     approve_records = fields.One2many("report.handle.approve.record","report_handle_id",string="审批记录")
 
     rejust_state = fields.Integer(string='驳回到销售',default=0)
+    warn_text = fields.Char()
     state = fields.Selection(
         [('0', '草稿'),
          ('1', '配置产品'),
@@ -118,7 +129,6 @@ class dtdream_sale_business_report(models.Model):
 
     @api.multi
     def wkf_approve4(self):
-        print self.state
         if self.state != "3":
             self.write({'rejust_state':1})
         self.write({'state':'4'})
@@ -140,6 +150,26 @@ class dtdream_sale_business_report(models.Model):
 
     @api.multi
     def wkf_approve7(self):
+        self.product_line
+        total_chuhuo_price = 0
+        total_chengben_price = 0
+        total_market_price = 0
+        i=0
+        for product in self.product_line:
+            i = i + 1
+            real_pro = self.env['product.template'].search([('bom','=',product.bom)])[0]
+            total_chuhuo_price = total_chuhuo_price + real_pro.list_price*product.apply_discount*product.pro_num
+            total_chengben_price = total_chengben_price + product.list_price*product.pro_num
+            total_market_price = total_market_price + real_pro.list_price*real_pro.market_president_discount*product.pro_num
+
+        self.apply_discount = round(total_chuhuo_price/total_chengben_price,2)
+        self.sale_grant_discount = round(self.env['dtdream.shenpi.config'].search([])[0].sale_grant_discount,2)
+        self.market_grant_discount = round(total_market_price/total_chengben_price,2)
+        if self.apply_discount < self.market_grant_discount :
+            self.if_out_grant = 1
+        else :
+            self.if_out_grant = 0
+
         self.write({'state':'7'})
         shenpiren = self.get_shenpiren()
         self.write({"shenpiren": shenpiren.id})
@@ -244,6 +274,17 @@ class dtdream_shenpi_config(models.Model):
     sales_manager = fields.Many2one('hr.employee',string="营销管理部部长")
     market_manager = fields.Many2one('hr.employee',string="市场部总裁")
     company_manager = fields.Many2one('hr.employee',string="公司总裁")
+    sale_grant_discount = fields.Float(string="营销管理部授权折扣(%)")
+
+    @api.onchange("sale_grant_discount")
+    def _onchange_sale_discount(self):
+        if self.sale_grant_discount > 100 or self.sale_grant_discount < 0:
+            self.sale_grant_discount = ""
+            warning = {
+                    'title': '警告：',
+                    'message': '授权折扣应在0%到100%之间',
+                }
+            return {'warning': warning}
 
 # 审批记录
 class report_handle_approve_record(models.Model):

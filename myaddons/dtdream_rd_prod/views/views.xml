@@ -142,7 +142,7 @@
                                 </group>
                                 <field name="version_ids" context="{'default_proName':id}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_03'))]}">   <!--context="{'default_proName':id}"-->
                                     <tree>
-                                        <field name="proName"/>
+                                        <field name="proName" string="产品名称"/>
                                         <field name="version_numb"/>
                                         <field name="pro_flag"/>
                                         <field name="version_state"/>

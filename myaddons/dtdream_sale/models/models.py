@@ -193,29 +193,31 @@ class dtdream_product_line(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals['product_id']:
-            rec = self.product_id.search([('id','=',vals['product_id'])])[0]
-            vals['bom'] = rec.bom
-            vals['pro_type'] = rec.pro_type.name
-            vals['pro_description'] = rec.pro_description
-            vals['pro_name'] = rec.name
-            vals['list_price'] = rec.list_price
-            vals['ref_discount'] = rec.ref_discount
-            vals['product_id'] = None
+        if vals.has_key('product_id'):
+            if vals['product_id']:
+                rec = self.product_id.search([('id','=',vals['product_id'])])[0]
+                vals['bom'] = rec.bom
+                vals['pro_type'] = rec.pro_type.name
+                vals['pro_description'] = rec.pro_description
+                vals['pro_name'] = rec.name
+                vals['list_price'] = rec.list_price
+                vals['ref_discount'] = rec.ref_discount
+                vals['product_id'] = None
         result = super(dtdream_product_line, self).create(vals)
         return result
 
     @api.multi
     def write(self, vals):
-        if vals['product_id']:
-            rec = self.product_id.search([('id','=',vals['product_id'])])[0]
-            vals['bom'] = rec.bom
-            vals['pro_type'] = rec.pro_type.name
-            vals['pro_description'] = rec.pro_description
-            vals['pro_name'] = rec.name
-            vals['list_price'] = rec.list_price
-            vals['ref_discount'] = rec.ref_discount
-            vals['product_id'] = None
+        if vals.has_key('product_id'):
+            if vals['product_id']:
+                rec = self.product_id.search([('id','=',vals['product_id'])])[0]
+                vals['bom'] = rec.bom
+                vals['pro_type'] = rec.pro_type.name
+                vals['pro_description'] = rec.pro_description
+                vals['pro_name'] = rec.name
+                vals['list_price'] = rec.list_price
+                vals['ref_discount'] = rec.ref_discount
+                vals['product_id'] = None
         result = super(dtdream_product_line, self).write(vals)
         return result
 

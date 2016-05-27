@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
+    <data noupdate="1">
         <record id="rd_product_workflow" model="workflow">
             <field name="name">研发项目立项工作流</field>
             <field name="osv">dtdream_prod_appr</field>
