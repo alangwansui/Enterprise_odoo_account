@@ -109,18 +109,18 @@ class dtdream_hr_resume(models.Model):
         for ex in self.experince:
             self.env["hr.employee.experience"].create({"start_time": ex.start_time, "end_time": ex.end_time,
                                                        "resume_modify": res_id, "company": ex.company,
-                                                       "post": ex.post, "remark": ex.remark})
+                                                       "post": ex.post, "remark": ex.remark, "related": ex.id})
         for ex in self.title:
             self.env["hr.employee.title"].create({"name": ex.name, "depertment": ex.depertment,
                                                   "resume_modify": res_id, "date": ex.date,
-                                                  "remark": ex.remark})
+                                                  "remark": ex.remark, "related": ex.id})
         for ex in self.degree:
             self.env["hr.employee.degree"].create({"degree": ex.degree, "has_degree": ex.has_degree,
                                                   "resume_modify": res_id, "entry_time": ex.entry_time,
                                                    "leave_time": ex.leave_time, "school": ex.school,
-                                                   "major": ex.major})
+                                                   "major": ex.major, "related": ex.id})
         for ex in self.language:
-            self.env["hr.employee.language"].create({"langange": ex.langange, "cerdit": ex.cerdit,
+            self.env["hr.employee.language"].create({"langange": ex.langange, "cerdit": ex.cerdit, "related": ex.id,
                                                      "resume_modify": res_id, "result": ex.result, "remark": ex.remark})
         action = {
                 'name': '员工履历',
@@ -257,6 +257,7 @@ class dtdream_hr_experience(models.Model):
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
+    related = fields.Integer(string="related")
     start_time = fields.Date(string="开始日期", required=True)
     end_time = fields.Date(string="结束日期", required=True)
     age_work = fields.Float(string="工龄", compute=_compute_age_work)
@@ -274,6 +275,7 @@ class dtdream_hr_title(models.Model):
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
+    related = fields.Integer(string="related")
     name = fields.Char(string="职称名称", required=True)
     depertment = fields.Char(string="授予部门", required=True)
     date = fields.Date(string="授予年月", required=True)
@@ -285,6 +287,7 @@ class dtdream_hr_degree(models.Model):
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
+    related = fields.Integer(string="related")
     degree = fields.Char(string="专科及以上学历", required=True)
     has_degree = fields.Selection([("0", "是"), ("1", "否")], string="是否获得学位", required=True)
     entry_time = fields.Date(string="在校时间(始)", required=True)
@@ -302,6 +305,7 @@ class dtdream_hr_language(models.Model):
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
     resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
+    related = fields.Integer(string="related")
     langange = fields.Char(string="外语语种")
     cerdit = fields.Char(string="证书名称")
     result = fields.Char(string="考试结果或分数")
@@ -542,9 +546,33 @@ class dtdream_resume_modify(models.Model):
     def track_fields_change(self):
         resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
         body = ""
-        tab = u"&nbsp;&nbsp;&nbsp;&nbsp;"
+        tab = u"<ul class='o_mail_thread_message_tracking'>"
         if resume.mobile != self.mobile:
-            body += tab + u"手机号: {0} --> {1}<br/>".format(resume.mobile, self.mobile)
+            body += tab + u"<li>手机号:<span>{0}</span>--><span>{1}</span></li>".format(resume.mobile, self.mobile)
+        if resume.icard != self.icard:
+            body += u"<li>身份证:<span>{0}</span>--><span>{1}</span></li>".format(resume.icard, self.icard)
+        if resume.home_address != self.home_address:
+            body += u"<li>居住地址:<span>{0}</span>--><span>{1}</span></li>".format(resume.home_address, self.home_address)
+        if resume.marry != self.marry:
+            marry = {"0": u"未婚", "1": u"已婚", "2": u"离异"}
+            body += u"<li>婚姻:<span>{0}</span>--><span>{1}</span></li>".format(marry.get(resume.marry), marry.get(self.marry))
+        if resume.has_title != self.has_title:
+            body += u"<li>是否有职称信息:<span>{0}</span>--><span>{1}</span></li>".format(resume.has_title, self.has_title)
+        experince = [ex.id for ex in resume.experince]
+        exper = u'''<li><table><thead><tr>
+                    <th style='width: 30px'></th><th style='width: 100px'>开始日期</th> <th style='width: 80px'> 结束日期</th>
+                    <th style='width: 70px'>工龄</th><th style='width: 70px'>工作单位</th><th style='width: 70px'>职位</th>
+                    <th style='width: 70px'>备注</th></tr></thead><tbody>'''
+        for ex in self.experince:
+            if ex.related in experince:
+                cr = self.env['hr.employee.experience'].search([('id', '=', ex.related)])
+                if ex.start_time != cr.start_time or ex.end_time != cr.end_time or ex.company != cr.company or \
+                                ex.post != cr.post or ex.remark != cr.remark:
+                    exper += u"<tr><td>修改</td><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td>".format(
+                        cr.start_time.replace("-", "/"), cr.end_time.replace("-", "/"), cr.age_work, cr.company, cr.post, cr.remark)
+        exper += u"</tbody></table></li>"
+        body += exper
+        body += u"</ul>"
         self.message_post(body=body)
 
     @api.multi
