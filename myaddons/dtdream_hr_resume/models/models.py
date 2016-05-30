@@ -97,6 +97,42 @@ class dtdream_hr_resume(models.Model):
             else:
                 rec.is_shenqingren = False
 
+    @api.multi
+    def act_dtdream_hr_resume_modify(self):
+        """create one new record which is the same as the resume when click the resume_modify button"""
+        cr = self.env["dtdream.hr.resume.modify"].create({"name": self.name.id, "is_graduate": self.is_graduate,
+                                                          "workid": self.workid, "department": self.department,
+                                                          "has_title": self.title, "marry": self.marry,
+                                                          "child": self.child, "icard": self.icard, "state": '0',
+                                                          "mobile": self.mobile, "home_address": self.home_address})
+        res_id = cr.id
+        for ex in self.experince:
+            self.env["hr.employee.experience"].create({"start_time": ex.start_time, "end_time": ex.end_time,
+                                                       "resume_modify": res_id, "company": ex.company,
+                                                       "post": ex.post, "remark": ex.remark})
+        for ex in self.title:
+            self.env["hr.employee.title"].create({"name": ex.name, "depertment": ex.depertment,
+                                                  "resume_modify": res_id, "date": ex.date,
+                                                  "remark": ex.remark})
+        for ex in self.degree:
+            self.env["hr.employee.degree"].create({"degree": ex.degree, "has_degree": ex.has_degree,
+                                                  "resume_modify": res_id, "entry_time": ex.entry_time,
+                                                   "leave_time": ex.leave_time, "school": ex.school,
+                                                   "major": ex.major})
+        for ex in self.language:
+            self.env["hr.employee.language"].create({"langange": ex.langange, "cerdit": ex.cerdit,
+                                                     "resume_modify": res_id, "result": ex.result, "remark": ex.remark})
+        action = {
+                'name': '员工履历',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dtdream.hr.resume.modify',
+                'res_id': res_id,
+                'context': self._context,
+                }
+        return action
+
     @api.constrains('title')
     def constrains_title_record(self):
         if self.has_title and not len(self.title):
@@ -220,6 +256,7 @@ class dtdream_hr_experience(models.Model):
                                   datetime.strptime(rec.start_time, time_format)).days / 365.0, 2)
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
+    resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
     start_time = fields.Date(string="开始日期", required=True)
     end_time = fields.Date(string="结束日期", required=True)
     age_work = fields.Float(string="工龄", compute=_compute_age_work)
@@ -264,6 +301,7 @@ class dtdream_hr_language(models.Model):
     _name = "hr.employee.language"
 
     resume = fields.Many2one("dtdream.hr.resume", "履历")
+    resume_modify = fields.Many2one("dtdream.hr.resume.modify", "修改履历")
     langange = fields.Char(string="外语语种")
     cerdit = fields.Char(string="证书名称")
     result = fields.Char(string="考试结果或分数")
@@ -383,13 +421,6 @@ class dtdream_resume_modify(models.Model):
     _description = u"修改员工履历"
     _inherit = ['mail.thread']
 
-    @api.depends('name')
-    def _compute_workid_department(self):
-        for rec in self:
-            rec.workid = rec.name.job_number
-            rec.department = rec.name.department_id.complete_name
-            rec.is_graduate = rec.name.graduate
-
     @api.onchange('child')
     def _check_child_isdigit(self):
         if self.child and not self.child.isdigit():
@@ -427,16 +458,36 @@ class dtdream_resume_modify(models.Model):
         else:
             self.is_login = False
 
+    def _compute_total_work(self):
+        total = 0
+        for rec in self.experince:
+            total += rec.age_work
+            self.total_work = total
+
+    @api.constrains("experince")
+    def check_start_end_time(self):
+        for index, experince in enumerate(self.experince):
+            start = experince.start_time
+            end = experince.end_time
+            for j in range(index):
+                if not(self.experince[j].start_time > end or self.experince[j].end_time < start):
+                    raise ValidationError("工作经历时间填写不合理,时间段之间存在重合!")
+
+    @api.constrains('title')
+    def constrains_title_record(self):
+        if self.has_title and not len(self.title):
+            raise ValidationError("请至少填写一条职称信息!")
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         user_id = self._context.get('active_id', None)
         res = super(dtdream_resume_modify, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         if res['type'] == "form":
+            doc = etree.XML(res['arch'])
+            doc.xpath("//form")[0].set("create", "false")
             if not user_id:
-                doc = etree.XML(res['arch'])
-                doc.xpath("//form")[0].set("create", "false")
                 doc.xpath("//form")[0].set("edit", "false")
-                res['arch'] = etree.tostring(doc)
+            res['arch'] = etree.tostring(doc)
         if res['type'] == "tree":
             if not user_id:
                 doc = etree.XML(res['arch'])
@@ -488,6 +539,20 @@ class dtdream_resume_modify(models.Model):
         self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
         self.send_mail_attend_mobile()
 
+    def track_fields_change(self):
+        resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
+        body = ""
+        tab = u"&nbsp;&nbsp;&nbsp;&nbsp;"
+        if resume.mobile != self.mobile:
+            body += tab + u"手机号: {0} --> {1}<br/>".format(resume.mobile, self.mobile)
+        self.message_post(body=body)
+
+    @api.multi
+    def write(self, vals):
+        result = super(dtdream_resume_modify, self).write(vals)
+        self.track_fields_change()
+        return result
+
     def update_resume_record(self):
         resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
         if self.marry:
@@ -515,18 +580,21 @@ class dtdream_resume_modify(models.Model):
                                                        'leave_time': degree.leave_time, 'school': degree.school,
                                                        'major': degree.major})
 
-    name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['dtdream.hr.resume'].search(
-        [("id", "=", self.env.context.get('active_id'))]).name, readonly="True")
-    workid = fields.Char(string="工号", compute=_compute_workid_department)
-    department = fields.Char(string="部门", compute=_compute_workid_department)
-    marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻")
+    name = fields.Many2one("hr.employee", string="花名", readonly="True")
+    is_graduate = fields.Boolean(string="是应届毕业生")
+    workid = fields.Char(string="工号", readonly="True")
+    department = fields.Char(string="部门", readonly="True")
+    has_title = fields.Boolean(string="是否有职称信息")
+    marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻", required=True)
     child = fields.Char(string="子女数")
-    icard = fields.Char(string="身份证")
-    mobile = fields.Char(string="手机号")
-    home_address = fields.Char(string="居住地址")
+    icard = fields.Char(string="身份证", required=True)
+    mobile = fields.Char(string="手机号", required=True)
+    home_address = fields.Char(string="居住地址", required=True)
+    experince = fields.One2many("hr.employee.experience", "resume_modify", "工作经历")
+    total_work = fields.Float(string="合计工龄", compute=_compute_total_work)
     title = fields.One2many("hr.employee.title", "resume_modify", "职称信息")
     degree = fields.One2many("hr.employee.degree", "resume_modify", "学历信息")
-    infor = fields.Text(string="备注")
+    language = fields.One2many("hr.employee.language", "resume_modify", "外语信息")
     resume_approve = fields.Many2one('hr.employee', string="当前审批人")
     is_login = fields.Boolean(string="登入", compute=_compute_name_equal_login)
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)

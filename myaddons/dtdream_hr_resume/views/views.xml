@@ -16,7 +16,7 @@
                             attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
                     <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('is_shenqingren','=',False),('state','!=','-1')]}"/>
-                    <button name="%(act_dtdream_hr_resume_modify)d" string="履历信息修改" type="action" class="oe_highlight"
+                    <button name="act_dtdream_hr_resume_modify" string="履历信息修改" type="object" class="oe_highlight"
                             attrs="{'invisible':['|',('state','!=','99'),('is_login','=',False)]}"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,1,99"/>
@@ -42,7 +42,7 @@
                         <field name="is_shenqingren" invisible="True"/>
                     </group>
                 </group>
-                <group string="工作经历" attrs="{'invisible':[('is_graduate','=',True)]}">
+                <group string="工作经历">
                     <div>
                          <p style="padding-left: 40px">入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
                         <notebook>
@@ -65,7 +65,7 @@
                     </div>
                 </group>
 
-                <group string="职称信息">
+                <group string="职称信息" attrs="{'invisible':[('has_title','!=',True)]}">
                     <div>
                         <p style="padding-left: 40px">所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
                         <notebook>
@@ -196,7 +196,9 @@
                         <field name="department"/>
                         <field name="mobile" attrs="{'readonly':[('state','!=','0')]}"/>
                         <field name="icard" attrs="{'readonly':[('state','!=','0')]}"/>
+                        <field name="home_address" attrs="{'readonly':[('state', '!=','0')]}"/>
                         <field name="is_current" invisible="True"/>
+                        <field name="is_graduate" invisible="True"/>
                         <field name="is_login" invisible="True"/>
                         <field name="is_shenqingren" invisible="True"/>
                     </group>
@@ -204,11 +206,34 @@
                         <field name="workid"/>
                         <field name="marry" attrs="{'readonly':[('state', '!=','0')]}"/>
                         <field name="child" attrs="{'readonly':[('state', '!=','0')]}"/>
-                        <field name="home_address" attrs="{'readonly':[('state', '!=','0')]}"/>
+                        <field name="has_title" attrs="{'readonly':[('state', '!=','0')]}"/>
                     </group>
                 </group>
 
-                <group string="职称信息">
+                <group string="工作经历">
+                    <div>
+                         <p style="padding-left: 40px">入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
+                        <notebook>
+                            <page>
+                              <field name="experince" attrs="{'readonly':[('state', '!=','0')]}">
+                                  <tree editable="bottom">
+                                     <field name="start_time"/>
+                                     <field name="end_time"/>
+                                     <field name="age_work"/>
+                                     <field name="company"/>
+                                     <field name="post"/>
+                                     <field name="remark"/>
+                                  </tree>
+                              </field>
+                              <group style="margin-top:-5px" class="oe_subtotal_footer" name="age_work_total">
+                                <field name="total_work"  class="oe_subtotal_footer_separator"/>
+                              </group>
+                            </page>
+                        </notebook>
+                    </div>
+                </group>
+
+                <group string="职称信息" attrs="{'invisible':[('has_title','!=',True)]}">
                     <div>
                         <p style="padding-left: 40px">所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
                         <notebook>
@@ -242,12 +267,20 @@
                         </page>
                     </notebook>
                 </group>
-                <group string="备注">
-                    <group>
-                        <div>
-                           <field name="infor" attrs="{'readonly':[('state', '!=','0')]}"/>
-                        </div>
-                    </group>
+
+                <group string="外语信息">
+                    <notebook>
+                        <page>
+                            <field name="language" attrs="{'readonly':[('state', '!=','0')]}">
+                              <tree editable="bottom">
+                                  <field name="langange"/>
+                                  <field name="cerdit"/>
+                                  <field name="result"/>
+                                  <field name="remark"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
                 </group>
                 <p>*<b>填写说明</b>:以上信息修改后，需『提交』至人力资源部审核后才生效</p>
               </sheet>
