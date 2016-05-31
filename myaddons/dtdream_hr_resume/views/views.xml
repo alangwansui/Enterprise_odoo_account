@@ -178,7 +178,7 @@
         <field name="arch" type="xml">
             <form string="修改履历">
                <header>
-                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                    <button name="track_fields_change" string="提交" type="object" class="oe_highlight"
                             attrs="{'invisible':['|',('state','!=','0'),('is_login','=',False)]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>

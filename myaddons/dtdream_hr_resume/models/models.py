@@ -232,14 +232,10 @@ class dtdream_hr_resume(models.Model):
     @api.multi
     def wkf_done(self):
         self.update_mobile_number()
-        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息已被批准,请您查看!' % self.name.name,
-                                     content=u"%s批准了您的员工履历信息审批!" % self.resume_approve.full_name)
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
     def wkf_reject(self):
-        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息已被驳回,请您查看!' % self.name.name,
-                                     content=u"%s驳回了您的员工履历信息审批!" % self.resume_approve.full_name)
         self.write({'state': '-1', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
 
@@ -425,23 +421,6 @@ class dtdream_resume_modify(models.Model):
     _description = u"修改员工履历"
     _inherit = ['mail.thread']
 
-    @api.onchange('child')
-    def _check_child_isdigit(self):
-        if self.child and not self.child.isdigit():
-            self.child = ""
-            warning = {
-                'title': u'提示',
-                'message': u'子女数必须为整数!',
-            }
-            return {"warning": warning}
-        elif int(self.child) > 100:
-            self.child = ""
-            warning = {
-                'title': u'提示',
-                'message': u'子女数必须小于100!',
-            }
-            return {"warning": warning}
-
     def _compute_is_current(self):
         for rec in self:
             if rec.resume_approve and rec.resume_approve.user_id == rec.env.user:
@@ -543,7 +522,200 @@ class dtdream_resume_modify(models.Model):
         self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
         self.send_mail_attend_mobile()
 
+    def track_experience_change(self, resume):
+        experince = [ex.id for ex in resume.experince]
+        related = [ex.related for ex in self.experince]
+        exper = u'''<li>工作经历:<table><thead><tr>
+                    <th style='width: 8%;white-space:nowrap;'>动作</th><th style='width: 20%'>开始日期</th> <th style='width: 20%'> 结束日期</th>
+                    <th style='width: 20%'>工作单位</th><th style='width: 10%; text-align:center'>职位</th><th style='width: 20%'>备注</th>
+                    </tr></thead><tbody>'''
+        tracked = False
+        for ex in self.experince:
+            if ex.related in experince:
+                cr = self.env['hr.employee.experience'].search([('id', '=', ex.related)])
+                if ex.start_time != cr.start_time or ex.end_time != cr.end_time or ex.company != cr.company or ex.post != cr.post or ex.remark != cr.remark:
+                    tracked = True
+                    if ex.start_time != cr.start_time:
+                        exper += u"<tr><td>修改</td><td>{0}-->{1}</td>".format(cr.start_time.replace("-", "/"), ex.start_time.replace("-", "/"))
+                    else:
+                        exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.start_time.replace("-", "/"))
+                    if ex.end_time != cr.end_time:
+                        exper += u"<td>{0}-->{1}</td>".format(cr.end_time.replace("-", "/"), ex.end_time.replace("-", "/"))
+                    else:
+                        exper += u"<td>{0}</td>".format(cr.end_time.replace("-", "/"))
+                    if ex.company != cr.company:
+                        exper += u"<td style='white-space:nowrap;'>{0}-->{1}</td>".format(cr.company, ex.company)
+                    else:
+                        exper += u"<td style='white-space:nowrap;'>{0}</td>".format(cr.company)
+                    if ex.post != cr.post:
+                        exper += u"<td style='text-align:center'>{0}-->{1}</td>".format(cr.post, ex.post)
+                    else:
+                        exper += u"<td style='text-align:center'>{0}</td>".format(cr.post)
+                    if ex.remark != cr.remark:
+                        exper += u"<td style='white-space:nowrap'>{0}-->{1}</td></tr>".format(cr.remark, ex.remark)
+                    else:
+                        exper += u"<td style='white-space:nowrap'>{0}</td></tr>".format(cr.remark)
+            else:
+                tracked = True
+                exper += u'''<tr><td>新增</td><td>{0}</td><td>{1}</td><td style='white-space:nowrap;'>{2}</td>
+                         <td style='text-align:center'>{3}</td><td style='white-space:nowrap'>{4}</td></tr>'''.format(
+                    ex.start_time.replace("-", "/"), ex.end_time.replace("-", "/"), ex.company, ex.post, ex.remark)
+        for ex in resume.experince:
+            if ex.id not in related:
+                tracked = True
+                exper += u'''<tr><td>删除</td><td>{0}</td><td>{1}</td><td style='white-space:nowrap;'>{2}</td>
+                         <td style='text-align:center'>{3}</td><td style='white-space:nowrap'>{4}</td></tr>'''.format(
+                    ex.start_time.replace("-", "/"), ex.end_time.replace("-", "/"), ex.company, ex.post, ex.remark)
+        if not tracked:
+            return ""
+        exper += u"</tbody></table></li>"
+        return exper.replace("False", "")
+
+    def track_title_change(self, resume):
+        title = [ex.id for ex in resume.title]
+        related = [ex.related for ex in self.title]
+        exper = u'''<li>职称信息:<table><thead><tr>
+                    <th style='width: 8%'>动作</th><th style='width: 26%'>职称名称</th> <th style='width: 26%'> 授予部门</th>
+                    <th style='width: 20%'>授予年月</th><th style='width: 20%;'>备注</th></tr></thead><tbody>'''
+        tracked = False
+        for ex in self.title:
+            if ex.related in title:
+                cr = self.env['hr.employee.title'].search([('id', '=', ex.related)])
+                if ex.name != cr.name or ex.depertment != cr.depertment or ex.date != cr.date or ex.remark != cr.remark:
+                    tracked = True
+                    if ex.name != cr.name:
+                        exper += u"<tr><td>修改</td><td style='white-space:nowrap'>{0}-->{1}</td>".format(cr.name, ex.name)
+                    else:
+                        exper += u"<tr><td>修改</td><td style='white-space:nowrap'>{0}</td>".format(cr.name)
+                    if ex.depertment != cr.depertment:
+                        exper += u"<td style='white-space:nowrap'>{0}-->{1}</td>".format(cr.depertment, ex.depertment)
+                    else:
+                        exper += u"<td style='white-space:nowrap'>{0}</td>".format(cr.depertment)
+                    if ex.date != cr.date:
+                        exper += u"<td>{0}-->{1}</td>".format(cr.date.replace("-", "/"), ex.date.replace("-", "/"))
+                    else:
+                        exper += u"<td>{0}</td>".format(cr.date.replace("-", "/"))
+                    if ex.remark != cr.remark:
+                        exper += u"<td style='white-space:nowrap;'>{0}-->{1}</td></tr>".format(cr.remark, ex.remark)
+                    else:
+                        exper += u"<td style='white-space:nowrap;'>{0}</td></tr>".format(cr.remark)
+            else:
+                tracked = True
+                exper += u'''<tr><td>新增</td><td style='white-space:nowrap'>{0}</td style='white-space:nowrap'><td>{1}</td>
+                <td>{2}</td><td style='white-space:nowrap;'>{3}</td></tr>'''.format(
+                    ex.name, ex.depertment, ex.date.replace("-", "/"), ex.remark)
+        for ex in resume.title:
+            if ex.id not in related:
+                tracked = True
+                exper += u'''<tr><td>删除</td><td style='white-space:nowrap'>{0}</td style='white-space:nowrap'><td>{1}</td>
+                <td>{2}</td><td style='white-space:nowrap;'>{3}</td></tr>'''.format(
+                    ex.name, ex.depertment, ex.date.replace("-", "/"), ex.remark)
+        if not tracked:
+            return ""
+        exper += u"</tbody></table></li>"
+        return exper.replace("False", "")
+
+    def track_degree_change(self, resume):
+        has_degree = {"0": u'是', "1": u'否'}
+        degree = [ex.id for ex in resume.degree]
+        related = [ex.related for ex in self.degree]
+        exper = u'''<li>学历信息:<table><thead><tr>
+                    <th style='width: 8%'>动作</th><th style='width: 16%'>专科及以上学历</th> <th style='width: 16%'>是否获得学位</th>
+                    <th style='width: 20%'>在校时间(始)</th><th style='width: 20%;'>在校时间(止)</th>
+                    <th style='width: 10%'>学校</th><th style='width: 10%'>专业</th></tr></thead><tbody>'''
+        tracked = False
+        for ex in self.degree:
+            if ex.related in degree:
+                cr = self.env['hr.employee.degree'].search([('id', '=', ex.related)])
+                if ex.degree != cr.degree or ex.has_degree != cr.has_degree or ex.entry_time != cr.entry_time or \
+                                ex.leave_time != cr.leave_time or ex.school != cr.school or ex.major != cr.major:
+                    tracked = True
+                    if ex.degree != cr.degree:
+                        exper += u"<tr><td>修改</td><td style='white-space:nowrap'>{0}-->{1}</td>".format(cr.degree, ex.degree)
+                    else:
+                        exper += u"<tr><td>修改</td><td style='white-space:nowrap'>{0}</td>".format(cr.degree)
+                    if ex.has_degree != cr.has_degree:
+                        exper += u"<td>{0}-->{1}</td>".format(has_degree.get(cr.has_degree), has_degree.get(ex.has_degree))
+                    else:
+                        exper += u"<td>{0}</td>".format(has_degree.get(cr.has_degree))
+                    if ex.entry_time != cr.entry_time:
+                        exper += u"<td>{0}-->{1}</td>".format(cr.entry_time.replace("-", "/"), ex.entry_time.replace("-", "/"))
+                    else:
+                        exper += u"<td>{0}</td>".format(cr.entry_time.replace("-", "/"))
+                    if ex.leave_time != cr.leave_time:
+                        exper += u"<td>{0}-->{1}</td>".format(cr.leave_time.replace("-", "/"), ex.leave_time.replace("-", "/"))
+                    else:
+                        exper += u"<td>{0}</td>".format(cr.leave_time.replace("-", "/"))
+                    if ex.school != cr.school:
+                        exper += u"<td style='white-space:nowrap;'>{0}-->{1}</td>".format(cr.school, ex.school)
+                    else:
+                        exper += u"<td style='white-space:nowrap;'>{0}</td>".format(cr.school)
+                    if ex.major != cr.major:
+                        exper += u"<td style='white-space:nowrap;'>{0}-->{1}</td></tr>".format(cr.major, ex.major)
+                    else:
+                        exper += u"<td style='white-space:nowrap;'>{0}</td></tr>".format(cr.major)
+            else:
+                tracked = True
+                exper += u'''<tr><td>新增</td><td style='white-space:nowrap'>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>
+                <td style='white-space:nowrap;'>{4}</td><td style='white-space:nowrap;'>{5}</td></tr>'''.format(
+                    ex.degree, has_degree.get(ex.has_degree), ex.entry_time.replace("-", "/"), ex.leave_time.replace("-", "/"), ex.school, ex.major)
+        for ex in resume.degree:
+            if ex.id not in related:
+                tracked = True
+                exper += u'''<tr><td>删除</td><td style='white-space:nowrap'>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td>
+                <td style='white-space:nowrap;'>{4}</td><td style='white-space:nowrap;'>{5}</td></tr>'''.format(
+                    ex.degree, has_degree.get(ex.has_degree), ex.entry_time.replace("-", "/"), ex.leave_time.replace("-", "/"), ex.school, ex.major)
+        if not tracked:
+            return ""
+        exper += u"</tbody></table></li>"
+        return exper.replace("False", "")
+
+    def track_language_change(self, resume):
+        language = [ex.id for ex in resume.language]
+        related = [ex.related for ex in self.language]
+        exper = u'''<li>外语信息:<table><thead><tr>
+                    <th style='width: 8%'>动作</th><th style='width: 20%'>外语语种</th> <th style='width: 20%'> 证书名称</th>
+                    <th style='width: 24%;white-space:nowrap'>考试结果或分数</th><th style='width: 28%'>备注</th>
+                    </tr></thead><tbody>'''
+        tracked = False
+        for ex in self.language:
+            if ex.related in language:
+                cr = self.env['hr.employee.language'].search([('id', '=', ex.related)])
+                if ex.langange != cr.langange or ex.cerdit != cr.cerdit or ex.result != cr.result or ex.remark != cr.remark:
+                    tracked = True
+                    if ex.langange != cr.langange:
+                        exper += u"<tr><td>修改</td><td>{0}-->{1}</td>".format(cr.langange, ex.langange)
+                    else:
+                        exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.langange)
+                    if ex.cerdit != cr.cerdit:
+                        exper += u"<td>{0}-->{1}</td>".format(cr.cerdit, ex.cerdit)
+                    else:
+                        exper += u"<td>{0}</td>".format(cr.cerdit)
+                    if ex.result != cr.result:
+                        exper += u"<td>{0}-->{1}</td>".format(cr.result, ex.result)
+                    else:
+                        exper += u"<td>{0}</td>".format(cr.result)
+                    if ex.remark != cr.remark:
+                        exper += u"<td style='white-space:nowrap'>{0}-->{1}</td></tr>".format(cr.remark, ex.remark)
+                    else:
+                        exper += u"<td style='white-space:nowrap'>{0}</td></tr>".format(cr.remark)
+            else:
+                tracked = True
+                exper += u'''<tr><td>新增</td><td>{0}</td><td>{1}</td><td>{2}</td><td style='white-space:nowrap'>
+                {3}</td></tr>'''.format(ex.langange, ex.cerdit, ex.result, ex.remark)
+        for ex in resume.language:
+            if ex.id not in related:
+                tracked = True
+                exper += u'''<tr><td>删除</td><td>{0}</td><td>{1}</td><td>{2}</td><td style='white-space:nowrap'>
+                {3}</td></tr>'''.format(ex.langange, ex.cerdit, ex.result, ex.remark)
+        if not tracked:
+            return ""
+        exper += u"</tbody></table></li>"
+        return exper.replace("False", "")
+
+    @api.multi
     def track_fields_change(self):
+        self.signal_workflow('btn_submit')
         resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
         body = ""
         tab = u"<ul class='o_mail_thread_message_tracking'>"
@@ -556,44 +728,35 @@ class dtdream_resume_modify(models.Model):
         if resume.marry != self.marry:
             marry = {"0": u"未婚", "1": u"已婚", "2": u"离异"}
             body += u"<li>婚姻:<span>{0}</span>--><span>{1}</span></li>".format(marry.get(resume.marry), marry.get(self.marry))
+        if resume.child != self.child:
+            body += u"<li>子女数:<span>{0}</span>--><span>{1}</span></li>".format(resume.child, self.child)
         if resume.has_title != self.has_title:
             body += u"<li>是否有职称信息:<span>{0}</span>--><span>{1}</span></li>".format(resume.has_title, self.has_title)
-        experince = [ex.id for ex in resume.experince]
-        exper = u'''<li><table><thead><tr>
-                    <th style='width: 30px'></th><th style='width: 100px'>开始日期</th> <th style='width: 80px'> 结束日期</th>
-                    <th style='width: 70px'>工龄</th><th style='width: 70px'>工作单位</th><th style='width: 70px'>职位</th>
-                    <th style='width: 70px'>备注</th></tr></thead><tbody>'''
-        for ex in self.experince:
-            if ex.related in experince:
-                cr = self.env['hr.employee.experience'].search([('id', '=', ex.related)])
-                if ex.start_time != cr.start_time or ex.end_time != cr.end_time or ex.company != cr.company or \
-                                ex.post != cr.post or ex.remark != cr.remark:
-                    exper += u"<tr><td>修改</td><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td>".format(
-                        cr.start_time.replace("-", "/"), cr.end_time.replace("-", "/"), cr.age_work, cr.company, cr.post, cr.remark)
-        exper += u"</tbody></table></li>"
-        body += exper
+        exper = self.track_experience_change(resume)
+        title = self.track_title_change(resume)
+        degree = self.track_degree_change(resume)
+        langange = self.track_language_change(resume)
+        body += exper + title + degree + langange
+        if not body:
+            return
         body += u"</ul>"
         self.message_post(body=body)
 
-    @api.multi
-    def write(self, vals):
-        result = super(dtdream_resume_modify, self).write(vals)
-        self.track_fields_change()
-        return result
-
     def update_resume_record(self):
         resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
-        if self.marry:
+        if self.marry != resume.marry:
             resume.write({'marry': self.marry})
-        if self.child:
+        if self.child != resume.child:
             resume.write({'child': self.child})
-        if self.icard:
+        if self.icard != resume.icard:
             resume.write({'icard': self.icard})
-        if self.mobile and self.mobile != resume.mobile:
+        if self.mobile != resume.mobile:
             resume.write({'mobile': self.mobile})
             self.update_mobile_number()
-        if self.home_address:
+        if self.home_address != resume.home_address:
             resume.write({'home_address': self.home_address})
+        if self.has_title != resume.has_title:
+            resume.write({'has_title': self.has_title})
         if len(self.title):
             resume.title.unlink()
             for title in self.title:
@@ -614,7 +777,7 @@ class dtdream_resume_modify(models.Model):
     department = fields.Char(string="部门", readonly="True")
     has_title = fields.Boolean(string="是否有职称信息")
     marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻", required=True)
-    child = fields.Char(string="子女数")
+    child = fields.Integer(string="子女数")
     icard = fields.Char(string="身份证", required=True)
     mobile = fields.Char(string="手机号", required=True)
     home_address = fields.Char(string="居住地址", required=True)
@@ -648,14 +811,10 @@ class dtdream_resume_modify(models.Model):
     @api.multi
     def wkf_done(self):
         self.update_resume_record()
-        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息修改已被批准,请您查看!' % self.name.name,
-                                     content=u"%s批准了您的员工履历信息修改审批!" % self.resume_approve.full_name)
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
     @api.multi
     def wkf_reject(self):
-        self.send_mail_attend_resume(self.name, subject=u'%s,您提交的员工履历信息修改已被驳回,请您查看!' % self.name.name,
-                                     content=u"%s驳回了您的员工履历信息修改审批!" % self.resume_approve.full_name)
         self.write({'state': '-1', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
 
 
