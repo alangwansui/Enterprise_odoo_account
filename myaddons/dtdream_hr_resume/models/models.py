@@ -757,19 +757,33 @@ class dtdream_resume_modify(models.Model):
             resume.write({'home_address': self.home_address})
         if self.has_title != resume.has_title:
             resume.write({'has_title': self.has_title})
-        if len(self.title):
-            resume.title.unlink()
-            for title in self.title:
-                self.env['hr.employee.title'].create({'resume': resume.id, 'name': title.name,
-                                                     'depertment': title.depertment, 'date': title.date,
-                                                      'remark': title.remark})
-        if len(self.degree):
-            resume.degree.unlink()
+
+        resume.experince.unlink()
+        for experince in self.experince:
+            self.env['hr.employee.experience'].create({'resume': resume.id, 'start_time': experince.start_time,
+                                                       'end_time': experince.end_time, 'age_work': experince.age_work,
+                                                       'company': experince.company, 'post': experince.post,
+                                                       'remark': experince.remark})
+
+        resume.title.unlink()
+        for title in self.title:
+            self.env['hr.employee.title'].create({'resume': resume.id, 'name': title.name,
+                                                 'depertment': title.depertment, 'date': title.date,
+                                                  'remark': title.remark})
+
+        resume.degree.unlink()
+        if self.has_title:
             for degree in self.degree:
                 self.env['hr.employee.degree'].create({'resume': resume.id, 'degree': degree.degree,
                                                       'has_degree': degree.has_degree, 'entry_time': degree.entry_time,
                                                        'leave_time': degree.leave_time, 'school': degree.school,
                                                        'major': degree.major})
+
+        resume.language.unlink()
+        for lan in self.language:
+            self.env['hr.employee.language'].create({'resume': resume.id, 'langange': lan.langange,
+                                                     'cerdit': lan.cerdit, 'result': lan.result,
+                                                     'remark': lan.remark})
 
     name = fields.Many2one("hr.employee", string="花名", readonly="True")
     is_graduate = fields.Boolean(string="是应届毕业生")
