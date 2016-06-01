@@ -17,6 +17,6 @@
         <menuitem action="action_hr_resume_all" id="dtdream_hr_resume_submit_all" parent="dtdream_hr_resume_all" name="履历信息所有单据" sequence="2"/>
         <menuitem action="action_hr_resume_modify_all" id="dtdream_hr_resume_modify_all" parent="dtdream_hr_resume_all" name="履历信息修改所有单据" sequence="4"/>
 
-        <menuitem name="履历信息人员配置" sequence="25" id="dtdream_hr_approve_resume" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
+        <menuitem name="员工入职相关配置" sequence="25" id="dtdream_hr_approve_resume" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_resume_approve" groups="base.group_hr_manager"/>
     </data>
 </openerp>

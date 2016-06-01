@@ -129,14 +129,21 @@
         <field name="name">view.hr.resume.approve.form</field>
         <field name="model">hr.resume.approve</field>
         <field name="arch" type="xml">
-            <form string="履历审批人">
+            <form string="员工入职相关配置">
                 <sheet>
                     <group>
                         <group>
-                            <field name="approve"/>
+                            <field name="approve" options="{'no_open': True}"/>
+                            <field name="email" options="{'no_open': True}"/>
+                            <field name="dingding" options="{'no_open': True}"/>
+                            <field name="bbs" options="{'no_open': True}"/>
+                            <field name="dodo" options="{'no_open': True}"/>
                         </group>
                         <group>
-                            <field name="remind" widget="many2many_tags"/>
+                            <field name="account" options="{'no_open': True}"/>
+                            <field name="weixin" options="{'no_open': True}"/>
+                            <field name="cloud" options="{'no_open': True}"/>
+                            <field name="oa" options="{'no_open': True}"/>
                         </group>
                     </group>
                 </sheet>

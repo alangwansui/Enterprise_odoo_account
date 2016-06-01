@@ -355,9 +355,16 @@ class dtdream_hr_resume_approve(models.Model):
         self.env['dtdream.hr.resume'].search([('state', '=', '1')]).write({'resume_approve': self.approve.id})
         self.env['dtdream.hr.resume.modify'].search([('state', '=', '1')]).write({'resume_approve': self.approve.id})
 
-    name = fields.Char(default="履历信息人员配置")
-    approve = fields.Many2one("hr.employee", string="履历信息审批人")
-    remind = fields.Many2many("hr.employee", string="手机号码变更通知人员")
+    name = fields.Char(default="员工入职相关配置")
+    approve = fields.Many2one("hr.employee", string="履历信息审批人", required=True)
+    account = fields.Many2one("hr.employee", string="域帐号管理员", required=True)
+    email = fields.Many2one('hr.employee', string='邮箱管理员', required=True)
+    weixin = fields.Many2one('hr.employee', string='微信管理员', required=True)
+    dingding = fields.Many2one('hr.employee', string='钉钉管理员', required=True)
+    cloud = fields.Many2one('hr.employee', string='云学堂管理员', required=True)
+    bbs = fields.Many2one('hr.employee', string='BBS管理员', required=True)
+    oa = fields.Many2one('hr.employee', string='OA管理员', required=True)
+    dodo = fields.Many2one('hr.employee', string='dodo管理员', required=True)
 
 
 class dtdream_hr_employee(models.Model):
@@ -409,6 +416,56 @@ class dtdream_hr_employee(models.Model):
     def _compute_contract_log(self):
         cr = self.env['dtdream.hr.contract'].search([("name.id", "=", self.id)])
         self.contract_log_nums = len(cr)
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_mail_remind_open_account(self, vals, email):
+        name = vals.get('name', '')
+        cr = self.env['hr.department'].search([('id', '=', vals.get('department_id'))])
+        department = '' if not cr else cr.complete_name
+        gen = {"male": u"男", "female": u'女'}
+        gender = gen.get(vals.get('gender', None), None)
+        email_to = email
+        subject = u"请开通新员工%s的微信(或钉钉/域账号/云学堂/BBS/OA/邮箱)账号！" % name
+        content = u"%s的员工信息如下表。请您尽快开通相关账号!" % name
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>{0}</p><table><tbody>
+                                <tr><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>
+                                <tr><td>{5}</td><td>{6}</td><td>{7}</td><td>{8}</td></tr>
+                                </tbody></table>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>'''.format(content, vals.get('account', ''), vals.get('full_name', ''), name,
+                                                    department, gender, vals.get('job_number', ''),
+                                                    vals.get('mobile_phone', ''), vals.get('work_email', '')),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+    @api.model
+    def create(self, vals):
+        result = super(dtdream_hr_employee, self).create(vals)
+        cr = self.env['hr.resume.approve'].search([])
+        if cr.account:
+            self.send_mail_remind_open_account(vals, cr.account.work_email)
+        if cr.email:
+            self.send_mail_remind_open_account(vals, cr.email.work_email)
+        if cr.weixin:
+            self.send_mail_remind_open_account(vals, cr.weixin.work_email)
+        if cr.dingding:
+            self.send_mail_remind_open_account(vals, cr.dingding.work_email)
+        if cr.cloud:
+            self.send_mail_remind_open_account(vals, cr.cloud.work_email)
+        if cr.bbs:
+            self.send_mail_remind_open_account(vals, cr.bbs.work_email)
+        if cr.oa:
+            self.send_mail_remind_open_account(vals, cr.oa.work_email)
+        if cr.dodo:
+            self.send_mail_remind_open_account(vals, cr.dodo.work_email)
+        return result
 
     resume_log_nums = fields.Integer(compute='_compute_resume_log', string="履历记录")
     contract_log_nums = fields.Integer(compute='_compute_contract_log', string="合同记录")
