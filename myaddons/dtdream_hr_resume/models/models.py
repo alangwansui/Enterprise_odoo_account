@@ -141,24 +141,22 @@ class dtdream_hr_resume(models.Model):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
-    def send_mail_attend_mobile(self):
-        cr = self.env["hr.resume.approve"].search([])
-        for email in cr.remind:
-            email_to = email.work_email
-            appellation = u'{0},您好：'.format(email.full_name)
-            subject = u"手机号码变更通知"
-            content = u"%s,更改了员工信息手机号,请您知悉!"% self.name.full_name
-            self.env['mail.mail'].create({
-                    'body_html': u'''<p>%s</p>
-                                    <p>%s</p>
-                                    <p>dodo</p>
-                                    <p>万千业务，简单有do</p>
-                                    <p>%s</p>''' % (appellation, content, self.write_date[:10]),
-                    'subject': '%s' % subject,
-                    'email_from': self.get_mail_server_name(),
-                    'email_to': '%s' % email_to,
-                    'auto_delete': False,
-                }).send()
+    def send_mail_attend_mobile(self, email):
+        email_to = email.work_email
+        appellation = u'{0},您好：'.format(email.full_name)
+        subject = u"手机号码变更通知"
+        content = u"%s,更改了员工信息手机号,请您知悉!" % self.name.full_name
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
 
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
@@ -178,10 +176,18 @@ class dtdream_hr_resume(models.Model):
             }).send()
 
     def update_mobile_number(self):
-        cr = self.env['hr.employee'].search([('id', '=', self.name.id)])
-        if cr.mobile_phone != self.mobile:
-            cr.write({"mobile_phone": self.mobile})
-            self.send_mail_attend_mobile()
+        self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
+        cr = self.env["hr.resume.approve"].search([])
+        if cr.email:
+            self.send_mail_attend_mobile(cr.email)
+        if cr.weixin:
+            self.send_mail_attend_mobile(cr.weixin)
+        if cr.dingding:
+            self.send_mail_attend_mobile(cr.dingding)
+        if cr.cloud:
+            self.send_mail_attend_mobile(cr.cloud)
+        if cr.oa:
+            self.send_mail_attend_mobile(cr.cloud)
 
     @api.model
     def create(self, vals):
@@ -475,7 +481,7 @@ class dtdream_hr_employee(models.Model):
 
 class dtdream_resume_modify(models.Model):
     _name = 'dtdream.hr.resume.modify'
-    _description = u"修改员工履历"
+    _description = u"履历修改"
     _inherit = ['mail.thread']
 
     def _compute_is_current(self):
@@ -539,24 +545,22 @@ class dtdream_resume_modify(models.Model):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
-    def send_mail_attend_mobile(self):
-        cr = self.env["hr.resume.approve"].search([])
-        for email in cr.remind:
-            email_to = email.work_email
-            appellation = u'{0},您好：'.format(email.full_name)
-            subject = u"手机号码变更通知"
-            content = u"%s,更改了员工信息手机号,请您知悉!" % self.name.full_name
-            self.env['mail.mail'].create({
-                    'body_html': u'''<p>%s</p>
-                                    <p>%s</p>
-                                    <p>dodo</p>
-                                    <p>万千业务，简单有do</p>
-                                    <p>%s</p>''' % (appellation, content, self.write_date[:10]),
-                    'subject': '%s' % subject,
-                    'email_from': self.get_mail_server_name(),
-                    'email_to': '%s' % email_to,
-                    'auto_delete': False,
-                }).send()
+    def send_mail_attend_mobile(self, email):
+        email_to = email.work_email
+        appellation = u'{0},您好：'.format(email.full_name)
+        subject = u"手机号码变更通知"
+        content = u"%s,更改了员工信息手机号,请您知悉!" % self.name.full_name
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
 
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
@@ -577,7 +581,17 @@ class dtdream_resume_modify(models.Model):
 
     def update_mobile_number(self):
         self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
-        self.send_mail_attend_mobile()
+        cr = self.env["hr.resume.approve"].search([])
+        if cr.email:
+            self.send_mail_attend_mobile(cr.email)
+        if cr.weixin:
+            self.send_mail_attend_mobile(cr.weixin)
+        if cr.dingding:
+            self.send_mail_attend_mobile(cr.dingding)
+        if cr.cloud:
+            self.send_mail_attend_mobile(cr.cloud)
+        if cr.oa:
+            self.send_mail_attend_mobile(cr.cloud)
 
     def track_experience_change(self, resume):
         experince = [ex.id for ex in resume.experince]
