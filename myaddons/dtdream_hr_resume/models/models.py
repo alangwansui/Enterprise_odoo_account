@@ -603,26 +603,27 @@ class dtdream_resume_modify(models.Model):
         for ex in self.experince:
             if ex.related in experince:
                 cr = self.env['hr.employee.experience'].search([('id', '=', ex.related)])
-                if ex.start_time != cr.start_time or ex.end_time != cr.end_time or ex.company != cr.company or ex.post != cr.post or ex.remark != cr.remark:
+                if ex.start_time != cr.start_time or ex.end_time != cr.end_time or ex.company.strip() != cr.company.strip() or \
+                                ex.post.strip() != cr.post.strip() or ex.remark.strip() != cr.remark.strip():
                     tracked = True
                     if ex.start_time != cr.start_time:
-                        exper += u"<tr><td>修改</td><td style='color: red;'>%s</td>" % ex.start_time.replace("-", "/")
+                        exper += u"<tr><td>修改</td><td style='color: red;'>%s</td>" % cr.start_time.replace("-", "/")
                     else:
                         exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.start_time.replace("-", "/"))
                     if ex.end_time != cr.end_time:
-                        exper += u"<td style='color: red;'>%s</td>" % ex.end_time.replace("-", "/")
+                        exper += u"<td style='color: red;'>%s</td>" % cr.end_time.replace("-", "/")
                     else:
                         exper += u"<td>{0}</td>".format(cr.end_time.replace("-", "/"))
-                    if ex.company != cr.company:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.company)
+                    if ex.company.strip() != cr.company.strip():
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.company)
                     else:
                         exper += u"<td>{0}</td>".format(cr.company)
-                    if ex.post != cr.post:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.post)
+                    if ex.post.strip() != cr.post.strip():
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.post)
                     else:
                         exper += u"<td>{0}</td>".format(cr.post)
-                    if ex.remark != cr.remark:
-                        exper += u"<td style='color: red;'>{0}</td></tr>".format(ex.remark)
+                    if ex.remark.strip() != cr.remark.strip():
+                        exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.remark)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.remark)
             else:
@@ -651,22 +652,23 @@ class dtdream_resume_modify(models.Model):
         for ex in self.title:
             if ex.related in title:
                 cr = self.env['hr.employee.title'].search([('id', '=', ex.related)])
-                if ex.name != cr.name or ex.depertment != cr.depertment or ex.date != cr.date or ex.remark != cr.remark:
+                if ex.name.strip() != cr.name.strip() or ex.depertment.strip() != cr.depertment.strip() or \
+                                ex.date != cr.date or ex.remark.strip() != cr.remark.strip():
                     tracked = True
-                    if ex.name != cr.name:
-                        exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(ex.name)
+                    if ex.name.strip() != cr.name.strip():
+                        exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(cr.name)
                     else:
                         exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.name)
-                    if ex.depertment != cr.depertment:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.depertment)
+                    if ex.depertment.strip() != cr.depertment.strip():
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.depertment)
                     else:
                         exper += u"<td>{0}</td>".format(cr.depertment)
                     if ex.date != cr.date:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.date.replace("-", "/"))
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.date.replace("-", "/"))
                     else:
                         exper += u"<td>{0}</td>".format(cr.date.replace("-", "/"))
-                    if ex.remark != cr.remark:
-                        exper += u"<td style='color: red;'>{0}</td></tr>".format(ex.remark)
+                    if ex.remark.strip() != cr.remark.strip():
+                        exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.remark)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.remark)
             else:
@@ -697,31 +699,32 @@ class dtdream_resume_modify(models.Model):
         for ex in self.degree:
             if ex.related in degree:
                 cr = self.env['hr.employee.degree'].search([('id', '=', ex.related)])
-                if ex.degree != cr.degree or ex.has_degree != cr.has_degree or ex.entry_time != cr.entry_time or \
-                                ex.leave_time != cr.leave_time or ex.school != cr.school or ex.major != cr.major:
+                if ex.degree.strip() != cr.degree.strip() or ex.has_degree != cr.has_degree or \
+                                ex.entry_time != cr.entry_time or ex.leave_time != cr.leave_time or \
+                                ex.school.strip() != cr.school.strip() or ex.major.strip() != cr.major.strip():
                     tracked = True
-                    if ex.degree != cr.degree:
-                        exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(ex.degree)
+                    if ex.degree.strip() != cr.degree.strip():
+                        exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(cr.degree)
                     else:
                         exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.degree)
                     if ex.has_degree != cr.has_degree:
-                        exper += u"<td style='color: red;'>{0}</td>".format(has_degree.get(ex.has_degree))
+                        exper += u"<td style='color: red;'>{0}</td>".format(has_degree.get(cr.has_degree))
                     else:
                         exper += u"<td>{0}</td>".format(has_degree.get(cr.has_degree))
                     if ex.entry_time != cr.entry_time:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.entry_time.replace("-", "/"))
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.entry_time.replace("-", "/"))
                     else:
                         exper += u"<td>{0}</td>".format(cr.entry_time.replace("-", "/"))
                     if ex.leave_time != cr.leave_time:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.leave_time.replace("-", "/"))
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.leave_time.replace("-", "/"))
                     else:
                         exper += u"<td>{0}</td>".format(cr.leave_time.replace("-", "/"))
-                    if ex.school != cr.school:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.school)
+                    if ex.school.strip() != cr.school.strip():
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.school)
                     else:
                         exper += u"<td>{0}</td>".format(cr.school)
-                    if ex.major != cr.major:
-                        exper += u"<td style='color: red;'>{0}</td></tr>".format(ex.major)
+                    if ex.major.strip() != cr.major.strip():
+                        exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.major)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.major)
             else:
@@ -751,22 +754,23 @@ class dtdream_resume_modify(models.Model):
         for ex in self.language:
             if ex.related in language:
                 cr = self.env['hr.employee.language'].search([('id', '=', ex.related)])
-                if ex.langange != cr.langange or ex.cerdit != cr.cerdit or ex.result != cr.result or ex.remark != cr.remark:
+                if ex.langange.strip() != cr.langange.strip() or ex.cerdit.strip() != cr.cerdit.strip()\
+                        or ex.result.strip() != cr.result.strip() or ex.remark.strip() != cr.remark.strip():
                     tracked = True
-                    if ex.langange != cr.langange:
-                        exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(ex.langange)
+                    if ex.langange.strip() != cr.langange.strip():
+                        exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(cr.langange)
                     else:
                         exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.langange)
-                    if ex.cerdit != cr.cerdit:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.cerdit)
+                    if ex.cerdit.strip() != cr.cerdit.strip():
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.cerdit)
                     else:
                         exper += u"<td>{0}</td>".format(cr.cerdit)
-                    if ex.result != cr.result:
-                        exper += u"<td style='color: red;'>{0}</td>".format(ex.result)
+                    if ex.result.strip() != cr.result.strip():
+                        exper += u"<td style='color: red;'>{0}</td>".format(cr.result)
                     else:
                         exper += u"<td>{0}</td>".format(cr.result)
-                    if ex.remark != cr.remark:
-                        exper += u"<td style='color: red;'>{0}</td></tr>".format(ex.remark)
+                    if ex.remark.strip() != cr.remark.strip():
+                        exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.remark)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.remark)
             else:
@@ -789,11 +793,11 @@ class dtdream_resume_modify(models.Model):
         resume = self.env['dtdream.hr.resume'].search([('name.id', '=', self.name.id)])
         body = ""
         tab = u"<ul class='o_mail_thread_message_tracking'>"
-        if resume.mobile != self.mobile:
+        if resume.mobile.strip() != self.mobile.strip():
             body += tab + u"<li>手机号:<span>{0}</span>--><span>{1}</span></li>".format(resume.mobile, self.mobile)
-        if resume.icard != self.icard:
+        if resume.icard.strip() != self.icard.strip():
             body += u"<li>身份证:<span>{0}</span>--><span>{1}</span></li>".format(resume.icard, self.icard)
-        if resume.home_address != self.home_address:
+        if resume.home_address.strip() != self.home_address.strip():
             body += u"<li>居住地址:<span>{0}</span>--><span>{1}</span></li>".format(resume.home_address, self.home_address)
         if resume.marry != self.marry:
             marry = {"0": u"未婚", "1": u"已婚", "2": u"离异"}
@@ -836,18 +840,18 @@ class dtdream_resume_modify(models.Model):
                                                        'remark': experince.remark})
 
         resume.title.unlink()
-        for title in self.title:
-            self.env['hr.employee.title'].create({'resume': resume.id, 'name': title.name,
-                                                 'depertment': title.depertment, 'date': title.date,
-                                                  'remark': title.remark})
+        if self.has_title:
+            for title in self.title:
+                self.env['hr.employee.title'].create({'resume': resume.id, 'name': title.name,
+                                                     'depertment': title.depertment, 'date': title.date,
+                                                      'remark': title.remark})
 
         resume.degree.unlink()
-        if self.has_title:
-            for degree in self.degree:
-                self.env['hr.employee.degree'].create({'resume': resume.id, 'degree': degree.degree,
-                                                      'has_degree': degree.has_degree, 'entry_time': degree.entry_time,
-                                                       'leave_time': degree.leave_time, 'school': degree.school,
-                                                       'major': degree.major})
+        for degree in self.degree:
+            self.env['hr.employee.degree'].create({'resume': resume.id, 'degree': degree.degree,
+                                                  'has_degree': degree.has_degree, 'entry_time': degree.entry_time,
+                                                   'leave_time': degree.leave_time, 'school': degree.school,
+                                                   'major': degree.major})
 
         resume.language.unlink()
         for lan in self.language:
