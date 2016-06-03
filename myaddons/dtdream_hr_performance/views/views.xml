@@ -1,0 +1,59 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="myaddons.list">
+      <field name="name">myaddons list</field>
+      <field name="model">myaddons.myaddons</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="myaddons.action_window">
+      <field name="name">myaddons window</field>
+      <field name="res_model">myaddons.myaddons</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="myaddons.action_server">
+      <field name="name">myaddons server</field>
+      <field name="model_id" ref="model_myaddons_myaddons"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="myaddons" id="myaddons.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="myaddons.menu_1" parent="myaddons.menu_root"/>
+    <menuitem name="Menu 2" id="myaddons.menu_2" parent="myaddons.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="myaddons.menu_1_list" parent="myaddons.menu_1"
+              action="myaddons.action_window"/>
+    <menuitem name="Server to list" id="myaddons" parent="myaddons.menu_2"
+              action="myaddons.action_server"/>
+    -->
+  </data>
+</openerp>

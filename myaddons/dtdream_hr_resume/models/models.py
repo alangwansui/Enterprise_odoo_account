@@ -178,16 +178,19 @@ class dtdream_hr_resume(models.Model):
     def update_mobile_number(self):
         self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
         cr = self.env["hr.resume.approve"].search([])
+        sender = []
         if cr.email:
-            self.send_mail_attend_mobile(cr.email)
+            sender.append(cr.email)
         if cr.weixin:
-            self.send_mail_attend_mobile(cr.weixin)
+            sender.append(cr.weixin)
         if cr.dingding:
-            self.send_mail_attend_mobile(cr.dingding)
+            sender.append(cr.dingding)
         if cr.cloud:
-            self.send_mail_attend_mobile(cr.cloud)
+            sender.append(cr.cloud)
         if cr.oa:
-            self.send_mail_attend_mobile(cr.cloud)
+            sender.append(cr.oa)
+        for employee in set(sender):
+            self.send_mail_attend_mobile(employee)
 
     @api.model
     def create(self, vals):
@@ -441,9 +444,9 @@ class dtdream_hr_employee(models.Model):
                                 <tr><td>性别:{5}</td><td>工号:{6}</td><td>手机:{7}</td><td>邮箱:{8}</td></tr>
                                 </tbody></table>
                                 <p>dodo</p>
-                                <p>万千业务，简单有do</p><p>{9}</p>'''.format(content, vals.get('account', ''), vals.get('full_name', ''),
+                                <p>万千业务，简单有do</p>'''.format(content, vals.get('account', ''), vals.get('full_name', ''),
                                                             name, department, gender, vals.get('job_number', ''),
-                                                            vals.get('mobile_phone', ''), vals.get('work_email', ''), self.write_date[:10]),
+                                                            vals.get('mobile_phone', ''), vals.get('work_email', '')),
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
@@ -454,22 +457,25 @@ class dtdream_hr_employee(models.Model):
     def create(self, vals):
         result = super(dtdream_hr_employee, self).create(vals)
         cr = self.env['hr.resume.approve'].search([])
+        sender = []
         if cr.account:
-            self.send_mail_remind_open_account(vals, cr.account.work_email)
+            sender.append(cr.account)
         if cr.email:
-            self.send_mail_remind_open_account(vals, cr.email.work_email)
+            sender.append(cr.email)
         if cr.weixin:
-            self.send_mail_remind_open_account(vals, cr.weixin.work_email)
+            sender.append(cr.weixin)
         if cr.dingding:
-            self.send_mail_remind_open_account(vals, cr.dingding.work_email)
+            sender.append(cr.dingding)
         if cr.cloud:
-            self.send_mail_remind_open_account(vals, cr.cloud.work_email)
+            sender.append(cr.cloud)
         if cr.bbs:
-            self.send_mail_remind_open_account(vals, cr.bbs.work_email)
+            sender.append(cr.bbs)
         if cr.oa:
-            self.send_mail_remind_open_account(vals, cr.oa.work_email)
+            sender.append(cr.oa)
         if cr.dodo:
-            self.send_mail_remind_open_account(vals, cr.dodo.work_email)
+            sender.append(cr.dodo)
+        for employee in set(sender):
+            self.send_mail_remind_open_account(vals, employee.work_email)
         return result
 
     resume_log_nums = fields.Integer(compute='_compute_resume_log', string="履历记录")
@@ -581,16 +587,19 @@ class dtdream_resume_modify(models.Model):
     def update_mobile_number(self):
         self.env['hr.employee'].search([('id', '=', self.name.id)]).write({"mobile_phone": self.mobile})
         cr = self.env["hr.resume.approve"].search([])
+        sender = []
         if cr.email:
-            self.send_mail_attend_mobile(cr.email)
+            sender.append(cr.email)
         if cr.weixin:
-            self.send_mail_attend_mobile(cr.weixin)
+            sender.append(cr.weixin)
         if cr.dingding:
-            self.send_mail_attend_mobile(cr.dingding)
+            sender.append(cr.dingding)
         if cr.cloud:
-            self.send_mail_attend_mobile(cr.cloud)
+            sender.append(cr.cloud)
         if cr.oa:
-            self.send_mail_attend_mobile(cr.cloud)
+            sender.append(cr.oa)
+        for employee in set(sender):
+            self.send_mail_attend_mobile(employee)
 
     def track_experience_change(self, resume):
         experince = [ex.id for ex in resume.experince]
@@ -794,18 +803,18 @@ class dtdream_resume_modify(models.Model):
         body = ""
         tab = u"<ul class='o_mail_thread_message_tracking'>"
         if resume.mobile.strip() != self.mobile.strip():
-            body += tab + u"<li>手机号:<span>{0}</span>--><span>{1}</span></li>".format(resume.mobile, self.mobile)
+            body += tab + u"<li>手机号:<span>{0}</span>更改为:<span>{1}</span></li>".format(resume.mobile, self.mobile)
         if resume.icard.strip() != self.icard.strip():
-            body += u"<li>身份证:<span>{0}</span>--><span>{1}</span></li>".format(resume.icard, self.icard)
+            body += u"<li>身份证:<span>{0}</span>更改为:<span>{1}</span></li>".format(resume.icard, self.icard)
         if resume.home_address.strip() != self.home_address.strip():
-            body += u"<li>居住地址:<span>{0}</span>--><span>{1}</span></li>".format(resume.home_address, self.home_address)
+            body += u"<li>居住地址:<span>{0}</span>更改为:<span>{1}</span></li>".format(resume.home_address, self.home_address)
         if resume.marry != self.marry:
             marry = {"0": u"未婚", "1": u"已婚", "2": u"离异"}
-            body += u"<li>婚姻:<span>{0}</span>--><span>{1}</span></li>".format(marry.get(resume.marry), marry.get(self.marry))
+            body += u"<li>婚姻:<span>{0}</span>更改为:<span>{1}</span></li>".format(marry.get(resume.marry), marry.get(self.marry))
         if resume.child != self.child:
-            body += u"<li>子女数:<span>{0}</span>--><span>{1}</span></li>".format(resume.child, self.child)
+            body += u"<li>子女数:<span>{0}</span>更改为:<span>{1}</span></li>".format(resume.child, self.child)
         if resume.has_title != self.has_title:
-            body += u"<li>是否有职称信息:<span>{0}</span>--><span>{1}</span></li>".format(resume.has_title, self.has_title)
+            body += u"<li>是否有职称信息:<span>{0}</span>更改为:<span>{1}</span></li>".format(resume.has_title, self.has_title)
         exper = self.track_experience_change(resume)
         title = self.track_title_change(resume)
         degree = self.track_degree_change(resume)

@@ -1,5 +1,6 @@
 <openerp>
   <data>
+
     <record id="view_employee_form_infor_inherit" model="ir.ui.view">
         <field name="name">hr.employee.infor.form.inherit</field>
         <field name="model">hr.employee</field>
@@ -162,6 +163,17 @@
                                             context="{'default_groups_ref': ['base.group_user']}"/>
             </xpath>
 
+        </field>
+    </record>
+
+    <record id="hr_employee_infor_view_search" model="ir.ui.view">
+        <field name="name">hr.employee.infor.search.view.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <filter string="我" domain="[('user_id', '=', uid)]"/>
+            </xpath>
         </field>
     </record>
 
