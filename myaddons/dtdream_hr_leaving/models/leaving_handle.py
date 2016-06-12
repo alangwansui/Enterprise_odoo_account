@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.osv import osv
+from lxml import etree
 # 离职办理
 class leaving_handle(models.Model):
     _name = 'leaving.handle'
     _description = u"离职办理"
+    #创建单据时，在备注中会显示“离职办理 创建”
     _inherit = ['mail.thread']
 
+    # 根据申请人带出工号、姓名、入职日期、所在部门
     @api.depends('name')
     def _compute_employee(self):
         for rec in self:
@@ -14,7 +18,7 @@ class leaving_handle(models.Model):
             rec.full_name=rec.name.full_name
             rec.entry_day=rec.name.entry_day
             rec.department_id=rec.name.department_id
-
+    # 用于判断离岗前环节是否全部批完
     @api.depends("leaving_handle_process_ids1")
     def _compute_process_ids1(self):
         for process in self.leaving_handle_process_ids1:
@@ -22,7 +26,7 @@ class leaving_handle(models.Model):
                 self.is_finish1 = False
                 return
         self.is_finish1 = True
-
+    # 用于判断离岗后环节是否全部批完
     @api.depends("leaving_handle_process_ids2")
     def _compute_process_ids2(self):
         for process in self.leaving_handle_process_ids2:
@@ -30,18 +34,21 @@ class leaving_handle(models.Model):
                 self.is_finish2 = False
                 return
         self.is_finish2 = True
-
+    # 用于判断当前登录人是否是审批人
     def _compute_cur_approver(self):
         if self.env["hr.employee"].search([("login", "=", self.env.user.login)]) in self.cur_approvers:
             self.is_approver = True
-
-
+    # 将当前登录人默认作为申请人
     def _default_current_employee(self):
         return self.env["hr.employee"].search([("login","=",self.env.user.login)])
-
+    # 判断用户是否含有离职管理员权限
     @api.depends("name")
     def _compute_is_admin(self):
         self.is_admin = self.user_has_groups('dtdream_hr_leaving.group_dtdream_leaving_admin')
+    # 计算是否有审批记录，用于显示审批记录
+    @api.depends("opinion_ids")
+    def _compute_opinion_count(self):
+        self.opinion_count = len(self.opinion_ids)>0
 
     state_list = [('0',u'草稿'),('1',u'离职办理确认'),('2',u'工作交接确认'),('3',u'离岗前环节'),('4',u'员工离岗确认'),('5',u'离岗后环节'),('6',u'离职手续办理完毕确认'),('7',u'启动离职结算'),('8',u'离职结算支付确认'),('-1',u'驳回'),('99',u'完成')]
     state_dict = dict(state_list)
@@ -49,9 +56,9 @@ class leaving_handle(models.Model):
     name = fields.Many2one("hr.employee",string="申请人",required=True,default=_default_current_employee)
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
-    post = fields.Char(string="岗位", required=True)
+    post = fields.Char(string="岗位",size=32, required=True)
     entry_day = fields.Date(compute=_compute_employee,string="入职日期")
-    department_id = fields.Many2one("hr.department",compute=_compute_employee,string="部门")
+    department_id = fields.Many2one("hr.department",compute=_compute_employee,store=True,string="部门")
     leave_date = fields.Date("计划离职日期",required=True)
     actual_leavig_date = fields.Date(string="实际离岗日期")
     opinion_ids = fields.One2many("leaving.handle.approve.record","leaving_handle_id",string="审批结果")
@@ -66,23 +73,70 @@ class leaving_handle(models.Model):
     manager_id = fields.Many2one("hr.employee",string="主管")
     assistant_id = fields.Many2one('hr.employee', string="行政助理")
     is_admin = fields.Boolean("是否管理员",compute=_compute_is_admin)
-
+    opinion_count = fields.Boolean("是否有审批记录",compute=_compute_opinion_count)
+    # 获取系统配置的邮件发送人
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
-
+    # 获取当前系统的网址基础部分
     def get_base_url(self,cr,uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
         return base_url
 
+    @api.model
+    def create(self, vals):
+        leaving_handle_ids = self.env["leaving.handle"].search([('name.id', '=', vals["name"])])
+        if len(leaving_handle_ids)>0:
+            raise osv.except_osv(u'您已经发起离职办理申请，不能重复发起！')
+        return super(leaving_handle, self).create(vals)
+
     @api.multi
-    def multi_process_btn_submit(self):
-        self.signal_workflow("btn_submit")
+    def unlink(self):
+        is_admin = self.env.ref("dtdream_hr_leaving.group_dtdream_leaving_admin") in self.env.user.groups_id
+        # 判断当前用户是否是离职管理员
+        for rec in self:
+            if not is_admin and rec.state != '0':
+                raise osv.except_osv(u'审批流程中的离职办理不能删除!')
+            return super(leaving_handle, self).unlink()
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(leaving_handle, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar,
+                                                               submenu=False)
+        doc = etree.XML(res['arch'])
+        if my_action.name != u"我的申请":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
 
     @api.multi
     def wkf_draft(self):
+        origin_state = self.state
         self.cur_approvers = False
         self.cur_approver_users = False
         self.write({"state": "0"})
+        if origin_state == "1":
+            base_url = self.get_base_url()
+            link = '/web#id=%s&view_type=form&model=leaving.handle' % self.id
+            url = base_url + link
+            self.env['mail.mail'].create({
+                'body_html': u'<p>您好</p>'
+                             u'<p>%s的离职办理已被驳回</p>'
+                             u'<p>请点击链接重新提交:'
+                             u'<a href="%s">%s</a></p>'
+                             u'<p>dodo</p>'
+                             u'<p>万千业务，简单有do</p>'
+                             u'<p>%s<p>' % (self.name.user_id.name, url, url, self.write_date[:10]),
+                'subject': u'您的离职办理已被驳回至“%s”' % (self.state_dict[self.state]),
+                'email_to': self.name.work_email,
+                'auto_delete': False,
+                'email_from': self.get_mail_server_name(),
+            }).send()
 
     # 审批时发送的邮件
     def approver_mail(self):
@@ -277,7 +331,7 @@ class leaving_handle_approve_record(models.Model):
     _name = "leaving.handle.approve.record"
 
     name = fields.Char("审批环节")
-    result = fields.Selection([("agree","同意"),("reject","驳回到上一步"),("other","不涉及")],string="审批结果")
+    result = fields.Selection([("agree","同意"),("finish","办理完成"),("reject","驳回到上一步"),("other","不涉及"),("is_finish","办理完成")],string="审批结果")
     opinion = fields.Text("意见", required=True)
     actual_leavig_date = fields.Date("实际离岗时间")
     leaving_handle_id = fields.Many2one("leaving.handle",string="离职交接申请")
@@ -307,23 +361,33 @@ class leaving_handle_process(models.Model):
         for rec in self:
             if rec.is_other and rec.is_finish:
                 rec.is_finish = False
-
-    def _if_process_can_edit(self):
+    # 用于控制离岗前并行环节审批按钮的显示隐藏控制
+    # 处于离岗前环节，并且当前登录人是处理人或管理员才显示审批按钮
+    def _if_process1_can_edit(self):
         for rec in self:
-            if self.env.user == rec.process_approver.user_id:
-                rec.can_edit = True
+            if rec.leaving_handle_id1.state == '3' and (self.env.user == rec.process_approver.user_id or self.user_has_groups('dtdream_hr_leaving.group_dtdream_leaving_admin')):
+                rec.process1_can_edit = True
             else:
-                rec.can_edit = False
+                rec.process1_can_edit = False
+    # 用于控制离岗后并行环节审批按钮的显示隐藏控制
+    # 处于离岗后环节，并且当前登录人是处理人或管理员才显示审批按钮
+    def _if_process2_can_edit(self):
+        for rec in self:
+            if rec.leaving_handle_id2.state == '5' and (self.env.user == rec.process_approver.user_id or self.user_has_groups('dtdream_hr_leaving.group_dtdream_leaving_admin')):
+                rec.process2_can_edit = True
+            else:
+                rec.process2_can_edit = False
 
     name = fields.Char("名称")
     is_finish = fields.Boolean("办理完成")
     is_other = fields.Boolean("不涉及")
-    remark = fields.Char("备注")
+    remark = fields.Char("意见",size=32)
     leaving_handle_id1 = fields.Many2one("leaving.handle",string="离职交接申请")
     leaving_handle_id2 = fields.Many2one("leaving.handle",string="离职交接申请")
     process_id = fields.Many2one("process.process",string="环节")
     process_approver = fields.Many2one("hr.employee",compute=_compute_process_approver,string="办理人")
-    can_edit = fields.Boolean("是否可以修改",compute=_if_process_can_edit)
+    process1_can_edit= fields.Boolean("是否可以修改",compute=_if_process1_can_edit)
+    process2_can_edit= fields.Boolean("是否可以修改",compute=_if_process2_can_edit)
 
 #并行环节基础数据
 class process_process(models.Model):

@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <record id="view_dtdream_hr_leaving_search" model="ir.ui.view">
+            <field name="name">view.dtdream.hr.leaving.search</field>
+            <field name="model">leaving.handle</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <filter string="草稿" domain="[('state','=','0')]"/>
+                    <filter string="离职办理确认" domain="[('state','=','1')]"/>
+                    <filter string="工作交接确认" domain="[('state','=','2')]"/>
+                    <filter string="离岗前环节" domain="[('state','=','3')]"/>
+                    <filter string="员工离岗确认" domain="[('state','=','4')]"/>
+                    <filter string="离岗后环节" domain="[('state','=','5')]"/>
+                    <filter string="离职手续办理完毕确认" domain="[('state','=','6')]"/>
+                    <filter string="启动离职结算" domain="[('state','=','7')]"/>
+                    <filter string="离职结算支付确认" domain="[('state','=','8')]"/>
+                    <filter string="完成" domain="[('state','=','99')]"/>
+                </search>
+            </field>
+        </record>
         <record id="act_dtdream_hr_leaving_my" model="ir.actions.act_window">
             <field name="name">我的申请</field>
             <field name="res_model">leaving.handle</field>
@@ -8,6 +28,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">['|',('name.user_id', '=', uid),('create_uid','=',uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
         </record>
         <record id="act_dtdream_hr_leaving_approving" model="ir.actions.act_window">
             <field name="name">待我审批</field>
@@ -16,6 +37,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('cur_approver_users','in', uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
         </record>
         <record id="act_dtdream_hr_leaving_approved" model="ir.actions.act_window">
             <field name="name">我已审批</field>
@@ -24,6 +46,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('opinion_ids.create_uid', '=', uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
         </record>
         <record id="act_dtdream_hr_leaving_all" model="ir.actions.act_window">
             <field name="name">所有单据</field>
@@ -32,9 +55,18 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">['|','|','|','|',('name.user_id', '=', uid),('create_uid','=',uid),('cur_approver_users', 'in', uid),('opinion_ids.create_uid', '=', uid),('opinion_ids.mail_ccs.user_id', '=', uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
+        </record>
+        <record id="act_dtdream_hr_leaving_report" model="ir.actions.act_window">
+            <field name="name">离职办理</field>
+            <field name="res_model">leaving.handle</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
         </record>
         <record id="act_dtdream_process_process" model="ir.actions.act_window">
-            <field name="name">离职办理并行环节</field>
+            <field name="name">离职办理环节配置</field>
             <field name="res_model">process.process</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -47,12 +79,14 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem name="离职办理" sequence="10" id="dtdream_hr_leaving" parent="hr.menu_hr_root"></menuitem>
+        <menuitem name="离职办理" sequence="10" id="dtdream_hr_leaving" parent="dtdream_hr.dtdream_hr_process"></menuitem>
         <menuitem name="我的申请" sequence="10" id="dtdream_hr_leaving_my" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_my"></menuitem>
         <menuitem name="待我审批" sequence="20" id="dtdream_hr_leaving_approving" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_approving"></menuitem>
         <menuitem name="我已审批" sequence="30" id="dtdream_hr_leaving_approved" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_approved"></menuitem>
         <menuitem name="所有单据" sequence="40" id="dtdream_hr_leaving_all" parent="dtdream_hr_leaving" action="act_dtdream_hr_leaving_all"></menuitem>
+        <menuitem name="离职办理" sequence="10" id="dtdream_hr_leaving_report" parent="dtdream_hr.dtdream_hr_report" action="act_dtdream_hr_leaving_report" groups="group_dtdream_leaving_admin,base.group_hr_manager"></menuitem>
         <menuitem id="hr.menu_human_resources_configuration" name="配置" parent="hr.menu_hr_root" sequence="100" groups="base.group_configuration,base.group_hr_manager,group_dtdream_leaving_admin"/>
+        <menuitem name="报告" sequence="200" id="dtdream_hr.dtdream_hr_report" parent="hr.menu_hr_root" groups="base.group_hr_manager,group_dtdream_leaving_admin"></menuitem>
         <menuitem name="离职办理环节配置" sequence="15" id="dtdream_process_process" parent="hr.menu_human_resources_configuration" action="act_dtdream_process_process" groups="group_dtdream_leaving_admin"></menuitem>
         <menuitem name="离职办理审批人配置" sequence="20" id="dtdream_process_approver" parent="hr.menu_human_resources_configuration" action="act_dtdream_process_approver" groups="group_dtdream_leaving_admin"></menuitem>
 

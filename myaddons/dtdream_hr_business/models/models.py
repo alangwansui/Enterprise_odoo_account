@@ -2,12 +2,13 @@
 from openerp import models, fields, api
 from datetime import datetime,timedelta
 from openerp.exceptions import ValidationError
+from lxml import etree
 
 class dtdream_hr_business(models.Model):
     _name = 'dtdream_hr_business.dtdream_hr_business'
     _inherit = ['mail.thread']
     _description = u"外出公干"
-    name = fields.Many2one("hr.employee",string="申请人",required=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
+    name = fields.Many2one("hr.employee",string="申请人",required=True,store=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
 
     @api.depends('name')
     def _compute_employee(self):
@@ -60,7 +61,7 @@ class dtdream_hr_business(models.Model):
 
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
-    department = fields.Char(compute=_compute_employee,string="部门")
+    department = fields.Char(compute=_compute_employee,string="部门" ,store=True)
     create_time = fields.Datetime(string='申请时间',default=lambda self: datetime.now(),readonly=True)
     approver_fir = fields.Many2one("hr.employee" ,string="第一审批人",store=True,required=True,default=_get_appFir)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
@@ -68,9 +69,25 @@ class dtdream_hr_business(models.Model):
     approver_fou = fields.Many2one("hr.employee",string="第四审批人")
     approver_fif = fields.Many2one("hr.employee",string="第五审批人")
 
-    current_approver = fields.Many2one("hr.employee" ,compute=_compute_employee,string="当前审批人",store=True)
+    current_approver = fields.Many2one("hr.employee" ,string="当前审批人")
 
     his_app = fields.Many2many("res.users")
+
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_hr_business, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if my_action.name != u"我的申请":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
 
     @api.one
     def _compute_is_shenpiren(self):
@@ -78,7 +95,7 @@ class dtdream_hr_business(models.Model):
             self.is_shenqingren = True
         else:
             self.is_shenqingren = False
-        if self.current_approver.user_id == self.env.user:
+        if self.current_approver and self.current_approver.user_id == self.env.user:
             self.is_shenpiren = True
         else:
             self.is_shenpiren = False
@@ -99,7 +116,7 @@ class dtdream_hr_business(models.Model):
 
     is_shenqingren = fields.Boolean(compute=_compute_is_shenpiren, string="当前用户是否申请人",default=True)
 
-    state = fields.Selection([('-1','草稿'),('0','一级审批'),('1','二级审批'),('2','三级审批'),('3','四级审批'),('4','五级审批'),('5','完成'),('99','驳回')],string="状态",default='-1')
+    state = fields.Selection([('-8','草稿'),('0','一级审批'),('1','二级审批'),('2','三级审批'),('3','四级审批'),('4','五级审批'),('99','驳回'),('5','完成')],string="状态",default='-8')
 
     employ = fields.Many2one("hr.employee", string="员工")
 
@@ -135,26 +152,34 @@ class dtdream_hr_business(models.Model):
     @api.constrains("detail_ids")
     def _check_start_end_time(self):
         """检查各行程间时间是否冲突，是否与出差时间冲突,是否与之前提交的出差申请时间冲突"""
-        min_start = ""
         cr = self.env["dtdream.travel.journey"].search([("travel_id.name.id", "=", self.name.id),
                                                                      ("travel_id.state", "not in", ("0","-1"))])
 
         crr = self.env["dtdream_hr_business.business_detail"].search([("business.name.id", "=", self.name.id)])
 
+        for index, journey in enumerate(self.detail_ids):
+            start = journey.startTime
+            end = journey.endTime
+            for j in range(index):
+                if not(self.detail_ids[j].startTime > end or self.detail_ids[j].endTime < start):
+                    raise ValidationError("外出时间与结束时间填写不合理,各行程间时间存在冲突!")
         for journey in self.detail_ids:
-            if journey.startTime < min_start:
-                raise ValidationError("外出时间与结束时间填写不合理,各行程间时间存在冲突!")
-            min_start = journey.endTime
             for travel in crr:
                 if travel.id == journey.id:
                     continue
-                if travel.startTime <= journey.startTime < travel.endTime or \
-                                        travel.startTime < journey.endTime <= travel.endTime:
+                if travel.startTime <= journey.startTime <= travel.endTime or \
+                                        travel.startTime <= journey.endTime <= travel.endTime:
                     raise ValidationError("{0}到{1}时间与之前提交的外出申请时间冲突!".format(datetime.strptime(journey.startTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8), datetime.strptime(journey.endTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8)))
             for detail in cr:
-                if detail.starttime <= journey.startTime[:10] < detail.endtime or \
-                                        detail.starttime < journey.endTime[:10] <= detail.endtime:
-                    raise ValidationError("{0}到{1}时间与外出公干时间重合".format(datetime.strptime(journey.startTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8), datetime.strptime(journey.endTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8)))
+                if detail.starttime <= journey.startTime[:10] <= detail.endtime or \
+                                        detail.starttime <= journey.endTime[:10] <= detail.endtime:
+                    raise ValidationError("{0}到{1}时间与出差申请时间重合".format(datetime.strptime(journey.startTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8), datetime.strptime(journey.endTime,"%Y-%m-%d %H:%M:%S")+timedelta(hours=8)))
+
+    @api.multi
+    def check_submit_dtdream_hr_business(self):
+        """提交时做检查时间冲突检查"""
+        self._check_start_end_time()
+        self.signal_workflow('btn_submit')
 
     detail_ids = fields.One2many("dtdream_hr_business.business_detail","business","明细")
 
@@ -196,11 +221,11 @@ class dtdream_hr_business(models.Model):
         url = base_url+link
         email_to=self.name.work_email
         app_time=  self.create_time[:10]
-        subject = u'%s您于%s提交外出公干申请已被%s批准，请您查看！' %(self.name.user_id.name,app_time,self.current_approver.user_id.name)
-        content = u'%s您提交的外出公干申请已被%s批准，请您查看！' %(self.name.user_id.name,self.current_approver.user_id.name)
+        subject = u'您于%s提交外出公干申请已被%s批准，请您查看！' %(app_time,self.current_approver.user_id.name)
+        content = u'您提交的外出公干申请已被%s批准，请您查看！' %(self.current_approver.user_id.name)
         if self.state=='99':
-            subject = u'%s您于%s提交外出公干申请已被%s驳回，请您查看！' %(self.name.user_id.name,app_time,self.current_approver.user_id.name)
-            content = u'%s您提交的外出公干申请已被%s驳回，请您查看！' %(self.name.user_id.name,self.current_approver.user_id.name)
+            subject = u'您于%s提交外出公干申请已被%s驳回，请您查看！' %(app_time,self.current_approver.user_id.name)
+            content = u'您提交的外出公干申请已被%s驳回，请您查看！' %(self.current_approver.user_id.name)
         appellation= self.name.user_id.name+u'，您好：'
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
@@ -226,49 +251,15 @@ class dtdream_hr_business(models.Model):
         result = super(dtdream_hr_business, self).create(cr, uid, values, context=context)
         if empl.user_id.id != uid:
             self.add_follower(cr, uid,[result],empl.id,context=context)
-        # if values['approver_fir']:
-        #     self.add_follower(cr, uid,[result],values['approver_fir'],context=context)
-        # if values['approver_sec']:
-        #     self.add_follower(cr, uid,[result],values['approver_sec'],context=context)
-        # if values['approver_thr']:
-        #     self.add_follower(cr, uid,[result],values['approver_thr'],context=context)
-        # if values['approver_fou']:
-        #     self.add_follower(cr, uid,[result],values['approver_fou'],context=context)
-        # if values['approver_fif']:
-        #     self.add_follower(cr, uid,[result],values['approver_fif'],context=context)
         return  result
 
-    # @api.constrains('approver_fir')
-    # def approver_fir_fol(self):
-    #     if self.approver_fir and self.approver_fir.user_id:
-    #         self.add_follower(employee_id=self.approver_fir.id)
-    #
-    # @api.constrains('approver_sec')
-    # def approver_sec_fol(self):
-    #     if self.approver_sec and self.approver_sec.user_id:
-    #         self.add_follower(employee_id=self.approver_sec.id)
-    #
-    # @api.constrains('approver_thr')
-    # def approver_thr_fol(self):
-    #     if self.approver_thr and self.approver_thr.user_id:
-    #         self.add_follower(employee_id=self.approver_thr.id)
-    #
-    # @api.constrains('approver_fou')
-    # def approver_fou_fol(self):
-    #     if self.approver_fou and self.approver_fou.user_id:
-    #         self.add_follower(employee_id=self.approver_fou.id)
-    #
-    # @api.constrains('approver_fif')
-    # def approver_fif_fol(self):
-    #     if self.approver_fif and self.approver_fif.user_id:
-    #         self.add_follower(employee_id=self.approver_fif.id)
 
 
     @api.model
     def wkf_draft(self):                            #创建
         if self.state=='99':
             self.message_post(body=u'重启流程，状态：驳回 --> '+u'草稿')
-        self.write({'state': '-1'})
+        self.write({'state': '-8'})
 
     @api.model
     def wkf_first(self):                            #提交
@@ -311,6 +302,7 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：二级审批 --> '+u'批准')
             # self.send_mail_to_app()
+            self.write({'current_approver':''})
 
     @api.model
     def wkf_fou(self):                                       #第三审批人批准
@@ -328,6 +320,7 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：三级审批 --> '+u'批准')
             # self.send_mail_to_app()
+            self.write({'current_approver':''})
 
     @api.model
     def wkf_fif(self):                                       #第四审批人批准
@@ -345,6 +338,7 @@ class dtdream_hr_business(models.Model):
             self.write({'state': '5'})
             self.message_post(body=u'批准，状态：四级审批 --> '+u'批准')
             # self.send_mail_to_app()
+            self.write({'current_approver':''})
 
     @api.model
     def wkf_accept(self):                                        #第五审批人批准
@@ -355,14 +349,14 @@ class dtdream_hr_business(models.Model):
         self.write({'state': '5'})
         self.message_post(body=u'批准，状态：五级审批 --> '+u'批准')
         # self.send_mail_to_app()
+        self.write({'current_approver':''})
 
     @api.model
     def wkf_refuse(self):                                       #各审批人驳回
         self.write({'state': '99'})
         self.write({'his_app': [(4, self.current_approver.user_id.id)]})
         # self.send_mail_to_app()
-        self.write({'current_approver':self.name.id})
-
+        self.write({'current_approver':''})
 
 
 class business_detail(models.Model):

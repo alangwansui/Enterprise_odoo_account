@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <template id="assets_backend" name="vnsoft_form_hide_edit assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/vnsoft_form_hide_edit/static/js/view_form.js"></script>
+            </xpath>
+        </template>
+    </data>
+</openerp>

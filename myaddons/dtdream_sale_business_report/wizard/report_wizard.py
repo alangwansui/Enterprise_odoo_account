@@ -13,7 +13,13 @@ class ReportWizard(models.TransientModel):
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
         state_name =dict(self.env['dtdream.sale.business.report']._columns['state'].selection)[current_report.state]
         shenpiren_name = self.env['hr.employee'].search([('login','=',self.env.user.login)]).name
-        self.env['report.handle.approve.record'].create({"name":state_name,"result":"驳回","shenpiren":shenpiren_name, "liyou":self.liyou,"report_handle_id":self._context['active_id']})
+        self.env['report.handle.approve.record'].create({"shenpiren_version":current_report.shenpiren_version,"name":state_name,"result":"驳回","shenpiren":shenpiren_name, "liyou":self.liyou,"report_handle_id":self._context['active_id']})
+        current_report.write({'approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        if current_report.state in ('1','2','3'):
+            current_report.write({'product_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        else :
+            current_report.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        current_report.write({'warn_text':""})
         current_report.signal_workflow('btn_reject')
 
 class ReportApproveWizard(models.TransientModel):
@@ -26,5 +32,15 @@ class ReportApproveWizard(models.TransientModel):
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
         state_name =dict(self.env['dtdream.sale.business.report']._columns['state'].selection)[current_report.state]
         shenpiren_name = self.env['hr.employee'].search([('login','=',self.env.user.login)]).name
-        self.env['report.handle.approve.record'].create({"name":state_name,"result":"通过","shenpiren":shenpiren_name, "liyou":self.liyou,"report_handle_id":self._context['active_id']})
+        self.env['report.handle.approve.record'].create({"shenpiren_version":current_report.shenpiren_version,"name":state_name,"result":"通过","shenpiren":shenpiren_name, "liyou":self.liyou,"report_handle_id":self._context['active_id']})
+        if len(current_report.shenpiren)>1:
+            current_report.write({'shenpiren':[(3,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        elif current_report.state=="3" or current_report.state=="5":
+            current_report.pro_zongbu_finish = "1"
+        current_report.write({'approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        if current_report.state in ('1','2','3'):
+            current_report.write({'product_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        else :
+            current_report.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
+        current_report.write({'warn_text':""})
         current_report.signal_workflow('btn_approve')

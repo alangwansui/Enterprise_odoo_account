@@ -112,6 +112,7 @@ class res_crm_team(models.Model):
     _defaults = {
         'stage_ids': "",
         'use_opportunities': True,
+        'use_leads': True,
     }
 
     def action_your_pipeline(self, cr, uid, context=None):
@@ -304,6 +305,13 @@ class dtdream_sale(models.Model):
         self.total_ref_price = ref_price
         self.total_apply_price = apply_price
 
+    @api.depends('project_space')
+    def _onchange_project_space(self):
+        space_total = 0
+        for rec in self.project_space:
+            space_total = space_total + rec.project_space
+        self.space_total = space_total
+
     @api.onchange('sale_apply_id')
     def _onchange_sale_apply_uid(self):
         self.sale_apply_id_uid = self.sale_apply_id.env['res.users'].search([('login','=',self.sale_apply_id.login)]).id
@@ -329,8 +337,8 @@ class dtdream_sale(models.Model):
         ('2', 'B'),
         ('3', 'C'),
         ('4', 'D'),
-    ],'项目把握度')
-    project_space = fields.Char('项目空间(万元)')
+    ],'项目把握度',required=True)
+    project_space = fields.One2many('dtdream.project.space.line', 'project_line_id', string='项目空间',copy=True)
     partner_id = fields.Many2one(required=True)
     ali_division = fields.Selection([
         ('1','数据中国'),
@@ -339,10 +347,15 @@ class dtdream_sale(models.Model):
         ('4','央企'),
         ('5','其他'),
     ],'阿里对应事业部')
+
     ali_saleman = fields.Char('阿里对应销售')
+    is_dtdream_integrated = fields.Selection([
+        ('1', '是'),
+        ('0', '否'),
+    ],string='是否数梦集成项目',required=True)
     project_province = fields.Many2one("res.country.state", '省份',required=True)
     project_place = fields.Char('城市',required=True)
-    product_category_type_id = fields.Many2many("product.category", string="产品分类",required=True)
+    product_category_type_id = fields.Many2many("product.category", string="产品分类")
     sale_apply_id = fields.Many2one("hr.employee",string="营销责任人",required=True)
     sale_apply_id_uid = fields.Integer(string="营销责任人id")
 
@@ -353,6 +366,7 @@ class dtdream_sale(models.Model):
     total_list_price = fields.Float('目录价总计',store=True,compute=_onchange_product_line)
     total_ref_price = fields.Float('参考折扣价总计',store=True,compute=_onchange_product_line)
     total_apply_price = fields.Float('申请折扣价总计',store=True,compute=_onchange_product_line)
+    space_total = fields.Float('合计(万元)',store=True,compute=_onchange_project_space)
 
     dt_partner_name = fields.Char(compute=_compute_partner_fields,store=True,string="公司名称")
     dt_contact_name = fields.Char(compute=_compute_partner_fields,store=True,string="联系人名称")
@@ -383,6 +397,64 @@ class dtdream_sale(models.Model):
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
             vals['project_number'] = ''.join([office_rec.code,self.env['ir.sequence'].next_by_code('project.number'),'N']) or 'New'
         result = super(dtdream_sale, self).create(vals)
+        result.write({"product_category_type_id": [(6,0,[])]})
+        if vals.has_key('project_space'):
+            for project_space in vals['project_space']:
+                result.write({"product_category_type_id": [(4,[project_space[2]['categ_id']])]})
+        return result
+
+    def stage_find(self, cr, uid, cases, team_id, domain=None, order='sequence', context=None):
+        """ Override of the base.stage method
+            Parameter of the stage search taken from the lead:
+            - type: stage type must be the same or 'both'
+            - team_id: if set, stages must belong to this team or
+              be a default stage; if not set, stages must be default
+              stages
+        """
+        if isinstance(cases, (int, long)):
+            cases = self.browse(cr, uid, cases, context=context)
+        if context is None:
+            context = {}
+        # check whether we should try to add a condition on type
+        avoid_add_type_term = any([term for term in domain if len(term) == 3 if term[0] == 'type'])
+        # collect all team_ids
+        team_ids = set()
+        types = ['both']
+        if not cases and context.get('default_type'):
+            ctx_type = context.get('default_type')
+            types += [ctx_type]
+        if team_id:
+            team_ids.add(team_id)
+        for lead in cases:
+            if lead.team_id:
+                team_ids.add(lead.team_id.id)
+            if lead.type not in types:
+                types.append(lead.type)
+        # OR all team_ids
+        search_domain = []
+        # if team_ids:
+        #     search_domain += [('|')] * (len(team_ids) - 1)
+        #     for team_id in team_ids:
+        #         search_domain.append(('team_ids', '=', team_id))
+        # # AND with cases types
+        # if not avoid_add_type_term:
+        #     search_domain.append(('type', 'in', types))
+        # # AND with the domain in parameter
+        # search_domain += list(domain)
+        # perform search, return the first found
+        stage_ids = self.pool.get('crm.stage').search(cr, uid, search_domain, order=order, limit=1, context=context)
+        if stage_ids:
+            return stage_ids[0]
+        return False
+
+    @api.multi
+    def write(self, vals):
+        result = super(dtdream_sale, self).write(vals)
+        if vals.has_key('project_space'):
+            rec = self.env['crm.lead'].search([('id','=',self.id)])
+            rec.write({"product_category_type_id": [(6,0,[])]})
+            for project_space in rec.project_space:
+                rec.write({"product_category_type_id": [(4,project_space.categ_id.id)]})
         return result
 
     def _read_group_stage_ids(self, cr, uid, ids, domain, read_group_order=None, access_rights_uid=None, context=None):
@@ -592,11 +664,6 @@ class dtdream_child_product_line(models.Model):
     child_write_uid = fields.Char('最后更新人',compute=_compute_child_fields)
     child_write_date = fields.Char('最后更新时间',compute=_compute_child_fields)
     child_pro_num = fields.Integer('数量')
-
-
-
-
-
     @api.onchange("child_pro_num")
     def _onchange_pro_num(self):
         if self.child_pro_num < 0:
@@ -606,3 +673,11 @@ class dtdream_child_product_line(models.Model):
                     'message': '数量不能小于0',
                 }
             return {'warning': warning}
+
+class dtdream_project_space_line(models.Model):
+    _name = "dtdream.project.space.line"
+
+    project_line_id = fields.Many2one('crm.lead',string="关联到项目")
+
+    categ_id = fields.Many2one('product.category',string="产品分类")
+    project_space = fields.Float('项目空间(万元)')

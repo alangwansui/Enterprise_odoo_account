@@ -59,7 +59,7 @@ class dtdream_hr_resume(models.Model):
             doc = etree.XML(res['arch'])
             if len(cr) or not user_id:
                 doc.xpath("//form")[0].set("create", "false")
-                if view:
+                if view and not (self.env.user == cr.name.user_id and cr.state == '0'):
                     doc.xpath("//form")[0].set("edit", "false")
             res['arch'] = etree.tostring(doc)
         if res['type'] == "tree":
@@ -144,8 +144,11 @@ class dtdream_hr_resume(models.Model):
     def send_mail_attend_mobile(self, email):
         email_to = email.work_email
         appellation = u'{0},您好：'.format(email.full_name)
+        sex = u'他'
+        if self.name.gender and self.name.gender != "male":
+            sex = u"她"
         subject = u"手机号码变更通知"
-        content = u"%s,员工手机号更改为%s,请您知悉!" % (self.name.full_name, self.mobile)
+        content = u"员工%s(%s)手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.full_name, self.name.job_number, self.mobile, sex)
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
@@ -158,17 +161,27 @@ class dtdream_hr_resume(models.Model):
                 'auto_delete': False,
             }).send()
 
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def get_employee_menu(self):
+        menu_id = self.env['ir.ui.menu'].search([('web_icon', '=', 'hr,static/description/icon.png')], limit=1).id
+        return menu_id
+
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
         appellation = u'{0},您好：'.format(name.full_name)
+        link = '/web#id=%s&view_type=form&model=dtdream.hr.resume&menu_id=%s' % (self.id, self.get_employee_menu())
         subject = subject
         content = content
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
+                                <p><a href="%s">点击进入查看</a></p>
                                 <p>dodo</p>
                                 <p>万千业务，简单有do</p>
-                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                                <p>%s</p>''' % (appellation, content, self.get_base_url() + link, self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
@@ -191,6 +204,18 @@ class dtdream_hr_resume(models.Model):
             sender.append(cr.oa)
         for employee in set(sender):
             self.send_mail_attend_mobile(employee)
+
+    @api.onchange('mobile')
+    @api.constrains('mobile')
+    def check_moblie_unique(self):
+        cr = self.env["hr.employee"].search([('mobile_phone', '=', self.mobile)])
+        if len(cr) > 1 or (len(cr) == 1 and cr.id != self.name.id):
+            warning = {
+                    'title': u"提示",
+                    'message': u"手机号码已经存在!"
+                }
+            self.mobile = False
+            return {"warning": warning}
 
     @api.model
     def create(self, vals):
@@ -529,6 +554,18 @@ class dtdream_resume_modify(models.Model):
         if self.has_title and not len(self.title):
             raise ValidationError("请至少填写一条职称信息!")
 
+    @api.onchange('mobile')
+    @api.constrains('mobile')
+    def check_moblie_unique(self):
+        cr = self.env["hr.employee"].search([('mobile_phone', '=', self.mobile)])
+        if len(cr) > 1 or (len(cr) == 1 and cr.id != self.name.id):
+            warning = {
+                    'title': u"提示",
+                    'message': u"手机号码已经存在!"
+                }
+            self.mobile = False
+            return {"warning": warning}
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         user_id = self._context.get('active_id', None)
@@ -552,9 +589,12 @@ class dtdream_resume_modify(models.Model):
 
     def send_mail_attend_mobile(self, email):
         email_to = email.work_email
+        sex = u'他'
+        if self.name.gender and self.name.gender != "male":
+            sex = u"她"
         appellation = u'{0},您好：'.format(email.full_name)
         subject = u"手机号码变更通知"
-        content = u"%s,员工手机号更改为%s,请您知悉!" % (self.name.full_name, self.mobile)
+        content = u"员工%s(%s)的手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.full_name, self.name.job_number, self.mobile, sex)
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
@@ -567,17 +607,27 @@ class dtdream_resume_modify(models.Model):
                 'auto_delete': False,
             }).send()
 
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def get_employee_menu(self):
+        menu_id = self.env['ir.ui.menu'].search([('web_icon', '=', 'hr,static/description/icon.png')], limit=1).id
+        return menu_id
+
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
+        link = '/web#id=%s&view_type=form&model=dtdream.hr.resume.modify&menu_id=%s' % (self.id, self.get_employee_menu())
         appellation = u'{0},您好：'.format(name.full_name)
         subject = subject
         content = content
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
+                                <p><a href="%s">点击进入查看</a></p>
                                 <p>dodo</p>
                                 <p>万千业务，简单有do</p>
-                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                                <p>%s</p>''' % (appellation, content, self.get_base_url() + link, self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
@@ -613,7 +663,7 @@ class dtdream_resume_modify(models.Model):
             if ex.related in experince:
                 cr = self.env['hr.employee.experience'].search([('id', '=', ex.related)])
                 if ex.start_time != cr.start_time or ex.end_time != cr.end_time or ex.company.strip() != cr.company.strip() or \
-                                ex.post.strip() != cr.post.strip() or ex.remark.strip() != cr.remark.strip():
+                                ex.post.strip() != cr.post.strip() or repr(ex.remark).strip() != repr(cr.remark).strip():
                     tracked = True
                     if ex.start_time != cr.start_time:
                         exper += u"<tr><td>修改</td><td style='color: red;'>%s</td>" % cr.start_time.replace("-", "/")
@@ -631,7 +681,7 @@ class dtdream_resume_modify(models.Model):
                         exper += u"<td style='color: red;'>{0}</td>".format(cr.post)
                     else:
                         exper += u"<td>{0}</td>".format(cr.post)
-                    if ex.remark.strip() != cr.remark.strip():
+                    if repr(ex.remark).strip() != repr(cr.remark).strip():
                         exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.remark)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.remark)
@@ -662,7 +712,7 @@ class dtdream_resume_modify(models.Model):
             if ex.related in title:
                 cr = self.env['hr.employee.title'].search([('id', '=', ex.related)])
                 if ex.name.strip() != cr.name.strip() or ex.depertment.strip() != cr.depertment.strip() or \
-                                ex.date != cr.date or ex.remark.strip() != cr.remark.strip():
+                                ex.date != cr.date or repr(ex.remark).strip() != repr(cr.remark).strip():
                     tracked = True
                     if ex.name.strip() != cr.name.strip():
                         exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(cr.name)
@@ -676,7 +726,7 @@ class dtdream_resume_modify(models.Model):
                         exper += u"<td style='color: red;'>{0}</td>".format(cr.date.replace("-", "/"))
                     else:
                         exper += u"<td>{0}</td>".format(cr.date.replace("-", "/"))
-                    if ex.remark.strip() != cr.remark.strip():
+                    if repr(ex.remark).strip() != repr(cr.remark).strip():
                         exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.remark)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.remark)
@@ -763,22 +813,22 @@ class dtdream_resume_modify(models.Model):
         for ex in self.language:
             if ex.related in language:
                 cr = self.env['hr.employee.language'].search([('id', '=', ex.related)])
-                if ex.langange.strip() != cr.langange.strip() or ex.cerdit.strip() != cr.cerdit.strip()\
-                        or ex.result.strip() != cr.result.strip() or ex.remark.strip() != cr.remark.strip():
+                if repr(ex.langange).strip() != repr(cr.langange).strip() or repr(ex.cerdit).strip() != repr(cr.cerdit).strip()\
+                        or repr(ex.result).strip() != repr(cr.result).strip() or repr(ex.remark).strip() != repr(cr.remark).strip():
                     tracked = True
-                    if ex.langange.strip() != cr.langange.strip():
+                    if repr(ex.langange).strip() != repr(cr.langange).strip():
                         exper += u"<tr><td>修改</td><td style='color: red;'>{0}</td>".format(cr.langange)
                     else:
                         exper += u"<tr><td>修改</td><td>{0}</td>".format(cr.langange)
-                    if ex.cerdit.strip() != cr.cerdit.strip():
+                    if repr(ex.cerdit).strip() != repr(cr.cerdit).strip():
                         exper += u"<td style='color: red;'>{0}</td>".format(cr.cerdit)
                     else:
                         exper += u"<td>{0}</td>".format(cr.cerdit)
-                    if ex.result.strip() != cr.result.strip():
+                    if repr(ex.result).strip() != repr(cr.result).strip():
                         exper += u"<td style='color: red;'>{0}</td>".format(cr.result)
                     else:
                         exper += u"<td>{0}</td>".format(cr.result)
-                    if ex.remark.strip() != cr.remark.strip():
+                    if repr(ex.remark).strip() != repr(cr.remark).strip():
                         exper += u"<td style='color: red;'>{0}</td></tr>".format(cr.remark)
                     else:
                         exper += u"<td>{0}</td></tr>".format(cr.remark)
@@ -904,6 +954,7 @@ class dtdream_resume_modify(models.Model):
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息修改,请您审批!' % self.name.name,
                                      content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.full_name)
         self.write({'state': '1', 'resume_approve': approve.id})
+        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.full_name)
 
     @api.multi
     def wkf_done(self):

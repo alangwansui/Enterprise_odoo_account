@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="rd_product_workflow" model="workflow">
             <field name="name">研发项目立项工作流</field>
             <field name="osv">dtdream_prod_appr</field>
@@ -46,9 +46,156 @@
         <record id="activity_jieshu" model="workflow.activity">
             <field name="wkf_id" ref="rd_product_workflow"/>
             <field name="name">结束</field>
-            <!--<field name="flow_stop">True</field>-->
             <field name="kind">function</field>
             <field name="action">wkf_jieshu()</field>
+        </record>
+
+        <record id="activity_zanting" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">审批暂停</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_zanting()</field>
+        </record>
+
+        <record id="trans_a_g" model="workflow.transition">
+            <field name="act_from" ref="rd_activity_draft"/>
+            <field name="act_to" ref="activity_zanting"/>
+            <field name="signal">draft_to_zanting</field>
+        </record>
+
+        <record id="trans_g_a" model="workflow.transition">
+            <field name="act_from" ref="activity_zanting"/>
+            <field name="act_to" ref="rd_activity_draft"/>
+            <field name="signal">zanting_to_draft</field>
+        </record>
+
+        <record id="trans_b_g" model="workflow.transition">
+            <field name="act_from" ref="activity_lixiang"/>
+            <field name="act_to" ref="activity_zanting"/>
+            <field name="signal">lixiang_to_zanting</field>
+        </record>
+
+        <record id="trans_g_b" model="workflow.transition">
+            <field name="act_from" ref="activity_zanting"/>
+            <field name="act_to" ref="activity_lixiang"/>
+            <field name="signal">zanting_to_lixiang</field>
+        </record>
+
+        <record id="trans_c_g" model="workflow.transition">
+            <field name="act_from" ref="activity_ztsj"/>
+            <field name="act_to" ref="activity_zanting"/>
+            <field name="signal">ztsj_to_zanting</field>
+        </record>
+
+        <record id="trans_g_c" model="workflow.transition">
+            <field name="act_from" ref="activity_zanting"/>
+            <field name="act_to" ref="activity_ztsj"/>
+            <field name="signal">zanting_to_ztsj</field>
+        </record>
+
+
+        <record id="trans_d_g" model="workflow.transition">
+            <field name="act_from" ref="activity_ddkf"/>
+            <field name="act_to" ref="activity_zanting"/>
+            <field name="signal">ddkf_to_zanting</field>
+        </record>
+
+        <record id="trans_g_d" model="workflow.transition">
+            <field name="act_from" ref="activity_zanting"/>
+            <field name="act_to" ref="activity_ddkf"/>
+            <field name="signal">zanting_to_ddkf</field>
+        </record>
+
+        <record id="trans_e_g" model="workflow.transition">
+            <field name="act_from" ref="activity_yzfb"/>
+            <field name="act_to" ref="activity_zanting"/>
+            <field name="signal">yzfb_to_zanting</field>
+        </record>
+
+        <record id="trans_g_e" model="workflow.transition">
+            <field name="act_from" ref="activity_zanting"/>
+            <field name="act_to" ref="activity_yzfb"/>
+            <field name="signal">zanting_to_yzfb</field>
+        </record>
+
+
+        <record id="activity_zhongzhi" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_workflow"/>
+            <field name="name">审批中止</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_zhongzhi()</field>
+        </record>
+
+        <record id="trans_a_h" model="workflow.transition">
+            <field name="act_from" ref="rd_activity_draft"/>
+            <field name="act_to" ref="activity_zhongzhi"/>
+            <field name="signal">draft_to_zhongzhi</field>
+        </record>
+
+        <record id="trans_h_a" model="workflow.transition">
+            <field name="act_from" ref="activity_zhongzhi"/>
+            <field name="act_to" ref="rd_activity_draft"/>
+            <field name="signal">zhongzhi_to_draft</field>
+        </record>
+
+        <record id="trans_b_h" model="workflow.transition">
+            <field name="act_from" ref="activity_lixiang"/>
+            <field name="act_to" ref="activity_zhongzhi"/>
+            <field name="signal">lixiang_to_zhongzhi</field>
+        </record>
+
+        <record id="trans_h_b" model="workflow.transition">
+            <field name="act_from" ref="activity_zhongzhi"/>
+            <field name="act_to" ref="activity_lixiang"/>
+            <field name="signal">zhongzhi_to_lixiang</field>
+        </record>
+
+        <record id="trans_c_h" model="workflow.transition">
+            <field name="act_from" ref="activity_ztsj"/>
+            <field name="act_to" ref="activity_zhongzhi"/>
+            <field name="signal">ztsj_to_zhongzhi</field>
+        </record>
+
+        <record id="trans_h_c" model="workflow.transition">
+            <field name="act_from" ref="activity_zhongzhi"/>
+            <field name="act_to" ref="activity_ztsj"/>
+            <field name="signal">zhongzhi_to_ztsj</field>
+        </record>
+
+        <record id="trans_d_h" model="workflow.transition">
+            <field name="act_from" ref="activity_ddkf"/>
+            <field name="act_to" ref="activity_zhongzhi"/>
+            <field name="signal">ddkf_to_zhongzhi</field>
+        </record>
+
+        <record id="trans_h_d" model="workflow.transition">
+            <field name="act_from" ref="activity_zhongzhi"/>
+            <field name="act_to" ref="activity_ddkf"/>
+            <field name="signal">zhongzhi_to_ddkf</field>
+        </record>
+
+        <record id="trans_e_h" model="workflow.transition">
+            <field name="act_from" ref="activity_yzfb"/>
+            <field name="act_to" ref="activity_zhongzhi"/>
+            <field name="signal">yzfb_to_zhongzhi</field>
+        </record>
+
+        <record id="trans_h_e" model="workflow.transition">
+            <field name="act_from" ref="activity_zhongzhi"/>
+            <field name="act_to" ref="activity_yzfb"/>
+            <field name="signal">zhongzhi_to_yzfb</field>
+        </record>
+
+        <record id="trans_g_h" model="workflow.transition">
+            <field name="act_from" ref="activity_zanting"/>
+            <field name="act_to" ref="activity_zhongzhi"/>
+            <field name="signal">zanting_to_zhongzhi</field>
+        </record>
+
+        <record id="trans_h_g" model="workflow.transition">
+            <field name="act_from" ref="activity_zhongzhi"/>
+            <field name="act_to" ref="activity_zanting"/>
+            <field name="signal">zhongzhi_to_zanting</field>
         </record>
 
         <record id="trans_a_b" model="workflow.transition">
@@ -117,85 +264,5 @@
             <field name="signal">js_to_yzfb</field>
         </record>
 
-
-        <!--ssssssssssssssssssssssssss版本流程ssssssssssssssssssssssss-->
-
-        <record id="rd_product_version_workflow" model="workflow">
-            <field name="name">研发产品版本工作流</field>
-            <field name="osv">dtdream_rd_version</field>
-            <field name="on_create">True</field>
-        </record>
-
-        <record id="activity_draft" model="workflow.activity">
-            <field name="wkf_id" ref="rd_product_version_workflow"/>
-            <field name="flow_start">True</field>
-            <field name="name">创建草稿</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_draft()</field>
-        </record>
-
-        <record id="activity_kaifa" model="workflow.activity">
-            <field name="wkf_id" ref="rd_product_version_workflow"/>
-            <field name="name">审批开发</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_kaifa()</field>
-        </record>
-
-        <record id="activity_dfb" model="workflow.activity">
-            <field name="wkf_id" ref="rd_product_version_workflow"/>
-            <field name="name">审批待发布</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_dfb()</field>
-        </record>
-
-         <record id="activity_yfb" model="workflow.activity">
-            <field name="wkf_id" ref="rd_product_version_workflow"/>
-            <field name="name">审批已发布</field>
-             <!--<field name="flow_stop">True</field>-->
-            <field name="kind">function</field>
-            <field name="action">wkf_yfb()</field>
-        </record>
-
-        <record id="ver_trans_a_b" model="workflow.transition">
-            <field name="act_from" ref="activity_draft"/>
-            <field name="act_to" ref="activity_kaifa"/>
-            <field name="signal">btn_to_kaifa</field>
-        </record>
-
-        <record id="ver_trans_b_a" model="workflow.transition">
-            <field name="act_from" ref="activity_kaifa"/>
-            <field name="act_to" ref="activity_draft"/>
-            <field name="signal">kaifa_to_draft</field>
-        </record>
-
-        <record id="ver_trans_b_c" model="workflow.transition">
-            <field name="act_from" ref="activity_kaifa"/>
-            <field name="act_to" ref="activity_dfb"/>
-            <field name="signal">btn_to_dfb</field>
-        </record>
-
-        <record id="ver_trans_c_b" model="workflow.transition">
-            <field name="act_from" ref="activity_dfb"/>
-            <field name="act_to" ref="activity_kaifa"/>
-            <field name="signal">dfb_to_kaifa</field>
-        </record>
-
-        <record id="ver_trans_c_a" model="workflow.transition">
-            <field name="act_from" ref="activity_dfb"/>
-            <field name="act_to" ref="activity_draft"/>
-            <field name="signal">dfb_to_draft</field>
-        </record>
-
-        <record id="ver_trans_c_d" model="workflow.transition">
-            <field name="act_from" ref="activity_dfb"/>
-            <field name="act_to" ref="activity_yfb"/>
-            <field name="signal">btn_to_yfb</field>
-        </record>
-
-        <record id="ver_trans_d_c" model="workflow.transition">
-            <field name="act_from" ref="activity_yfb"/>
-            <field name="act_to" ref="activity_dfb"/>
-            <field name="signal">yfb_to_dfb</field>
-        </record>
     </data>
 </openerp>

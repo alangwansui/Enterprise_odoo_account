@@ -8,6 +8,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('create_uid','=',uid)]</field>
         </record>
 
         <record id="act_to_approve" model="ir.actions.act_window">
@@ -16,6 +17,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('shenpiren.user_id','=',uid)]</field>
         </record>
 
         <record id="act_already_approve" model="ir.actions.act_window">
@@ -24,14 +26,23 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('approveds.user_id','=',uid)]</field>
         </record>
 
-        <record id="act_all_reports" model="ir.actions.act_window">
+        <record model="ir.actions.server" id="act_all_reports">
             <field name="name">所有单据</field>
-            <field name="res_model">dtdream.sale.business.report</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="model_id" ref="model_dtdream_sale_business_report"/>
+            <field name="code">
+                action = {
+                'name':'所有单据',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'dtdream.sale.business.report',
+                'domain': ['|','|','|',('shenpiren.user_id','=',uid),('approveds.user_id','=',uid),('create_uid','=',uid),('message_follower_ids.partner_id', '=', user.partner_id.id)],
+                'context':context,
+                }
+            </field>
         </record>
 
         <record model="ir.actions.server" id="act_shenpi_config">

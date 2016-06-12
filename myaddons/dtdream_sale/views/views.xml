@@ -341,14 +341,26 @@
                     <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
                     <field name="project_detail"/>
                     <field name="sale_channel"/>
-                    <field name="product_category_type_id" widget="many2many_tags"/>
+                    <field name="product_category_type_id" widget="many2many_tags" invisible="True"/>
                 </field>
+                <button name="action_schedule_meeting" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+                <xpath expr="//field[@name='sale_number']/parent::div/parent::button" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//header/child::button[2]" position="replace">
                     <button name="%(crm.crm_lead_lost_action)d" string="标记为失去"
                             type="action" class="oe_highlight"
                             context="{'default_lead_id': active_id}"
                             groups="dtdream_sale.group_dtdream_sale_manager"
                     />
+                </xpath>
+                <xpath expr="//header/child::button[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/child::button[4]" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <field name="partner_id" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -441,9 +453,9 @@
                     <field name="pre_implementation_time"/>
                     <field name="pre_check_time"/>
                     <field name="project_master_degree"/>
-                    <field name="project_space"/>
                     <field name="ali_division"/>
                     <field name="ali_saleman"/>
+                    <field name="is_dtdream_integrated"/>
                     <field name="partner_id" string="客户"
                            domain="[('customer','=','True')]"/>
                     <field name="dt_contact_name"/>
@@ -455,7 +467,30 @@
                 <label for="next_activity_id" position="replace">
                     <attribute name="invisible"></attribute>
                 </label>
-                <xpath expr="//page[@name='lead']" position="after">
+                <xpath expr="//field[@name='description']/parent::page" position="before">
+                    <page string="项目空间">
+                            <field name="project_space" mode="tree">
+                                <tree string="项目空间" editable="bottom">
+                                    <field name="categ_id" domain="[('parent_id.parent_id','=',False)]"/>
+                                    <field name="project_space"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="categ_id"/>
+                                            </group>
+                                            <group>
+                                                <field name="project_space"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" name="project_space_total">
+                                <field name="space_total"  class="oe_subtotal_footer_separator"/>
+                            </group>
+                    </page>
                     <page string="产品配置">
                             <field name="product_line" mode="tree">
                                 <tree string="产品配置">
@@ -687,7 +722,7 @@
                   <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
                   <field name="project_detail"/>
                   <field name="sale_channel"/>
-                  <field name="product_category_type_id" widget="many2many_tags"/>
+                  <field name="product_category_type_id" widget="many2many_tags" invisible="True"/>
               </field>
               <button name="action_set_lost" position="replace">
                   <button name="action_set_lost" string="标记为失去"
@@ -744,9 +779,9 @@
                   <field name="pre_implementation_time"/>
                   <field name="pre_check_time"/>
                   <field name="project_master_degree"/>
-                  <field name="project_space"/>
                   <field name="ali_division"/>
                   <field name="ali_saleman"/>
+                  <field name="is_dtdream_integrated"/>
                   <field name="partner_id" string="客户"
                          options='{"create_name_field": "name"}'
                          domain="[('customer','=','True')]"/>
@@ -768,6 +803,31 @@
               <field name="user_id" position="after">
                   <field name="team_id" domain="[('user_id','=',-99)]"/>
               </field>
+              <xpath expr="//field[@name='description']/parent::page" position="before">
+                    <page string="项目空间">
+                            <field name="project_space" mode="tree">
+                                <tree string="项目空间" editable="bottom">
+                                    <field name="categ_id" domain="[('parent_id.parent_id','=',False)]"/>
+                                    <field name="project_space"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="categ_id"/>
+                                            </group>
+                                            <group>
+                                                <field name="project_space"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" name="project_space_total">
+                                <field name="space_total"  class="oe_subtotal_footer_separator"/>
+                            </group>
+                    </page>
+                </xpath>
               <xpath expr="//page[@name='extra']" position="attributes">
                   <attribute name="invisible">1</attribute>
               </xpath>
@@ -937,6 +997,15 @@
             <field name="model">crm.team</field>
             <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
             <field name="arch" type="xml">
+                <label for="name" position="replace">
+                    <label for="name" class="oe_edit_only" string="项目团队"/>
+                </label>
+                <field name="name" position="replace">
+                    <field name="name" placeholder="项目团队名称"/>
+                </field>
+                <xpath expr="//group[@name='left']/parent::group" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <field name="member_ids" position="replace">
                     <field name="res_member_ids" widget="many2many_kanban" options="{'not_delete': True}">
                         <kanban quick_create="false" create="true" delete="true">
@@ -1009,6 +1078,7 @@
                 'default_type': 'opportunity',
 }</field>
         <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="view_id" ref="crm.crm_case_form_view_oppor"/>
         <field name="help" type="html">
             <p>
                 Odoo helps you keep track of your sales pipeline to follow
@@ -1064,7 +1134,7 @@
 
       <menuitem name="Leads" id="crm.menu_crm_leads" parent="base.menu_base_partner" sequence="3" action="crm.crm_lead_all_leads" groups="crm.group_use_lead"/>
       <menuitem id="crm.menu_crm_opportunities" action="crm.action_your_pipeline" parent="base.menu_base_partner" sequence="4"/>
-      <menuitem id="base.menu_partner_form" parent="base.menu_base_partner" action="base.action_partner_form" sequence="1"/>
+      <menuitem id="base.menu_partner_form" parent="base.menu_base_partner" action="base.action_partner_form" sequence="15"/>
 
       <menuitem name="产品" id="base.menu_top_dtdream_product" web_icon="dtdream_sale,static/description/product.png" action="product.product_template_action"/>
 

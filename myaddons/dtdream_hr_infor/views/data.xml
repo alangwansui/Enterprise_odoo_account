@@ -377,7 +377,7 @@
             <field name="abbre">YP</field>
             <field name="pro_name">上海市</field>
         </record>
-        <record id="state_S_ZB" model="dtdream.hr.state">
+        <record id="state_S_ZB_S" model="dtdream.hr.state">
             <field name="name">闸北区</field>
             <field name="abbre">ZB</field>
             <field name="pro_name">上海市</field>
@@ -455,7 +455,7 @@
             <field name="abbre">BB</field>
             <field name="pro_name">安徽省</field>
         </record>
-        <record id="state_A_CZ" model="dtdream.hr.state">
+        <record id="state_A_CZ_A" model="dtdream.hr.state">
             <field name="name">池州市</field>
             <field name="abbre">CZ</field>
             <field name="pro_name">安徽省</field>
@@ -639,7 +639,7 @@
             <field name="abbre">NC</field>
             <field name="pro_name">重庆市</field>
         </record>
-        <record id="state_C_QJ" model="dtdream.hr.state">
+        <record id="state_C_QJ_A" model="dtdream.hr.state">
             <field name="name">綦江区</field>
             <field name="abbre">QJ</field>
             <field name="pro_name">重庆市</field>
@@ -727,7 +727,7 @@
             <field name="abbre">XY</field>
             <field name="pro_name">江西省</field>
         </record>
-        <record id="state_J_YC" model="dtdream.hr.state">
+        <record id="state_J_YC_A" model="dtdream.hr.state">
             <field name="name">宜春市</field>
             <field name="abbre">YC</field>
             <field name="pro_name">江西省</field>
@@ -739,27 +739,27 @@
         </record>
 
 
-        <record id="state_S_BZ" model="dtdream.hr.state">
+        <record id="state_S_BZ_A" model="dtdream.hr.state">
             <field name="name">滨州市</field>
             <field name="abbre">BZ</field>
             <field name="pro_name">山东省</field>
         </record>
-        <record id="state_S_DZ" model="dtdream.hr.state">
+        <record id="state_S_DZ_A" model="dtdream.hr.state">
             <field name="name">德州市</field>
             <field name="abbre">DZ</field>
             <field name="pro_name">山东省</field>
         </record>
-        <record id="state_S_DY" model="dtdream.hr.state">
+        <record id="state_S_DY_A" model="dtdream.hr.state">
             <field name="name">东营市</field>
             <field name="abbre">DY</field>
             <field name="pro_name">山东省</field>
         </record>
-        <record id="state_S_HZ" model="dtdream.hr.state">
+        <record id="state_S_HZ_A" model="dtdream.hr.state">
             <field name="name">菏泽市</field>
             <field name="abbre">HZ</field>
             <field name="pro_name">山东省</field>
         </record>
-        <record id="state_S_JN" model="dtdream.hr.state">
+        <record id="state_S_JN_A" model="dtdream.hr.state">
             <field name="name">济南市</field>
             <field name="abbre">JN</field>
             <field name="pro_name">山东省</field>
@@ -836,7 +836,7 @@
             <field name="abbre">HB</field>
             <field name="pro_name">河南省</field>
         </record>
-        <record id="state_H_JZ" model="dtdream.hr.state">
+        <record id="state_H_JZ_A" model="dtdream.hr.state">
             <field name="name">焦作市</field>
             <field name="abbre">JZ</field>
             <field name="pro_name">河南省</field>
@@ -891,7 +891,7 @@
             <field name="abbre">XX</field>
             <field name="pro_name">河南省</field>
         </record>
-        <record id="state_H_XY" model="dtdream.hr.state">
+        <record id="state_H_XY_A" model="dtdream.hr.state">
             <field name="name">信阳市</field>
             <field name="abbre">XY</field>
             <field name="pro_name">河南省</field>
@@ -1005,7 +1005,7 @@
             <field name="abbre">JZ</field>
             <field name="pro_name">湖北省</field>
         </record>
-        <record id="state_H_SY" model="dtdream.hr.state">
+        <record id="state_H_SY_A" model="dtdream.hr.state">
             <field name="name">十堰市</field>
             <field name="abbre">SY</field>
             <field name="pro_name">湖北省</field>
@@ -1144,7 +1144,7 @@
             <field name="abbre">LD</field>
             <field name="pro_name">湖南省</field>
         </record>
-        <record id="state_H_SY" model="dtdream.hr.state">
+        <record id="state_H_SY_B" model="dtdream.hr.state">
             <field name="name">邵阳市</field>
             <field name="abbre">SY</field>
             <field name="pro_name">湖南省</field>
@@ -1159,7 +1159,7 @@
             <field name="abbre">XXTJZ</field>
             <field name="pro_name">湖南省</field>
         </record>
-        <record id="state_H_YY" model="dtdream.hr.state">
+        <record id="state_H_YY_A" model="dtdream.hr.state">
             <field name="name">益阳市</field>
             <field name="abbre">YY</field>
             <field name="pro_name">湖南省</field>
@@ -1179,7 +1179,7 @@
             <field name="abbre">ZJJ</field>
             <field name="pro_name">湖南省</field>
         </record>
-        <record id="state_H_ZZ" model="dtdream.hr.state">
+        <record id="state_H_ZZ_A" model="dtdream.hr.state">
             <field name="name">株洲市</field>
             <field name="abbre">ZZ</field>
             <field name="pro_name">湖南省</field>
@@ -1213,7 +1213,7 @@
         </record>
 
 
-        <record id="state_G_CZ" model="dtdream.hr.state">
+        <record id="state_G_CZ_A" model="dtdream.hr.state">
             <field name="name">潮州市</field>
             <field name="abbre">CZ</field>
             <field name="pro_name">广东省</field>
@@ -1238,7 +1238,7 @@
             <field name="abbre">HY</field>
             <field name="pro_name">广东省</field>
         </record>
-        <record id="state_G_HZ" model="dtdream.hr.state">
+        <record id="state_G_HZ_A" model="dtdream.hr.state">
             <field name="name">惠州市</field>
             <field name="abbre">HZ</field>
             <field name="pro_name">广东省</field>
@@ -1263,7 +1263,7 @@
             <field name="abbre">MZ</field>
             <field name="pro_name">广东省</field>
         </record>
-        <record id="state_G_QY" model="dtdream.hr.state">
+        <record id="state_G_QY_A" model="dtdream.hr.state">
             <field name="name">清远市</field>
             <field name="abbre">QY</field>
             <field name="pro_name">广东省</field>
@@ -1360,7 +1360,7 @@
             <field name="abbre">LXHZ</field>
             <field name="pro_name">甘肃省</field>
         </record>
-        <record id="state_G_LZ" model="dtdream.hr.state">
+        <record id="state_G_LZ_A" model="dtdream.hr.state">
             <field name="name">兰州市</field>
             <field name="abbre">LZ</field>
             <field name="pro_name">甘肃省</field>
@@ -1385,7 +1385,7 @@
             <field name="abbre">WW</field>
             <field name="pro_name">甘肃省</field>
         </record>
-        <record id="state_G_ZY" model="dtdream.hr.state">
+        <record id="state_G_ZY_A" model="dtdream.hr.state">
             <field name="name">张掖市</field>
             <field name="abbre">ZY</field>
             <field name="pro_name">甘肃省</field>
@@ -1516,12 +1516,12 @@
             <field name="abbre">BD</field>
             <field name="pro_name">河北省</field>
         </record>
-        <record id="state_H_CD" model="dtdream.hr.state">
+        <record id="state_H_CD_A" model="dtdream.hr.state">
             <field name="name">承德市</field>
             <field name="abbre">CD</field>
             <field name="pro_name">河北省</field>
         </record>
-        <record id="state_H_CZ" model="dtdream.hr.state">
+        <record id="state_H_CZ_A" model="dtdream.hr.state">
             <field name="name">沧州市</field>
             <field name="abbre">CZ</field>
             <field name="pro_name">河北省</field>
@@ -1531,7 +1531,7 @@
             <field name="abbre">HD</field>
             <field name="pro_name">河北省</field>
         </record>
-        <record id="state_H_HS" model="dtdream.hr.state">
+        <record id="state_H_HS_A" model="dtdream.hr.state">
             <field name="name">衡水市</field>
             <field name="abbre">HS</field>
             <field name="pro_name">河北省</field>
@@ -1556,7 +1556,7 @@
             <field name="abbre">TS</field>
             <field name="pro_name">河北省</field>
         </record>
-        <record id="state_H_XT" model="dtdream.hr.state">
+        <record id="state_H_XT_A" model="dtdream.hr.state">
             <field name="name">邢台市</field>
             <field name="abbre">XT</field>
             <field name="pro_name">河北省</field>
@@ -1589,12 +1589,12 @@
             <field name="abbre">HEB</field>
             <field name="pro_name">黑龙江省</field>
         </record>
-        <record id="state_H_HG" model="dtdream.hr.state">
+        <record id="state_H_HG_A" model="dtdream.hr.state">
             <field name="name">鹤岗市</field>
             <field name="abbre">HG</field>
             <field name="pro_name">黑龙江省</field>
         </record>
-        <record id="state_H_HH" model="dtdream.hr.state">
+        <record id="state_H_HH_A" model="dtdream.hr.state">
             <field name="name">黑河市</field>
             <field name="abbre">HH</field>
             <field name="pro_name">黑龙江省</field>
@@ -1634,7 +1634,7 @@
             <field name="abbre">SYS</field>
             <field name="pro_name">黑龙江省</field>
         </record>
-        <record id="state_H_YC" model="dtdream.hr.state">
+        <record id="state_H_YC_A" model="dtdream.hr.state">
             <field name="name">伊春市</field>
             <field name="abbre">YC</field>
             <field name="pro_name">黑龙江省</field>
@@ -1656,7 +1656,7 @@
             <field name="abbre">SS</field>
             <field name="pro_name">海南省</field>
         </record>
-        <record id="state_H_ZZ" model="dtdream.hr.state">
+        <record id="state_H_ZZ_B" model="dtdream.hr.state">
             <field name="name">儋州市</field>
             <field name="abbre">ZZ</field>
             <field name="pro_name">海南省</field>
@@ -1866,7 +1866,7 @@
             <field name="abbre">HB</field>
             <field name="pro_name">青海省</field>
         </record>
-        <record id="state_Q_HN" model="dtdream.hr.state">
+        <record id="state_Q_HN_A" model="dtdream.hr.state">
             <field name="name">黄南藏族</field>
             <field name="abbre">HN</field>
             <field name="pro_name">青海省</field>
@@ -1938,7 +1938,7 @@
             <field name="abbre">LSYZ</field>
             <field name="pro_name">四川省</field>
         </record>
-        <record id="state_S_LS" model="dtdream.hr.state">
+        <record id="state_S_LS_A" model="dtdream.hr.state">
             <field name="name">乐山市</field>
             <field name="abbre">LS</field>
             <field name="pro_name">四川省</field>
@@ -2040,7 +2040,7 @@
             <field name="abbre">XY</field>
             <field name="pro_name">陕西省</field>
         </record>
-        <record id="state_S_YA" model="dtdream.hr.state">
+        <record id="state_S_YA_A" model="dtdream.hr.state">
             <field name="name">延安市</field>
             <field name="abbre">YA</field>
             <field name="pro_name">陕西省</field>

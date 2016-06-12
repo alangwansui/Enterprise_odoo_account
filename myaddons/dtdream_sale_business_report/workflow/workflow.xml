@@ -128,6 +128,7 @@
             <field name="act_from" ref="act_approve3"/>
             <field name="act_to" ref="act_approve4"/>
             <field name="signal">btn_approve</field>
+            <field name="condition">pro_zongbu_finish=="1"</field>
         </record>
 
         <record id="trans_approve4_approve5" model="workflow.transition">
@@ -140,6 +141,7 @@
             <field name="act_from" ref="act_approve5"/>
             <field name="act_to" ref="act_approve6"/>
             <field name="signal">btn_approve</field>
+            <field name="condition">pro_zongbu_finish=="1"</field>
         </record>
 
         <record id="trans_approve6_approve7" model="workflow.transition">
@@ -152,12 +154,14 @@
             <field name="act_from" ref="act_approve7"/>
             <field name="act_to" ref="act_approve8"/>
             <field name="signal">btn_approve</field>
+            <field name="condition">if_out_grant=="1"</field>
         </record>
 
         <record id="trans_approve7_done" model="workflow.transition">
             <field name="act_from" ref="act_approve7"/>
             <field name="act_to" ref="act_done"/>
-            <field name="signal">btn_finish</field>
+            <field name="signal">btn_approve</field>
+            <field name="condition">if_out_grant=="0"</field>
         </record>
 
         <record id="trans_approve8_approve9" model="workflow.transition">

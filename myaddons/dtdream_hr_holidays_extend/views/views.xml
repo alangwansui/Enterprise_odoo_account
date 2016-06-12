@@ -2,6 +2,51 @@
         <openerp>
             <data>
  <!--=======================================================================================view===================================================================-->
+                <record model="ir.ui.view" id="hr_holidays.view_holiday_employee">
+                    <field name="name">hr.holidays.report_employee_tree</field>
+                    <field name="model">hr.holidays</field>
+                    <field name="priority">21</field>
+                    <field name="arch" type="xml">
+                        <tree decoration-danger="state == 'refuse'" decoration-info="state == 'draft'" string="Employee's Leave">
+                            <field name="employee_id"/>
+                            <field name="type"/>
+                            <field name="name"/>
+                            <field name="number_of_days" string="Number of Days" sum="Remaining Days"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="holiday_status_id"/>
+                            <field name="state"/>
+                            <button name="toggle_payslip_status" invisible="1" field_name="payslip_status" type="object"
+                                widget="toggle_button" options='{"active": "Reported in last payslips", "inactive": "To Report in Payslip"}' groups="base.group_hr_manager"/>
+                            <field name="report_note" invisible="1"/>
+                            <field name="payslip_status" invisible="1"/>
+                        </tree>
+                    </field>
+                </record>
+
+                <record model="ir.ui.view" id="hr_holidays.view_holiday_simple">
+                    <field name="name">hr.holidays.report_tree</field>
+                    <field name="model">hr.holidays</field>
+                    <field name="priority">20</field>
+                    <field name="arch" type="xml">
+                        <tree decoration-danger="state == 'refuse'" decoration-info="state == 'draft'" string="Leaves Summary">
+                            <field name="employee_id"/>
+                            <field name="category_id" invisible="1"/>
+                            <field name="department_id" invisible="1"/>
+                            <field name="holiday_status_id"/>
+                            <field name="name" invisible="1"/>
+                            <field name="number_of_days" string="Number of Days" sum="Remaining Days"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="type"/>
+                            <field name="manager_id" invisible="1"/>
+                            <field name="user_id" invisible="1"/>
+                            <field name="state"/>
+                            <field name="current_shenpiren"></field>
+                        </tree>
+                    </field>
+                </record>
+
                 <record id="edit_holiday_new_inher" model="ir.ui.view">
                   <field name="name">edit.holiday.new.inher</field>
                   <field name="model">hr.holidays</field>
@@ -21,7 +66,7 @@
                             <field name="attachment_name" invisible="1"></field>
 
                             <field name="attachment" widget="binary" height="64" filename="attachment_name" attrs="{'readonly':[('state','not in','draft')]}"></field>
-                            <field name="year" attrs="{'invisible':[('type','not in','add')],'required': [('type', 'in','add')],'readonly':[('state','not in','draft')]}"></field>
+                            <field name="year" attrs="{'invisible':[('create_type','not in','manage')],'required': [('create_type', 'in','manage')],'readonly':[('state','not in','draft')]}"></field>
                             <field name="current_shenpiren" attrs="{'invisible':'(1==1)'}"></field>
                             <field name="is_shenpiren" attrs="{'invisible':'(1==1)'}"></field>
                         </field>
@@ -85,8 +130,8 @@
                                  <p style="text-align:center">请假说明</p>
                                  <p>一、事假说明：</p>
                                  <p>1、事假期间不包含公休日和法定节假日。</p>
-                                 <p>2、请事假最小单位为半小时</p>
-                                 <p>3．请事假时如有年休假余额的，优先从年休假余额中抵扣相应的事假时间。</p>
+                                 <p>2、请事假最小单位为半小时。</p>
+                                 <p>3、请事假时如有年休假余额的，优先从年休假余额中抵扣相应的事假时间。</p>
                                  <p>二、年休假说明：</p>
                                  <p>1、年休假余额在员工自助处查询，本次请假天数不能超出当前余额。</p>
                                  <p>2、年休假期间不包含公休日和法定节假日。</p>
@@ -118,11 +163,12 @@
                             <field name="state"></field>
                             <group expand="0" string="Group By">
                                 <filter name="group_employee" string="花名" context="{'group_by':'employee_id'}"/>
-                                <filter name="group_gonghao" string="工号" context="{'group_by':'gonghao'}"></filter>
+                                <!--<filter name="group_gonghao" string="工号" context="{'group_by':'gonghao'}"></filter>-->
                                 <filter name="group_bumen" string="部门" context="{'group_by':'department_id'}"></filter>
-                                <filter name="group_category" string="Category" context="{'group_by':'category_id'}"/>
-                                <filter string="Manager" context="{'group_by':'manager_id'}"/>
-                                <filter name="group_type" string="Type" context="{'group_by':'holiday_status_id'}"/>
+                                <!--<filter name="group_category" string="Category" context="{'group_by':'category_id'}"/>-->
+                                <!--<filter string="Manager" context="{'group_by':'manager_id'}"/>-->
+                                <!--<filter name="group_type" string="Type" context="{'group_by':'holiday_status_id'}"/>-->
+                                <filter name="group_year" string="年份" context="{'group_by':'year'}"></filter>
                                 <filter name="group_state" string="状态" context="{'group_by':'state'}"></filter>
 
                             </group>
@@ -146,7 +192,7 @@
                                 <field name="date_from" invisible="1"/>
                                 <field name="type" invisible="1"></field>
                                 <field name="message_needaction" invisible="1"/>
-                                <field name="year" attrs="{'invisible':[('type','=','remove')]}"></field>
+                                <field name="year"></field>
                                 <field name="state"/>
                             </tree>
                         </field>
@@ -172,10 +218,83 @@
                     </field>
                 </record>
 
+                <record id="hr_holidays.view_hr_holidays_filter" model="ir.ui.view"><!--休假搜索视图-->
+                        <field name="name">hr.holidays.filter</field>
+                        <field name="model">hr.holidays</field>
+                        <field name="arch" type="xml">
+                            <search string="Search Leave">
+                                <field name="name"/>
+                                <filter domain="[('state','=','draft')]" string="草稿" name="draft"/>
+                                <filter domain="[('state','=','confirm')]" string="一级审批" name="fir"/>
+                                <filter domain="[('state','=','confirm2')]" string="二级审批" name="sec"/>
+                                <filter domain="[('state','=','confirm3')]" string="三级审批" name="thi"/>
+                                <filter domain="[('state','=','confirm4')]" string="四级审批" name="four"/>
+                                <filter domain="[('state','=','confirm5')]" string="五级审批" name="five"/>
+                                <filter string="Approved Leaves" domain="[('state', '=', 'validate')]" name="approved"/>
+                                <filter domain="[('state','=','refuse')]" string="拒绝" name="refuse"/>
+                                <separator/>
+
+                                <separator/>
+                                <!--<filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>-->
+                                <separator/>
+                                <!--<filter string="My Department Leaves" name="department" domain="[('department_id.manager_id.user_id', '=', uid)]" help="My Department Leaves"/>-->
+                                <!--<filter string="My Team Leaves" domain="[('employee_id.parent_id.user_id', '=', uid)]" groups="base.group_hr_manager" help="Leaves of Your Team Member"/>-->
+                                <separator/>
+                                <!--<filter string="To Report in Payslip" name="gray" domain="[('payslip_status', '=', False)]" groups="base.group_hr_manager"/>-->
+                                <separator/>
+                                <!--<filter string="To Do" name="todo" domain="[('payslip_status', '=', False), ('holiday_status_id.active', '=', True)]"/>-->
+                                <separator/>
+                                <!--<filter name="year" string="Current" domain="[('holiday_status_id.active', '=', True)]" help="Active Leaves and Allocations"/>-->
+                                <separator/>
+                                <!--<filter string="My Requests" name="my_leaves" domain="[('user_id', '=', uid)]"/>-->
+                                <separator/>
+                                <!--<filter name="leaves" string="Leaves" domain="[('type', '=', 'remove')]"/>-->
+                                <!--<filter name="allocations" string="" domain="[('type', '=', 'add')]"/>-->
+                                <field name="employee_id"/>
+                                <field name="department_id"/>
+                                <field name="holiday_status_id"/>
+                                <field name="state"></field>
+                                <group expand="0" string="Group By">
+                                    <filter name="group_name" string="Description" context="{'group_by':'name'}"/>
+                                    <filter name="group_employee" string="Employee" context="{'group_by':'employee_id'}"/>
+                                    <!--<filter name="group_category" string="Category" context="{'group_by':'category_id'}"/>-->
+                                    <!--<filter string="Manager" context="{'group_by':'manager_id'}"/>-->
+                                    <filter name="group_type" string="休假类型" context="{'group_by':'holiday_status_id'}"/>
+                                    <separator/>
+                                    <filter name="group_date_from" string="Start Month" context="{'group_by':'date_from:month'}"/>
+                                </group>
+                            </search>
+                        </field>
+                  </record>
+
 
 
 
 <!--=============================================================================act_window====================================================================================-->
+
+
+                  <record model="ir.actions.act_window" id="hr_holidays.open_employee_leaves">
+                        <field name="name">Leave Details</field>
+                        <field name="res_model">hr.holidays</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form,calendar</field>
+                        <field name="view_id" ref="hr_holidays.view_holiday_employee"/>
+                        <field name="context">{'default_type': 'remove'}</field>
+                        <field name="domain">[('type','=','remove')]</field>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+                  </record>
+
+                  <record model="ir.actions.act_window" id="hr_holidays.open_employee_leaves2">
+                        <field name="name">报告</field>
+                        <field name="res_model">hr.holidays</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form,calendar</field>
+                        <field name="context">{'default_type': 'remove'}</field>
+                        <field name="domain">[('type','=','remove')]</field>
+                        <field name="view_id" ref="hr_holidays.view_holiday_simple"/>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+                  </record>
+
 
                   <record model="ir.actions.act_window" id="hr_holidays.open_department_holidays_approve2"><!--待批准休假-->
 
@@ -185,7 +304,7 @@
                         <field name="view_mode">tree,form,calendar</field>
                         <field name="context">{}</field>
                         <field name="domain">['&amp;','&amp;',('type','=','remove'),('current_shenpiren.user_id','=',uid),('create_type','not in',['manage'])]</field>
-                        <field name="view_id" ref="hr_holidays.view_holiday_allocation_tree"/>
+                        <field name="view_id" ref="hr_holidays.view_holiday_simple"/>
                         <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
                   <record model="ir.actions.act_window" id="hr_holidays.open_hr_holidays_approved"><!--已批准休假-->
@@ -196,7 +315,7 @@
                         <field name="view_mode">tree,form</field>
                         <field name="context">{}</field>
                         <field name="domain">['&amp;','|',('state','in',['validate']),('current_shenpiren.user_id','!=',uid),'&amp;','|','|','|','|',('shenpiren_his1','=',uid),('shenpiren_his2','=',uid),('shenpiren_his3','=',uid),('shenpiren_his4','=',uid),('shenpiren_his5','=',uid),('create_type','=',False)]</field>
-                        <field name="view_id" ref="hr_holidays.view_holiday_allocation_tree"/>
+                        <field name="view_id" ref="hr_holidays.view_holiday_simple"/>
                         <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
 
@@ -209,8 +328,6 @@
                         <!--<field name="view_id" eval="hr_holidays.view_holiday_simple"></field>-->
                         <field name="context">{
                             'search_default_group_type': 1,
-                            'search_default_year': 1 ,
-                            'search_default_my_leaves': 1,
                             'needaction_menu_ref':
                             [
                                 'hr_holidays.menu_open_ask_holidays_new',
@@ -220,7 +337,29 @@
                             ]
                         }</field>
 
-                        <field name="domain">[('holiday_type','=','employee')]</field>
+                        <field name="domain">[('holiday_type','=','employee'),('employee_id.user_id','=',uid)]</field>
+                        <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+                  </record>
+
+                  <record model="ir.actions.act_window" id="hr_holidays.open_all_holiday_request"><!--所有单据-->
+
+                        <field name="name">所有单据</field>
+                        <field name="res_model">hr.holidays</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">tree,form</field>
+                        <!--<field name="view_id" eval="hr_holidays.view_holiday_simple"></field>-->
+                        <field name="context">{
+
+                            'needaction_menu_ref':
+                            [
+                                'hr_holidays.menu_open_ask_holidays_new',
+                                'hr_holidays.menu_open_allocation_holidays',
+                                'hr_holidays.menu_request_approve_allocation',
+                                'hr_holidays.menu_open_employee_leave',
+                            ]
+                        }</field>
+
+                        <field name="domain">[('holiday_type','=','employee'),('employee_id.user_id','=',uid)]</field>
                         <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
                   </record>
 
@@ -325,19 +464,19 @@
                           groups="base.group_hr_user"/>
 
                     <record id="view_employee_form_holidays_inherit" model="ir.ui.view">
-                    <field name="name">hr.employee.holidays.form.inherit</field>
-                    <field name="model">hr.employee</field>
-                    <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
-                    <field name="arch" type="xml">
-                        <button name="toggle_active" position="before">
-                            <field name="can_view_holidays" invisible="True"/>
-                           <button class="oe_stat_button" type="action" name="%(hr_holidays.open_ask_holidays)d"
-                            icon="fa-strikethrough" attrs="{'invisible':[('can_view_holidays','=',False)]}">
-                            <field string="休假" name="holidays_nums" widget="statinfo"/>
-                           </button>
-                        </button>
-                    </field>
-                </record>
+                        <field name="name">hr.employee.holidays.form.inherit</field>
+                        <field name="model">hr.employee</field>
+                        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+                        <field name="arch" type="xml">
+                            <button name="toggle_active" position="before">
+                                <field name="can_view_holidays" invisible="True"/>
+                               <button class="oe_stat_button" type="action" name="%(hr_holidays.open_ask_holidays)d"
+                                icon="fa-strikethrough" attrs="{'invisible':[('can_view_holidays','=',False)]}">
+                                <field string="休假" name="holidays_nums" widget="statinfo"/>
+                               </button>
+                            </button>
+                        </field>
+                    </record>
 <!--=======================================================================================menuitem===================================================================-->
                  <!--分配申请-->
                  <delete id="hr_holidays.menu_open_allocation_holidays" model="ir.ui.menu"></delete>
@@ -358,7 +497,17 @@
                  <menuitem name="年休假设定" parent="hr_holidays.menu_hr_holidays_root" id="menu_open_set_nianxiujia" sequence="22" groups="base.group_hr_user"/>
                  <menuitem name="年休假分配" parent="menu_open_set_nianxiujia" id="open_allocate_request" action="hr_holidays.open_allocation_holidays2" groups="base.group_hr_user,base.group_hr_manager"></menuitem>
                  <menuitem name="年休假扣除" parent="menu_open_set_nianxiujia" id="open_allocate_mini" action="hr_holidays.open_ask_holidays2" groups="base.group_hr_user,base.group_hr_manager"></menuitem>
-                <menuitem name="休假统计" parent="hr_holidays.menu_hr_holidays_my_leaves" id="hr_holidays.menu_open_company_allocation" action="hr_holidays.open_company_allocation" sequence="21"/>
+                 <menuitem name="休假统计" parent="hr_holidays.menu_hr_holidays_my_leaves" id="hr_holidays.menu_open_company_allocation" action="hr_holidays.open_company_allocation" sequence="21"/>
+
+                 <menuitem name="所有单据" parent="hr_holidays.menu_hr_holidays_root" id="menu_open_all_holiday_request" action="hr_holidays.open_all_holiday_request"></menuitem>
+
+                <delete id="hr_holidays.menu_hr_holidays_report" model="ir.ui.menu"></delete>
+                <delete id="hr_holidays.menu_open_employee_leave" model="ir.ui.menu"></delete>
+                <delete id="hr_holidays.menu_hr_available_holidays_report_tree" model="ir.ui.menu"></delete>
+                <delete id="hr_holidays.menu_account_central_journal" model="ir.ui.menu"></delete>
+                <menuitem name="报告" id="hr_holidays.menu_hr_holidays_report_new" parent="hr_holidays.menu_hr_holidays_root" sequence="98" groups="base.group_hr_user" action="hr_holidays.open_employee_leaves2"/>
+
+
 
             </data>
         </openerp>

@@ -4,17 +4,18 @@ from openerp import models, fields, api
 from openerp.osv import osv
 from openerp.exceptions import ValidationError
 from datetime import datetime
+from lxml import etree
 import re
 
 
 class dtdream_travel(models.Model):
     _name = 'dtdream.travel.chucha'
-    _description = u"出差"
+    _description = u'出差'
     _inherit = ['mail.thread']
 
     warning_digit = {
                     'title': u"提示",
-                    'message': u"输入费用含非数字，或者输入的数字不合法!"
+                    'message': u"只可输入数字!"
                 }
 
     warning_order = {
@@ -27,7 +28,7 @@ class dtdream_travel(models.Model):
     def _check_traveling_fee(self):
         p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.traveling_fee:
-            if not p.search(str(self.traveling_fee)):
+            if not p.search(self.traveling_fee.encode("utf-8")):
                 self.traveling_fee = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
@@ -36,7 +37,7 @@ class dtdream_travel(models.Model):
     def _check_incity_fee(self):
         p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.incity_fee:
-            if not p.search(str(self.incity_fee)):
+            if not p.search(self.incity_fee.encode("utf-8")):
                 self.incity_fee = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
@@ -45,7 +46,7 @@ class dtdream_travel(models.Model):
     def _check_hotel_fee(self):
         p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.hotel_expense:
-            if not p.search(str(self.hotel_expense)):
+            if not p.search(self.hotel_expense.encode("utf-8")):
                 self.hotel_expense = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
@@ -54,7 +55,7 @@ class dtdream_travel(models.Model):
     def _check_other_fee(self):
         p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.other_expense:
-            if not p.search(str(self.other_expense)):
+            if not p.search(self.other_expense.encode("utf-8")):
                 self.other_expense = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
@@ -126,11 +127,13 @@ class dtdream_travel(models.Model):
         if len(self.journey_id) <= 0:
             raise ValidationError(u"请至少填写一条行程记录!")
 
-    def unlink(self, cr, uid, ids, context=None):
-        for rec in self.browse(cr, uid, ids, context=context):
-            if rec.state != '0'and rec.env.user.id != 1:
+    @api.multi
+    def unlink(self):
+        manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
+        for rec in self:
+            if not manager and rec.state != '0':
                 raise osv.except_osv(u'审批流程中的出差申请单无法删除!')
-            return super(dtdream_travel, self).unlink(cr, uid, ids, context)
+            return super(dtdream_travel, self).unlink()
 
     @api.one
     def _compute_is_current(self):
@@ -202,7 +205,7 @@ class dtdream_travel(models.Model):
     def _check_start_end_time(self):
         """检查各行程间时间是否冲突，是否与外出公干时间冲突,是否与之前提交的出差申请时间冲突"""
         cr = self.env["dtdream_hr_business.business_detail"].search([("business.name.id", "=", self.name.id),
-                                                                     ("business.state", "not in", (0, -1))])
+                                                                     ("business.state", "not in", ('-8','99'))])
         crr = self.env["dtdream.travel.journey"].search([("travel_id.name.id", "=", self.name.id)])
         for index, journey in enumerate(self.journey_id):
             start = journey.starttime
@@ -214,13 +217,34 @@ class dtdream_travel(models.Model):
             for travel in crr:
                 if travel.id == journey.id:
                     continue
-                if travel.starttime[:10] <= journey.starttime < travel.endtime[:10] or \
-                                        travel.starttime[:10] < journey.endtime <= travel.endtime[:10]:
+                if travel.starttime[:10] <= journey.starttime <= travel.endtime[:10] or \
+                                        travel.starttime[:10] <= journey.endtime <= travel.endtime[:10]:
                     raise ValidationError("{0}到{1}时间与之前提交的出差申请时间冲突!".format(journey.starttime, journey.endtime))
             for detail in cr:
-                if detail.startTime[:10] <= journey.starttime < detail.endTime[:10] or \
-                                        detail.startTime[:10] < journey.endtime <= detail.endTime[:10]:
+                if detail.startTime[:10] <= journey.starttime <= detail.endTime[:10] or \
+                                        detail.startTime[:10] <= journey.endtime <= detail.endTime[:10]:
                     raise ValidationError("{0}到{1}时间与外出公干时间重合".format(journey.starttime, journey.endtime))
+
+    @api.multi
+    def check_submit_dtdream_travel(self):
+        """提交时做检查时间冲突检查"""
+        self._check_start_end_time()
+        self.signal_workflow('btn_submit')
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_travel, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if my_action.name != u"我的申请":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
 
     def create(self, cr, uid, values, context=None):
         """申请人默认添加关注"""
@@ -241,7 +265,7 @@ class dtdream_travel(models.Model):
     can_restart = fields.Boolean(string="是否有权限重启", compute=_compute_can_restart)
     has_edit = fields.Boolean(compute=has_edit_shenpiren, string="是否有权限编辑审批人", default=True)
     workid = fields.Char(string="工号", compute=_compute_shenpi_person)
-    department = fields.Char(string="部门", compute=_compute_shenpi_person)
+    department = fields.Char(string="部门", compute=_compute_shenpi_person, store=True)
     department_shouyi = fields.Many2one('hr.department', string="受益部门", required=True)
     create_time = fields.Datetime(string="申请时间", default=lambda self: datetime.now(), readonly=True)
     traveling_fee = fields.Char(string="在途交通费(元)", required=True)
@@ -280,13 +304,13 @@ class dtdream_travel(models.Model):
         if self.shenpi_second.id:
             if self.department_shouyi != self.name.department_id and not self.shenpi_third:
                 raise osv.except_osv(u'申请人与受益部门不是同一部门，请填写第三审批人!')
+            self.write({'state': '2', "shenpiren": self.shenpi_second.id, "approve": [(4, self.shenpi_first.id)]})
             # content = u'%s批准了您的出差申请！' % self.shenpi_first.name
             # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
             #     self.name.name, self.create_time[:10], self.shenpi_first.name), content=content,
             #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
             self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
                            u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_second.work_email)
-            self.write({'state': '2', "shenpiren": self.shenpi_second.id, "approve": [(4, self.shenpi_first.id)]})
             self.message_post(body=u'批准,一级审批 --> 二级审批 '+u'下一审批人:' + self.shenpi_second.name)
         else:
             raise osv.except_osv(u'第二审批人为必填项!')
@@ -371,7 +395,7 @@ class dtdream_travel_journey(models.Model):
     reason = fields.Text(string="出差原因")
 
     _sql_constraints = [
-        ("date_check", "CHECK(starttime < endtime)", u'结束时间必须大于出差时间')
+        ("date_check", "CHECK(starttime <= endtime)", u'结束时间必须大于等于出差时间')
     ]
 
 

@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
-
-        <record id="rd_prod_rule_01" model="ir.rule">
-             <field name="name">全局规则：研发产品删除</field>
-             <field name="model_id" ref="model_dtdream_prod_appr"/>
-             <field name="perm_read" eval="0"/>
-             <field name="perm_create" eval="0"/>
-             <field name="perm_write" eval="0"/>
-             <field name="perm_unlink" eval="1"/>
-             <field name="domain_force">[('is_create','=',True),('state','=','state_00')]</field>
-         </record>
+    <data noupdate="0">
 
         <record model="ir.module.category" id="module_rd_prod_group">
             <field name="name">研发</field>
@@ -32,6 +22,28 @@
             <field name="name">研发可创建</field>
             <field name="category_id" ref="module_rd_prod_group"/>
         </record>
+
+        <record id="rd_prod_rule_01" model="ir.rule">
+             <field name="name">研发产品删除</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">[('is_create','=',True),('state','=','state_00')]</field>
+         </record>
+
+        <record id="rd_prod_rule_02" model="ir.rule">
+             <field name="name">研发版本删除</field>
+             <field name="model_id" ref="model_dtdream_rd_version"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">[('is_create','=',True),('version_state','=','initialization')]</field>
+         </record>
 
         </data>
     </openerp>

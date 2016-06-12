@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                    <button name="check_submit_dtdream_travel" string="提交" type="object" class="oe_highlight"
                             attrs="{'invisible':[('state','!=','0')]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
                     attrs="{'invisible':['|',('is_current','=',False),('state','not in',('1','2','3','4','5'))]}"/>
@@ -89,6 +89,7 @@
               <field name="department"/>
               <field name="create_time"/>
               <field name="state"/>
+              <field name="shenpiren"/>
             </tree>
         </field>
     </record>
@@ -114,6 +115,21 @@
                </button>
                <field name="can_view" invisible="True"/>
             </button>
+        </field>
+    </record>
+
+    <record id="view_dtdream_travel_filter" model="ir.ui.view">
+        <field name="name">dtdream.travel.filter</field>
+        <field name="model">dtdream.travel.chucha</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <filter string="草稿" domain="[('state','=','0')]" name='state_draft'/>
+                <filter string="一级审批" domain="[('state','=','1')]" name='state_approve'/>
+                <filter string="驳回" domain="[('state','=','-1')]" name='state_reject'/>
+                <filter string="完成" domain="[('state','=','99')]" name="state_done"/>
+            </search>
         </field>
     </record>
   </data>

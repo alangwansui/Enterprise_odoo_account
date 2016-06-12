@@ -1,5 +1,18 @@
 <openerp>
     <data>
+
+        <record id="view_rd_version_filter" model="ir.ui.view">
+            <field name="name">rd.version.filter</field>
+            <field name="model">dtdream_rd_version</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <group expand="0" string="Group By">
+                        <filter string="产品名称" context="{'group_by':'name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="act_dtdream_rd_version" model="ir.actions.act_window">
             <field name="name">所有</field>
             <field name="res_model">dtdream_rd_version</field>
@@ -7,6 +20,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">['|','|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('sameDept','=',True)]</field>
+            <field name="search_view_id" ref="view_rd_version_filter"/>
         </record>
 
 
@@ -17,6 +31,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
+            <field name="search_view_id" ref="view_rd_version_filter"/>
         </record>
 
 
@@ -27,6 +42,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_rd_version_filter"/>
         </record>
 
 
@@ -50,16 +66,34 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                         <button name="%(dtdream_rd_prod.act_version_wizard)d" string="提交"  type="action"  attrs="{'invisible':[('version_state','not in',('initialization','Development','pending'))]}"/>
-                         <button name="do_back"  string="返回上一步"  type="object" confirm="是否确认返回上一步？" attrs="{'invisible':[('version_state','in',('initialization'))]}"/>
-                         <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
+                         <button name="%(dtdream_rd_prod.act_version_wizard)d" string="进入下一阶段"  type="action"  attrs="{'invisible':['|',('version_state','not in',('initialization','Development','pending')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                         <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一步阶段" attrs="{'invisible':['|',('version_state','in',('initialization')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
+                        <!--<button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？"  attrs="{'invisible':['|','|',('is_zanting','=',True),('version_state','in',('pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('is_zantingtj','=',True),('is_zanting','=',False),('version_state','in',('pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|',('is_zhongzhi','=',True),('version_state','in',('stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|',('is_zhongzhitj','=',True),('is_zhongzhi','=',False),('version_state','in',('stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('is_zanting_back','=',True),('version_state','not in',('pause')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|','|',('is_zanting_backtj','=',True),('is_zanting_back','=',False),('version_state','not in',('pause')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('version_state','not in',('stop')),('is_Qa','=',False)]}"/>
+
+                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': proName,'default_version': active_id,'default_mark':False}" attrs="{'invisible':['|',('execption_flag','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="action_makeexception" string="申请例外" type="object" attrs="{'invisible':['|',('execption_flag','!=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object" attrs="{'invisible':['|',('execption_flag','!=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+-->
+
+                        <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
                     </header>
                     <sheet>
                         <group>
                             <group>
                                 <field name="name" invisible="1"/>
+                                <field name="is_zanting" invisible="1"/>
+                                <field name="is_zhongzhi" invisible="1"/>
+                                <field name="execption_flag" invisible="1"/>
                                 <field name="proName" string="产品名称"/>
                                 <field name="pro_flag" />
+                                <field name="is_create" invisible="1"/>
                             </group>
                             <group>
                                 <field name="version_numb" />
@@ -89,7 +123,7 @@
                                                     <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                     <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                     <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)],'required':[('is_refuse','=',True)]}"/>
+                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
                                                 </tree>
@@ -118,7 +152,7 @@
                                                 <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                 <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                 <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)],'required':[('is_refuse','=',True)]}"/>
+                                                <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                 <field name="editable" invisible="1"/>
                                                 <field name="is_Qa" invisible="1"/>
                                             </tree>
@@ -147,7 +181,7 @@
                                           <p><font color="red">注：当修改审批人时相当于授权</font></p>
                                         </div>
                                         <field name="process_03_ids">
-                                            <tree editable="bottom" create="false" >
+                                            <tree editable="bottom" create="false" delete="false" >
                                                 <field name="ver_state" />
                                                 <field name="role" />
                                                 <field name="level"/>
@@ -155,7 +189,7 @@
                                                 <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                 <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                 <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)],'required':[('is_refuse','=',True)]}"/>
+                                                <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                 <field name="editable" invisible="1"/>
                                                 <field name="is_Qa" invisible="1"/>
                                             </tree>
@@ -164,6 +198,35 @@
                                 </notebook>
                             </group>
                         </page>
+                            <page string="暂停或中止" attrs="{'invisible':[('is_ztpage','=',False)]}">
+                                <div>
+                                  <p><font color="red">注：此页面为申请暂停、恢复暂停、中止填写与审批页面</font></p>
+                                </div>
+                                    <group>
+                                        <field name="reason_request"/>
+                                        <field name="is_ztpage" invisible="1"/>
+                                        <field name="comments" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhi','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <group>
+                                               <field name="agree" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhi','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
+                                           </group>
+                                           <group>
+                                               <field name="disagree" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhi','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
+                                           </group>
+                                        </group>
+                                        <group>
+                                            <field name="is_shenpiren" invisible="1"/>
+                                            <field name="is_zanting" invisible="1"/>
+                                            <field name="is_zanting_back" invisible="1"/>
+                                            <field name="is_zhongzhi" invisible="1"/>
+                                            <field name="is_zantingtj" invisible="1"/>
+                                            <field name="is_zanting_backtj" invisible="1"/>
+                                            <field name="is_zhongzhitj" invisible="1"/>
+                                        </group>
+                                    </group>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -194,9 +257,9 @@
                                 <field name="name"/>
                                 <field name='ver_state'/>
                                 <field name="is_pending" invisible="1"/>
-                                <field name='level' attrs="{'readonly':[('is_pending','=',False)]}"/>
+                                <field name='level'/>
                                 <field name="is_level" invisible="1"/>
-                                <field name="department" attrs="{'readonly':['|',('is_pending','=',False),('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
+                                <field name="department" attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
                             </group>
                         </group>
                     </sheet>
@@ -212,9 +275,9 @@
                     <field name='name'/>
                     <field name='ver_state'/>
                     <field name="is_pending" invisible="1"/>
-                    <field name='level' attrs="{'readonly':[('is_pending','=',False)]}"/>
+                    <field name='level'/>
                     <field name="is_level" invisible="1"/>
-                    <field name="department" attrs="{'readonly':['|',('is_pending','=',False),('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
+                    <field name="department" attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
                 </tree>
             </field>
         </record>
@@ -241,13 +304,12 @@
                                 <field name="editable" invisible="1"/>
                                 <field name="approver_old" invisible="1"/>
                             </group>
-                            <field name="reason" attrs="{'readonly':[('editable','=',False)],'required':[('is_refuse','=',True)]}"/>
+                            <field name="reason" attrs="{'readonly':[('editable','=',False)]}"/>
                         </group>
                     </sheet>
                 </form>
             </field>
         </record>
-
 
         <menuitem id="menu_finance_rd_approver_ver" name="版本审批人配置" parent="menu_finance_rd_config" sequence="300"  action="act_dtdream_rd_approver_ver"/>
 

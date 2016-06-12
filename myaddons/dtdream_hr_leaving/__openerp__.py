@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'views/menu.xml',
         'wizard/leaving_handle_wizard.xml',
+        'wizard/leaving_handle_process_wizard.xml',
         'views/leaving_handle.xml',
         'views/leaving_process.xml',
         'views/leaving_handle_approver.xml',

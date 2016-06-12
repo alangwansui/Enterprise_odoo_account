@@ -15,12 +15,10 @@
                         <field name="opinion"/>
                         <field name="mail_ccs" widget="many2many_tags"/>
                         <field name="current_state" invisible="True"/>
-
                     </group>
                 </group>
                 <footer>
                     <button name="btn_agree" type="object" string="同意" class="oe_highlight oe_edit_only"/>
-                    <button name="btn_other" type="object" string="不涉及" class="oe_highlight oe_edit_only"/>
                     <button name="btn_reject" type="object" string="驳回到上一步" class="oe_highlight oe_edit_only"/>
                     <button special="cancel" string="取消" class="oe_edit_only"/>
                 </footer>
@@ -28,9 +26,8 @@
         </field>
     </record>
 
-
     <record id="act_leaving_handle_wizard" model="ir.actions.act_window">
-        <field name="name">离职交接审批</field>
+        <field name="name">离职办理审批</field>
         <field name="res_model">leaving.handle.wizard</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>

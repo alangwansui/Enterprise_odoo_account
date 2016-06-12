@@ -16,6 +16,6 @@
                    action="act_dtdream_travel_chucha_shenqing_04"/>
 
         <menuitem name="报告" id="menu_dtdream_travel_shenqing_report" parent="menu_dtdream_travel_root" sequence="20"
-                   action="act_dtdream_travel_chucha_shenqing_05" groups="base.group_hr_manager"/>
+                   action="act_dtdream_travel_chucha_shenqing_05" groups="base.group_hr_manager,base.group_hr_user"/>
     </data>
 </openerp>

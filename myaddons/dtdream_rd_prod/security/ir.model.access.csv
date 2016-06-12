@@ -1,14 +1,15 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dtdream_rd_prod,dtdream_rd_prod,model_dtdream_rd_prod,group_dtdream_rd_user_all,1,1,1,0
-access_dtdream_prod_appr,dtdream_prod_appr,model_dtdream_prod_appr,group_dtdream_rd_user_all,1,1,1,0
-access_dtdream_rd_version,dtdream_rd_version,model_dtdream_rd_version,group_dtdream_rd_user_all,1,1,1,0
-access_dtdream_rd_config,dtdream_rd_config,model_dtdream_rd_config,group_dtdream_rd_user_all,1,1,1,0
-access_dtdream_rd_role,dtdream_rd_role,model_dtdream_rd_role,group_dtdream_rd_user_all,1,1,1,0
-access_dtdream_rd_approver,dtdream_rd_approver,model_dtdream_rd_approver,group_dtdream_rd_user_all,1,1,1,0
-access_dtdream_rd_process,dtdream_rd_process,model_dtdream_rd_process,group_dtdream_rd_user_all,1,1,1,0
+access_dtdream_rd_prod,dtdream_rd_prod,model_dtdream_rd_prod,group_dtdream_rd_user_all,1,1,1,1
+access_dtdream_prod_appr,dtdream_prod_appr,model_dtdream_prod_appr,group_dtdream_rd_user_all,1,1,1,1
+access_dtdream_rd_version,dtdream_rd_version,model_dtdream_rd_version,group_dtdream_rd_user_all,1,1,1,1
+access_dtdream_rd_config,dtdream_rd_config,model_dtdream_rd_config,group_dtdream_rd_user_all,1,0,0,0
+access_dtdream_rd_role,dtdream_rd_role,model_dtdream_rd_role,group_dtdream_rd_user_all,1,1,1,1
+access_dtdream_rd_approver,dtdream_rd_approver,model_dtdream_rd_approver,group_dtdream_rd_user_all,1,0,0,0
+access_dtdream_rd_process,dtdream_rd_process,model_dtdream_rd_process,group_dtdream_rd_user_all,1,1,1,1
 
-access_dtdream_rd_approver_ver,dtdream_rd_approver_ver,model_dtdream_rd_approver_ver,,1,1,1,0
-access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ver,,1,1,1,0
+access_dtdream_rd_approver_ver,dtdream_rd_approver_ver,model_dtdream_rd_approver_ver,group_dtdream_rd_user_all,1,0,0,0
+access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ver,group_dtdream_rd_user_all,1,1,1,1
+access_dtdream_execption,dtdream_execption,model_dtdream_execption,group_dtdream_rd_user_all,1,1,1,0
 
 
 qa_access_dtdream_rd_prod,dtdream_rd_prod,model_dtdream_rd_prod,group_dtdream_rd_qa,1,1,1,1
@@ -21,6 +22,7 @@ qa_access_dtdream_rd_process,dtdream_rd_process,model_dtdream_rd_process,group_d
 
 qa_access_dtdream_rd_approver_ver,dtdream_rd_approver_ver,model_dtdream_rd_approver_ver,group_dtdream_rd_qa,1,1,1,1
 qa_access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ver,group_dtdream_rd_qa,1,1,1,1
+qa_access_dtdream_execption,dtdream_execption,model_dtdream_execption,group_dtdream_rd_qa,1,1,1,1
 
 
 base_access_dtdream_rd_prod,dtdream_rd_prod,model_dtdream_rd_prod,group_dtdream_rd_user,1,0,0,0
@@ -33,11 +35,6 @@ bass_access_dtdream_rd_process,dtdream_rd_process,model_dtdream_rd_process,group
 
 bass_access_dtdream_rd_approver_ver,dtdream_rd_approver_ver,model_dtdream_rd_approver_ver,group_dtdream_rd_user,1,0,0,0
 bass_access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ver,group_dtdream_rd_user,1,0,0,0
-
-
-
-
-
-
+bass_access_dtdream_execption,dtdream_execption,model_dtdream_execption,group_dtdream_rd_user,1,0,0,0
 
 

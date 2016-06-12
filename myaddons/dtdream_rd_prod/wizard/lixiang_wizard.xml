@@ -10,7 +10,7 @@
                 <group>
                     <group>
                         <!--<field name="liyou"/>-->
-                        <div>确定进入下一步？</div>
+                        <div>确定进入下一阶段？</div>
                     </group>
                 </group>
                 <footer>
@@ -42,7 +42,7 @@
             <form>
                 <group>
                     <group>
-                        <div>确定提交审批？</div>
+                        <div>确定进入下一阶段？</div>
                     </group>
                 </group>
                 <footer>
@@ -57,7 +57,7 @@
 
 
     <record id="act_lixiang_wizardappr" model="ir.actions.act_window">
-        <field name="name">提交审批</field>
+        <field name="name">进入下一阶段</field>
         <field name="res_model">dtdream_prod_appr.wizardappr</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -74,8 +74,7 @@
             <form>
                 <group>
                     <group>
-                        <!--<field name="liyou"/>-->
-                        <div>确定进入下一步？</div>
+                        <div>确定进入下一阶段？</div>
                     </group>
                 </group>
                 <footer>
@@ -98,5 +97,17 @@
         <field name="target">new</field>
     </record>
 
+
+
+    <!--例外新建-->
+    <record id="act_dtdream_exception" model="ir.actions.act_window">
+        <field name="name">例外</field>
+        <field name="res_model">dtdream_execption</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'default_flag':False}</field>
+        <field name="target">new</field>
+    </record>
     </data>
 </openerp>

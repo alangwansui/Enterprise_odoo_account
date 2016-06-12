@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <menuitem name="订单执行审批" id="dtdream_menu_order_approval" parent="base.menu_base_partner" sequence="6"></menuitem>
+
+    <menuitem name="我的申请" id="menu_my_order_applys" parent="dtdream_menu_order_approval" sequence="10" action="act_my_applys"></menuitem>
+    <menuitem name="待我审批" id="menu_order_to_approve" parent="dtdream_menu_order_approval"  sequence="20" action="act_to_approve"></menuitem>
+    <menuitem name="我已审批" id="menu_order_already_approve" parent="dtdream_menu_order_approval"  sequence="30" action="act_already_approve"></menuitem>
+    <menuitem name="所有单据" id="menu_all_orders" parent="dtdream_menu_order_approval" sequence="40" action="act_all_reports"></menuitem>
+
+    </data>
+</openerp>

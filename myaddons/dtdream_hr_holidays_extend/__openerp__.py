@@ -34,6 +34,7 @@
         'data/data.xml',
 
         'workflow.xml',
+        'importcss.xml',
 
     ],
     # only loaded in demonstration mode

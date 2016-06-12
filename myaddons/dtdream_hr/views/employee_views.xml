@@ -173,5 +173,7 @@
             <field name="name">ir_exports group_system</field>
             <field name="model_id" ref="base.model_ir_exports"/>
         </record>
+        <menuitem name="HR业务办理" sequence="10" id="dtdream_hr_process" parent="hr.menu_hr_root"></menuitem>
+        <menuitem name="报告" sequence="20" id="dtdream_hr_report" parent="hr.menu_hr_root" groups="base.group_hr_manager"></menuitem>
   </data>
 </openerp>

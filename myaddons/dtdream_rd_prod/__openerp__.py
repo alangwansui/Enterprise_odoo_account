@@ -31,6 +31,7 @@
         'views/views.xml',
         'views/templates.xml',
         'workflow/workflow.xml',
+        'workflow/versionWorkflow.xml',
 
     ],
     # only loaded in demonstration mode
