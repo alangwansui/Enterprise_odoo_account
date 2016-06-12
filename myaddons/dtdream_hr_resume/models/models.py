@@ -234,7 +234,7 @@ class dtdream_hr_resume(models.Model):
     home_address = fields.Char(string="居住地址", required=True)
     is_login = fields.Boolean(string="登入", compute=_compute_name_equal_login)
     workid = fields.Char(string="工号", compute=_compute_workid_department)
-    department = fields.Char(string="部门", compute=_compute_workid_department)
+    department = fields.Char(string="部门", compute=_compute_workid_department, store=True)
     has_title = fields.Boolean(string="是否有职称信息", default=True)
     experince = fields.One2many("hr.employee.experience", "resume", "工作经历")
     total_work = fields.Float(string="合计工龄", compute=_compute_total_work)
@@ -254,6 +254,8 @@ class dtdream_hr_resume(models.Model):
 
     @api.multi
     def wkf_draft(self):
+        if self.state == "-1":
+            self.message_post(body=u'重启流程,驳回 --> 草稿 ')
         self.write({'state': '0', 'resume_approve': ''})
 
     @api.multi
@@ -262,11 +264,13 @@ class dtdream_hr_resume(models.Model):
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息,请您审批!' % self.name.name,
                                      content=u"%s提交了员工履历信息,等待您的审批!" % self.name.full_name)
         self.write({'state': '1', 'resume_approve': approve.id})
+        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.full_name)
 
     @api.multi
     def wkf_done(self):
         self.update_mobile_number()
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
+        self.message_post(body=u'通过,人力资源部审批 -->  完成')
 
     @api.multi
     def wkf_reject(self):
@@ -946,6 +950,8 @@ class dtdream_resume_modify(models.Model):
 
     @api.multi
     def wkf_draft(self):
+        if self.state == "-1":
+            self.message_post(body=u'重启流程,驳回 --> 草稿 ')
         self.write({'state': '0', 'resume_approve': ''})
 
     @api.multi
@@ -960,6 +966,7 @@ class dtdream_resume_modify(models.Model):
     def wkf_done(self):
         self.update_resume_record()
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
+        self.message_post(body=u'通过,人力资源部审批 -->  完成')
 
     @api.multi
     def wkf_reject(self):

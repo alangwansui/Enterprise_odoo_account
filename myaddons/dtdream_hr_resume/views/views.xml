@@ -160,6 +160,7 @@
                 <field name="workid"/>
                 <field name="department"/>
                 <field name="state"/>
+                <field name="resume_approve"/>
             </tree>
         </field>
     </record>
@@ -309,6 +310,7 @@
                 <field name="workid"/>
                 <field name="department"/>
                 <field name="state"/>
+                <field name="resume_approve"/>
             </tree>
         </field>
     </record>
@@ -370,6 +372,36 @@
                     <field string="合同" name="contract_log_nums" widget="statinfo"/>
                </button>
             </button>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_resume_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.resume.filter</field>
+        <field name="model">dtdream.hr.resume</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <filter string="草稿" domain="[('state','=','0')]" name='state_draft'/>
+                <filter string="人力资源部审批" domain="[('state','=','1')]" name='state_approve'/>
+                <filter string="驳回" domain="[('state','=','-1')]" name='state_reject'/>
+                <filter string="完成" domain="[('state','=','99')]" name="state_done"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_resume_modify_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.resume.modify.filter</field>
+        <field name="model">dtdream.hr.resume.modify</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <filter string="草稿" domain="[('state','=','0')]" name='state_draft'/>
+                <filter string="人力资源部审批" domain="[('state','=','1')]" name='state_approve'/>
+                <filter string="驳回" domain="[('state','=','-1')]" name='state_reject'/>
+                <filter string="完成" domain="[('state','=','99')]" name="state_done"/>
+            </search>
         </field>
     </record>
 
