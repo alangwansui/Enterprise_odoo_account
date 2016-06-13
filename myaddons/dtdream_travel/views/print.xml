@@ -4,7 +4,7 @@
 
         <report
             id="dtdream_travel_print"
-            string="出差打印"
+            string="出差申请单"
             model="dtdream.travel.chucha"
             report_type="qweb-pdf"
             name="dtdream_travel.report_travel"
