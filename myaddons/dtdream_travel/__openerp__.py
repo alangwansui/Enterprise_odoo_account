@@ -25,6 +25,8 @@
         'security/ir.model.access.csv',
         'security/security.xml',
         'wizard/chucha_wizard.xml',
+        'views/report_travel.xml',
+        'views/print.xml',
         'views/views.xml',
         'views/templates.xml',
         'views/actions.xml',
