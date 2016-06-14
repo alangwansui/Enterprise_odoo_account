@@ -1,0 +1,129 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="dtdream_expense_record_tree_view">
+      <field name="name">dtdream.expense.record.tree</field>
+      <field name="model">dtdream.expense.record</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="expensestartdate"/>
+          <field name="expenseenddate"/>
+          <field name="expensecatelog"/>
+           <field name="expensedetail"/>
+           <field name="invoicevalue"/>
+          <field name="state"/>
+          <field name="create_date" string="创建时间" />
+          <field name="create_uid" string="创建人" />
+        </tree>
+      </field>
+    </record>
+
+
+      <record model="ir.ui.view" id="dtdream_expense_record_search_view">
+      <field name="name">dtdream.expense.record.search</field>
+      <field name="model">dtdream.expense.record</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="expensestartdate"/>
+          <field name="expenseenddate"/>
+          <field name="expensecatelog"/>
+           <field name="expensedetail"/>
+           <field name="invoicevalue"/>
+          <field name="state"/>
+          <field name="create_date" string="创建时间" />
+          <field name="create_uid" string="创建人" />
+        </search>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="dtdream_expense_record_form_view">
+      <field name="name">dtdream.expense.record.form</field>
+      <field name="model">dtdream.expense.record</field>
+      <field name="arch" type="xml">
+        <form>
+            <sheet>
+                    <group  string="基本信息">
+
+
+                        <group >
+
+                        <field name="expensecatelog" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                        <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+
+                        <field name="expensestartdate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                        <field name="expenseenddate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                         <field name="invoicevalue"  attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                         <field name="city" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                            <field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                        </group>
+
+
+                        <group >
+                            <field name="state" readonly="1"/>
+
+                         <field name="create_date"  string="创建时间" readonly="1"/>
+                      　　<field name="create_uid" string="创建人" readonly="1"/>
+
+                        </group>
+
+
+
+                    </group>
+
+                <group>
+
+                </group>
+
+
+
+
+            </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="action_dtdream_expense_record">
+      <field name="name">我的消费记录</field>
+      <field name="res_model">dtdream.expense.record</field>
+        <field name="domain">[('create_uid','=',uid)]</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="dtdream_expense.action_server">
+      <field name="name">dtdream_expense server</field>
+      <field name="model_id" ref="model_dtdream_expense_dtdream_expense"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+
+    <menuitem name="费用报销" id="dtdream_expense.menu_root" web_icon="dtdream_rd_prod,static/description/rd.png"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="我的消费记录" id="dtdream_expense.record" parent="dtdream_expense.menu_root" action="action_dtdream_expense_record"/>
+
+
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="dtdream_expense.menu_1_list" parent="dtdream_expense.menu_1"
+              action="dtdream_expense.action_window"/>
+-->
+
+  </data>
+</openerp>

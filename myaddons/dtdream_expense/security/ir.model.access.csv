@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_expense_record,dtdream_expense.dtdream_expense_record,model_dtdream_expense_record,,1,1,1,0

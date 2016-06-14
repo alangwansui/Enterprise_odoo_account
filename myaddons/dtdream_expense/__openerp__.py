@@ -1,31 +1,29 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_hr_performance",
+    'name': "dtdream_expense",
 
     'summary': """
-        员工绩效管理""",
+        数梦费用报销流程""",
 
     'description': """
-        employee performance manage
+       消费记录上传，费用报销单的提交，审批，工作委托，授权。
     """,
 
-    'author': "jinshuzhao",
+    'author': "杭州数梦工场",
     'website': "http://www.dtdream.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
     # for the full list
-    'category': 'Uncategorized',
+    'category': 'Accounting & Finance',
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr'],
+    'depends': ['base'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
-        'views/actions.xml',
-        'views/menu.xml',
+         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
     ],

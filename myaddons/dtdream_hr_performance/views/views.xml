@@ -1,59 +1,102 @@
 <openerp>
   <data>
-    <!-- explicit list view definition -->
-    <!--
-    <record model="ir.ui.view" id="myaddons.list">
-      <field name="name">myaddons list</field>
-      <field name="model">myaddons.myaddons</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
-    -->
+    <record id="view_dtdream_hr_pbc_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.form</field>
+        <field name="model">dtdream.hr.pbc</field>
+        <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <group>
+                  <group>
+                    <field name="department" options="{'no_create': True}"/>
+                  </group>
+                  <group>
+                    <field name="quarter"/>
+                  </group>
+                </group>
 
-    <!-- actions opening views on models -->
-    <!--
-    <record model="ir.actions.act_window" id="myaddons.action_window">
-      <field name="name">myaddons window</field>
-      <field name="res_model">myaddons.myaddons</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    -->
+                <notebook>
+                    <page string="部门目标">
+                        <field name="target">
+                            <tree editable="bottom">
+                                <field name="num"/>
+                                <field name="works"/>
+                            </tree>
+                        </field>
+                    </page>
+                  </notebook>
 
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="myaddons.action_server">
-      <field name="name">myaddons server</field>
-      <field name="model_id" ref="model_myaddons_myaddons"/>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
-      </field>
+              </sheet>
+            </form>
+        </field>
     </record>
-    -->
 
-    <!-- Top menu item -->
-    <!--
-    <menuitem name="myaddons" id="myaddons.menu_root"/>
-    -->
-    <!-- menu categories -->
-    <!--
-    <menuitem name="Menu 1" id="myaddons.menu_1" parent="myaddons.menu_root"/>
-    <menuitem name="Menu 2" id="myaddons.menu_2" parent="myaddons.menu_root"/>
-    -->
-    <!-- actions -->
-    <!--
-    <menuitem name="List" id="myaddons.menu_1_list" parent="myaddons.menu_1"
-              action="myaddons.action_window"/>
-    <menuitem name="Server to list" id="myaddons" parent="myaddons.menu_2"
-              action="myaddons.action_server"/>
-    -->
+    <record id="view_dtdream_hr_pbc_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.tree</field>
+        <field name="model">dtdream.hr.pbc</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="department"/>
+              <field name="quarter"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_pbc_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.pbc.filter</field>
+        <field name="model">dtdream.hr.pbc</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="department"/>
+                <filter string="第一季度" domain="[('quarter','=','1')]" name='first'/>
+                <filter string="第二季度" domain="[('quarter','=','2')]" name='second'/>
+                <filter string="第三季度" domain="[('quarter','=','3')]" name='third'/>
+                <filter string="第四季度" domain="[('quarter','=','4')]" name="fourth"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_performance_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.form</field>
+        <field name="model">dtdream.hr.performance</field>
+        <field name="arch" type="xml">
+            <form>
+              <header>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,99"/>
+                </header>
+
+              <sheet>
+                <group string="基本信息">
+                  <group>
+                    <field name="department" options="{'no_create': True}"/>
+                    <field name="quarter"/>
+                    <field name="officer"/>
+                    <field name="result"/>
+                  </group>
+                  <group>
+                    <field name="name"/>
+                    <field name="workid"/>
+                    <field name="onwork"/>
+                  </group>
+                </group>
+
+                <notebook>
+                    <page string="部门PBC">
+                        <field name="hr_pbc">
+                            <tree>
+                                <field name="name"/>
+                                <field name="target" widget="many2many_tags"/>
+                            </tree>
+                        </field>
+                    </page>
+                  </notebook>
+
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+
   </data>
 </openerp>
