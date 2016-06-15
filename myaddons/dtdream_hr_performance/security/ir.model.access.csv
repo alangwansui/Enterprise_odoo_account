@@ -2,4 +2,5 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dtdream_hr_performance_dtdream_hr_performance,dtdream_hr_performance.dtdream_hr_performance,model_dtdream_hr_performance,,1,1,1,1
 access_dtdream_hr_pbc_dtdream_hr_pbc,dtdream_hr_pbc.dtdream_hr_pbc,model_dtdream_hr_pbc,,1,1,1,1
 access_dtdream_pbc_target,dtdream_pbc_target.dtdream_pbc_target,model_dtdream_pbc_target,,1,1,1,1
-access_dtdream_hr_per_pbc,dtdream_hr_per_pbc.dtdream_hr_per_pbc,model_dtdream_hr_per_pbc,,1,1,1,1
+access_dtdream_hr_pbc_per,dtdream_hr_pbc_per.dtdream_hr_pbc_per,model_dtdream_hr_pbc_per,,1,1,1,1
+access_dtdream_pbc_target_per,dtdream_pbc_target_per.dtdream_pbc_target_per,model_dtdream_pbc_target_per,,1,0,1,0

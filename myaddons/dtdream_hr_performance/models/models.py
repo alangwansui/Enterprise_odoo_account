@@ -3,20 +3,6 @@
 from openerp import models, fields, api
 
 
-class dtdream_hr_pbc(models.Model):
-    _name = "dtdream.hr.pbc"
-    _inherit = ['mail.thread']
-
-    name = fields.Char(default=lambda self: '部门PBC')
-    department = fields.Many2one('hr.department', string='部门')
-    quarter = fields.Selection([('1', '第一季度'),
-                                ('2', '第二季度'),
-                                ('3', '第三季度'),
-                                ('4', '第四季度'),
-                                ], string='考核季度')
-    target = fields.One2many('dtdream.pbc.target', 'target', string='目标')
-
-
 class dtdream_hr_performance(models.Model):
     _name = "dtdream.hr.performance"
     _inherit = ['mail.thread']
@@ -26,8 +12,24 @@ class dtdream_hr_performance(models.Model):
     def _onchange_compute_hr_pbc(self):
         if self.department and self.quarter:
             cr = self.env['dtdream.hr.pbc'].search([('quarter', '=', self.quarter), '|', ('department', '=', self.department.parent_id.id), ('department', '=', self.department.id)])
-            for crr in cr:
-                self.env['dtdream.hr.per.pbc'].create({'name': crr.department.id, 'target': crr.target, 'perform': self.id})
+            list = []
+            dlist = []
+            for rec in cr:
+                arr = {}
+                arr['department'] = rec.department
+                print "---------------------->",rec.quarter
+                arr['quarter'] = rec.quarter
+                for drec in rec.target:
+                    brr = {}
+                    brr['num'] = drec.num
+                    brr['works'] = drec.works
+                    dlist.append(brr)
+                arr['target'] = dlist
+                list = []
+            for rec in cr:
+                vals = {'department':rec.department}
+                list.append(vals)
+            self.pbc = list
 
     department = fields.Many2one('hr.department', string='部门')
     name = fields.Many2one('hr.employee', string='花名')
@@ -49,21 +51,52 @@ class dtdream_hr_performance(models.Model):
                               ('6', '待最终考评'),
                               ('99', '考评完成')
                               ], string='状态', default='0')
-    hr_pbc = fields.One2many('dtdream.hr.per.pbc', 'perform', string="部门PBC")
+    pbc = fields.One2many('dtdream.hr.pbc.per', 'perform', string="部门PBC", copy=True)
 
 
-class dtdream_hr_per_pbc(models.Model):
-    _name = "dtdream.hr.per.pbc"
+class dtdream_hr_pbc_per(models.Model):
+    _name = "dtdream.hr.pbc.per"
 
-    name = fields.Many2one('hr.department', string='部门名称')
+    department = fields.Many2one('hr.department', string='部门')
+    quarter = fields.Selection([('1', '第一季度'),
+                                ('2', '第二季度'),
+                                ('3', '第三季度'),
+                                ('4', '第四季度'),
+                                ], string='考核季度')
+    # target = fields.One2many('dtdream.pbc.target.per', 'target')
     perform = fields.Many2one('dtdream.hr.performance')
-    target = fields.One2many('dtdream.pbc.target', 'per_target', string='工作内容')
+
+
+# class dtdream_pbc_target(models.Model):
+#     _name = "dtdream.pbc.target.per"
+#
+#     target = fields.Many2one('dtdream.hr.pbc.per', string='部门PBC')
+#     num = fields.Integer(string='序号')
+#     works = fields.Text(string='工作内容')
+
+
+class dtdream_hr_pbc(models.Model):
+    _name = "dtdream.hr.pbc"
+    _inherit = ['mail.thread']
+
+    # def _compute_work_text_record(self):
+    #     for rec in self:
+    #         rec.work_text = "(%s条记录)" % len(rec.target)
+
+    name = fields.Char(default=lambda self: '部门PBC')
+    department = fields.Many2one('hr.department', string='部门')
+    quarter = fields.Selection([('1', '第一季度'),
+                                ('2', '第二季度'),
+                                ('3', '第三季度'),
+                                ('4', '第四季度'),
+                                ], string='考核季度')
+    target = fields.One2many('dtdream.pbc.target', 'target')
+    # work_text = fields.Char(string='工作内容', compute=_compute_work_text_record)
 
 
 class dtdream_pbc_target(models.Model):
     _name = "dtdream.pbc.target"
 
     target = fields.Many2one('dtdream.hr.pbc', string='部门PBC')
-    per_target = fields.Many2one('dtdream.hr.per.pbc')
     num = fields.Integer(string='序号')
     works = fields.Text(string='工作内容')

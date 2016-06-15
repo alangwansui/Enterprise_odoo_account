@@ -83,14 +83,45 @@
 
                 <notebook>
                     <page string="部门PBC">
-                        <field name="hr_pbc">
+                        <field name="pbc">
                             <tree>
-                                <field name="name"/>
-                                <field name="target" widget="many2many_tags"/>
+                                <field name="department"/>
+                                <!--<field name="target" string="工作内容"/>-->
                             </tree>
                         </field>
                     </page>
                   </notebook>
+
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_pbc_per_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.per</field>
+        <field name="model">dtdream.hr.pbc.per</field>
+        <field name="arch" type="xml">
+            <form readonly="1">
+              <sheet>
+                <group>
+                  <group>
+                    <field name="department" options="{'no_create': True}"/>
+                  </group>
+                  <group>
+                    <field name="quarter"/>
+                  </group>
+                </group>
+
+                <!--<notebook>-->
+                    <!--<page string="部门目标">-->
+                        <!--<field name="target">-->
+                            <!--<tree>-->
+                                <!--<field name="num"/>-->
+                                <!--<field name="works"/>-->
+                            <!--</tree>-->
+                        <!--</field>-->
+                    <!--</page>-->
+                  <!--</notebook>-->
 
               </sheet>
             </form>
