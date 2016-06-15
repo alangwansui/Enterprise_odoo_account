@@ -6,25 +6,27 @@
         <field name="arch" type="xml">
             <form>
               <sheet>
-                <group>
+                <group string="基本信息">
                   <group>
-                    <field name="department" options="{'no_create': True}"/>
+                    <field name="name" options="{'no_create': True}"/>
                   </group>
                   <group>
                     <field name="quarter"/>
                   </group>
                 </group>
 
-                <notebook>
-                    <page string="部门目标">
-                        <field name="target">
-                            <tree editable="bottom">
-                                <field name="num"/>
-                                <field name="works"/>
-                            </tree>
-                        </field>
-                    </page>
-                  </notebook>
+                <group string="部门目标">
+                    <notebook>
+                        <page>
+                            <field name="target">
+                                <tree editable="bottom">
+                                    <field name="num"/>
+                                    <field name="works"/>
+                                </tree>
+                            </field>
+                        </page>
+                      </notebook>
+                </group>
 
               </sheet>
             </form>
@@ -36,7 +38,7 @@
         <field name="model">dtdream.hr.pbc</field>
         <field name="arch" type="xml">
             <tree>
-              <field name="department"/>
+              <field name="name"/>
               <field name="quarter"/>
             </tree>
         </field>
@@ -47,12 +49,31 @@
         <field name="model">dtdream.hr.pbc</field>
         <field name="arch" type="xml">
             <search string="Search">
-                <field name="department"/>
+                <field name="name"/>
                 <filter string="第一季度" domain="[('quarter','=','1')]" name='first'/>
                 <filter string="第二季度" domain="[('quarter','=','2')]" name='second'/>
                 <filter string="第三季度" domain="[('quarter','=','3')]" name='third'/>
                 <filter string="第四季度" domain="[('quarter','=','4')]" name="fourth"/>
             </search>
+        </field>
+    </record>
+
+    <record id="view_dtdream_pbc_target_form" model="ir.ui.view">
+        <field name="name">view.dtdream.pbc.target.form</field>
+        <field name="model">dtdream.pbc.target</field>
+        <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <group>
+                  <group>
+                       <field name="num"/>
+                  </group>
+                  <group>
+                      <field name="works"/>
+                  </group>
+                </group>
+              </sheet>
+            </form>
         </field>
     </record>
 
@@ -69,62 +90,64 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="department" options="{'no_create': True}"/>
+                    <field name="name"/>
                     <field name="quarter"/>
                     <field name="officer"/>
                     <field name="result"/>
                   </group>
                   <group>
-                    <field name="name"/>
+                    <field name="department" options="{'no_create': True}"/>
                     <field name="workid"/>
                     <field name="onwork"/>
                   </group>
                 </group>
 
-                <notebook>
-                    <page string="部门PBC">
-                        <field name="pbc">
-                            <tree>
-                                <field name="department"/>
-                                <!--<field name="target" string="工作内容"/>-->
-                            </tree>
-                        </field>
-                    </page>
-                  </notebook>
+                <group string="部门PBC">
+                    <notebook>
+                        <page>
+                            <field name="pbc">
+                                <tree create="0" delete="false">
+                                    <field name="name"/>
+                                    <field name="quarter" invisible="1"/>
+                                    <field name="target" string="工作内容"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </group>
 
               </sheet>
             </form>
         </field>
     </record>
 
-    <record id="view_dtdream_hr_pbc_per_form" model="ir.ui.view">
-        <field name="name">view.dtdream.hr.pbc.per</field>
-        <field name="model">dtdream.hr.pbc.per</field>
+     <record id="view_dtdream_hr_performance_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.tree</field>
+        <field name="model">dtdream.hr.performance</field>
         <field name="arch" type="xml">
-            <form readonly="1">
-              <sheet>
-                <group>
-                  <group>
-                    <field name="department" options="{'no_create': True}"/>
-                  </group>
-                  <group>
-                    <field name="quarter"/>
-                  </group>
-                </group>
+            <tree>
+                <field name="name"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="quarter"/>
+                <field name="result"/>
+            </tree>
+        </field>
+      </record>
 
-                <!--<notebook>-->
-                    <!--<page string="部门目标">-->
-                        <!--<field name="target">-->
-                            <!--<tree>-->
-                                <!--<field name="num"/>-->
-                                <!--<field name="works"/>-->
-                            <!--</tree>-->
-                        <!--</field>-->
-                    <!--</page>-->
-                  <!--</notebook>-->
-
-              </sheet>
-            </form>
+      <record id="view_dtdream_hr_performance_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.performance.filter</field>
+        <field name="model">dtdream.hr.performance</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <field name="result"/>
+                <filter string="第一季度" domain="[('quarter','=','1')]" name='first'/>
+                <filter string="第二季度" domain="[('quarter','=','2')]" name='second'/>
+                <filter string="第三季度" domain="[('quarter','=','3')]" name='third'/>
+                <filter string="第四季度" domain="[('quarter','=','4')]" name="fourth"/>
+            </search>
         </field>
     </record>
 
