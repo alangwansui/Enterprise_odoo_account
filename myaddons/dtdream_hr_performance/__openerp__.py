@@ -28,6 +28,7 @@
         'views/menu.xml',
         'views/views.xml',
         'views/templates.xml',
+        'workflow/workflow.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

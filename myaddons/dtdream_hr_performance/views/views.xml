@@ -83,9 +83,18 @@
         <field name="arch" type="xml">
             <form>
               <header>
-                    <field name="state"  widget="statusbar"
-                           statusbar_visible="0,99"/>
-                </header>
+                  <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                          attrs="{'invisible':[('state','not in',('1', '4','5'))]}"/>
+                  <button name="btn_revise" string="返回修改" type="workflow" class="oe_highlight"
+                          attrs="{'invisible':[('state','!=','2')]}"/>
+                  <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
+                          attrs="{'invisible':[('state','!=','2')]}"/>
+                  <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
+                          attrs="{'invisible':[('state','!=','3')]}"/>
+                  <button name="btn_import" string="导入" type="workflow" class="oe_highlight"
+                          attrs="{'invisible':[('state','!=','6')]}"/>
+                  <field name="state" widget="statusbar" statusbar_visible="0,99"/>
+              </header>
 
               <sheet>
                 <group string="基本信息">
@@ -96,7 +105,7 @@
                     <field name="result"/>
                   </group>
                   <group>
-                    <field name="department" options="{'no_create': True}"/>
+                    <field name="department" options="{'no_create': True, 'no_open': True}"/>
                     <field name="workid"/>
                     <field name="onwork"/>
                   </group>
@@ -110,6 +119,21 @@
                                     <field name="name"/>
                                     <field name="quarter" invisible="1"/>
                                     <field name="target" string="工作内容"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </group>
+
+                <group string="个人PBC">
+                    <notebook>
+                        <page>
+                            <field name="pbc_employee">
+                                <tree editable="bottom">
+                                    <field name="work"/>
+                                    <field name="detail"/>
+                                    <field name="result"/>
+                                    <field name="evaluate"/>
                                 </tree>
                             </field>
                         </page>
@@ -130,6 +154,7 @@
                 <field name="workid"/>
                 <field name="department"/>
                 <field name="quarter"/>
+                <field name="state"/>
                 <field name="result"/>
             </tree>
         </field>
@@ -150,6 +175,58 @@
             </search>
         </field>
     </record>
+
+    <record id="view_dtdream_hr_pbc_start_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.start.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="PBC填写">
+                <p>确定启动PBC填写?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_start"
+          name="启动PBC填写"
+          src_model="dtdream.hr.performance"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_start_from"
+          view_mode="form"
+          view_type="form"
+          target="new"/>
+
+    <record id="view_dtdream_hr_pbc_evaluate_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.start.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="PBC考评">
+                <p>确定启动PBC考评?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc_evaluate" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_evaluate"
+          name="启动PBC考评"
+          src_model="dtdream.hr.performance"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_evaluate_from"
+          view_mode="form"
+          view_type="form"
+          target="new"/>
 
 
   </data>
