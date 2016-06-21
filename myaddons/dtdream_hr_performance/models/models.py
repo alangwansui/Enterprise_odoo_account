@@ -134,7 +134,45 @@ class dtdream_hr_pbc(models.Model):
             content += "{0}. {1}\n".format(count, rec.works)
         self.content = content
 
+    def get_inter_employee(self):
+        cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
+        inter = [rec.name.user_id for rec in cr.interface]
+        inter.append(cr.manage.user_id)
+        return inter
+
+    def _compute_is_inter(self):
+        inter = self.get_inter_employee()
+        if self.env.user not in inter:
+            self.write({"is_inter": False})
+        else:
+            self.write({"is_inter": True})
+        print '----------------------->', self.is_inter
+
+    def _compute_login_in_department(self):
+        cr = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+        for rec in self:
+            if rec.name == cr.department_id or rec.name == cr.department_id.parent_id:
+                rec.write({"is_in_department": True})
+            else:
+                rec.write({"is_in_department": False})
+            print '----------------------->', rec.is_in_department
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(dtdream_hr_pbc, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        inter = self.get_inter_employee()
+        if self.env.user not in inter:
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
     name = fields.Many2one('hr.department', string='部门', required=True)
+    is_inter = fields.Boolean(string="是否接口人", compute=_compute_is_inter)
+    is_in_department = fields.Boolean(string='是否所在部门', compute=_compute_login_in_department)
     year = fields.Char(string='考核年度', default=lambda self: u"%s财年" % datetime.now().year, readonly=True)
     quarter = fields.Selection([('1', 'Q1'),
                                 ('2', 'Q2'),

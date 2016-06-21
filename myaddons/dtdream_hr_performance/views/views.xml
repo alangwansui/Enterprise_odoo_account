@@ -16,6 +16,8 @@
                   <group>
                     <field name="name" options="{'no_create': True}"/>
                     <field name="content" invisible="True"/>
+                    <field name="is_inter" invisible="True"/>
+                    <field name="is_in_department" invisible="True"/>
                   </group>
                   <group>
                     <div class="o_row">
@@ -52,6 +54,9 @@
             <tree>
               <field name="name"/>
               <field name="quarter"/>
+              <field name="content" invisible="True"/>
+              <field name="is_inter"/>
+              <field name="is_in_department" />
             </tree>
         </field>
     </record>

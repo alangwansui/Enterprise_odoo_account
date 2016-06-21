@@ -2,12 +2,20 @@
 <openerp>
     <data>
 
-        <record id="act_dtdream_hr_pbc" model="ir.actions.act_window">
+        <record id="act_dtdream_hr_pbc" model="ir.actions.server">
             <field name="name">部门PBC</field>
-            <field name="res_model">dtdream.hr.pbc</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="model_id" ref="model_dtdream_hr_pbc"/>
+            <field name="code">
+                action = {
+                'name':'部门PBC',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'dtdream.hr.pbc',
+                'domain': [(1,'=',1)],
+                'context':context,
+                }
+            </field>
         </record>
 
         <record id="act_dtdream_hr_pbc_mine" model="ir.actions.act_window">
