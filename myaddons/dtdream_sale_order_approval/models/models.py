@@ -142,13 +142,6 @@ class dtdream_sale_order_approval(models.Model):
                 'auto_delete': False,
             }).send()
 
-    @api.depends('product_line')
-    def _compute_product_line(self):
-        sale_money = 0
-        for rec in self.product_line:
-            sale_money = sale_money + rec.list_price * rec.pro_num
-        self.sale_money = sale_money
-
     pro_zongbu_finish = fields.Char(string='产品总部并行审批完成标识',default="0")
     name = fields.Char(default="订单执行审批")
     project_number = fields.Char(string="项目编号")
@@ -157,7 +150,7 @@ class dtdream_sale_order_approval(models.Model):
     system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True,track_visibility='onchange')
     industry_id = fields.Many2one("dtdream.industry", string="行业",required=True,track_visibility='onchange')
     office_id = fields.Many2one("dtdream.office", string="办事处",required=True,track_visibility='onchange')
-    sale_money = fields.Float(string="销售金额", required=True,track_visibility='onchange',compute=_compute_product_line)
+    sale_money = fields.Float(string="销售金额", required=True,track_visibility='onchange')
     need_ali_grant = fields.Selection([
         ('shi','是'),
         ('fou','否')

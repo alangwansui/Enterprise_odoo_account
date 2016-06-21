@@ -105,19 +105,15 @@
                         <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','in',('state_00','state_06','state_07')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                         <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
-                        <!--<button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('state','in',('state_00','state_05','state_07','state_06')),('is_zanting','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('state','in',('state_00','state_05','state_07','state_06')),('is_zantingtj','=',True),('is_zanting','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|','|','|',('is_zanting_back','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitj','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('state','!=','state_06'),('is_zanting_back','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|',('state','!=','state_06'),('is_zanting_backtj','=',True),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <!--<button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('state','in',('state_00','state_05','state_07','state_06')),('is_zanting','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('state','in',('state_00','state_05','state_07','state_06')),('is_zantingtj','=',True),('is_zanting','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|','|','|',('is_zanting_back','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitj','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('state','!=','state_06'),('is_zanting_back','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|',('state','!=','state_06'),('is_zanting_backtj','=',True),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <!--<button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>-->
 
-                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':['|',('execption_flag','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="action_makeexception" string="申请例外" type="object" attrs="{'invisible':['|',('execption_flag','!=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object" attrs="{'invisible':['|',('execption_flag','!=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-
-                        <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>
--->
                         <button name="do_jieshu"  string="结束"  type="object" confirm="是否确认结束？" attrs="{'invisible':['|',('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
                     </header>
@@ -145,41 +141,35 @@
                              </group>
                         </group>
                         <notebook>
-
-                            <page name="detail" string="角色信息">
-                                <field name="role_ids" string="角色" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}">
-                                    <tree default_order="id" editable="bottom">
-                                        <field name="cof_id"/>
-                                        <field name="person"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page name="version" string="进度与计划" >
-                                <group >
-                                    <field name="pro_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                            <page string="总体设计阶段" attrs="{'invisible':[('state','in',('state_00','state_01'))]}">
+                                <group>
+                                    <field name="overall_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
                                 </group>
                                 <group>
-                                    <group>
-                                        <field name="overall_plan_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
-                                    </group>
-                                    <group>
-                                        <field name="overall_actual_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
-                                    </group>
+                                    <notebook>
+                                        <page string="审批意见" states="state_00,state_01,state_02,state_03,state_04,state_05">
+                                            <div>
+                                              <p><font color="red">注：当修改审批人时相当于授权</font></p>
+                                            </div>
+                                            <field name="ztsj_process_ids">
+                                                <tree editable="bottom" create="false" delete="false" >
+                                                    <field name="pro_state" />
+                                                    <field name="role" />
+                                                    <field name="level"/>
+                                                    <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="editable" invisible="1"/>
+                                                    <field name="is_Qa" invisible="1"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
                                 </group>
-                                <field name="version_ids" context="{'default_proName':id}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_03'))]}">   <!--context="{'default_proName':id}"-->
-                                    <tree>
-                                        <field name="proName" string="产品名称"/>
-                                        <field name="version_numb"/>
-                                        <field name="pro_flag"/>
-                                        <field name="version_state"/>
-                                        <field name="plan_check_pub_time"/>
-                                        <field name="plan_pub_time"/>
-                                        <field name="actual_check_pub_time" string="实际开发完成时间"/>
-                                        <field name="actual_pub_time"/>
-                                    </tree>
-                                </field>
                             </page>
-                            <page string="立项材料" attrs="{'invisible':['&amp;',('is_Qa','=',False),('state','in',('state_00'))]}">
+                            <page string="立项阶段" >
                                 <group>
                                     <field name="start_pro_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 </group>
@@ -207,33 +197,38 @@
                                     </notebook>
                                 </group>
                             </page>
-                            <page string="总体设计材料" attrs="{'invisible':['&amp;',('is_Qa','=',False),('state','in',('state_00','state_01'))]}">
-                                <group>
-                                    <field name="overall_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
+                            <page name="detail" string="角色信息">
+                                <field name="role_ids" string="角色" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}">
+                                    <tree default_order="id" editable="bottom">
+                                        <field name="cof_id"/>
+                                        <field name="person"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="version" string="进度与计划" >
+                                <group >
+                                    <field name="pro_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                 </group>
                                 <group>
-                                    <notebook>
-                                        <page string="审批意见" states="state_00,state_01,state_02,state_03,state_04,state_05">
-                                            <div>
-                                              <p><font color="red">注：当修改审批人时相当于授权</font></p>
-                                            </div>
-                                            <field name="ztsj_process_ids">
-                                                <tree editable="bottom" create="false" delete="false" >
-                                                    <field name="pro_state" />
-                                                    <field name="role" />
-                                                    <field name="level"/>
-                                                    <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="editable" invisible="1"/>
-                                                    <field name="is_Qa" invisible="1"/>
-                                                </tree>
-                                            </field>
-                                        </page>
-                                    </notebook>
+                                    <group>
+                                        <field name="overall_plan_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="overall_actual_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
+                                    </group>
                                 </group>
+                                <field name="version_ids" context="{'default_proName':id}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01','state_03'))]}">   <!--context="{'default_proName':id}"-->
+                                    <tree>
+                                        <field name="proName" string="产品名称"/>
+                                        <field name="version_numb"/>
+                                        <field name="pro_flag"/>
+                                        <field name="version_state"/>
+                                        <field name="plan_check_pub_time"/>
+                                        <field name="plan_pub_time"/>
+                                        <field name="actual_check_pub_time" string="实际开发完成时间"/>
+                                        <field name="actual_pub_time"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="暂停或中止" attrs="{'invisible':[('is_ztpage','=',False)]}">
                                 <div>
@@ -379,7 +374,7 @@
                                 <field name="name"/>
                                 <field name='pro_state'/>
                                 <field name='level'/>
-                                <field name='department' attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
+                                <!--<field name='department' attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>-->
                                 <field name="is_level" invisible="1"/>
                             </group>
                         </group>
@@ -397,7 +392,7 @@
                     <field name='pro_state'/>
                     <field name='level'/>
                     <field name="is_level" invisible="1"/>
-                    <field name='department' attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
+                    <!--<field name='department' attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>-->
                 </tree>
             </field>
         </record>
@@ -419,6 +414,12 @@
             <field name="model">dtdream_execption</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object" attrs="{'invisible':['|',('state','not in',('dsp')),('flag','=',False)]}" />
+                        <button name="%(dtdream_rd_prod.act_liwaiwizardagree)d"  string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp')),('flag','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_liwaiwizard)d"  string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp')),('flag','=',False)]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="dsp,yjsp,ejsp,ysp" />
+                    </header>
                     <sheet>
                         <group>
                             <group>
@@ -427,32 +428,44 @@
                                 <field name="is_create" invisible="1"/>
                                 <field name="is_shenpiren" invisible="1"/>
                                 <field name="is_Qa" invisible="1"/>
+
+                                <field name='version' domain="[('proName','=',name)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                             </group>
                             <group>
-                                <field name='version' domain="[('proName','=',name)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                                <field name="approver_fir" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                                <field name="approver_sec" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                             </group>
                         </group>
                         <group>
                             <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                         </group>
-                        <group>
+                        <!--<group>
                             <group>
-                                <field name="agree" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
+                                <group>
+                                    <field name="agree" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
+                                </group>
+                                <group>
+                                    <field name='disagree' attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
+                                </group>
                             </group>
                             <group>
-                                <field name='disagree' attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
+                                 <field name="is_Qa" invisible="1"/>
                             </group>
                         </group>
                         <group>
                             <field name="comments" attrs="{'readonly':['&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
-                        </group>
+                        </group>-->
                         <footer attrs="{'invisible':[('flag','=',True)]}">
                             <button name="btn_execption_submit" type="object"
-                                    string="确认" class="oe_highlight"/>
+                                    string="提交" class="oe_highlight"/>
                             或
                             <button special="cancel" string="取消"/>
                         </footer>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -486,11 +499,12 @@
         <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="400" groups="group_dtdream_rd_qa"/>
         <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="100"  action="act_dtdream_rd_Rconfig"/>
         <menuitem id="menu_finance_rd_approver" name="产品审批人配置" parent="menu_finance_rd_config" sequence="200"  action="act_dtdream_rd_approver"/>
+         <menuitem id="menu_finance_rd_approver_ver" name="版本审批人配置" parent="menu_finance_rd_config" sequence="300"  action="act_dtdream_rd_approver_ver"/>
 
         <menuitem id="menu_finance_prod_all" name="所有" parent="menu_finance_rd" sequence="500" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_prod_appr_all" name="所有产品" parent="menu_finance_prod_all" sequence="100" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_prod_version_all" name="所有版本" parent="menu_finance_prod_all" sequence="200" action="act_dtdream_prod_version_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
 
-        <menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300" action="act_dtdream_exception_meun"/>
+        <!--<menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300" action="act_dtdream_exception_meun"/>-->
     </data>
 </openerp>

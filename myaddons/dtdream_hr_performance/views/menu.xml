@@ -6,6 +6,7 @@
         <menuitem name="我的考评" id="menu_dtdream_hr_pbc_mine" parent="menu_dtdream_hr_performance_root" sequence="12" action="act_dtdream_hr_pbc_mine"/>
         <menuitem name="待我审批" id="menu_dtdream_hr_pbc_approve" parent="menu_dtdream_hr_performance_root" sequence="14" action="act_dtdream_hr_pbc_approve"/>
         <menuitem name="所有单据" id="menu_dtdream_hr_pbc_all" parent="menu_dtdream_hr_performance_root" sequence="16" action="act_dtdream_hr_pbc_all"/>
-        <menuitem name="绩效相关配置" sequence="18" id="dtdream_hr_pbc_config" parent="hr.menu_human_resources_configuration" groups="base.group_hr_manager"/>
+        <menuitem name="绩效管理" id="menu_dtdream_hr_pbc_manage" parent="menu_dtdream_hr_performance_root" sequence="18" action="act_dtdream_hr_pbc_manage" groups="base.group_hr_manager,base.group_hr_user"/>
+        <menuitem name="绩效相关配置" sequence="18" id="dtdream_hr_pbc_config" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_pbc_config" groups="base.group_hr_manager"/>
     </data>
 </openerp>

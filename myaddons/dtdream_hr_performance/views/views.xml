@@ -5,13 +5,25 @@
         <field name="model">dtdream.hr.pbc</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','0')]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,99"/>
+               </header>
               <sheet>
                 <group string="基本信息">
                   <group>
                     <field name="name" options="{'no_create': True}"/>
+                    <field name="content" invisible="True"/>
                   </group>
                   <group>
-                    <field name="quarter"/>
+                    <div class="o_row">
+                        <label for="year" string="考核季度" style="font-weight:bold"/>
+                        <field name="year"/>
+                        <label for="quarter" string="" style="font-weight:bold; margin-left: 50px;"/>
+                        <field name="quarter"/>
+                    </div>
                   </group>
                 </group>
 
@@ -100,13 +112,14 @@
                 <group string="基本信息">
                   <group>
                     <field name="name"/>
+                    <field name="year"/>
                     <field name="quarter"/>
-                    <field name="officer"/>
                     <field name="result"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
                     <field name="workid"/>
+                    <field name="officer"/>
                     <field name="onwork"/>
                   </group>
                 </group>
@@ -118,7 +131,7 @@
                                 <tree create="0" delete="false">
                                     <field name="name"/>
                                     <field name="quarter" invisible="1"/>
-                                    <field name="target" string="工作内容"/>
+                                    <field name="content" string="工作内容"/>
                                 </tree>
                             </field>
                         </page>
@@ -228,6 +241,51 @@
           view_type="form"
           target="new"/>
 
+    <record id="view_dtdream_hr_pbc_config" model="ir.ui.view">
+        <field name="name">view.dtdream.pbc.hr.config.form</field>
+        <field name="model">dtdream.pbc.hr.config</field>
+        <field name="arch" type="xml">
+            <form string="绩效相关配置">
+                <sheet>
+                    <group string="管理员设置">
+                        <group>
+                            <field name="manage" options="{'no_open': True}" required="True"/>
+                        </group>
+                    </group>
 
+                    <group string="HR业务接口人设置">
+                        <notebook>
+                            <page>
+                                <field name="interface">
+                                    <tree editable="bottom">
+                                        <field name="department" options="{'no_open': True}" required="True"/>
+                                        <field name="name" options="{'no_open': True}" required="True"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="act_dtdream_hr_pbc_config">
+            <field name="name">绩效相关配置</field>
+            <field name="model_id" ref="model_dtdream_pbc_hr_config"/>
+            <field name="code">
+                action = {
+                'name':'绩效相关配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dtdream.pbc.hr.config',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+                'context':context,
+                }
+            </field>
+        </record>
+
+      
   </data>
 </openerp>

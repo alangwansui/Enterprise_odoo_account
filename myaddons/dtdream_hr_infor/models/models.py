@@ -125,6 +125,7 @@ class dtdream_hr_infor(models.Model):
     edit_public_info = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public, default=True)
     edit_basic_info = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic, default=True)
     edit_self_info = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
+    active = fields.Boolean(default=True, string='有效')
 
 
 class dtdream_hr_family(models.Model):
@@ -179,7 +180,6 @@ class dtdream_hr_state(models.Model):
     abbre = fields.Char(string="缩写", required=True)
     pro_name = fields.Char(string="省份")
     province = fields.Many2one("dtdream.hr.province", string="省份")
-
 
 
 

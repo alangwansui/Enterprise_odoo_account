@@ -143,12 +143,12 @@ class dtdream_hr_resume(models.Model):
 
     def send_mail_attend_mobile(self, email):
         email_to = email.work_email
-        appellation = u'{0},您好：'.format(email.full_name)
+        appellation = u'{0},您好：'.format(email.name)
         sex = u'他'
         if self.name.gender and self.name.gender != "male":
             sex = u"她"
         subject = u"手机号码变更通知"
-        content = u"员工%s(%s)手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.full_name, self.name.job_number, self.mobile, sex)
+        content = u"员工%s(%s)手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name, self.name.job_number, self.mobile, sex)
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
@@ -171,7 +171,7 @@ class dtdream_hr_resume(models.Model):
 
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
-        appellation = u'{0},您好：'.format(name.full_name)
+        appellation = u'{0},您好：'.format(name.name)
         link = '/web#id=%s&view_type=form&model=dtdream.hr.resume&menu_id=%s' % (self.id, self.get_employee_menu())
         subject = subject
         content = content
@@ -262,9 +262,9 @@ class dtdream_hr_resume(models.Model):
     def wkf_approve(self):
         approve = self.env["hr.resume.approve"].search([], limit=1).approve
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息,请您审批!' % self.name.name,
-                                     content=u"%s提交了员工履历信息,等待您的审批!" % self.name.full_name)
+                                     content=u"%s提交了员工履历信息,等待您的审批!" % self.name.name)
         self.write({'state': '1', 'resume_approve': approve.id})
-        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.full_name)
+        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.name)
 
     @api.multi
     def wkf_done(self):
@@ -485,6 +485,9 @@ class dtdream_hr_employee(models.Model):
     @api.model
     def create(self, vals):
         result = super(dtdream_hr_employee, self).create(vals)
+        employee = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+        self.env['mail.message'].search([('res_id', '=', result.id)]).unlink()
+        result.message_post(body=u'%s,&nbsp%s&nbsp;创建员工 &nbsp;%s' % (result.create_date, employee.name, result.name))
         cr = self.env['hr.resume.approve'].search([])
         sender = []
         if cr.account:
@@ -596,9 +599,9 @@ class dtdream_resume_modify(models.Model):
         sex = u'他'
         if self.name.gender and self.name.gender != "male":
             sex = u"她"
-        appellation = u'{0},您好：'.format(email.full_name)
+        appellation = u'{0},您好：'.format(email.name)
         subject = u"手机号码变更通知"
-        content = u"员工%s(%s)的手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.full_name, self.name.job_number, self.mobile, sex)
+        content = u"员工%s(%s)的手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.name, self.name.job_number, self.mobile, sex)
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
@@ -622,7 +625,7 @@ class dtdream_resume_modify(models.Model):
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
         link = '/web#id=%s&view_type=form&model=dtdream.hr.resume.modify&menu_id=%s' % (self.id, self.get_employee_menu())
-        appellation = u'{0},您好：'.format(name.full_name)
+        appellation = u'{0},您好：'.format(name.name)
         subject = subject
         content = content
         self.env['mail.mail'].create({
@@ -958,9 +961,9 @@ class dtdream_resume_modify(models.Model):
     def wkf_approve(self):
         approve = self.env["hr.resume.approve"].search([], limit=1).approve
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息修改,请您审批!' % self.name.name,
-                                     content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.full_name)
+                                     content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.name)
         self.write({'state': '1', 'resume_approve': approve.id})
-        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.full_name)
+        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.name)
 
     @api.multi
     def wkf_done(self):
