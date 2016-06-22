@@ -134,9 +134,9 @@ class dtdream_hr_pbc_employee(models.Model):
             rec.state = rec.perform.state
 
     perform = fields.Many2one('dtdream.hr.performance')
-    work = fields.Char(string='工作事项')
-    detail = fields.Text(string='工作目标描述')
-    result = fields.Text(string='工作目标(结果)与关键事件(过程)')
+    work = fields.Char(string='工作目标')
+    detail = fields.Text(string='具体描述')
+    result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
     state = fields.Selection([('0', '待启动'),
                               ('1', '待填写PBC'),
@@ -279,8 +279,8 @@ class dtdream_pbc_target(models.Model):
     _name = "dtdream.pbc.target"
 
     target = fields.Many2one('dtdream.hr.pbc', string='部门PBC')
-    num = fields.Integer(string='序号')
-    works = fields.Text(string='工作内容', required=True)
+    num = fields.Char(string='业务目标')
+    works = fields.Text(string='关键指标,关键动作,行为', required=True)
 
 
 class dtdream_pbc_hr_config(models.Model):
