@@ -6,3 +6,4 @@ access_dtdream_hr_pbc_employee,dtdream_hr_pbc_employee.dtdream_hr_pbc_employee,m
 access_dtdream_hr_pbc_start,dtdream_hr_pbc_start.dtdream_hr_pbc_start,model_dtdream_hr_pbc_start,,1,1,1,1
 access_dtdream_pbc_hr_config,dtdream_pbc_hr_config.dtdream_pbc_hr_config,model_dtdream_pbc_hr_config,,1,1,1,1
 access_dtdream_pbc_hr_interface,dtdream_pbc_hr_interface.dtdream_pbc_hr_interface,model_dtdream_pbc_hr_interface,,1,1,1,1
+access_ir_exports_hr_pbc,ir_exports hr_pbc,base.model_ir_exports,,1,1,1,1

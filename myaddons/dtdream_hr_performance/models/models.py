@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 from datetime import datetime
 from lxml import etree
 
@@ -21,6 +22,18 @@ class dtdream_hr_performance(models.Model):
             rec.workid = rec.name.job_number
             rec.department = rec.name.department_id
             rec.onwork = rec.name.Inaugural_state
+
+    def _compute_name_is_login(self):
+        if self.env.user == self.name.user_id:
+            self.login = True
+        else:
+            self.login = False
+
+    def _compute_officer_is_login(self):
+        if self.env.user == self.officer.user_id:
+            self.officer = True
+        else:
+            self.officer = False
 
     @api.model
     def create(self, vals):
@@ -77,6 +90,8 @@ class dtdream_hr_performance(models.Model):
                               ], string='状态', default='0')
     pbc = fields.Many2many('dtdream.hr.pbc', string="部门PBC")
     pbc_employee = fields.One2many('dtdream.hr.pbc.employee', 'perform', string='个人PBC')
+    login = fields.Boolean(compute=_compute_name_is_login)
+    is_officer = fields.Boolean(compute=_compute_officer_is_login)
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter, year)', '每个员工每个季度只能有一条员工PBC !')
@@ -114,11 +129,24 @@ class dtdream_hr_performance(models.Model):
 class dtdream_hr_pbc_employee(models.Model):
     _name = "dtdream.hr.pbc.employee"
 
+    def _compute_state_related(self):
+        for rec in self:
+            rec.state = rec.perform.state
+
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作事项')
     detail = fields.Text(string='工作目标描述')
     result = fields.Text(string='工作目标(结果)与关键事件(过程)')
     evaluate = fields.Text(string='主管评价')
+    state = fields.Selection([('0', '待启动'),
+                              ('1', '待填写PBC'),
+                              ('2', '待主管确认'),
+                              ('3', '待考评启动'),
+                              ('4', '待总结'),
+                              ('5', '待主管评价'),
+                              ('6', '待最终考评'),
+                              ('99', '考评完成')
+                              ], string='状态', default='0', compute=_compute_state_related)
 
 
 class dtdream_hr_pbc(models.Model):
@@ -140,22 +168,25 @@ class dtdream_hr_pbc(models.Model):
         inter.append(cr.manage.user_id)
         return inter
 
+    @api.multi
     def _compute_is_inter(self):
         inter = self.get_inter_employee()
-        if self.env.user not in inter:
-            self.write({"is_inter": False})
-        else:
-            self.write({"is_inter": True})
-        print '----------------------->', self.is_inter
+        pbc = self.search([])
+        for rec in pbc:
+            if self.env.user not in inter:
+                rec.write({"is_inter": False}, False)
+            else:
+                rec.write({"is_inter": True}, False)
 
+    @api.multi
     def _compute_login_in_department(self):
         cr = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
-        for rec in self:
+        pbc = self.search([])
+        for rec in pbc:
             if rec.name == cr.department_id or rec.name == cr.department_id.parent_id:
-                rec.write({"is_in_department": True})
+                rec.write({"is_in_department": True}, False)
             else:
-                rec.write({"is_in_department": False})
-            print '----------------------->', rec.is_in_department
+                rec.write({"is_in_department": False}, False)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -165,14 +196,64 @@ class dtdream_hr_pbc(models.Model):
         if self.env.user not in inter:
             if res['type'] == "form":
                 doc.xpath("//form")[0].set("create", "false")
+                doc.xpath("//form")[0].set("edit", "false")
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
+                doc.xpath("//tree")[0].set("edit", "false")
         res['arch'] = etree.tostring(doc)
+        self._compute_login_in_department()
+        self._compute_is_inter()
         return res
 
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            department = []
+            cr = rec.env['dtdream.pbc.hr.config'].search([], limit=1)
+            if rec.env.user != cr.manage.user_id:
+                inter = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
+                if not inter:
+                    raise ValidationError("普通员工无法删除部门PBC!")
+                for crr in inter:
+                    department.append(crr.department.id)
+                    for depart in crr.department.child_ids:
+                        department.append(depart.id)
+                if rec.name.id not in department:
+                    raise ValidationError("HR接口人只能删除所接口部门的部门PBC!")
+        return super(dtdream_hr_pbc, self).unlink()
+
+    @api.multi
+    def write(self, vals, flag=True):
+        if flag:
+            department = []
+            cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
+            if self.env.user != cr.manage.user_id:
+                inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+                for crr in inter:
+                    department.append(crr.department.id)
+                    for depart in crr.department.child_ids:
+                        department.append(depart.id)
+                if self.name.id not in department:
+                    raise ValidationError("HR接口人只能编辑所接口部门的部门PBC!")
+        return super(dtdream_hr_pbc, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        department = []
+        cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
+        if self.env.user != cr.manage.user_id:
+            inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+            for crr in inter:
+                department.append(crr.department.id)
+                for depart in crr.department.child_ids:
+                    department.append(depart.id)
+            if vals.get('name', '') not in department:
+                raise ValidationError("HR接口人只能创建所接口部门的部门PBC!")
+        return super(dtdream_hr_pbc, self).create(vals)
+
     name = fields.Many2one('hr.department', string='部门', required=True)
-    is_inter = fields.Boolean(string="是否接口人", compute=_compute_is_inter)
-    is_in_department = fields.Boolean(string='是否所在部门', compute=_compute_login_in_department)
+    is_inter = fields.Boolean(string="是否接口人", default=lambda self: True)
+    is_in_department = fields.Boolean(string='是否所在部门')
     year = fields.Char(string='考核年度', default=lambda self: u"%s财年" % datetime.now().year, readonly=True)
     quarter = fields.Selection([('1', 'Q1'),
                                 ('2', 'Q2'),

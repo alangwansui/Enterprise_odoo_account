@@ -101,7 +101,7 @@
             <form>
               <header>
                   <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                          attrs="{'invisible':[('state','not in',('1', '4','5'))]}"/>
+                          attrs="{'invisible':['|','&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','not in',('1', '4')),('login','=',True),'&amp;',('state','!=','5'),('is_officer','=',True)]}"/>
                   <button name="btn_revise" string="返回修改" type="workflow" class="oe_highlight"
                           attrs="{'invisible':[('state','!=','2')]}"/>
                   <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
@@ -116,16 +116,18 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name"/>
+                    <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="year"/>
-                    <field name="quarter"/>
-                    <field name="result"/>
+                    <field name="quarter" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    <field name="result" attrs="{'readonly':[('state', '!=','0')]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
                     <field name="workid"/>
-                    <field name="officer"/>
+                    <field name="officer" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="onwork"/>
+                    <field name="login"/>
+                    <field name="is_officer"/>
                   </group>
                 </group>
 
@@ -150,8 +152,9 @@
                                 <tree editable="bottom">
                                     <field name="work"/>
                                     <field name="detail"/>
-                                    <field name="result"/>
-                                    <field name="evaluate"/>
+                                    <field name="result" attrs="{'readonly':[('state', '!=','0')]}"/>
+                                    <field name="evaluate" attrs="{'readonly':[('state', '!=','0')]}"/>
+                                    <field name="state" invisible="True"/>
                                 </tree>
                             </field>
                         </page>

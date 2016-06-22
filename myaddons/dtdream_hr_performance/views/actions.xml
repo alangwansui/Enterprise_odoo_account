@@ -2,20 +2,13 @@
 <openerp>
     <data>
 
-        <record id="act_dtdream_hr_pbc" model="ir.actions.server">
+        <record id="act_dtdream_hr_pbc" model="ir.actions.act_window">
             <field name="name">部门PBC</field>
-            <field name="model_id" ref="model_dtdream_hr_pbc"/>
-            <field name="code">
-                action = {
-                'name':'部门PBC',
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'tree,form',
-                'res_model': 'dtdream.hr.pbc',
-                'domain': [(1,'=',1)],
-                'context':context,
-                }
-            </field>
+            <field name="res_model">dtdream.hr.pbc</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|', ('is_inter', '=', True),'&amp;',('is_in_department','=',True),('state','=','99')]</field>
         </record>
 
         <record id="act_dtdream_hr_pbc_mine" model="ir.actions.act_window">
@@ -24,7 +17,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('name.user_id','=',uid)]</field>
+            <field name="domain">[('name.user_id','=',uid),('state', '!=', '0')]</field>
         </record>
 
         <record id="act_dtdream_hr_pbc_approve" model="ir.actions.act_window">
