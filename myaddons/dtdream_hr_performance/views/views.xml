@@ -102,12 +102,12 @@
               <header>
                   <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
                           attrs="{'invisible':['|','&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','not in',('1', '4')),('login','=',True),'&amp;',('state','!=','5'),('is_officer','=',True)]}"/>
-                  <button name="btn_revise" string="返回修改" type="workflow" class="oe_highlight"
-                          attrs="{'invisible':[('state','!=','2')]}"/>
-                  <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
-                          attrs="{'invisible':[('state','!=','2')]}"/>
+                  <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" type="action" class="oe_highlight"
+                          attrs="{'invisible':['|',('state','!=','2'),('is_officer','=',False)]}"/>
+                  <button name="%(act_dtdream_pbc_agree_wizard)d" string="同意" type="action" class="oe_highlight"
+                          attrs="{'invisible':['|',('state','!=','2'),('is_officer','=',False)]}"/>
                   <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
-                          attrs="{'invisible':[('state','!=','3')]}"/>
+                          attrs="{'invisible':['|',('login','=',False),('state','!=','3')]}"/>
                   <button name="btn_import" string="导入" type="workflow" class="oe_highlight"
                           attrs="{'invisible':[('state','!=','6')]}"/>
                   <field name="state" widget="statusbar" statusbar_visible="0,99"/>
@@ -128,13 +128,14 @@
                     <field name="onwork"/>
                     <field name="login"/>
                     <field name="is_officer"/>
+                    <field name="view_all"/>
                   </group>
                 </group>
 
                 <group string="部门PBC">
                     <notebook>
                         <page>
-                            <field name="pbc">
+                            <field name="pbc" attrs="{'readonly':[('state', '!=','0')]}">
                                 <tree create="0" delete="false">
                                     <field name="name"/>
                                     <field name="quarter" invisible="1"/>
@@ -148,13 +149,14 @@
                 <group string="个人PBC">
                     <notebook>
                         <page>
-                            <field name="pbc_employee">
+                            <field name="pbc_employee" attrs="{'readonly':['|',('state', 'not in',('1','4')),('login','=',False)]}">
                                 <tree editable="bottom">
-                                    <field name="work"/>
-                                    <field name="detail"/>
-                                    <field name="result" attrs="{'readonly':[('state', '!=','0')]}"/>
+                                    <field name="work" attrs="{'readonly':[('state', '!=','1')]}"/>
+                                    <field name="detail" attrs="{'readonly':[('state', '!=','1')]}"/>
+                                    <field name="result" attrs="{'readonly':['|',('state', 'not in',('0','4')),'&amp;',('state', '=','4'),('login','=',False)]}"/>
                                     <field name="evaluate" attrs="{'readonly':[('state', '!=','0')]}"/>
                                     <field name="state" invisible="True"/>
+                                    <field name="login"/>
                                 </tree>
                             </field>
                         </page>
@@ -162,6 +164,10 @@
                 </group>
 
               </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>

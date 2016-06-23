@@ -9,6 +9,7 @@ from lxml import etree
 class dtdream_hr_performance(models.Model):
     _name = "dtdream.hr.performance"
     _inherit = ['mail.thread']
+    _description = u"员工PBC"
 
     @api.onchange('department', 'quarter')
     def _onchange_compute_hr_pbc(self):
@@ -31,9 +32,9 @@ class dtdream_hr_performance(models.Model):
 
     def _compute_officer_is_login(self):
         if self.env.user == self.officer.user_id:
-            self.officer = True
+            self.is_officer = True
         else:
-            self.officer = False
+            self.is_officer = False
 
     @api.model
     def create(self, vals):
@@ -42,6 +43,34 @@ class dtdream_hr_performance(models.Model):
             val[0] = 4
         vals['pbc'] = pbc
         return super(dtdream_hr_performance, self).create(vals)
+
+    @api.multi
+    def write(self, vals, flag=True):
+        return super(dtdream_hr_performance, self).write(vals)
+
+    def get_inter_employee(self):
+        cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
+        inter = [rec.name.user_id for rec in cr.interface]
+        manage = cr.manage
+        return inter, manage
+
+    @api.multi
+    def _compute_is_inter_department(self):
+        inter, manage = self.get_inter_employee()
+        pbc = self.search([])
+        for rec in pbc:
+            if rec.env.user == manage.user_id:
+                rec.write({"view_all": True}, False)
+            elif rec.env.user not in inter:
+                rec.write({"view_all": False}, False)
+            else:
+                cr = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
+                department_id = [department.id for department in cr.department.child_ids if cr.department.child_ids]
+                department_id.append(cr.department.id)
+                if rec.department.id in department_id:
+                    rec.write({"view_all": True}, False)
+                else:
+                    rec.write({"view_all": False}, False)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -65,6 +94,7 @@ class dtdream_hr_performance(models.Model):
                 if res['type'] == "tree":
                     doc.xpath("//tree")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
+        self._compute_is_inter_department()
         return res
 
     name = fields.Many2one('hr.employee', string='花名', required=True)
@@ -92,6 +122,7 @@ class dtdream_hr_performance(models.Model):
     pbc_employee = fields.One2many('dtdream.hr.pbc.employee', 'perform', string='个人PBC')
     login = fields.Boolean(compute=_compute_name_is_login)
     is_officer = fields.Boolean(compute=_compute_officer_is_login)
+    view_all = fields.Boolean(string='所有单据')
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter, year)', '每个员工每个季度只能有一条员工PBC !')
@@ -133,11 +164,19 @@ class dtdream_hr_pbc_employee(models.Model):
         for rec in self:
             rec.state = rec.perform.state
 
+    def _compute_name_is_login(self):
+        for rec in self:
+            if rec.env.user == rec.perform.name.user_id:
+                rec.login = True
+            else:
+                rec.login = False
+
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作目标')
     detail = fields.Text(string='具体描述')
     result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
+    login = fields.Boolean(compute=_compute_name_is_login)
     state = fields.Selection([('0', '待启动'),
                               ('1', '待填写PBC'),
                               ('2', '待主管确认'),
@@ -146,7 +185,7 @@ class dtdream_hr_pbc_employee(models.Model):
                               ('5', '待主管评价'),
                               ('6', '待最终考评'),
                               ('99', '考评完成')
-                              ], string='状态', default='0', compute=_compute_state_related)
+                              ], string='状态', default='1', compute=_compute_state_related)
 
 
 class dtdream_hr_pbc(models.Model):

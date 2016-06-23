@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'wizard/pbc_wizard.xml',
         'views/actions.xml',
         'views/views.xml',
         'views/menu.xml',
