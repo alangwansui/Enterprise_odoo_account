@@ -108,9 +108,7 @@
                           attrs="{'invisible':['|',('state','!=','2'),('is_officer','=',False)]}"/>
                   <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
                           attrs="{'invisible':['|',('login','=',False),('state','!=','3')]}"/>
-                  <button name="btn_import" string="导入" type="workflow" class="oe_highlight"
-                          attrs="{'invisible':[('state','!=','6')]}"/>
-                  <field name="state" widget="statusbar" statusbar_visible="0,99"/>
+                  <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,5,6,99"/>
               </header>
 
               <sheet>
@@ -149,14 +147,15 @@
                 <group string="个人PBC">
                     <notebook>
                         <page>
-                            <field name="pbc_employee" attrs="{'readonly':['|',('state', 'not in',('1','4')),('login','=',False)]}">
+                            <field name="pbc_employee" attrs="{'readonly':['|',('state', 'not in',('1','4','5')),'|','&amp;',('state','in',('1','4')),('login','=',False),'&amp;',('state','=','5'),('is_officer','=',False)]}">
                                 <tree editable="bottom">
                                     <field name="work" attrs="{'readonly':[('state', '!=','1')]}"/>
                                     <field name="detail" attrs="{'readonly':[('state', '!=','1')]}"/>
-                                    <field name="result" attrs="{'readonly':['|',('state', 'not in',('0','4')),'&amp;',('state', '=','4'),('login','=',False)]}"/>
-                                    <field name="evaluate" attrs="{'readonly':[('state', '!=','0')]}"/>
+                                    <field name="result" attrs="{'readonly':['|',('state', '!=','4'),'&amp;',('state', '=','4'),('login','=',False)]}"/>
+                                    <field name="evaluate" attrs="{'readonly':['|',('state', '!=','5'),('officer', '!=',True)]}"/>
                                     <field name="state" invisible="True"/>
                                     <field name="login"/>
+                                    <field name="officer"/>
                                 </tree>
                             </field>
                         </page>
@@ -227,7 +226,8 @@
           view_id="view_dtdream_hr_pbc_start_from"
           view_mode="form"
           view_type="form"
-          target="new"/>
+          target="new"
+          groups="group_hr_manage_performance"/>
 
     <record id="view_dtdream_hr_pbc_evaluate_from" model="ir.ui.view">
         <field name="name">view.dtdream.hr.pbc.start.from</field>
@@ -253,20 +253,15 @@
           view_id="view_dtdream_hr_pbc_evaluate_from"
           view_mode="form"
           view_type="form"
-          target="new"/>
+          target="new"
+          groups="group_hr_manage_performance"/>
 
     <record id="view_dtdream_hr_pbc_config" model="ir.ui.view">
         <field name="name">view.dtdream.pbc.hr.config.form</field>
         <field name="model">dtdream.pbc.hr.config</field>
         <field name="arch" type="xml">
-            <form string="绩效相关配置">
+            <form string="HR业务接口人设置">
                 <sheet>
-                    <group string="管理员设置">
-                        <group>
-                            <field name="manage" options="{'no_open': True}" required="True"/>
-                        </group>
-                    </group>
-
                     <group string="HR业务接口人设置">
                         <notebook>
                             <page>

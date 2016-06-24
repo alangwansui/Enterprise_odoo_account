@@ -46,22 +46,18 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def write(self, vals, flag=True):
+        result = vals.get('result', '')
+        if result and result.strip():
+            vals['state'] = "99"
         return super(dtdream_hr_performance, self).write(vals)
-
-    def get_inter_employee(self):
-        cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
-        inter = [rec.name.user_id for rec in cr.interface]
-        manage = cr.manage
-        return inter, manage
 
     @api.multi
     def _compute_is_inter_department(self):
-        inter, manage = self.get_inter_employee()
         pbc = self.search([])
         for rec in pbc:
-            if rec.env.user == manage.user_id:
+            if rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") in rec.env.user.groups_id:
                 rec.write({"view_all": True}, False)
-            elif rec.env.user not in inter:
+            elif rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
                 rec.write({"view_all": False}, False)
             else:
                 cr = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
@@ -85,10 +81,9 @@ class dtdream_hr_performance(models.Model):
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
         else:
-            cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
-            inter = [rec.name.user_id for rec in cr.interface]
-            inter.append(cr.manage.user_id)
-            if self.env.user not in inter:
+            inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id
+            manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
+            if inter and manage:
                 if res['type'] == "form":
                     doc.xpath("//form")[0].set("create", "false")
                 if res['type'] == "tree":
@@ -122,7 +117,7 @@ class dtdream_hr_performance(models.Model):
     pbc_employee = fields.One2many('dtdream.hr.pbc.employee', 'perform', string='个人PBC')
     login = fields.Boolean(compute=_compute_name_is_login)
     is_officer = fields.Boolean(compute=_compute_officer_is_login)
-    view_all = fields.Boolean(string='所有单据')
+    view_all = fields.Boolean()
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter, year)', '每个员工每个季度只能有一条员工PBC !')
@@ -163,6 +158,7 @@ class dtdream_hr_pbc_employee(models.Model):
     def _compute_state_related(self):
         for rec in self:
             rec.state = rec.perform.state
+            rec.officer = rec.perform.officer
 
     def _compute_name_is_login(self):
         for rec in self:
@@ -171,12 +167,20 @@ class dtdream_hr_pbc_employee(models.Model):
             else:
                 rec.login = False
 
+    def _compute_login_is_officer(self):
+        for rec in self:
+            if rec.env.user == rec.perform.officer.user_id:
+                rec.officer = True
+            else:
+                rec.officer = False
+
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作目标')
     detail = fields.Text(string='具体描述')
     result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
     login = fields.Boolean(compute=_compute_name_is_login)
+    officer = fields.Boolean(compute=_compute_login_is_officer)
     state = fields.Selection([('0', '待启动'),
                               ('1', '待填写PBC'),
                               ('2', '待主管确认'),
@@ -204,15 +208,13 @@ class dtdream_hr_pbc(models.Model):
     def get_inter_employee(self):
         cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
         inter = [rec.name.user_id for rec in cr.interface]
-        inter.append(cr.manage.user_id)
         return inter
 
     @api.multi
     def _compute_is_inter(self):
-        inter = self.get_inter_employee()
         pbc = self.search([])
         for rec in pbc:
-            if self.env.user not in inter:
+            if rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
                 rec.write({"is_inter": False}, False)
             else:
                 rec.write({"is_inter": True}, False)
@@ -231,8 +233,9 @@ class dtdream_hr_pbc(models.Model):
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(dtdream_hr_pbc, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
-        inter = self.get_inter_employee()
-        if self.env.user not in inter:
+        inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id
+        manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
+        if inter and manage:
             if res['type'] == "form":
                 doc.xpath("//form")[0].set("create", "false")
                 doc.xpath("//form")[0].set("edit", "false")
@@ -248,10 +251,10 @@ class dtdream_hr_pbc(models.Model):
     def unlink(self):
         for rec in self:
             department = []
-            cr = rec.env['dtdream.pbc.hr.config'].search([], limit=1)
-            if rec.env.user != cr.manage.user_id:
+            manage = rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in rec.env.user.groups_id
+            if manage:
                 inter = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
-                if not inter:
+                if rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
                     raise ValidationError("普通员工无法删除部门PBC!")
                 for crr in inter:
                     department.append(crr.department.id)
@@ -265,8 +268,8 @@ class dtdream_hr_pbc(models.Model):
     def write(self, vals, flag=True):
         if flag:
             department = []
-            cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
-            if self.env.user != cr.manage.user_id:
+            manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
+            if manage:
                 inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
                 for crr in inter:
                     department.append(crr.department.id)
@@ -279,8 +282,8 @@ class dtdream_hr_pbc(models.Model):
     @api.model
     def create(self, vals):
         department = []
-        cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
-        if self.env.user != cr.manage.user_id:
+        manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
+        if manage:
             inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
             for crr in inter:
                 department.append(crr.department.id)
@@ -325,8 +328,7 @@ class dtdream_pbc_target(models.Model):
 class dtdream_pbc_hr_config(models.Model):
     _name = "dtdream.pbc.hr.config"
 
-    manage = fields.Many2one('hr.employee', string='绩效管理员')
-    interface = fields.One2many('dtdream.pbc.hr.interface', 'inter', string='业务接口人设置')
+    interface = fields.One2many('dtdream.pbc.hr.interface', 'inter', string='业务接口部门设置')
 
 
 class dtdream_pbc_hr_interface(models.Model):
