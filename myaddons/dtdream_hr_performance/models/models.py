@@ -92,14 +92,21 @@ class dtdream_hr_performance(models.Model):
         self._compute_is_inter_department()
         return res
 
+    @api.onchange('quarter')
+    def _compute_quarter_str(self):
+        for rec in self:
+            rec.quarter_str = u'%s财年Q%s' % (datetime.now().year, rec.quarter)
+
+    @api.model
+    def _get_quarter_value(self):
+        return [(str(i), u'%s财年Q%s' % (datetime.now().year, i)) for i in range(1, 5)]
+
     name = fields.Many2one('hr.employee', string='花名', required=True)
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info)
     workid = fields.Char(string='工号', compute=_compute_employee_info)
-    year = fields.Char(string='考核年度', default=lambda self: u"%s财年" % datetime.now().year, readonly=True)
-    quarter = fields.Selection([('1', 'Q1'),
-                                ('2', 'Q2'),
-                                ('3', 'Q3'),
-                                ('4', 'Q4')], string='考核季度', required=True)
+    year = fields.Char(string='考核年度', default=lambda self: "%s" % datetime.now().year)
+    quarter_str = fields.Char()
+    quarter = fields.Selection(selection='_get_quarter_value', string='考核季度', required=True)
     officer = fields.Many2one('hr.employee', string='主管')
     result = fields.Char(string='考核结果')
     onwork = fields.Selection([('Inaugural_state_01', '在职'), ('Inaugural_state_02', '离职')],
@@ -120,7 +127,7 @@ class dtdream_hr_performance(models.Model):
     view_all = fields.Boolean()
 
     _sql_constraints = [
-        ('name_quarter_uniq', 'unique (name,quarter, year)', '每个员工每个季度只能有一条员工PBC !')
+        ('name_quarter_uniq', 'unique (name,year,quarter)', '每个员工每个季度只能有一条员工PBC !')
     ]
 
     @api.multi
@@ -293,15 +300,21 @@ class dtdream_hr_pbc(models.Model):
                 raise ValidationError("HR接口人只能创建所接口部门的部门PBC!")
         return super(dtdream_hr_pbc, self).create(vals)
 
+    @api.onchange('quarter')
+    def _compute_quarter_str(self):
+        for rec in self:
+            rec.quarter_str = u'%s财年Q%s' % (datetime.now().year, rec.quarter)
+
+    @api.model
+    def _get_quarter_value(self):
+        return [(str(i), u'%s财年Q%s' % (datetime.now().year, i)) for i in range(1, 5)]
+
     name = fields.Many2one('hr.department', string='部门', required=True)
     is_inter = fields.Boolean(string="是否接口人", default=lambda self: True)
     is_in_department = fields.Boolean(string='是否所在部门')
-    year = fields.Char(string='考核年度', default=lambda self: u"%s财年" % datetime.now().year, readonly=True)
-    quarter = fields.Selection([('1', 'Q1'),
-                                ('2', 'Q2'),
-                                ('3', 'Q3'),
-                                ('4', 'Q4'),
-                                ], string='考核季度', required=True)
+    year = fields.Char(string='考核年度', default=lambda self: "%s" % datetime.now().year)
+    quarter_str = fields.Char()
+    quarter = fields.Selection(selection='_get_quarter_value', string='考核季度', required=True)
     state = fields.Selection([('0', '草稿'),
                               ('99', '完成'),
                               ], string='状态', default='0')

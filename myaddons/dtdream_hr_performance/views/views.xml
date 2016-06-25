@@ -14,18 +14,14 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name" options="{'no_create': True}"/>
+                    <field name="name" options="{'no_create': True}" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="content" invisible="True"/>
                     <field name="is_inter" invisible="True"/>
                     <field name="is_in_department" invisible="True"/>
                   </group>
                   <group>
-                    <div class="o_row">
-                        <label for="year" string="考核季度" style="font-weight:bold"/>
-                        <field name="year"/>
-                        <label for="quarter" string="" style="font-weight:bold; margin-left: 50px;"/>
-                        <field name="quarter"/>
-                    </div>
+                    <field name="quarter_str" string='考核季度' attrs="{'readonly':[('state', '!=','0')],'invisible':[('state', '=','0')]}"/>
+                    <field name="quarter" attrs="{'invisible':[('state', '!=','0')]}"/>
                   </group>
                 </group>
 
@@ -53,7 +49,8 @@
         <field name="arch" type="xml">
             <tree>
               <field name="name"/>
-              <field name="quarter"/>
+              <field name="quarter_str" string="考核季度"/>
+              <field name="quarter" string="考核季度" />
               <field name="content" invisible="True"/>
               <field name="is_inter"/>
               <field name="is_in_department" />
@@ -115,13 +112,13 @@
                 <group string="基本信息">
                   <group>
                     <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
-                    <field name="year"/>
-                    <field name="quarter" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    <field name="workid"/>
+                    <field name="quarter_str" string='考核季度' attrs="{'readonly':[('state', '!=','0')],'invisible':[('state', '=','0')]}"/>
+                    <field name="quarter" attrs="{'invisible':[('state', '!=','0')]}"/>
                     <field name="result" attrs="{'readonly':[('state', '!=','0')]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
-                    <field name="workid"/>
                     <field name="officer" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="onwork"/>
                     <field name="login"/>
@@ -179,7 +176,7 @@
                 <field name="name"/>
                 <field name="workid"/>
                 <field name="department"/>
-                <field name="quarter"/>
+                <field name="quarter_str" string='考核季度'/>
                 <field name="state"/>
                 <field name="result"/>
             </tree>
