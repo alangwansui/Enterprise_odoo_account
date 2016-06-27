@@ -26,7 +26,7 @@
                 <group string="部门目标">
                     <notebook>
                         <page>
-                            <field name="target">
+                            <field name="target" attrs="{'readonly':[('state', '!=','0')]}">
                                 <tree editable="bottom">
                                     <field name="num"/>
                                     <field name="works"/>

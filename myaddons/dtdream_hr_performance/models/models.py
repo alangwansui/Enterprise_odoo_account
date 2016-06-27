@@ -14,7 +14,9 @@ class dtdream_hr_performance(models.Model):
     def _onchange_compute_hr_pbc(self):
         if self.department and self.quarter:
             cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
-            self.pbc = cr
+            target = [t.id for crr in cr for t in crr.target]
+            print '-------------------->',target
+            self.pbc = [(6, 0, target)]
 
     @api.depends('name')
     def _compute_employee_info(self):
@@ -308,6 +310,7 @@ class dtdream_hr_pbc(models.Model):
 
 class dtdream_pbc_target(models.Model):
     _name = "dtdream.pbc.target"
+    _order = "target"
 
     def _compute_department_target(self):
         for rec in self:
