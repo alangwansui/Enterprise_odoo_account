@@ -13,7 +13,6 @@
           <field name="job_number"/>
           <field name="department_id"/>
           <field name="leave_date"/>
-          <field name="actual_leavig_date"/>
           <field name="state"/>
           <field name="cur_approvers" widget="many2many_tags"/>
         </tree>
@@ -28,9 +27,18 @@
           <header>
               <button name="btn_submit"
                       type="workflow" states="0" string="提交" class="oe_highlight"></button>
+              <!--<button name="multi_process_btn_submit"-->
+                      <!--confirm="是否确认提交？"-->
+                      <!--attrs="{'invisible':['|',('state','not in',('3','5')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"-->
+                      <!--type="object" string="提交" class="oe_highlight"></button>-->
               <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" string="审批" class="oe_highlight"
                       attrs="{'invisible':['|',('state','not in',('1','2','4','6', '7','8')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"
                       context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"></button>
+              <!--<button name="btn_reject"-->
+                      <!--confirm="是否确认驳回？"-->
+                      <!--attrs="{'invisible':['|',('state','not in',('3','5')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"-->
+                      <!--type="workflow" string="驳回到上一步" class="oe_highlight"></button>-->
+
               <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,8,99" widget="statusbar"></field>
           </header>
           <sheet>
@@ -43,6 +51,7 @@
               <field name="entry_day"/>
               <field name="leave_date" attrs="{'readonly':[('state', '!=','0'),('is_admin', '=', False)]}"/>
               <field name="actual_leavig_date" readonly="True" states="5,6,7,8,99"/>
+              <field name="cur_approver_users" widget="many2many_tags" invisible="True"/>
               <field name="cur_approvers" widget="many2many_tags" invisible="True"/>
               <field name="is_approver" invisible="True"/>
               <field name="manager_id" invisible="True"/>
@@ -52,7 +61,7 @@
             </group>
             <notebook states="3,4,5,6,7,8,99">
               <page string="离岗后环节" states="5,6,7,8,99" >
-                <field name="leaving_handle_process_ids2" attrs="{'readonly':['|',('state','!=','5'),('is_admin', '=', False)]}">
+                <field name="leaving_handle_process_ids2" attrs="{'readonly':[('state','!=','5')]}">
                   <tree editable="bottom" create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
                     <field name="process_approver" readonly="True"></field>
@@ -67,7 +76,7 @@
                 </field>
               </page>
               <page string="离岗前环节" states="3,4,5,6,7,8,99">
-                <field name="leaving_handle_process_ids1" attrs="{'readonly':['|',('state','!=','3'),('is_admin', '=', False)]}">
+                <field name="leaving_handle_process_ids1" attrs="{'readonly':[('state','!=','3')]}">
                   <tree create="false" delete="false">
                     <field name="process_id" readonly="True"></field>
                     <field name="process_approver" readonly="True"></field>

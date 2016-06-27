@@ -19,7 +19,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('sameDept','=',True)]</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
         </record>
 
@@ -69,15 +69,15 @@
                          <button name="%(dtdream_rd_prod.act_version_wizard)d" string="进入下一阶段"  type="action"  attrs="{'invisible':['|',('version_state','not in',('draft','initialization','Development','pending')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                          <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一步阶段" attrs="{'invisible':['|',('version_state','in',('draft')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
-                        <!--<button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？"  attrs="{'invisible':['|','|',('is_zanting','=',True),('version_state','in',('draft','pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('is_zantingtj','=',True),('is_zanting','=',False),('version_state','in',('pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|',('is_zhongzhi','=',True),('version_state','in',('draft','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|',('is_zhongzhitj','=',True),('is_zhongzhi','=',False),('version_state','in',('stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('is_zanting_back','=',True),('version_state','not in',('pause')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|','|',('is_zanting_backtj','=',True),('is_zanting_back','=',False),('version_state','not in',('pause')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('version_state','not in',('stop')),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': proName,'default_version': active_id,'default_mark':False}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>-->
+                        <button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？"  attrs="{'invisible':['|','|',('is_zanting','=',True),('version_state','in',('draft','pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
+                        <button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('is_zantingtj','=',True),('is_zanting','=',False),('version_state','in',('pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|',('is_zhongzhi','=',True),('version_state','in',('draft','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|',('is_zhongzhitj','=',True),('is_zhongzhi','=',False),('version_state','in',('stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('is_zanting_back','=',True),('version_state','not in',('pause')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|','|',('is_zanting_backtj','=',True),('is_zanting_back','=',False),('version_state','not in',('pause')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('version_state','not in',('stop')),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': proName,'default_version': active_id,'default_mark':False}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
 
                         <field name="version_state" widget="statusbar" statusbar_visible="draft,initialization,Development,pending,released" />
                     </header>
@@ -135,6 +135,7 @@
                                     </notebook>
                                 </group>
                             </page>
+
                             <page string="版本开发" attrs="{'invisible':[('version_state','in',('draft','initialization'))]}">
                                 <group>
                                     <field name="actual_dev_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),('version_state','not in',('Development'))]}"/>
@@ -194,6 +195,7 @@
                                         </page>
                                     </notebook>
                                 </group>
+
                             </page>
                             <page string="暂停或中止" attrs="{'invisible':[('is_ztpage','=',False)]}">
                                 <div>

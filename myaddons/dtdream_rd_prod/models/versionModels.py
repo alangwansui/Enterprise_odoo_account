@@ -234,7 +234,6 @@ class dtdream_rd_version(models.Model):
                 self.write({'his_app_user': [(4, user.id)]})
             self.is_finish_01 = True
             processes = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id),('ver_state','=',self.version_state),('is_new','=',True),('level','=','level_01')])
-
             for process in processes:
                 if self.is_Qa:
                     process_01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id),('ver_state','=',self.version_state),('is_new','=',True),('level','=','level_02')])
@@ -271,7 +270,6 @@ class dtdream_rd_version(models.Model):
                                 self.message_post(body=process.approver.name+u'在计划中阶段一级审批意见:不通过,原因：'+process.reason)
                             else:
                                 self.message_post(body=process.approver.name+u'在计划中阶段一级审批意见:不通过')
-
 
             for process in processes:
                 if not (process.is_pass or process.is_risk):
@@ -353,6 +351,7 @@ class dtdream_rd_version(models.Model):
                             else:
                                 self.message_post(body=process_01.approver.name+u'在计划中阶段二级审批意见:带风险通过')
                     elif process_01.is_refuse:
+
                         self.message_post(body=process_01.approver.name+u'在计划中阶段二级审批不同意，原因:'+process_01.reason)
                         proces_01all = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id),('ver_state','=',self.version_state)])
                         proces_01all.unlink()
@@ -514,6 +513,7 @@ class dtdream_rd_version(models.Model):
                         proces_02all = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',self.id),('ver_state','=',self.version_state)])
                         proces_02all.unlink()
 
+
     @api.constrains('process_03_ids')
     def con_pro_03_ids(self):
         for rec in self.process_03_ids:
@@ -598,7 +598,7 @@ class dtdream_rd_version(models.Model):
                         rold_ids +=[record.name.id]
                     appro = self.env['dtdream_rd_role'].search([('role_id','=',self.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                     if len(appro)==0:
-                        self.signal_workflow('btn_to_dfb')
+                        self.signal_workflow('btn_to_yfb')
                     else:
                         for record in appro:
                             self.add_follower(employee_id=record.person.id)
@@ -623,6 +623,7 @@ class dtdream_rd_version(models.Model):
                                 'auto_delete': False,
                                 'email_from':self.get_mail_server_name(),
                             }).send()
+
                 else:
                     for process in process_03:
                         if process.approver_old and process.approver!=process.approver_old:
@@ -664,11 +665,13 @@ class dtdream_rd_version(models.Model):
                             else:
                                 self.message_post(body=process_03.approver.name+u'在待发布阶段二级审批意见:带风险通过')
                     elif process_03.is_refuse:
+
                         self.message_post(body=process_03.approver.name+u'在待发布阶段二级审批不同意，原因:'+process_03.reason)
                         # self.signal_workflow('dfb_to_draft')
                         self.write({'is_click_03':False})
                         proces_03all = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',self.id),('ver_state','=',self.version_state)])
                         proces_03all.unlink()
+
 
     @api.model
     def wkf_zanting(self):

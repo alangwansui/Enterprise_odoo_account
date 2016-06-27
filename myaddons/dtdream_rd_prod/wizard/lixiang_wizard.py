@@ -50,7 +50,7 @@ class lxWizardappr(models.TransientModel):
             self.current_approver_user = [(5,)]
             for record in appro:
                 self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
-                self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                current_lixiang.write({'current_approver_user': [(4, record.person.user_id.id)]})
 
                 subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
                 appellation = record.person.name+u",您好"
@@ -86,79 +86,14 @@ class lxWizardappr(models.TransientModel):
                     self.current_approver_user = [(5,)]
                     for record in appro:
                         self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
-                        self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                        current_lixiang.write({'current_approver_user': [(4, record.person.user_id.id)]})
 
-                        subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
+                        if current_lixiang.department_2:
+                            subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
+                        else:
+                            subject=current_lixiang.department.name+u"的"+current_lixiang.name+u"待您审批"
                         appellation = record.person.name+u",您好"
-                        content = current_lixiang.department.name+u"的"+current_lixiang.name+u"的立项阶段待您审批"
-                        base_url = self.get_base_url()
-                        link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % current_lixiang.id
-                        url = base_url+link
-                        self.env['mail.mail'].create({
-                            'body_html': u'''<p>%s</p>
-                                         <p>%s</p>
-                                         <p> 请点击链接进入:
-                                         <a href="%s">%s</a></p>
-                                        <p>dodo</p>
-                                         <p>万千业务，简单有do</p>
-                                         <p>%s</p>''' % (appellation,content, url,url,current_lixiang.write_date[:10]),
-                            'subject': '%s' % subject,
-                            'email_to': '%s' % record.person.work_email,
-                            'auto_delete': False,
-                            'email_from':self.get_mail_server_name(),
-                        }).send()
-
-
-        if current_lixiang.state=="state_02":
-            current_lixiang.write({'is_appred':True})
-            current_lixiang.current_approver_user = [(5,)]
-            records = self.env['dtdream_rd_approver'].search([('pro_state','=','state_02'),('level','=','level_01')])           #审批人配置
-            rold_ids = []
-            for record in records:
-                rold_ids +=[record.name.id]
-            appro = self.env['dtdream_rd_role'].search([('role_id','=',current_lixiang.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
-            for record in appro:
-                self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":current_lixiang.id,'pro_state':'state_02','approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
-                current_lixiang.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-                subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
-                appellation = record.person.name+u",您好"
-                content = current_lixiang.department.name+u"的"+current_lixiang.name+u"的总体设计阶段待您审批"
-                base_url = self.get_base_url()
-                link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % current_lixiang.id
-                url = base_url+link
-                self.env['mail.mail'].create({
-                    'body_html': u'''<p>%s</p>
-                                 <p>%s</p>
-                                 <p> 请点击链接进入:
-                                 <a href="%s">%s</a></p>
-                                <p>dodo</p>
-                                 <p>万千业务，简单有do</p>
-                                 <p>%s</p>''' % (appellation,content, url,url,current_lixiang.write_date[:10]),
-                    'subject': '%s' % subject,
-                    'email_to': '%s' % record.person.work_email,
-                    'auto_delete': False,
-                    'email_from':self.get_mail_server_name(),
-                }).send()
-
-            processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',current_lixiang.id),('pro_state','=','state_02'),('level','=','level_01'),('is_new','=',True)])
-            if len(processes)==0:
-                records = self.env['dtdream_rd_approver'].search([('pro_state','=',current_lixiang.state),('level','=','level_02')])           #审批人配置
-                rold_ids = []
-                for record in records:
-                    rold_ids +=[record.name.id]
-                appro = self.env['dtdream_rd_role'].search([('role_id','=',current_lixiang.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
-                if len(appro)==0:
-                    current_lixiang.signal_workflow('btn_to_ddkf')
-                else:
-                    self.current_approver_user = [(5,)]
-                    for record in appro:
-                        self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
-                        self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-                        subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
-                        appellation = record.person.name+u",您好"
-                        content = current_lixiang.department.name+u"的"+current_lixiang.name+u"的立项阶段待您审批"
+                        content = current_lixiang.department.name+u"的"+current_lixiang.name+u"已进入立项阶段，等待您的审批"
                         base_url = self.get_base_url()
                         link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % current_lixiang.id
                         url = base_url+link
@@ -405,8 +340,11 @@ class dtdream_liwai(models.TransientModel):
                 current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意,意见：'+self.liyou)
                 if current_execption.approver_sec:
                     current_execption.write({'state':'ejsp'})
-                    subject=current_execption.name.department.name+u"/"+current_execption.name.department_2.name+u"的"+current_execption.name.name+u"的例外申请，待您审批"
-                    appellation = current_execption.name.department.manager_id.name+u",您好"
+                    if current_execption.name.department_2:
+                        subject=current_execption.name.department.name+u"/"+current_execption.name.department_2.name+u"的"+current_execption.name.name+u"的例外申请，待您审批"
+                    else:
+                        subject=current_execption.name.department.name+u"的"+current_execption.name.name+u"的例外申请，待您审批"
+                    appellation = current_execption.approver_sec.name+u",您好"
                     content = current_execption.name.department.name+u"的"+current_execption.name.name+u"的例外申请，待您审批"
                     base_url = self.get_base_url()
                     link = '/web#id=%s&view_type=form&model=dtdream_execption' % self.id

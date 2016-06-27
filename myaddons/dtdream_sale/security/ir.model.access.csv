@@ -112,3 +112,5 @@ access_crm_lead2opportunity_partner_mass_salesman,crm.lead2opportunity.mass sale
 access_crm_lead2opportunity_partner_mass_manager,crm.lead2opportunity.mass manager,crm.model_crm_lead2opportunity_partner_mass,group_dtdream_sale_manager,1,1,1,1
 
 access_dtdream_project_space_line,dtdream.project.space.line user,model_dtdream_project_space_line,base.group_user,1,1,1,1
+
+access_dtdream_des_records,dtdream.des.records user,model_dtdream_des_records,base.group_user,1,1,1,1

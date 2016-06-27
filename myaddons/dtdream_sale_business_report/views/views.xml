@@ -26,17 +26,21 @@
           <sheet>
             <group>
               <group>
+                <field name="is_business_approveds" invisible="True"/>
+                <field name="is_pro_approveds" invisible="True"/>
                 <field name="shenpiren_version" invisible="True"></field>
                 <field name="approveds" invisible="True"></field>
                 <field name="product_approveds" invisible="True"></field>
                 <field name="business_approveds" invisible="True"></field>
                 <field name="is_current" invisible="True"></field>
-                <field name="if_out_grant"></field>
+                <field name="if_out_grant" invisible="True"></field>
                 <field name="rejust_state" invisible="True"></field>
                 <field name="a_apply_discount" invisible="True"></field>
                 <field name="sale_grant_discount" invisible="True"></field>
                 <field name="market_grant_discount" invisible="True"></field>
-                <field name="maoli" invisible="True"></field>
+                <!--<field name="maoli" invisible="True"></field>-->
+                <field name="total_zhuren_price" invisible="True"></field>
+                <field name="zhuren_grant_discount" invisible="True"></field>
                 <field name="total_chuhuo_price" invisible="True"></field>
                 <field name="total_market_price" invisible="True"></field>
                 <field name="total_sale_price" invisible="True"></field>
@@ -46,7 +50,7 @@
                 <field name="office_id" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="system_department_id" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="industry_id" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="sale_money" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <!--<field name="sale_money" ></field>-->
                 <field name="partner_budget" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="have_hardware" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
               </group>
@@ -62,6 +66,9 @@
                 <field name="sale_business_interface_person" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
               </group>
             </group>
+            <span style="color:red">
+                <field name="warn_text"  readonly="True" ></field>
+            </span>
             <notebook colspan="4">
                 <page string="项目概况">
                     <group>
@@ -101,7 +108,8 @@
                           <field name="ref_discount" string="参考折扣(%)"/>
                           <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
                           <field name="pro_num" string="数量" />
-                          <field name="config_set" string="配置组"/>
+                          <field name="config_set" string="发货地"/>
+                          <field name="remark" string="备注"/>
                       </tree>
                       <form>
                           <sheet>
@@ -122,13 +130,17 @@
                                       <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
                                       <field name="apply_discount" string="申请折扣(%)" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)],'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
                                       <field name="pro_num" string="数量" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
-                                      <field name="config_set" string="配置组" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="config_set" string="发货地" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="remark" string="备注" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)]}"/>
                                   </group>
                               </group>
                           </sheet>
                       </form>
                     </field>
-                    <field name="warn_text"  readonly="True" ></field>
+                    <group class="oe_subtotal_footer oe_right" name="product_total">
+                        <field name="total_list_price"  class="oe_subtotal_footer_separator"/>
+                        <field name="total_apply_price" class="oe_subtotal_footer_separator" attrs="{'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('state','in',('1','2','3')),('is_current','=',True)]}"/>
+                    </group>
                 </page>
                 <page string="历史审批记录">
                     <field name="approve_records" readonly="True">

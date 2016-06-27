@@ -121,9 +121,9 @@
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
                     <field name="officer" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="onwork"/>
-                    <field name="login"/>
-                    <field name="is_officer"/>
-                    <field name="view_all"/>
+                    <field name="login" invisible="True"/>
+                    <field name="is_officer" invisible="True"/>
+                    <field name="view_all" invisible="True"/>
                   </group>
                 </group>
 
@@ -151,8 +151,8 @@
                                     <field name="result" attrs="{'readonly':['|',('state', '!=','4'),'&amp;',('state', '=','4'),('login','=',False)]}"/>
                                     <field name="evaluate" attrs="{'readonly':['|',('state', '!=','5'),('officer', '!=',True)]}"/>
                                     <field name="state" invisible="True"/>
-                                    <field name="login"/>
-                                    <field name="officer"/>
+                                    <field name="login" invisible="True"/>
+                                    <field name="officer" invisible="True"/>
                                 </tree>
                             </field>
                         </page>

@@ -4,6 +4,7 @@ from openerp import models, fields, api
 from openerp.exceptions import Warning
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from openerp .exceptions import ValidationError
 
 # 继承产品模型，修改字段
 class dtdream_product(models.Model):
@@ -179,7 +180,7 @@ class dtdream_product_line(models.Model):
     ref_discount = fields.Float('参考折扣(%)')
     apply_discount = fields.Float('申请折扣(%)')
     pro_num = fields.Integer('数量')
-    config_set = fields.Char('配置组')
+    config_set = fields.Char('发货地')
 
     @api.onchange("product_id")
     def _onchange_product_id(self):
@@ -316,6 +317,7 @@ class dtdream_sale(models.Model):
     def _onchange_sale_apply_uid(self):
         self.sale_apply_id_uid = self.sale_apply_id.env['res.users'].search([('login','=',self.sale_apply_id.login)]).id
 
+    description = fields.Text('项目进展')
     name = fields.Char('项目名称',required=True,select=1)
     user_id = fields.Many2one(string="Salesperson")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
@@ -330,7 +332,7 @@ class dtdream_sale(models.Model):
     bidding_time = fields.Date("招标时间",required=True,default=lambda self:datetime.now())
     supply_time = fields.Date("供货时间",required=True,default=lambda self:(datetime.now() + relativedelta(months=1)))
     pre_implementation_time = fields.Date("预计开始实施时间",default=lambda self:(datetime.now() + relativedelta(months=2)))
-    pre_check_time = fields.Date("预计验收时间",required=True,default=lambda self:(datetime.now() + relativedelta(months=3)))
+    pre_check_time = fields.Date("预计验收时间",default=lambda self:(datetime.now() + relativedelta(months=3)))
     sale_channel = fields.Char("渠道",required=True)
     project_master_degree = fields.Selection([
         ('1', 'A'),
@@ -343,9 +345,14 @@ class dtdream_sale(models.Model):
     ali_division = fields.Selection([
         ('1','数据中国'),
         ('2','部委事业部'),
-        ('3','金融'),
-        ('4','央企'),
-        ('5','其他'),
+        ('3','央企'),
+        ('4','民企'),
+        ('5','金融'),
+        ('6','互联网+'),
+        ('7','大安全部'),
+        ('8','中间件部'),
+        ('9','支付宝'),
+        ('10','无'),
     ],'阿里对应事业部')
 
     ali_saleman = fields.Char('阿里对应销售')
@@ -354,14 +361,14 @@ class dtdream_sale(models.Model):
         ('0', '否'),
     ],string='是否数梦集成项目',required=True)
     project_province = fields.Many2one("res.country.state", '省份',required=True)
-    project_place = fields.Char('城市',required=True)
     product_category_type_id = fields.Many2many("product.category", string="产品分类")
+    project_place = fields.Char('城市')
     sale_apply_id = fields.Many2one("hr.employee",string="营销责任人",required=True)
     sale_apply_id_uid = fields.Integer(string="营销责任人id")
 
     product_line = fields.One2many('dtdream.product.line', 'product_line_id', string='产品配置',copy=True)
 
-    project_detail = fields.Text("项目详情")
+    project_detail = fields.Text("项目详情",required=True)
 
     total_list_price = fields.Float('目录价总计',store=True,compute=_onchange_product_line)
     total_ref_price = fields.Float('参考折扣价总计',store=True,compute=_onchange_product_line)
@@ -371,6 +378,7 @@ class dtdream_sale(models.Model):
     dt_partner_name = fields.Char(compute=_compute_partner_fields,store=True,string="公司名称")
     dt_contact_name = fields.Char(compute=_compute_partner_fields,store=True,string="联系人名称")
     dt_mobile = fields.Char(compute=_compute_partner_fields,store=True,string="手机")
+    des_records = fields.One2many("dtdream.des.records","des_id",string="进展记录")
 
     stage_id = fields.Many2one('crm.stage', string='Stage', track_visibility='onchange', select=True,domain="['|', ('type', '=', type), ('type', '=', 'both')]")
 
@@ -392,6 +400,8 @@ class dtdream_sale(models.Model):
 
     @api.model
     def create(self, vals):
+        if len(vals.get('des_records')) == 0 :
+            raise ValidationError("请录入项目进展")
         if vals.get('project_number', 'New') == 'New':
             o_id = vals.get('office_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
@@ -449,6 +459,12 @@ class dtdream_sale(models.Model):
 
     @api.multi
     def write(self, vals):
+        if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid:
+            raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
+        if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
+            raise ValidationError("请录入项目进展")
+        if vals.has_key('description'):
+            self.env['dtdream.des.records'].create({"name":self.description,"des_id":self.id})
         result = super(dtdream_sale, self).write(vals)
         if vals.has_key('project_space'):
             rec = self.env['crm.lead'].search([('id','=',self.id)])
@@ -681,3 +697,11 @@ class dtdream_project_space_line(models.Model):
 
     categ_id = fields.Many2one('product.category',string="产品分类")
     project_space = fields.Float('项目空间(万元)')
+
+# 进展记录
+class dtdream_des_records(models.Model):
+    _name = "dtdream.des.records"
+    _order = "id desc"
+
+    name = fields.Text("项目进展")
+    des_id = fields.Many2one("crm.lead",string="项目")

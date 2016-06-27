@@ -13,8 +13,9 @@ class dtdream_hr_performance(models.Model):
 
     @api.onchange('department', 'quarter')
     def _onchange_compute_hr_pbc(self):
+        print self.env['bus_f_u_u'].search([])
         if self.department and self.quarter:
-            cr = self.env['dtdream.hr.pbc'].search([('year', '=', self.year), ('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
+            cr = self.env['dtdream.hr.pbc'].search([('year', '=', str(datetime.now().year)), ('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
             self.pbc = cr
 
     @api.depends('name')
@@ -39,9 +40,16 @@ class dtdream_hr_performance(models.Model):
     @api.model
     def create(self, vals):
         pbc = vals.get('pbc', '')
-        for val in pbc:
-            val[0] = 4
-        vals['pbc'] = pbc
+        if not pbc:
+            employee = self.env['hr.employee'].search([('id', '=', vals.get('name', 0))])
+            pbc = self.env['dtdream.hr.pbc'].search([('year', '=', str(datetime.now().year)), ('state', '=', '99'),
+                ('quarter', '=', vals.get('quarter', '')), '|', ('name', '=', employee.department_id.parent_id.id),
+                                                     ('name', '=', employee.department_id.id)])
+            vals['pbc'] = [[4, cr.id] for cr in pbc]
+        else:
+            for val in pbc:
+                val[0] = 4
+            vals['pbc'] = pbc
         return super(dtdream_hr_performance, self).create(vals)
 
     @api.multi
@@ -92,7 +100,7 @@ class dtdream_hr_performance(models.Model):
         self._compute_is_inter_department()
         return res
 
-    @api.onchange('quarter')
+    @api.depends('quarter')
     def _compute_quarter_str(self):
         for rec in self:
             rec.quarter_str = u'%s财年Q%s' % (datetime.now().year, rec.quarter)
@@ -102,12 +110,12 @@ class dtdream_hr_performance(models.Model):
         return [(str(i), u'%s财年Q%s' % (datetime.now().year, i)) for i in range(1, 5)]
 
     name = fields.Many2one('hr.employee', string='花名', required=True)
-    department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info)
+    department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)
     workid = fields.Char(string='工号', compute=_compute_employee_info)
-    year = fields.Char(string='考核年度', default=lambda self: "%s" % datetime.now().year)
-    quarter_str = fields.Char()
+    year = fields.Char(default=lambda self: "%s" % datetime.now().year)
+    quarter_str = fields.Char(compute=_compute_quarter_str, store=True)
     quarter = fields.Selection(selection='_get_quarter_value', string='考核季度', required=True)
-    officer = fields.Many2one('hr.employee', string='主管')
+    officer = fields.Many2one('hr.employee', string='主管', required=True)
     result = fields.Char(string='考核结果')
     onwork = fields.Selection([('Inaugural_state_01', '在职'), ('Inaugural_state_02', '离职')],
                               string="在职状态", compute=_compute_employee_info)
@@ -300,7 +308,7 @@ class dtdream_hr_pbc(models.Model):
                 raise ValidationError("HR接口人只能创建所接口部门的部门PBC!")
         return super(dtdream_hr_pbc, self).create(vals)
 
-    @api.onchange('quarter')
+    @api.depends('quarter')
     def _compute_quarter_str(self):
         for rec in self:
             rec.quarter_str = u'%s财年Q%s' % (datetime.now().year, rec.quarter)
@@ -313,7 +321,7 @@ class dtdream_hr_pbc(models.Model):
     is_inter = fields.Boolean(string="是否接口人", default=lambda self: True)
     is_in_department = fields.Boolean(string='是否所在部门')
     year = fields.Char(string='考核年度', default=lambda self: "%s" % datetime.now().year)
-    quarter_str = fields.Char()
+    quarter_str = fields.Char(compute=_compute_quarter_str, store=True)
     quarter = fields.Selection(selection='_get_quarter_value', string='考核季度', required=True)
     state = fields.Selection([('0', '草稿'),
                               ('99', '完成'),

@@ -69,6 +69,7 @@ class leaving_handle(models.Model):
     is_finish2 = fields.Boolean(string="离岗后并且环节是否都通过",compute=_compute_process_ids2)
     is_approver = fields.Boolean(string="判断当前登录人是否是该环节的审批人",compute=_compute_cur_approver)
     cur_approvers = fields.Many2many("hr.employee",string="当前处理人")
+    cur_approver_users = fields.Many2many("res.users",string="当前处理人")
     manager_id = fields.Many2one("hr.employee",string="主管")
     assistant_id = fields.Many2one('hr.employee', string="行政助理")
     is_admin = fields.Boolean("是否管理员",compute=_compute_is_admin)
@@ -117,6 +118,7 @@ class leaving_handle(models.Model):
     def wkf_draft(self):
         origin_state = self.state
         self.cur_approvers = False
+        self.cur_approver_users = False
         self.write({"state": "0"})
         if origin_state == "1":
             base_url = self.get_base_url()
@@ -191,7 +193,10 @@ class leaving_handle(models.Model):
         origin_state = self.state
         self.write({"state":"1"})
         self.cur_approvers = self.env.ref('dtdream_hr_leaving.leaving_handle_approver_1').approver
-        self.message_post(body=u'状态：'+self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
+        user_ids = []
+        for approver in self.cur_approvers:
+            user_ids.append(approver.user_id.id)
+        self.cur_approver_users = self.env["res.users"].browse(user_ids)
         if origin_state == "0":
             self.approver_mail()
         elif origin_state == "2":
@@ -202,8 +207,11 @@ class leaving_handle(models.Model):
     def wkf_approve2(self):
         origin_state = self.state
         self.cur_approvers = self.manager_id
+        user_ids = []
+        for approver in self.cur_approvers:
+            user_ids.append(approver.user_id.id)
+        self.cur_approver_users = self.env["res.users"].browse(user_ids)
         self.write({"state":"2"})
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
         if origin_state == "1":
             self.approver_mail()
         elif origin_state == "3":
@@ -213,20 +221,20 @@ class leaving_handle(models.Model):
     def wkf_approve3(self):
         origin_state = self.state
         self.write({"state":"3"})
-        self.env['leaving.handle.process'].search([('leaving_handle_id1', '=', self.id)]).unlink()
-        records = self.env['process.process'].search([('parent_process', '=', '3')])
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
-        for record in records:
-            approver = record.approver
-            if record.is_assistant:
-                approver = self.assistant_id
-            self.env['leaving.handle.process'].create({"process_id": record.id,"process_approver":approver.id, "leaving_handle_id1": self.id})
-        cur_approver_ids = set([])
-        for process in self.leaving_handle_process_ids1:
-            if process.process_approver.id:
-                cur_approver_ids.add(process.process_approver.id)
-        self.cur_approvers = self.env["hr.employee"].browse(cur_approver_ids)
         if origin_state == "2":
+            self.env['leaving.handle.process'].search([('leaving_handle_id1', '=', self.id)]).unlink()
+            records = self.env['process.process'].search([('parent_process', '=', '3')])
+            for record in records:
+                self.env['leaving.handle.process'].create({"process_id": record.id, "leaving_handle_id1": self.id})
+            cur_approver_ids = set([])
+            for process in self.leaving_handle_process_ids1:
+                if process.process_approver.id:
+                    cur_approver_ids.add(process.process_approver.id)
+            self.cur_approvers = self.env["hr.employee"].browse(cur_approver_ids)
+            user_ids = []
+            for approver in self.cur_approvers:
+                user_ids.append(approver.user_id.id)
+            self.cur_approver_users = self.env["res.users"].browse(user_ids)
             self.approver_mail()
         elif origin_state == "4":
             self.reject_mail()
@@ -236,7 +244,10 @@ class leaving_handle(models.Model):
         origin_state = self.state
         self.write({"state":"4"})
         self.cur_approvers = self.manager_id
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
+        user_ids = []
+        for approver in self.cur_approvers:
+            user_ids.append(approver.user_id.id)
+        self.cur_approver_users = self.env["res.users"].browse(user_ids)
         if origin_state == "3":
             self.approver_mail()
         elif origin_state == "5":
@@ -246,20 +257,20 @@ class leaving_handle(models.Model):
     def wkf_approve5(self):
         origin_state = self.state
         self.write({"state":"5"})
-        self.env['leaving.handle.process'].search([('leaving_handle_id2', '=', self.id)]).unlink()
-        records = self.env['process.process'].search([('parent_process', '=', '5')])
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
-        for record in records:
-            approver = record.approver
-            if record.is_assistant:
-                approver = self.assistant_id
-            self.env['leaving.handle.process'].create({"process_id": record.id,"process_approver":approver.id, "leaving_handle_id2": self.id})
-        cur_approver_ids = set([])
-        for process in self.leaving_handle_process_ids2:
-            if process.process_approver.id:
-                cur_approver_ids.add(process.process_approver.id)
-        self.cur_approvers = self.env["hr.employee"].browse(cur_approver_ids)
         if origin_state == "4":
+            self.env['leaving.handle.process'].search([('leaving_handle_id2', '=', self.id)]).unlink()
+            records = self.env['process.process'].search([('parent_process', '=', '5')])
+            for record in records:
+                self.env['leaving.handle.process'].create({"process_id": record.id, "leaving_handle_id2": self.id})
+            cur_approver_ids = set([])
+            for process in self.leaving_handle_process_ids2:
+                if process.process_approver.id:
+                    cur_approver_ids.add(process.process_approver.id)
+            self.cur_approvers = self.env["hr.employee"].browse(cur_approver_ids)
+            user_ids = []
+            for approver in self.cur_approvers:
+                user_ids.append(approver.user_id.id)
+            self.cur_approver_users = self.env["res.users"].browse(user_ids)
             self.approver_mail()
         elif origin_state == "6":
             self.reject_mail()
@@ -270,7 +281,10 @@ class leaving_handle(models.Model):
         origin_state = self.state
         self.write({"state":"6"})
         self.cur_approvers = self.env.ref('dtdream_hr_leaving.leaving_handle_approver_6').approver
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
+        user_ids = []
+        for approver in self.cur_approvers:
+            user_ids.append(approver.user_id.id)
+        self.cur_approver_users = self.env["res.users"].browse(user_ids)
         if origin_state == "5":
             self.approver_mail()
         elif origin_state == "7":
@@ -282,7 +296,10 @@ class leaving_handle(models.Model):
         origin_state = self.state
         self.write({"state":"7"})
         self.cur_approvers = self.env.ref('dtdream_hr_leaving.leaving_handle_approver_7').approver
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
+        user_ids = []
+        for approver in self.cur_approvers:
+            user_ids.append(approver.user_id.id)
+        self.cur_approver_users = self.env["res.users"].browse(user_ids)
         if origin_state == "6":
             self.approver_mail()
         elif origin_state == "8":
@@ -294,7 +311,10 @@ class leaving_handle(models.Model):
         origin_state = self.state
         self.write({"state": "8"})
         self.cur_approvers = self.env.ref('dtdream_hr_leaving.leaving_handle_approver_8').approver
-        self.message_post(body=u'状态：' + self.state_dict[origin_state] + '--> ' + self.state_dict[self.state])
+        user_ids = []
+        for approver in self.cur_approvers:
+            user_ids.append(approver.user_id.id)
+        self.cur_approver_users = self.env["res.users"].browse(user_ids)
         if origin_state == "7":
             self.approver_mail()
         elif origin_state == "9":
@@ -303,7 +323,7 @@ class leaving_handle(models.Model):
     @api.multi
     def wkf_done(self):
         self.cur_approvers = False
-        self.message_post(body=u'状态：' + self.state_dict[self.state] + u'--> 完成')
+        self.cur_approver_users = False
         self.write({"state":"99"})
 
 # 审批记录
@@ -320,6 +340,15 @@ class leaving_handle_approve_record(models.Model):
 #离岗并行环节
 class leaving_handle_process(models.Model):
     _name = "leaving.handle.process"
+
+    def _compute_process_approver(self):
+        for rec in self:
+            rec.process_approver = rec.process_id.approver
+            if rec.process_id.code == "101":
+                rec.process_approver = rec.leaving_handle_id1.assistant_id
+            if rec.process_id.code == "201":
+                rec.process_approver = rec.leaving_handle_id2.assistant_id
+
 
     @api.onchange("is_finish")
     def is_finish_change(self):
@@ -352,11 +381,11 @@ class leaving_handle_process(models.Model):
     name = fields.Char("名称")
     is_finish = fields.Boolean("办理完成")
     is_other = fields.Boolean("不涉及")
-    remark = fields.Char("意见",size=100)
+    remark = fields.Char("意见",size=32)
     leaving_handle_id1 = fields.Many2one("leaving.handle",string="离职交接申请")
     leaving_handle_id2 = fields.Many2one("leaving.handle",string="离职交接申请")
     process_id = fields.Many2one("process.process",string="环节")
-    process_approver = fields.Many2one("hr.employee",string="办理人")
+    process_approver = fields.Many2one("hr.employee",compute=_compute_process_approver,string="办理人")
     process1_can_edit= fields.Boolean("是否可以修改",compute=_if_process1_can_edit)
     process2_can_edit= fields.Boolean("是否可以修改",compute=_if_process2_can_edit)
 

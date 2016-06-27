@@ -54,35 +54,44 @@ class dtdream_sale_order_approval(models.Model):
             if self.env.user == pro_shenpiren.user_id:
                 for rec in self.product_line:
                     rec.is_order_pro_approveds = True
+                    self.write({'is_pro_approveds':True})
                 break
             else :
                 for rec in self.product_line:
                     rec.is_order_pro_approveds = False
+                    self.write({'is_pro_approveds':False})
         for pro_shenpiren in self.business_approveds:
             if self.env.user == pro_shenpiren.user_id:
                 for rec in self.product_line:
                     rec.is_order_bus_approveds = True
+                    self.write({'is_business_approveds':True})
                 break
             else :
                 for rec in self.product_line:
                     rec.is_order_bus_approveds = False
+                    self.write({'is_business_approveds':False})
         if self.state not in ('1','2','3') and self.is_current == True:
             for rec in self.product_line:
                     rec.is_order_bus_approveds = True
         self.write({'warn_text':""})
         if len(self.shenpiren)==1 and self.shenpiren.user_id == self.env.user:
+            if self.state == "6":
+                if self.a_apply_discount < self.zhuren_grant_discount :
+                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，整单平均折扣（%s%%），已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_zhuren_price,self.a_apply_discount)})
+                else :
+                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，整单平均折扣（%s%%），在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_zhuren_price,self.a_apply_discount)})
             if self.state == "7":
                 if self.a_apply_discount < self.sale_grant_discount :
-                    self.write({'warn_text':u'此项目总销售额%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,整单毛利（%s%%），已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_sale_price,self.total_market_price,self.a_apply_discount,self.maoli)})
+                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%），已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
                 else :
-                    self.write({'warn_text':u'此项目总销售额%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,整单毛利（%s%%），在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_sale_price,self.total_market_price,self.a_apply_discount,self.maoli)})
+                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%），在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
             if self.state == "8":
                 if self.a_apply_discount < self.market_grant_discount :
-                    self.write({'warn_text':u'此项目总销售额%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,整单毛利（%s%%），已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_sale_price,self.total_market_price,self.a_apply_discount,self.maoli)})
+                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
                 else :
-                    self.write({'warn_text':u'此项目总销售额%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,整单毛利（%s%%），在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_sale_price,self.total_market_price,self.a_apply_discount,self.maoli)})
+                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
             if self.state == "9":
-                self.write({'warn_text':u'此项目总销售额%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,整单毛利（%s%%）。'%(self.total_chuhuo_price,self.total_sale_price,self.total_market_price,self.a_apply_discount,self.maoli)})
+                self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
         for rec in self.product_line:
             rec.write({'report_state':self.state})
         for rec in self.product_line:
@@ -95,8 +104,7 @@ class dtdream_sale_order_approval(models.Model):
 
     @api.onchange("sale_business_interface_person")
     def _onchange_sale_business_interface_person(self):
-        if self.state == "0":
-            self.is_current = True
+        if self.state == "0":            self.is_current = True
         rec = self.env['dtdream.shenpi.config'].search([])
         if rec:
             business_interface_person = self.env['dtdream.shenpi.config'].search([])[0].business_interface_person
@@ -142,6 +150,18 @@ class dtdream_sale_order_approval(models.Model):
                 'auto_delete': False,
             }).send()
 
+    @api.depends('product_line')
+    def _onchange_product_line(self):
+        list_price = 0
+        apply_price = 0
+        for rec in self.product_line:
+            list_price = list_price + rec.list_price * rec.pro_num
+            apply_price = apply_price + rec.list_price * rec.pro_num * rec.apply_discount * 0.01
+        self.total_list_price = list_price
+        self.total_apply_price = apply_price
+
+    is_business_approveds = fields.Boolean(string="是否历史商务审批人",default=False)
+    is_pro_approveds = fields.Boolean(string="是否历史产品审批人",default=False)
     pro_zongbu_finish = fields.Char(string='产品总部并行审批完成标识',default="0")
     name = fields.Char(default="订单执行审批")
     project_number = fields.Char(string="项目编号")
@@ -150,7 +170,9 @@ class dtdream_sale_order_approval(models.Model):
     system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True,track_visibility='onchange')
     industry_id = fields.Many2one("dtdream.industry", string="行业",required=True,track_visibility='onchange')
     office_id = fields.Many2one("dtdream.office", string="办事处",required=True,track_visibility='onchange')
-    sale_money = fields.Float(string="销售金额", required=True,track_visibility='onchange')
+    total_list_price = fields.Float('目录价总计',store=True,compute=_onchange_product_line)
+    total_apply_price = fields.Float('申请折扣价总计',store=True,compute=_onchange_product_line)
+
     need_ali_grant = fields.Selection([
         ('shi','是'),
         ('fou','否')
@@ -177,21 +199,23 @@ class dtdream_sale_order_approval(models.Model):
     project_promise = fields.Text(string="项目认定及承诺",readonly=True,default="对本项目的其他情况说明：本人确认此项目情况如前面所述，项目情况真实，代理商情况真实，价格情况真实。本人承诺如果今后此项目的方案产品配置数量、代理商、各级价格情况发生变化，本人将立刻向销售管理部商务更改申请，用新的审批表替换此表，对项目情况予以刷新。")
     if_promise = fields.Boolean(string="确认项目承诺",track_visibility='onchange')
     product_line = fields.One2many('dtdream.product.line', 'product_order_line_id', string='产品配置',copy=True)
-    shenpiren = fields.Many2many('hr.employee', 'o_s_t_e',string="当前审批人")
+    shenpiren = fields.Many2many('hr.employee', 'o_o_s_t_e',string="当前审批人")
     shenpiren_version = fields.Char(string='审批版本',default="V1")
 
-    approveds = fields.Many2many("hr.employee",'o_a_t_e', string="历史审批人")
-    product_approveds = fields.Many2many("hr.employee",'o_p_a_t_e',string="历史产品审批人")
-    business_approveds = fields.Many2many("hr.employee",'b_a_t_e',string="历史商务审批人")
+    approveds = fields.Many2many("hr.employee",'o_o_a_t_e', string="历史审批人")
+    product_approveds = fields.Many2many("hr.employee",'o_o_p_a_t_e',string="历史产品审批人")
+    business_approveds = fields.Many2many("hr.employee",'o_b_a_t_e',string="历史商务审批人")
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
 
     a_apply_discount = fields.Float(string="平均折扣")
     sale_grant_discount = fields.Float(string="营销管理部授权折扣")
     market_grant_discount = fields.Float(string="市场部授权折扣")
-    maoli = fields.Float(string="毛利")
+    # maoli = fields.Float(string="毛利")
     total_chuhuo_price = fields.Float(string="总销售额")
     total_market_price = fields.Float(string="市场部部长授权价")
     total_sale_price = fields.Float(string="营销管理部授权价")
+    total_zhuren_price = fields.Float(string="主任授权价")
+    zhuren_grant_discount = fields.Float(string="主任授权折扣")
 
 
     if_out_grant = fields.Char(default=0)
@@ -226,7 +250,10 @@ class dtdream_sale_order_approval(models.Model):
         if self.state=="1":
             shenpiren = self.product_manager
         if self.state=="2":
-            shenpiren = self.env['dtdream.shenpi.line'].search([('department','=',department.id)])[0].product_charge
+            if len(self.env['dtdream.shenpi.line'].search([('department','=',department.id)])) > 0:
+                shenpiren = self.env['dtdream.shenpi.line'].search([('department','=',department.id)])[0].product_charge
+            else :
+                raise ValidationError('请先配置产品主管')
         if self.state=="6":
             shenpiren = self.env['dtdream.shenpi.line'].search([('department','=',department.id)])[0].director
 
@@ -234,30 +261,42 @@ class dtdream_sale_order_approval(models.Model):
             self.write({"shenpiren": [(6,0,[])]})
             for pro_rec in self.product_line:
                 categ_id = self.env['product.template'].search([('bom','=',pro_rec.bom)])[0].categ_id
-                pro_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])[0].zongbu_product_charge
-                service_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])[0].zongbu_service_charge
+                if len(self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])) > 0:
+                    pro_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])[0].zongbu_product_charge
+                    if not pro_shenpiren:
+                        raise ValidationError('请先配置总部产品经理')
+                    service_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])[0].zongbu_service_charge
+                    if not service_shenpiren:
+                        raise ValidationError('请先配置总部服务经理')
+                else :
+                    raise ValidationError("请先配置总部产品经理与服务经理")
                 self.write({"shenpiren": [(4,[pro_shenpiren.id])]})
                 self.write({"shenpiren": [(4,[service_shenpiren.id])]})
             for shenpiren in self.shenpiren:
                 self.dtdream_send_mail(u"{0}于{1}提交了订单执行审批申请,请您审核产品配置!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了订单执行审批申请,等待您审核产品配置" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=shenpiren.work_email,
                        appellation = u'{0},您好：'.format(shenpiren.name))
-
-
         if self.state=="4":
             shenpiren = self.env['hr.employee'].search([('user_id','=',self.create_uid.id)])
         if self.state=="5":
             shenpiren = self.sale_business_interface_person
         if self.state=="7":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].sales_manager
+            if not shenpiren:
+                raise ValidationError("请先配置营销管理部部长")
         if self.state=="8":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].market_manager
+            if not shenpiren:
+                raise ValidationError("请先配置市场部总裁")
         if self.state=="9":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].company_manager
+            if not shenpiren:
+                raise ValidationError("请先配置公司总裁")
         return shenpiren
 
     @api.multi
     def wkf_approve1(self):
+        self.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         self.pro_zongbu_finish = "0"
         self.write({'rejust_state':0})
         self.write({'state':'1'})
@@ -320,20 +359,24 @@ class dtdream_sale_order_approval(models.Model):
         total_chuhuo_price = 0
         total_chengben_price = 0
         total_market_price = 0
+        total_zhuren_price = 0
         i=0
         for product in self.product_line:
             i = i + 1
             real_pro = self.env['product.template'].search([('bom','=',product.bom)])[0]
-            total_chuhuo_price = total_chuhuo_price + real_pro.list_price*product.apply_discount*product.pro_num
+            total_chuhuo_price = total_chuhuo_price + real_pro.list_price*product.pro_num*product.apply_discount/100
             total_chengben_price = total_chengben_price + product.list_price*product.pro_num
-            total_market_price = total_market_price + real_pro.list_price*real_pro.market_president_discount*product.pro_num
-        self.a_apply_discount = round(total_chuhuo_price/total_chengben_price,2)
+            total_market_price = total_market_price + real_pro.list_price*real_pro.market_president_discount*product.pro_num/100
+            total_zhuren_price = total_zhuren_price + real_pro.list_price*real_pro.office_manager_discount*product.pro_num/100
+        self.a_apply_discount = round(total_chuhuo_price*100/total_chengben_price,2)
         self.sale_grant_discount = round(self.env['dtdream.shenpi.config'].search([])[0].sale_grant_discount,2)
-        self.total_chuhuo_price = total_chuhuo_price/10000
-        self.total_market_price = total_market_price/10000
-        self.total_sale_price = round(total_chengben_price*self.env['dtdream.shenpi.config'].search([])[0].sale_grant_discount/10000,2)
-        self.market_grant_discount = round(total_market_price/total_chengben_price,2)
-        self.maoli = round((total_chuhuo_price - total_chengben_price)/total_chuhuo_price)
+        self.total_chuhuo_price = round(total_chuhuo_price/10000,2)
+        self.total_market_price = round(total_market_price/10000,2)
+        self.total_zhuren_price = round(total_zhuren_price/10000,2)
+        self.total_sale_price = round(total_chuhuo_price*(self.env['dtdream.shenpi.config'].search([])[0].sale_grant_discount/1000000),2)
+        self.market_grant_discount = round(total_market_price*100/total_chengben_price,2)
+        self.zhuren_grant_discount = round(total_zhuren_price*100/total_chengben_price,2)
+        # self.maoli = round((total_chuhuo_price - total_chengben_price)/total_chuhuo_price)
 
         self.pro_zongbu_finish = "0"
         self.write({'state':'6'})
@@ -386,7 +429,7 @@ class dtdream_sale_order_approval(models.Model):
     @api.multi
     def wkf_done(self):
         self.write({'state':'done'})
-        self.write({"shenpiren": ""})
+        self.write({"shenpiren": [(6,0,[])]})
 
     # 豆腐块跳转到商务报备或选择项目后拷贝项目信息及产品清单
     @api.onchange("rep_pro_name")

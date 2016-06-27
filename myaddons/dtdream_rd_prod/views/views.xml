@@ -59,7 +59,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('sameDept','=',True)]</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]</field>
         </record>
 
         <record id="act_dtdream_prod_appr_wait" model="ir.actions.act_window">
@@ -104,17 +104,18 @@
                         <button name="do_ztsjtj"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('is_appred','=',True),('state','not in',('state_02')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','in',('state_00','state_06','state_07')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                         <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_jieshu"  string="进入下一步"  type="object" confirm="是否确认结束？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
-                        <!--<button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('state','in',('state_00','state_05','state_07','state_06')),('is_zanting','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('state','in',('state_00','state_05','state_07','state_06')),('is_zantingtj','=',True),('is_zanting','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|','|','|',('is_zanting_back','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitj','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('state','!=','state_06'),('is_zanting_back','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|',('state','!=','state_06'),('is_zanting_backtj','=',True),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>-->
-                        <!--<button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>-->
+                        <button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('state','in',('state_00','state_05','state_07','state_06')),('is_zanting','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('state','in',('state_00','state_05','state_07','state_06')),('is_zantingtj','=',True),('is_zanting','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|','|','|',('is_zanting_back','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitj','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('state','!=','state_06'),('is_zanting_back','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|',('state','!=','state_06'),('is_zanting_backtj','=',True),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>
 
-                        <button name="do_jieshu"  string="结束"  type="object" confirm="是否确认结束？" attrs="{'invisible':['|',('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
                     </header>
                     <sheet>
@@ -505,6 +506,6 @@
         <menuitem id="menu_finance_prod_appr_all" name="所有产品" parent="menu_finance_prod_all" sequence="100" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_prod_version_all" name="所有版本" parent="menu_finance_prod_all" sequence="200" action="act_dtdream_prod_version_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
 
-        <!--<menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300" action="act_dtdream_exception_meun"/>-->
+        <menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300" action="act_dtdream_exception_meun"/>
     </data>
 </openerp>

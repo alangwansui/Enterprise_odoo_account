@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="0">
+    <data>
 
         <record id="rd_product_version_workflow" model="workflow">
             <field name="name">研发产品版本工作流</field>
             <field name="osv">dtdream_rd_version</field>
             <field name="on_create">True</field>
         </record>
+
+        <!--<record id="activity_draft" model="workflow.activity">
+            <field name="wkf_id" ref="rd_product_version_workflow"/>
+            <field name="flow_start">True</field>
+            <field name="name">创建草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>-->
+
+
 
         <record id="activity_caogao" model="workflow.activity">
             <field name="wkf_id" ref="rd_product_version_workflow"/>
