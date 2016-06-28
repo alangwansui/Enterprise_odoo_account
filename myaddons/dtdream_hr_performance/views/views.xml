@@ -15,13 +15,11 @@
                 <group string="基本信息">
                   <group>
                     <field name="name" options="{'no_create': True}" attrs="{'readonly':[('state', '!=','0')]}"/>
-                    <field name="content" invisible="True"/>
                     <field name="is_inter" invisible="True"/>
                     <field name="is_in_department" invisible="True"/>
                   </group>
                   <group>
-                    <field name="quarter_str" string='考核季度' attrs="{'readonly':[('state', '!=','0')],'invisible':[('state', '=','0')]}"/>
-                    <field name="quarter" attrs="{'invisible':[('state', '!=','0')]}"/>
+                    <field name="quarter" attrs="{'readonly':[('state', '!=','0')]}"/>
                   </group>
                 </group>
 
@@ -32,6 +30,7 @@
                                 <tree editable="bottom">
                                     <field name="num"/>
                                     <field name="works"/>
+                                    <field name="depart_target" invisible="True" string="部门"/>
                                 </tree>
                             </field>
                         </page>
@@ -49,11 +48,9 @@
         <field name="arch" type="xml">
             <tree>
               <field name="name"/>
-              <field name="quarter_str" string="考核季度"/>
               <field name="quarter" string="考核季度" />
-              <field name="content" invisible="True"/>
-              <field name="is_inter"/>
-              <field name="is_in_department" />
+              <field name="is_inter" invisible="True"/>
+              <field name="is_in_department" invisible="True"/>
             </tree>
         </field>
     </record>
@@ -64,10 +61,7 @@
         <field name="arch" type="xml">
             <search string="Search">
                 <field name="name"/>
-                <filter string="第一季度" domain="[('quarter','=','1')]" name='first'/>
-                <filter string="第二季度" domain="[('quarter','=','2')]" name='second'/>
-                <filter string="第三季度" domain="[('quarter','=','3')]" name='third'/>
-                <filter string="第四季度" domain="[('quarter','=','4')]" name="fourth"/>
+                <field name="quarter"/>
             </search>
         </field>
     </record>
@@ -113,13 +107,13 @@
                   <group>
                     <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="workid"/>
-                    <field name="quarter_str" string='考核季度' attrs="{'readonly':[('state', '!=','0')],'invisible':[('state', '=','0')]}"/>
-                    <field name="quarter" attrs="{'invisible':[('state', '!=','0')]}"/>
+                    <field name="quarter" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="result" attrs="{'readonly':[('state', '!=','0')]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
                     <field name="officer" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    <field name="officer_sec" attrs="{'readonly':[('state', '!=','0')]}"/>
                     <field name="onwork"/>
                     <field name="login" invisible="True"/>
                     <field name="is_officer" invisible="True"/>
@@ -132,9 +126,9 @@
                         <page>
                             <field name="pbc" attrs="{'readonly':[('state', '!=','0')]}">
                                 <tree create="0" delete="false">
-                                    <field name="name"/>
-                                    <field name="quarter" invisible="1"/>
-                                    <field name="content" string="工作内容"/>
+                                    <field name="depart_target" string="部门"/>
+                                    <field name="num"/>
+                                    <field name="works"/>
                                 </tree>
                             </field>
                         </page>
@@ -176,7 +170,7 @@
                 <field name="name"/>
                 <field name="workid"/>
                 <field name="department"/>
-                <field name="quarter_str" string='考核季度'/>
+                <field name="quarter"/>
                 <field name="state"/>
                 <field name="result"/>
             </tree>
@@ -191,10 +185,7 @@
                 <field name="name"/>
                 <field name="department"/>
                 <field name="result"/>
-                <filter string="第一季度" domain="[('quarter','=','1')]" name='first'/>
-                <filter string="第二季度" domain="[('quarter','=','2')]" name='second'/>
-                <filter string="第三季度" domain="[('quarter','=','3')]" name='third'/>
-                <filter string="第四季度" domain="[('quarter','=','4')]" name="fourth"/>
+                <field name="quarter"/>
             </search>
         </field>
     </record>
