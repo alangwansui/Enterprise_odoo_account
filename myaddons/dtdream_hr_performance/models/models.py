@@ -15,8 +15,15 @@ class dtdream_hr_performance(models.Model):
         if self.department and self.quarter:
             cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
             target = [t.id for crr in cr for t in crr.target]
-            print '-------------------->',target
             self.pbc = [(6, 0, target)]
+
+    @api.multi
+    def update_dtdream_hr_pbc(self):
+        pbc = self.search([])
+        for rec in pbc:
+            cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', rec.quarter), '|', ('name', '=', rec.department.parent_id.id), ('name', '=', rec.department.id)])
+            target = [t.id for crr in cr for t in crr.target]
+            rec.write({"pbc": [(6, 0, target)]})
 
     @api.depends('name')
     def _compute_employee_info(self):
@@ -55,8 +62,8 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def write(self, vals, flag=True):
         result = vals.get('result', '')
-        if result and result.strip():
-            vals['state'] = "99"
+        if result and result.strip() and self.state == "5":
+            self.signal_workflow('btn_import')
         return super(dtdream_hr_performance, self).write(vals)
 
     @api.multi
@@ -98,11 +105,40 @@ class dtdream_hr_performance(models.Model):
                     doc.xpath("//tree")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         self._compute_is_inter_department()
+        self.update_dtdream_hr_pbc()
         return res
+
+    @api.multi
+    def message_subscribe_users(self, user_ids=None, subtype_ids=None):
+        user_ids = []
+        result = self.message_subscribe(self.env['res.users'].browse(user_ids).mapped('partner_id').ids, subtype_ids=subtype_ids)
+        return result
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_mail_attend_mobile(self, name, subject, content):
+        email_to = name.work_email
+        appellation = u'{0},您好：'.format(name.name)
+        url = '/web#id=%s&view_type=form&model=dtdream.hr.performance' % self.id
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p><a href="%s">点击进入查看</a></p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
 
     name = fields.Many2one('hr.employee', string='花名', required=True)
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)
-    workid = fields.Char(string='工号', compute=_compute_employee_info)
+    workid = fields.Char(string='工号', compute=_compute_employee_info, strore=True)
     quarter = fields.Char(string='考核季度', required=True)
     officer = fields.Many2one('hr.employee', string='一考主管', required=True)
     officer_sec = fields.Many2one('hr.employee', string='二考主管', required=True)
@@ -130,31 +166,49 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def wkf_wait_write(self):
+        if self.state == '0':
+            content = u"您的个人PBC绩效考核已启动,请您填写本季度工作目标,以及具体描述!"
+            self.send_mail_attend_mobile(self.name, subject=content, content=content)
+        else:
+            content = u"您的个人PBC绩效考核已被驳回,请您修改相关内容后再提交!"
+            self.send_mail_attend_mobile(self.name, subject=content, content=content)
         self.write({'state': '1'})
 
     @api.multi
     def wkf_confirm(self):
         self.write({'state': '2'})
+        content = u'%s,提交了个人PBC绩效考核,请你确认!' % self.name.name
+        self.send_mail_attend_mobile(self.officer, subject=content, content=content)
 
     @api.multi
     def wkf_evaluate(self):
         self.write({'state': '3'})
+        content = u"%s,已经确认了您的个人PBC绩效考核,请您查看!" % self.officer.name
+        self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
     @api.multi
     def wkf_conclud(self):
         self.write({'state': '4'})
+        content = u"您的个人PBC绩效考评已启动,请您填写个人总结!"
+        self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
     @api.multi
     def wkf_rate(self):
         self.write({'state': '5'})
+        content = u'%s,提交了个人PBC绩效考核总结,请您对该员工进行评价!' % self.name.name
+        self.send_mail_attend_mobile(self.officer, subject=content, content=content)
 
     @api.multi
     def wkf_final(self):
         self.write({'state': '6'})
+        content = u'%s,已对您的个人PBC绩效考核做出了评价,请您查看!' % self.officer.name
+        self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
     @api.multi
     def wkf_done(self):
         self.write({'state': '99'})
+        content = u'您的个人PBC绩效考核结果已经导入,请您查看!'
+        self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
 
 class dtdream_hr_pbc_employee(models.Model):
