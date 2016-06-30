@@ -44,6 +44,12 @@ class dtdream_hr_performance(models.Model):
         else:
             self.is_officer = False
 
+    def _compute_login_is_manage(self):
+        if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
+            self.manage = True
+        else:
+            self.manage = False
+
     @api.model
     def create(self, vals):
         pbc = vals.get('pbc', '')
@@ -62,7 +68,7 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def write(self, vals, flag=True):
         result = vals.get('result', '')
-        if result and result.strip() and self.state == "5":
+        if result and result.strip() and self.state == "6":
             self.signal_workflow('btn_import')
         return super(dtdream_hr_performance, self).write(vals)
 
@@ -159,6 +165,7 @@ class dtdream_hr_performance(models.Model):
     login = fields.Boolean(compute=_compute_name_is_login)
     is_officer = fields.Boolean(compute=_compute_officer_is_login)
     view_all = fields.Boolean()
+    manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter)', '每个员工每个季度只能有一条员工PBC !')
@@ -233,6 +240,10 @@ class dtdream_hr_pbc_employee(models.Model):
             else:
                 rec.officer = False
 
+    def _compute_login_is_manage(self):
+        for rec in self:
+            rec.manage = rec.perform.manage
+
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作目标')
     detail = fields.Text(string='具体描述')
@@ -240,6 +251,7 @@ class dtdream_hr_pbc_employee(models.Model):
     evaluate = fields.Text(string='主管评价')
     login = fields.Boolean(compute=_compute_name_is_login)
     officer = fields.Boolean(compute=_compute_login_is_officer)
+    manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
     state = fields.Selection([('0', '待启动'),
                               ('1', '待填写PBC'),
                               ('2', '待主管确认'),

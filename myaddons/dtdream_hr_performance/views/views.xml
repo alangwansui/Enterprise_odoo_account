@@ -105,19 +105,20 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    <field name="name" attrs="{'readonly':[('state', '!=','0'),('manage','=', False)]}"/>
                     <field name="workid"/>
-                    <field name="quarter" attrs="{'readonly':[('state', '!=','0')]}"/>
-                    <field name="result" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    <field name="quarter" attrs="{'readonly':[('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="result" attrs="{'readonly':[('state', '!=','0'),('manage','=', False)]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
-                    <field name="officer" attrs="{'readonly':[('state', '!=','0')]}"/>
-                    <field name="officer_sec" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    <field name="officer" attrs="{'readonly':[('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="officer_sec" attrs="{'readonly':[('state', '!=','0'),('manage','=', False)]}"/>
                     <field name="onwork"/>
                     <field name="login" invisible="True"/>
                     <field name="is_officer" invisible="True"/>
                     <field name="view_all" invisible="True"/>
+                    <field name="manage"/>
                   </group>
                 </group>
 
@@ -138,15 +139,16 @@
                 <group string="个人PBC">
                     <notebook>
                         <page>
-                            <field name="pbc_employee" attrs="{'readonly':['|',('state', 'not in',('1','4','5')),'|','&amp;',('state','in',('1','4')),('login','=',False),'&amp;',('state','=','5'),('is_officer','=',False)]}">
+                            <field name="pbc_employee" attrs="{'readonly':['|',('state','not in',('1','4','5')),'|','&amp;',('state','in',('1','4')),'|',('login','=',False),('manage','=',False),'&amp;',('state','=','5'),'|',('is_officer','=',False),('manage','=',False)]}">
                                 <tree editable="bottom">
-                                    <field name="work" attrs="{'readonly':[('state', '!=','1')]}"/>
-                                    <field name="detail" attrs="{'readonly':[('state', '!=','1')]}"/>
-                                    <field name="result" attrs="{'readonly':['|',('state', '!=','4'),'&amp;',('state', '=','4'),('login','=',False)]}"/>
-                                    <field name="evaluate" attrs="{'readonly':['|',('state', '!=','5'),('officer', '!=',True)]}"/>
+                                    <field name="work" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
+                                    <field name="detail" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
+                                    <field name="result" attrs="{'readonly':['|','&amp;',('state', '!=','4'),('manage','=', False),'&amp;',('state', '=','4'),('login','=',False)]}"/>
+                                    <field name="evaluate" attrs="{'readonly':['|','&amp;',('manage','=', False),('state', '!=','5'),'&amp;',('state', '=','5'),('officer', '!=',True)]}"/>
                                     <field name="state" invisible="True"/>
                                     <field name="login" invisible="True"/>
                                     <field name="officer" invisible="True"/>
+                                    <field name="manage"/>
                                 </tree>
                             </field>
                         </page>
