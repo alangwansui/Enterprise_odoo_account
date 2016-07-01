@@ -19,7 +19,7 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def update_dtdream_hr_pbc(self):
-        pbc = self.search([])
+        pbc = self.search([('state', '!=', '99')])
         for rec in pbc:
             cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', rec.quarter), '|', ('name', '=', rec.department.parent_id.id), ('name', '=', rec.department.id)])
             target = [t.id for crr in cr for t in crr.target]
@@ -50,8 +50,21 @@ class dtdream_hr_performance(models.Model):
         else:
             self.manage = False
 
+    def check_access_right_create(self, vals):
+        department = []
+        manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
+        if manage:
+            inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+            for crr in inter:
+                department.append(crr.department.id)
+                for depart in crr.department.child_ids:
+                    department.append(depart.id)
+            if vals.get('department', '') not in department:
+                raise ValidationError("HR接口人只能创建所接口部门员工的绩效考核单!")
+
     @api.model
     def create(self, vals):
+        self.check_access_right_create(vals)
         pbc = vals.get('pbc', '')
         if not pbc:
             employee = self.env['hr.employee'].search([('id', '=', vals.get('name', 0))])
@@ -63,13 +76,27 @@ class dtdream_hr_performance(models.Model):
             for val in pbc:
                 val[0] = 4
             vals['pbc'] = pbc
-        return super(dtdream_hr_performance, self).create(vals)
+        result = super(dtdream_hr_performance, self).create(vals)
+        self.unlink_message_subscribe(result.id)
+        return result
+
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            manage = rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in rec.env.user.groups_id
+            if manage:
+                raise ValidationError("仅绩效管理员可以删除员工绩效单!")
+        return super(dtdream_hr_performance, self).unlink()
 
     @api.multi
     def write(self, vals, flag=True):
         result = vals.get('result', '')
-        if result and result.strip() and self.state == "6":
-            self.signal_workflow('btn_import')
+        if result and result.strip():
+            if self.state == "6":
+                self.signal_workflow('btn_import')
+            else:
+                content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
+                self.send_mail_attend_mobile(self.name, subject=content, content=content)
         return super(dtdream_hr_performance, self).write(vals)
 
     @api.multi
@@ -114,11 +141,8 @@ class dtdream_hr_performance(models.Model):
         self.update_dtdream_hr_pbc()
         return res
 
-    @api.multi
-    def message_subscribe_users(self, user_ids=None, subtype_ids=None):
-        user_ids = []
-        result = self.message_subscribe(self.env['res.users'].browse(user_ids).mapped('partner_id').ids, subtype_ids=subtype_ids)
-        return result
+    def unlink_message_subscribe(self, res_id):
+        self.env['mail.followers'].search([('res_model', '=', 'dtdream.hr.performance'), ('res_id', '=', res_id)]).unlink()
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
@@ -142,9 +166,18 @@ class dtdream_hr_performance(models.Model):
                 'auto_delete': False,
             }).send()
 
+    @api.model
+    def default_get(self, fields):
+        rec = super(dtdream_hr_performance, self).default_get(fields)
+        if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
+            rec.update({"manage": True})
+        else:
+            rec.update({"manage": False})
+        return rec
+
     name = fields.Many2one('hr.employee', string='花名', required=True)
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)
-    workid = fields.Char(string='工号', compute=_compute_employee_info, strore=True)
+    workid = fields.Char(string='工号', compute=_compute_employee_info, store=True)
     quarter = fields.Char(string='考核季度', required=True)
     officer = fields.Many2one('hr.employee', string='一考主管', required=True)
     officer_sec = fields.Many2one('hr.employee', string='二考主管', required=True)
@@ -174,47 +207,51 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def wkf_wait_write(self):
         if self.state == '0':
-            content = u"您的个人PBC绩效考核已启动,请您填写本季度工作目标,以及具体描述!"
+            content = u'''您的个人季度绩效目标填写已启动,请根据部门季度绩效目标、及与主管沟通的情况,详细填写本季度的工作目标,
+            并描述将如何达成该目标,采取哪些措施。'''
             self.send_mail_attend_mobile(self.name, subject=content, content=content)
-        else:
-            content = u"您的个人PBC绩效考核已被驳回,请您修改相关内容后再提交!"
+        elif self.state != '3':
+            content = u"您的个人季度绩效目标已被驳回,请完善后提交主管确认!"
             self.send_mail_attend_mobile(self.name, subject=content, content=content)
         self.write({'state': '1'})
 
     @api.multi
     def wkf_confirm(self):
         self.write({'state': '2'})
-        content = u'%s,提交了个人PBC绩效考核,请你确认!' % self.name.name
+        content = u'%s的个人季度绩效目标已制定,请确认;如该季度绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % self.name.name
         self.send_mail_attend_mobile(self.officer, subject=content, content=content)
 
     @api.multi
     def wkf_evaluate(self):
         self.write({'state': '3'})
-        content = u"%s,已经确认了您的个人PBC绩效考核,请您查看!" % self.officer.name
+        content = u"%s已针对您的个人季度绩效目标完成确认,请查阅。" % self.officer.name
         self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
     @api.multi
     def wkf_conclud(self):
         self.write({'state': '4'})
-        content = u"您的个人PBC绩效考评已启动,请您填写个人总结!"
+        content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写本季度关键事项达成情况与主要工作成果。"
         self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
     @api.multi
     def wkf_rate(self):
         self.write({'state': '5'})
-        content = u'%s,提交了个人PBC绩效考核总结,请您对该员工进行评价!' % self.name.name
+        content = u'%s已完成个人工作总结，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % self.name.name
         self.send_mail_attend_mobile(self.officer, subject=content, content=content)
 
     @api.multi
     def wkf_final(self):
-        self.write({'state': '6'})
-        content = u'%s,已对您的个人PBC绩效考核做出了评价,请您查看!' % self.officer.name
+        if self.result:
+            self.write({'state': '99'})
+        else:
+            self.write({'state': '6'})
+        content = u'%s已针对您的工作总结完成了评价,请查阅!' % self.officer.name
         self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
     @api.multi
     def wkf_done(self):
         self.write({'state': '99'})
-        content = u'您的个人PBC绩效考核结果已经导入,请您查看!'
+        content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
         self.send_mail_attend_mobile(self.name, subject=content, content=content)
 
 
@@ -244,9 +281,36 @@ class dtdream_hr_pbc_employee(models.Model):
         for rec in self:
             rec.manage = rec.perform.manage
 
+    @api.multi
+    def unlink(self):
+        for rec in self:
+            if rec.state == '4' and rec.env.user == rec.perform.name.user_id:
+                raise ValidationError("无法删除审批中的记录!")
+            if rec.state == '5' and rec.env.user == rec.perform.officer.user_id:
+                raise ValidationError("主管无法删除员工个人PBC记录!")
+        return super(dtdream_hr_pbc_employee, self).unlink()
+
+    @api.model
+    def create(self, vals):
+        for rec in self:
+            if rec.state == '4' and rec.env.user == rec.perform.name.user_id:
+                raise ValidationError("待总结状态不能创建新纪录!")
+            if rec.state == '5' and rec.env.user == rec.perform.officer.user_id:
+                raise ValidationError("主管不能新增员工个人PBC记录!")
+        return super(dtdream_hr_pbc_employee, self).create(vals)
+
+    @api.model
+    def default_get(self, fields):
+        rec = super(dtdream_hr_pbc_employee, self).default_get(fields)
+        if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
+            rec.update({"manage": True})
+        else:
+            rec.update({"manage": False})
+        return rec
+
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作目标')
-    detail = fields.Text(string='具体描述')
+    detail = fields.Text(string='具体描述(请具体说明主要工作成果即关键措施)')
     result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
     login = fields.Boolean(compute=_compute_name_is_login)
@@ -266,7 +330,6 @@ class dtdream_hr_pbc_employee(models.Model):
 class dtdream_hr_pbc(models.Model):
     _name = "dtdream.hr.pbc"
     _description = u'部门PBC'
-    _inherit = ['mail.thread']
 
     def get_inter_employee(self):
         cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
@@ -423,6 +486,20 @@ class dtdream_hr_pbc_start(models.TransientModel):
         for per in performance:
             if per.state == '3':
                 per.signal_workflow('btn_start2')
+        return {'type': 'ir.actions.act_window_close'}
+
+    @api.one
+    def start_hr_pbc_manage_submit(self):#todo
+        context = dict(self._context or {})
+        pbc = context.get('active_ids', []) or []
+        performance = self.env['dtdream.hr.performance'].browse(pbc)
+        return {'type': 'ir.actions.act_window_close'}
+
+    @api.one
+    def start_hr_pbc_send_mail(self):#todo
+        context = dict(self._context or {})
+        pbc = context.get('active_ids', []) or []
+        performance = self.env['dtdream.hr.performance'].browse(pbc)
         return {'type': 'ir.actions.act_window_close'}
 
 
