@@ -7,28 +7,28 @@
             <form>
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','!=','0')]}"/>
+                            attrs="{'invisible':['|',('state','!=','0'),'&amp;',('manage','=',False),('inter_edit','=',False)]}"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,99"/>
                </header>
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name" options="{'no_create': True}" attrs="{'readonly':[('state', '!=','0'),('manage','=',False),('inter_edit','=',False)]}"/>
+                    <field name="name" options="{'no_create': True}" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}"/>
                     <field name="is_inter" invisible="True"/>
                     <field name="manage" invisible="True"/>
                     <field name="inter_edit" invisible="True"/>
                     <field name="is_in_department" invisible="True"/>
                   </group>
                   <group>
-                    <field name="quarter" attrs="{'readonly':[('state', '!=','0'),('manage','=',False),('inter_edit','=',False)]}"/>
+                    <field name="quarter" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}"/>
                   </group>
                 </group>
 
                 <group string="部门目标">
                     <notebook>
                         <page>
-                            <field name="target" attrs="{'readonly':[('state', '!=','0'),('manage','=',False),('inter_edit','=',False)]}">
+                            <field name="target" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}">
                                 <tree editable="bottom">
                                     <field name="num"/>
                                     <field name="works"/>
