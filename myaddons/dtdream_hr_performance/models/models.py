@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from lxml import etree
+import time
 
 
 class dtdream_hr_performance(models.Model):
@@ -346,6 +347,31 @@ class dtdream_hr_pbc(models.Model):
                 rec.write({"is_inter": True}, False)
 
     @api.multi
+    def _compute_login_is_manage(self):
+        for rec in self:
+            if rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in rec.env.user.groups_id:
+                rec.manage = False
+            else:
+                rec.manage = True
+
+    @api.multi
+    def _compute_inter_edit(self):
+        for rec in self:
+            if rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
+                rec.inter_edit = False
+            else:
+                department = []
+                inter = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
+                for crr in inter:
+                    department.append(crr.department.id)
+                    for depart in crr.department.child_ids:
+                        department.append(depart.id)
+                if rec.name.id not in department:
+                    rec.inter_edit = False
+                else:
+                    rec.inter_edit = True
+
+    @api.multi
     def _compute_login_in_department(self):
         cr = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
         pbc = self.search([])
@@ -422,6 +448,8 @@ class dtdream_hr_pbc(models.Model):
     name = fields.Many2one('hr.department', string='部门', required=True)
     is_inter = fields.Boolean(string="是否接口人", default=lambda self: True)
     is_in_department = fields.Boolean(string='是否所在部门')
+    manage = fields.Boolean(string='是否绩效管理员', compute=_compute_login_is_manage)
+    inter_edit = fields.Boolean(string='接口是否可以编辑', compute=_compute_inter_edit)
     quarter = fields.Char(string='考核季度', required=True)
     state = fields.Selection([('0', '草稿'),
                               ('99', '完成'),
@@ -439,15 +467,17 @@ class dtdream_hr_pbc(models.Model):
 
 class dtdream_pbc_target(models.Model):
     _name = "dtdream.pbc.target"
-    _order = "target"
+    _order = "target,level"
 
     def _compute_department_target(self):
         for rec in self:
             rec.depart_target = rec.target.name.complete_name
+            rec.write({"level": len(rec.depart_target.split('/'))})
 
     target = fields.Many2one('dtdream.hr.pbc', string='部门PBC')
     depart_target = fields.Char(compute=_compute_department_target)
-    num = fields.Char(string='业务目标')
+    level = fields.Integer(default=lambda self: 1, string="部门类型")
+    num = fields.Char(string='业务目标', required=True)
     works = fields.Text(string='关键指标,关键动作,行为', required=True)
 
 
@@ -489,17 +519,43 @@ class dtdream_hr_pbc_start(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one
-    def start_hr_pbc_manage_submit(self):#todo
+    def start_hr_pbc_manage_submit(self):
         context = dict(self._context or {})
         pbc = context.get('active_ids', []) or []
         performance = self.env['dtdream.hr.performance'].browse(pbc)
+        for rec in performance:
+            if rec.state in ('1', '4', '5'):
+                rec.signal_workflow('btn_submit')
+            elif rec.state == '2':
+                rec.signal_workflow('btn_agree')
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one
-    def start_hr_pbc_send_mail(self):#todo
+    def start_hr_pbc_send_mail(self):
         context = dict(self._context or {})
         pbc = context.get('active_ids', []) or []
         performance = self.env['dtdream.hr.performance'].browse(pbc)
+        for rec in performance:
+            if rec.state == '1':
+                content = u'您的个人季度绩效目标仍未完成填写,请尽快提交。'
+                rec.send_mail_attend_mobile(rec.name, subject=content, content=content)
+            elif rec.state == '2':
+                content = u'您对%s的个人季度绩效目标仍未完成确认,请尽快审阅。'% rec.name
+                rec.send_mail_attend_mobile(rec.officer, subject=content, content=content)
+            elif rec.state == '4':
+                content = u'您的个人季度关键事项达成情况与主要工作成果仍未完成填写,请尽快提交。'
+                rec.send_mail_attend_mobile(rec.name, subject=content, content=content)
+            elif rec.state == '5':
+                content = u'您对%s的个人工作总结仍未完成评价,请尽快提交。'% rec.name
+                rec.send_mail_attend_mobile(rec.officer, subject=content, content=content)
+            time.sleep(0.1)
+        return {'type': 'ir.actions.act_window_close'}
+
+    @api.one
+    def start_hr_pbc_submit(self):#todo
+        context = dict(self._context or {})
+        pbc = context.get('active_ids', []) or []
+        performance = self.env['dtdream.hr.pbc'].browse(pbc)
         return {'type': 'ir.actions.act_window_close'}
 
 
