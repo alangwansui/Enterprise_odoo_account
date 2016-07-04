@@ -9,7 +9,7 @@ import time
 class dtdream_hr_performance(models.Model):
     _name = "dtdream.hr.performance"
     _inherit = ['mail.thread']
-    _description = u"员工PBC"
+    _description = u"员工绩效目标"
 
     @api.onchange('department', 'quarter')
     def _onchange_compute_hr_pbc(self):
@@ -50,6 +50,12 @@ class dtdream_hr_performance(models.Model):
             self.manage = True
         else:
             self.manage = False
+
+    def _compute_login_is_inter(self):
+        if self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
+            self.inter = True
+        else:
+            self.inter = False
 
     def check_access_right_create(self, vals):
         department = []
@@ -116,6 +122,10 @@ class dtdream_hr_performance(models.Model):
                     rec.write({"view_all": True}, False)
                 else:
                     rec.write({"view_all": False}, False)
+            if rec.department.parent_id.manager_id.user_id == rec.env.user:
+                rec.write({"up_officer": True}, False)
+            else:
+                rec.write({"up_officer": False}, False)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -186,6 +196,10 @@ class dtdream_hr_performance(models.Model):
             rec.update({"manage": True})
         else:
             rec.update({"manage": False})
+        if self.env.ref('dtdream_hr_performance.group_hr_inter_performance') in self.env.user.groups_id:
+            rec.update({"inter": True})
+        else:
+            rec.update({"inter": False})
         return rec
 
     name = fields.Many2one('hr.employee', string='花名', required=True)
@@ -198,7 +212,7 @@ class dtdream_hr_performance(models.Model):
     onwork = fields.Selection([('Inaugural_state_01', '在职'), ('Inaugural_state_02', '离职')],
                               string="在职状态", compute=_compute_employee_info)
     state = fields.Selection([('0', '待启动'),
-                              ('1', '待填写PBC'),
+                              ('1', '待填写绩效目标'),
                               ('2', '待主管确认'),
                               ('3', '待考评启动'),
                               ('4', '待总结'),
@@ -206,15 +220,17 @@ class dtdream_hr_performance(models.Model):
                               ('6', '待最终考评'),
                               ('99', '考评完成')
                               ], string='状态', default='0')
-    pbc = fields.Many2many('dtdream.pbc.target', string="部门PBC")
-    pbc_employee = fields.One2many('dtdream.hr.pbc.employee', 'perform', string='个人PBC')
+    pbc = fields.Many2many('dtdream.pbc.target', string="部门绩效目标")
+    pbc_employee = fields.One2many('dtdream.hr.pbc.employee', 'perform', string='个人绩效目标')
     login = fields.Boolean(compute=_compute_name_is_login)
     is_officer = fields.Boolean(compute=_compute_officer_is_login)
     view_all = fields.Boolean(default=lambda self: True)
+    up_officer = fields.Boolean(string='上级部门主管', default=lambda self: True)
+    inter = fields.Boolean(string='当前登入者是否接口人',compute=_compute_login_is_inter)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
 
     _sql_constraints = [
-        ('name_quarter_uniq', 'unique (name,quarter)', '每个员工每个季度只能有一条员工PBC !')
+        ('name_quarter_uniq', 'unique (name,quarter)', '每个员工每个季度只能有一条员工绩效目标!')
     ]
 
     @api.multi
@@ -224,7 +240,7 @@ class dtdream_hr_performance(models.Model):
             并描述将如何达成该目标,采取哪些措施。'''
             self.send_mail(self.name, subject=content, content=content)
         elif self.state != '3':
-            content = u"您的个人季度绩效目标已被驳回,请完善后提交主管确认!"
+            content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
             self.send_mail(self.name, subject=content, content=content)
         self.write({'state': '1'})
 
@@ -300,7 +316,7 @@ class dtdream_hr_pbc_employee(models.Model):
             if rec.state == '4' and rec.env.user == rec.perform.name.user_id:
                 raise ValidationError("无法删除审批中的记录!")
             if rec.state == '5' and rec.env.user == rec.perform.officer.user_id:
-                raise ValidationError("主管无法删除员工个人PBC记录!")
+                raise ValidationError("主管无法删除员工个人绩效目标记录!")
         return super(dtdream_hr_pbc_employee, self).unlink()
 
     @api.model
@@ -309,7 +325,7 @@ class dtdream_hr_pbc_employee(models.Model):
             if rec.state == '4' and rec.env.user == rec.perform.name.user_id:
                 raise ValidationError("待总结状态不能创建新纪录!")
             if rec.state == '5' and rec.env.user == rec.perform.officer.user_id:
-                raise ValidationError("主管不能新增员工个人PBC记录!")
+                raise ValidationError("主管不能新增员工个人绩效目标记录!")
         return super(dtdream_hr_pbc_employee, self).create(vals)
 
     @api.model
@@ -330,7 +346,7 @@ class dtdream_hr_pbc_employee(models.Model):
     officer = fields.Boolean(compute=_compute_login_is_officer)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
     state = fields.Selection([('0', '待启动'),
-                              ('1', '待填写PBC'),
+                              ('1', '待填写绩效目标'),
                               ('2', '待主管确认'),
                               ('3', '待考评启动'),
                               ('4', '待总结'),
@@ -342,7 +358,7 @@ class dtdream_hr_pbc_employee(models.Model):
 
 class dtdream_hr_pbc(models.Model):
     _name = "dtdream.hr.pbc"
-    _description = u'部门PBC'
+    _description = u'部门绩效目标'
 
     def get_inter_employee(self):
         cr = self.env['dtdream.pbc.hr.config'].search([], limit=1)
@@ -419,13 +435,13 @@ class dtdream_hr_pbc(models.Model):
             if manage:
                 inter = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
                 if rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
-                    raise ValidationError("普通员工无法删除部门PBC!")
+                    raise ValidationError("普通员工无法删除部门绩效目标!")
                 for crr in inter:
                     department.append(crr.department.id)
                     for depart in crr.department.child_ids:
                         department.append(depart.id)
                 if rec.name.id not in department:
-                    raise ValidationError("HR接口人只能删除所接口部门的部门PBC!")
+                    raise ValidationError("HR接口人只能删除所接口部门的部门绩效目标!")
         return super(dtdream_hr_pbc, self).unlink()
 
     @api.multi
@@ -440,7 +456,7 @@ class dtdream_hr_pbc(models.Model):
                     for depart in crr.department.child_ids:
                         department.append(depart.id)
                 if self.name.id not in department:
-                    raise ValidationError("HR接口人只能编辑所接口部门的部门PBC!")
+                    raise ValidationError("HR接口人只能编辑所接口部门的部门绩效目标!")
             employee = self.env['hr.employee'].search(['|', ('department_id', '=', self.name.id), ('department_id', 'in', [cr.id for cr in self.name.child_ids])])
             if vals.get('target', '') or vals.get('quarter', '') or vals.get('name'):
                 for name in employee:
@@ -460,7 +476,7 @@ class dtdream_hr_pbc(models.Model):
                 for depart in crr.department.child_ids:
                     department.append(depart.id)
             if vals.get('name', '') not in department:
-                raise ValidationError("HR接口人只能创建所接口部门的部门PBC!")
+                raise ValidationError("HR接口人只能创建所接口部门的部门绩效目标!")
         return super(dtdream_hr_pbc, self).create(vals)
 
     def get_base_url(self, cr, uid):
@@ -468,7 +484,7 @@ class dtdream_hr_pbc(models.Model):
         return base_url
 
     def get_hr_performance_menu(self):
-        menu = self.env['ir.ui.menu'].search([('name', '=', u'部门PBC')], limit=1)
+        menu = self.env['ir.ui.menu'].search([('name', '=', u'部门绩效目标')], limit=1)
         menu_id = menu.parent_id.id
         action = menu.action.id
         return menu_id, action
@@ -509,7 +525,7 @@ class dtdream_hr_pbc(models.Model):
     target = fields.One2many('dtdream.pbc.target', 'target', string='工作内容')
 
     _sql_constraints = [
-        ('name_quarter_uniq', 'unique (name,quarter)', '每个季度只能有一条PBC !')
+        ('name_quarter_uniq', 'unique (name,quarter)', '每个季度只能有一条绩效目标!')
     ]
 
     @api.multi
@@ -531,7 +547,7 @@ class dtdream_pbc_target(models.Model):
             rec.depart_target = rec.target.name.complete_name
             rec.write({"level": len(rec.depart_target.split('/'))})
 
-    target = fields.Many2one('dtdream.hr.pbc', string='部门PBC')
+    target = fields.Many2one('dtdream.hr.pbc', string='部门绩效目标')
     depart_target = fields.Char(compute=_compute_department_target)
     level = fields.Integer(default=lambda self: 1, string="部门类型")
     num = fields.Char(string='业务目标', required=True)
@@ -541,7 +557,25 @@ class dtdream_pbc_target(models.Model):
 class dtdream_pbc_hr_config(models.Model):
     _name = "dtdream.pbc.hr.config"
 
+    @api.model
+    def create(self, vals):
+        config = self.search([])
+        if config:
+            raise ValidationError("已经存在一条配置!")
+        return super(dtdream_pbc_hr_config, self).create(vals)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(dtdream_pbc_hr_config, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        config = self.search([])
+        if res['type'] == "form" and config:
+            doc.xpath("//form")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
     interface = fields.One2many('dtdream.pbc.hr.interface', 'inter', string='业务接口部门设置')
+    name = fields.Char(default=lambda self: '业务接口人配置')
 
 
 class dtdream_pbc_hr_interface(models.Model):

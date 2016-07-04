@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <menuitem name="绩效" id="menu_dtdream_hr_performance_root" icon="fa-user"/>
-        <menuitem name="部门PBC" id="menu_dtdream_hr_pbc" parent="menu_dtdream_hr_performance_root" sequence="10" action="act_dtdream_hr_pbc"/>
+        <menuitem name="部门绩效目标" id="menu_dtdream_hr_pbc" parent="menu_dtdream_hr_performance_root" sequence="10" action="act_dtdream_hr_pbc"/>
         <menuitem name="我的考评" id="menu_dtdream_hr_pbc_mine" parent="menu_dtdream_hr_performance_root" sequence="12" action="act_dtdream_hr_pbc_mine"/>
         <menuitem name="待我审批" id="menu_dtdream_hr_pbc_approve" parent="menu_dtdream_hr_performance_root" sequence="14" action="act_dtdream_hr_pbc_approve"/>
         <menuitem name="所有单据" id="menu_dtdream_hr_pbc_all" parent="menu_dtdream_hr_performance_root" sequence="16" action="act_dtdream_hr_pbc_all"/>

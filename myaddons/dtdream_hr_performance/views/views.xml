@@ -101,7 +101,7 @@
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
                   <button name="%(act_dtdream_pbc_agree_wizard)d" string="同意" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
-                  <button name="btn_back" string="PBC修改" type="workflow" class="oe_highlight"
+                  <button name="btn_back" string="绩效目标修改" type="workflow" class="oe_highlight"
                           attrs="{'invisible':['|',('login','=',False),('state','!=','3')]}"/>
                   <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,5,6,99"/>
               </header>
@@ -109,24 +109,26 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name" attrs="{'readonly':['|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="name" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
                     <field name="workid"/>
-                    <field name="quarter" attrs="{'readonly':['|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
-                    <field name="result" attrs="{'readonly':['|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="quarter" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="result" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
-                    <field name="officer" attrs="{'readonly':['|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
-                    <field name="officer_sec" attrs="{'readonly':['|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="officer" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="officer_sec" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
                     <field name="onwork"/>
                     <field name="login" invisible="True"/>
                     <field name="is_officer" invisible="True"/>
+                    <field name="up_officer" invisible="True"/>
                     <field name="view_all" invisible="True"/>
+                    <field name="inter" invisible="True"/>
                     <field name="manage" invisible="True"/>
                   </group>
                 </group>
 
-                <group string="部门PBC">
+                <group string="部门绩效目标">
                     <notebook>
                         <page>
                             <field name="pbc" attrs="{'readonly':['|',('manage','=',False),('state', '!=','0')]}">
@@ -140,11 +142,11 @@
                     </notebook>
                 </group>
 
-                <group string="个人PBC">
+                <group string="个人绩效目标">
                     <notebook>
                         <page>
                             <field name="pbc_employee" attrs="{'readonly':['|','&amp;',('state','not in',('1','4','5','99')),('manage','=',False),'|',('state','=','99'),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),('manage','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),('manage','=',False)]}">
-                                <tree editable="bottom">
+                                <tree editable="bottom" name="personal_pbc">
                                     <field name="work" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
                                     <field name="detail" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
                                     <field name="result" attrs="{'readonly':['|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),('login','=',False),'&amp;',('state', '!=','4'),('manage','=', False)]}"/>
@@ -189,6 +191,7 @@
         <field name="arch" type="xml">
             <search string="Search">
                 <field name="name"/>
+                <field name="workid"/>
                 <field name="department"/>
                 <field name="result"/>
                 <field name="quarter"/>
@@ -227,8 +230,8 @@
         <field name="name">view.dtdream.hr.pbc.start.from</field>
         <field name="model">dtdream.hr.pbc.start</field>
         <field name="arch" type="xml">
-            <form string="PBC填写">
-                <p>确定启动PBC填写?</p>
+            <form string="绩效目标填写">
+                <p>确定启动绩效目标填写?</p>
                 <footer>
                     <button string="确定" name="start_hr_pbc" type="object" class="oe_highlight"/>
                     <button string="取消" special="cancel"/>
@@ -241,7 +244,7 @@
           multi="True"
           key2="client_action_multi"
           id="act_dtdream_hr_pbc_start"
-          name="启动PBC填写"
+          name="启动绩效目标填写"
           src_model="dtdream.hr.performance"
           res_model="dtdream.hr.pbc.start"
           view_id="view_dtdream_hr_pbc_start_from"
@@ -254,8 +257,8 @@
         <field name="name">view.dtdream.hr.pbc.start.from</field>
         <field name="model">dtdream.hr.pbc.start</field>
         <field name="arch" type="xml">
-            <form string="PBC考评">
-                <p>确定启动PBC考评?</p>
+            <form string="绩效目标考评">
+                <p>确定启动绩效目标考评?</p>
                 <footer>
                     <button string="确定" name="start_hr_pbc_evaluate" type="object" class="oe_highlight"/>
                     <button string="取消" special="cancel"/>
@@ -268,7 +271,7 @@
           multi="True"
           key2="client_action_multi"
           id="act_dtdream_hr_pbc_evaluate"
-          name="启动PBC考评"
+          name="启动绩效目标考评"
           src_model="dtdream.hr.performance"
           res_model="dtdream.hr.pbc.start"
           view_id="view_dtdream_hr_pbc_evaluate_from"
@@ -337,7 +340,7 @@
         <field name="arch" type="xml">
             <form string="HR业务接口人设置">
                 <sheet>
-                    <group string="HR业务接口人设置">
+                    <group>
                         <notebook>
                             <page>
                                 <field name="interface">
