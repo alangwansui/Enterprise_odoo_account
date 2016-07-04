@@ -109,15 +109,15 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="name" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
                     <field name="workid"/>
-                    <field name="quarter" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
-                    <field name="result" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="quarter" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="result" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
-                    <field name="officer" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
-                    <field name="officer_sec" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('state','=', '99'),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="officer" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="officer_sec" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
                     <field name="onwork"/>
                     <field name="login" invisible="True"/>
                     <field name="is_officer" invisible="True"/>
@@ -145,7 +145,7 @@
                 <group string="个人绩效目标">
                     <notebook>
                         <page>
-                            <field name="pbc_employee" attrs="{'readonly':['|','&amp;',('state','not in',('1','4','5','99')),('manage','=',False),'|',('state','=','99'),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),('manage','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),('manage','=',False)]}">
+                            <field name="pbc_employee" attrs="{'readonly':['|','&amp;',('state','not in',('1','4','5','99')),('manage','=',False),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),('manage','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),('manage','=',False)]}">
                                 <tree editable="bottom" name="personal_pbc">
                                     <field name="work" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
                                     <field name="detail" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
