@@ -109,15 +109,15 @@
               <sheet>
                 <group string="基本信息">
                   <group>
-                    <field name="name" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="name" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                     <field name="workid"/>
-                    <field name="quarter" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
-                    <field name="result" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="quarter" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="result" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                   </group>
                   <group>
                     <field name="department" options="{'no_create': True, 'no_open': True}"/>
-                    <field name="officer" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
-                    <field name="officer_sec" attrs="{'readonly':['|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),('manage','=', False)]}"/>
+                    <field name="officer" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="officer_sec" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                     <field name="onwork"/>
                     <field name="login" invisible="True"/>
                     <field name="is_officer" invisible="True"/>
@@ -131,7 +131,7 @@
                 <group string="部门绩效目标">
                     <notebook>
                         <page>
-                            <field name="pbc" attrs="{'readonly':['|',('manage','=',False),('state', '!=','0')]}">
+                            <field name="pbc" attrs="{'readonly':['|',('inter','=',False),('state', '!=','0')]}">
                                 <tree create="0" delete="false">
                                     <field name="depart_target" string="部门"/>
                                     <field name="num"/>
@@ -145,15 +145,16 @@
                 <group string="个人绩效目标">
                     <notebook>
                         <page>
-                            <field name="pbc_employee" attrs="{'readonly':['|','&amp;',('state','not in',('1','4','5','99')),('manage','=',False),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),('manage','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),('manage','=',False)]}">
+                            <field name="pbc_employee" attrs="{'readonly':['|','&amp;','&amp;',('state','not in',('1','4','5')),('login','=',True),'&amp;',('manage','=',False),('inter','=',True),'|','&amp;',('state','not in',('1','4','5')),'&amp;',('manage','=',False),('inter','=',False),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),'&amp;',('manage','=',False),('inter','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),'&amp;',('manage','=',False),('inter','=',False)]}">
                                 <tree editable="bottom" name="personal_pbc">
-                                    <field name="work" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
-                                    <field name="detail" attrs="{'readonly':[('state', '!=','1'),('manage','=', False)]}"/>
-                                    <field name="result" attrs="{'readonly':['|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),('login','=',False),'&amp;',('state', '!=','4'),('manage','=', False)]}"/>
-                                    <field name="evaluate" attrs="{'readonly':['|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),('officer','=',False),'&amp;',('state', '!=','5'),('manage','=', False)]}"/>
+                                    <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="state" invisible="True"/>
                                     <field name="login" invisible="True"/>
                                     <field name="officer" invisible="True"/>
+                                    <field name="inter" invisible="True"/>
                                     <field name="manage" invisible="True"/>
                                 </tree>
                             </field>
@@ -381,12 +382,12 @@
               <sheet>
                   <group>
                       <group>
-                          <field name="work"/>
-                          <field name="detail"/>
+                          <field name="work" readonly="True"/>
+                          <field name="detail" readonly="True"/>
                       </group>
                       <group>
-                          <field name="result"/>
-                          <field name="evaluate"/>
+                          <field name="result" readonly="True"/>
+                          <field name="evaluate" readonly="True"/>
                       </group>
                   </group>
               </sheet>

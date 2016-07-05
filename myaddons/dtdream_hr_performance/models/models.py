@@ -33,6 +33,7 @@ class dtdream_hr_performance(models.Model):
             rec.department = rec.name.department_id
             rec.onwork = rec.name.Inaugural_state
 
+    @api.depends('name')
     def _compute_name_is_login(self):
         if self.env.user == self.name.user_id:
             self.login = True
@@ -66,7 +67,8 @@ class dtdream_hr_performance(models.Model):
                 department.append(crr.department.id)
                 for depart in crr.department.child_ids:
                     department.append(depart.id)
-            if vals.get('department', '') not in department:
+            employee = self.env['hr.employee'].search([('id', '=', vals.get('name', 0))])
+            if employee.department_id.id not in department:
                 raise ValidationError("HR接口人只能创建所接口部门员工的绩效考核单!")
 
     @api.model
@@ -78,11 +80,12 @@ class dtdream_hr_performance(models.Model):
             pbc = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', vals.get('quarter', '')),
                                                      '|', ('name', '=', employee.department_id.parent_id.id),
                                                      ('name', '=', employee.department_id.id)])
-            vals['pbc'] = [[4, cr.id] for cr in pbc]
+            vals['pbc'] = [(4, t.id) for crr in pbc for t in crr.target]
         else:
             for val in pbc:
                 val[0] = 4
             vals['pbc'] = pbc
+        print vals
         result = super(dtdream_hr_performance, self).create(vals)
         self.unlink_message_subscribe(result.id)
         return result
@@ -126,6 +129,21 @@ class dtdream_hr_performance(models.Model):
                 rec.write({"up_officer": True}, False)
             else:
                 rec.write({"up_officer": False}, False)
+
+    @api.multi
+    def compute_view_all_manage_submit(self):
+        if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
+            self.write({"view_all": True}, False)
+        elif self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id:
+            self.write({"view_all": False}, False)
+        else:
+            cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+            department_id = [department.id for department in cr.department.child_ids if cr.department.child_ids]
+            department_id.append(cr.department.id)
+            if self.department.id in department_id:
+                self.write({"view_all": True}, False)
+            else:
+                self.write({"view_all": False}, False)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -226,7 +244,7 @@ class dtdream_hr_performance(models.Model):
     is_officer = fields.Boolean(compute=_compute_officer_is_login)
     view_all = fields.Boolean(default=lambda self: True)
     up_officer = fields.Boolean(string='上级部门主管', default=lambda self: True)
-    inter = fields.Boolean(string='当前登入者是否接口人',compute=_compute_login_is_inter)
+    inter = fields.Boolean(string='当前登入者是否接口人', compute=_compute_login_is_inter)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
 
     _sql_constraints = [
@@ -292,6 +310,7 @@ class dtdream_hr_pbc_employee(models.Model):
             rec.state = rec.perform.state
             rec.officer = rec.perform.officer
 
+    @api.depends('inter')
     def _compute_name_is_login(self):
         for rec in self:
             if rec.env.user == rec.perform.name.user_id:
@@ -310,6 +329,10 @@ class dtdream_hr_pbc_employee(models.Model):
         for rec in self:
             rec.manage = rec.perform.manage
 
+    def _compute_login_is_inter(self):
+        for rec in self:
+            rec.inter = rec.perform.inter
+
     @api.multi
     def unlink(self):
         for rec in self:
@@ -321,11 +344,14 @@ class dtdream_hr_pbc_employee(models.Model):
 
     @api.model
     def create(self, vals):
-        for rec in self:
-            if rec.state == '4' and rec.env.user == rec.perform.name.user_id:
-                raise ValidationError("待总结状态不能创建新纪录!")
-            if rec.state == '5' and rec.env.user == rec.perform.officer.user_id:
-                raise ValidationError("主管不能新增员工个人绩效目标记录!")
+        performance = self.env['dtdream.hr.performance'].search([('id', '=', vals.get('perform', 0))])
+        state = performance.state
+        inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id
+        manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id
+        if state != "1" and inter:
+            raise ValidationError("无法新增员工个人绩效目标记录!")
+        elif state != "1" and not inter and not manage and performance.name.user_id == self.env.user:
+            raise ValidationError("无法新增员工个人绩效目标记录!")
         return super(dtdream_hr_pbc_employee, self).create(vals)
 
     @api.model
@@ -335,6 +361,10 @@ class dtdream_hr_pbc_employee(models.Model):
             rec.update({"manage": True})
         else:
             rec.update({"manage": False})
+        if self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
+            rec.update({"inter": True})
+        else:
+            rec.update({"inter": False})
         return rec
 
     perform = fields.Many2one('dtdream.hr.performance')
@@ -345,6 +375,7 @@ class dtdream_hr_pbc_employee(models.Model):
     login = fields.Boolean(compute=_compute_name_is_login)
     officer = fields.Boolean(compute=_compute_login_is_officer)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
+    inter = fields.Boolean(string='当前登入者是否接口人', compute=_compute_login_is_inter)
     state = fields.Selection([('0', '待启动'),
                               ('1', '待填写绩效目标'),
                               ('2', '待主管确认'),
@@ -597,6 +628,7 @@ class dtdream_hr_pbc_start(models.TransientModel):
         for per in performance:
             if per.state == '0' and per.onwork == 'Inaugural_state_01':
                 per.signal_workflow('btn_start')
+                per.compute_view_all_manage_submit()
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one
