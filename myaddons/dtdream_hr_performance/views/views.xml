@@ -125,21 +125,27 @@
                     <field name="view_all" invisible="True"/>
                     <field name="inter" invisible="True"/>
                     <field name="manage" invisible="True"/>
+                    <field name="pbc_log" invisible="True"/>
                   </group>
                 </group>
 
                 <group string="部门绩效目标">
-                    <notebook>
-                        <page>
-                            <field name="pbc" attrs="{'readonly':['|',('inter','=',False),('state', '!=','0')]}">
-                                <tree create="0" delete="false">
-                                    <field name="depart_target" string="部门"/>
-                                    <field name="num"/>
-                                    <field name="works"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+                    <div>
+                        <span style="margin-left:20px" attrs="{'invisible':[('pbc_log','=',True)]}">
+                           您所在部门的PBC未录入，请于部门主管沟通了解!
+                        </span>
+                        <notebook>
+                            <page>
+                                <field name="pbc" attrs="{'readonly':['|',('inter','=',False),('state', '!=','0')]}">
+                                    <tree create="0" delete="false">
+                                        <field name="depart_target" string="部门"/>
+                                        <field name="num"/>
+                                        <field name="works"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </div>
                 </group>
 
                 <group string="个人绩效目标">

@@ -85,7 +85,6 @@ class dtdream_hr_performance(models.Model):
             for val in pbc:
                 val[0] = 4
             vals['pbc'] = pbc
-        print vals
         result = super(dtdream_hr_performance, self).create(vals)
         self.unlink_message_subscribe(result.id)
         return result
@@ -119,8 +118,11 @@ class dtdream_hr_performance(models.Model):
                 rec.write({"view_all": False}, False)
             else:
                 cr = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
-                department_id = [department.id for department in cr.department.child_ids if cr.department.child_ids]
-                department_id.append(cr.department.id)
+                department_id = []
+                for crr in cr:
+                    department_id.append(crr.department.id)
+                    for department in crr.department.child_ids:
+                        department_id.append(department.id)
                 if rec.department.id in department_id:
                     rec.write({"view_all": True}, False)
                 else:
@@ -138,8 +140,11 @@ class dtdream_hr_performance(models.Model):
             self.write({"view_all": False}, False)
         else:
             cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
-            department_id = [department.id for department in cr.department.child_ids if cr.department.child_ids]
-            department_id.append(cr.department.id)
+            department_id = []
+            for crr in cr:
+                department_id.append(crr.department.id)
+                for department in crr.department.child_ids:
+                    department_id.append(department.id)
             if self.department.id in department_id:
                 self.write({"view_all": True}, False)
             else:
@@ -220,6 +225,13 @@ class dtdream_hr_performance(models.Model):
             rec.update({"inter": False})
         return rec
 
+    @api.depends('name', 'quarter')
+    def _compute_has_pbc_log(self):
+        if self.pbc:
+            self.pbc_log = True
+        else:
+            self.pbc_log = False
+
     name = fields.Many2one('hr.employee', string='花名', required=True)
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)
     workid = fields.Char(string='工号', compute=_compute_employee_info, store=True)
@@ -240,6 +252,7 @@ class dtdream_hr_performance(models.Model):
                               ], string='状态', default='0')
     pbc = fields.Many2many('dtdream.pbc.target', string="部门绩效目标")
     pbc_employee = fields.One2many('dtdream.hr.pbc.employee', 'perform', string='个人绩效目标')
+    pbc_log = fields.Boolean(compute=_compute_has_pbc_log)
     login = fields.Boolean(compute=_compute_name_is_login)
     is_officer = fields.Boolean(compute=_compute_officer_is_login)
     view_all = fields.Boolean(default=lambda self: True)
@@ -254,8 +267,8 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def wkf_wait_write(self):
         if self.state == '0':
-            content = u'''您的个人季度绩效目标填写已启动,请根据部门季度绩效目标、及与主管沟通的情况,详细填写本季度的工作目标,
-            并描述将如何达成该目标,采取哪些措施。'''
+            content = u'''您的个人季度绩效目标填写已启动,请根据部门季度绩效目标、及与主管沟通的情况,详细填写%s的工作目标,
+            并描述将如何达成该目标,采取哪些措施。''' % self.quarter
             self.send_mail(self.name, subject=content, content=content)
         elif self.state != '3':
             content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
@@ -277,7 +290,7 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def wkf_conclud(self):
         self.write({'state': '4'})
-        content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写本季度关键事项达成情况与主要工作成果。"
+        content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写%s关键事项达成情况与主要工作成果。" % self.quarter
         self.send_mail(self.name, subject=content, content=content)
 
     @api.multi
@@ -491,8 +504,9 @@ class dtdream_hr_pbc(models.Model):
             employee = self.env['hr.employee'].search(['|', ('department_id', '=', self.name.id), ('department_id', 'in', [cr.id for cr in self.name.child_ids])])
             if vals.get('target', '') or vals.get('quarter', '') or vals.get('name'):
                 for name in employee:
-                    content = u'%s本季度部门绩效业务目标或关键指标、关键动作、行为已修改,请查看' % self.name.complete_name
-                    self.send_mail(name, subject=content, content=content)
+                    subject = u'【温馨提示】%s部门绩效业务目标修改通知'% self.quarter
+                    content = u'%s%s部门绩效业务目标或关键指标,关键动作,行为已修改,请进入dodo绩效查看，或点击链接' % (self.name.complete_name, self.quarter)
+                    self.send_mail(name, subject=subject, content=content)
                     time.sleep(0.01)
         return super(dtdream_hr_pbc, self).write(vals)
 
@@ -544,7 +558,21 @@ class dtdream_hr_pbc(models.Model):
                 'auto_delete': False,
             }).send()
 
-    name = fields.Many2one('hr.department', string='部门', required=True)
+    def _get_name_domain(self):
+        inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id
+        manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
+        if inter and manage:
+            department = []
+            departments = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+            for crr in departments:
+                department.append(crr.department.id)
+                for depart in crr.department.child_ids:
+                    department.append(depart.id)
+            return [('id', 'in', department)]
+        else:
+            return [('id', '!=', False)]
+
+    name = fields.Many2one('hr.department', string='部门', required=True, domain=_get_name_domain)
     is_inter = fields.Boolean(string="是否接口人", default=lambda self: True)
     is_in_department = fields.Boolean(string='是否所在部门')
     manage = fields.Boolean(string='是否绩效管理员', compute=_compute_login_is_manage)
@@ -564,7 +592,7 @@ class dtdream_hr_pbc(models.Model):
         self.write({'state': '99'})
         employee = self.env['hr.employee'].search(['|', ('department_id', '=', self.name.id), ('department_id', 'in', [cr.id for cr in self.name.child_ids])])
         for name in employee:
-            content = u'%s本季度部门绩效业务目标已制定，请查看' % self.name.complete_name
+            content = u'%s%s部门绩效业务目标已制定，请查看' % (self.name.complete_name,self.quarter)
             self.send_mail(name, subject=content, content=content)
             time.sleep(0.01)
 

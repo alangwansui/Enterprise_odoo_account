@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem name="绩效" id="menu_dtdream_hr_performance_root" icon="fa-user"/>
+        <menuitem name="绩效" id="menu_dtdream_hr_performance_root" icon="fa-user"
+                  web_icon="dtdream_hr_performance,static/description/icon.png"/>
         <menuitem name="部门绩效目标" id="menu_dtdream_hr_pbc" parent="menu_dtdream_hr_performance_root" sequence="10" action="act_dtdream_hr_pbc"/>
         <menuitem name="我的考评" id="menu_dtdream_hr_pbc_mine" parent="menu_dtdream_hr_performance_root" sequence="12" action="act_dtdream_hr_pbc_mine"/>
         <menuitem name="待我审批" id="menu_dtdream_hr_pbc_approve" parent="menu_dtdream_hr_performance_root" sequence="14" action="act_dtdream_hr_pbc_approve"/>
         <menuitem name="所有单据" id="menu_dtdream_hr_pbc_all" parent="menu_dtdream_hr_performance_root" sequence="16" action="act_dtdream_hr_pbc_all"/>
         <menuitem name="绩效管理" id="menu_dtdream_hr_pbc_manage" parent="menu_dtdream_hr_performance_root" sequence="18" action="act_dtdream_hr_pbc_manage" groups="group_hr_inter_performance,group_hr_manage_performance"/>
-        <menuitem name="HR业务接口人设置" sequence="18" id="dtdream_hr_pbc_config" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_pbc_config" groups="base.group_hr_manager"/>
+        <menuitem id="hr.menu_human_resources_configuration" name="配置" parent="hr.menu_hr_root" sequence="100" groups="base.group_configuration,base.group_hr_manager,dtdream_hr_leaving.group_dtdream_leaving_admin,group_hr_manage_performance"/>
+        <menuitem name="HR业务接口人设置" sequence="18" id="dtdream_hr_pbc_config" parent="hr.menu_human_resources_configuration" action="act_dtdream_hr_pbc_config" groups="group_hr_manage_performance"/>
     </data>
 </openerp>
