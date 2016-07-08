@@ -97,8 +97,80 @@ class dtdream_hr_performance(models.Model):
                 raise ValidationError("仅绩效管理员可以删除员工绩效单!")
         return super(dtdream_hr_performance, self).unlink()
 
+    def track_pbc_value_change(self, vals):
+        tab = u"<ul class='o_mail_thread_message_tracking'>"
+        message = u'''<li>个人绩效目标:<table width='840px' border='1px' style='table-layout:fixed;'><thead><tr>
+                    <th style='width: 40px;'>动作</th><th style='width: 100px;'>工作目标</th><th style='width: 300px'>
+                    具体描述(请具体说明主要工作成果即关键措施)</th><th style='width: 300px;'>关键事件达成</th>
+                    <th style='width: 100px;'>主管评价</th></tr></thead><tbody>'''
+        tracked = False
+        add = u''
+        if vals.get('name', ''):
+            name = self.env['hr.employee'].search([('id', '=', vals.get('name'))]).name
+            if self.name.name != name:
+                tab += u"<li>花名:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.name.name, name)
+        if vals.get('officer', ''):
+            name = self.env['hr.employee'].search([('id', '=', vals.get('officer'))]).name
+            if self.officer.name != name:
+                tab += u"<li>一考主管:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.officer.name, name)
+        if vals.get('officer_sec', ''):
+            name = self.env['hr.employee'].search([('id', '=', vals.get('officer_sec'))]).name
+            if self.officer_sec.name != name:
+                tab += u"<li>二考主管:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.officer_sec.name, name)
+        if vals.get('quarter', ''):
+            if vals.get('quarter') != self.quarter:
+                tab += u"<li>考核季度:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.quarter, vals.get('quarter'))
+        if vals.get('result', ''):
+            if vals.get('result') != self.result:
+                tab += u"<li>考核结果:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.result, vals.get('result'))
+        target = vals.get('pbc_employee', [])
+        for rec in target:
+            cr = self.env['dtdream.hr.pbc.employee'].search([('id', '=', rec[1])])
+            if rec[0] == 1:
+                tracked = True
+                field = rec[2]
+                if field.get('work', None):
+                    message += u"<tr><td>修改</td><td style='color: red; word-wrap:break-word;'>%s</td>" % field.get('work')
+                else:
+                    message += u"<tr><td>修改</td><td style='word-wrap:break-word;'>%s</td>" % cr.work
+                if field.get('detail', None):
+                    message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('detail')
+                else:
+                    message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.detail
+                if field.get('result', None):
+                    message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('result')
+                else:
+                    message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.result
+                if field.get('evaluate', None):
+                    message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('evaluate')
+                else:
+                    message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.evaluate
+            elif rec[0] == 0:
+                tracked = True
+                field = rec[2]
+                add += u'''<tr style='color: red;'><td>新增</td><td style='word-wrap:break-word;'>{0}</td>
+                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td>
+                <td style='word-wrap:break-word;'>{3}</td></tr>'''.format(field.get('work', ''), field.get('detail', ''),
+                                                                          field.get('result', ''), field.get('evaluate', ''))
+            elif rec[0] == 2:
+                tracked = True
+                message += u'''<tr style='color: red;'><td>删除</td><td style='word-wrap:break-word;'>{0}</td>
+                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td>
+                <td style='word-wrap:break-word;'>{3}</td></tr>'''.format(cr.work, cr.detail,
+                                                                          cr.result, cr.evaluate)
+        if not tracked:
+            message = tab + u'</ul>'
+            if message == u"<ul class='o_mail_thread_message_tracking'></ul>":
+                return ''
+            return message.replace("False", '')
+        message = tab + message + add + u"</tbody></table></li></ul>"
+        return message.replace("False", '')
+
     @api.multi
     def write(self, vals, flag=True):
+        message = self.track_pbc_value_change(vals)
+        if message:
+            self.message_post(body=message)
         result = vals.get('result', '')
         if result and result.strip():
             if self.state == "6":
@@ -106,6 +178,7 @@ class dtdream_hr_performance(models.Model):
             else:
                 content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
                 self.send_mail(self.name, subject=content, content=content)
+                self.message_post(body=u'绩效考核结果导入')
         return super(dtdream_hr_performance, self).write(vals)
 
     @api.multi
@@ -270,6 +343,7 @@ class dtdream_hr_performance(models.Model):
             content = u'''您的个人季度绩效目标填写已启动,请根据部门季度绩效目标、及与主管沟通的情况,详细填写%s的工作目标,
             并描述将如何达成该目标,采取哪些措施。''' % self.quarter
             self.send_mail(self.name, subject=content, content=content)
+            self.message_post(body=u'个人绩效目标填写启动')
         elif self.state != '3':
             content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
             self.send_mail(self.name, subject=content, content=content)
@@ -280,6 +354,7 @@ class dtdream_hr_performance(models.Model):
         self.write({'state': '2'})
         content = u'%s的个人季度绩效目标已制定,请确认;如该季度绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % self.name.name
         self.send_mail(self.officer, subject=content, content=content)
+        self.message_post(body=u'%s提交了个人绩效目标' % self.name.name)
 
     @api.multi
     def wkf_evaluate(self):
@@ -292,27 +367,32 @@ class dtdream_hr_performance(models.Model):
         self.write({'state': '4'})
         content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写%s关键事项达成情况与主要工作成果。" % self.quarter
         self.send_mail(self.name, subject=content, content=content)
+        self.message_post(body=u'个人绩效考评启动')
 
     @api.multi
     def wkf_rate(self):
         self.write({'state': '5'})
         content = u'%s已完成个人工作总结，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % self.name.name
         self.send_mail(self.officer, subject=content, content=content)
+        self.message_post(body=u'%s提交了个人绩效目标总结' % self.name.name)
 
     @api.multi
     def wkf_final(self):
         if self.result:
             self.write({'state': '99'})
+
         else:
             self.write({'state': '6'})
         content = u'%s已针对您的工作总结完成了评价,请查阅!' % self.officer.name
         self.send_mail(self.name, subject=content, content=content)
+        self.message_post(body=u'%s对个人绩效目标做了评价' % self.officer.name)
 
     @api.multi
     def wkf_done(self):
         self.write({'state': '99'})
         content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
         self.send_mail(self.name, subject=content, content=content)
+        self.message_post(body=u'绩效考核结果导入')
 
 
 class dtdream_hr_pbc_employee(models.Model):
@@ -402,6 +482,7 @@ class dtdream_hr_pbc_employee(models.Model):
 
 class dtdream_hr_pbc(models.Model):
     _name = "dtdream.hr.pbc"
+    _inherit = ['mail.thread']
     _description = u'部门绩效目标'
 
     def get_inter_employee(self):
@@ -488,8 +569,54 @@ class dtdream_hr_pbc(models.Model):
                     raise ValidationError("HR接口人只能删除所接口部门的部门绩效目标!")
         return super(dtdream_hr_pbc, self).unlink()
 
+    def track_pbc_value_change(self, vals):
+        tab = u"<ul class='o_mail_thread_message_tracking'>"
+        message = u'''<li>部门目标:<table width='800px' border='1px' style='table-layout:fixed;'><thead><tr>
+                    <th style='width: 40px;'>动作</th><th style='width: 200px;'>业务目标</th><th style='width: 600px'>
+                    关键指标,关键动作,行为</th></tr></thead><tbody>'''
+        tracked = False
+        add = u''
+        if vals.get('name', ''):
+            name = self.env['hr.department'].search([('id', '=', vals.get('name'))]).complete_name
+            tab += u"<li>部门:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.name.complete_name, name)
+        if vals.get('quarter', ''):
+            tab += u"<li>考核季度:<span>{0}</span>更改为:<span>{1}</span></li>".format(self.quarter, vals.get('quarter'))
+        target = vals.get('target', [])
+        for rec in target:
+            cr = self.env['dtdream.pbc.target'].search([('id', '=', rec[1])])
+            if rec[0] == 1:
+                tracked = True
+                field = rec[2]
+                if field.get('num', None):
+                    message += u"<tr><td>修改</td><td style='color: red; word-wrap:break-word;'>%s</td>" % field.get('num')
+                else:
+                    message += u"<tr><td>修改</td><td style='word-wrap:break-word;'>%s</td>" % cr.num
+                if field.get('works', None):
+                    message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('works')
+                else:
+                    message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.works
+            elif rec[0] == 0:
+                tracked = True
+                field = rec[2]
+                add += u'''<tr style='color: red;'><td>新增</td><td style='word-wrap:break-word;'>{0}</td>
+                <td style='word-wrap:break-word;'>{1}</td></tr>'''.format(field.get('num'), field.get('works'))
+            elif rec[0] == 2:
+                tracked = True
+                message += u'''<tr style='color: red;'><td>删除</td><td style='word-wrap:break-word;'>{0}</td>
+                <td style='word-wrap:break-word;'>{1}</td></tr>'''.format(cr.num, cr.works)
+        if not tracked:
+            message = tab + u'</ul>'
+            if message == u"<ul class='o_mail_thread_message_tracking'></ul>":
+                return ''
+            return message
+        message = tab + message + add + u"</tbody></table></li></ul>"
+        return message
+
     @api.multi
     def write(self, vals, flag=True):
+        message = self.track_pbc_value_change(vals)
+        if message:
+            self.message_post(body=message)
         if flag:
             department = []
             manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
@@ -510,6 +637,9 @@ class dtdream_hr_pbc(models.Model):
                     time.sleep(0.01)
         return super(dtdream_hr_pbc, self).write(vals)
 
+    def unlink_message_subscribe(self, res_id):
+        self.env['mail.followers'].search([('res_model', '=', 'dtdream.hr.pbc'), ('res_id', '=', res_id)]).unlink()
+
     @api.model
     def create(self, vals):
         department = []
@@ -522,7 +652,9 @@ class dtdream_hr_pbc(models.Model):
                     department.append(depart.id)
             if vals.get('name', '') not in department:
                 raise ValidationError("HR接口人只能创建所接口部门的部门绩效目标!")
-        return super(dtdream_hr_pbc, self).create(vals)
+        result = super(dtdream_hr_pbc, self).create(vals)
+        self.unlink_message_subscribe(result.id)
+        return result
 
     def get_base_url(self, cr, uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
@@ -604,7 +736,10 @@ class dtdream_pbc_target(models.Model):
     def _compute_department_target(self):
         for rec in self:
             rec.depart_target = rec.target.name.complete_name
-            rec.write({"level": len(rec.depart_target.split('/'))})
+            level = 1
+            if rec.depart_target:
+                level = len(rec.depart_target.split('/'))
+            rec.write({"level": level})
 
     target = fields.Many2one('dtdream.hr.pbc', string='部门绩效目标')
     depart_target = fields.Char(compute=_compute_department_target)

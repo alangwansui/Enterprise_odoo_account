@@ -29,7 +29,7 @@
                     <notebook>
                         <page>
                             <field name="target" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}">
-                                <tree editable="bottom">
+                                <tree editable="bottom" class="dtdream_hr_performance_tree">
                                     <field name="num"/>
                                     <field name="works"/>
                                     <field name="depart_target" invisible="True" string="部门"/>
@@ -40,6 +40,12 @@
                 </group>
 
               </sheet>
+
+              <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+              </div>
+
             </form>
         </field>
     </record>
@@ -131,7 +137,7 @@
 
                 <group string="部门绩效目标">
                     <div>
-                        <span style="margin-left:20px" attrs="{'invisible':[('pbc_log','=',True)]}">
+                        <span style="margin-left:20px; color:red;" attrs="{'invisible':[('pbc_log','=',True)]}">
                            您所在部门的PBC未录入，请于部门主管沟通了解!
                         </span>
                         <notebook>
