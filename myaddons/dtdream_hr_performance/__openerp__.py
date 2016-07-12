@@ -31,7 +31,6 @@
         'views/menu.xml',
         'views/templates.xml',
         'workflow/workflow.xml',
-        'views/importcss.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

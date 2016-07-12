@@ -29,7 +29,7 @@
                     <notebook>
                         <page>
                             <field name="target" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}">
-                                <tree editable="bottom" class="dtdream_hr_performance_tree">
+                                <tree editable="bottom">
                                     <field name="num"/>
                                     <field name="works"/>
                                     <field name="depart_target" invisible="True" string="部门"/>

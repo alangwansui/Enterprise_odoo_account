@@ -22,9 +22,11 @@ class dtdream_hr_performance(models.Model):
     def update_dtdream_hr_pbc(self):
         pbc = self.search([('state', '!=', '99')])
         for rec in pbc:
-            cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', rec.quarter), '|', ('name', '=', rec.department.parent_id.id), ('name', '=', rec.department.id)])
-            target = [t.id for crr in cr for t in crr.target]
-            rec.write({"pbc": [(6, 0, target)]})
+            if not rec.pbc:
+                cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', rec.quarter), '|', ('name', '=', rec.department.parent_id.id), ('name', '=', rec.department.id)])
+                target = [t.id for crr in cr for t in crr.target]
+                if target:
+                    rec.write({"pbc": [(6, 0, target)]})
 
     @api.depends('name')
     def _compute_employee_info(self):
@@ -184,18 +186,18 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def _compute_is_inter_department(self):
         pbc = self.search([])
+        cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+        department_id = []
+        for crr in cr:
+            department_id.append(crr.department.id)
+            for department in crr.department.child_ids:
+                department_id.append(department.id)
         for rec in pbc:
             if rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") in rec.env.user.groups_id:
                 rec.write({"view_all": True}, False)
             elif rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
                 rec.write({"view_all": False}, False)
             else:
-                cr = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
-                department_id = []
-                for crr in cr:
-                    department_id.append(crr.department.id)
-                    for department in crr.department.child_ids:
-                        department_id.append(department.id)
                 if rec.department.id in department_id:
                     rec.write({"view_all": True}, False)
                 else:
@@ -243,8 +245,8 @@ class dtdream_hr_performance(models.Model):
                     doc.xpath("//form")[0].set("create", "false")
                 if res['type'] == "tree":
                     doc.xpath("//tree")[0].set("create", "false")
+            self._compute_is_inter_department()
         res['arch'] = etree.tostring(doc)
-        self._compute_is_inter_department()
         self.update_dtdream_hr_pbc()
         return res
 

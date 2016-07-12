@@ -35,7 +35,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|',('up_officer','=',True),'|',('officer_sec.user_id','=',uid),'|',('officer.user_id','=',uid),'|',('view_all','=',True),'&amp;',('name.user_id','=',uid),('state', '!=', '0')]</field>
+            <field name="domain">['|',('officer_sec.user_id','=',uid),'|',('officer.user_id','=',uid),'&amp;',('name.user_id','=',uid),('state', '!=', '0')]</field>
         </record>
 
         <record id="act_dtdream_hr_pbc_manage" model="ir.actions.act_window">
