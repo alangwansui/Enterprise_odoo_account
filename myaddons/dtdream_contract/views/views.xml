@@ -1,0 +1,175 @@
+<openerp>
+  <data>
+    <!-- ====================================================视图===================================================== -->
+    <record id="view_dtdream_contract_from" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.from</field>
+      <field name="model">dtdream.contract</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="btn_submit" string="提交" class="btn-primary" attrs="{'invisible':['|',('is_applicant','=',False),('state','not in','0')]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_agree)d" type="action" string="同意" class="btn-primary" attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('1','2','3','4','5','6'))]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_refuse)d" type="action" string="不同意" attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('3','5'))]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_norefer)d" type="action" string="不涉及" attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('3','5'))]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_reject)d" type="action" string="驳回" attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('1','2','6'))]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_force)d" type="action" string="强制通过" attrs="{'invisible':['|',('is_legal_interface','=',False),('state','not in','3')]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_void)d" type="action" string="作废" attrs="{'invisible':['|',('is_legal_interface','=',False),('state','not in','3')]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_stamp)d" type="action" string="确认盖章" attrs="{'invisible':['|',('is_handler','=',False),('state','not in','7')]}"></button>
+            <button name="%(dtdream_contract.act_dtdream_contract_wizard_file)d" type="action" string="确认归档" attrs="{'invisible':['|',('is_handler','=',False),('state','not in','8')]}"></button>
+            <field name="state"  widget="statusbar"  statusbar_visible="0,1,2,3,4,5,6,7,8,9"></field>
+          </header>
+          <sheet>
+            <group string="申请人信息">
+              <group>
+                <field name="is_manager" invisible="1"></field>
+                <field name="is_applicant" invisible="1"></field>
+                <field name="his_approve" widget="many2many_tags" invisible="1"></field>
+                <field name="is_handler" invisible="1"></field>
+                <field name="is_legal_interface" invisible="1"></field>
+                <field name="applicant" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1" options="{'no_create': True}"></field>
+                <field name="tel_number"></field>
+                <field name="deparment_manage"></field>
+              </group>
+              <group>
+                <field name="deparment"></field>
+                <field name="job_number"></field>
+              </group>
+
+
+            </group>
+            <group string="合同信息">
+              <group>
+                <field name="name"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="constract_id"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="money"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="remark"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="pro_name" attrs="{'invisible':[('constract_type_char','!=','商务平台协议')],'required':[('constract_type_char', '=', '商务平台协议')]}" options="{'no_create': True}"></field>
+                <field name="partner" attrs="{'invisible':[('constract_type_char','!=','商务平台协议')]}"></field>
+              </group>
+              <group>
+                <field name="create_time"></field>
+                <field name="constract_type"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1" options="{'no_create': True}"></field>
+                <field name="constract_type_char" invisible="1"></field>
+                <field name="background"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="is_standard"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="attachment_name" invisible="1"></field>
+                <field name="attachment" widget="binary" filename="attachment_name" class="zxtest" attrs="{'readonly':['|',('is_applicant','=',False),('state','in',('1','2','3','4','5','6','7','8','9','10'))]}" required="1"></field>
+              </group>
+            </group>
+            <group string="流程信息">
+              <group>
+                <field name="current_handler_ids" widget="many2many_tags" readonly="1"></field>
+                <field name="review_ids" widget="many2many_tags" attrs="{'readonly':['&amp;','|',('is_manager','=',False),('state','not in','1'),'|',('is_legal_interface','=',False),('state','not in','2')]}"></field>
+                <field name="quanqian_id" readonly="1"></field>
+                <field name="stamp_id" readonly="1"></field>
+                <field name="is_stamped" readonly="True"></field>
+                <field name="stamp_time" readonly="True"></field>
+              </group>
+              <group>
+
+                <field name="legal_interface" readonly="1"></field>
+                <field name="huiqian_ids" widget="many2many_tags" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in','4')]}"></field>
+                <field name="file_id" readonly="1"></field>
+                <field name="is_filed" readonly="1"></field>
+                <field name="file_time" readonly="1"></field>
+              </group>
+            </group>
+          </sheet>
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
+        </form>
+
+      </field>
+    </record>
+
+
+    <record id="view_dtdream_contract_tree" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.tree</field>
+      <field name="model">dtdream.contract</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="constract_id"></field>
+          <field name="name"></field>
+          <field name="constract_type"></field>
+          <field name="state"></field>
+          <field name="create_time"></field>
+          <field name="applicant"></field>
+          <field name="current_handler_ids"></field>
+        </tree>
+      </field>
+    </record>
+    <record id="view_dtdram_contract_config_form" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.config.form</field>
+      <field name="model">dtdream.contract.config</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="name" required="1"></field>
+                <field name="review_ids" required="1" widget="many2many_tags"></field>
+                <field name="quanqian_id" required="1"></field>
+                <field name="file_id" required="1"></field>
+              </group>
+              <group>
+                <field name="legal_interface" required="1"></field>
+                <field name="huiqian_ids" required="1" widget="many2many_tags"></field>
+                <field name="stamp_id" required="1"></field>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <!-- ====================================================动作===================================================== -->
+    <record model="ir.actions.act_window" id="open_contract_my_request">
+      <field name="name">我的申请</field>
+      <field name="res_model">dtdream.contract</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">['|',('create_uid','=',uid),('applicant.user_id','=',uid)]</field>
+
+    </record>
+    <record model="ir.actions.act_window" id="open_wait_to_approve">
+      <field name="name">待我审批</field>
+      <field name="res_model">dtdream.contract</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('current_handler_ids.user_id','=',uid)]</field>
+    </record>
+    <record model="ir.actions.act_window" id="open_approved">
+      <field name="name">我已审批</field>
+      <field name="res_model">dtdream.contract</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('his_approve.user_id','=',uid)]</field>
+    </record>
+    <record model="ir.actions.act_window" id="open_all_contract">
+      <field name="name">所有合同</field>
+      <field name="res_model">dtdream.contract</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <record model="ir.actions.act_window" id="open_contract_config">
+      <field name="name">审批人配置表</field>
+      <field name="res_model">dtdream.contract.config</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ====================================================菜单===================================================== -->
+    <menuitem name="合同评审" id="menu_contract_root" web_icon="dtdream_contract,static/src/img/dtdream_contract.png"></menuitem>
+    <menuitem name="我的申请" id="menu_contract_my_request" parent="menu_contract_root" action="open_contract_my_request"></menuitem>
+    <menuitem name="待我审批" id="menu_contract_to_approve" parent="menu_contract_root" action="open_wait_to_approve"></menuitem>
+    <menuitem name="我已审批" id="menu_contract_approved" parent="menu_contract_root" action="open_approved"></menuitem>
+    <menuitem name="所有合同" id="menu_contract_all" parent="menu_contract_root" action="open_all_contract" groups="group_contract_admin"></menuitem>
+    <menuitem name="审批配置表" id="menu_contract_config" parent="menu_contract_root" action="open_contract_config" groups="group_contract_admin"></menuitem>
+  </data>
+</openerp>

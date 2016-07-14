@@ -56,11 +56,12 @@ class leaving_handle_wizard(models.TransientModel):
                 'email_from': self.get_mail_server_name(),
             }).send()
 
-    @api.one
+    @api.multi
     def btn_agree(self):
         active_id = self._context['active_id']
         current_leaving_handle = self.env['leaving.handle'].browse(active_id)
-        if self.current_state == "4":
+        current_state = self.current_state
+        if current_state == "4":
             current_leaving_handle.write({"actual_leavig_date":self.actual_leavig_date})
         if self.current_state == "1":
             if len(self.manager_id) ==0:
@@ -77,8 +78,13 @@ class leaving_handle_wizard(models.TransientModel):
                                                           "leaving_handle_id":active_id,"mail_ccs":[(6, 0, mail_ccs_user_ids)]})
         current_leaving_handle.signal_workflow('btn_agree')
         self.cc_mail(current_leaving_handle)
+        if current_state == "4":
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'reload',
+            }
 
-    @api.one
+    @api.multi
     def btn_reject(self):
         active_id = self._context['active_id']
         current_leaving_handle = self.env['leaving.handle'].browse(active_id)

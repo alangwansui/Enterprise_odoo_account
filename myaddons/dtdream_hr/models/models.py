@@ -8,6 +8,11 @@ class dtdream_hr(models.Model):
     code = fields.Char("部门编码")
     assitant_id = fields.Many2many("hr.employee",string="行政助理")
 
+    def search_read(self, cr, uid, domain=None, fields=None, offset=0, limit=None, order=None, context=None):
+        if 'child_ids' not in fields:
+            domain = []
+        return super(dtdream_hr, self).search_read(cr, uid, domain=domain)
+
 
 
 

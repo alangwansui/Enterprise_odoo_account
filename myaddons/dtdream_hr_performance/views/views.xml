@@ -29,9 +29,9 @@
                     <notebook>
                         <page>
                             <field name="target" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}">
-                                <tree editable="bottom">
+                                <tree editable="bottom" class="dtdream_hr_performance_tree">
                                     <field name="num"/>
-                                    <field name="works"/>
+                                    <field name="works" class="jsz"/>
                                     <field name="depart_target" invisible="True" string="部门"/>
                                 </tree>
                             </field>
@@ -138,12 +138,12 @@
                 <group string="部门绩效目标">
                     <div>
                         <span style="margin-left:20px; color:red;" attrs="{'invisible':[('pbc_log','=',True)]}">
-                           您所在部门的PBC未录入，请于部门主管沟通了解!
+                           您所在部门的部门绩效目标未录入，请于部门主管沟通了解!
                         </span>
                         <notebook>
                             <page>
                                 <field name="pbc" attrs="{'readonly':['|',('inter','=',False),('state', '!=','0')]}">
-                                    <tree create="0" delete="false">
+                                    <tree create="0" delete="false" class="dtdream_hr_performance_tree">
                                         <field name="depart_target" string="部门"/>
                                         <field name="num"/>
                                         <field name="works"/>
@@ -158,7 +158,7 @@
                     <notebook>
                         <page>
                             <field name="pbc_employee" attrs="{'readonly':['|','&amp;','&amp;',('state','not in',('1','4','5')),('login','=',True),'&amp;',('manage','=',False),('inter','=',True),'|','&amp;',('state','not in',('1','4','5')),'&amp;',('manage','=',False),('inter','=',False),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),'&amp;',('manage','=',False),('inter','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),'&amp;',('manage','=',False),('inter','=',False)]}">
-                                <tree editable="bottom" name="personal_pbc">
+                                <tree editable="bottom" name="personal_pbc" class="dtdream_hr_performance_tree">
                                     <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>

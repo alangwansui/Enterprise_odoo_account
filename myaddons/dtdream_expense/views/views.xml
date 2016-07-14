@@ -157,11 +157,11 @@
                 <form string="department">
                     <sheet>
                         <group col="4">
-                            <field name="name" readonly="1"/>
-                            <field name="code" readonly="1"/>
-                             <field name="parent_id" readonly="1"/>
-                            <field name="manager_id" string="主管" readonly="1"/>
-                            <field name="assitant_id" widget="many2many_tags" readonly="1"/>
+                            <field name="name" readonly="0"/>
+                            <field name="code" readonly="0"/>
+                             <field name="parent_id" readonly="0"/>
+                            <field name="manager_id" string="主管" readonly="0"/>
+                            <field name="assitant_id" widget="many2many_tags" readonly="0"/>
 
                            <field name="quanqianren" string="权签人" />
                             <field name="shouquanren1" string="第一授权人" />

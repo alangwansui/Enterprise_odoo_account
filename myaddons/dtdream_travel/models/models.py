@@ -190,6 +190,7 @@ class dtdream_travel(models.Model):
 
     @api.onchange('name')
     def _shenpi_first_domain(self):
+        self._compute_shouyi_department()
         assitand = self.name.department_id.assitant_id
         ancestors = []
         if assitand:
@@ -200,6 +201,9 @@ class dtdream_travel(models.Model):
         else:
             self.shenpi_first = False
             return {'domain': {'shenpi_first': [('id', '=', False)]}}
+
+    def _compute_shouyi_department(self):
+        self.department_shouyi = self.name.department_id
 
     @api.constrains("journey_id")
     def _check_start_end_time(self):
@@ -404,8 +408,9 @@ class dtdream_hr(models.Model):
 
     @api.depends("travel_ids")
     def _compute_chucha_log(self):
-        cr = self.env["dtdream.travel.chucha"].search([("name.id", "=", self.id)])
-        self.chucha_log_nums = len(cr)
+        for rec in self:
+            cr = rec.env["dtdream.travel.chucha"].search([("name.id", "=", rec.id)])
+            rec.chucha_log_nums = len(cr)
 
     @api.one
     def _compute_has_view(self):

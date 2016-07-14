@@ -1,0 +1,979 @@
+<openerp>
+  <data>
+
+      <!--个人周报FORM视图-->
+      <record model="ir.ui.view" id="dtdream_sale_own_report_form">
+          <field name="name">dtdream.sale.own.report.form</field>
+          <field name="model">dtdream.sale.own.report</field>
+          <field name="arch" type="xml">
+            <form string="个人周报">
+                <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"/>
+                            attrs="{'invisible':[('state','!=','draft')]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="draft,submit"/>
+                </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="report_person" invisible="True"></field>
+                          <field name="report_person_name"></field>
+                          <field name="department"></field>
+                      </group>
+                      <group>
+                          <field name="job_number"></field>
+                          <field name="week"></field>
+                      </group>
+                  </group>
+                <notebook colspan="4">
+                    <page string="本周工作总结">
+                        <h1>近三个月招投标项目</h1>
+                        <group string="政务系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_total_space" style="width:60% !important"/>
+                            <field name="zhengwu_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_total_project" style="width:60% !important"/>
+                            <field name="zhengwu_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_important_project" style="width:60% !important"/>
+                            <field name="zhengwu_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_important_space" style="width:60% !important"/>
+                            <field name="zhengwu_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="zhengwu_project" mode="tree" string="政务系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="政法系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_total_space" style="width:60% !important"/>
+                            <field name="zhengfa_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_total_project" style="width:60% !important"/>
+                            <field name="zhengfa_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_important_project" style="width:60% !important"/>
+                            <field name="zhengfa_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_important_space" style="width:60% !important"/>
+                            <field name="zhengfa_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="zhengfa_project" mode="tree" string="政法系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                              <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                              <field name="office_id"/>
+                              <field name="sale_apply_id"/>
+                              <field name="space_total"/>
+                              <field name="project_master_degree"/>
+                              <field name="bidding_time"/>
+                              <field name="project_process"/>
+                              <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="共享业务部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_total_space" style="width:60% !important"/>
+                            <field name="shared_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_total_project" style="width:60% !important"/>
+                            <field name="shared_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_important_project" style="width:60% !important"/>
+                            <field name="shared_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_important_space" style="width:60% !important"/>
+                            <field name="shared_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="shared_project" mode="tree" string="共享业务部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重大机会点"></group>
+                        <field name="lead_project" mode="tree" string="重大机会点">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="渠道进展"></group>
+                        <field name="sale_channel" mode="tree" string="渠道进展">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="channer_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="channer_process"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="竞争对手情况"></group>
+                        <field name="competitor_situation" mode="tree" string="竞争对手情况">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="sale_other" mode="tree" string="其他">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="下周工作计划">
+                        <h1>重大项目下周计划</h1>
+                        <group string="政务系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_total_space" style="width:60% !important"/>
+                            <field name="next_zhengwu_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_total_project" style="width:60% !important"/>
+                            <field name="next_zhengwu_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_important_project" style="width:60% !important"/>
+                            <field name="next_zhengwu_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_important_space" style="width:60% !important"/>
+                            <field name="next_zhengwu_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="next_zhengwu_project" mode="tree" string="政务系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="政法系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_total_space" style="width:60% !important"/>
+                            <field name="next_zhengfa_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_total_project" style="width:60% !important"/>
+                            <field name="next_zhengfa_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_important_project" style="width:60% !important"/>
+                            <field name="next_zhengfa_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_important_space" style="width:60% !important"/>
+                            <field name="next_zhengfa_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="next_zhengfa_project" mode="tree" string="政法系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                              <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                              <field name="office_id"/>
+                              <field name="sale_apply_id"/>
+                              <field name="space_total"/>
+                              <field name="project_master_degree"/>
+                              <field name="bidding_time"/>
+                              <field name="project_process"/>
+                              <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="共享业务部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_total_space" style="width:60% !important"/>
+                            <field name="next_shared_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_total_project" style="width:60% !important"/>
+                            <field name="next_shared_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_important_project" style="width:60% !important"/>
+                            <field name="next_shared_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_important_space" style="width:60% !important"/>
+                            <field name="next_shared_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="next_shared_project" mode="tree" string="共享业务部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="next_sale_other" mode="tree" string="其他">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="问题与求助">
+                        <field name="dtdream_problem_help" mode="tree">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="type" options='{"no_open": True, "no_create": True}'/>
+                                <field name="report_help_people" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="report_help_people"/>
+                                  </group>
+                                  <group>
+                                      <field name="type"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+              </sheet>
+              <!--<div class="oe_chatter">-->
+                  <!--<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>-->
+                  <!--<field name="message_ids" widget="mail_thread"/>-->
+              <!--</div>-->
+            </form>
+          </field>
+      </record>
+
+      <!--个人周报tree视图-->
+      <record id="dtdream_sale_own_report_tree" model="ir.ui.view">
+          <field name="name">dtdream.sale.own.report.tree</field>
+          <field name="model">dtdream.sale.own.report</field>
+          <field name="arch" type="xml">
+              <tree string="个人周报">
+                  <field name="report_person_name"></field>
+                  <field name="department"></field>
+                  <field name="job_number"></field>
+                  <field name="week"></field>
+              </tree>
+          </field>
+      </record>
+
+      <!--主管周报FORM视图-->
+      <record model="ir.ui.view" id="dtdream_sale_manager_report_form">
+          <field name="name">dtdream.sale.manager.report.form</field>
+          <field name="model">dtdream.sale.manager.report</field>
+          <field name="arch" type="xml">
+            <form string="主管周报">
+              <sheet>
+                <group>
+                    <group>
+                        <field name="report_manager" invisible="True"></field>
+                        <field name="report_manager_name"></field>
+                        <field name="department"></field>
+                    </group>
+                    <group>
+                        <field name="job_number"></field>
+                        <field name="week"></field>
+                    </group>
+                </group>
+                <notebook colspan="4">
+                    <page string="本周工作总结">
+                        <h1>近三个月招投标项目</h1>
+                        <group string="政务系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_total_space" style="width:60% !important"/>
+                            <field name="zhengwu_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_total_project" style="width:60% !important"/>
+                            <field name="zhengwu_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_important_project" style="width:60% !important"/>
+                            <field name="zhengwu_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengwu_important_space" style="width:60% !important"/>
+                            <field name="zhengwu_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="zhengwu_project" mode="tree" string="政务系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="政法系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_total_space" style="width:60% !important"/>
+                            <field name="zhengfa_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_total_project" style="width:60% !important"/>
+                            <field name="zhengfa_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_important_project" style="width:60% !important"/>
+                            <field name="zhengfa_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="zhengfa_important_space" style="width:60% !important"/>
+                            <field name="zhengfa_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="zhengfa_project" mode="tree" string="政法系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                              <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                              <field name="office_id"/>
+                              <field name="sale_apply_id"/>
+                              <field name="space_total"/>
+                              <field name="project_master_degree"/>
+                              <field name="bidding_time"/>
+                              <field name="project_process"/>
+                              <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="共享业务部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_total_space" style="width:60% !important"/>
+                            <field name="shared_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_total_project" style="width:60% !important"/>
+                            <field name="shared_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_important_project" style="width:60% !important"/>
+                            <field name="shared_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="shared_important_space" style="width:60% !important"/>
+                            <field name="shared_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="shared_project" mode="tree" string="共享业务部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重大机会点"></group>
+                        <field name="lead_project" mode="tree" string="重大机会点">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="渠道进展"></group>
+                        <field name="sale_channel" mode="tree" string="渠道进展">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="channer_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="channer_process"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="竞争对手情况"></group>
+                        <field name="competitor_situation" mode="tree" string="竞争对手情况">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="sale_other" mode="tree" string="其他">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="下周工作计划">
+                        <h1>重大项目下周计划</h1>
+                        <group string="政务系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_total_space" style="width:60% !important"/>
+                            <field name="next_zhengwu_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_total_project" style="width:60% !important"/>
+                            <field name="next_zhengwu_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_important_project" style="width:60% !important"/>
+                            <field name="next_zhengwu_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengwu_important_space" style="width:60% !important"/>
+                            <field name="next_zhengwu_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="next_zhengwu_project" mode="tree" string="政务系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="政法系统部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_total_space" style="width:60% !important"/>
+                            <field name="next_zhengfa_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_total_project" style="width:60% !important"/>
+                            <field name="next_zhengfa_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_important_project" style="width:60% !important"/>
+                            <field name="next_zhengfa_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_zhengfa_important_space" style="width:60% !important"/>
+                            <field name="next_zhengfa_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="next_zhengfa_project" mode="tree" string="政法系统部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                              <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                              <field name="office_id"/>
+                              <field name="sale_apply_id"/>
+                              <field name="space_total"/>
+                              <field name="project_master_degree"/>
+                              <field name="bidding_time"/>
+                              <field name="project_process"/>
+                              <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="共享业务部"></group>
+                        <div class="o_row" style="width:100% !important">
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_total_space" style="width:60% !important"/>
+                            <field name="next_shared_total_space" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_total_project" style="width:60% !important"/>
+                            <field name="next_shared_total_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_important_project" style="width:60% !important"/>
+                            <field name="next_shared_important_project" class="dtdream_center"/>
+                          </div>
+                          <div style="width:25% !important" class="o_row">
+                            <label for="next_shared_important_space" style="width:60% !important"/>
+                            <field name="next_shared_important_space" class="dtdream_center"/>
+                          </div>
+                        </div>
+                        <field name="next_shared_project" mode="tree" string="共享业务部">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="office_id"/>
+                                <field name="sale_apply_id"/>
+                                <field name="space_total"/>
+                                <field name="project_master_degree"/>
+                                <field name="bidding_time"/>
+                                <field name="project_process"/>
+                                <field name="add_project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"/>
+                                      <field name="sale_apply_id"/>
+                                      <field name="space_total"/>
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time"/>
+                                      <field name="project_process"/>
+                                      <field name="add_project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="next_sale_other" mode="tree" string="其他">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="问题与求助">
+                        <field name="dtdream_manager_problem_help" mode="tree">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="type" options='{"no_open": True, "no_create": True}'/>
+                                <field name="report_help_people" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="report_help_people"/>
+                                  </group>
+                                  <group>
+                                      <field name="type"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+              </sheet>
+              <!--<div class="oe_chatter">-->
+                  <!--<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>-->
+                  <!--<field name="message_ids" widget="mail_thread"/>-->
+              <!--</div>-->
+            </form>
+          </field>
+      </record>
+
+      <!--主管周报tree视图-->
+      <record id="dtdream_sale_manager_report_tree" model="ir.ui.view">
+          <field name="name">dtdream.sale.manager.report.tree</field>
+          <field name="model">dtdream.sale.manager.report</field>
+          <field name="arch" type="xml">
+              <tree string="主管周报">
+                  <field name="report_manager_name"></field>
+                  <field name="department"></field>
+                  <field name="job_number"></field>
+                  <field name="week"></field>
+              </tree>
+          </field>
+      </record>
+
+      <!--求助问题类型配置FORM视图-->
+      <record model="ir.ui.view" id="dtdream_problem_help_form">
+          <field name="name">dtdream.problem.help.form</field>
+          <field name="model">problem.type</field>
+          <field name="arch" type="xml">
+            <form string="求助问题类型配置">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+          </field>
+      </record>
+  </data>
+</openerp>

@@ -92,39 +92,112 @@ class dtdream_hr_infor(models.Model):
         else:
             self.login_info_employee = False
 
-    account = fields.Char(string="账号")
-    byname = fields.Char(string="等价花名")
+    def track_family_change(self, family):
+        message = u'''<ul class='o_mail_thread_message_tracking'><li>家庭成员:<table border='1px'><thead><tr>
+                    <th style='width: 40px;'>动作</th><th style='width: 50px;'>关系</th><th style='width: 80px'>姓名</th>
+                    <th style='width: 160px'> 工作单位</th><th style='width: 160px'>地址</th><th style='width: 60px;'>邮编</th>
+                    <th style='width: 100px'>邮箱</th><th style='width: 80px'>联系电话</th>
+                    <th style='width: 100px'>紧急联系人</th></tr></thead><tbody>'''
+        add = u''
+        family = sorted(family, key=lambda family: family[1])
+        tracked = False
+        for rec in family:
+            if not rec[1] and rec[0] != 0:
+                continue
+            cr = self.env['hr.employee.family'].search([('id', '=', rec[1])])
+            if rec[0] == 1:
+                tracked = True
+                field = rec[2]
+                if field.get('relation', None):
+                    message += u"<tr><td>修改</td><td style='color: red;'>%s</td>" % field.get('relation')
+                else:
+                    message += u"<tr><td>修改</td><td>%s</td>" % cr.relation
+                if field.get('name', None):
+                    message += u"<td style='color: red;'>%s</td>" % field.get('name')
+                else:
+                    message += u"<td>%s</td>" % cr.name
+                if field.get('company', None):
+                    message += u"<td style='color: red;'>%s</td>" % field.get('company')
+                else:
+                    message += u"<td>%s</td>" % cr.company
+                if field.get('address', None):
+                    message += u"<td style='color: red;'>%s</td>" % field.get('address')
+                else:
+                    message += u"<td>%s</td>" % cr.address
+                if field.get('postcode', None):
+                    message += u"<td style='color: red;'>%s</td>" % field.get('postcode')
+                else:
+                    message += u"<td>%s</td>" % cr.postcode
+                if field.get('mail', None):
+                    message += u"<td style='color: red;'>%s</td>" % field.get('mail')
+                else:
+                    message += u"<td>%s</td>" % cr.mail
+                if field.get('tel', None):
+                    message += u"<td style='color: red;'>%s</td>" % field.get('tel')
+                else:
+                    message += u"<td>%s</td>" % cr.tel
+                if str(field.get('emergency', '')):
+                    message += u"<td style='color: red;'>%s</td></tr>" % field.get('emergency')
+                else:
+                    message += u"<td>%s</td></tr>" % cr.emergency
+            elif rec[0] == 0:
+                tracked = True
+                field = rec[2]
+                add += u'''<tr style='color: red;'><td>新增</td><td>{0}</td><td>{1}</td><td>{2}</td>
+                         <td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td></tr>'''.format(
+                    field.get('relation'), field.get('name'), field.get('company'), field.get('address'),
+                    field.get('postcode'), field.get('mail'), field.get('tel'), field.get('emergency'))
+            elif rec[0] == 2:
+                tracked = True
+                message += u'''<tr style='color: red;'><td>删除</td><td>{0}</td><td>{1}</td><td>{2}</td>
+                         <td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td></tr>'''.format(cr.relation,
+                        cr.name, cr.company, cr.address, cr.postcode, cr.mail, cr.tel, cr.emergency)
+        if not tracked:
+            return ''
+        message += add + u"</tbody></table></li></ul>"
+        return message
+
+    @api.multi
+    def write(self, vals):
+        message = self.track_family_change(vals.get('family', ''))
+        if message:
+            self.message_post(body=message)
+        return super(dtdream_hr_infor, self).write(vals)
+
+    account = fields.Char(string="帐号")
+    byname = fields.Char(string="等价花名", track_visibility='onchange')
     recruit = fields.Selection([('0', "社会招聘"), ('1', "校园招聘")], string="招聘类型")
     work_place = fields.Char(string="常驻工作地")
     recruit_place = fields.Char(string="招聘所在地")
     expatriate = fields.Boolean(string="是否外派")
-    nation = fields.Char(string="民族")
-    political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌")
-    postcode = fields.Char(string="邮编")
-    birthday = fields.Date(string="出生日期")
-    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯(省)")
-    Birthplace_state = fields.Many2one("dtdream.hr.state", string="籍贯(市)")
-    graduate = fields.Boolean(string="是否应届生")
+    nation = fields.Char(string="民族", track_visibility='onchange')
+    political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌", track_visibility='onchange')
+    postcode = fields.Char(string="邮编", track_visibility='onchange')
+    birthday = fields.Date(string="出生日期", track_visibility='onchange')
+    Birthplace_province = fields.Many2one("dtdream.hr.province", string="籍贯(省)", track_visibility='onchange')
+    Birthplace_state = fields.Many2one("dtdream.hr.state", string="籍贯(市)", track_visibility='onchange')
+    graduate = fields.Boolean(string="是否应届生", track_visibility='onchange')
     family = fields.One2many("hr.employee.family", "employee", string="家庭成员")
-    province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)")
-    state_hukou = fields.Many2one("dtdream.hr.state", string="户口所在地(市)")
-    nature_hukou = fields.Selection([("0", "城镇"), ("1", "农村")], string="户口性质")
-    endtime_shebao = fields.Date(string="上家单位社保缴纳截止月份")
-    endtime_gongjijin = fields.Date(string="上家单位公积金缴纳截止月份")
-    ahead_prov = fields.Many2one("dtdream.hr.province", string="原社保缴纳地(省)")
-    ahead_state = fields.Many2one("dtdream.hr.state", string="原社保缴纳地(市)")
-    now_prov = fields.Many2one("dtdream.hr.province", string="申请社保缴纳地(省)")
-    now_state = fields.Many2one("dtdream.hr.state", string="申请社保缴纳地(市)")
-    shebao_prov = fields.Many2one("dtdream.hr.province", string="原公积金缴纳地(省)")
-    gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)")
-    oil_card = fields.Char(string="油卡编号")
-    has_oil = fields.Boolean(string="已办理中大一卡通")
+    province_hukou = fields.Many2one("dtdream.hr.province", string="户口所在地(省)", track_visibility='onchange')
+    state_hukou = fields.Many2one("dtdream.hr.state", string="户口所在地(市)", track_visibility='onchange')
+    nature_hukou = fields.Selection([("0", "城镇"), ("1", "农村")], string="户口性质", track_visibility='onchange')
+    endtime_shebao = fields.Date(string="上家单位社保缴纳截止月份", track_visibility='onchange')
+    endtime_gongjijin = fields.Date(string="上家单位公积金缴纳截止月份", track_visibility='onchange')
+    ahead_prov = fields.Many2one("dtdream.hr.province", string="原社保缴纳地(省)", track_visibility='onchange')
+    ahead_state = fields.Many2one("dtdream.hr.state", string="原社保缴纳地(市)", track_visibility='onchange')
+    now_prov = fields.Many2one("dtdream.hr.province", string="申请社保缴纳地(省)", track_visibility='onchange')
+    now_state = fields.Many2one("dtdream.hr.state", string="申请社保缴纳地(市)", track_visibility='onchange')
+    shebao_prov = fields.Many2one("dtdream.hr.province", string="原公积金缴纳地(省)", track_visibility='onchange')
+    gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)", track_visibility='onchange')
+    oil_card = fields.Char(string="油卡编号", track_visibility='onchange')
+    has_oil = fields.Boolean(string="已办理中大一卡通", track_visibility='onchange')
     login_info_employee = fields.Boolean(string="员工是否当前登入人", compute=_compute_login_equal_employee)
     can_view_info_self = fields.Boolean(string="员工自助信息是否可见", compute=_compute_self_page)
     can_view_info_basic = fields.Boolean(string="员工基本信息是否可见", compute=_compute_basic_page, default=True)
     edit_public_info = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public, default=True)
     edit_basic_info = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic, default=True)
     edit_self_info = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
+    active = fields.Boolean(default=True, string='有效')
 
 
 class dtdream_hr_family(models.Model):
@@ -181,6 +254,13 @@ class dtdream_hr_state(models.Model):
     province = fields.Many2one("dtdream.hr.province", string="省份")
 
 
+class dtdream_hr_department(models.Model):
+    _inherit = 'hr.department'
 
-
-
+    @api.multi
+    def message_subscribe_users(self, user_ids=None, subtype_ids=None):
+        """ Wrapper on message_subscribe, using users. If user_ids is not
+            provided, subscribe uid instead. """
+        user_ids = []
+        result = self.message_subscribe(self.env['res.users'].browse(user_ids).mapped('partner_id').ids, subtype_ids=subtype_ids)
+        return result

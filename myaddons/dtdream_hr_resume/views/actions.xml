@@ -53,7 +53,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|',('approved.user_id','=',uid),('resume_approve.user_id','=',uid),('create_uid','=',uid),('name.user_id','=',uid)]</field>
+            <field name="domain">['|','|',('state', '!=', '0'),('create_uid','=',uid),('name.user_id','=',uid)]</field>
         </record>
 
         <record id="action_hr_resume_modify_all" model="ir.actions.act_window">
@@ -62,7 +62,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|',('approved.user_id','=',uid),('resume_approve.user_id','=',uid),('create_uid','=',uid),('name.user_id','=',uid)]</field>
+            <field name="domain">['|','|',('state', '!=', '0'),('create_uid','=',uid),('name.user_id','=',uid)]</field>
         </record>
 
         <record model="ir.actions.server" id="act_dtdream_hr_resume_approve">

@@ -309,15 +309,18 @@ class dtdream_sale(models.Model):
     @api.depends('project_space')
     def _onchange_project_space(self):
         space_total = 0
-        for rec in self.project_space:
-            space_total = space_total + rec.project_space
-        self.space_total = space_total
+        for recc in self:
+            for rec in recc.project_space:
+                space_total = space_total + rec.project_space
+            recc.space_total = space_total
 
     @api.onchange('sale_apply_id')
     def _onchange_sale_apply_uid(self):
         self.sale_apply_id_uid = self.sale_apply_id.env['res.users'].search([('login','=',self.sale_apply_id.login)]).id
 
+
     description = fields.Text('项目进展')
+
     name = fields.Char('项目名称',required=True,select=1)
     user_id = fields.Many2one(string="Salesperson")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
@@ -360,7 +363,13 @@ class dtdream_sale(models.Model):
         ('1', '是'),
         ('0', '否'),
     ],string='是否数梦集成项目',required=True)
+    is_invest_project = fields.Selection([
+        ('1', '是'),
+        ('0', '否'),
+    ],string='是否投资类项目',required=True)
+
     project_province = fields.Many2one("res.country.state", '省份',required=True)
+
     product_category_type_id = fields.Many2many("product.category", string="产品分类")
     project_place = fields.Char('城市')
     sale_apply_id = fields.Many2one("hr.employee",string="营销责任人",required=True)
@@ -452,6 +461,7 @@ class dtdream_sale(models.Model):
         # # AND with the domain in parameter
         # search_domain += list(domain)
         # perform search, return the first found
+        search_domain.append(('type', 'in', types))
         stage_ids = self.pool.get('crm.stage').search(cr, uid, search_domain, order=order, limit=1, context=context)
         if stage_ids:
             return stage_ids[0]

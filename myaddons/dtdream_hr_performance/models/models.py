@@ -4,6 +4,7 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from lxml import etree
 import time
+import re
 
 
 class dtdream_hr_performance(models.Model):
@@ -55,10 +56,11 @@ class dtdream_hr_performance(models.Model):
             self.manage = False
 
     def _compute_login_is_inter(self):
-        if self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
-            self.inter = True
-        else:
-            self.inter = False
+        for rec in self:
+            if rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") in rec.env.user.groups_id:
+                rec.inter = True
+            else:
+                rec.inter = False
 
     def check_access_right_create(self, vals):
         department = []
@@ -73,8 +75,14 @@ class dtdream_hr_performance(models.Model):
             if employee.department_id.id not in department:
                 raise ValidationError("HR接口人只能创建所接口部门员工的绩效考核单!")
 
+    def validate_quarter_check(self, quarter):
+        p = re.match(u'\d{4}财年Q[1-4]', quarter)
+        if not p:
+            raise ValidationError('考核季度格式必须是xxxx/财年Q1~Q4')
+
     @api.model
     def create(self, vals):
+        self.validate_quarter_check(vals.get('quarter'))
         self.check_access_right_create(vals)
         pbc = vals.get('pbc', '')
         if not pbc:
@@ -103,7 +111,7 @@ class dtdream_hr_performance(models.Model):
         tab = u"<ul class='o_mail_thread_message_tracking'>"
         message = u'''<li>个人绩效目标:<table width='840px' border='1px' style='table-layout:fixed;'><thead><tr>
                     <th style='width: 40px;'>动作</th><th style='width: 100px;'>工作目标</th><th style='width: 300px'>
-                    具体描述(请具体说明主要工作成果即关键措施)</th><th style='width: 300px;'>关键事件达成</th>
+                    具体描述(请具体说明主要工作成果及关键措施)</th><th style='width: 300px;'>关键事件达成</th>
                     <th style='width: 100px;'>主管评价</th></tr></thead><tbody>'''
         tracked = False
         add = u''
@@ -170,6 +178,8 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def write(self, vals, flag=True):
+        if vals.get('quarter'):
+            self.validate_quarter_check(vals.get('quarter'))
         message = self.track_pbc_value_change(vals)
         if message:
             self.message_post(body=message)
@@ -464,7 +474,7 @@ class dtdream_hr_pbc_employee(models.Model):
 
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作目标')
-    detail = fields.Text(string='具体描述(请具体说明主要工作成果即关键措施)')
+    detail = fields.Text(string='具体描述(请具体说明主要工作成果及关键措施)')
     result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
     login = fields.Boolean(compute=_compute_name_is_login)
@@ -614,8 +624,15 @@ class dtdream_hr_pbc(models.Model):
         message = tab + message + add + u"</tbody></table></li></ul>"
         return message
 
+    def validate_quarter_check(self, quarter):
+        p = re.match(u'\d{4}财年Q[1-4]', quarter)
+        if not p:
+            raise ValidationError('考核季度格式必须是xxxx/财年Q1~Q4')
+
     @api.multi
     def write(self, vals, flag=True):
+        if vals.get('quarter'):
+            self.validate_quarter_check(vals.get('quarter'))
         message = self.track_pbc_value_change(vals)
         if message:
             self.message_post(body=message)
@@ -644,6 +661,7 @@ class dtdream_hr_pbc(models.Model):
 
     @api.model
     def create(self, vals):
+        self.validate_quarter_check(vals.get('quarter'))
         department = []
         manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
         if manage:

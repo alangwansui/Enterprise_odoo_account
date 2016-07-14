@@ -207,9 +207,14 @@ class dtdream_rd_version(models.Model):
                 raise ValidationError("不通过时，意见为必填项")
         for process in self.process_01_ids:
             if process.approver_old and process.approver!=process.approver_old:
-                subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                if self.proName.department_2:
+                    subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                else:
+                    subject=process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                 appellation = process.approver.name+u",您好"
-                content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                 url = base_url+link
@@ -226,6 +231,7 @@ class dtdream_rd_version(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
+                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.add_follower(employee_id=process.approver.id)
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
@@ -234,6 +240,7 @@ class dtdream_rd_version(models.Model):
                 self.write({'his_app_user': [(4, user.id)]})
             self.is_finish_01 = True
             processes = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id),('ver_state','=',self.version_state),('is_new','=',True),('level','=','level_01')])
+
             for process in processes:
                 if self.is_Qa:
                     process_01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id),('ver_state','=',self.version_state),('is_new','=',True),('level','=','level_02')])
@@ -271,6 +278,7 @@ class dtdream_rd_version(models.Model):
                             else:
                                 self.message_post(body=process.approver.name+u'在计划中阶段一级审批意见:不通过')
 
+
             for process in processes:
                 if not (process.is_pass or process.is_risk):
                     self.is_finish_01 = False
@@ -291,9 +299,12 @@ class dtdream_rd_version(models.Model):
                             self.add_follower(employee_id=record.person.id)
                             self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":self.id,'ver_state':self.version_state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
+                            if self.proName.department_2:
+                                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
+                            else:
+                                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
                             appellation = record.person.name+u",您好"
-                            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本的计划阶段待您审批"
+                            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本已进入计划中阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                             url = base_url+link
@@ -313,9 +324,13 @@ class dtdream_rd_version(models.Model):
                 else:
                     for process in process_01:
                         if process.approver_old and process.approver!=process.approver_old:
-                            subject=process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                            if self.proName.department_2:
+                                subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                                content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                            else:
+                                subject=process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                                content = process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                             appellation = process.approver.name+u",您好"
-                            content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                             url = base_url+link
@@ -332,9 +347,10 @@ class dtdream_rd_version(models.Model):
                                 'auto_delete': False,
                                 'email_from':self.get_mail_server_name(),
                             }).send()
+                            self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                             process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                             self.add_follower(employee_id=process.approver.id)
-                    self.write({'current_approver_user': [(4, self.proName.department.manager_id.user_id.id)]})
+                        self.write({'current_approver_user': [(4, process.approver.user_id.id)]})
                     for user in self.current_approver_user:
                         self.write({'his_app_user': [(4, user.id)]})
                     if process_01.is_pass or process_01.is_risk:
@@ -351,10 +367,10 @@ class dtdream_rd_version(models.Model):
                             else:
                                 self.message_post(body=process_01.approver.name+u'在计划中阶段二级审批意见:带风险通过')
                     elif process_01.is_refuse:
-
                         self.message_post(body=process_01.approver.name+u'在计划中阶段二级审批不同意，原因:'+process_01.reason)
                         proces_01all = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id),('ver_state','=',self.version_state)])
                         proces_01all.unlink()
+                        self.write({'is_click_01':False,'is_finish_01':False})
 
 
     @api.constrains('process_02_ids')
@@ -364,9 +380,13 @@ class dtdream_rd_version(models.Model):
                 raise ValidationError("不通过时，意见为必填项")
         for process in self.process_02_ids:
             if process.approver_old and process.approver!=process.approver_old:
-                subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                if self.proName.department_2:
+                    subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                else:
+                    subject=process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                 appellation = process.approver.name+u",您好"
-                content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                 url = base_url+link
@@ -383,6 +403,7 @@ class dtdream_rd_version(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
+                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.add_follower(employee_id=process.approver.id)
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
@@ -447,9 +468,12 @@ class dtdream_rd_version(models.Model):
                             self.add_follower(employee_id=record.person.id)
                             self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_02_id":self.id,'ver_state':self.version_state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
+                            if self.proName.department_2:
+                                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
+                            else:
+                                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
                             appellation = record.person.name+u",您好"
-                            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本的开发中阶段待您审批"
+                            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本已进入开发中阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                             url = base_url+link
@@ -469,9 +493,13 @@ class dtdream_rd_version(models.Model):
                 else:
                     for process in process_02:
                         if process.approver_old and process.approver!=process.approver_old:
-                            subject=process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                            if self.proName.department_2:
+                                subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                                content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                            else:
+                                subject=process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                                content = process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                             appellation = process.approver.name+u",您好"
-                            content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                             url = base_url+link
@@ -488,9 +516,10 @@ class dtdream_rd_version(models.Model):
                                 'auto_delete': False,
                                 'email_from':self.get_mail_server_name(),
                             }).send()
+                            self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                             process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                             self.add_follower(employee_id=process.approver.id)
-                    self.write({'current_approver_user': [(4, self.proName.department.manager_id.user_id.id)]})
+                            self.write({'current_approver_user': [(4, process.approver.user_id.id)]})
                     for user in self.current_approver_user:
                         self.write({'his_app_user': [(4, user.id)]})
                     if process_02.is_pass or process_02.is_risk:
@@ -512,7 +541,7 @@ class dtdream_rd_version(models.Model):
                         self.write({'is_click_02':False})
                         proces_02all = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',self.id),('ver_state','=',self.version_state)])
                         proces_02all.unlink()
-
+                        self.write({'is_click_02':False,'is_finish_02':False})
 
     @api.constrains('process_03_ids')
     def con_pro_03_ids(self):
@@ -558,9 +587,13 @@ class dtdream_rd_version(models.Model):
                             self.message_post(body=process.approver.name+u'在待发布阶段一级审批意见:不通过')
         for process in processes:
             if process.approver_old and process.approver!=process.approver_old:
-                subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                if self.proName.department_2:
+                    subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                else:
+                    subject=process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                 appellation = process.approver.name+u",您好"
-                content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                 url = base_url+link
@@ -577,6 +610,7 @@ class dtdream_rd_version(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
+                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.add_follower(employee_id=process.approver.id)
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
@@ -604,9 +638,12 @@ class dtdream_rd_version(models.Model):
                             self.add_follower(employee_id=record.person.id)
                             self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_03_id":self.id,'ver_state':self.version_state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
+                            if self.proName.department_2:
+                                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
+                            else:
+                                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，待您审批"
                             appellation = record.person.name+u",您好"
-                            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本的待发布阶段待您审批"
+                            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本已进入待发布阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                             url = base_url+link
@@ -623,13 +660,16 @@ class dtdream_rd_version(models.Model):
                                 'auto_delete': False,
                                 'email_from':self.get_mail_server_name(),
                             }).send()
-
                 else:
                     for process in process_03:
                         if process.approver_old and process.approver!=process.approver_old:
-                            subject=process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                            if self.proName.department_2:
+                                subject=process.approver_old.name+u"把"+self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                                content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                            else:
+                                subject=process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
+                                content = process.approver_old.name+u"把"+self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                             appellation = process.approver.name+u",您好"
-                            content = process.approver_old.name+u"把"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"版本，审批权限授予你"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
                             url = base_url+link
@@ -646,9 +686,10 @@ class dtdream_rd_version(models.Model):
                                 'auto_delete': False,
                                 'email_from':self.get_mail_server_name(),
                             }).send()
+                            self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                             process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                             self.add_follower(employee_id=process.approver.id)
-                    self.write({'current_approver_user': [(4, self.proName.department.manager_id.user_id.id)]})
+                        self.write({'current_approver_user': [(4, process.approver.user_id.id)]})
                     for user in self.current_approver_user:
                         self.write({'his_app_user': [(4, user.id)]})
                     if process_03.is_pass or process_03.is_risk:
@@ -665,13 +706,12 @@ class dtdream_rd_version(models.Model):
                             else:
                                 self.message_post(body=process_03.approver.name+u'在待发布阶段二级审批意见:带风险通过')
                     elif process_03.is_refuse:
-
                         self.message_post(body=process_03.approver.name+u'在待发布阶段二级审批不同意，原因:'+process_03.reason)
                         # self.signal_workflow('dfb_to_draft')
                         self.write({'is_click_03':False})
                         proces_03all = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',self.id),('ver_state','=',self.version_state)])
                         proces_03all.unlink()
-
+                        self.write({'is_click_03':False,'is_finish_03':False})
 
     @api.model
     def wkf_zanting(self):
@@ -772,7 +812,10 @@ class dtdream_rd_version(models.Model):
             self.write({'current_approver_user': [(4,self.proName.department.manager_id.user_id.id)]})
             if not self.proName.department.manager_id:
                 raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
+            if self.proName.department_2:
+                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
+            else:
+                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
             appellation = self.proName.department.manager_id.name+u",您好"
             content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的暂停申请，待您审批"
             base_url = self.get_base_url()
@@ -809,7 +852,10 @@ class dtdream_rd_version(models.Model):
             self.current_approver_user = [(5,)]
             if not self.proName.department.manager_id:
                 raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
+            if self.proName.department_2:
+                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
+            else:
+                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
             appellation = self.proName.department.manager_id.name+u",您好"
             content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的中止申请，待您审批"
             base_url = self.get_base_url()
@@ -907,7 +953,10 @@ class dtdream_rd_version(models.Model):
     def execptiontj(self):
         if not self.approver_fir:
             raise ValidationError(u"第一审批人不能为空")
-        subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
+        if self.proName.department_2:
+            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
+        else:
+            subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
         appellation = self.proName.department.manager_id.name+u",您好"
         content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的例外申请，待您审批"
         base_url = self.get_base_url()

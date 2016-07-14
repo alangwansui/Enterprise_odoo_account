@@ -385,20 +385,20 @@ class dtdream_hr_holidays_extend(models.Model):
         # url=self.get_base_url()+link
         # state=dict(self.env['hr.holidays']._columns['state'].selection)[self.state]
         # state_code=unicode(state,'utf-8')
-        if self.create_type==False:
-            self.env['mail.mail'].create({
-                    'subject': u'%s您于%s提交请假申请已被驳回，请您查看！' % (self.employee_id.name, self.create_time[:10]),
-                    'body_html': u'''<p>%s，您好：</p>
-                             <p>您提交的请假申请已被驳回，请您查看！</p>
-                             <p> 请点击链接进入查看:
-                             <a href="%s">%s</a></p>
-                              <p>dodo</p>
-                             <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (self.employee_id.name, url,url,self.write_date[:10]),
-                    'email_from':self.get_mail_server_name(),
+        # if self.create_type==False:
+        #     self.env['mail.mail'].create({
+        #             'subject': u'%s您于%s提交请假申请已被驳回，请您查看！' % (self.employee_id.name, self.create_time[:10]),
+        #             'body_html': u'''<p>%s，您好：</p>
+        #                      <p>您提交的请假申请已被驳回，请您查看！</p>
+        #                      <p> 请点击链接进入查看:
+        #                      <a href="%s">%s</a></p>
+        #                       <p>dodo</p>
+        #                      <p>万千业务，简单有do</p>
+        #                      <p>%s</p>''' % (self.employee_id.name, url,url,self.write_date[:10]),
+        #             'email_from':self.get_mail_server_name(),
 
-                    'email_to': self.employee_id.work_email,
-                }).send()
+        #             'email_to': self.employee_id.work_email,
+        #         }).send()
 
 
 
@@ -416,24 +416,24 @@ class dtdream_hr_holidays_extend(models.Model):
         message = ("批准，状态：%s --> 完成") % (dic[this_self.state])
         this_self.message_post(body=message)
         # 邮件通知
-        link='/web?#id=%s&view_type=form&model=hr.holidays'%this_self.id
-        url=this_self.get_base_url()+link
-        state=dict(this_self.env['hr.holidays']._columns['state'].selection)[this_self.state]
-        state_code=unicode(state,'utf-8')
-        if this_self.create_type==False:
-            this_self.env['mail.mail'].create({
-                    'subject': u'您于%s提交请假申请已经审批通过，请您查看！' % (this_self.create_time[:10]),
-                    'body_html': u'''<p>%s，您好：</p>
-                             <p>您提交的请假申请已经审批通过，请您查看！</p>
-                             <p> 请点击链接进入查看:
-                             <a href="%s">%s</a></p>
-                              <p>dodo</p>
-                             <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (this_self.employee_id.name, url,url,this_self.write_date[:10]),
-                    'email_from':this_self.get_mail_server_name(),
+        # link='/web?#id=%s&view_type=form&model=hr.holidays'%this_self.id
+        # url=this_self.get_base_url()+link
+        # state=dict(this_self.env['hr.holidays']._columns['state'].selection)[this_self.state]
+        # state_code=unicode(state,'utf-8')
+        # if this_self.create_type==False:
+        #     this_self.env['mail.mail'].create({
+        #             'subject': u'您于%s提交请假申请已经审批通过，请您查看！' % (this_self.create_time[:10]),
+        #             'body_html': u'''<p>%s，您好：</p>
+        #                      <p>您提交的请假申请已经审批通过，请您查看！</p>
+        #                      <p> 请点击链接进入查看:
+        #                      <a href="%s">%s</a></p>
+        #                       <p>dodo</p>
+        #                      <p>万千业务，简单有do</p>
+        #                      <p>%s</p>''' % (this_self.employee_id.name, url,url,this_self.write_date[:10]),
+        #             'email_from':this_self.get_mail_server_name(),
 
-                    'email_to': this_self.employee_id.work_email,
-                }).send()
+        #             'email_to': this_self.employee_id.work_email,
+        #         }).send()
         # elif this_self.create_type=='manage':
         #     this_self.env['mail.mail'].create({
         #             'subject': u'%s 年休假分配'%this_self.employee_id.name,
@@ -554,7 +554,7 @@ class dtdream_hr_holidays_extend(models.Model):
         my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
         res = super(dtdream_hr_holidays_extend, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
-        if my_action.name != u"休假摘要" and my_action.name != u"年休假分配" and my_action.name != u"年休假扣除":
+        if my_action.name != u"休假摘要" and my_action.name != u"年休假分配" and my_action.name != u"年休假扣除" and my_action.name != u"休假申请":
             if res['type'] == "form":
                 doc.xpath("//form")[0].set("create", "false")
             if res['type'] == "tree":

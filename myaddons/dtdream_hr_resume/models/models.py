@@ -9,6 +9,7 @@ from lxml import etree
 class dtdream_hr_resume(models.Model):
     _name = "dtdream.hr.resume"
     _description = u"员工履历"
+    _rec_name = 'resume_name'
     _inherit = ['mail.thread']
 
     @api.depends('name')
@@ -59,7 +60,7 @@ class dtdream_hr_resume(models.Model):
             doc = etree.XML(res['arch'])
             if len(cr) or not user_id:
                 doc.xpath("//form")[0].set("create", "false")
-                if view and not (self.env.user == cr.name.user_id and cr.state == '0'):
+                if view and not (self.env.user == cr.name.user_id and cr.state in ('0', '-1')):
                     doc.xpath("//form")[0].set("edit", "false")
             res['arch'] = etree.tostring(doc)
         if res['type'] == "tree":
@@ -143,12 +144,12 @@ class dtdream_hr_resume(models.Model):
 
     def send_mail_attend_mobile(self, email):
         email_to = email.work_email
-        appellation = u'{0},您好：'.format(email.full_name)
+        appellation = u'{0},您好：'.format(email.name)
         sex = u'他'
         if self.name.gender and self.name.gender != "male":
             sex = u"她"
         subject = u"手机号码变更通知"
-        content = u"员工%s(%s)手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.full_name, self.name.job_number, self.mobile, sex)
+        content = u"员工%s(%s)手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.name, self.name.job_number, self.mobile, sex)
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
@@ -171,7 +172,7 @@ class dtdream_hr_resume(models.Model):
 
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
-        appellation = u'{0},您好：'.format(name.full_name)
+        appellation = u'{0},您好：'.format(name.name)
         link = '/web#id=%s&view_type=form&model=dtdream.hr.resume&menu_id=%s' % (self.id, self.get_employee_menu())
         subject = subject
         content = content
@@ -246,6 +247,7 @@ class dtdream_hr_resume(models.Model):
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
     is_shenqingren = fields.Boolean(string="是否申请人", compute=_compute_is_shenqingren)
     approved = fields.Many2many("hr.employee", string="已批准的审批人")
+    resume_name = fields.Char(default=lambda self: "履历")
     state = fields.Selection(
         [("0", "草稿"),
          ("1", "人力资源部审批"),
@@ -262,9 +264,9 @@ class dtdream_hr_resume(models.Model):
     def wkf_approve(self):
         approve = self.env["hr.resume.approve"].search([], limit=1).approve
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息,请您审批!' % self.name.name,
-                                     content=u"%s提交了员工履历信息,等待您的审批!" % self.name.full_name)
+                                     content=u"%s提交了员工履历信息,等待您的审批!" % self.name.name)
         self.write({'state': '1', 'resume_approve': approve.id})
-        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.full_name)
+        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.name)
 
     @api.multi
     def wkf_done(self):
@@ -394,15 +396,15 @@ class dtdream_hr_resume_approve(models.Model):
         self.env['dtdream.hr.resume.modify'].search([('state', '=', '1')]).write({'resume_approve': self.approve.id})
 
     name = fields.Char(default="员工入职相关配置")
-    approve = fields.Many2one("hr.employee", string="履历信息审批人", required=True)
-    account = fields.Many2one("hr.employee", string="域帐号管理员", required=True)
-    email = fields.Many2one('hr.employee', string='邮箱管理员', required=True)
-    weixin = fields.Many2one('hr.employee', string='微信管理员', required=True)
-    dingding = fields.Many2one('hr.employee', string='钉钉管理员', required=True)
-    cloud = fields.Many2one('hr.employee', string='云学堂管理员', required=True)
-    bbs = fields.Many2one('hr.employee', string='BBS管理员', required=True)
-    oa = fields.Many2one('hr.employee', string='OA管理员', required=True)
-    dodo = fields.Many2one('hr.employee', string='dodo管理员', required=True)
+    approve = fields.Many2one("hr.employee", string="履历信息审批人")
+    account = fields.Many2one("hr.employee", string="域帐号管理员")
+    email = fields.Many2one('hr.employee', string='邮箱管理员')
+    weixin = fields.Many2one('hr.employee', string='微信管理员')
+    dingding = fields.Many2one('hr.employee', string='钉钉管理员')
+    cloud = fields.Many2one('hr.employee', string='云学堂管理员')
+    bbs = fields.Many2one('hr.employee', string='BBS管理员')
+    oa = fields.Many2one('hr.employee', string='OA管理员')
+    dodo = fields.Many2one('hr.employee', string='dodo管理员')
 
 
 class dtdream_hr_employee(models.Model):
@@ -485,6 +487,9 @@ class dtdream_hr_employee(models.Model):
     @api.model
     def create(self, vals):
         result = super(dtdream_hr_employee, self).create(vals)
+        employee = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+        self.env['mail.message'].search([('res_id', '=', result.id)]).unlink()
+        result.message_post(body=u'%s,&nbsp%s&nbsp;创建员工 &nbsp;%s' % (result.create_date[:10], employee.name, result.name))
         cr = self.env['hr.resume.approve'].search([])
         sender = []
         if cr.account:
@@ -596,9 +601,9 @@ class dtdream_resume_modify(models.Model):
         sex = u'他'
         if self.name.gender and self.name.gender != "male":
             sex = u"她"
-        appellation = u'{0},您好：'.format(email.full_name)
+        appellation = u'{0},您好：'.format(email.name)
         subject = u"手机号码变更通知"
-        content = u"员工%s(%s)的手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.full_name, self.name.job_number, self.mobile, sex)
+        content = u"员工%s(%s)的手机号更改为%s,请您修改%s在其它系统里的手机号。" % (self.name.name, self.name.job_number, self.mobile, sex)
         self.env['mail.mail'].create({
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
@@ -622,7 +627,7 @@ class dtdream_resume_modify(models.Model):
     def send_mail_attend_resume(self, name, subject, content):
         email_to = name.work_email
         link = '/web#id=%s&view_type=form&model=dtdream.hr.resume.modify&menu_id=%s' % (self.id, self.get_employee_menu())
-        appellation = u'{0},您好：'.format(name.full_name)
+        appellation = u'{0},您好：'.format(name.name)
         subject = subject
         content = content
         self.env['mail.mail'].create({
@@ -958,9 +963,9 @@ class dtdream_resume_modify(models.Model):
     def wkf_approve(self):
         approve = self.env["hr.resume.approve"].search([], limit=1).approve
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息修改,请您审批!' % self.name.name,
-                                     content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.full_name)
+                                     content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.name)
         self.write({'state': '1', 'resume_approve': approve.id})
-        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.full_name)
+        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.name)
 
     @api.multi
     def wkf_done(self):

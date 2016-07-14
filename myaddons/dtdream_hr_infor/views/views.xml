@@ -70,17 +70,17 @@
                       <label for="Birthplace_province" string="籍贯"/>
                       <div class="o_row">
                           <field name="Birthplace_province" options="{'no_open': True,'no_create': True}" placeholder="请选择省份"
-                          attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                          attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                           <field name="Birthplace_state" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
-                          attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                          attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                       </div>
-                      <field name="birthday" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
-                      <field name="postcode" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                      <field name="birthday" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      <field name="postcode" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                       <field name="edit_self_info" invisible="True"/>
                     </group>
                     <group>
-                      <field name="nation" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
-                      <field name="political" attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                      <field name="nation" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      <field name="political" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                       <field name="graduate" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                     </group>
                 </group>
@@ -112,36 +112,36 @@
                         <label for="province_hukou" string="户口所在地"/>
                         <div class="o_row">
                             <field name="province_hukou" options="{'no_open': True, 'no_create': True}" placeholder="请选择省份"
-                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                             <field name="state_hukou" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
-                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                         </div>
                         <label for="now_prov" string="申请社保缴纳地"/>
                         <div class="o_row">
                             <field name="now_prov" options="{'no_open': True, 'no_create': True}" placeholder="请选择省份"
-                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                             <field name="now_state" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
-                            attrs="{'readonly':[('edit_self_info','=',False)],'required':[('login_info_employee','=',True)]}"/>
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
                         </div>
                         <label for="shebao_prov" string="原公积金缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
                         <div class="o_row">
                             <field name="shebao_prov" options="{'no_open': True, 'no_create': True}"
-                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
                             <field name="gongjijin_state" options="{'no_open': True, 'no_create': True}"
-                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
                         </div>
                         <label for="ahead_prov" string="原社保缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
                         <div class="o_row">
                             <field name="ahead_prov" options="{'no_open': True, 'no_create': True}"
-                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
                             <field name="ahead_state" options="{'no_open': True, 'no_create': True}"
-                                   attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
                         </div>
                     </group>
                     <group>
-                        <field name="nature_hukou" attrs="{'required':[('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)]}"/>
-                        <field name="endtime_gongjijin" attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
-                        <field name="endtime_shebao" attrs="{'required':[('graduate','!=',True),('login_info_employee','=',True)], 'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
+                        <field name="nature_hukou" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                        <field name="endtime_gongjijin" attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
+                        <field name="endtime_shebao" attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
                     </group>
                 </group>
 

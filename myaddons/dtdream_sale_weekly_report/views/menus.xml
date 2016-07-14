@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem name="市场周报" id="dtdream_menu_sale_report" parent="base.menu_base_partner" sequence="9"></menuitem>
+
+        <menuitem name="个人周报" id="menu_own_report" parent="dtdream_menu_sale_report" sequence="10" action="act_my_report"></menuitem>
+        <menuitem name="主管周报" id="menu_manager_report" parent="dtdream_menu_sale_report"  sequence="20" action="act_manager_report"></menuitem>
+
+        <menuitem name='求助问题类型配置' id='menu_problem_type_config' parent='base.menu_sale_config' sequence="70" action="act_problem_type_config" />
+
+
+    </data>
+</openerp>

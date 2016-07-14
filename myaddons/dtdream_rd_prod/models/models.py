@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from datetime import datetime
 
 class dtdream_rd_prod(models.Model):
     _name = 'dtdream_rd_prod'
@@ -15,7 +16,7 @@ class dtdream_prod_appr(models.Model):
     _inherit = ['mail.thread']
     _description = u"研发产品"
     department = fields.Many2one('hr.department','部门',track_visibility='onchange',required=True)
-    department_2 = fields.Many2one('hr.department','二级部门',track_visibility='onchange',required=True)
+    department_2 = fields.Many2one('hr.department','二级部门',track_visibility='onchange')
     name=fields.Char('产品名称',required=True,track_visibility='onchange')
 
 
@@ -41,13 +42,14 @@ class dtdream_prod_appr(models.Model):
 
     ztsj_process_ids = fields.One2many('dtdream_rd_process','ztsj_process_id',string="总体设计审批意见",track_visibility='onchange')
 
+    @api.model
     def _compute_dept(self):
         em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-        if em.department_id.id == self.department.id or em.department_id.id==self.department_2.id:
+        if em.department_id.id == self.department.id:
             self.sameDept=True
         else:
             self.sameDept=False
-    sameDept = fields.Boolean(compute = _compute_dept)
+    sameDept = fields.Boolean(string="是否同一部门",compute=_compute_dept,stroe=True,default=False)
 
     def add_follower(self, cr, uid, ids, employee_id, context=None):
         employee = self.pool.get('hr.employee').browse(cr, uid, employee_id, context=context)
@@ -80,9 +82,14 @@ class dtdream_prod_appr(models.Model):
                 raise ValidationError("不通过时，意见为必填项")
         for process in self.process_ids:
             if process.approver_old and process.approver!=process.approver_old:
-                subject=process.approver_old.name+u"把"+self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+                if self.department_2:
+                    subject=process.approver_old.name+u"把"+self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+                else:
+                    subject=process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
                 appellation = process.approver.name+u",您好"
-                content = process.approver_old.name+u"把"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
                 url = base_url+link
@@ -99,6 +106,7 @@ class dtdream_prod_appr(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
+                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
                 self.add_follower(employee_id=process.approver.id)
@@ -164,10 +172,12 @@ class dtdream_prod_appr(models.Model):
                         for record in appro:
                             self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":self.id,'pro_state':self.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-                            subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+                            if self.department_2:
+                                subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+                            else:
+                                subject=self.department.name+u"的"+self.name+u"待您的审批"
                             appellation = record.person.name+u",您好"
-                            content = self.department.name+u"的"+self.name+u"的立项阶段待您审批"
+                            content = self.department.name+u"的"+self.name+u"已进入立项阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
                             url = base_url+link
@@ -215,14 +225,18 @@ class dtdream_prod_appr(models.Model):
 
     @api.constrains('ztsj_process_ids')
     def _compute_ztsj_process_ids(self):
-        for rec in self.process_ids:
+        for rec in self.ztsj_process_ids:
             if rec.is_refuse and not rec.reason :
                 raise ValidationError("不通过时，意见为必填项")
         for process in self.ztsj_process_ids:
             if process.approver_old and process.approver!=process.approver_old:
-                subject=process.approver_old.name+u"把"+self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+                if self.department_2:
+                    subject=process.approver_old.name+u"把"+self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
+                else:
+                    subject=process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
+                    content = process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
                 appellation = process.approver.name+u",您好"
-                content = process.approver_old.name+u"把"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
                 url = base_url+link
@@ -239,6 +253,7 @@ class dtdream_prod_appr(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
+                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
                 self.add_follower(employee_id=process.approver.id)
@@ -299,15 +314,18 @@ class dtdream_prod_appr(models.Model):
                     appro = self.env['dtdream_rd_role'].search([('role_id','=',self.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                     self.current_approver_user = [(5,)]
                     if len(appro)==0:
+                        self.write({'overall_actual_time':datetime.now()})
                         self.signal_workflow('btn_to_ddkf')
                     else:
                         for record in appro:
                             self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":self.id,'pro_state':self.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-                            subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+                            if self.department_2:
+                                subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+                            else:
+                                subject=self.department.name+u"的"+self.name+u"待您的审批"
                             appellation = record.person.name+u",您好"
-                            content = self.department.name+u"的"+self.name+u"的总体设计阶段待您审批"
+                            content = self.department.name+u"的"+self.name+u"已进入总体设计阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
                             url = base_url+link
@@ -330,6 +348,7 @@ class dtdream_prod_appr(models.Model):
                     self.current_approver_user = [(5,)]
                     if processes.is_pass or processes.is_risk:
                         self.signal_workflow('btn_to_ddkf')
+                        self.write({'overall_actual_time':datetime.now()})
                         self.write({'is_appred':False})
                         if processes.is_pass:
                             if processes.reason:
@@ -343,9 +362,7 @@ class dtdream_prod_appr(models.Model):
                                 self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:带风险通过')
                     elif processes.is_refuse:
                         self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批不同意，原因:'+processes.reason)
-
                         # self.write({'is_lixiangappred':False})
-
                         self.write({'is_appred':False})
                         # self.write({'is_finsished_01':False})
                         self.write({'is_finsished_02':False})
@@ -436,8 +453,8 @@ class dtdream_prod_appr(models.Model):
     def _chang_department_2(self):
         domain = {}
         if self.department:
-            if self.department.child_ids:
-                self.department_2 =  self.department.child_ids[0]
+            # if self.department.child_ids:
+                # self.department_2 =  self.department.child_ids[0]
                 domain['department_2'] = [('parent_id', '=', self.department.id)]
         else:
             domain['department_2'] = [('parent_id.parent_id', '=', False)]
@@ -457,6 +474,7 @@ class dtdream_prod_appr(models.Model):
 
     @api.multi
     def wkf_lixiang(self):
+        self.message_follower_ids
         # lg = len(self.version_ids)
         if self.state=="state_02":
             self.write({'is_lixiangappred':False})
@@ -535,6 +553,7 @@ class dtdream_prod_appr(models.Model):
     @api.multi
     def do_jieshu(self):
         self.signal_workflow('btn_to_jieshu')
+
     #总体设计提交
     @api.multi
     def do_ztsjtj(self):
@@ -549,10 +568,12 @@ class dtdream_prod_appr(models.Model):
             for record in appro:
                 self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":self.id,'pro_state':'state_02','approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
                 self.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-                subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+                if self.department_2:
+                    subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+                else:
+                    subject=self.department.name+u"的"+self.name+u"待您的审批"
                 appellation = record.person.name+u",您好"
-                content = self.department.name+u"的"+self.name+u"待您审批"
+                content = self.department.name+u"的"+self.name+u"已进入总体设计阶段，等待您的审批"
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
                 url = base_url+link
@@ -578,6 +599,7 @@ class dtdream_prod_appr(models.Model):
                     rold_ids +=[record.name.id]
                 appro = self.env['dtdream_rd_role'].search([('role_id','=',self.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                 if len(appro)==0:
+                    self.write({'overall_actual_time':datetime.now()})
                     self.signal_workflow('btn_to_ddkf')
                 else:
                     self.current_approver_user = [(5,)]
@@ -702,7 +724,10 @@ class dtdream_prod_appr(models.Model):
             self.current_approver_user = [(5,)]
             if not self.department.manager_id:
                 raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
-            subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+            if self.department_2:
+                subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+            else:
+                subject=self.department.name+u"的"+self.name+u"待您的审批"
             appellation = self.department.manager_id.name+u",您好"
             content = self.department.name+u"的"+self.name+u"的暂停申请，待您审批"
             base_url = self.get_base_url()
@@ -738,7 +763,10 @@ class dtdream_prod_appr(models.Model):
             self.current_approver_user = [(5,)]
             if not self.department.manager_id:
                 raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
-            subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+            if self.department_2:
+                subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+            else:
+                subject=self.department.name+u"的"+self.name+u"待您的审批"
             appellation = self.department.manager_id.name+u",您好"
             content = self.department.name+u"的"+self.name+u"的恢复暂停申请，待您审批"
             base_url = self.get_base_url()
@@ -776,7 +804,10 @@ class dtdream_prod_appr(models.Model):
             self.current_approver_user = [(5,)]
             if not self.department.manager_id:
                 raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
-            subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+            if self.department_2:
+                subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+            else:
+                subject=self.department.name+u"的"+self.name+u"待您的审批"
             appellation = self.department.manager_id.name+u",您好"
             content = self.department.name+u"的"+self.name+u"的中止申请，待您审批"
             base_url = self.get_base_url()
@@ -839,7 +870,10 @@ class dtdream_prod_appr(models.Model):
     def execptiontj(self):
         if not self.approver_fir:
             raise ValidationError(u"第一审批人不能为空")
-        subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您审批"
+        if self.department_2:
+            subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
+        else:
+            subject=self.department.name+u"的"+self.name+u"待您的审批"
         appellation = self.department.manager_id.name+u",您好"
         content = self.department.name+u"的"+self.name+u"的例外申请，待您审批"
         base_url = self.get_base_url()

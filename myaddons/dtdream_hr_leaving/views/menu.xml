@@ -36,7 +36,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('cur_approver_users','in', uid)]</field>
+            <field name="domain">[('cur_approvers.user_id','=', uid)]</field>
             <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
         </record>
         <record id="act_dtdream_hr_leaving_approved" model="ir.actions.act_window">
@@ -54,7 +54,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|','|',('name.user_id', '=', uid),('create_uid','=',uid),('cur_approver_users', 'in', uid),('opinion_ids.create_uid', '=', uid),('opinion_ids.mail_ccs.user_id', '=', uid)]</field>
+            <field name="domain">['|','|','|','|',('name.user_id', '=', uid),('create_uid','=',uid),('cur_approvers.user_id', '=', uid),('opinion_ids.create_uid', '=', uid),('opinion_ids.mail_ccs.user_id', '=', uid)]</field>
             <field name="search_view_id" ref="view_dtdream_hr_leaving_search"/>
         </record>
         <record id="act_dtdream_hr_leaving_report" model="ir.actions.act_window">

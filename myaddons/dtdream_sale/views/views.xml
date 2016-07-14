@@ -298,12 +298,12 @@
                     <field name="project_leave" string="项目级别"/>
                     <field name="office_id"/>
                     <field name="system_department_id"/>
-                    <field name="industry_id"/>
                     <field name="bidding_time"/>
-                    <field name="project_space"/>
+                    <field name="space_total" string="项目空间（万元）"/>
                     <field name="project_master_degree"/>
                     <field name="sale_apply_id"/>
                     <field name="user_id" string="创建人" invisible="True" on_change="on_change_user(user_id, context)" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'dtdream_sale.group_dtdream_sale_salesman_all_leads'], 'team_id': team_id}"/>
+                    <field name="write_date" string="更新时间"/>
                 </field>
                 <field name="create_date" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -461,6 +461,7 @@
                     <field name="ali_division"/>
                     <field name="ali_saleman"/>
                     <field name="is_dtdream_integrated"/>
+                    <field name="is_invest_project"/>
                     <field name="partner_id" string="客户"
                            domain="[('customer','=','True')]"/>
                     <field name="dt_contact_name"/>
@@ -473,15 +474,13 @@
                     <attribute name="invisible"></attribute>
                 </label>
                 <xpath expr="//field[@name='description']" position="attributes">
-                    <attribute name="string">项目进展</attribute>
-                </xpath>
-                <xpath expr="//field[@name='description']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='description']" position="after">
                     <field name="des_records" >
                         <tree string="项目进展">
                             <field name="name"/>
+                            <field name="write_uid" string="更新人"/>
                             <field name="create_date" string="更新时间"/>
                         </tree>
                         <form>
@@ -603,13 +602,13 @@
                     <field name="project_leave" string="项目级别"/>
                     <field name="office_id"/>
                     <field name="system_department_id"/>
-                    <field name="industry_id"/>
                     <field name="bidding_time"/>
-                    <field name="project_space"/>
+                    <field name="space_total" string="项目空间（万元）"/>
                     <field name="project_master_degree"/>
                 </field>
                 <field name="user_id" position="replace">
                     <field name="sale_apply_id"/>
+                    <field name="write_date" string="更新时间"/>
                 </field>
                 <field name="create_date" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -819,6 +818,7 @@
                   <field name="ali_division"/>
                   <field name="ali_saleman"/>
                   <field name="is_dtdream_integrated"/>
+                  <field name="is_invest_project"/>
                   <field name="partner_id" string="客户"
                          options='{"create_name_field": "name"}'
                          domain="[('customer','=','True')]"/>
@@ -850,6 +850,7 @@
                   <field name="des_records">
                       <tree string="项目进展">
                           <field name="name"/>
+                          <field name="write_uid" string="更新人"/>
                           <field name="create_date" string="更新时间"/>
                       </tree>
                       <form>
@@ -889,6 +890,12 @@
               <xpath expr="//page[@name='extra']" position="attributes">
                   <attribute name="invisible">1</attribute>
               </xpath>
+              <xpath expr="//field[@name='description']" position="attributes">
+                   <attribute name="string">项目进展</attribute>
+              </xpath>
+              <field name="tag_ids" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </field>
           </field>
       </record>
 

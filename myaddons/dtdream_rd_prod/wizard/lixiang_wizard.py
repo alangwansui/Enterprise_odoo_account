@@ -51,10 +51,12 @@ class lxWizardappr(models.TransientModel):
             for record in appro:
                 self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":current_lixiang.id,'pro_state':current_lixiang.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
                 current_lixiang.write({'current_approver_user': [(4, record.person.user_id.id)]})
-
-                subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
+                if current_lixiang.department_2:
+                    subject=current_lixiang.department.name+u"/"+current_lixiang.department_2.name+u"的"+current_lixiang.name+u"待您审批"
+                else:
+                    subject=current_lixiang.department.name+u"的"+current_lixiang.name+u"待您审批"
                 appellation = record.person.name+u",您好"
-                content = current_lixiang.department.name+u"的"+current_lixiang.name+u"的立项阶段待您审批"
+                content = current_lixiang.department.name+u"的"+current_lixiang.name+u"已进入立项阶段，等待您的审批"
                 base_url = self.get_base_url()
                 link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % current_lixiang.id
                 url = base_url+link
@@ -148,11 +150,14 @@ class versionWizard(models.TransientModel):
                         current_version.signal_workflow('btn_to_kaifa')
                     else:
                         for record in appro:
-                            self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
+                            self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                            subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                            if current_version.proName.department_2:
+                                subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                            else:
+                                subject=current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
                             appellation = record.person.name+u",您好"
-                            content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本的计划阶段待您审批"
+                            content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，已进入计划中阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
                             url = base_url+link
@@ -173,9 +178,12 @@ class versionWizard(models.TransientModel):
                     for record in appro:
                         self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
                         current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                        subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                        if current_version.proName.department_2:
+                            subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                        else:
+                            subject=current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
                         appellation = record.person.name+u",您好"
-                        content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本的计划阶段待您审批"
+                        content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，已进入计划中阶段，等待您的审批"
                         base_url = self.get_base_url()
                         link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
                         url = base_url+link
@@ -211,11 +219,14 @@ class versionWizard(models.TransientModel):
                         current_version.signal_workflow('btn_to_dfb')
                     else:
                         for record in appro:
-                            self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
+                            self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_02_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                            subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                            if current_version.proName.department_2:
+                                subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                            else:
+                                subject=current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
                             appellation = record.person.name+u",您好"
-                            content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本的计划阶段待您审批"
+                            content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，已进入开发中阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
                             url = base_url+link
@@ -236,9 +247,12 @@ class versionWizard(models.TransientModel):
                     for record in appro:
                         self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_02_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
                         current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                        subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                        if current_version.proName.department_2:
+                            subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                        else:
+                            subject=current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
                         appellation = record.person.name+u",您好"
-                        content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本的开发中阶段待您审批"
+                        content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，已进入开发中阶段，等待您的审批"
                         base_url = self.get_base_url()
                         link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
                         url = base_url+link
@@ -274,11 +288,14 @@ class versionWizard(models.TransientModel):
                         current_version.signal_workflow('btn_to_yfb')
                     else:
                         for record in appro:
-                            self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
+                            self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_03_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                             current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
-                            subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                            if current_version.proName.department_2:
+                                subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                            else:
+                                subject=current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
                             appellation = record.person.name+u",您好"
-                            content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本的计划阶段待您审批"
+                            content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，已进入待发布阶段，等待您的审批"
                             base_url = self.get_base_url()
                             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
                             url = base_url+link
@@ -300,9 +317,12 @@ class versionWizard(models.TransientModel):
                         self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_03_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_01'})       #审批意见记录创建
                         current_version.write({'current_approver_user': [(4, record.person.user_id.id)]})
 
-                        subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
-                        appellation = current_version.proName.department.manager_id.name+u",您好"
-                        content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本的待发布阶段待您审批"
+                        if current_version.proName.department_2:
+                            subject=current_version.proName.department.name+u"/"+current_version.proName.department_2.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                        else:
+                            subject=current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，待您审批"
+                        appellation = record.person.name+u",您好"
+                        content = current_version.proName.department.name+u"的"+current_version.proName.name+u"的"+current_version.version_numb+u"版本，已进入待发布阶段，等待您的审批"
                         base_url = self.get_base_url()
                         link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
                         url = base_url+link
@@ -315,7 +335,7 @@ class versionWizard(models.TransientModel):
                                          <p>万千业务，简单有do</p>
                                          <p>%s</p>''' % (appellation,content, url,url,current_version.write_date[:10]),
                             'subject': '%s' % subject,
-                            'email_to': '%s' % current_version.proName.department.manager_id.work_email,
+                            'email_to': '%s' % record.person.work_email,
                             'auto_delete': False,
                             'email_from':self.get_mail_server_name(),
                         }).send()

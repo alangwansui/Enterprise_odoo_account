@@ -1,0 +1,179 @@
+<?xml version="1.0" ?>
+<openerp>
+<data>
+
+
+    <record id="dtdream_contract_workflow" model="workflow">
+        <field name="name">合同评审工作流</field>
+        <field name="osv">dtdream.contract</field>
+        <field name="on_create">True</field>
+    </record>
+
+
+    <record id="activity_draft" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="flow_start">True</field>
+        <field name="name">创建草稿</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_draft()</field>
+    </record>
+
+    <record id="activity_manager_review" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">主管审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_manager_review()</field>
+    </record>
+    <record id="activity_wait_review" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">待组织评审</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_wait_review()</field>
+    </record>
+    <record id="activity_review" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">评审中</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_review()</field>
+    </record>
+    <record id="activity_wait_countersign" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">待组织会签</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_wait_countersign()</field>
+    </record>
+    <record id="activity_countersign" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">会签中</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_countersign()</field>
+    </record>
+    <record id="activity_sign" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">权签中</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_sign()</field>
+    </record>
+    <record id="activity_stamp" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">待盖章</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_stamp()</field>
+    </record>
+    <record id="activity_file" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">待归档</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_file()</field>
+    </record>
+    <record id="activity_done" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">闭环</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+    <record id="activity_void" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_contract_workflow"/>
+        <field name="name">作废</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_void()</field>
+    </record>
+
+
+
+    <!--      ============================================transition============================================                 -->
+    <record model="workflow.transition" id="contract_draft2manager_review">
+        <field name="act_from" ref="activity_draft" />
+        <field name="act_to" ref="activity_manager_review" />
+        <field name="signal">btn_submit</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_manager_review2wait_review">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_wait_review" />
+        <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_manager_review2draft">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_draft" />
+        <field name="signal">btn_reject</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_wait_review2review">
+        <field name="act_from" ref="activity_wait_review" />
+        <field name="act_to" ref="activity_review" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">is_standard==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_wait_review2wait_countersign">
+        <field name="act_from" ref="activity_wait_review" />
+        <field name="act_to" ref="activity_wait_countersign" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">is_standard</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_wait_review2draft">
+        <field name="act_from" ref="activity_wait_review" />
+        <field name="act_to" ref="activity_draft" />
+        <field name="signal">btn_reject</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_review2wait_countersign">
+        <field name="act_from" ref="activity_review" />
+        <field name="act_to" ref="activity_wait_countersign" />
+        <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_review2wait_countersign_force">
+        <field name="act_from" ref="activity_review" />
+        <field name="act_to" ref="activity_wait_countersign" />
+        <field name="signal">btn_force_approve</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_review2void">
+        <field name="act_from" ref="activity_review" />
+        <field name="act_to" ref="activity_void" />
+        <field name="signal">btn_void</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_wait_countersign2countersign">
+        <field name="act_from" ref="activity_wait_countersign" />
+        <field name="act_to" ref="activity_countersign" />
+        <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_countersign2sign">
+        <field name="act_from" ref="activity_countersign" />
+        <field name="act_to" ref="activity_sign" />
+        <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_sign2stamp">
+        <field name="act_from" ref="activity_sign" />
+        <field name="act_to" ref="activity_stamp" />
+        <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_sign2review">
+        <field name="act_from" ref="activity_sign" />
+        <field name="act_to" ref="activity_review" />
+        <field name="signal">btn_reject</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_stamp2file">
+        <field name="act_from" ref="activity_stamp" />
+        <field name="act_to" ref="activity_file" />
+        <field name="signal">btn_confirm_stamped</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_file2done">
+        <field name="act_from" ref="activity_file" />
+        <field name="act_to" ref="activity_done" />
+        <field name="signal">btn_confirm_filed</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+</data>
+</openerp>
