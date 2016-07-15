@@ -295,6 +295,7 @@
                     <attribute name="string">项目名称</attribute>
                 </field>
                 <field name="name" position="after">
+                    <field name="is_red" invisible="1"/>
                     <field name="project_leave" string="项目级别"/>
                     <field name="office_id"/>
                     <field name="system_department_id"/>
@@ -336,6 +337,7 @@
             <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="before">
+                    <field name="is_red" invisible="1"/>
                     <field name="project_number"/>
                     <field name="sale_apply_id_uid" invisible="True"/>
                     <field name="project_leave" string="项目级别"/>
@@ -495,6 +497,11 @@
                 <field name="tag_ids" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <xpath expr="//field[@name='description']/parent::page" position="after">
+                    <page string="投资类项目背景" attrs="{'invisible':[('is_invest_project','!=','1')]}">
+                        <field name="pro_background" placeholder="请输入投资类项目背景"/>
+                    </page>
+                </xpath>
                 <xpath expr="//field[@name='description']/parent::page" position="before">
                     <page string="项目空间">
                             <field name="project_space" mode="tree">
@@ -587,56 +594,44 @@
           <field name="name">Mark As Lost</field>
       </record>
       <!--重写项目管理tree视图-->
-      <record id="view_res_product_oppr_tree" model="ir.ui.view">
-            <field name="name">view.res.product.oppr.tree</field>
+      <!-- Opportunities Tree View -->
+        <record model="ir.ui.view" id="crm.crm_case_tree_view_oppor">
+            <field name="name">Opportunities Tree</field>
             <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+            <field name="priority">8</field>
             <field name="arch" type="xml">
-                <field name="name" position="before">
+                <tree colors="red:is_red==True" string="Opportunities" decoration-bf="message_needaction==True" decoration-muted="probability == 100" decoration-danger="date_action and (date_action &lt; current_date)">
+                    <field name="is_red" invisible="1"/>
+                    <field name="date_deadline" invisible="1"/>
+                    <field name="create_date" invisible="1"/>
+                    <field name="partner_id" string="Customer" invisible="1"/>
+                    <field name="country_id" invisible="1"/>
+                    <field name="date_action" invisible="1"/>
+                    <field name="title_action" invisible="1"/>
+                    <field name="medium_id" invisible="1"/>
+                    <field name="campaign_id" invisible="1"/>
+                    <field name="source_id" invisible="1"/>
+                    <field name="stage_id" invisible="1"/>
+                    <field name="planned_revenue" sum="Expected Revenues" invisible="1"/>
+                    <field name="probability" avg="Avg. of Probability" invisible="1"/>
+                    <field name="team_id" invisible="1"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="referred" invisible="1"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="probability" invisible="1"/>
+
                     <field name="project_number"/>
-                </field>
-                <field name="name" position="attributes">
-                    <attribute name="string">项目名称</attribute>
-                </field>
-                <field name="name" position="after">
+                    <field name="name" string="项目名称"/>
                     <field name="project_leave" string="项目级别"/>
                     <field name="office_id"/>
                     <field name="system_department_id"/>
                     <field name="bidding_time"/>
                     <field name="space_total" string="项目空间（万元）"/>
                     <field name="project_master_degree"/>
-                </field>
-                <field name="user_id" position="replace">
                     <field name="sale_apply_id"/>
                     <field name="write_date" string="更新时间"/>
-                </field>
-                <field name="create_date" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="partner_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="country_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="date_action" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="title_action" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="stage_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="planned_revenue" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="probability" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
-                <field name="team_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </field>
+                </tree>
             </field>
         </record>
 
@@ -745,6 +740,7 @@
           <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
           <field name="arch" type="xml">
               <field name="partner_id" position="before">
+                  <field name="is_red" invisible="1"/>
                   <field name="sale_apply_id_uid" invisible="True"/>
                   <field name="project_number"/>
                   <field name="project_leave" string="项目级别"/>
@@ -862,6 +858,11 @@
                       </form>
                     </field>
               </xpath>
+              <xpath expr="//field[@name='description']/parent::page" position="after">
+                    <page string="投资类项目背景" attrs="{'invisible':[('is_invest_project','!=','1')]}">
+                        <field name="pro_background" placeholder="请输入投资类项目背景"/>
+                    </page>
+              </xpath>
               <xpath expr="//field[@name='description']/parent::page" position="before">
                     <page string="项目空间">
                             <field name="project_space" mode="tree">
@@ -905,8 +906,15 @@
             <field name="model">crm.lead</field>
             <field name="arch" type="xml">
                 <search string="Search Leads">
+                    <field name="project_number" string="项目编号"/>
+                    <field name="name" string="项目名称" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
+                    <field name="project_leave" string="项目级别"/>
+                    <field name="office_id" string="办事处"/>
+                    <field name="system_department_id" string="系统部"/>
+                    <field name="bidding_time" string="招标时间"/>
+                    <field name="space_total" string="项目空间"/>
                     <field name="name" string="Lead / Customer" filter_domain="['|','|','|',('partner_name','ilike',self),('email_from','ilike',self),('contact_name','ilike',self),('name','ilike',self)]"/>
-                    <field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>
+                    <!--<field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>-->
                     <field name="team_id"/>
                     <field name="user_id"/>
                     <field name="partner_id" operator="child_of" string="Customer"/>
@@ -928,14 +936,19 @@
                             name='not_opt_out' domain="[('opt_out', '=', False)]"
                             help="Leads that did not ask not to be included in mass mailing campaigns"/>
                     <group expand="0" string="Group By">
-                        <filter string="Salesperson" name="groupby_salesperson" domain="[]" context="{'group_by':'user_id'}"/>
+                        <!--<filter string="Salesperson" name="groupby_salesperson" domain="[]" context="{'group_by':'user_id'}"/>-->
                         <filter string="Sales Team" name="groupby_team" domain="[]" context="{'group_by':'team_id'}"/>
                         <filter string="Stage" name="groupby_stage" domain="[]" context="{'group_by':'stage_id'}"/>
-                        <filter name="customer" string="Customer" help="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
-                        <filter string="Campaign" name="groupby_campaign"  domain="[]" context="{'group_by':'campaign_id'}"/>
-                        <filter string="Source" name="groupby_source" domain="[]" context="{'group_by':'source_id'}"/>
-                        <filter string="Medium" name="groupby_channel" domain="[]" context="{'group_by':'medium_id'}"/>
-                        <filter string="Creation Month" name="groupby_createmonth" domain="[]" context="{'group_by':'create_date'}"/>
+                        <filter string="办事处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
+                        <filter string="系统部" name="groupby_stage" domain="[]" context="{'group_by':'system_department_id'}"/>
+                        <filter string="项目把握度" name="groupby_stage" domain="[]" context="{'group_by':'project_master_degree'}"/>
+                        <filter string="项目级别" name="groupby_stage" domain="[]" context="{'group_by':'project_leave'}"/>
+
+                        <!--<filter name="customer" string="Customer" help="Partner" domain="[]" context="{'group_by':'partner_id'}"/>-->
+                        <!--<filter string="Campaign" name="groupby_campaign"  domain="[]" context="{'group_by':'campaign_id'}"/>-->
+                        <!--<filter string="Source" name="groupby_source" domain="[]" context="{'group_by':'source_id'}"/>-->
+                        <!--<filter string="Medium" name="groupby_channel" domain="[]" context="{'group_by':'medium_id'}"/>-->
+                        <!--<filter string="Creation Month" name="groupby_createmonth" domain="[]" context="{'group_by':'create_date'}"/>-->
                     </group>
                 </search>
             </field>
@@ -1100,8 +1113,14 @@
           <field name="model">crm.lead</field>
           <field name="arch" type="xml">
               <search string="Search Opportunities">
-                  <field name="name" string="Opportunity" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
-                  <field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>
+                  <field name="project_number" string="项目编号"/>
+                  <field name="name" string="项目名称" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
+                  <field name="project_leave" string="项目级别"/>
+                  <field name="office_id" string="办事处"/>
+                  <field name="system_department_id" string="系统部"/>
+                  <field name="bidding_time" string="招标时间"/>
+                  <field name="space_total" string="项目空间"/>
+                  <!--<field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>-->
                   <field name="team_id"/>
                   <field name="sale_apply_id"/>
                   <field name="partner_id" operator="child_of" string="Customer"/>
@@ -1119,16 +1138,31 @@
                   <separator/>
                   <filter string="Archived" domain="[('active', '=', False)]"/>
                   <group expand="0" string="Group By" colspan="16">
-                      <filter string="营销责任人" context="{'group_by':'sale_apply_id'}"/>
-                      <filter string="Sales Team" context="{'group_by':'team_id'}"/>
-                      <filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
-                      <filter name="stage" string="Stage" context="{'group_by':'stage_id'}"/>
-                      <filter string="Campaign" domain="[]" context="{'group_by':'campaign_id'}"/>
-                      <separator orientation="vertical" />
-                      <filter string="Creation Month" context="{'group_by':'create_date:month'}" name="month"/>
-                      <filter string="Expected Closing" context="{'group_by':'date_deadline'}"/>
-                      <filter string="Lost Reason" context="{'group_by':'lost_reason'}"/>
-                  </group>
+                        <!--<filter string="Salesperson" name="groupby_salesperson" domain="[]" context="{'group_by':'user_id'}"/>-->
+                        <filter string="Sales Team" name="groupby_team" domain="[]" context="{'group_by':'team_id'}"/>
+                        <filter string="Stage" name="groupby_stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                        <filter string="办事处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
+                        <filter string="系统部" name="groupby_stage" domain="[]" context="{'group_by':'system_department_id'}"/>
+                        <filter string="项目把握度" name="groupby_stage" domain="[]" context="{'group_by':'project_master_degree'}"/>
+                        <filter string="项目级别" name="groupby_stage" domain="[]" context="{'group_by':'project_leave'}"/>
+
+                        <!--<filter name="customer" string="Customer" help="Partner" domain="[]" context="{'group_by':'partner_id'}"/>-->
+                        <!--<filter string="Campaign" name="groupby_campaign"  domain="[]" context="{'group_by':'campaign_id'}"/>-->
+                        <!--<filter string="Source" name="groupby_source" domain="[]" context="{'group_by':'source_id'}"/>-->
+                        <!--<filter string="Medium" name="groupby_channel" domain="[]" context="{'group_by':'medium_id'}"/>-->
+                        <!--<filter string="Creation Month" name="groupby_createmonth" domain="[]" context="{'group_by':'create_date'}"/>-->
+                    </group>
+                  <!--<group expand="0" string="Group By" colspan="16">-->
+                      <!--<filter string="营销责任人" context="{'group_by':'sale_apply_id'}"/>-->
+                      <!--<filter string="Sales Team" context="{'group_by':'team_id'}"/>-->
+                      <!--<filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>-->
+                      <!--<filter name="stage" string="Stage" context="{'group_by':'stage_id'}"/>-->
+                      <!--<filter string="Campaign" domain="[]" context="{'group_by':'campaign_id'}"/>-->
+                      <!--<separator orientation="vertical" />-->
+                      <!--<filter string="Creation Month" context="{'group_by':'create_date:month'}" name="month"/>-->
+                      <!--<filter string="Expected Closing" context="{'group_by':'date_deadline'}"/>-->
+                      <!--<filter string="Lost Reason" context="{'group_by':'lost_reason'}"/>-->
+                  <!--</group>-->
               </search>
           </field>
       </record>

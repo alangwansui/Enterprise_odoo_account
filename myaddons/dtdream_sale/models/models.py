@@ -318,6 +318,13 @@ class dtdream_sale(models.Model):
     def _onchange_sale_apply_uid(self):
         self.sale_apply_id_uid = self.sale_apply_id.env['res.users'].search([('login','=',self.sale_apply_id.login)]).id
 
+    # @api.onchange('is_invest_project')
+    # def _onchange_invesr(self):
+    #     if self.is_invest_project == True:
+    #
+    #     else:
+
+
 
     description = fields.Text('项目进展')
 
@@ -390,6 +397,10 @@ class dtdream_sale(models.Model):
     des_records = fields.One2many("dtdream.des.records","des_id",string="进展记录")
 
     stage_id = fields.Many2one('crm.stage', string='Stage', track_visibility='onchange', select=True,domain="['|', ('type', '=', type), ('type', '=', 'both')]")
+
+    is_red = fields.Boolean(string="判断招标时间是否早于当天")
+
+    pro_background = fields.Text("投资类项目背景")
 
     @api.onchange("system_department_id")
     def onchange_system_department(self):
@@ -541,6 +552,20 @@ class dtdream_sale(models.Model):
             if value:
                 self.write(cr, uid, [lead_id], value, context=context)
         return True
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        print "------------>",self.search([])
+        for rec in self.search([]):
+            print rec.bidding_time
+            print datetime.now().strftime('%Y-%m-%d')
+            if rec.bidding_time <= datetime.now().strftime('%Y-%m-%d'):
+                rec.is_red = True
+            else:
+                rec.is_red = False
+            print rec.is_red
+        result = super(dtdream_sale, self).fields_view_get(view_id, view_type, toolbar=toolbar, submenu=submenu)
+        return result
 # 定义行业模型
 class dtdream_industry(models.Model):
     _name = 'dtdream.industry'

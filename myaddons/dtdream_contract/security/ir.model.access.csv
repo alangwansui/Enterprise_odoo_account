@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dtdream_contract,dtdream_contract,model_dtdream_contract,,1,1,1,1
-access_dtdream_contract_config_user,dtdream_contract_config,model_dtdream_contract_config,base.group_user,1,0,0,0
-access_dtdream_contract_config,dtdream_contract_config,model_dtdream_contract_config,group_contract_admin,1,1,1,0
+access_dtdream_contract_config_user,dtdream_contract_config_user,model_dtdream_contract_config,base.group_user,1,0,0,0
+access_dtdream_contract_config,dtdream_contract_config,model_dtdream_contract_config,group_contract_config,1,1,1,0
+
+

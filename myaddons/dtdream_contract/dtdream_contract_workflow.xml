@@ -92,6 +92,14 @@
         <field name="act_from" ref="activity_manager_review" />
         <field name="act_to" ref="activity_wait_review" />
         <field name="signal">btn_agree</field>
+        <field name="condition">is_standard==False</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_manager_review2wait_countersign">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_wait_countersign" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">is_standard</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
     <record model="workflow.transition" id="contract_manager_review2draft">
@@ -100,20 +108,14 @@
         <field name="signal">btn_reject</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
+
     <record model="workflow.transition" id="contract_wait_review2review">
         <field name="act_from" ref="activity_wait_review" />
         <field name="act_to" ref="activity_review" />
         <field name="signal">btn_agree</field>
-        <field name="condition">is_standard==False</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="contract_wait_review2wait_countersign">
-        <field name="act_from" ref="activity_wait_review" />
-        <field name="act_to" ref="activity_wait_countersign" />
-        <field name="signal">btn_agree</field>
-        <field name="condition">is_standard</field>
-        <field name="group_id" ref="base.group_user"/>
-    </record>
+
     <record model="workflow.transition" id="contract_wait_review2draft">
         <field name="act_from" ref="activity_wait_review" />
         <field name="act_to" ref="activity_draft" />
@@ -148,6 +150,18 @@
         <field name="act_from" ref="activity_countersign" />
         <field name="act_to" ref="activity_sign" />
         <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_countersign2sign_force">
+        <field name="act_from" ref="activity_countersign" />
+        <field name="act_to" ref="activity_sign" />
+        <field name="signal">btn_force_approve</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_countersign2review">
+        <field name="act_from" ref="activity_countersign" />
+        <field name="act_to" ref="activity_review" />
+        <field name="signal">btn_reject</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
     <record model="workflow.transition" id="contract_sign2stamp">

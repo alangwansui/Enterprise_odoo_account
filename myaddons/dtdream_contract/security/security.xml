@@ -5,8 +5,13 @@
                     <field name="name">合同评审授权</field>
                     <field name="sequence">2</field>
                 </record>
-                <record id="group_contract_admin" model="res.groups">
-                    <field name="name">业务管理员</field>
+                <record id="group_contract_config" model="res.groups">
+                    <field name="name">合同类型以及审批人配置</field>
+                    <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+                    <field name="category_id" ref="module_contract_group"></field>
+                </record>
+                <record id="group_contract_view_all" model="res.groups">
+                    <field name="name">查看所有合同</field>
                     <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
                     <field name="category_id" ref="module_contract_group"></field>
                 </record>
@@ -29,7 +34,7 @@
                     <field name="perm_create" eval="False"/>
                     <field name="perm_write" eval="False"/>
                     <field name="perm_unlink" eval="True"/>
-                    <field name="groups" eval="[(4,ref('group_contract_admin'))]"/>
+                    <field name="groups" eval="[(4,ref('group_contract_view_all'))]"/>
                 </record>
                 <record id="rule_dtdream_contract_read" model="ir.rule">
                     <field name="name">合同评审电子流员工读权限</field>
@@ -49,8 +54,11 @@
                     <field name="perm_create" eval="False"/>
                     <field name="perm_write" eval="False"/>
                     <field name="perm_unlink" eval="False"/>
-                    <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+                    <field name="groups" eval="[(4,ref('group_contract_view_all'))]"/>
                 </record>
+
+
+
 
 
             </data>

@@ -9,7 +9,7 @@
                             <group>
                                 <group>
                                     <field name="reason"></field>
-                                    <field name="temp"></field>
+                                    <field name="temp" invisible="1"></field>
                                 </group>
                             </group>
                             <footer>

@@ -1,0 +1,9 @@
+.o_group.zxgroup{
+    margin-top:-20px;
+}
+.o_form_label.zx_invisible{
+    visibility: hidden;
+}
+.o_form_view .o_form_field.zx_inline{
+    text-align: left;
+}

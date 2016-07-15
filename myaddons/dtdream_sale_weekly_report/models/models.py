@@ -25,9 +25,20 @@ class dtdream_sale_own_report(models.Model):
                 zhengwu_recs = recs.search([('system_department_id.name','=',u"政务系统部")])
                 zhengfa_recs = recs.search([('system_department_id.name','=',u"政法系统部")])
                 shared_business_recs = recs.search([('system_department_id.name','=',u"共享业务部")])
-                dic_zhengwu_recs = [(0,0,{"project_id":i.id}) for i in zhengwu_recs]
+
+                list = []
+                for rec in zhengwu_recs:
+                    str = ""
+                    for recc in rec.des_records:
+                        if recc.name != False:
+                            str = str + recc.name + u";"
+                    project_process = str
+                    list.append((0,0,{"project_id":rec.id,"office_id":rec.office_id.name,"sale_apply_id":rec.sale_apply_id.name,"space_total":rec.space_total,
+                                          "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
+                                          "project_process":project_process}))
                 ref.zhengwu_project = False
-                ref.zhengwu_project = dic_zhengwu_recs
+                ref.zhengwu_project = list
+
                 dic_zhengfa_recs = [(0,0,{"project_id":i.id}) for i in zhengfa_recs]
                 ref.zhengfa_project = False
                 ref.zhengfa_project = dic_zhengfa_recs
@@ -52,28 +63,28 @@ class dtdream_sale_own_report(models.Model):
 
     report_person = fields.Many2one('hr.employee','报告人',default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]))
     report_person_name = fields.Char(string="报告人花名",compute=_compute_reportor_info)
-    job_number = fields.Char(string="工号",compute=_compute_reportor_info)
-    department = fields.Char(string="部门",compute=_compute_reportor_info)
+    job_number = fields.Char(string="工号",compute=_compute_reportor_info,store=True)
+    department = fields.Char(string="部门",compute=_compute_reportor_info,store=True)
     week = fields.Integer(string="周别")
 
-    name = fields.Char('个人周报')
+    name = fields.Char('个人周报',default="个人周报")
     zhengwu_project = fields.One2many("zhengwu.system.project","zhengwu_project_id",copy=True)
-    zhengwu_total_space = fields.Char("项目个数",compute=_compute_reportor_info)
-    zhengwu_total_project = fields.Float("整体空间(万元)",compute=_compute_reportor_info)
-    zhengwu_important_project = fields.Char("重大项目个数",compute=_compute_reportor_info)
-    zhengwu_important_space = fields.Float("重大整体空间(万元)",compute=_compute_reportor_info)
+    zhengwu_total_space = fields.Char("项目个数",compute=_compute_reportor_info,store=True)
+    zhengwu_total_project = fields.Float("整体空间(万元)",compute=_compute_reportor_info,store=True)
+    zhengwu_important_project = fields.Char("重大项目个数",compute=_compute_reportor_info,store=True)
+    zhengwu_important_space = fields.Float("重大整体空间(万元)",compute=_compute_reportor_info,store=True)
 
     zhengfa_project = fields.One2many("zhengfa.system.project","zhengfa_project_id")
-    zhengfa_total_space = fields.Char("项目个数",compute=_compute_reportor_info)
-    zhengfa_total_project = fields.Float("整体空间(万元)",compute=_compute_reportor_info)
-    zhengfa_important_project = fields.Char("重大项目个数",compute=_compute_reportor_info)
-    zhengfa_important_space = fields.Float("重大整体空间(万元)",compute=_compute_reportor_info)
+    zhengfa_total_space = fields.Char("项目个数",compute=_compute_reportor_info,store=True)
+    zhengfa_total_project = fields.Float("整体空间(万元)",compute=_compute_reportor_info,store=True)
+    zhengfa_important_project = fields.Char("重大项目个数",compute=_compute_reportor_info,store=True)
+    zhengfa_important_space = fields.Float("重大整体空间(万元)",compute=_compute_reportor_info,store=True)
 
     shared_project = fields.One2many("shared.business.project","shared_project_id")
-    shared_total_space = fields.Char("项目个数",compute=_compute_reportor_info)
-    shared_total_project = fields.Float("整体空间(万元)",compute=_compute_reportor_info)
-    shared_important_project = fields.Char("重大项目个数",compute=_compute_reportor_info)
-    shared_important_space = fields.Float("重大整体空间(万元)",compute=_compute_reportor_info)
+    shared_total_space = fields.Char("项目个数",compute=_compute_reportor_info,store=True)
+    shared_total_project = fields.Float("整体空间(万元)",compute=_compute_reportor_info,store=True)
+    shared_important_project = fields.Char("重大项目个数",compute=_compute_reportor_info,store=True)
+    shared_important_space = fields.Float("重大整体空间(万元)",compute=_compute_reportor_info,store=True)
 
     lead_project = fields.One2many("lead.project","lead_project_id")
     sale_channel = fields.One2many("sale.channel","sale_channel_id")
@@ -107,6 +118,33 @@ class dtdream_sale_own_report(models.Model):
         res = super(dtdream_sale_own_report, self).default_get(fields)
         return res
 
+    # 新建时更新项目进展
+    @api.model
+    def create(self, vals):
+        result = super(dtdream_sale_own_report, self).create(vals)
+        if len(result.zhengwu_project) > 0 :
+            for rec in result.zhengwu_project:
+                if rec.add_project_process != False:
+                    crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_number)])[0]
+                    crm_rec.des_records.create({"name":rec.add_project_process,"des_id":crm_rec.id})
+                    rec.project_process = rec.add_project_process + ";" + rec.project_process
+                    rec.add_project_process = False
+        return result
+
+    @api.multi
+    def write(self, vals):
+        if vals.has_key('zhengwu_project'):
+            for rec in vals['zhengwu_project']:
+                if rec[2] != False:
+                    process_rec = self.env['zhengwu.system.project'].search([('id','=',rec[1])])[0]
+                    if rec[2].get('add_project_process',False) != False:
+                        crm_rec = self.env['crm.lead'].search([('project_number','=',process_rec.project_number)])[0]
+                        crm_rec.des_records.create({"name":rec[2].get('add_project_process'),"des_id":crm_rec.id})
+                        rec[2]['project_process'] = rec[2].get('add_project_process') + ";" + process_rec.project_process
+                        rec[2]['add_project_process'] = False
+        result = super(dtdream_sale_own_report, self).write(vals)
+        return result
+
 # 政务系统部项目
 class zhengwu_system_project(models.Model):
     _name = 'zhengwu.system.project'
@@ -117,8 +155,8 @@ class zhengwu_system_project(models.Model):
     next_zhengwu_project_id = fields.Many2one("dtdream.sale.own.report",string="个人周报")
     manager_next_zhengwu_project_id = fields.Many2one("dtdream.sale.own.report",string="主管周报")
 
-    @api.depends('project_id')
-    def _compute_project_info(self):
+    @api.onchange('project_id')
+    def _onchange_project_info(self):
         for rec in self:
             rec.office_id = rec.project_id.office_id.name
             rec.sale_apply_id = rec.project_id.sale_apply_id.name
@@ -128,24 +166,25 @@ class zhengwu_system_project(models.Model):
             rec.project_number = rec.project_id.project_number
             str = ""
             for recc in rec.project_id.des_records:
-                str = str + recc.name + u";"
+                if recc.name != False:
+                    str = str + recc.name + u";"
             rec.project_process = str
 
 
-    office_id = fields.Char(string="办事处",compute=_compute_project_info)
+    office_id = fields.Char(string="办事处")
     project_id = fields.Many2one('crm.lead',string="项目名称")
-    sale_apply_id = fields.Char(string="营销责任人",compute=_compute_project_info)
-    space_total = fields.Float(string="项目空间",compute=_compute_project_info)
+    sale_apply_id = fields.Char(string="营销责任人")
+    space_total = fields.Float(string="项目空间")
     project_master_degree = fields.Selection([
         ('1', 'A'),
         ('2', 'B'),
         ('3', 'C'),
         ('4', 'D'),
-    ],'项目把握度',compute=_compute_project_info)
-    bidding_time = fields.Char(string="预计投标日期",compute=_compute_project_info)
-    project_process = fields.Text(string="项目进展",compute=_compute_project_info)
+    ],'项目把握度')
+    bidding_time = fields.Char(string="预计投标日期")
+    project_process = fields.Text(string="项目进展")
     add_project_process = fields.Text(string="补充项目进展")
-    project_number = fields.Char(string="项目编号",compute=_compute_project_info)
+    project_number = fields.Char(string="项目编号")
 
 class zhengfa_system_project(models.Model):
     _name = 'zhengfa.system.project'

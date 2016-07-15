@@ -138,7 +138,7 @@
                 <group string="部门绩效目标">
                     <div>
                         <span style="margin-left:20px; color:red;" attrs="{'invisible':[('pbc_log','=',True)]}">
-                           您所在部门的部门绩效目标未录入，请于部门主管沟通了解!
+                           您所在部门的部门绩效目标未录入，请与部门主管沟通了解!
                         </span>
                         <notebook>
                             <page>
