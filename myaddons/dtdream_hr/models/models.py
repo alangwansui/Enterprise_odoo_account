@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api
 
+
 class dtdream_hr(models.Model):
     _inherit = 'hr.department'
 
@@ -10,10 +11,8 @@ class dtdream_hr(models.Model):
 
     def search_read(self, cr, uid, domain=None, fields=None, offset=0, limit=None, order=None, context=None):
         if 'child_ids' not in fields:
-            domain = []
+            domain = [ex for ex in domain if ex != ['parent_id', '=', False]]
         return super(dtdream_hr, self).search_read(cr, uid, domain=domain)
-
-
 
 
 class dtdream_hr_employee(models.Model):

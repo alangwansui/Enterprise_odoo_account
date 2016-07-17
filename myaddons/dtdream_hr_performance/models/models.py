@@ -19,15 +19,34 @@ class dtdream_hr_performance(models.Model):
             target = [t.id for crr in cr for t in crr.target]
             self.pbc = [(6, 0, target)]
 
+    def refresh_when_department_changed(self, result=None):
+        for cr in result:
+            employee = cr.get('name', None)
+            if isinstance(employee, tuple) and cr.get('department', None):
+                crr = self.env['hr.employee'].search([('id', '=', employee[0])])
+                cr['department'] = (crr.department_id.id, crr.department_id.complete_name)
+        return result
+
     @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        result = super(dtdream_hr_performance, self).read(fields=fields, load=load)
+        result = self.refresh_when_department_changed(result)
+        if len(result[0]) != 2 and result[0].get('pbc', 1) != 1:
+            department = result[0]['department']
+            self.department = department[0]
+            cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
+            target_level1 = [t.id for crr in cr for t in crr.target if t.level == 1]
+            target_level2 = [t.id for crr in cr for t in crr.target if t.level == 2]
+            target = target_level1 + target_level2
+            result[0]['pbc'] = target
+            self.write({"pbc": [(6, 0, target)]})
+        return result
+
     def update_dtdream_hr_pbc(self):
-        pbc = self.search([('state', '!=', '99')])
-        for rec in pbc:
-            if not rec.pbc:
-                cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', rec.quarter), '|', ('name', '=', rec.department.parent_id.id), ('name', '=', rec.department.id)])
-                target = [t.id for crr in cr for t in crr.target]
-                if target:
-                    rec.write({"pbc": [(6, 0, target)]})
+        for rec in self:
+            cr = rec.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', rec.quarter), '|', ('name', '=', rec.department.parent_id.id), ('name', '=', rec.department.id)])
+            target = [t.id for crr in cr for t in crr.target]
+            rec.write({"pbc": [(6, 0, target)]})
 
     @api.depends('name')
     def _compute_employee_info(self):
@@ -193,47 +212,41 @@ class dtdream_hr_performance(models.Model):
                 self.message_post(body=u'绩效考核结果导入')
         return super(dtdream_hr_performance, self).write(vals)
 
-    @api.multi
-    def _compute_is_inter_department(self):
-        pbc = self.search([])
-        cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
-        department_id = []
-        for crr in cr:
-            department_id.append(crr.department.id)
-            for department in crr.department.child_ids:
-                department_id.append(department.id)
-        for rec in pbc:
-            if rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") in rec.env.user.groups_id:
-                rec.write({"view_all": True}, False)
-            elif rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
-                rec.write({"view_all": False}, False)
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+        if menu == u"所有单据" or menu == u"绩效管理":
+            if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
+                domain = domain if domain else []
+            elif self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
+                cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+                department_id = []
+                for crr in cr:
+                    department_id.append(crr.department.id)
+                    for department in crr.department.child_ids:
+                        department_id.append(department.id)
+                domain = domain + [("department", 'in', department_id)] if domain else [("department", 'in', department_id)]
             else:
-                if rec.department.id in department_id:
-                    rec.write({"view_all": True}, False)
+                uid = self._context.get('uid', '')
+                if domain:
+                    value = []
+                    for key in domain:
+                        value += ['&', key]
+                    value.pop(-2)
+                    a = ['|', '&'] + [('department.parent_id.manager_id.user_id', '=', uid)] + value
+                    b = ['|', '&'] +  [('officer.user_id', '=', uid)] + value
+                    c = ['|', '&'] + [('officer_sec.user_id', '=', uid)] + value
+                    d = ['&', ('name.user_id', '=', uid), '&', ('state', '!=', '0')] + value
+                    domain = a + b + c + d
                 else:
-                    rec.write({"view_all": False}, False)
-            if rec.department.parent_id.manager_id.user_id == rec.env.user:
-                rec.write({"up_officer": True}, False)
-            else:
-                rec.write({"up_officer": False}, False)
-
-    @api.multi
-    def compute_view_all_manage_submit(self):
-        if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
-            self.write({"view_all": True}, False)
-        elif self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id:
-            self.write({"view_all": False}, False)
-        else:
-            cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
-            department_id = []
-            for crr in cr:
-                department_id.append(crr.department.id)
-                for department in crr.department.child_ids:
-                    department_id.append(department.id)
-            if self.department.id in department_id:
-                self.write({"view_all": True}, False)
-            else:
-                self.write({"view_all": False}, False)
+                    domain = ['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
+                              ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
+                              '&', ('name.user_id', '=', uid), ('state', '!=', '0')]
+        return super(dtdream_hr_performance, self).search_read(domain=domain, fields=fields, offset=offset,
+                                                               limit=limit, order=order)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -255,9 +268,7 @@ class dtdream_hr_performance(models.Model):
                     doc.xpath("//form")[0].set("create", "false")
                 if res['type'] == "tree":
                     doc.xpath("//tree")[0].set("create", "false")
-            self._compute_is_inter_department()
         res['arch'] = etree.tostring(doc)
-        self.update_dtdream_hr_pbc()
         return res
 
     def unlink_message_subscribe(self, res_id):
@@ -312,7 +323,9 @@ class dtdream_hr_performance(models.Model):
 
     @api.depends('name', 'quarter')
     def _compute_has_pbc_log(self):
-        if self.pbc:
+        cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
+        target = [t.id for crr in cr for t in crr.target]
+        if target:
             self.pbc_log = True
         else:
             self.pbc_log = False
@@ -503,15 +516,6 @@ class dtdream_hr_pbc(models.Model):
         return inter
 
     @api.multi
-    def _compute_is_inter(self):
-        pbc = self.search([])
-        for rec in pbc:
-            if rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in rec.env.user.groups_id:
-                rec.write({"is_inter": False}, False)
-            else:
-                rec.write({"is_inter": True}, False)
-
-    @api.multi
     def _compute_login_is_manage(self):
         for rec in self:
             if rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in rec.env.user.groups_id:
@@ -536,15 +540,18 @@ class dtdream_hr_pbc(models.Model):
                 else:
                     rec.inter_edit = True
 
-    @api.multi
-    def _compute_login_in_department(self):
-        cr = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
-        pbc = self.search([])
-        for rec in pbc:
-            if rec.name == cr.department_id or rec.name == cr.department_id.parent_id:
-                rec.write({"is_in_department": True}, False)
-            else:
-                rec.write({"is_in_department": False}, False)
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        if self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
+            domain = domain if domain else []
+        else:
+            crr = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+            department_id = [department.id for department in crr.department_id.parent_id]
+            department_id.append(crr.department_id.id)
+            domain = domain + [("name", 'in', department_id), ('state', '=', '99')] if domain else\
+                [("name", 'in', department_id), ('state', '=', '99')]
+        return super(dtdream_hr_pbc, self).search_read(domain=domain, fields=fields, offset=offset,
+                                                       limit=limit, order=order)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -560,8 +567,6 @@ class dtdream_hr_pbc(models.Model):
                 doc.xpath("//tree")[0].set("create", "false")
                 doc.xpath("//tree")[0].set("edit", "false")
         res['arch'] = etree.tostring(doc)
-        self._compute_login_in_department()
-        self._compute_is_inter()
         return res
 
     @api.multi
@@ -811,7 +816,6 @@ class dtdream_hr_pbc_start(models.TransientModel):
         for per in performance:
             if per.state == '0' and per.onwork == 'Inaugural_state_01':
                 per.signal_workflow('btn_start')
-                per.compute_view_all_manage_submit()
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one
@@ -854,7 +858,7 @@ class dtdream_hr_pbc_start(models.TransientModel):
             elif rec.state == '5':
                 content = u'您对%s的个人工作总结仍未完成评价,请尽快提交。'% rec.name.name
                 rec.send_mail(rec.officer, subject=content, content=content)
-            time.sleep(0.1)
+            time.sleep(0.01)
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one
