@@ -308,8 +308,8 @@ class dtdream_sale(models.Model):
 
     @api.depends('project_space')
     def _onchange_project_space(self):
-        space_total = 0
         for recc in self:
+            space_total = 0
             for rec in recc.project_space:
                 space_total = space_total + rec.project_space
             recc.space_total = space_total
@@ -420,12 +420,22 @@ class dtdream_sale(models.Model):
 
     @api.model
     def create(self, vals):
-        if len(vals.get('des_records')) == 0 :
+        if len(vals.get('des_records',"")) == 0 :
             raise ValidationError("请录入项目进展")
         if vals.get('project_number', 'New') == 'New':
             o_id = vals.get('office_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
-            vals['project_number'] = ''.join([office_rec.code,self.env['ir.sequence'].next_by_code('project.number'),'N']) or 'New'
+            num = len(self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)]))+1
+            if len(self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)], order="id desc"))>0:
+                num = int(self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)], order="id desc")[0].project_number[-3:-1])+1
+            if num < 10:
+                num = "%02d"%num
+            if vals.get('project_leave') == "company_leave":
+                vals['project_number'] = ''.join([office_rec.code,datetime.now().strftime('%Y%m%d'),num,'A']) or 'New'
+            if vals.get('project_leave') == "department_leave":
+                vals['project_number'] = ''.join([office_rec.code,datetime.now().strftime('%Y%m%d'),num,'B']) or 'New'
+            if vals.get('project_leave') == "normal_leave":
+                vals['project_number'] = ''.join([office_rec.code,datetime.now().strftime('%Y%m%d'),num,'N']) or 'New'
         result = super(dtdream_sale, self).create(vals)
         result.write({"product_category_type_id": [(6,0,[])]})
         if vals.has_key('project_space'):
@@ -480,6 +490,16 @@ class dtdream_sale(models.Model):
 
     @api.multi
     def write(self, vals):
+        if vals.has_key('project_leave'):
+            if vals.get('project_leave') == "company_leave":
+                vals['project_number'] = self.project_number[:-1]+"A"
+                self.project_number = self.project_number[:-1]+"A"
+            if vals.get('project_leave') == "department_leave":
+                vals['project_number'] = self.project_number[:-1]+"B"
+                self.project_number = self.project_number[:-1]+"B"
+            if vals.get('project_leave') == "normal_leave":
+                vals['project_number'] = self.project_number[:-1]+"N"
+                self.project_number = self.project_number[:-1]+"N"
         if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid:
             raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
         if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
@@ -555,15 +575,11 @@ class dtdream_sale(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        print "------------>",self.search([])
-        for rec in self.search([]):
-            print rec.bidding_time
-            print datetime.now().strftime('%Y-%m-%d')
-            if rec.bidding_time <= datetime.now().strftime('%Y-%m-%d'):
-                rec.is_red = True
-            else:
-                rec.is_red = False
-            print rec.is_red
+        # for rec in self.search([]):
+        #     if rec.bidding_time < datetime.now().strftime('%Y-%m-%d'):
+        #         rec.is_red = True
+        #     else:
+        #         rec.is_red = False
         result = super(dtdream_sale, self).fields_view_get(view_id, view_type, toolbar=toolbar, submenu=submenu)
         return result
 # 定义行业模型

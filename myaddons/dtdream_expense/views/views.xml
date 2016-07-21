@@ -8,10 +8,10 @@
       <field name="model">dtdream.expense.record</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="expensestartdate"/>
-          <field name="expenseenddate"/>
+            <field name="name"/>
           <field name="expensecatelog"/>
            <field name="expensedetail"/>
+            <field name="currentdate"/>
            <field name="invoicevalue"/>
           <field name="state"/>
           <field name="create_date" string="创建时间" />
@@ -26,8 +26,7 @@
       <field name="model">dtdream.expense.record</field>
       <field name="arch" type="xml">
         <search>
-          <field name="expensestartdate"/>
-          <field name="expenseenddate"/>
+          <field name="currentdate"/>
           <field name="expensecatelog"/>
            <field name="expensedetail"/>
            <field name="invoicevalue"/>
@@ -53,9 +52,8 @@
                         <field name="expensecatelog" attrs="{'readonly':[('state','not in',('draft'))]}"/>
                         <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft'))]}"/>
 
-                        <field name="expensestartdate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                        <field name="expenseenddate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                         <field name="invoicevalue"  attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                        <field name="currentdate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                            <field name="invoicevalue"  attrs="{'readonly':[('state','not in',('draft'))]}"/>
                          <field name="city" attrs="{'readonly':[('state','not in',('draft'))]}"/>
                             <field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>
                         </group>
@@ -157,11 +155,15 @@
                 <form string="department">
                     <sheet>
                         <group col="4">
+
+
                             <field name="name" readonly="0"/>
                             <field name="code" readonly="0"/>
                              <field name="parent_id" readonly="0"/>
                             <field name="manager_id" string="主管" readonly="0"/>
                             <field name="assitant_id" widget="many2many_tags" readonly="0"/>
+
+
 
                            <field name="quanqianren" string="权签人" />
                             <field name="shouquanren1" string="第一授权人" />
@@ -203,87 +205,99 @@
             <field name="model">dtdream.expense.report</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button  string="提交" name="btn_submit" type="object" class="oe_highlight"  />
+                        <button string="同意" name="btn_agree"  type="object" class="oe_highlight"  />
+                        <button string="驳回" name="btn_refuse"  type="object" class="oe_highlight"  />
+                        <button string="签收纸件" name="btn_checkpaper"  type="object" class="oe_highlight"  />
+                         <button string="确认付款" name="btn_confirmmoney"  type="object" class="oe_highlight"  />
+                         <button string="催签" name="btn_cuiqian"  type="object" class="oe_highlight"  />
+
+                         <field name="state" widget="statusbar" statusbar_visible="draft,xingzheng,zhuguan,quanqianren,jiekoukuaiji,daifukuan,yifukuan,"/>
+                    </header>
                     <sheet>
+                         <group>
+                            <group string="基本信息">
+                                 <field name="job_number" readonly="1"/>
+                                 <field name="full_name" readonly="1"/>
+                                 <field name="work_place" readonly="1"/>
+                               　 <field name="department_id" readonly="1"/>
+                                　<field name="department_number" readonly="1"/>
 
-                               <!--<group>-->
-                                        <!--<group  string="员工信息">-->
-                                             <!--<field name="job_number" />-->
-                                             <!--<field name="full_name" />-->
-                                             <!--<field name="work_place" />-->
-                                           <!--　 <field name="department_id" />-->
-                                            <!--　<field name="department_number" />-->
-
-                                           <!--　　 <field name="name" />-->
-                                         <!--</group>-->
-
-                                        <!--<groug string="支付信息">-->
-                                            <!--<field name="paytype"  widget="radio"/>-->
-                                            <!--<field name="paycatelog"  widget="radio"/>-->
-                                            <!--<field name="shoukuanrenxinming" />-->
-                                            <!--<field name="kaihuhang" />-->
-                                            <!--<field name="yinhangkahao" />-->
-                                            <!---->
+                                <!--<field name="expensecode"/>-->
+                                <!--<field name="name"/>
+                                 <field name="state"/>-->
+                                <!--<field name="currentauditperson"/>-->
+                                <!--<field name="zhuanxiangshiqianshenpidanhao"/>-->
+                                <field name="expensereason" />
+                            </group>
 
 
-                                        <!--</groug>-->
+                             <group  string="支付信息">
+                                <field name="paytype"  widget="radio"/>
+                                <field name="paycatelog"  widget="radio"/>
+                                <field name="shoukuanrenxinming" />
+                                <field name="kaihuhang" />
+                                <field name="yinhangkahao" />
+                            </group>
 
-                                <!--</group>-->
+                         </group>
 
-                                <style>
-                                    #table01  tr td {padding:4px}
-                                </style>
-                                <div id="table01">
-                                    <table style="border-collapse:collapse;" border="1" bordercolor="#cdcdcd" bgcolor="#FFFFFF"  align="center" width="95%">
-                                    <tbody>
-  <tr><td rowspan="1" colspan="6"><p style="font-weight:bold;text-align:center;white-space:normal;"><span style="font-size:24px;">报销申请单</span></p></td></tr>
-  <tr><td colspan="6" style="height:25px;" bgcolor="#F2F2F2"><strong><span style="font-size:12px;">员工信息</span></strong></td></tr>
-                                        <tr>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">员工工号</span></strong></td>
-                                            <td style="width:175px"><field name="job_number" readonly="1"/></td>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">员工姓名</span></strong></td>
-                                            <td style="width:175px"><field name="full_name" readonly="1"/></td>
-                                           <td style="width:90px"><strong><span style="font-size:12px;">工作常驻地</span></strong></td>
-                                            <td style="width:175px"><field name="work_place" readonly="1"/></td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">所属部门</span></strong></td>
-                                            <td style="width:175px"><field name="department_id" readonly="1"/></td>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">部门编码</span></strong></td>
-                                            <td style="width:175px" colspan="3"><field name="department_number" readonly="1"/></td>
-
-                                        </tr>
-                                </tbody>
-                                    </table>
+                        <notebook>
+                            <page string="费用明细">
+                                <field name="record_ids"  >
+                                    <tree editable="bottom" >
+                                        <field  name="record_id" />
+                                         <field name="expensecatelog"/>
+                                            <field name="expensedetail"/>
+                                            <field name="currentdate"/>
+                                           <field name="invoicevalue"/>
+                                          <field name="state"/>
+                                          <field name="create_date" string="创建时间" />
+                                          <field name="create_uid" string="创建人" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
 
 
-                                       <table style="border-collapse:collapse;" border="1" bordercolor="#cdcdcd" bgcolor="#FFFFFF"  align="center" width="95%">
-                                    <tbody>
+                        <notebook>
+                            <page string="受益部门分摊比例">
+                                <field name="benefitdep_ids">
+                                    <tree  editable="bottom">
 
-  <tr><td colspan="6" style="height:25px;" bgcolor="#F2F2F2"><strong><span style="font-size:12px;">支付信息</span></strong></td></tr>
-                                        <tr>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">支付方式</span></strong></td>
-                                            <td style="width:175px"><field name="paytype"  widget="radio"/></td>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">支付类别</span></strong></td>
-                                            <td style="width:175px" colspan="3"><field name="paycatelog"  widget="radio"/></td>
+                                        <field name="name"/>
+                                        <field name="sharepercent"/>
+                                        <field name="depcode"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+<!--
+                        <notebook>
+                            <page string="对应预算月份">
 
-                                        </tr>
+                                    <tree>
+                                         <field name="budgetmonth"/>
 
-                                        <tr>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">收款人姓名</span></strong></td>
-                                            <td style="width:175px"><field name="shoukuanrenxinming" /></td>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">开户行</span></strong></td>
-                                            <td style="width:175px" ><field name="kaihuhang" /></td>
-                                            <td style="width:90px"><strong><span style="font-size:12px;">卡号</span></strong></td>
-                                            <td style="width:175px" ><field name="yinhangkahao" /></td>
+                                    </tree>
 
-                                        </tr>
-                                        <tr><td style="width:90px"><strong><span style="font-size:12px;">报销事由</span></strong></td>
-                                            <td style="width:175px" colspan="5"><field name="expensereason" /></td>
-                                        </tr>
-                                </tbody>
-                                    </table>
-                                </div>
+                            </page>
+                        </notebook>
+-->
+                        <notebook>
+                            <page string="对应出差时间">
+
+                                     <field name="chuchaishijian_ids">
+                                                <tree  editable="bottom">
+
+                                                 <field name="name"/>
+                                                </tree>
+                                     </field>
+                            </page>
+                        </notebook>
+
+
 
                     </sheet>
 
@@ -296,7 +310,14 @@
             <field name="model">dtdream.expense.report</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field  name="expensecode"/>
                     <field name="name"/>
+                     <field name="state"/>
+                     <field name="currentauditperson"/>
+                     <field name="create_uid" string="申请人"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="department_id"/>
+
                 </tree>
             </field>
         </record>

@@ -423,6 +423,7 @@ class dtdream_hr_performance(models.Model):
 class dtdream_hr_pbc_employee(models.Model):
     _name = "dtdream.hr.pbc.employee"
 
+    @api.depends('inter')
     def _compute_state_related(self):
         for rec in self:
             rec.state = rec.perform.state
@@ -466,9 +467,9 @@ class dtdream_hr_pbc_employee(models.Model):
         state = performance.state
         inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id
         manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id
-        if state != "1" and inter:
+        if state not in ("1", "4") and inter:
             raise ValidationError("无法新增员工个人绩效目标记录!")
-        elif state != "1" and not inter and not manage and performance.name.user_id == self.env.user:
+        elif state not in ("1", "4") and not inter and not manage and performance.name.user_id == self.env.user:
             raise ValidationError("无法新增员工个人绩效目标记录!")
         return super(dtdream_hr_pbc_employee, self).create(vals)
 

@@ -26,16 +26,16 @@
                     <field name="perm_unlink" eval="True"/>
                     <field name="groups" eval="[(4,ref('base.group_user'))]"/>
                 </record>
-                <record id="rule_dtdream_contract_admin_delete" model="ir.rule">
-                    <field name="name">合同评审电子流业务管理员删除权限</field>
-                    <field name="model_id" ref="model_dtdream_contract"/>
-                    <field name="domain_force">[(1,'=',1)]</field>
-                    <field name="perm_read" eval="False"/>
-                    <field name="perm_create" eval="False"/>
-                    <field name="perm_write" eval="False"/>
-                    <field name="perm_unlink" eval="True"/>
-                    <field name="groups" eval="[(4,ref('group_contract_view_all'))]"/>
-                </record>
+                <!--<record id="rule_dtdream_contract_admin_delete" model="ir.rule">-->
+                    <!--<field name="name">合同评审电子流业务管理员删除权限</field>-->
+                    <!--<field name="model_id" ref="model_dtdream_contract"/>-->
+                    <!--<field name="domain_force">[(1,'=',1)]</field>-->
+                    <!--<field name="perm_read" eval="False"/>-->
+                    <!--<field name="perm_create" eval="False"/>-->
+                    <!--<field name="perm_write" eval="False"/>-->
+                    <!--<field name="perm_unlink" eval="True"/>-->
+                    <!--<field name="groups" eval="[(4,ref('group_contract_view_all'))]"/>-->
+                <!--</record>-->
                 <record id="rule_dtdream_contract_read" model="ir.rule">
                     <field name="name">合同评审电子流员工读权限</field>
                     <field name="model_id" ref="model_dtdream_contract"/>

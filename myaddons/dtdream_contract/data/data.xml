@@ -27,9 +27,9 @@
                         <field name="name" eval="'其他类型协议'"/>
                         <field name="name_id" eval="'OTR'"></field>
                      </record>
-                     <!--<record model="dtdream.contract.url" id="contract_url">-->
-                        <!--<field name="name" eval="'http://'"/>-->
-                     <!--</record>-->
+                     <record model="dtdream.contract.url" id="contract_url">
+                        <field name="name" eval="'http://'"/>
+                     </record>
 
 
                 </data>

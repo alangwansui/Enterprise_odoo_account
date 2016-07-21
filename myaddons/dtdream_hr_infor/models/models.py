@@ -191,6 +191,8 @@ class dtdream_hr_infor(models.Model):
     gongjijin_state = fields.Many2one("dtdream.hr.state", string="原公积金缴纳地(市)", track_visibility='onchange')
     oil_card = fields.Char(string="油卡编号", track_visibility='onchange')
     has_oil = fields.Boolean(string="已办理中大一卡通", track_visibility='onchange')
+    bankaddr = fields.Char(string="开户行地址")
+    bankcardno = fields.Char(string="银行卡号")
     login_info_employee = fields.Boolean(string="员工是否当前登入人", compute=_compute_login_equal_employee)
     can_view_info_self = fields.Boolean(string="员工自助信息是否可见", compute=_compute_self_page)
     can_view_info_basic = fields.Boolean(string="员工基本信息是否可见", compute=_compute_basic_page, default=True)

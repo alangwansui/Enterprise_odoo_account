@@ -396,7 +396,7 @@ class dtdream_hr_holidays_extend(models.Model):
         #                      <p>万千业务，简单有do</p>
         #                      <p>%s</p>''' % (self.employee_id.name, url,url,self.write_date[:10]),
         #             'email_from':self.get_mail_server_name(),
-
+        #
         #             'email_to': self.employee_id.work_email,
         #         }).send()
 
@@ -431,7 +431,7 @@ class dtdream_hr_holidays_extend(models.Model):
         #                      <p>万千业务，简单有do</p>
         #                      <p>%s</p>''' % (this_self.employee_id.name, url,url,this_self.write_date[:10]),
         #             'email_from':this_self.get_mail_server_name(),
-
+        #
         #             'email_to': this_self.employee_id.work_email,
         #         }).send()
         # elif this_self.create_type=='manage':

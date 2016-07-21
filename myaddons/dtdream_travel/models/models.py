@@ -392,7 +392,7 @@ class dtdream_travel_journey(models.Model):
 
     travel_id = fields.Many2one("dtdream.travel.chucha", string="申请人")
     name = fields.Char(related="travel_id.name.full_name", string="姓名")
-    starttime = fields.Date(default=fields.Date.today, string="出差时间")
+    starttime = fields.Date(default=fields.Date.today, string="开始时间")
     endtime = fields.Date(string="结束时间")
     startaddress = fields.Char(string="出发地")
     endaddress = fields.Char(string="目的地")

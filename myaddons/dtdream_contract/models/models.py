@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
-import openerp
-from openerp import http
-from openerp.exceptions import ValidationError
-from openerp.http import request, serialize_exception as _serialize_exception, _logger
+
 from openerp import models, fields, api
-import base64
+from openerp.osv.orm import setup_modifiers
 
-from openerp.osv import osv
-from openerp.tools.translate import _
-import logging
-import json
-
-from openerp.http import serialize_exception
 from datetime import datetime,time
 
 import time
 from lxml import etree
 
+from openerp.exceptions import ValidationError
 
 try:
     import xlwt
@@ -24,10 +16,17 @@ except ImportError:
     xlwt = None
 
 
+class dtdream_contract_url(models.Model):
+    _name = "dtdream.contract.url"
+
+    name = fields.Char(string="标准合同下载地址")
+
+
 class dtdream_contract(models.Model):
     _name = 'dtdream.contract'
     _inherit =['mail.thread']
     _description = u'合同评审电子流'
+
     his_approve=fields.Many2many('hr.employee',string="历史审批人")
     name = fields.Char(string="合同名称")
 
@@ -40,14 +39,13 @@ class dtdream_contract(models.Model):
             sql_baseid = baseid + "%"
             self._cr.execute("select constract_id from dtdream_contract where constract_id like '"+sql_baseid+"' order by id desc limit 1")
             for rec in self._cr.fetchall():
-                print "rec",rec
+
                 max_constract_id = rec[0]
 
             if max_constract_id:
-                print "max_constract_id",max_constract_id
+
                 max_id = max_constract_id[15:]
-                print max_id
-                print int(max_id)
+
                 if int(max_id)<9:
                     self.constract_id_copy = baseid+'0'+str(int(max_id)+1)
                     self.constract_id = baseid+'0'+str(int(max_id)+1)
@@ -64,7 +62,7 @@ class dtdream_contract(models.Model):
     constract_type_char=fields.Char(string="合同类型_copy")
     @api.onchange("constract_type")
     def _compute_people(self):
-        print "--------------------"
+
         self.constract_type_char=self.constract_type.name
         config=self.env['dtdream.contract.config'].search([('name','=',self.constract_type.name)])
         self.legal_interface=config.legal_interface
@@ -77,7 +75,6 @@ class dtdream_contract(models.Model):
     @api.one
     @api.onchange("applicant")
     def _compute_employee(self):
-        print "+++++++++++++++++++++++++++",self
         self.job_number=self.applicant.job_number
         self.deparment=self.applicant.department_id.complete_name
         self.tel_number=self.applicant.mobile_phone
@@ -109,7 +106,7 @@ class dtdream_contract(models.Model):
     job_number=fields.Char(string="工号",compute=_compute_employee)
     deparment=fields.Char(string="部门",compute=_compute_employee)
     tel_number=fields.Char(string="电话",compute=_compute_employee)
-    deparment_manage=fields.Many2one('hr.employee',string="部门主管",compute=_compute_employee)
+    deparment_manage=fields.Many2one('hr.employee',string="部门主管")
     state=fields.Selection([("0", "草稿"), ("1", "主管审批"), ("2", "待组织评审"),("3","评审中"),("4","待组织会签"),("5","会签中"),("6","权签中"),("7","待盖章"),("8","待归档"),("9","闭环"),("10","作废")],string="合同状态")
     create_time=fields.Datetime(string='创建时间',default=lambda self:datetime.now(),readonly=1)
     money=fields.Float(string="合同金额(元)")
@@ -121,11 +118,11 @@ class dtdream_contract(models.Model):
     background=fields.Text(string="合同背景介绍")
     attachment=fields.Binary(string="合同附件（初稿）",store=True)
     attachment_name=fields.Char(string="附件名")
-    att_final=fields.Binary(string="合同附件（终稿）")
+    att_final=fields.Binary(string="合同附件（最新稿）")
     att_final_name=fields.Char(string="合同终稿附件名")
     remark=fields.Char(string="备注")
     pro_name=fields.Many2one("crm.lead",string="项目名称")
-    # tip=fields.Char(default=lambda self:self.env['dtdream.contract.url'].search([],limit=1).name)
+    tip=fields.Char(default=lambda self:self.env['dtdream.contract.url'].search([],limit=1).name)
 
     @api.onchange('pro_name')
     def _compute_parter(self):
@@ -137,7 +134,7 @@ class dtdream_contract(models.Model):
 
     partner=fields.Char(string="合作方",compute=_compute_parter)
     provider=fields.Many2one('res.partner',string='合作方',domain=[('supplier','=',True)])
-    is_standard=fields.Boolean(string="是否标准合同",help='标准合同无需评审，直接进入会签环节，可快速完成合同评审流程')
+    is_standard=fields.Boolean(string="是标准合同",help='标准合同无需评审，直接进入会签环节，可快速完成合同评审流程')
     current_handler_ids=fields.Many2many('hr.employee','c_i_h_e',string="当前处理人",store=True)
 
     @api.one
@@ -168,10 +165,10 @@ class dtdream_contract(models.Model):
     def _compute_file(self):
         self.is_filed=True
         self.file_time=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    is_stamped=fields.Boolean(string="是否盖章")
+    is_stamped=fields.Boolean(string="是否已盖章")
     stamp_time=fields.Char(string="盖章时间")
     file_id=fields.Many2one('hr.employee',string="归档处理人")
-    is_filed=fields.Boolean(string="是否归档")
+    is_filed=fields.Boolean(string="是否已归档")
     is_file_id=fields.Boolean(string='是否归档人',compute=_compute_is_applicant)
     file_time=fields.Char(string="归档时间")
     review2wait_countersign=fields.Boolean(default=False)
@@ -220,14 +217,11 @@ class dtdream_contract(models.Model):
         return result
     @api.multi
     def write(self, vals):
-        print "write--------"
-        print self
-        print self.state
-        print vals
+
         if self.state == '0':
 
             if vals.has_key('money'):
-                print "monet",self.money
+
                 self.money_final=vals['money']
             if vals.has_key('constract_type_char'):
                 config=self.env['dtdream.contract.config'].search([('name','=',vals['constract_type_char'])])
@@ -239,7 +233,6 @@ class dtdream_contract(models.Model):
 
                 self.constract_id=vals['constract_id_copy']
         result = super(dtdream_contract, self).write(vals)
-        # print oooo
 
 
         return result
@@ -351,12 +344,12 @@ class dtdream_contract(models.Model):
 
     @api.cr_uid_ids_context
     def message_post(self, cr, uid, thread_id, context=None, **kwargs):
-        print "message_post"
-        """ Redirect the posting of message on res.users to the related employee.
-            This is done because when giving the context of Chatter on the
-            various mailboxes, we do not have access to the current partner_id. """
+
 
         current_contract = self.pool.get('dtdream.contract').browse(cr, uid,thread_id,context=context)
+
+        # if current_contract.is_handler == False:
+        #     raise ValidationError("您不能在此区域编辑！")
         if kwargs.has_key('attachment_ids'):
             for id in kwargs['attachment_ids']:
                 print "attachment_ids",id
@@ -366,9 +359,7 @@ class dtdream_contract(models.Model):
                 link1 = link='/web?#id=%s&view_type=form&model=dtdream.contract'%thread_id
                 url1=base1+link1
                 for people in current_contract.current_handler_ids:
-                    print "dddddddddddddd"
-                    print current_contract
-                    print current_contract.name
+
                     current_contract.env['mail.mail'].create({
                             'subject': u'%s于%s提交合同：%s 评审申请已经重新上传了附件，请您审批！' % (current_contract.applicant.name, current_contract.create_time[:10],current_contract.name),
                             'body_html': u'''
@@ -387,6 +378,7 @@ class dtdream_contract(models.Model):
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+
         params = self._context.get('params', None)
         action = params.get("action", 0) if params else 0
         my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
@@ -399,6 +391,8 @@ class dtdream_contract(models.Model):
                 doc.xpath("//tree")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
+
+
 
 
 class dtdream_contract_wizard(models.TransientModel):
@@ -418,7 +412,8 @@ class dtdream_contract_wizard(models.TransientModel):
               self.reason=unicode('无','utf-8')
           if self.temp == 'agree':
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：同意, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+
+              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：同意, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
               if current_record.state == '2' or current_record.state == '4':
                   current_record.signal_workflow('btn_agree')
               else:
@@ -458,9 +453,7 @@ class dtdream_contract_config(models.Model):
     stamp_id=fields.Many2one('hr.employee',string="盖章处理人")
     file_id=fields.Many2one('hr.employee',string="归档处理人")
 
-# class dtdream_contract_url(models.Model):
-#     _name = "dtdream.contract.url"
-#     name = fields.Char(string="标准合同下载地址")
+
 
 
 

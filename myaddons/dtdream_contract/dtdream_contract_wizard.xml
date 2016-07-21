@@ -8,12 +8,12 @@
                         <form>
                             <group>
                                 <group>
-                                    <field name="reason"></field>
+                                    <field name="reason" required="1"></field>
                                     <field name="temp" invisible="1"></field>
                                 </group>
                             </group>
                             <footer>
-                                <button name="btn_confirm" type="object" string="确定" class="oe_highlight" style="border-radius:5px"></button>
+                                <button name="btn_confirm" type="object" string="确定" class="oe_highlight zx_button" style="border-radius:5px" id="zx_button"></button>
                             </footer>
                         </form>
 

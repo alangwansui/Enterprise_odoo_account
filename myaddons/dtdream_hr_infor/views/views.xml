@@ -152,6 +152,13 @@
                     <group>
                        <field name="has_oil" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
                     </group>
+
+                     <group>
+                       <field name="bankcardno" />
+                    </group>
+                    <group>
+                       <field name="bankaddr" />
+                    </group>
                 </group>
 
                 <p>*<b>填写说明</b>：以上信息修改即生效，无需HR审核。该处信息将被报销系统、社保金积金系统、微信、钉钉、油卡充值系统等多个系统引用。请谨慎填写，保证相关业务的准确性</p>
