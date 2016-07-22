@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_customer_reception,dtdream_customer_reception.dtdream_customer_reception,model_dtdream_customer_reception,,1,1,1,0
+access_dtdream_guest_honour,dtdream_customer_reception.dtdream_guest_honour,model_dtdream_guest_honour,,1,1,1,1
+access_dtdream_visit_path,dtdream_customer_reception.dtdream_visit_path,model_dtdream_visit_path,,1,1,1,1
