@@ -11,6 +11,95 @@
                            statusbar_visible="0,99"/>
                </header>
               <sheet>
+                  <group string="基本信息">
+                      <group>
+                          <field name="bill_num"/>
+                          <field name="receptionist" required="True"/>
+                      </group>
+                      <group>
+                          <field name="duty_tel"/>
+                          <field name="write_time"/>
+                      </group>
+                  </group>
+
+                  <group string="员工信息">
+                      <group>
+                          <field name="name" required="True"/>
+                          <field name="post"/>
+                          <field name="department"/>
+                          <field name="home"/>
+                      </group>
+                      <group>
+                          <field name="workid"/>
+                          <field name="iphone"/>
+                          <field name="code"/>
+                      </group>
+                  </group>
+
+                  <group string="客户信息">
+                      <group>
+                          <field name="customer" required="True"/>
+                          <field name="customer_v" widget="radio" options="{'horizontal': true}"/>
+                          <field name="inter_tel"/>
+                          <field name="background"/>
+                      </group>
+                      <group>
+                          <field name="visit_count" required="True"/>
+                          <field name="project"/>
+                          <field name="visit_date" required="True"/>
+                          <field name="purpose" required="True"/>
+                      </group>
+                  </group>
+                  <group string="主宾信息">
+                      <notebook>
+                        <page>
+                            <field name="guest">
+                                <tree editable="bottom">
+                                    <field name="name_guest" required="True"/>
+                                    <field name="post_guest"/>
+                                </tree>
+                            </field>
+                        </page>
+                      </notebook>
+                  </group>
+
+                  <group string="接待资源需求">
+                      <group>
+                          <field name="accompany_leads" widget="many2many_tags" required="True"/>
+                          <field name="participants" widget="many2many_tags" required="True"/>
+                      </group>
+                      <group>
+                          <field name="interpreter" widget="many2many_tags" required="True"/>
+                      </group>
+                  </group>
+
+                  <group string="会议室资源需求">
+                      <group>
+                          <field name="meeting"/>
+                          <field name="room_capacity"/>
+                      </group>
+                      <group>
+                          <field name="reserve_time"/>
+                          <field name="busy_time_room"/>
+                      </group>
+                  </group>
+
+                  <group string="接送安排">
+                      <group>
+                          <div class="o_row dtdream_customer_input">
+                              <field name="car"/>
+                              <span>小车</span>
+                              <field name="car_num"/>
+                              <span>部</span>
+                              <field name="commercial_vehicle"/>
+                              <span>商务车</span>
+                              <field name="commercial_vehicle_num"/>
+                              <span>部</span>
+                              <field name="bicycle"/>
+                              <span>自行乘车</span>
+                          </div>
+                      </group>
+                  </group>
 
               </sheet>
 
