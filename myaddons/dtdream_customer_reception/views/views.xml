@@ -91,14 +91,35 @@
                               <span>小车</span>
                               <field name="car_num"/>
                               <span>部</span>
+                          </div>
+                          <div class="o_row dtdream_customer_input">
                               <field name="commercial_vehicle"/>
                               <span>商务车</span>
                               <field name="commercial_vehicle_num"/>
                               <span>部</span>
+                          </div>
+                      </group>
+                      <group>
+                          <div class="dtdream_customer_input">
                               <field name="bicycle"/>
                               <span>自行乘车</span>
                           </div>
                       </group>
+                  </group>
+
+                  <group string="行程路线">
+                      <notebook>
+                        <page>
+                            <field name="path">
+                                <tree editable="bottom">
+                                    <field name="start_time"/>
+                                    <field name="starting"/>
+                                    <field name="end_time"/>
+                                    <field name="destination"/>
+                                </tree>
+                            </field>
+                        </page>
+                      </notebook>
                   </group>
 
               </sheet>
