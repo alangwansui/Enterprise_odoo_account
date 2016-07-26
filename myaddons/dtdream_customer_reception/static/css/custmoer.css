@@ -2,3 +2,7 @@
 .dtdream_customer_input input{
     max-width: 30px;
 }
+
+.dtdream_customer_checkbox div{
+    border: gray 1px solid;
+}

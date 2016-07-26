@@ -82,17 +82,41 @@
                           <field name="reserve_time"/>
                           <field name="busy_time_room"/>
                       </group>
+                      <group style="margin-top: -10px;" colspan="12">
+                          <label string="会议室准备" colspan="4" />
+                          <div class="o_row dtdream_customer_checkbox">
+                              <field name="ppt"/>
+                              <span style="margin-right:30px">PPT</span>
+                              <field name="camera"/>
+                              <span style="margin-right:30px">摄影</span>
+                              <field name="water"/>
+                              <span style="margin-right:30px">瓶装水</span>
+                              <field name="tea"/>
+                              <span style="margin-right:30px">茶水</span>
+                              <field name="meeting_document"/>
+                              <span style="margin-right:30px">公司资料</span>
+                              <field name="seat_board"/>
+                              <span style="margin-right:30px">席位牌</span>
+                              <field name="banner"/>
+                              <span style="margin-right:30px">横幅</span>
+                              <field name="other_more"/>
+                              <span>其它</span>
+                          </div>
+                          <group>
+                              <field name="other_more_text" attrs="{'invisible':[('other_more','=',False)]}"/>
+                          </group>
+                      </group>
                   </group>
 
                   <group string="接送安排">
                       <group>
-                          <div class="o_row dtdream_customer_input">
+                          <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
                               <field name="car"/>
                               <span>小车</span>
                               <field name="car_num"/>
                               <span>部</span>
                           </div>
-                          <div class="o_row dtdream_customer_input">
+                          <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
                               <field name="commercial_vehicle"/>
                               <span>商务车</span>
                               <field name="commercial_vehicle_num"/>
@@ -100,7 +124,7 @@
                           </div>
                       </group>
                       <group>
-                          <div class="dtdream_customer_input">
+                          <div class="dtdream_customer_input dtdream_customer_checkbox">
                               <field name="bicycle"/>
                               <span>自行乘车</span>
                           </div>
@@ -120,6 +144,92 @@
                             </field>
                         </page>
                       </notebook>
+                  </group>
+
+                  <group string="接送要求">
+                      <group>
+                          <div class="o_row dtdream_customer_checkbox">
+                              <field name="driver" border="yellow 2px solid;"/>
+                              <span>司机</span>
+                          </div>
+                          <div class="dtdream_customer_checkbox">
+                               <field name="card"/>
+                               <span>接机牌</span>
+                          </div>
+                      </group>
+                      <group>
+                          <div class="o_row dtdream_customer_checkbox">
+                              <field name="assistance"/>
+                              <span>接机/接站人员</span>
+                          </div>
+                          <div class="dtdream_customer_checkbox">
+                              <field name="flower"/>
+                              <span>鲜花</span>
+                          </div>
+                      </group>
+                  </group>
+
+                  <group string="接待标准">
+                      <group>
+                          <label for="single_room" string="酒店住宿"/>
+                          <div class="o_row dtdream_customer_checkbox" style="margin: -5px 0 5px -50px;">
+                              <field name="single_room" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <span attrs="{'invisible':[('room_self','=',True)]}">标准单人房</span>
+                              <field name="single_room_num" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <span style="margin-right:20px" attrs="{'invisible':[('room_self','=',True)]}">间</span>
+                              <field name="double_room" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <span attrs="{'invisible':[('room_self','=',True)]}">标准双人房</span>
+                              <field name="double_room_num" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <span style="margin-right:20px" attrs="{'invisible':[('room_self','=',True)]}">间</span>
+                              <field name="room_self" attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)]}"/>
+                              <span attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)]}">自理安排酒店</span>
+                          </div>
+                          <label for="hotel"/>
+                          <div class="o_row" style="margin: -2px 0 5px -50px;">
+                              <field name="hotel" widget="radio" options="{'horizontal': true}"/>
+                          </div>
+                          <label for="dinner"/>
+                          <div class="o_row" style="margin: -2px 0 5px -50px;">
+                              <field name="dinner" widget="radio" options="{'horizontal': true}"/>
+                          </div>
+                          <label for="memories"/>
+                          <div class="o_row" style="margin: -2px 0 5px -50px;">
+                              <field name="memories"/>
+                              <span style="margin-left: 30px;">数量</span>
+                              <field name="memories_num"/>
+                          </div>
+                      </group>
+                      <group>
+                          <field name="hotel_position" widget="radio" options="{'horizontal': true}"/>
+                          <field name="payment_hotel" widget="radio" options="{'horizontal': true}"/>
+                          <field name="dinner_position" widget="radio" options="{'horizontal': true}"/>
+                          <field name="payment_dinner" widget="radio" options="{'horizontal': true}"/>
+                      </group>
+                  </group>
+
+                  <group string="费用预算">
+                      <group>
+                          <field name="hotel_fee" required="True"/>
+                          <field name="car_fee" required="True"/>
+                          <field name="other_fee" required="True"/>
+                      </group>
+                      <group>
+                          <field name="dinner_fee" required="True"/>
+                          <field name="advertise_fee" required="True"/>
+                          <field name="total_fee"/>
+                      </group>
+                  </group>
+
+                  <group string="接待小结">
+                      <group>
+                          <field name="summary"/>
+                      </group>
+                      <group>
+                          <label for="score" string="请对本次的客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
+                          <div class="o_row">
+                              <field name="score" widget="radio" options="{'horizontal': true}"/>
+                          </div>
+                      </group>
                   </group>
 
               </sheet>
