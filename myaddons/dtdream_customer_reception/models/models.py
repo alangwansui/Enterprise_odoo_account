@@ -98,12 +98,14 @@ class dtdream_visit_purpose(models.Model):
     _name = 'dtdream.visit.purpose'
 
     name = fields.Char(string='来访目的')
+    config = fields.Many2one('dtdream.customer.reception.config')
 
 
 class dtdream_meeting_room(models.Model):
     _name = 'dtdream.meeting.room'
 
     name = fields.Char(string='会议室名称')
+    config = fields.Many2one('dtdream.customer.reception.config')
 
 
 class dtdream_visit_path(models.Model):
@@ -120,6 +122,40 @@ class dtdream_customer_memories(models.Model):
     _name = 'dtdream.customer.memories'
 
     name = fields.Char(string='纪念品名称')
+    config = fields.Many2one('dtdream.customer.reception.config')
+
+
+class dtdream_customer_reception_config(models.Model):
+    _name = 'dtdream.customer.reception.config'
+
+    duty_phone = fields.Char(string='客工部值班电话')
+    officer = fields.Many2one('hr.employee', string='客工部主管')
+    car = fields.Many2one('hr.employee', string='车辆负责人')
+    inter = fields.Many2one('hr.employee', string='企划部接口人')
+    purpose = fields.One2many('dtdream.visit.purpose', 'config')
+    memory = fields.One2many('dtdream.customer.memories', 'config')
+    metting_room = fields.One2many('dtdream.meeting.room', 'config')
+
+
+class dtdream_marketing_activities(models.Model):
+    _name = 'dtdream.marketing.activities'
+
+    activity = fields.Selection([('0', '技术交流'), ('1', '公司参观'), ('2', '高层拜访'), ('3', '现场会'),
+                                 ('4', '第三方活动'), ('5', '样板点参观')], string='活动类型')
+    activity_time = fields.Date(string='时间')
+    activity_place = fields.Char(string='地点')
+    customer = fields.Many2many(string='客户参与人员')
+    company = fields.Many2many(string='公司参与人员')
+    activity_content = fields.Text(string='活动内容')
+    activity_result = fields.Text(string='结果')
+    partner_customer = fields.Many2one('res.partner')
+
+
+class dtdream_customer_res_partner(models.Model):
+    _inherit = 'res.partner'
+
+    marketing_activities = fields.One2many('dtdream.marketing.activities', 'partner_customer')
+    customer_reception = fields.Integer()
 
 
 

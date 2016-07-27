@@ -83,7 +83,7 @@
                           <field name="busy_time_room"/>
                       </group>
                       <group style="margin-top: -10px;" colspan="12">
-                          <label string="会议室准备" colspan="4" />
+                          <label string="会议室准备" colspan="4" style="font-weigh:bold"/>
                           <div class="o_row dtdream_customer_checkbox">
                               <field name="ppt"/>
                               <span style="margin-right:30px">PPT</span>
@@ -242,6 +242,95 @@
             </form>
         </field>
     </record>
+
+    <record id="view_dtdream_customer_reception_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.customer.reception.tree</field>
+        <field name="model">dtdream.customer.reception</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="bill_num"/>
+              <field name="name"/>
+              <field name="workid"/>
+              <field name="iphone"/>
+              <field name="receptionist"/>
+              <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_marketing_activities_form" model="ir.ui.view">
+        <field name="name">marketing.activities.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='sales_purchases']" position="after">
+                <page string="营销活动" name="marketing_activities">
+                   <field name="marketing_activities">
+                       <tree editable="bottom" create="0">
+                           <field name="activity"/>
+                           <field name="activity_time"/>
+                           <field name="activity_place"/>
+                           <field name="customer" widget="many2many_tags"/>
+                           <field name="company" widget="many2many_tags"/>
+                           <field name="activity_content"/>
+                           <field name="activity_result"/>
+                       </tree>
+                   </field>
+                </page>
+            </xpath>
+
+            <button name="toggle_active" position="before">
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_customer_reception_mine)d"
+                icon="fa-edit">
+                    <field string="客户接待" name="customer_reception" widget="statinfo"/>
+               </button>
+            </button>
+        </field>
+    </record>
+
+    <record id="view_dtdream_customer_reception_config_form" model="ir.ui.view">
+        <field name="name">view.dtdream.customer.reception.config.form</field>
+        <field name="model">dtdream.customer.reception.config</field>
+        <field name="arch" type="xml">
+            <form>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="duty_phone"/>
+                          <field name="officer"/>
+                      </group>
+                      <group>
+                          <field name="car"/>
+                          <field name="inter"/>
+                      </group>
+                      <notebook colspan="12">
+                          <page string="来访目的">
+                              <field name="purpose">
+                                  <tree editable="bottom">
+                                      <field name="name"/>
+                                  </tree>
+                              </field>
+                          </page>
+                          <page string="会议室资源">
+                              <field name="metting_room">
+                                  <tree editable="bottom">
+                                      <field name="name"/>
+                                  </tree>
+                              </field>
+                          </page>
+                          <page string="纪念品">
+                              <field name="memory">
+                                  <tree editable="bottom">
+                                      <field name="name"/>
+                                  </tree>
+                              </field>
+                          </page>
+                      </notebook>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+     </record>
 
   </data>
 </openerp>
