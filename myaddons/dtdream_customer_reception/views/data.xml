@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="customer_reception_config" model="dtdream.customer.reception.config">
+            <field name="duty_phone"/>
+            <field name="officer"/>
+            <field name="car"/>
+            <field name="inter"/>
+        </record>
+
+        <record id="visit_purpose_one" model="dtdream.visit.purpose">
+            <field name="name">公司展厅参观</field>
+            <field name="config" ref="customer_reception_config"/>
+        </record>
+
+        <record id="visit_purpose_two" model="dtdream.visit.purpose">
+            <field name="name">小镇展厅参观</field>
+            <field name="config" ref="customer_reception_config"/>
+        </record>
+
+        <record id="visit_purpose_three" model="dtdream.visit.purpose">
+            <field name="name">会议交流</field>
+            <field name="config" ref="customer_reception_config"/>
+        </record>
+
+
+    </data>
+</openerp>

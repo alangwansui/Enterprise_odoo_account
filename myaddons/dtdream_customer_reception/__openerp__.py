@@ -23,12 +23,13 @@
 
     # always loaded
     'data': [
+        'views/data.xml',
         'security/ir.model.access.csv',
         'views/importcss.xml',
         'views/actions.xml',
         'views/menu.xml',
         'views/views.xml',
-        'views/templates.xml',
+        'workflow/workflow.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

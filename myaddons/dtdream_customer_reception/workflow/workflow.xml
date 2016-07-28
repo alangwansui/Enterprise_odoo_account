@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="workflow_customer_reception_handle" model="workflow">
+        <field name="name">客户接待</field>
+        <field name="osv">dtdream.customer.reception</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record id="act_draft" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_customer_reception_handle"/>
+        <field name="flow_start">True</field>
+        <field name="name">草稿</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_draft()</field>
+    </record>
+
+    <record id="act_approve1" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_customer_reception_handle" />
+        <field name="name">部门审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve1()</field>
+    </record>
+
+    <record id="act_approve2" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_customer_reception_handle" />
+        <field name="name">客工部审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve2()</field>
+    </record>
+
+    <record id="act_apply" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_customer_reception_handle" />
+        <field name="name">接待安排与执行</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_apply()</field>
+    </record>
+
+    <record id="act_evaluate" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_customer_reception_handle" />
+        <field name="name">执行评价</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_evaluate()</field>
+    </record>
+
+    <record id="act_done" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_customer_reception_handle" />
+        <field name="name">完成</field>
+        <field name="flow_stop">True</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="trans_draft_approve1" model="workflow.transition">
+        <field name="act_from" ref="act_draft"/>
+        <field name="act_to" ref="act_approve1"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_approve1_approve2" model="workflow.transition">
+        <field name="act_from" ref="act_approve1"/>
+        <field name="act_to" ref="act_approve2"/>
+        <field name="signal">btn_agree</field>
+    </record>
+
+    <record id="trans_approve2_apply" model="workflow.transition">
+        <field name="act_from" ref="act_approve2"/>
+        <field name="act_to" ref="act_apply"/>
+        <field name="signal">btn_agree</field>
+    </record>
+
+    <record id="trans_apply_evaluate" model="workflow.transition">
+        <field name="act_from" ref="act_apply"/>
+        <field name="act_to" ref="act_evaluate"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_evaluate_done" model="workflow.transition">
+        <field name="act_from" ref="act_evaluate"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_approve1_draft_reject" model="workflow.transition">
+        <field name="act_from" ref="act_approve1"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_approve2_draft_reject" model="workflow.transition">
+        <field name="act_from" ref="act_approve2"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_reject</field>
+    </record>
+
+    <record id="trans_approve1_draft_back" model="workflow.transition">
+        <field name="act_from" ref="act_approve1"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_back</field>
+    </record>
+
+    <record id="trans_approve2_draft_back" model="workflow.transition">
+        <field name="act_from" ref="act_approve2"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_back</field>
+    </record>
+
+    <record id="trans_apply_draft_back" model="workflow.transition">
+        <field name="act_from" ref="act_apply"/>
+        <field name="act_to" ref="act_draft"/>
+        <field name="signal">btn_back</field>
+    </record>
+
+    </data>
+</openerp>

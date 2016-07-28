@@ -7,8 +7,12 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"/>
+                    <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"/>
+                    <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"/>
+                    <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"/>
                     <field name="state"  widget="statusbar"
-                           statusbar_visible="0,99"/>
+                           statusbar_visible="0,1,2,3,4,99"/>
                </header>
               <sheet>
                   <group string="基本信息">
@@ -38,16 +42,16 @@
 
                   <group string="客户信息">
                       <group>
-                          <field name="customer" required="True"/>
+                          <field name="customer" required="True" domain="[('customer', '=', True)]"/>
                           <field name="customer_v" widget="radio" options="{'horizontal': true}"/>
                           <field name="inter_tel"/>
                           <field name="background"/>
                       </group>
                       <group>
                           <field name="visit_count" required="True"/>
-                          <field name="project"/>
+                          <field name="project" options="{'no_open': True,'no_create': True}"/>
                           <field name="visit_date" required="True"/>
-                          <field name="purpose" required="True"/>
+                          <field name="purpose" required="True" options="{'no_open': True,'no_create': True}"/>
                       </group>
                   </group>
                   <group string="主宾信息">
@@ -75,7 +79,7 @@
 
                   <group string="会议室资源需求">
                       <group>
-                          <field name="meeting"/>
+                          <field name="meeting" options="{'no_open': True,'no_create': True}"/>
                           <field name="room_capacity"/>
                       </group>
                       <group>
@@ -194,7 +198,7 @@
                           </div>
                           <label for="memories"/>
                           <div class="o_row" style="margin: -2px 0 5px -50px;">
-                              <field name="memories"/>
+                              <field name="memories" options="{'no_open': True,'no_create': True}"/>
                               <span style="margin-left: 30px;">数量</span>
                               <field name="memories_num"/>
                           </div>

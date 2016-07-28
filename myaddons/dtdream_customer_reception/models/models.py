@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from lxml import etree
 
 
 class dtdream_customer_reception(models.Model):
@@ -8,7 +9,7 @@ class dtdream_customer_reception(models.Model):
     _description = u"客户接待"
     _inherit = ['mail.thread']
 
-    write_time = fields.Char(string='填单时间')
+    write_time = fields.Datetime(string='填单时间')
     bill_num = fields.Char(string='单据号')
     duty_tel = fields.Char(string='客工部值班电话')
     name = fields.Many2one('hr.employee', string='员工姓名')
@@ -85,6 +86,30 @@ class dtdream_customer_reception(models.Model):
                               ('99', '完成'),
                               ], string='状态', default='0')
 
+    @api.multi
+    def wkf_draft(self):
+        self.write({"state": '0'})
+
+    @api.multi
+    def wkf_approve1(self):
+        self.write({"state": '1'})
+
+    @api.multi
+    def wkf_approve2(self):
+        self.write({"state": '2'})
+
+    @api.multi
+    def wkf_apply(self):
+        self.write({"state": '3'})
+
+    @api.multi
+    def wkf_evaluate(self):
+        self.write({"state": '4'})
+
+    @api.multi
+    def wkf_done(self):
+        self.write({"state": '99'})
+
 
 class dtdream_guest_honour(models.Model):
     _name = 'dtdream.guest.honour'
@@ -128,6 +153,17 @@ class dtdream_customer_memories(models.Model):
 class dtdream_customer_reception_config(models.Model):
     _name = 'dtdream.customer.reception.config'
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(dtdream_customer_reception_config, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if res['type'] == "form":
+            doc.xpath("//form")[0].set("create", "false")
+        if res['type'] == "tree":
+            doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
     duty_phone = fields.Char(string='客工部值班电话')
     officer = fields.Many2one('hr.employee', string='客工部主管')
     car = fields.Many2one('hr.employee', string='车辆负责人')
@@ -135,6 +171,7 @@ class dtdream_customer_reception_config(models.Model):
     purpose = fields.One2many('dtdream.visit.purpose', 'config')
     memory = fields.One2many('dtdream.customer.memories', 'config')
     metting_room = fields.One2many('dtdream.meeting.room', 'config')
+    name = fields.Char(default=lambda self: u'客户接待配置')
 
 
 class dtdream_marketing_activities(models.Model):
