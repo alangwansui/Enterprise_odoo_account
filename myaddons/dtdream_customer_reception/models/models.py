@@ -1,28 +1,120 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+import re
+from datetime import datetime
 from lxml import etree
 
 
 class dtdream_customer_reception(models.Model):
     _name = 'dtdream.customer.reception'
+    _rec_name = 'title'
     _description = u"客户接待"
     _inherit = ['mail.thread']
 
-    write_time = fields.Datetime(string='填单时间')
-    bill_num = fields.Char(string='单据号')
-    duty_tel = fields.Char(string='客工部值班电话')
-    name = fields.Many2one('hr.employee', string='员工姓名')
-    workid = fields.Char('工号')
-    iphone = fields.Char(string='联系电话')
-    post = fields.Char(string='职务')
-    home = fields.Char(string='常驻地')
-    department = fields.Many2one('hr.department', string='所属部门')
-    code = fields.Char(string='部门编码')
+    warning = {"warning": {'title': u"提示",
+                           'message': u"只可输入数字!"}}
+
+    @api.onchange('hotel_fee')
+    @api.constrains('hotel_fee')
+    def _check_hotel_fee(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if self.hotel_fee:
+            if not p.search(self.hotel_fee.encode("utf-8")):
+                self.hotel_fee = False
+                return self.warning
+        self._compute_total_fee()
+
+    @api.onchange('dinner_fee')
+    @api.constrains('dinner_fee')
+    def _check_dinner_fee(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if self.dinner_fee:
+            if not p.search(self.dinner_fee.encode("utf-8")):
+                self.dinner_fee = False
+                return self.warning
+        self._compute_total_fee()
+
+    @api.onchange('car_fee')
+    @api.constrains('car_fee')
+    def _check_car_fee(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if self.car_fee:
+            if not p.search(self.car_fee.encode("utf-8")):
+                self.car_fee = False
+                return self.warning
+        self._compute_total_fee()
+
+    @api.onchange('advertise_fee')
+    @api.constrains('advertise_fee')
+    def _check_advertise_fee(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if self.advertise_fee:
+            if not p.search(self.advertise_fee.encode("utf-8")):
+                self.advertise_fee = False
+                return self.warning
+        self._compute_total_fee()
+
+    @api.onchange('other_fee')
+    @api.constrains('other_fee')
+    def _check_other_fee(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if self.other_fee:
+            if not p.search(self.other_fee.encode("utf-8")):
+                self.other_fee = False
+                return self.warning
+        self._compute_total_fee()
+
+    def _compute_total_fee(self):
+        self.total_fee = float(self.hotel_fee) + float(self.dinner_fee) +\
+                     float(self.car_fee) + float(self.advertise_fee) + float(self.other_fee)
+
+    @api.depends('name')
+    def compute_employee_info(self):
+        for rec in self:
+            rec.workid = rec.name.job_number
+            rec.iphone = rec.name.mobile_phone
+            rec.post = rec.name.duties
+            rec.home = rec.name.work_place
+            rec.department = rec.name.department_id.complete_name
+            rec.code = rec.name.department_id.code
+
+    @api.depends('name')
+    def _compute_phone_num(self):
+        cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
+        self.duty_tel = cr.duty_phone
+
+    @api.model
+    def create(self, vals):
+        letter = 'V' if vals.get('customer_v') == '0' else 'N'
+        bill_num = datetime.now().strftime("%Y%m%d")
+        cr = self.search([('bill_num', 'like', bill_num)], order='id desc', limit=1)
+        if cr:
+            bill_num = "%s" % (int(cr.bill_num[:-1]) + 1) + letter
+        else:
+            bill_num = bill_num + '01' + letter
+        vals.update({'bill_num': bill_num})
+        return super(dtdream_customer_reception, self).create(vals)
+
+    bill_num = fields.Char(string='单据号', store="True")
+    title = fields.Char(default='客户接待')
+    write_time = fields.Datetime(string='填单时间', default=lambda self: fields.Datetime.now())
+    duty_tel = fields.Char(string='客工部值班电话', compute=_compute_phone_num)
+    name = fields.Many2one('hr.employee', string='员工姓名',
+                           default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
+    workid = fields.Char('工号', compute=compute_employee_info)
+    iphone = fields.Char(string='联系电话', compute=compute_employee_info)
+    post = fields.Char(string='职务', compute=compute_employee_info)
+    home = fields.Char(string='常驻地', compute=compute_employee_info)
+    department = fields.Char(string='所属部门', compute=compute_employee_info)
+    code = fields.Char(string='部门编码', compute=compute_employee_info)
     customer = fields.Many2one('res.partner', string='客户名称')
+    customer_level = fields.Selection([('ss', 'ss'), ('s', 's'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
+                                      string='客户重要等级')
+    customer_source = fields.Char(string='客户来源')
     customer_v = fields.Selection([('0', '是'), ('1', '否')], string='是否价值客户', default='0')
     project = fields.Many2one('crm.lead', string='项目名称')
-    visit_count = fields.Char(string='来访人数')
+    visit_count = fields.Integer(string='来访人数')
     guest = fields.One2many('dtdream.guest.honour', 'customer_reception')
     visit_date = fields.Date(string='来访日期')
     inter_tel = fields.Char(string='接口人联系方式')
@@ -68,16 +160,17 @@ class dtdream_customer_reception(models.Model):
     dinner_position = fields.Selection([('0', '商业区'), ('1', '景区')], string='用餐地点', default='0')
     payment_dinner = fields.Selection([('0', '申请人垫付'), ('1', '客户自理')], string='用餐结算方式', default='0')
     memories = fields.Many2one('dtdream.customer.memories', string='纪念品')
+    remark = fields.Text(string='备注')
     memories_num = fields.Integer()
     hotel_fee = fields.Char(string='住宿费(元)')
     dinner_fee = fields.Char(string='就餐费(元)')
     car_fee = fields.Char(string='车辆费(元)')
     advertise_fee = fields.Char(string='公司宣传费(元)')
     other_fee = fields.Char(string='其它费用(元)')
-    total_fee = fields.Char(string='总计(元)')
+    total_fee = fields.Float(string='总计(元)', readonly='True')
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
-    score = fields.Selection([('1', '1分'), ('5', '5分'), ('10', '10分')])
+    score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
     state = fields.Selection([('0', '草稿'),
                               ('1', '部门审批'),
                               ('2', '客工部审批'),

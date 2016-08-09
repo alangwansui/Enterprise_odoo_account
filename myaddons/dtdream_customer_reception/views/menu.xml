@@ -5,7 +5,7 @@
         <menuitem name="我的申请" id="menu_dtdream_customer_mine" parent="menu_dtdream_customer_reception_root" sequence="12" action="act_dtdream_customer_reception_mine"/>
         <menuitem name="待我审批" id="menu_dtdream_customer_approve" parent="menu_dtdream_customer_reception_root" sequence="14" action="act_dtdream_customer_reception_approve"/>
         <menuitem name="所有单据" id="menu_dtdream_customer_all" parent="menu_dtdream_customer_reception_root" sequence="16" action="act_dtdream_customer_reception_all"/>
-        <menuitem name="配置" id="menu_dtdream_customer_config" parent="menu_dtdream_customer_reception_root" sequence="18"/>
+        <menuitem name="配置" id="menu_dtdream_customer_config" parent="menu_dtdream_customer_reception_root" sequence="18" groups="customer_reception_manage"/>
         <menuitem name="客户接待配置" id="menu_dtdream_customer_config_child" parent="menu_dtdream_customer_config" action="act_dtdream_customer_reception_config"/>
     </data>
 </openerp>

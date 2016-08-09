@@ -111,6 +111,5 @@
         <field name="act_to" ref="act_draft"/>
         <field name="signal">btn_back</field>
     </record>
-
     </data>
 </openerp>

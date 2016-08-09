@@ -7,22 +7,25 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"/>
-                    <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"/>
-                    <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"/>
-                    <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"/>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',('0', '3', '4'))]}"/>
+                    <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',('1', '2', '3'))]}"/>
+                    <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',('1', '2'))]}"/>
+                    <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',('1', '2'))]}"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,1,2,3,4,99"/>
                </header>
               <sheet>
                   <group string="基本信息">
                       <group>
-                          <field name="bill_num"/>
-                          <field name="receptionist" required="True"/>
+                          <field name="bill_num" readonly="True" attrs="{'invisible':[('bill_num','=',False)]}"/>
+                          <field name="write_time" readonly="True"/>
                       </group>
                       <group>
                           <field name="duty_tel"/>
-                          <field name="write_time"/>
                       </group>
                   </group>
 
@@ -43,13 +46,15 @@
                   <group string="客户信息">
                       <group>
                           <field name="customer" required="True" domain="[('customer', '=', True)]"/>
+                          <field name="customer_level"/>
+                          <field name="customer_source"/>
                           <field name="customer_v" widget="radio" options="{'horizontal': true}"/>
-                          <field name="inter_tel"/>
                           <field name="background"/>
                       </group>
                       <group>
                           <field name="visit_count" required="True"/>
                           <field name="project" options="{'no_open': True,'no_create': True}"/>
+                          <field name="inter_tel"/>
                           <field name="visit_date" required="True"/>
                           <field name="purpose" required="True" options="{'no_open': True,'no_create': True}"/>
                       </group>
@@ -65,6 +70,11 @@
                             </field>
                         </page>
                       </notebook>
+                  </group>
+                  <group string="客户接待执行人" attrs="{'invisible':[('state','in',('0','1'))]}">
+                      <group>
+                          <field name="receptionist" attrs="{'required':[('state','not in',('0','1'))]}"/>
+                      </group>
                   </group>
 
                   <group string="接待资源需求">
@@ -202,6 +212,10 @@
                               <span style="margin-left: 30px;">数量</span>
                               <field name="memories_num"/>
                           </div>
+                          <label for="remark"/>
+                          <div class="o_row" style="margin: -2px 0 5px -50px;">
+                              <field name="remark"/>
+                          </div>
                       </group>
                       <group>
                           <field name="hotel_position" widget="radio" options="{'horizontal': true}"/>
@@ -224,14 +238,16 @@
                       </group>
                   </group>
 
-                  <group string="接待小结">
+                  <group string="接待小结" attrs="{'invisible':[('state','in',('0','1', '2'))]}">
                       <group>
                           <field name="summary"/>
                       </group>
+                  </group>
+                  <group string="评价" attrs="{'invisible':[('state','not in',('4','99'))]}">
                       <group>
                           <label for="score" string="请对本次的客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
                           <div class="o_row">
-                              <field name="score" widget="radio" options="{'horizontal': true}"/>
+                              <field name="score"/>
                           </div>
                       </group>
                   </group>
@@ -256,7 +272,6 @@
               <field name="name"/>
               <field name="workid"/>
               <field name="iphone"/>
-              <field name="receptionist"/>
               <field name="state"/>
             </tree>
         </field>
