@@ -42,7 +42,6 @@ class ZhihuClient(object):
         headers = {'X-Xsrftoken': self.xsrf,
                     }
         self.session.headers.update(headers)
-            #print self.session.headers
         r = self.session.post(url, data=data)
         print json.loads(r.content).get('msg','')
         #print self.session.cookies.items()
@@ -57,9 +56,9 @@ class ZhihuClient(object):
                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                    }
         self.session.headers.update(headers)
-        print self.session.headers
+        #print self.session.headers
         r = self.session.post(url, data=data)
-        print '---------------->',(r.content)
+        print json.loads(r.content).get('msg','')
 
 
 def _attr(attrs, attrname):
@@ -94,7 +93,7 @@ if __name__ == '__main__':
     username = '15088618784'
     password = 'jinshuz18784'
     c.login(username, password)
-    #c.edit_signature('dasdada')
+    c.edit_signature('python programming')
 
 
 
