@@ -17,7 +17,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('is_current','=',True),('shenpiren.user_id','=',uid),]</field>
+            <field name="domain">[('is_current','=',True),('shenpiren.user_id','=',uid),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
         <record id="act_dtdream_travel_chucha_shenqing_03" model="ir.actions.act_window">
@@ -26,7 +26,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('approve.user_id','=',uid)]</field>
+            <field name="domain">[('approve.user_id','=',uid),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
         <record model="ir.actions.server" id="act_dtdream_travel_chucha_shenqing_04">
@@ -39,7 +39,7 @@
                 'view_type': 'form',
                 'view_mode': 'tree,form',
                 'res_model': 'dtdream.travel.chucha',
-                'domain': ['|','|','|','|',('message_follower_ids.partner_id', '=', user.partner_id.id),('create_uid', '=', uid),('shenpiren.user_id','=',uid),('approve.user_id','=',uid),('name.user_id','=',uid)],
+                'domain': ['|','&amp;',('message_follower_ids.partner_id', '=', user.partner_id.id),('name.Inaugural_state','=','Inaugural_state_01'),'|','&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('create_uid', '=', uid),'|','&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('shenpiren.user_id','=',uid),'|','&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('approve.user_id','=',uid),'&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('name.user_id','=',uid)],
                 'context':context,
                 }
             </field>
@@ -51,7 +51,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','!=','0')]</field>
+            <field name="domain">[('state','!=','0'),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
     </data>
