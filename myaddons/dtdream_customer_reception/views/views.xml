@@ -23,6 +23,7 @@
                       <group>
                           <field name="bill_num" readonly="True" attrs="{'invisible':[('bill_num','=',False)]}"/>
                           <field name="write_time" readonly="True"/>
+                          <field name="is_manage" invisible="True"/>
                       </group>
                       <group>
                           <field name="duty_tel"/>
@@ -31,7 +32,7 @@
 
                   <group string="员工信息">
                       <group>
-                          <field name="name" required="True"/>
+                          <field name="name" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="post"/>
                           <field name="department"/>
                           <field name="home"/>
@@ -45,24 +46,24 @@
 
                   <group string="客户信息">
                       <group>
-                          <field name="customer" required="True" domain="[('customer', '=', True)]"/>
-                          <field name="customer_level"/>
-                          <field name="customer_source"/>
-                          <field name="customer_v" widget="radio" options="{'horizontal': true}"/>
-                          <field name="background"/>
+                          <field name="customer" required="True" domain="[('customer', '=', True)]" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer_level" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer_source" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="background" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
-                          <field name="visit_count" required="True"/>
-                          <field name="project" options="{'no_open': True,'no_create': True}"/>
-                          <field name="inter_tel"/>
-                          <field name="visit_date" required="True"/>
-                          <field name="purpose" required="True" options="{'no_open': True,'no_create': True}"/>
+                          <field name="visit_count" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="inter_tel" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="visit_date" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
                   <group string="主宾信息">
                       <notebook>
                         <page>
-                            <field name="guest">
+                            <field name="guest" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}">
                                 <tree editable="bottom">
                                     <field name="name_guest" required="True"/>
                                     <field name="post_guest"/>
@@ -73,51 +74,51 @@
                   </group>
                   <group string="客户接待执行人" attrs="{'invisible':[('state','in',('0','1'))]}">
                       <group>
-                          <field name="receptionist" attrs="{'required':[('state','not in',('0','1'))]}"/>
+                          <field name="receptionist" attrs="{'required':[('state','not in',('0','1'))], 'readonly':[('state','!=', '2'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
 
                   <group string="接待资源需求">
                       <group>
-                          <field name="accompany_leads" widget="many2many_tags" required="True"/>
-                          <field name="participants" widget="many2many_tags" required="True"/>
+                          <field name="accompany_leads" widget="many2many_tags" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="participants" widget="many2many_tags" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
-                          <field name="interpreter" widget="many2many_tags" required="True"/>
+                          <field name="interpreter" widget="many2many_tags" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
 
                   <group string="会议室资源需求">
                       <group>
-                          <field name="meeting" options="{'no_open': True,'no_create': True}"/>
-                          <field name="room_capacity"/>
+                          <field name="meeting" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="room_capacity" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
-                          <field name="reserve_time"/>
-                          <field name="busy_time_room"/>
+                          <field name="reserve_time" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="busy_time_room" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group style="margin-top: -10px;" colspan="12">
                           <label string="会议室准备" colspan="4" style="font-weigh:bold"/>
                           <div class="o_row dtdream_customer_checkbox">
-                              <field name="ppt"/>
+                              <field name="ppt" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">PPT</span>
-                              <field name="camera"/>
+                              <field name="camera" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">摄影</span>
-                              <field name="water"/>
+                              <field name="water" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">瓶装水</span>
-                              <field name="tea"/>
+                              <field name="tea" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">茶水</span>
-                              <field name="meeting_document"/>
+                              <field name="meeting_document" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">公司资料</span>
-                              <field name="seat_board"/>
+                              <field name="seat_board" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">席位牌</span>
-                              <field name="banner"/>
+                              <field name="banner" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">横幅</span>
-                              <field name="other_more"/>
+                              <field name="other_more" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>其它</span>
                           </div>
                           <group>
-                              <field name="other_more_text" attrs="{'invisible':[('other_more','=',False)]}"/>
+                              <field name="other_more_text" attrs="{'invisible':[('other_more','=',False)],'readonly':[('state','!=', '0'),('is_manage','=',False)]}" />
                           </group>
                       </group>
                   </group>
@@ -125,21 +126,21 @@
                   <group string="接送安排">
                       <group>
                           <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
-                              <field name="car"/>
+                              <field name="car" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>小车</span>
-                              <field name="car_num"/>
+                              <field name="car_num" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>部</span>
                           </div>
                           <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
-                              <field name="commercial_vehicle"/>
+                              <field name="commercial_vehicle" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>商务车</span>
-                              <field name="commercial_vehicle_num"/>
+                              <field name="commercial_vehicle_num" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>部</span>
                           </div>
                       </group>
                       <group>
                           <div class="dtdream_customer_input dtdream_customer_checkbox">
-                              <field name="bicycle"/>
+                              <field name="bicycle" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>自行乘车</span>
                           </div>
                       </group>
@@ -148,7 +149,7 @@
                   <group string="行程路线">
                       <notebook>
                         <page>
-                            <field name="path">
+                            <field name="path" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}">
                                 <tree editable="bottom">
                                     <field name="start_time"/>
                                     <field name="starting"/>
@@ -163,21 +164,21 @@
                   <group string="接送要求">
                       <group>
                           <div class="o_row dtdream_customer_checkbox">
-                              <field name="driver" border="yellow 2px solid;"/>
+                              <field name="driver" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>司机</span>
                           </div>
                           <div class="dtdream_customer_checkbox">
-                               <field name="card"/>
+                               <field name="card" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                                <span>接机牌</span>
                           </div>
                       </group>
                       <group>
                           <div class="o_row dtdream_customer_checkbox">
-                              <field name="assistance"/>
+                              <field name="assistance" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>接机/接站人员</span>
                           </div>
                           <div class="dtdream_customer_checkbox">
-                              <field name="flower"/>
+                              <field name="flower" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span>鲜花</span>
                           </div>
                       </group>
@@ -187,67 +188,67 @@
                       <group>
                           <label for="single_room" string="酒店住宿"/>
                           <div class="o_row dtdream_customer_checkbox" style="margin: -5px 0 5px -50px;">
-                              <field name="single_room" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <field name="single_room" attrs="{'invisible':[('room_self','=',True)], 'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span attrs="{'invisible':[('room_self','=',True)]}">标准单人房</span>
-                              <field name="single_room_num" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <field name="single_room_num" attrs="{'invisible':[('room_self','=',True)], 'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:20px" attrs="{'invisible':[('room_self','=',True)]}">间</span>
-                              <field name="double_room" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <field name="double_room" attrs="{'invisible':[('room_self','=',True)], 'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span attrs="{'invisible':[('room_self','=',True)]}">标准双人房</span>
-                              <field name="double_room_num" attrs="{'invisible':[('room_self','=',True)]}"/>
+                              <field name="double_room_num" attrs="{'invisible':[('room_self','=',True)], 'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:20px" attrs="{'invisible':[('room_self','=',True)]}">间</span>
-                              <field name="room_self" attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)]}"/>
+                              <field name="room_self" attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)], 'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)]}">自理安排酒店</span>
                           </div>
                           <label for="hotel"/>
                           <div class="o_row" style="margin: -2px 0 5px -50px;">
-                              <field name="hotel" widget="radio" options="{'horizontal': true}"/>
+                              <field name="hotel" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           </div>
                           <label for="dinner"/>
                           <div class="o_row" style="margin: -2px 0 5px -50px;">
-                              <field name="dinner" widget="radio" options="{'horizontal': true}"/>
+                              <field name="dinner" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           </div>
                           <label for="memories"/>
                           <div class="o_row" style="margin: -2px 0 5px -50px;">
-                              <field name="memories" options="{'no_open': True,'no_create': True}"/>
+                              <field name="memories" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-left: 30px;">数量</span>
-                              <field name="memories_num"/>
+                              <field name="memories_num" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           </div>
                           <label for="remark"/>
                           <div class="o_row" style="margin: -2px 0 5px -50px;">
-                              <field name="remark"/>
+                              <field name="remark" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           </div>
                       </group>
                       <group>
-                          <field name="hotel_position" widget="radio" options="{'horizontal': true}"/>
-                          <field name="payment_hotel" widget="radio" options="{'horizontal': true}"/>
-                          <field name="dinner_position" widget="radio" options="{'horizontal': true}"/>
-                          <field name="payment_dinner" widget="radio" options="{'horizontal': true}"/>
+                          <field name="hotel_position" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="payment_hotel" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="dinner_position" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="payment_dinner" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
 
                   <group string="费用预算">
                       <group>
-                          <field name="hotel_fee" required="True"/>
-                          <field name="car_fee" required="True"/>
-                          <field name="other_fee" required="True"/>
+                          <field name="hotel_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="car_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="other_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
-                          <field name="dinner_fee" required="True"/>
-                          <field name="advertise_fee" required="True"/>
+                          <field name="dinner_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="advertise_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="total_fee"/>
                       </group>
                   </group>
 
                   <group string="接待小结" attrs="{'invisible':[('state','in',('0','1', '2'))]}">
                       <group>
-                          <field name="summary"/>
+                          <field name="summary" attrs="{'readonly':[('state','!=', '3'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
                   <group string="评价" attrs="{'invisible':[('state','not in',('4','99'))]}">
                       <group>
                           <label for="score" string="请对本次的客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
                           <div class="o_row">
-                              <field name="score"/>
+                              <field name="score" attrs="{'readonly':[('state','!=', '4'),('is_manage','=',False)]}"/>
                           </div>
                       </group>
                   </group>
@@ -284,13 +285,13 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook/page[@name='sales_purchases']" position="after">
                 <page string="营销活动" name="marketing_activities">
-                   <field name="marketing_activities">
+                   <field name="marketing_activities" string="营销活动">
                        <tree editable="bottom" create="0">
                            <field name="activity"/>
                            <field name="activity_time"/>
                            <field name="activity_place"/>
-                           <field name="customer" widget="many2many_tags"/>
-                           <field name="company" widget="many2many_tags"/>
+                           <field name="customer"/>
+                           <field name="company"/>
                            <field name="activity_content"/>
                            <field name="activity_result"/>
                        </tree>
@@ -306,6 +307,32 @@
             </button>
         </field>
     </record>
+
+    <record id="view_marketing_activities_tree" model="ir.ui.view">
+        <field name="name">view.marketing.activities.tree</field>
+        <field name="model">dtdream.marketing.activities</field>
+        <field name="arch" type="xml">
+            <form string="营销活动">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="activity"/>
+                          <field name="activity_time"/>
+                      </group>
+                      <group>
+                          <field name="activity_place"/>
+                          <field name="activity_content"/>
+                          <field name="activity_result"/>
+                      </group>
+                      <group style="margin-top:-30px">
+                          <field name="company"/>
+                          <field name="customer"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+     </record>
 
     <record id="view_dtdream_customer_reception_config_form" model="ir.ui.view">
         <field name="name">view.dtdream.customer.reception.config.form</field>

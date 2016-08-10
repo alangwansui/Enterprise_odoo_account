@@ -84,6 +84,68 @@ class dtdream_customer_reception(models.Model):
         cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
         self.duty_tel = cr.duty_phone
 
+    def _compute_is_customer_manage(self):
+        if self.env.ref("dtdream_customer_reception.customer_reception_manage") in self.env.user.groups_id:
+            self.is_manage = True
+        else:
+            self.is_manage = False
+
+    @api.onchange('customer_v')
+    def update_bill_num(self):
+        if self.bill_num:
+            letter = 'V' if self.customer_v == '0' else 'N'
+            self.bill_num = self.bill_num[:-1] + letter
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(dtdream_customer_reception, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        # doc = etree.XML(res['arch'])
+        # if res['type'] == "form":
+        #     doc.xpath("//form")[0].set("delete", "false")
+        #     res['arch'] = etree.tostring(doc)
+        # if res['type'] == "tree":
+        #     doc.xpath("//tree")[0].set("delete", "false")
+        #     res['arch'] = etree.tostring(doc)
+        return res
+
+    def create_customer_activities(self, result):
+        if result.purpose.name == u'公司展厅参观' or result.purpose.name == u"小镇展厅参观":
+            activity = '1'
+        elif result.purpose.name == u'会议交流':
+            activity = '0'
+        else:
+            activity = ''
+        company = [p.name for p in result.accompany_leads] + [p.name for p in result.interpreter] +\
+                  [p.name for p in result.participants]
+        company.append(result.name.name)
+        result.env['dtdream.marketing.activities'].create({'activity': activity, 'activity_time': result.visit_date,
+                                                           'customer': ';'.join([guest.name_guest for guest in result.guest if guest]),
+                                                           'company': ';'.join(company), 'partner_customer': result.customer.id,
+                                                           'customer_reception_id': result.id})
+
+    def update_customer_activities(self):
+        if self.purpose.name == u'公司展厅参观' or self.purpose.name == u"小镇展厅参观":
+            activity = '1'
+        elif self.purpose.name == u'会议交流':
+            activity = '0'
+        else:
+            activity = ''
+        company = [p.name for p in self.accompany_leads] + [p.name for p in self.interpreter] +\
+                  [p.name for p in self.participants]
+        company.append(self.name.name)
+        if self.receptionist:
+            company.append(self.receptionist.name)
+        self.env['dtdream.marketing.activities'].search([('customer_reception_id', '=', self.id)]).write(
+            {'activity': activity, 'activity_time': self.visit_date,
+             'customer': ';'.join([guest.name_guest for guest in self.guest if guest]), 'company': ';'.join(company)})
+
+    @api.multi
+    def write(self, vals):
+        result = super(dtdream_customer_reception, self).write(vals)
+        if result:
+            self.update_customer_activities()
+        return result
+
     @api.model
     def create(self, vals):
         letter = 'V' if vals.get('customer_v') == '0' else 'N'
@@ -94,7 +156,9 @@ class dtdream_customer_reception(models.Model):
         else:
             bill_num = bill_num + '01' + letter
         vals.update({'bill_num': bill_num})
-        return super(dtdream_customer_reception, self).create(vals)
+        result = super(dtdream_customer_reception, self).create(vals)
+        self.create_customer_activities(result)
+        return result
 
     bill_num = fields.Char(string='单据号', store="True")
     title = fields.Char(default='客户接待')
@@ -120,9 +184,9 @@ class dtdream_customer_reception(models.Model):
     inter_tel = fields.Char(string='接口人联系方式')
     background = fields.Text(string='客户背景')
     purpose = fields.Many2one('dtdream.visit.purpose', string='来访目的')
-    accompany_leads = fields.Many2many('hr.employee', string='公司出席陪同领导')
-    interpreter = fields.Many2many('hr.employee', string='汇报讲解人员')
-    participants = fields.Many2many('hr.employee', string='公司参会人员名单')
+    accompany_leads = fields.Many2many('hr.employee', 'dtdream_customer_accompany_leads', string='公司出席陪同领导')
+    interpreter = fields.Many2many('hr.employee', 'dtdream_customer_interpreter', string='汇报讲解人员')
+    participants = fields.Many2many('hr.employee', 'dtdream_customer_participants', string='公司参会人员名单')
     room_capacity = fields.Char(string='会议室可容纳人数')
     busy_time_room = fields.Datetime(string='会议室使用时间')
     ppt = fields.Boolean(string='PPT')
@@ -171,6 +235,7 @@ class dtdream_customer_reception(models.Model):
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
+    is_manage = fields.Boolean(string='是否客户接待管理员', compute=_compute_is_customer_manage)
     state = fields.Selection([('0', '草稿'),
                               ('1', '部门审批'),
                               ('2', '客工部审批'),
@@ -273,11 +338,12 @@ class dtdream_marketing_activities(models.Model):
     activity = fields.Selection([('0', '技术交流'), ('1', '公司参观'), ('2', '高层拜访'), ('3', '现场会'),
                                  ('4', '第三方活动'), ('5', '样板点参观')], string='活动类型')
     activity_time = fields.Date(string='时间')
-    activity_place = fields.Char(string='地点')
-    customer = fields.Many2many(string='客户参与人员')
-    company = fields.Many2many(string='公司参与人员')
+    activity_place = fields.Char(string='地点', default=lambda self: '公司杭州基地')
+    customer = fields.Char(string='客户参与人员')
+    company = fields.Char(string='公司参与人员')
     activity_content = fields.Text(string='活动内容')
     activity_result = fields.Text(string='结果')
+    customer_reception_id = fields.Integer()
     partner_customer = fields.Many2one('res.partner')
 
 
