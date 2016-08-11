@@ -90,6 +90,24 @@ class dtdream_customer_reception(models.Model):
         else:
             self.is_manage = False
 
+    def _compute_login_is_approve(self):
+        if self.current_approve.user_id == self.env.user:
+            self.is_current = True
+        else:
+            self.is_current = False
+
+    def _compute_login_is_shenqinren(self):
+        if self.name.user_id == self.env.user:
+            self.is_shenqingren = True
+        else:
+            self.is_shenqingren = False
+
+    def _compute_login_is_receptionist(self):
+        if self.receptionist.user_id == self.env.user:
+            self.is_receptionist = True
+        else:
+            self.is_receptionist = False
+
     @api.onchange('customer_v')
     def update_bill_num(self):
         if self.bill_num:
@@ -159,6 +177,13 @@ class dtdream_customer_reception(models.Model):
         result = super(dtdream_customer_reception, self).create(vals)
         self.create_customer_activities(result)
         return result
+
+    @api.model
+    def default_get(self, fields):
+        rec = super(dtdream_customer_reception, self).default_get(fields)
+        if self._context.get('active_id', None):
+            rec.update({"entry_way": True})
+        return rec
 
     bill_num = fields.Char(string='单据号', store="True")
     title = fields.Char(default='客户接待')
@@ -235,7 +260,12 @@ class dtdream_customer_reception(models.Model):
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
+    current_approve = fields.Many2one('hr.employee', string='当前审批人')
+    is_current = fields.Boolean(string='是否当前审批人', compute=_compute_login_is_approve)
+    is_shenqingren = fields.Boolean(string='是否申请人', compute=_compute_login_is_shenqinren, default=lambda self: True)
+    is_receptionist = fields.Boolean(string='是否接待执行人', compute=_compute_login_is_receptionist)
     is_manage = fields.Boolean(string='是否客户接待管理员', compute=_compute_is_customer_manage)
+    entry_way = fields.Boolean(string='创建客户接待方式')
     state = fields.Selection([('0', '草稿'),
                               ('1', '部门审批'),
                               ('2', '客工部审批'),
@@ -246,27 +276,31 @@ class dtdream_customer_reception(models.Model):
 
     @api.multi
     def wkf_draft(self):
-        self.write({"state": '0'})
+        self.write({"state": '0', 'current_approve': ''})
 
     @api.multi
     def wkf_approve1(self):
-        self.write({"state": '1'})
+        current_approve = self.name.department_id.manager_id.id
+        self.write({"state": '1',  'current_approve': current_approve})
 
     @api.multi
     def wkf_approve2(self):
-        self.write({"state": '2'})
+        current_approve = self.env['dtdream.customer.reception.config'].search([], limit=1).officer.id
+        self.write({"state": '2', 'current_approve': current_approve})
 
     @api.multi
     def wkf_apply(self):
-        self.write({"state": '3'})
+        current_approve = self.receptionist.id
+        self.write({"state": '3', 'current_approve': current_approve})
 
     @api.multi
     def wkf_evaluate(self):
-        self.write({"state": '4'})
+        current_approve = self.name.id
+        self.write({"state": '4', 'current_approve': current_approve})
 
     @api.multi
     def wkf_done(self):
-        self.write({"state": '99'})
+        self.write({"state": '99', 'current_approve': ''})
 
 
 class dtdream_guest_honour(models.Model):
@@ -322,6 +356,12 @@ class dtdream_customer_reception_config(models.Model):
         res['arch'] = etree.tostring(doc)
         return res
 
+    @api.onchange('officer')
+    def update_officer_approve(self):
+        reception = self.env['dtdream.customer.reception'].search([('state', '=', '2')])
+        for cr in reception:
+            cr.write({'current_approve': self.officer.id})
+
     duty_phone = fields.Char(string='客工部值班电话')
     officer = fields.Many2one('hr.employee', string='客工部主管')
     car = fields.Many2one('hr.employee', string='车辆负责人')
@@ -353,7 +393,28 @@ class dtdream_customer_res_partner(models.Model):
     marketing_activities = fields.One2many('dtdream.marketing.activities', 'partner_customer')
     customer_reception = fields.Integer()
 
+    @api.multi
+    def act_dtdream_customer_reception(self):
+        action = {
+            'name': '客户接待',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'dtdream.customer.reception',
+            'res_id': '',
+            'context': self._context,
+            }
+        return action
 
+
+class dtdream_hr_department(models.Model):
+    _inherit = 'hr.department'
+
+    @api.onchange('manager_id')
+    def update_customer_reception(self):
+        reception = self.env['dtdream.customer.reception'].search([('state', '=', '1')])
+        for cr in reception:
+            cr.write({'current_approve': self.manager_id.id})
 
 
 

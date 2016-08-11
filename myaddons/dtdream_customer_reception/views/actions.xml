@@ -17,6 +17,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_approve.user_id','=',uid)]</field>
         </record>
 
         <record id="act_dtdream_customer_reception_all" model="ir.actions.act_window">
@@ -51,6 +52,12 @@
 
     <record id="customer_reception_manage" model="res.groups">
         <field name="name">客户接待管理员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_customer_reception_group"/>
+    </record>
+
+    <record id="customer_reception_member" model="res.groups">
+        <field name="name">客工部成员</field>
         <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
         <field name="category_id" ref="module_customer_reception_group"/>
     </record>

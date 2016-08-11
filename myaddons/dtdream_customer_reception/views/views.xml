@@ -8,13 +8,13 @@
             <form>
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','not in',('0', '3', '4'))]}"/>
+                            attrs="{'invisible':['|',('state','not in',('0', '3', '4')),'|','&amp;',('state','in',('0','4')),('is_shenqingren','=', False),'&amp;',('state','=','3'),('is_receptionist','=', False)]}"/>
                     <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','not in',('1', '2', '3'))]}"/>
+                            attrs="{'invisible':['|',('state','not in',('1', '2', '3')),('is_shenqingren','=',False)]}"/>
                     <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','not in',('1', '2'))]}"/>
+                            attrs="{'invisible':['|',('state','not in',('1', '2')),('is_current','=',False)]}"/>
                     <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':[('state','not in',('1', '2'))]}"/>
+                            attrs="{'invisible':['|',('state','not in',('1', '2')),('is_current','=',False)]}"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,1,2,3,4,99"/>
                </header>
@@ -24,6 +24,10 @@
                           <field name="bill_num" readonly="True" attrs="{'invisible':[('bill_num','=',False)]}"/>
                           <field name="write_time" readonly="True"/>
                           <field name="is_manage" invisible="True"/>
+                          <field name="entry_way" invisible="True"/>
+                          <field name="is_current" invisible="True"/>
+                          <field name="is_shenqingren" invisible="True"/>
+                          <field name="is_receptionist" invisible="True"/>
                       </group>
                       <group>
                           <field name="duty_tel"/>
@@ -46,10 +50,10 @@
 
                   <group string="客户信息">
                       <group>
-                          <field name="customer" required="True" domain="[('customer', '=', True)]" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'required':[('customer_v','=','0')]}"/>
                           <field name="customer_level" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="customer_source" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="background" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
@@ -63,7 +67,7 @@
                   <group string="主宾信息">
                       <notebook>
                         <page>
-                            <field name="guest" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}">
+                            <field name="guest" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}" string="主宾信息">
                                 <tree editable="bottom">
                                     <field name="name_guest" required="True"/>
                                     <field name="post_guest"/>
@@ -149,7 +153,7 @@
                   <group string="行程路线">
                       <notebook>
                         <page>
-                            <field name="path" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}">
+                            <field name="path" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}" string="行程路线">
                                 <tree editable="bottom">
                                     <field name="start_time"/>
                                     <field name="starting"/>
@@ -241,14 +245,14 @@
 
                   <group string="接待小结" attrs="{'invisible':[('state','in',('0','1', '2'))]}">
                       <group>
-                          <field name="summary" attrs="{'readonly':[('state','!=', '3'),('is_manage','=',False)]}"/>
+                          <field name="summary" attrs="{'readonly':['|',('is_receptionist','=',False),'&amp;',('state','!=', '3'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
                   <group string="评价" attrs="{'invisible':[('state','not in',('4','99'))]}">
                       <group>
                           <label for="score" string="请对本次的客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
                           <div class="o_row">
-                              <field name="score" attrs="{'readonly':[('state','!=', '4'),('is_manage','=',False)]}"/>
+                              <field name="score" attrs="{'readonly':['|',('is_shenqingren','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)]}"/>
                           </div>
                       </group>
                   </group>
@@ -300,7 +304,7 @@
             </xpath>
 
             <button name="toggle_active" position="before">
-               <button class="oe_stat_button" type="action" name="%(act_dtdream_customer_reception_mine)d"
+               <button class="oe_stat_button" type="object" name="act_dtdream_customer_reception"
                 icon="fa-edit">
                     <field string="客户接待" name="customer_reception" widget="statinfo"/>
                </button>
@@ -372,6 +376,46 @@
                               </field>
                           </page>
                       </notebook>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+     </record>
+
+      <record id="view_dtdream_visit_path_form" model="ir.ui.view">
+        <field name="name">view.dtdream.visit.path.form</field>
+        <field name="model">dtdream.visit.path</field>
+        <field name="arch" type="xml">
+            <form string="行程路线">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="start_time"/>
+                          <field name="starting"/>
+                      </group>
+                      <group>
+                          <field name="end_time"/>
+                          <field name="destination"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+     </record>
+
+     <record id="view_dtdream_guest_honour_form" model="ir.ui.view">
+        <field name="name">view.dtdream.guest.honour.form</field>
+        <field name="model">dtdream.guest.honour</field>
+        <field name="arch" type="xml">
+            <form string="主宾信息">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="name_guest"/>
+                      </group>
+                      <group>
+                          <field name="post_guest"/>
+                      </group>
                   </group>
               </sheet>
             </form>
