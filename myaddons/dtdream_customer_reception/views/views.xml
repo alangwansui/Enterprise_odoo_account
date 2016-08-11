@@ -78,7 +78,7 @@
                   </group>
                   <group string="客户接待执行人" attrs="{'invisible':[('state','in',('0','1'))]}">
                       <group>
-                          <field name="receptionist" attrs="{'required':[('state','not in',('0','1'))], 'readonly':[('state','!=', '2'),('is_manage','=',False)]}"/>
+                          <field name="receptionist" attrs="{'readonly':[('state','!=', '2'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
 
@@ -214,7 +214,7 @@
                           <label for="memories"/>
                           <div class="o_row" style="margin: -2px 0 5px -50px;">
                               <field name="memories" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                              <span style="margin-left: 30px;">数量</span>
+                              <span style="margin-left: 30px;font-weight:bold">数量</span>
                               <field name="memories_num" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           </div>
                           <label for="remark"/>
@@ -265,6 +265,18 @@
               </div>
 
             </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_customer_reception_filter" model="ir.ui.view">
+        <field name="name">dtdream.customer.reception.filter</field>
+        <field name="model">dtdream.customer.reception</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="bill_num"/>
+                <field name="workid"/>
+            </search>
         </field>
     </record>
 

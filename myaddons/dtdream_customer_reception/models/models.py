@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.osv import expression
+from openerp.exceptions import ValidationError
 import re
 from datetime import datetime
 from lxml import etree
@@ -115,16 +117,27 @@ class dtdream_customer_reception(models.Model):
             self.bill_num = self.bill_num[:-1] + letter
 
     @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(dtdream_customer_reception, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
-        # doc = etree.XML(res['arch'])
-        # if res['type'] == "form":
-        #     doc.xpath("//form")[0].set("delete", "false")
-        #     res['arch'] = etree.tostring(doc)
-        # if res['type'] == "tree":
-        #     doc.xpath("//tree")[0].set("delete", "false")
-        #     res['arch'] = etree.tostring(doc)
-        return res
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+        if menu == u"所有单据":
+            member = self.env.ref("dtdream_customer_reception.customer_reception_member") in self.env.user.groups_id
+            manage = self.env.ref("dtdream_customer_reception.customer_reception_manage") in self.env.user.groups_id
+            inter = self.env['dtdream.customer.reception.config'].search([], limit=1).inter.user_id == self.env.user
+            if member or manage or inter:
+                domain = domain if domain else []
+            else:
+                uid = self._context.get('uid', '')
+                if domain:
+                    domain = expression.AND([['|', '|', ('approves.user_id', '=', uid), ('name.user_id', '=', uid),
+                                              ('current_approve.user_id', '=', uid)], domain])
+                else:
+                    domain = ['|', '|', ('approves.user_id', '=', uid), ('name.user_id', '=', uid),
+                              ('current_approve.user_id', '=', uid)]
+        return super(dtdream_customer_reception, self).search_read(domain=domain, fields=fields, offset=offset,
+                                                                   limit=limit, order=order)
 
     def create_customer_activities(self, result):
         if result.purpose.name == u'公司展厅参观' or result.purpose.name == u"小镇展厅参观":
@@ -138,7 +151,7 @@ class dtdream_customer_reception(models.Model):
         company.append(result.name.name)
         result.env['dtdream.marketing.activities'].create({'activity': activity, 'activity_time': result.visit_date,
                                                            'customer': ';'.join([guest.name_guest for guest in result.guest if guest]),
-                                                           'company': ';'.join(company), 'partner_customer': result.customer.id,
+                                                           'company': ';'.join(set(company)), 'partner_customer': result.customer.id,
                                                            'customer_reception_id': result.id})
 
     def update_customer_activities(self):
@@ -155,7 +168,7 @@ class dtdream_customer_reception(models.Model):
             company.append(self.receptionist.name)
         self.env['dtdream.marketing.activities'].search([('customer_reception_id', '=', self.id)]).write(
             {'activity': activity, 'activity_time': self.visit_date,
-             'customer': ';'.join([guest.name_guest for guest in self.guest if guest]), 'company': ';'.join(company)})
+             'customer': ';'.join([guest.name_guest for guest in self.guest if guest]), 'company': ';'.join(set(company))})
 
     @api.multi
     def write(self, vals):
@@ -185,13 +198,13 @@ class dtdream_customer_reception(models.Model):
             rec.update({"entry_way": True})
         return rec
 
-    bill_num = fields.Char(string='单据号', store="True")
+    bill_num = fields.Char(string='单据号', store=True)
     title = fields.Char(default='客户接待')
     write_time = fields.Datetime(string='填单时间', default=lambda self: fields.Datetime.now())
     duty_tel = fields.Char(string='客工部值班电话', compute=_compute_phone_num)
     name = fields.Many2one('hr.employee', string='员工姓名',
                            default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
-    workid = fields.Char('工号', compute=compute_employee_info)
+    workid = fields.Char('工号', compute=compute_employee_info, store=True)
     iphone = fields.Char(string='联系电话', compute=compute_employee_info)
     post = fields.Char(string='职务', compute=compute_employee_info)
     home = fields.Char(string='常驻地', compute=compute_employee_info)
@@ -261,6 +274,7 @@ class dtdream_customer_reception(models.Model):
     summary = fields.Text(string='接待人员接待小结')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
     current_approve = fields.Many2one('hr.employee', string='当前审批人')
+    approves = fields.Many2many('hr.employee', string='已审批的人')
     is_current = fields.Boolean(string='是否当前审批人', compute=_compute_login_is_approve)
     is_shenqingren = fields.Boolean(string='是否申请人', compute=_compute_login_is_shenqinren, default=lambda self: True)
     is_receptionist = fields.Boolean(string='是否接待执行人', compute=_compute_login_is_receptionist)
@@ -276,7 +290,11 @@ class dtdream_customer_reception(models.Model):
 
     @api.multi
     def wkf_draft(self):
-        self.write({"state": '0', 'current_approve': ''})
+        if (self.state == '1' or self.state == '2') and self.name.user_id != self.env.user:
+            approve = self.current_approve.id
+            self.write({"state": '0', 'current_approve': '', 'approves': [(4, approve)]})
+        else:
+            self.write({"state": '0', 'current_approve': ''})
 
     @api.multi
     def wkf_approve1(self):
@@ -285,18 +303,23 @@ class dtdream_customer_reception(models.Model):
 
     @api.multi
     def wkf_approve2(self):
+        approve = self.current_approve.id
         current_approve = self.env['dtdream.customer.reception.config'].search([], limit=1).officer.id
-        self.write({"state": '2', 'current_approve': current_approve})
+        self.write({"state": '2', 'current_approve': current_approve, 'approves': [(4, approve)]})
 
     @api.multi
     def wkf_apply(self):
+        approve = self.current_approve.id
+        if not self.receptionist:
+            raise ValidationError('请指定客户接待执行人!')
         current_approve = self.receptionist.id
-        self.write({"state": '3', 'current_approve': current_approve})
+        self.write({"state": '3', 'current_approve': current_approve, 'approves': [(4, approve)]})
 
     @api.multi
     def wkf_evaluate(self):
+        approve = self.current_approve.id
         current_approve = self.name.id
-        self.write({"state": '4', 'current_approve': current_approve})
+        self.write({"state": '4', 'current_approve': current_approve, 'approves': [(4, approve)]})
 
     @api.multi
     def wkf_done(self):
