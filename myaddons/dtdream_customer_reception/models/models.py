@@ -413,8 +413,13 @@ class dtdream_marketing_activities(models.Model):
 class dtdream_customer_res_partner(models.Model):
     _inherit = 'res.partner'
 
+    def _compute_marketing_activities_log(self):
+        for rec in self:
+            cr = rec.env["dtdream.customer.reception"].search([("customer.id", "=", rec.id)])
+            rec.customer_reception = len(cr)
+
     marketing_activities = fields.One2many('dtdream.marketing.activities', 'partner_customer')
-    customer_reception = fields.Integer()
+    customer_reception = fields.Integer(compute=_compute_marketing_activities_log)
 
     @api.multi
     def act_dtdream_customer_reception(self):

@@ -10,7 +10,7 @@
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('0', '3', '4')),'|','&amp;',('state','in',('0','4')),('is_shenqingren','=', False),'&amp;',('state','=','3'),('is_receptionist','=', False)]}"/>
                     <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':['|',('state','not in',('1', '2', '3')),('is_shenqingren','=',False)]}"/>
+                            attrs="{'invisible':['|',('state','not in',('1', '2', '3')),('is_shenqingren','=',False)]}" confirm="请确认是否撤回?"/>
                     <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1', '2')),('is_current','=',False)]}"/>
                     <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
@@ -303,11 +303,11 @@
                 <page string="营销活动" name="marketing_activities">
                    <field name="marketing_activities" string="营销活动">
                        <tree editable="bottom" create="0">
-                           <field name="activity"/>
-                           <field name="activity_time"/>
-                           <field name="activity_place"/>
-                           <field name="customer"/>
-                           <field name="company"/>
+                           <field name="activity" readonly="True"/>
+                           <field name="activity_time" readonly="True"/>
+                           <field name="activity_place" readonly="True"/>
+                           <field name="customer" readonly="True"/>
+                           <field name="company" readonly="True"/>
                            <field name="activity_content"/>
                            <field name="activity_result"/>
                        </tree>
@@ -332,17 +332,17 @@
               <sheet>
                   <group>
                       <group>
-                          <field name="activity"/>
-                          <field name="activity_time"/>
+                          <field name="activity" readonly="True"/>
+                          <field name="activity_time" readonly="True"/>
                       </group>
                       <group>
-                          <field name="activity_place"/>
+                          <field name="activity_place" readonly="True"/>
                           <field name="activity_content"/>
                           <field name="activity_result"/>
                       </group>
                       <group style="margin-top:-30px">
-                          <field name="company"/>
-                          <field name="customer"/>
+                          <field name="company" readonly="True"/>
+                          <field name="customer" readonly="True"/>
                       </group>
                   </group>
               </sheet>
