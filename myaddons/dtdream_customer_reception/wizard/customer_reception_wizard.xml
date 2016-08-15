@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_dtdream_hr_performance_reject_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.reject.wizard.form</field>
+        <field name="model">dtdream.hr.performance.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="liyou" placeholder="请填写理由"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_dtdream_pbc_reject_wizard" model="ir.actions.act_window">
+        <field name="name">返回修改</field>
+        <field name="res_model">dtdream.hr.performance.reject.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_dtdream_hr_performance_agree_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.agree.wizard.form</field>
+        <field name="model">dtdream.hr.performance.agree.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="liyou" placeholder="请填写意见"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_dtdream_pbc_agree_wizard" model="ir.actions.act_window">
+        <field name="name">同意</field>
+        <field name="res_model">dtdream.hr.performance.agree.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    </data>
+</openerp>

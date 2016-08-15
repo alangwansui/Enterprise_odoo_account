@@ -198,6 +198,40 @@ class dtdream_customer_reception(models.Model):
             rec.update({"entry_way": True})
         return rec
 
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def get_customer_reception_menu(self):
+        menu_id = self.env['ir.ui.menu'].search([('name', '=', u'客户接待')], limit=1).id
+        menu = self.env['ir.ui.menu'].search([('name', '=', u'所有单据'), ('parent_id', '=', menu_id)], limit=1)
+        action = menu.action.id
+        return menu_id, action
+
+    def send_mail(self, name, subject, content):
+        email_to = name.work_email
+        appellation = u'{0},您好：'.format(name.name)
+        base_url = self.get_base_url()
+        menu_id, action = self.get_customer_reception_menu()
+        url = '%s/web#id=%s&view_type=form&model=dtdream.customer.reception&action=%s&menu_id=%s' % (base_url, self.id, action, menu_id)
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p><a href="%s">点击进入查看</a></p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
     bill_num = fields.Char(string='单据号', store=True)
     title = fields.Char(default='客户接待')
     write_time = fields.Datetime(string='填单时间', default=lambda self: fields.Datetime.now())
@@ -211,8 +245,9 @@ class dtdream_customer_reception(models.Model):
     department = fields.Char(string='所属部门', compute=compute_employee_info)
     code = fields.Char(string='部门编码', compute=compute_employee_info)
     customer = fields.Many2one('res.partner', string='客户名称')
-    customer_level = fields.Selection([('ss', 'ss'), ('s', 's'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
-                                      string='客户重要等级')
+    customer_char = fields.Char(string='客户名称')
+    customer_level = fields.Selection([('SS', 'SS'), ('S', 'S'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
+                                      string='客户重要级')
     customer_source = fields.Char(string='客户来源')
     customer_v = fields.Selection([('0', '是'), ('1', '否')], string='是否价值客户', default='0')
     project = fields.Many2one('crm.lead', string='项目名称')
@@ -225,10 +260,10 @@ class dtdream_customer_reception(models.Model):
     accompany_leads = fields.Many2many('hr.employee', 'dtdream_customer_accompany_leads', string='公司出席陪同领导')
     interpreter = fields.Many2many('hr.employee', 'dtdream_customer_interpreter', string='汇报讲解人员')
     participants = fields.Many2many('hr.employee', 'dtdream_customer_participants', string='公司参会人员名单')
-    room_capacity = fields.Char(string='会议室可容纳人数')
+    room_capacity = fields.Integer(string='会议室大小')
     busy_time_room = fields.Datetime(string='会议室使用时间')
     ppt = fields.Boolean(string='PPT')
-    camera = fields.Boolean(string='摄影')
+    camera = fields.Selection(string='摄影', selection=[('0', '全程摄影'), ('1', '会议室摄影'), ('2', '无需摄影')])
     water = fields.Boolean(string='瓶装水')
     tea = fields.Boolean(string='茶水')
     meeting_document = fields.Boolean(string='公司资料')
@@ -294,36 +329,77 @@ class dtdream_customer_reception(models.Model):
             approve = self.current_approve.id
             self.write({"state": '0', 'current_approve': '', 'approves': [(4, approve)]})
         else:
+            if self.state == '3':
+                # 通知接待安排执行人
+                subject = u'%s提交的客户接待申请已被撤回,请您知悉!' % self.name
+                self.send_mail(self.receptionist, subject=subject, content=subject)
+                # 通知车辆负责人
+                cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
+                inter = cr.inter
+                if (self.car and self.car_num) or (self.commercial_vehicle and self.commercial_vehicle_num):
+                    car = cr.car
+                    self.send_mail(car, subject=subject, content=subject)
+                # 通知企划部接口人
+                self.send_mail(inter, subject=subject, content=subject)
+            if self.state != '0':
+                state = {'1': u'部门审批', '2': u'客工部审批', '3': u'接待安排与执行'}
+                self.message_post(body=u'撤回, %s撤回了客户接待申请,状态:%s-->草稿' %
+                                       (self.name, state.get(self.state)))
             self.write({"state": '0', 'current_approve': ''})
 
-    @api.multi
+    @api.multis
     def wkf_approve1(self):
-        current_approve = self.name.department_id.manager_id.id
-        self.write({"state": '1',  'current_approve': current_approve})
+        current_approve = self.name.department_id.manager_id
+        self.write({"state": '1',  'current_approve': current_approve.id})
+        subject = u'%s提交了客户接待申请进入部门审批阶段,请您审批!' % self.name
+        self.send_mail(current_approve, subject=subject, content=subject)
+        self.message_post(body=u'提交, %s提交客户接待申请,状态:草稿-->部门审批' % self.name)
 
     @api.multi
     def wkf_approve2(self):
         approve = self.current_approve.id
-        current_approve = self.env['dtdream.customer.reception.config'].search([], limit=1).officer.id
-        self.write({"state": '2', 'current_approve': current_approve, 'approves': [(4, approve)]})
+        current_approve = self.env['dtdream.customer.reception.config'].search([], limit=1).officer
+        self.write({"state": '2', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
+        subject = u'%s提交的客户接待申请进入客工部审批阶段,请您审批!' % self.name
+        self.send_mail(current_approve, subject=subject, content=subject)
 
     @api.multi
     def wkf_apply(self):
         approve = self.current_approve.id
         if not self.receptionist:
             raise ValidationError('请指定客户接待执行人!')
-        current_approve = self.receptionist.id
-        self.write({"state": '3', 'current_approve': current_approve, 'approves': [(4, approve)]})
+        current_approve = self.receptionist
+        self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
+        # 通知接待安排执行人
+        subject = u'%s提交的客户接待申请进入接待安排与执行阶段,请您与申请人沟通,落实安排,待接待完成填写接待小结!' % self.name
+        self.send_mail(current_approve, subject=subject, content=subject)
+        # 通知车辆负责人
+        cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
+        inter = cr.inter
+        if (self.car and self.car_num) or (self.commercial_vehicle and self.commercial_vehicle_num):
+            car = cr.car
+            subject = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看及安排相关接送车辆!' % self.name
+            self.send_mail(car, subject=subject, content=subject)
+        # 通知企划部接口人
+        subject = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看!' % self.name
+        self.send_mail(inter, subject=subject, content=subject)
 
     @api.multi
     def wkf_evaluate(self):
         approve = self.current_approve.id
-        current_approve = self.name.id
-        self.write({"state": '4', 'current_approve': current_approve, 'approves': [(4, approve)]})
+        current_approve = self.name
+        self.write({"state": '4', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
+        subject = u'您提交的客户接待申请进入执行评价阶段,请您对接待效果做出评价!'
+        self.send_mail(current_approve, subject=subject, content=subject)
+        self.message_post(body=u'提交, %s提交客户接待申请,状态:接待安排与执行-->执行评价' % self.receptionist)
 
     @api.multi
     def wkf_done(self):
         self.write({"state": '99', 'current_approve': ''})
+        officer = self.env['dtdream.customer.reception.config'].search([], limit=1).officer
+        subject = u'%s对客户接待效果做出了评价,请您查看!' % self.name
+        self.send_mail(officer, subject=subject, content=subject)
+        self.message_post(body=u'提交, %s提交客户接待申请,状态:执行评价-->完成' % self.name)
 
 
 class dtdream_guest_honour(models.Model):
@@ -430,7 +506,7 @@ class dtdream_customer_res_partner(models.Model):
             'view_mode': 'form',
             'res_model': 'dtdream.customer.reception',
             'res_id': '',
-            'context': self._context,
+            'context': {'default_customer': self.id, 'default_customer_level': self.partner_important},
             }
         return action
 

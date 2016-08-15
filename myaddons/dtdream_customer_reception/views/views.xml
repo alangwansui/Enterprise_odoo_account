@@ -38,11 +38,11 @@
                       <group>
                           <field name="name" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="post"/>
-                          <field name="department"/>
                           <field name="home"/>
                       </group>
                       <group>
-                          <field name="workid"/>
+                          <field name="workid" invisible="True"/>
+                          <field name="department"/>
                           <field name="iphone"/>
                           <field name="code"/>
                       </group>
@@ -50,15 +50,16 @@
 
                   <group string="客户信息">
                       <group>
-                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'required':[('customer_v','=','0')]}"/>
-                          <field name="customer_level" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','1')]}"/>
+                          <field name="customer_char" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','0')]}"/>
+                          <field name="customer_level" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="customer_source" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="background" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
                           <field name="visit_count" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)],'invisible':[('customer_v','=','1')]}"/>
                           <field name="inter_tel" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="visit_date" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
@@ -94,11 +95,15 @@
 
                   <group string="会议室资源需求">
                       <group>
-                          <field name="meeting" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="room_capacity" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <!--<field name="meeting" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
+                          <label for="room_capacity"/>
+                          <div class="o_row dtdream_customer_integer_input">
+                              <field name="room_capacity" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                              <span>人</span>
+                          </div>
+                          <!--<field name="reserve_time" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
                       </group>
                       <group>
-                          <field name="reserve_time" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="busy_time_room" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group style="margin-top: -10px;" colspan="12">
@@ -106,8 +111,6 @@
                           <div class="o_row dtdream_customer_checkbox">
                               <field name="ppt" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">PPT</span>
-                              <field name="camera" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                              <span style="margin-right:30px">摄影</span>
                               <field name="water" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                               <span style="margin-right:30px">瓶装水</span>
                               <field name="tea" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
@@ -127,7 +130,7 @@
                       </group>
                   </group>
 
-                  <group string="接送安排">
+                  <group string="用车安排">
                       <group>
                           <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
                               <field name="car" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
@@ -230,6 +233,12 @@
                       </group>
                   </group>
 
+                  <group string="摄影">
+                      <group>
+                          <field name="camera" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                      </group>
+                  </group>
+
                   <group string="费用预算">
                       <group>
                           <field name="hotel_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
@@ -275,7 +284,6 @@
             <search string="Search">
                 <field name="name"/>
                 <field name="bill_num"/>
-                <field name="workid"/>
             </search>
         </field>
     </record>
@@ -287,9 +295,9 @@
             <tree>
               <field name="bill_num"/>
               <field name="name"/>
-              <field name="workid"/>
               <field name="iphone"/>
               <field name="state"/>
+              <field name="current_approve" string="当前处理人"/>
             </tree>
         </field>
     </record>
@@ -373,13 +381,13 @@
                                   </tree>
                               </field>
                           </page>
-                          <page string="会议室资源">
-                              <field name="metting_room">
-                                  <tree editable="bottom">
-                                      <field name="name"/>
-                                  </tree>
-                              </field>
-                          </page>
+                          <!--<page string="会议室资源">-->
+                              <!--<field name="metting_room">-->
+                                  <!--<tree editable="bottom">-->
+                                      <!--<field name="name"/>-->
+                                  <!--</tree>-->
+                              <!--</field>-->
+                          <!--</page>-->
                           <page string="纪念品">
                               <field name="memory">
                                   <tree editable="bottom">

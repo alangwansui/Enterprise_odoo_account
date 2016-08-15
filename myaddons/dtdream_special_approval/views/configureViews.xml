@@ -1,0 +1,79 @@
+<openerp>
+    <data>
+        <record id="act_dtdream_approval_right_peo" model="ir.actions.act_window">
+            <field name="name">配置</field>
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_department_form_approval_inherit" model="ir.ui.view">
+            <field name="name">hr.department.form.approva.inherit</field>
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <form string="department">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="manager_id" string="主管"/>
+                                <field name="parent_id"/>
+                                <!--<field name="zxfirst_person" />-->
+                                <!--<field name="zxsec_person" />-->
+                                <!--<field name="zxthird_person"/>-->
+                                <!--<field name="zxfouth_person"/>-->
+                            </group>
+                            <group>
+                                <field name="code"/>
+                                <field name="assitant_id" widget="many2many_tags"/>
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                <!--<field name="zxfirst_money" />-->
+                                <!--<field name="zxsec_money" />-->
+                                <!--<field name="zxthird_money"/>-->
+                                <!--<field name="zxfouth_money"/>-->
+                            </group>
+                        </group>
+                        <group>
+                        <div><p><font color="red">注：第三权签人权利最大，审批金额也最大；设置金额一元起，设置权签人则必须设置金额</font></p></div>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="zxfirst_person" />
+                                <field name="zxsec_person" />
+                                <field name="zxthird_person"/>
+                                <!--<field name="fouth_person"/>-->
+                            </group>
+                            <group>
+                                <field name="zxfirst_money" />
+                                <field name="zxsec_money" />
+                                <field name="zxthird_money"/>
+                                <!--<field name="fouth_money"/>-->
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_dtdream_approval_right_peo_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_hr.dtdream_view_department_tree"/>
+            <field name="act_window_id" ref="act_dtdream_approval_right_peo"/>
+        </record>
+
+        <record id="action_dtdream_approval_right_peo_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_department_form_approval_inherit"/>
+            <field name="act_window_id" ref="act_dtdream_approval_right_peo"/>
+        </record>
+
+
+
+
+
+
+    </data>
+</openerp>
