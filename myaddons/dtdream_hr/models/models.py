@@ -26,7 +26,7 @@ class dtdream_hr_employee(models.Model):
         for employee in self:
             display_value = ''
             display_value += employee.name or ""
-            display_value += ' '
+            display_value += '.' + employee.full_name + ' '
             display_value += employee.job_number or ""
             data.append((employee.id, display_value))
         return data

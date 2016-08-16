@@ -225,8 +225,16 @@ class dtdream_hr_resume(models.Model):
             raise ValidationError("履历信息已经存在,无法重复创建!")
         return super(dtdream_hr_resume, self).create(vals)
 
+    @api.multi
+    def _message_poss(self, state, action, approve=''):
+        self.message_post(body=u"""<table border="1" style="border-collapse: collapse;">
+                                               <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">下一审批人</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" % (state, action, approve))
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
-        [("id", "=", self.env.context.get('active_id'))]), readonly="True")
+        [("id", "=", self.env.context.get('active_id'))]))
     is_graduate = fields.Boolean(string="是应届毕业生")
     marry = fields.Selection([("0", "未婚"), ("1", "已婚"), ("2", "离异")], string="婚姻", required=True)
     child = fields.Integer(string="子女数")
@@ -257,8 +265,8 @@ class dtdream_hr_resume(models.Model):
     @api.multi
     def wkf_draft(self):
         if self.state == "-1":
-            self.message_post(body=u'重启流程,驳回 --> 草稿 ')
-        self.write({'state': '0', 'resume_approve': ''})
+            self._message_poss(state=u'驳回-->草稿 ', action=u'重启流程')
+            self.write({'state': '0', 'resume_approve': ''})
 
     @api.multi
     def wkf_approve(self):
@@ -266,13 +274,13 @@ class dtdream_hr_resume(models.Model):
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息,请您审批!' % self.name.name,
                                      content=u"%s提交了员工履历信息,等待您的审批!" % self.name.name)
         self.write({'state': '1', 'resume_approve': approve.id})
-        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.name)
+        self._message_poss(state=u'草稿-->人力资源部审批 ', action=u'提交', approve=self.resume_approve.name)
 
     @api.multi
     def wkf_done(self):
         self.update_mobile_number()
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
-        self.message_post(body=u'通过,人力资源部审批 -->  完成')
+        self._message_poss(state=u'人力资源部审批-->完成', action=u'审批通过')
 
     @api.multi
     def wkf_reject(self):
@@ -927,6 +935,14 @@ class dtdream_resume_modify(models.Model):
                                                      'cerdit': lan.cerdit, 'result': lan.result,
                                                      'remark': lan.remark})
 
+    @api.multi
+    def _message_poss(self, state, action, approve=''):
+        self.message_post(body=u"""<table border="1" style="border-collapse: collapse;">
+                                               <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">下一审批人</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" % (state, action, approve))
+
     name = fields.Many2one("hr.employee", string="花名", readonly="True")
     is_graduate = fields.Boolean(string="是应届毕业生")
     workid = fields.Char(string="工号", readonly="True")
@@ -956,7 +972,7 @@ class dtdream_resume_modify(models.Model):
     @api.multi
     def wkf_draft(self):
         if self.state == "-1":
-            self.message_post(body=u'重启流程,驳回 --> 草稿 ')
+            self._message_poss(state=u'驳回-->草稿 ', action=u'重启流程')
         self.write({'state': '0', 'resume_approve': ''})
 
     @api.multi
@@ -965,13 +981,13 @@ class dtdream_resume_modify(models.Model):
         self.send_mail_attend_resume(approve, subject=u'%s提交了员工履历信息修改,请您审批!' % self.name.name,
                                      content=u"%s提交了员工履历信息修改,等待您的审批!" % self.name.name)
         self.write({'state': '1', 'resume_approve': approve.id})
-        self.message_post(body=u'提交,草稿 --> 人力资源部审批 '+u'下一审批人:' + self.resume_approve.name)
+        self._message_poss(state=u'草稿-->人力资源部审批 ', action=u'提交', approve=self.resume_approve.name)
 
     @api.multi
     def wkf_done(self):
         self.update_resume_record()
         self.write({'state': '99', 'resume_approve': '', "approved": [(4, self.resume_approve.id)]})
-        self.message_post(body=u'通过,人力资源部审批 -->  完成')
+        self._message_poss(state=u'人力资源部审批-->完成', action=u'审批通过')
 
     @api.multi
     def wkf_reject(self):

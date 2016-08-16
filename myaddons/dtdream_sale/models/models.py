@@ -324,8 +324,6 @@ class dtdream_sale(models.Model):
     #
     #     else:
 
-
-
     description = fields.Text('项目进展')
 
     name = fields.Char('项目名称',required=True,select=1)
@@ -402,6 +400,11 @@ class dtdream_sale(models.Model):
 
     pro_background = fields.Text("投资类项目背景")
 
+    @api.constrains("name")
+    def check_name(self):
+        if len(self.search([('name','=',self.name)])) > 1:
+            raise ValidationError("项目名称已存在。")
+
     @api.onchange("system_department_id")
     def onchange_system_department(self):
         if self.system_department_id:
@@ -443,50 +446,50 @@ class dtdream_sale(models.Model):
                 result.write({"product_category_type_id": [(4,[project_space[2]['categ_id']])]})
         return result
 
-    def stage_find(self, cr, uid, cases, team_id, domain=None, order='sequence', context=None):
-        """ Override of the base.stage method
-            Parameter of the stage search taken from the lead:
-            - type: stage type must be the same or 'both'
-            - team_id: if set, stages must belong to this team or
-              be a default stage; if not set, stages must be default
-              stages
-        """
-        if isinstance(cases, (int, long)):
-            cases = self.browse(cr, uid, cases, context=context)
-        if context is None:
-            context = {}
-        # check whether we should try to add a condition on type
-        avoid_add_type_term = any([term for term in domain if len(term) == 3 if term[0] == 'type'])
-        # collect all team_ids
-        team_ids = set()
-        types = ['both']
-        if not cases and context.get('default_type'):
-            ctx_type = context.get('default_type')
-            types += [ctx_type]
-        if team_id:
-            team_ids.add(team_id)
-        for lead in cases:
-            if lead.team_id:
-                team_ids.add(lead.team_id.id)
-            if lead.type not in types:
-                types.append(lead.type)
-        # OR all team_ids
-        search_domain = []
-        # if team_ids:
-        #     search_domain += [('|')] * (len(team_ids) - 1)
-        #     for team_id in team_ids:
-        #         search_domain.append(('team_ids', '=', team_id))
-        # # AND with cases types
-        # if not avoid_add_type_term:
-        #     search_domain.append(('type', 'in', types))
-        # # AND with the domain in parameter
-        # search_domain += list(domain)
-        # perform search, return the first found
-        search_domain.append(('type', 'in', types))
-        stage_ids = self.pool.get('crm.stage').search(cr, uid, search_domain, order=order, limit=1, context=context)
-        if stage_ids:
-            return stage_ids[0]
-        return False
+    # def stage_find(self, cr, uid, cases, team_id, domain=None, order='sequence', context=None):
+    #     """ Override of the base.stage method
+    #         Parameter of the stage search taken from the lead:
+    #         - type: stage type must be the same or 'both'
+    #         - team_id: if set, stages must belong to this team or
+    #           be a default stage; if not set, stages must be default
+    #           stages
+    #     """
+    #     if isinstance(cases, (int, long)):
+    #         cases = self.browse(cr, uid, cases, context=context)
+    #     if context is None:
+    #         context = {}
+    #     # check whether we should try to add a condition on type
+    #     avoid_add_type_term = any([term for term in domain if len(term) == 3 if term[0] == 'type'])
+    #     # collect all team_ids
+    #     team_ids = set()
+    #     types = ['both']
+    #     if not cases and context.get('default_type'):
+    #         ctx_type = context.get('default_type')
+    #         types += [ctx_type]
+    #     if team_id:
+    #         team_ids.add(team_id)
+    #     for lead in cases:
+    #         if lead.team_id:
+    #             team_ids.add(lead.team_id.id)
+    #         if lead.type not in types:
+    #             types.append(lead.type)
+    #     # OR all team_ids
+    #     search_domain = []
+    #     # if team_ids:
+    #     #     search_domain += [('|')] * (len(team_ids) - 1)
+    #     #     for team_id in team_ids:
+    #     #         search_domain.append(('team_ids', '=', team_id))
+    #     # # AND with cases types
+    #     # if not avoid_add_type_term:
+    #     #     search_domain.append(('type', 'in', types))
+    #     # # AND with the domain in parameter
+    #     # search_domain += list(domain)
+    #     # perform search, return the first found
+    #     search_domain.append(('type', 'in', types))
+    #     stage_ids = self.pool.get('crm.stage').search(cr, uid, search_domain, order=order, limit=1, context=context)
+    #     if stage_ids:
+    #         return stage_ids[0]
+    #     return False
 
     @api.multi
     def write(self, vals):
@@ -756,3 +759,9 @@ class dtdream_des_records(models.Model):
 
     name = fields.Text("项目进展")
     des_id = fields.Many2one("crm.lead",string="项目")
+    week = fields.Integer(string="周别")
+
+class DtdreamCrmLeadLost(models.TransientModel):
+    _inherit = 'crm.lead.lost'
+
+    lead_id = fields.Many2one(ondelete="cascade")

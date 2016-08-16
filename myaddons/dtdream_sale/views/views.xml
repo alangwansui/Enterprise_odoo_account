@@ -356,13 +356,19 @@
                 <xpath expr="//field[@name='sale_number']/parent::div/parent::button" position="attributes">
                         <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//header/child::button[2]" position="replace">
-                    <button name="%(crm.crm_lead_lost_action)d" string="标记为失去"
-                            type="action" class="oe_highlight"
-                            context="{'default_lead_id': active_id}"
-                            groups="dtdream_sale.group_dtdream_sale_manager"
-                    />
-                </xpath>
+                <button name="toggle_active" position="replace">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" groups="dtdream_sale.group_dtdream_sale_manager"
+                            attrs="{'invisible': [('active', '=', True), ('probability', '&lt;', 100)]}">
+                        <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                    </button>
+                </button>
+                <!--<xpath expr="//header/child::button[2]" position="replace">-->
+                    <!--<button name="%(crm.crm_lead_lost_action)d" string="标记为失去"-->
+                            <!--type="action" class="oe_highlight"-->
+                            <!--context="{'default_lead_id': active_id}"-->
+                            <!--groups="dtdream_sale.group_dtdream_sale_manager"-->
+                    <!--/>-->
+                <!--</xpath>-->
                 <xpath expr="//header/child::button[3]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -576,23 +582,23 @@
             </field>
       </record>
 
-      <delete model="ir.values" id="crm.action_mark_as_lost"/>
-      <record id="crm.action_mark_as_lost" model="ir.actions.server">
-          <field name="name">Mark As Lost</field>
-          <field name="model_id" ref="model_crm_lead"/>
-          <field name="state">code</field>
-          <field name="code">
-              if context.get('active_model') == 'crm.lead' and context.get('active_ids'):
-              self.case_mark_lost(cr, uid, context['active_ids'], context=context)
-          </field>
-      </record>
+      <!--<delete model="ir.values" id="crm.action_mark_as_lost"/>-->
+      <!--<record id="crm.action_mark_as_lost" model="ir.actions.server">-->
+          <!--<field name="name">Mark As Lost</field>-->
+          <!--<field name="model_id" ref="model_crm_lead"/>-->
+          <!--<field name="state">code</field>-->
+          <!--<field name="code">-->
+              <!--if context.get('active_model') == 'crm.lead' and context.get('active_ids'):-->
+              <!--self.case_mark_lost(cr, uid, context['active_ids'], context=context)-->
+          <!--</field>-->
+      <!--</record>-->
 
-      <delete model="ir.values" id="crm.ir_mark_as_lost"/>
-      <record id="crm.ir_mark_as_lost" model="ir.values">
-          <field eval="'client_action_multi'" name="key2"/>
-          <field eval="'crm.lead'" name="model"/>
-          <field name="name">Mark As Lost</field>
-      </record>
+      <!--<delete model="ir.values" id="crm.ir_mark_as_lost"/>-->
+      <!--<record id="crm.ir_mark_as_lost" model="ir.values">-->
+          <!--<field eval="'client_action_multi'" name="key2"/>-->
+          <!--<field eval="'crm.lead'" name="model"/>-->
+          <!--<field name="name">Mark As Lost</field>-->
+      <!--</record>-->
       <!--重写项目管理tree视图-->
       <!-- Opportunities Tree View -->
         <record model="ir.ui.view" id="crm.crm_case_tree_view_oppor">
@@ -753,11 +759,17 @@
                   <field name="sale_channel"/>
                   <field name="product_category_type_id" widget="many2many_tags" invisible="True"/>
               </field>
-              <button name="action_set_lost" position="replace">
-                  <button name="action_set_lost" string="标记为失去"
-                            type="object" class="oe_highlight"
-                            groups="dtdream_sale.group_dtdream_sale_manager"
-                            />
+              <!--<button name="action_set_lost" position="replace">-->
+                  <!--<button name="action_set_lost" string="标记为失去"-->
+                            <!--type="object" class="oe_highlight"-->
+                            <!--groups="dtdream_sale.group_dtdream_sale_manager"-->
+                            <!--/>-->
+              <!--</button>-->
+              <button name="toggle_active" position="replace">
+                  <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" groups="dtdream_sale.group_dtdream_sale_manager"
+                            attrs="{'invisible': [('active', '=', True), ('probability', '&lt;', 100)]}">
+                        <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                    </button>
               </button>
               <field name="name" position="replace">
                   <field name="name" placeholder="项目名称"/>

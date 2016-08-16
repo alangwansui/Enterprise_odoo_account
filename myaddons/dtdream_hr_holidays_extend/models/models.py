@@ -51,13 +51,16 @@ class dtdream_hr_holidays_extend(models.Model):
     is_confirm42approved=fields.Boolean(default=False,string="四审批后直接通过")
 
     year= fields.Selection([
-        ('0',datetime.strftime(datetime.today()+relativedelta(years=1),"%Y")),
-        ('1',datetime.strftime(datetime.today(),"%Y")),
-        ('2',datetime.strftime(datetime.today()-relativedelta(years=1),"%Y")),
-        ('3',datetime.strftime(datetime.today()-relativedelta(years=2),"%Y")),
-        ('4',datetime.strftime(datetime.today()-relativedelta(years=3),"%Y")),
-        ('5',datetime.strftime(datetime.today()-relativedelta(years=4),"%Y")),
-        ('6',datetime.strftime(datetime.today()-relativedelta(years=5),"%Y")),
+        ('-3','2020'),
+        ('-2','2019'),
+        ('-1','2018'),
+        ('0','2017'),
+        ('1','2016'),
+        ('2','2015'),
+        ('3','2014'),
+        ('4','2013'),
+        ('5','2012'),
+        ('6','2011'),
 
     ],string="年休假年份")
     _check_holidays = lambda self, cr, uid, ids, context=None: self.check_holidays(cr, uid, ids, context=context)

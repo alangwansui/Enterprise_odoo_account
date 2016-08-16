@@ -384,6 +384,7 @@ class dtdream_travel(models.Model):
 
 class dtdream_travel_journey(models.Model):
     _name = "dtdream.travel.journey"
+    _rec_name = "starttime"
 
     @api.constrains("startaddress", "endaddress", "starttime", "endtime", "reason")
     def _check_start_end_address(self):

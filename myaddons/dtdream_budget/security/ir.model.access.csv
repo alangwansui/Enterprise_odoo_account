@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_budget,dtdream_budget,model_dtdream_budget,,1,1,1,1
+access_dtdream_budget_travel,dtdream_budget_travel,model_dtdream_budget_travel,,1,1,1,1
+access_dtdream_budget_daily,dtdream_budget_daily,model_dtdream_budget_daily,,1,1,1,1
+access_dtdream_budget_zhuanx,dtdream_budget_zhuanx,model_dtdream_budget_zhuanx,,1,1,1,1
+access_dtdream_budget_xingz,dtdream_budget_xingz,model_dtdream_budget_xingz,,1,1,1,1

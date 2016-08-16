@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record model="ir.module.category" id="module_dtdream_sale_permission">
+            <field name="name">销售权限角色配置</field>
+            <field name="description">销售权限角色配置</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="group_dtdream_sale_rep" model="res.groups">
+            <field name="name">销售代表</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_sale_office_manager" model="res.groups">
+            <field name="name">办事处主任</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_product_manager" model="res.groups">
+            <field name="name">产品经理SE</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_office_product_vice_manager" model="res.groups">
+            <field name="name">办事处产品副主任</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_office_server_manager" model="res.groups">
+            <field name="name">办事处服务经理</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_headquarters_server_manager" model="res.groups">
+            <field name="name">总部服务经理</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_server_manager" model="res.groups">
+            <field name="name">服务部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_marketing_department_manager" model="res.groups">
+            <field name="name">营销管理部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_marketing_department_vice_manager" model="res.groups">
+            <field name="name">营销管理部副部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_marketing_department_project_interface_person" model="res.groups">
+            <field name="name">营销管理部项目接口人</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_marketing_department_business_interface_person" model="res.groups">
+            <field name="name">营销管理部商务接口人</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_system_manager" model="res.groups">
+            <field name="name">系统部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_system_vice_manager" model="res.groups">
+            <field name="name">系统部副部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_system_product_vice_manager" model="res.groups">
+            <field name="name">系统部产副</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_market_manager" model="res.groups">
+            <field name="name">市场部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_headquarters_product_manager" model="res.groups">
+            <field name="name">总部产品线经理</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_product_director" model="res.groups">
+            <field name="name">产品部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_management_manager" model="res.groups">
+            <field name="name">区域管理部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_management_vice_manager" model="res.groups">
+            <field name="name">区域管理部副部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_management_product_vice_manager" model="res.groups">
+            <field name="name">区域管理部产副</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_company_manager" model="res.groups">
+            <field name="name">公司总裁</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_devolopement_manager" model="res.groups">
+            <field name="name">战略发展部部长</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_sale_high_manager" model="res.groups">
+            <field name="name">营销管理组</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_dtdream_weekly_report_manager" model="res.groups">
+            <field name="name">周报管理员</field>
+            <field name="category_id" ref="module_dtdream_sale_permission"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+    </data>
+</openerp>

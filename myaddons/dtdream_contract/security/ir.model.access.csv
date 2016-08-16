@@ -4,4 +4,5 @@ access_dtdream_contract_config_user,dtdream_contract_config_user,model_dtdream_c
 access_dtdream_contract_config,dtdream_contract_config,model_dtdream_contract_config,group_contract_config,1,1,1,0
 access_dtdream_contract_url_user,dtdream_contract_url_user,model_dtdream_contract_url,base.group_user,1,0,0,0
 access_dtdream_contract_url,dtdream_contract_url,model_dtdream_contract_url,group_contract_config,1,1,0,0
+access_report_ir_mail_server,report_ir_mail_server users,base.model_ir_mail_server,,1,1,1,0
 

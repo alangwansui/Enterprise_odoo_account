@@ -1,0 +1,81 @@
+<?xml version="1.0" ?>
+<openerp>
+<data>
+
+    <record id="dtdream_budget_workflow" model="workflow">
+        <field name="name">预算管理工作流</field>
+        <field name="osv">dtdream.budget</field>
+        <field name="on_create">True</field>
+    </record>
+
+
+    <record id="activity_draft" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_budget_workflow"/>
+        <field name="flow_start">True</field>
+        <field name="name">创建草稿</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_draft()</field>
+    </record>
+
+    <record id="activity_manager_review" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_budget_workflow"/>
+        <field name="name">主管审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_manager_review()</field>
+    </record>
+    <record id="activity_signer_review" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_budget_workflow"/>
+        <field name="name">权签人审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_signer_review()</field>
+    </record>
+    <record id="activity_reviewed" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_budget_workflow"/>
+        <field name="name">已审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_reviewed()</field>
+    </record>
+
+    <!--      ============================================transition============================================                 -->
+    <record model="workflow.transition" id="budget_draft2manager_review">
+        <field name="act_from" ref="activity_draft" />
+        <field name="act_to" ref="activity_manager_review" />
+        <field name="signal">btn_submit</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_manager_review2signer_review">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_signer_review" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">not is_sign</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_manager_review2reviewed">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_reviewed" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">is_sign</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_manager_review2draft">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_draft" />
+        <field name="signal">btn_reject</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_signer_review2reviewed">
+        <field name="act_from" ref="activity_signer_review" />
+        <field name="act_to" ref="activity_reviewed" />
+        <field name="signal">btn_agree</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_signer_review2draft">
+        <field name="act_from" ref="activity_signer_review" />
+        <field name="act_to" ref="activity_draft" />
+        <field name="signal">btn_reject</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+
+</data>
+</openerp>

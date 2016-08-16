@@ -44,6 +44,5 @@
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
              <field name="domain_force">[('is_create','=',True),('version_state','=','draft')]</field>
          </record>
-
         </data>
     </openerp>

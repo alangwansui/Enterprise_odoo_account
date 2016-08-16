@@ -24,7 +24,7 @@
               <sheet>
                 <group string="基本信息">
                     <group>
-                        <field name="name"/>
+                        <field name="name" readonly="True"/>
                         <field name="department"/>
                         <field name="mobile" attrs="{'readonly':[('has_edit', '=',False)]}"/>
                         <field name="icard" attrs="{'readonly':[('has_edit', '=',False)]}"/>

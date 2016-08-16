@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import openerp
 from openerp import models, fields, api
 from openerp.osv.orm import setup_modifiers
-
+from dateutil.relativedelta import relativedelta
 from datetime import datetime,time
 
 import time
@@ -25,7 +25,7 @@ class dtdream_contract_url(models.Model):
 class dtdream_contract(models.Model):
     _name = 'dtdream.contract'
     _inherit =['mail.thread']
-    _description = u'合同评审电子流'
+    _description = u'合同评审'
 
     his_approve=fields.Many2many('hr.employee',string="历史审批人")
     name = fields.Char(string="合同名称")
@@ -34,7 +34,6 @@ class dtdream_contract(models.Model):
     def _compute_constract_id(self):
         if self.constract_type:
             max_constract_id=''
-            # print self.env.cr.execute("SELECT * FROM dtdream_contract")
             baseid='DTD-'+self.constract_type.name_id+time.strftime("%Y%m%d", time.localtime())
             sql_baseid = baseid + "%"
             self._cr.execute("select constract_id from dtdream_contract where constract_id like '"+sql_baseid+"' order by id desc limit 1")
@@ -125,6 +124,7 @@ class dtdream_contract(models.Model):
     tip=fields.Char(default=lambda self:self.env['dtdream.contract.url'].search([],limit=1).name)
 
     @api.onchange('pro_name')
+    @api.depends('pro_name')
     def _compute_parter(self):
         try:
             self.partner=self.env['crm.lead'].search([('name','=',self.pro_name.name)]).partner_id.name
@@ -132,7 +132,7 @@ class dtdream_contract(models.Model):
             return
 
 
-    partner=fields.Char(string="合作方",compute=_compute_parter)
+    partner=fields.Char(string="合作方",compute=_compute_parter,store=True)
     provider=fields.Many2one('res.partner',string='合作方',domain=[('supplier','=',True)])
     is_standard=fields.Boolean(string="是标准合同",help='标准合同无需评审，直接进入会签环节，可快速完成合同评审流程')
     current_handler_ids=fields.Many2many('hr.employee','c_i_h_e',string="当前处理人",store=True)
@@ -251,7 +251,7 @@ class dtdream_contract(models.Model):
     @api.multi
     def wkf_manager_review(self):
         # 主管审批
-        self.message_post(body=u"合同编号：%s，提交，提交时间：%s"%(self.constract_id,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        self.message_post(body=u"合同编号：%s，提交，提交时间：%s"%(self.constract_id,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
         self.current_handler_ids=self.deparment_manage
         self.state='1'
         self.send_email()
@@ -345,14 +345,10 @@ class dtdream_contract(models.Model):
     @api.cr_uid_ids_context
     def message_post(self, cr, uid, thread_id, context=None, **kwargs):
 
-
         current_contract = self.pool.get('dtdream.contract').browse(cr, uid,thread_id,context=context)
-
-        # if current_contract.is_handler == False:
-        #     raise ValidationError("您不能在此区域编辑！")
         if kwargs.has_key('attachment_ids'):
             for id in kwargs['attachment_ids']:
-                print "attachment_ids",id
+
                 current_contract.att_final=self.pool.get('ir.attachment').browse(cr, uid,id,context=context).datas
                 current_contract.att_final_name=self.pool.get('ir.attachment').browse(cr, uid,id,context=context).name
                 base1 = current_contract.pool.get('ir.config_parameter').get_param(current_contract.env.cr,current_contract.env.user.id,'web.base.url')
@@ -360,7 +356,7 @@ class dtdream_contract(models.Model):
                 url1=base1+link1
                 for people in current_contract.current_handler_ids:
 
-                    current_contract.env['mail.mail'].create({
+                    mess = current_contract.env['mail.mail'].create({
                             'subject': u'%s于%s提交合同：%s 评审申请已经重新上传了附件，请您审批！' % (current_contract.applicant.name, current_contract.create_time[:10],current_contract.name),
                             'body_html': u'''
                             <p>%s，您好：</p>
@@ -372,7 +368,12 @@ class dtdream_contract(models.Model):
                             <p>%s</p>''' % (people.name, current_contract.applicant.name, url1, url1, current_contract.write_date[:10]),
                             'email_from':current_contract.env['ir.mail_server'].search([], limit=1).smtp_user,
                             'email_to': people.work_email,
-                        }).send()
+                            # 'model': "",
+                        })
+                    mess.write({'model':""})
+                    mess.send()
+
+
 
         return super(dtdream_contract, self).message_post(cr, uid, thread_id, context=context, **kwargs)
 
@@ -413,33 +414,89 @@ class dtdream_contract_wizard(models.TransientModel):
           if self.temp == 'agree':
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
 
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：同意, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">同意</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               if current_record.state == '2' or current_record.state == '4':
                   current_record.signal_workflow('btn_agree')
               else:
                   if len(current_record.current_handler_ids) == 0:
                       current_record.signal_workflow('btn_agree')
           elif self.temp == 'refuse':
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：<span style='color:red'>不同意</span>, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">不同意</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
           elif self.temp == 'norefer':
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：不涉及, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">不涉及</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               if len(current_record.current_handler_ids) == 0:
                   current_record.signal_workflow('btn_agree')
           elif self.temp == 'reject':
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：<span style='color:red'>驳回</span>, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">驳回</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>"""%(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_reject')
           elif self.temp == 'force':
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：强制通过, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">强制通过</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_force_approve')
           elif self.temp == 'void':
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：作废, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">作废</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_void')
           elif self.temp == 'stamp':
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：确认盖章, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">确认盖章</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>"""%(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_confirm_stamped')
           elif self.temp == 'file':
-              current_record.message_post(body=u"合同编号：%s, 状态：%s, 审批人：%s, 审批结果：确认归档, 审批意见：%s, 审批时间：%s" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
+                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">确认归档</td></tr>
+                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
+                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_confirm_filed')
 
 class dtdream_contract_config(models.Model):

@@ -96,7 +96,7 @@
                                   <field name="name" required="True"/>
                                   <field name="company" required="True"/>
                                   <field name="address" required="True"/>
-                                  <field name="postcode" required="True"/>
+                                  <field name="postcode"/>
                                   <field name="mail"/>
                                   <field name="tel" required="True"/>
                                   <field name="emergency"/>

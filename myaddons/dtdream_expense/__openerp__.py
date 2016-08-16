@@ -24,8 +24,11 @@
     # always loaded
     'data': [
          'security/ir.model.access.csv',
+        'wizard/expense_wizard.xml',
         'views/views.xml',
         'views/templates.xml',
+        'workflow/expenseworkflow.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [

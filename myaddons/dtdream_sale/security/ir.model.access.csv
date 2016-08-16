@@ -32,7 +32,7 @@ access_product_price_history_manager,product.price.history manager,product.model
 access_crm_lead_salesman_all_leads,crm.lead,crm.model_crm_lead,group_dtdream_sale_salesman_all_leads,1,0,0,0
 crm.access_crm_lead_manager,crm.lead.manager,crm.model_crm_lead,group_dtdream_sale_manager,1,1,1,1
 crm.access_crm_lead,crm.lead,crm.model_crm_lead,group_dtdream_sale_salesman,1,1,1,0
-crm.access_crm_lead_read,crm.lead,crm.model_crm_lead,group_dtdream_sale_read,1,0,0,0
+crm.access_crm_lead_read,crm.lead,crm.model_crm_lead,group_dtdream_sale_read,1,1,0,0
 crm_partner_assign.partner_access_crm_lead,crm.lead,crm.model_crm_lead,base.group_portal,0,0,0,0
 crm.access_crm_lead_partner_manager,crm.lead.partner.manager,crm.model_crm_lead,base.group_partner_manager,0,0,0,0
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_dtdream_expense">
+            <field name="name">费用报销审批流程</field>
+            <field name="osv">dtdream.expense.report</field>
+            <field name="on_create">True</field>
+        </record>
+
+
+        <record model="workflow.activity" id="draft">
+            <field name="name">草稿</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+
+        <record model="workflow.activity" id="xingzheng">
+            <field name="name">行政助理审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="kind">function</field>
+            <field name="action">action_xingzheng()</field>
+        </record>
+
+
+
+
+        <record model="workflow.activity" id="zhuguan">
+            <field name="name">主管审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="kind">function</field>
+            <field name="action">action_zhuguan()</field>
+        </record>
+        <record model="workflow.activity" id="quanqianren">
+            <field name="name">权签人审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="kind">function</field>
+            <field name="action">action_quanqianren()</field>
+        </record>
+
+        <record model="workflow.activity" id="jiekoukuaiji">
+            <field name="name">接口会计审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="kind">function</field>
+            <field name="action">action_jiekoukuaiji()</field>
+        </record>
+        <record model="workflow.activity" id="daifukuan">
+            <field name="name">待付款</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="kind">function</field>
+            <field name="action">action_daifukuan()</field>
+        </record>
+
+        <record model="workflow.activity" id="yifukuan">
+            <field name="name">已付款</field>
+            <field name="wkf_id" ref="wkf_dtdream_expense"/>
+            <field name="flow_stop" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_yifukuan()</field>
+        </record>
+
+
+
+
+        <record model="workflow.transition" id="dtdream_expense_draft_to_xingzheng">
+            <field name="act_from" ref="draft"/>
+            <field name="act_to" ref="xingzheng"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_xingzheng_to_draft">
+            <field name="act_from" ref="xingzheng"/>
+            <field name="act_to" ref="draft"/>
+            <field name="signal">btn_refuse_xingzheng_to_draft</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_xingzheng_to_zhuguan">
+            <field name="act_from" ref="xingzheng"/>
+            <field name="act_to" ref="zhuguan"/>
+            <field name="signal">btn_agree</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_zhuguan_to_xingzheng">
+            <field name="act_from" ref="zhuguan"/>
+            <field name="act_to" ref="xingzheng"/>
+            <field name="signal">btn_refuse_zhuguan_to_xingzheng</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_zhuguan_to_draft">
+            <field name="act_from" ref="zhuguan"/>
+            <field name="act_to" ref="draft"/>
+            <field name="signal">btn_refuse_zhuguan_to_draft</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="dtdream_expense_zhuguan_to_quanqianren">
+            <field name="act_from" ref="zhuguan"/>
+            <field name="act_to" ref="quanqianren"/>
+            <field name="signal">btn_agree</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_quanqianren_to_zhuguan">
+            <field name="act_from" ref="quanqianren"/>
+            <field name="act_to" ref="zhuguan"/>
+            <field name="signal">btn_refuse_quanqianren_to_zhuguan</field>
+        </record>
+
+          <record model="workflow.transition" id="dtdream_expense_quanqianren_to_xingzheng">
+            <field name="act_from" ref="quanqianren"/>
+            <field name="act_to" ref="xingzheng"/>
+            <field name="signal">btn_refuse_quanqianren_to_xingzheng</field>
+        </record>
+          <record model="workflow.transition" id="dtdream_expense_quanqianren_to_draft">
+            <field name="act_from" ref="quanqianren"/>
+            <field name="act_to" ref="draft"/>
+            <field name="signal">btn_refuse_quanqianren_to_draft</field>
+        </record>
+
+
+
+
+
+        <record model="workflow.transition" id="dtdream_expense_quanqianren_to_jiekoukuaiji">
+            <field name="act_from" ref="quanqianren"/>
+            <field name="act_to" ref="jiekoukuaiji"/>
+            <field name="signal">btn_agree</field>
+            <field name="condition">can_pass_jiekoukuaiji=="1"</field>
+        </record>
+
+           <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_quanqianren">
+            <field name="act_from" ref="jiekoukuaiji"/>
+            <field name="act_to" ref="quanqianren"/>
+            <field name="signal">btn_refuse_jiekoukuaiji_to_quanqianren</field>
+        </record>
+        <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_zhuguan">
+            <field name="act_from" ref="jiekoukuaiji"/>
+            <field name="act_to" ref="zhuguan"/>
+            <field name="signal">btn_refuse_jiekoukuaiji_to_zhuguan</field>
+        </record>
+        <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_xingzheng">
+            <field name="act_from" ref="jiekoukuaiji"/>
+            <field name="act_to" ref="xingzheng"/>
+            <field name="signal">btn_refuse_jiekoukuaiji_to_xingzheng</field>
+        </record>
+        <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_draft">
+            <field name="act_from" ref="jiekoukuaiji"/>
+            <field name="act_to" ref="draft"/>
+            <field name="signal">btn_refuse_jiekoukuaiji_to_draft</field>
+        </record>
+
+
+        <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_daifukuan">
+            <field name="act_from" ref="jiekoukuaiji"/>
+            <field name="act_to" ref="daifukuan"/>
+            <field name="signal">btn_agree</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_daifukuan_to_yifukuan">
+            <field name="act_from" ref="daifukuan"/>
+            <field name="act_to" ref="yifukuan"/>
+            <field name="signal">btn_confirmmoney</field>
+        </record>
+
+    </data>
+</openerp>

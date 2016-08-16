@@ -1,180 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-  <data>
-    <!-- form,list视图-->
+    <data>
+        <!-- form,list视图-->
 
-    <record model="ir.ui.view" id="dtdream_expense_record_tree_view">
-      <field name="name">dtdream.expense.record.tree</field>
-      <field name="model">dtdream.expense.record</field>
-      <field name="arch" type="xml">
-        <tree>
-            <field name="name"/>
-          <field name="expensecatelog"/>
-           <field name="expensedetail"/>
-            <field name="currentdate"/>
-           <field name="invoicevalue"/>
-          <field name="state"/>
-          <field name="create_date" string="创建时间" />
-          <field name="create_uid" string="创建人" />
-        </tree>
-      </field>
-    </record>
-
-
-      <record model="ir.ui.view" id="dtdream_expense_record_search_view">
-      <field name="name">dtdream.expense.record.search</field>
-      <field name="model">dtdream.expense.record</field>
-      <field name="arch" type="xml">
-        <search>
-          <field name="currentdate"/>
-          <field name="expensecatelog"/>
-           <field name="expensedetail"/>
-           <field name="invoicevalue"/>
-          <field name="state"/>
-          <field name="create_date" string="创建时间" />
-          <field name="create_uid" string="创建人" />
-        </search>
-      </field>
-    </record>
+        <record model="ir.ui.view" id="dtdream_expense_record_tree_view">
+            <field name="name">dtdream.expense.record.tree</field>
+            <field name="model">dtdream.expense.record</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="expensecatelog"/>
+                    <field name="expensedetail"/>
+                    <field name="currentdate"/>
+                    <field name="invoicevalue"/>
+                    <field name="state"/>
+                    <field name="create_date" string="创建时间"/>
+                    <field name="create_uid" string="创建人"/>
+                </tree>
+            </field>
+        </record>
 
 
-    <record model="ir.ui.view" id="dtdream_expense_record_form_view">
-      <field name="name">dtdream.expense.record.form</field>
-      <field name="model">dtdream.expense.record</field>
-      <field name="arch" type="xml">
-        <form>
-            <sheet>
-                    <group  string="基本信息">
+        <record model="ir.ui.view" id="dtdream_expense_record_search_view">
+            <field name="name">dtdream.expense.record.search</field>
+            <field name="model">dtdream.expense.record</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="currentdate"/>
+                    <field name="expensecatelog"/>
+                    <field name="expensedetail"/>
+                    <field name="invoicevalue"/>
+                    <field name="state"/>
+                    <field name="create_date" string="创建时间"/>
+                    <field name="create_uid" string="创建人"/>
+                </search>
+            </field>
+        </record>
 
 
-                        <group >
-
-                        <field name="expensecatelog" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                        <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-
-                        <field name="currentdate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                            <field name="invoicevalue"  attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                         <field name="city" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                            <field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                        </group>
+        <record model="ir.ui.view" id="dtdream_expense_record_form_view">
+            <field name="name">dtdream.expense.record.form</field>
+            <field name="model">dtdream.expense.record</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
 
 
-                        <group >
-                            <field name="state" readonly="1"/>
+                            <group>
 
-                         <field name="create_date"  string="创建时间" readonly="1"/>
-                      　　<field name="create_uid" string="创建人" readonly="1"/>
+                                <field name="expensecatelog" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft'))]}"
+                                       context="{'default_parentid':expensecatelog}"/>
 
-                        </group>
-
-
-
-                    </group>
-
-                <group>
-
-                </group>
+                                <field name="currentdate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="invoicevalue" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="city" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                            </group>
 
 
+                            <group>
+                                <field name="state" readonly="1"/>
 
+                                <field name="create_date" string="创建时间" readonly="1"/>
+                                　　
+                                <field name="create_uid" string="创建人" readonly="1"/>
 
-            </sheet>
-        </form>
-      </field>
-    </record>
+                            </group>
 
-      <record model="ir.ui.view" id="dtdream_expense_catelog_tree_view">
-      <field name="name">dtdream.expense.catelog.tree</field>
-      <field name="model">dtdream.expense.catelog</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-        </tree>
-      </field>
-    </record>
-      <record model="ir.ui.view" id="dtdream_expense_catelog_form_view">
-      <field name="name">dtdream.expense.catelog.form</field>
-      <field name="model">dtdream.expense.catelog</field>
-      <field name="arch" type="xml">
-        <form>
-            <sheet>
-                    <group  string="基本信息">
-
-
-                        <group >
-
-                        <field name="name" />
 
                         </group>
 
-                    </group>
+                        <group>
 
-            </sheet>
-        </form>
-      </field>
-    </record>
-
-      <record model="ir.ui.view" id="dtdream_expense_detail_tree_view">
-      <field name="name">dtdream.expense.detail.tree</field>
-      <field name="model">dtdream.expense.detail</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-            <field name="parentid"/>
-        </tree>
-      </field>
-    </record>
-      <record model="ir.ui.view" id="dtdream_expense_detail_form_view">
-      <field name="name">dtdream.expense.detail.form</field>
-      <field name="model">dtdream.expense.detail</field>
-      <field name="arch" type="xml">
-        <form>
-            <sheet>
-                    <group  string="基本信息">
-
-
-                        <group >
-
-                        <field name="name" />
-                        <field name="parentid"/>
                         </group>
 
-                    </group>
 
-            </sheet>
-        </form>
-      </field>
-    </record>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_expense_catelog_tree_view">
+            <field name="name">dtdream.expense.catelog.tree</field>
+            <field name="model">dtdream.expense.catelog</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_catelog_form_view">
+            <field name="name">dtdream.expense.catelog.form</field>
+            <field name="model">dtdream.expense.catelog</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
 
 
-      <record id="dtdream_expense_quanqian_form_view" model="ir.ui.view">
+                            <group>
+
+                                <field name="name"/>
+
+                            </group>
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_expense_detail_tree_view">
+            <field name="name">dtdream.expense.detail.tree</field>
+            <field name="model">dtdream.expense.detail</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="parentid"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_detail_form_view">
+            <field name="name">dtdream.expense.detail.form</field>
+            <field name="model">dtdream.expense.detail</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
+
+
+                            <group>
+
+                                <field name="name"/>
+                                <field name="parentid"/>
+                            </group>
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="dtdream_expense_quanqian_form_view" model="ir.ui.view">
             <field name="name">dtdream.expense.quanqian.form</field>
             <field name="model">hr.department</field>
             <field name="priority">15</field>
             <field name="arch" type="xml">
                 <form string="department">
                     <sheet>
-                        <group col="4">
+                        <group>
+
+                            <group>
+                                <field name="name" readonly="0"/>
+                                <field name="code" readonly="0"/>
+                                <field name="parent_id" readonly="0"/>
+                                <field name="manager_id" string="主管" readonly="0"/>
+                                <field name="assitant_id" widget="many2many_tags" readonly="0"/>
+
+                            </group>
+                            <group>
 
 
-                            <field name="name" readonly="0"/>
-                            <field name="code" readonly="0"/>
-                             <field name="parent_id" readonly="0"/>
-                            <field name="manager_id" string="主管" readonly="0"/>
-                            <field name="assitant_id" widget="many2many_tags" readonly="0"/>
+                                <field name="no_one_auditor" string="第一审批人"/>
+                                <field name="no_one_auditor_amount" string="第一审批人权签金额"/>
+                                <field name="no_two_auditor" string="第二审批人"/>
 
+                                <field name="no_two_auditor_amount" string="第二审批人权签金额"/>
+                                <field name="no_three_auditor" string="第三审批人"/>
 
-
-                           <field name="quanqianren" string="权签人" />
-                            <field name="shouquanren1" string="第一授权人" />
-                             <field name="shouquanren2" string="第二授权人" />
-                            <field name="amountmin1" string="第一授权人最小金额" />
-                            <field name="amountmin2" string="第二授权人最小金额" />
-                            <field name="amountmax1" string="第一授权人最大金额" />
-                            <field name="amountmax2" string="第二授权人最大金额" />
-                             <field name="jiekoukuaiji" string="接口会计" />
-                             <field name="chunakuaiji" string="出纳会计" />
-
+                                <field name="jiekoukuaiji" string="接口会计"/>
+                                <field name="chunakuaiji" string="出纳会计"/>
+                            </group>
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -185,7 +190,7 @@
             </field>
         </record>
 
-      <record id="dtdream_expense_quanqian_tree_view" model="ir.ui.view">
+        <record id="dtdream_expense_quanqian_tree_view" model="ir.ui.view">
             <field name="name">dtdream.expense.quanqian.tree</field>
             <field name="model">hr.department</field>
             <field name="field_parent">child_ids</field>
@@ -200,63 +205,89 @@
         </record>
 
 
-      <record id="dtdream_expense_myreport_form_view" model="ir.ui.view">
+        <record id="dtdream_expense_myreport_form_view" model="ir.ui.view">
             <field name="name">dtdream.expense.myreport.form</field>
             <field name="model">dtdream.expense.report</field>
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button  string="提交" name="btn_submit" type="object" class="oe_highlight"  />
-                        <button string="同意" name="btn_agree"  type="object" class="oe_highlight"  />
-                        <button string="驳回" name="btn_refuse"  type="object" class="oe_highlight"  />
-                        <button string="签收纸件" name="btn_checkpaper"  type="object" class="oe_highlight"  />
-                         <button string="确认付款" name="btn_confirmmoney"  type="object" class="oe_highlight"  />
-                         <button string="催签" name="btn_cuiqian"  type="object" class="oe_highlight"  />
+                        <button string="提交" name="btn_submit" type="workflow" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('draft'))]}"/>
+                        <button string="同意" name="%(act_expense_agree_wizard)d" type="action" class="oe_highlight"
+                                attrs="{'invisible':['|','|',('compute_currentaudit','=',False),('state','not in',
+                                ('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))]}"/>
+                        <button string="驳回" name="%(act_expense_wizard)d" type="action" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))]}"/>
+                        <button string="签收纸件" name="btn_checkpaper" type="object" class="oe_highlight"
+                                confirm="确定收到报销单纸件吗?"
+                                attrs="{'invisible':['|','|',('compute_currentaudit','=',False),('state','not in',('jiekoukuaiji','xingzheng'))]}"/>
+                        <button string="确认付款" name="btn_confirmmoney" type="workflow" class="oe_highlight" states=""
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('daifukuan'))]}"
+                                confirm="确定已付款吗?"/>
+                        <button string="催签" name="btn_cuiqian" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji','daifukuan'))]}"
+                                confirm="确定要催签吗?"/>
 
-                         <field name="state" widget="statusbar" statusbar_visible="draft,xingzheng,zhuguan,quanqianren,jiekoukuaiji,daifukuan,yifukuan,"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,xingzheng,zhuguan,quanqianren,jiekoukuaiji,daifukuan,yifukuan,"/>
                     </header>
                     <sheet>
-                         <group>
+                        <group>
                             <group string="基本信息">
-                                 <field name="job_number" readonly="1"/>
-                                 <field name="full_name" readonly="1"/>
-                                 <field name="work_place" readonly="1"/>
-                               　 <field name="department_id" readonly="1"/>
-                                　<field name="department_number" readonly="1"/>
+                                <field name="job_number" readonly="1"/>
+                                <field name="full_name" readonly="1"/>
+                                <field name="work_place" readonly="1"/>
+                                　
+                                <field name="department_id" readonly="1"/>
+                                　
+                                <field name="department_number" readonly="1"/>
+                                <field name="compute_shenqingren" invisible="1"/>
+                                <field name="compute_currentaudit" invisible="1"/>
+                                <field name="showcuiqian" invisible="1"/>
+
 
                                 <!--<field name="expensecode"/>-->
                                 <!--<field name="name"/>
                                  <field name="state"/>-->
                                 <!--<field name="currentauditperson"/>-->
                                 <!--<field name="zhuanxiangshiqianshenpidanhao"/>-->
-                                <field name="expensereason" />
+                                <field name="expensereason"/>
                             </group>
 
 
-                             <group  string="支付信息">
-                                <field name="paytype"  widget="radio"/>
-                                <field name="paycatelog"  widget="radio"/>
-                                <field name="shoukuanrenxinming" />
-                                <field name="kaihuhang" />
-                                <field name="yinhangkahao" />
+                            <group string="支付信息">
+                                <field name="paytype" widget="radio"/>
+                                <field name="paycatelog" widget="radio"/>
+                                <field name="shoukuanrenxinming"/>
+                                <field name="kaihuhang"/>
+                                <field name="yinhangkahao"/>
                             </group>
 
-                         </group>
+                        </group>
 
                         <notebook>
                             <page string="费用明细">
-                                <field name="record_ids"  >
-                                    <tree editable="bottom" >
-                                        <field  name="record_id" />
-                                         <field name="expensecatelog"/>
-                                            <field name="expensedetail"/>
-                                            <field name="currentdate"/>
-                                           <field name="invoicevalue"/>
-                                          <field name="state"/>
-                                          <field name="create_date" string="创建时间" />
-                                          <field name="create_uid" string="创建人" />
+                                <field name="record_ids">
+                                    <tree editable="bottom">
+                                        <!--<field name="record_id"/>-->
+                                        <field name="expensecatelog"/>
+                                        <field name="expensedetail"/>
+                                        <field name="currentdate"/>
+                                        <field name="invoicevalue"/>
+                                        <field name="koujianamount"/>
+                                        <field name="shibaoamount"/>
+                                        <field name="outtimenumber"/>
+                                        <field name="state" readonly="1"/>
+                                        <field name="create_date" string="创建时间" readonly="1"/>
+                                        <field name="create_uid" string="创建人" readonly="1"/>
                                     </tree>
                                 </field>
+                                <group class="oe_subtotal_footer oe_right" name="expense_total_invoicevalue">
+                                    <field name="total_invoicevalue" class="oe_subtotal_footer_separator" readonly="1"/>
+                                    <field name="total_koujianamount" class="oe_subtotal_footer_separator"
+                                           readonly="1"/>
+                                    <field name="total_shibaoamount" class="oe_subtotal_footer_separator" readonly="1"/>
+                                </group>
                             </page>
                         </notebook>
 
@@ -264,7 +295,7 @@
                         <notebook>
                             <page string="受益部门分摊比例">
                                 <field name="benefitdep_ids">
-                                    <tree  editable="bottom">
+                                    <tree editable="bottom">
 
                                         <field name="name"/>
                                         <field name="sharepercent"/>
@@ -273,121 +304,219 @@
                                 </field>
                             </page>
                         </notebook>
-<!--
+                        <!--
+                                                <notebook>
+                                                    <page string="对应预算月份">
+
+                                                            <tree>
+                                                                 <field name="budgetmonth"/>
+
+                                                            </tree>
+
+                                                    </page>
+                                                </notebook>
+                        -->
                         <notebook>
-                            <page string="对应预算月份">
+                            <page string="出差时间">
 
-                                    <tree>
-                                         <field name="budgetmonth"/>
+                                <field name="chuchaishijian_ids">
+                                    <tree editable="bottom">
 
+                                        <field name="name"/>
+                                        <field name="endtime"/>
+                                        <field name="startaddress"/>
+                                        <field name="endaddress"/>
+                                        <field name="reason"/>
                                     </tree>
-
+                                </field>
                             </page>
                         </notebook>
--->
-                        <notebook>
-                            <page string="对应出差时间">
-
-                                     <field name="chuchaishijian_ids">
-                                                <tree  editable="bottom">
-
-                                                 <field name="name"/>
-                                                </tree>
-                                     </field>
-                            </page>
-                        </notebook>
-
 
 
                     </sheet>
-
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
 
-      <record id="dtdream_expense_myreport_tree_view" model="ir.ui.view">
+        <record id="dtdream_expense_myreport_tree_view" model="ir.ui.view">
             <field name="name">dtdream.expense.myreport.tree</field>
             <field name="model">dtdream.expense.report</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field  name="expensecode"/>
+                    <field name="expensecode"/>
                     <field name="name"/>
-                     <field name="state"/>
-                     <field name="currentauditperson"/>
-                     <field name="create_uid" string="申请人"/>
+                    <field name="state"/>
+                    <field name="currentauditperson"/>
+                    <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <field name="department_id"/>
+
+                  
+
 
                 </tree>
             </field>
         </record>
 
-    <!-- actions 定义-->
+        <record model="ir.ui.view" id="dtdream_expense_president_tree_view">
+            <field name="name">dtdream.expense.president.tree</field>
+            <field name="model">dtdream.expense.president</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="type"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_president_form_view">
+            <field name="name">dtdream.expense.president.form</field>
+            <field name="model">dtdream.expense.president</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
 
-    <record model="ir.actions.act_window" id="action_dtdream_expense_record">
-      <field name="name">我的消费记录</field>
-      <field name="res_model">dtdream.expense.record</field>
-        <field name="domain">[('create_uid','=',uid)]</field>
-      <field name="view_mode">tree,form</field>
-    </record>
 
-      <record model="ir.actions.act_window" id="action_dtdream_expense_catelog">
-      <field name="name">费用类别</field>
-      <field name="res_model">dtdream.expense.catelog</field>
-      <field name="view_mode">tree,form</field>
-    </record>
+                            <group>
 
-      <record model="ir.actions.act_window" id="action_dtdream_expense_detail">
-      <field name="name">费用明细</field>
+                                <field name="type"/>
+                                <field name="name"/>
+                            </group>
 
-      <field name="res_model">dtdream.expense.detail</field>
-      <field name="view_mode">tree,form</field>
-    </record>
+                        </group>
 
-      <record model="ir.actions.act_window" id="action_dtdream_expense_quanqian">
-          <field name="name">权签授权设置</field>
-          <field name="view_type">tree</field>
-          <field name="res_model">hr.department</field>
-          <field name="view_mode">tree,list,form</field>
-
-          <field name="domain">[('parent_id','=',False)]</field>
-    </record>
-
-        <record model="ir.actions.act_window" id="action_dtdream_expense_myreport">
-          <field name="name">我的申请</field>
-          <field name="res_model">dtdream.expense.report</field>
-            <field name="domain">[('create_uid','=',uid)]</field>
-          <field name="view_mode">tree,form</field>
+                    </sheet>
+                </form>
+            </field>
         </record>
 
 
-    <!-- 顶层菜单 -->
+        <!-- actions 定义-->
 
-    <menuitem name="费用报销" id="dtdream_expense_menu_root" web_icon="dtdream_rd_prod,static/description/rd.png"/>
+        <record model="ir.actions.act_window" id="action_dtdream_expense_record">
+            <field name="name">我的消费记录</field>
+            <field name="res_model">dtdream.expense.record</field>
+            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_catelog">
+            <field name="name">费用类别</field>
+            <field name="res_model">dtdream.expense.catelog</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_detail">
+            <field name="name">费用明细</field>
+
+            <field name="res_model">dtdream.expense.detail</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_quanqian">
+            <field name="name">权签授权设置</field>
+            <field name="view_type">tree</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_mode">tree,list,form</field>
+
+            <field name="domain">[('parent_id','=',False)]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_myreport">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_pending">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('currentauditperson_userid','=',uid)]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_audited">
+            <field name="name">我已审批</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('hasauditor.user_id','=',uid)]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_draft">
+            <field name="name">草稿箱</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('create_uid','=',uid),('state','=','draft')]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_all">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_president">
+            <field name="name">公司总裁</field>
+            <field name="res_model">dtdream.expense.president</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- 顶层菜单 -->
+
+        <menuitem name="费用报销" id="dtdream_expense_menu_root" web_icon="dtdream_rd_prod,static/description/rd.png"/>
 
 
+        <!-- 子菜单 -->
 
-    <!-- 子菜单 -->
+        <menuitem name="我的消费记录" id="dtdream_expense_record" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_record"/>
 
-      <menuitem name="我的消费记录" id="dtdream_expense_record" parent="dtdream_expense_menu_root" action="action_dtdream_expense_record"/>
-
-      <menuitem name="报销单" id="dtdream_expense_report" parent="dtdream_expense_menu_root"/>
-      <menuitem name="我的申请" id="dtdream_expense_myreport" parent="dtdream_expense_report" action="action_dtdream_expense_myreport"/>
-
-      <!--
-      <menuitem name="待我审批" id="dtdream_expense_pending" parent="dtdream_expense_report" action="action_dtdream_expense_pending"/>
-      <menuitem name="我已审批" id="dtdream_expense_audited" parent="dtdream_expense_report" action="action_dtdream_expense_audited"/>
-      <menuitem name="草稿箱" id="dtdream_expense_draft" parent="dtdream_expense_report" action="action_dtdream_expense_draft"/>
-      <menuitem name="所有单据" id="dtdream_expense_all" parent="dtdream_expense_report" action="action_dtdream_expense_all"/>
-     -->
-
-       <menuitem name="配置" id="dtdream_expense_configration" parent="dtdream_expense_menu_root" />
-      <menuitem name="费用类别" id="dtdream_expense_catelog" parent="dtdream_expense_configration" action="action_dtdream_expense_catelog"/>
-      <menuitem name="费用明细" id="dtdream_expense_detail" parent="dtdream_expense_configration" action="action_dtdream_expense_detail"/>
-      <menuitem name="权签人" id="dtdream_expense_quanqianren" parent="dtdream_expense_configration" action="action_dtdream_expense_quanqian"/>
+        <menuitem name="报销单" id="dtdream_expense_report" parent="dtdream_expense_menu_root"/>
+        <menuitem name="我的申请" id="dtdream_expense_myreport" parent="dtdream_expense_report"
+                  action="action_dtdream_expense_myreport"/>
 
 
+        <menuitem name="待我审批" id="dtdream_expense_pending" parent="dtdream_expense_report"
+                  action="action_dtdream_expense_pending"/>
+        <menuitem name="我已审批" id="dtdream_expense_audited" parent="dtdream_expense_report"
+                  action="action_dtdream_expense_audited"/>
+        <menuitem name="草稿箱" id="dtdream_expense_draft" parent="dtdream_expense_report"
+                  action="action_dtdream_expense_draft"/>
+        <menuitem name="所有单据" id="dtdream_expense_all" parent="dtdream_expense_report"
+                  action="action_dtdream_expense_all"/>
 
 
-  </data>
+        <menuitem name="配置" id="dtdream_expense_configration" parent="dtdream_expense_menu_root"/>
+        <menuitem name="费用类别" id="dtdream_expense_catelog" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_catelog"/>
+        <menuitem name="费用明细" id="dtdream_expense_detail" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_detail"/>
+        <menuitem name="权签人" id="dtdream_expense_quanqianren" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_quanqian"/>
+        <menuitem name="公司总裁" id="dtdream_expense_president" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_president"/>
+
+
+        <record id="action_create_expense_report" model="ir.actions.server">
+            <field name="name">生成报销单</field>
+            <field name="model_id" ref="model_dtdream_expense_record"/>
+            <field name="state">code</field>
+            <field name="code">
+                action = object.create_expense_record_baoxiao()
+            </field>
+        </record>
+
+        <record id="ir_create_exprense_report" model="ir.values">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'dtdream.expense.record'" name="model"/>
+            <field name="name">生成报销单</field>
+            <field eval="'ir.actions.server,%d'%action_create_expense_report" name="value"/>
+        </record>
+
+    </data>
 </openerp>

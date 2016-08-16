@@ -347,7 +347,7 @@ class dtdream_customer_reception(models.Model):
                                        (self.name, state.get(self.state)))
             self.write({"state": '0', 'current_approve': ''})
 
-    @api.multis
+    @api.multi
     def wkf_approve1(self):
         current_approve = self.name.department_id.manager_id
         self.write({"state": '1',  'current_approve': current_approve.id})

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem name="客户接待" id="menu_dtdream_customer_reception_root" icon="fa-user"/>
+        <menuitem name="客户接待" id="menu_dtdream_customer_reception_root" icon="fa-user"
+                  web_icon="dtdream_customer_reception,static/description/icon.png"/>
         <menuitem name="我的申请" id="menu_dtdream_customer_mine" parent="menu_dtdream_customer_reception_root" sequence="12" action="act_dtdream_customer_reception_mine"/>
         <menuitem name="待我审批" id="menu_dtdream_customer_approve" parent="menu_dtdream_customer_reception_root" sequence="14" action="act_dtdream_customer_reception_approve"/>
         <menuitem name="所有单据" id="menu_dtdream_customer_all" parent="menu_dtdream_customer_reception_root" sequence="16" action="act_dtdream_customer_reception_all"/>

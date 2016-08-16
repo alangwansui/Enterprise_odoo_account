@@ -30,7 +30,7 @@ class lxWizardappr(models.TransientModel):
         return base_url
 
     def get_mail_server_name(self):
-        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
 #立项、总体设计阶段内部的提交
     @api.one
@@ -84,6 +84,7 @@ class lxWizardappr(models.TransientModel):
                 appro = self.env['dtdream_rd_role'].search([('role_id','=',current_lixiang.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                 if len(appro)==0:
                     current_lixiang.signal_workflow('btn_to_ztsj')
+                    current_lixiang.write({'is_lixiangappred':False})
                 else:
                     self.current_approver_user = [(5,)]
                     for record in appro:
@@ -122,7 +123,7 @@ class versionWizard(models.TransientModel):
         return base_url
 
     def get_mail_server_name(self):
-        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
     @api.one
     def btn_version_submit(self):
@@ -148,6 +149,7 @@ class versionWizard(models.TransientModel):
                     appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                     if len(appro)==0:
                         current_version.signal_workflow('btn_to_kaifa')
+                        current_version.write({'is_click_01':False})
                     else:
                         for record in appro:
                             self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_01_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
@@ -217,6 +219,7 @@ class versionWizard(models.TransientModel):
                     appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                     if len(appro)==0:
                         current_version.signal_workflow('btn_to_dfb')
+                        current_version.write({'is_click_02':False})
                     else:
                         for record in appro:
                             self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_02_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
@@ -286,6 +289,7 @@ class versionWizard(models.TransientModel):
                     appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                     if len(appro)==0:
                         current_version.signal_workflow('btn_to_yfb')
+                        current_version.write({'is_click_03':False})
                     else:
                         for record in appro:
                             self.env['dtdream_rd_process_ver'].create({"role":record.cof_id.id, "process_03_id":current_version.id,'ver_state':state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
@@ -350,16 +354,31 @@ class dtdream_liwai(models.TransientModel):
         return base_url
 
     def get_mail_server_name(self):
-        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
     @api.one
     def btn_confirm_liwai(self):
         current_execption = self.env['dtdream_execption'].browse(self._context['active_id'])
         if self.flag:
-            if current_execption.state=='yjsp':
-                current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意,意见：'+self.liyou)
+            if current_execption.state=='yjsp'or current_execption.state=='Nyjsp':
+                if self.liyou:
+                    # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意,意见：'+self.liyou)
+                    current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'一级审批意见:同意,意见：'+self.liyou))
+                else:
+                    # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意')
+                    current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'一级审批意见:同意'))
                 if current_execption.approver_sec:
                     current_execption.write({'state':'ejsp'})
+                    current_execption.write({'is_apped':True})
+                    current_execption.write({'his_app_user': [(4, current_execption.approver_fir.user_id.id)]})
                     if current_execption.name.department_2:
                         subject=current_execption.name.department.name+u"/"+current_execption.name.department_2.name+u"的"+current_execption.name.name+u"的例外申请，待您审批"
                     else:
@@ -387,12 +406,44 @@ class dtdream_liwai(models.TransientModel):
                 else:
                     current_execption.write({'state':'ysp'})
                     current_execption.current_approver_user = [(5,)]
-            if current_execption.state=='ejsp':
-                current_execption.message_post(body=current_execption.approver_sec.name+u'的审批意见:同意,意见：'+self.liyou)
+                    current_execption.write({'is_apped':True})
+            elif current_execption.state=='ejsp'or current_execption.state=='Nejsp':
+                if self.liyou:
+                    # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意,意见：'+self.liyou)
+                    current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'二级审批意见:同意,意见：'+self.liyou))
+                else:
+                    # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意')
+                    current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'二级审批意见:同意'))
                 current_execption.write({'state':'ysp'})
+                current_execption.write({'his_app_user': [(4, current_execption.approver_sec.user_id.id)]})
                 current_execption.current_approver_user = [(5,)]
+                current_execption.write({'is_apped':True})
         else:
-            if current_execption.state=='yjsp':
-                current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:不同意,意见：'+self.liyou)
-            if current_execption.state=='ejsp':
-                current_execption.message_post(body=current_execption.approver_sec.name+u'的审批意见:不同意,意见：'+self.liyou)
+            if not self.liyou:
+                raise ValidationError(u'不同意时意见必填')
+            if current_execption.state=='yjsp'or current_execption.state=='Nyjsp':
+                current_execption.write({'is_apped':False})
+                current_execption.write({'state':'Nyjsp'})
+                # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:不同意,意见：'+self.liyou)
+                current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'一级审批意见:不同意,意见：'+self.liyou))
+            if current_execption.state=='ejsp'or current_execption.state=='Nejsp':
+                current_execption.write({'is_apped':False})
+                current_execption.write({'state':'Nejsp'})
+                # current_execption.message_post(body=current_execption.approver_sec.name+u'的审批意见:不同意,意见：'+self.liyou)
+                current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'二级审批意见:不同意,意见：'+self.liyou))

@@ -29,7 +29,7 @@
                 <field name="is_legal_interface" invisible="1"></field>
                 <field name="applicant" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1" options="{'no_create': True}"></field>
                 <field name="tel_number"></field>
-                <field name="deparment_manage"></field>
+                <field name="deparment_manage" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
               </group>
               <group>
                 <field name="deparment"></field>
@@ -77,7 +77,7 @@
             <group string="流程信息">
               <group>
                 <field name="current_handler_ids" widget="many2many_tags" readonly="1"></field>
-                <field name="review_ids" widget="many2many_tags" attrs="{'readonly':['&amp;','&amp;','|',('is_manager','=',False),('state','not in','1'),'|',('is_legal_interface','=',False),('state','not in','2'),'|',('is_applicant','=',False),('state','in',('1','2','3','4','5','6','7','8','9,','10'))]}"></field>
+                <field name="review_ids" widget="many2many_tags" attrs="{'readonly':['&amp;','&amp;','|',('is_manager','=',False),('state','not in','1'),'|',('is_legal_interface','=',False),('state','not in','2'),'|',('is_applicant','=',False),('state','in',('1','2','3','4','5','6','7','8','9','10'))]}"></field>
                 <field name="quanqian_id" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in',('2','3','4','5'))]}"></field>
                 <field name="stamp_id" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in',('2','3','4','5','6'))]}"></field>
                 <field name="is_stamped" readonly="True"></field>

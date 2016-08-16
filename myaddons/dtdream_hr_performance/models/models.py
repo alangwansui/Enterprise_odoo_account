@@ -97,7 +97,7 @@ class dtdream_hr_performance(models.Model):
     def validate_quarter_check(self, quarter):
         p = re.match(u'\d{4}财年Q[1-4]', quarter)
         if not p:
-            raise ValidationError('考核季度格式必须是xxxx/财年Q1~Q4')
+            raise ValidationError('考核季度格式必须是xxxx财年Q1~Q4, 如2016财年Q1')
 
     @api.model
     def create(self, vals):
@@ -256,10 +256,15 @@ class dtdream_hr_performance(models.Model):
         res = super(dtdream_hr_performance, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
         if my_action.name != u"绩效管理":
+            has_delete = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
             if res['type'] == "form":
                 doc.xpath("//form")[0].set("create", "false")
+                if has_delete:
+                    doc.xpath("//form")[0].set("delete", "false")
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
+                if has_delete:
+                    doc.xpath("//tree")[0].set("delete", "false")
         else:
             inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id
             manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
@@ -268,6 +273,11 @@ class dtdream_hr_performance(models.Model):
                     doc.xpath("//form")[0].set("create", "false")
                 if res['type'] == "tree":
                     doc.xpath("//tree")[0].set("create", "false")
+            if manage:
+                if res['type'] == "form":
+                    doc.xpath("//form")[0].set("delete", "false")
+                if res['type'] == "tree":
+                    doc.xpath("//tree")[0].set("delete", "false")
         res['arch'] = etree.tostring(doc)
         return res
 
@@ -633,7 +643,7 @@ class dtdream_hr_pbc(models.Model):
     def validate_quarter_check(self, quarter):
         p = re.match(u'\d{4}财年Q[1-4]', quarter)
         if not p:
-            raise ValidationError('考核季度格式必须是xxxx/财年Q1~Q4')
+            raise ValidationError('考核季度格式必须是xxxx财年Q1~Q4, 如2016财年Q1')
 
     @api.multi
     def write(self, vals, flag=True):

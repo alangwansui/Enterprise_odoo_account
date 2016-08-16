@@ -110,6 +110,7 @@
         <field name="target">new</field>
     </record>
 
+        <!--不同意-->
     <record id="act_liwaiwizard" model="ir.actions.act_window">
         <field name="name">例外</field>
         <field name="res_model">dtdream_liwai</field>
@@ -120,6 +121,7 @@
         <field name="target">new</field>
     </record>
 
+        <!--同意-->
     <record id="act_liwaiwizardagree" model="ir.actions.act_window">
         <field name="name">例外</field>
         <field name="res_model">dtdream_liwai</field>

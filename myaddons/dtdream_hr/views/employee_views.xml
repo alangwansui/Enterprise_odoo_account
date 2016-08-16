@@ -17,7 +17,7 @@
         <record model="ir.ui.view" id="hr.hr_kanban_view_employees">
             <field name="name">HR - Employess Kanban</field>
             <field name="model">hr.employee</field>
-            <field name="priority">10</field>
+            <field name="priority">9</field>
             <field name="arch" type="xml">
                 <kanban class="o_hr_employee_kanban">
                     <field name="last_login"/>
@@ -66,7 +66,7 @@
         <record id="dtdream_view_employee_form" model="ir.ui.view" >
             <field name="name">employee form inherit</field>
             <field name="model">hr.employee</field>
-            <field name="priority">15</field>
+            <field name="priority">9</field>
             <field name="arch" type="xml">
                 <form string="Employee">
                     <sheet>
@@ -127,10 +127,10 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
+                    <!--<div class="oe_chatter">-->
+                        <!--<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>-->
+                        <!--<field name="message_ids" widget="mail_thread"/>-->
+                    <!--</div>-->
                 </form>
             </field>
         </record>

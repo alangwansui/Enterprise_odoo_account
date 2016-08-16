@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         'security/dtdream_sale_security.xml',
+        'security/dtdream_sale_permission_groups.xml',
         'security/ir.model.access.csv',
         'sale_sequence.xml',
         'views/views.xml',

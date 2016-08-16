@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-
+import openerp
+from openerp import SUPERUSER_ID
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
 class dtdream_rd_prod(models.Model):
@@ -20,7 +22,7 @@ class dtdream_prod_appr(models.Model):
     name=fields.Char('产品名称',required=True,track_visibility='onchange')
 
 
-    state = fields.Selection([('state_00','草稿'),('state_01','立项'),('state_02','总体设计'),('state_03','迭代开发'),('state_04','验证发布'),('state_06','暂停'),('state_05','完成'),('state_07','中止')],'产品状态',track_visibility='onchange',readonly=True,default='state_00')
+    state = fields.Selection([('state_00','草稿'),('state_01','立项'),('state_02','总体设计'),('state_03','迭代开发'),('state_04','验证发布'),('state_06','暂停'),('state_07','中止'),('state_05','完成')],'产品状态',readonly=True,default='state_00')
 
     state_old = fields.Selection([('state_00','草稿'),('state_01','立项'),('state_02','总体设计'),('state_03','迭代开发'),('state_04','验证发布'),('state_05','完成'),('state_06','暂停'),('state_07','中止')])
 
@@ -43,6 +45,13 @@ class dtdream_prod_appr(models.Model):
     ztsj_process_ids = fields.One2many('dtdream_rd_process','ztsj_process_id',string="总体设计审批意见",track_visibility='onchange')
 
     @api.model
+    def _compute_liwai_log(self):
+        cr = self.env["dtdream_execption"].search([("name.id", "=", self.id)])
+        self.liwai_nums = len(cr)
+
+    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",stroe=True)
+
+    @api.model
     def _compute_dept(self):
         em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
         if em.department_id.id == self.department.id:
@@ -55,13 +64,13 @@ class dtdream_prod_appr(models.Model):
         employee = self.pool.get('hr.employee').browse(cr, uid, employee_id, context=context)
         if employee and employee.user_id:
             self.message_subscribe_users(cr, uid, ids, user_ids=[employee.user_id.id], context=context)
-    
+
     def create(self, cr, uid, values, context=None):
         if context is None:
             context = {}
         context = dict(context, mail_create_nolog=True, mail_create_nosubscribe=True)
         prod_id = super(dtdream_prod_appr, self).create(cr, uid, values, context=context)
-        self.message_subscribe_users(cr, uid, [prod_id], user_ids=[uid], context=context)
+        self.message_subscribe_users(cr, uid, [prod_id],user_ids=[uid], context=context)
         rold_ids = values['role_ids']
         for rold in rold_ids:
             if rold[2]['person']:
@@ -73,7 +82,105 @@ class dtdream_prod_appr(models.Model):
         return base_url
 
     def get_mail_server_name(self):
-        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
+
+
+    def track_process_ids_change(self, process_ids):
+        message=u"""<p>产品名称:%s</p>
+                    <table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">审批人</th><th style="padding:10px">内容</th><th style="padding:10px">意见</th></tr>""" %(self.name)
+        if process_ids:
+            process_ids = sorted(process_ids, key=lambda process_ids: process_ids[1])
+            for rec in process_ids:
+                cr = self.env['dtdream_rd_process'].search([('id', '=', rec[1])])
+                if rec[2] and cr.level=='level_01':
+                    if rec[2].get('is_pass') or rec[2].get('reason'):
+                        # message+=cr.approver.name+u'在立项阶段一级审批意见:通过'
+                        message+=u"""<tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td>""" %(cr.approver.name,u'在立项阶段一级审批意见:通过')
+                        if rec[2].get('reason') or cr.reason:
+                            reason = rec[2].get('reason') or cr.reason
+                            # message+=u',原因：'+reason
+                            if reason:
+                                message+=u"""<td style="padding:10px">%s</td></tr>""" %(reason)
+                        else:
+                             message+=u"""<td style="padding:10px">无</td></tr>"""
+                    elif rec[2].get('is_risk') or rec[2].get('reason'):
+                        # message+=cr.approver.name+u'在立项阶段一级审批意见:带风险通过'
+                        message+=u"""<tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td>""" %(cr.approver.name,u'在立项阶段一级审批意见:带风险通过')
+                        if rec[2].get('reason') or cr.reason:
+                            reason = rec[2].get('reason') or cr.reason
+                            # message+=u',原因：'+reason
+                            if reason:
+                                message+=u"""<td style="padding:10px">%s</td></tr>""" %(reason)
+                        else:
+                            message+=u"""<td style="padding:10px">无</td></tr>"""
+                    elif rec[2].get('is_refuse') or rec[2].get('reason'):
+                        # message+=cr.approver.name+u'在立项阶段一级审批意见:不通过'
+                        message+=u"""<tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td>""" %(cr.approver.name,u'在立项阶段一级审批意见:不通过')
+                        if rec[2].get('reason') or cr.reason:
+                            reason = rec[2].get('reason') or cr.reason
+                            # message+=u',原因：'+reason
+                            if reason:
+                                message+=u"""<td style="padding:10px">%s</td></tr>""" %(reason)
+                        else:
+                            message+=u"""<td style="padding:10px">无</td></tr>"""
+                elif cr.level=='level_02':
+                    message=""
+            return message
+
+    def track_ztsjprocess_ids_change(self, process_ids):
+        message=u"""<p>产品名称:%s</p>
+                    <table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">审批人</th><th style="padding:10px">内容</th><th style="padding:10px">意见</th></tr>""" %(self.name)
+        if process_ids:
+            process_ids = sorted(process_ids, key=lambda process_ids: process_ids[1])
+            for rec in process_ids:
+                cr = self.env['dtdream_rd_process'].search([('id', '=', rec[1])])
+                if rec[2] and cr.level=='level_01':
+                    if rec[2].get('is_pass') or rec[2].get('reason'):
+                        # message+=cr.approver.name+u'在总体设计阶段一级审批意见:通过'
+                        message+=u"""<tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td>""" %(cr.approver.name,u'在总体设计阶段一级审批意见:通过')
+                        if rec[2].get('reason') or cr.reason:
+                            reason = rec[2].get('reason') or cr.reason
+                            # message+=u',原因：'+reason
+                            if reason:
+                                message+=u"""<td style="padding:10px">%s</td></tr>""" %(reason)
+                        else:
+                             message+=u"""<td style="padding:10px">无</td></tr>"""
+                    elif rec[2].get('is_risk') or rec[2].get('reason'):
+                        # message+=cr.approver.name+u'在总体设计阶段一级审批意见:带风险通过'
+                        message+=u"""<tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td>""" %(cr.approver.name,u'在总体设计阶段一级审批意见:带风险通过')
+                        if rec[2].get('reason') or cr.reason:
+                            reason = rec[2].get('reason') or cr.reason
+                            # message+=u',原因：'+reason
+                            if reason:
+                                message+=u"""<td style="padding:10px">%s</td></tr>""" %(reason)
+                        else:
+                             message+=u"""<td style="padding:10px">无</td></tr>"""
+                    elif rec[2].get('is_refuse') or rec[2].get('reason'):
+                        # message+=cr.approver.name+u'在总体设计阶段一级审批意见:不通过'
+                        message+=u"""<tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td>""" %(cr.approver.name,u'在总体设计阶段一级审批意见:不通过')
+                        if rec[2].get('reason') or cr.reason:
+                            reason = rec[2].get('reason') or cr.reason
+                            # message+=u',原因：'+reason
+                            if reason:
+                                message+=u"""<td style="padding:10px">%s</td></tr>""" %(reason)
+                        else:
+                             message+=u"""<td style="padding:10px">无</td></tr>"""
+                elif cr.level=='level_02':
+                    message=""
+            return message
+
+    @api.multi
+    def write(self, vals, flag=True):
+        if flag:
+            message = self.track_process_ids_change(vals.get('process_ids', ''))
+            if message:
+                self.message_post(body=message)
+            ztsjmessage = self.track_ztsjprocess_ids_change(vals.get('ztsj_process_ids', ''))
+            if ztsjmessage:
+                self.message_post(body=ztsjmessage)
+        return super(dtdream_prod_appr, self).write(vals)
 
     @api.constrains('process_ids')
     def _compute_process_ids(self):
@@ -106,50 +213,17 @@ class dtdream_prod_appr(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
-                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
+                # self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
+                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,process.approver_old.name,u'将审批权限授给'+process.approver.name))
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
-                self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
+                self.write({'current_approver_user': [(4,process.approver.user_id.id)]},flag=False)
                 self.add_follower(employee_id=process.approver.id)
         if self.state=='state_01'and self.is_lixiangappred:
             processes = self.env['dtdream_rd_process'].search([('process_id','=',self.id),('pro_state','=','state_01'),('level','=','level_01')])
-
-            for process in processes:
-                if self.is_Qa:
-                    processeslx = self.env['dtdream_rd_process'].search([('process_id','=',self.id),('pro_state','=','state_01'),('level','=','level_02'),('is_new','=',True)])
-                    if len(processeslx)==0:
-                        if process.is_pass:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:通过')
-                        if process.is_risk:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:带风险通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:带风险通过')
-                        if process.is_refuse:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:不通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:不通过')
-                else:
-                    if process.approver.user_id.id == self.env.user.id:
-                        if process.is_pass:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:通过')
-                        if process.is_risk:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:带风险通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:带风险通过')
-                        if process.is_refuse:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:不通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在立项阶段一级审批意见:不通过')
-
             self.is_finsished_01 = True
             for process in processes:
                 if not (process.is_pass or process.is_risk):
@@ -168,6 +242,7 @@ class dtdream_prod_appr(models.Model):
                     self.current_approver_user = [(5,)]
                     if len(appro)==0:
                         self.signal_workflow('btn_to_ztsj')
+                        self.write({'is_lixiangappred':False})
                     else:
                         for record in appro:
                             self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":self.id,'pro_state':self.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
@@ -203,23 +278,44 @@ class dtdream_prod_appr(models.Model):
                         self.write({'is_lixiangappred':False})
                         if processes.is_pass:
                             if processes.reason:
-                                self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:通过,原因：'+processes.reason)
+                                # self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:通过,原因：'+processes.reason)
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在立项阶段二级审批意见:通过,原因：'+processes.reason))
                             else:
-                                self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:通过')
+                                # self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:通过')
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在立项阶段二级审批意见:通过'))
                         if processes.is_risk:
                             if processes.reason:
-                                self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:带风险通过,原因：'+processes.reason)
+                                # self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:带风险通过,原因：'+processes.reason)
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在立项阶段二级审批意见:带风险通过,原因：'+processes.reason))
                             else:
-                                self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:带风险通过')
+                                # self.message_post(body=processes.approver.name+u'在立项阶段二级审批意见:带风险通过')
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在立项阶段二级审批意见:带风险通过'))
                     elif processes.is_refuse:
-                        self.message_post(body=processes.approver.name+u'在立项阶段二级审批不同意，原因:'+processes.reason)
+                        # self.message_post(body=processes.approver.name+u'在立项阶段二级审批不同意，原因:'+processes.reason)
+                        self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在立项阶段二级审批意见:不同意,原因：'+processes.reason))
                         self.write({'is_lixiangappred':False})
                         self.write({'is_appred':False})
                         self.write({'is_finsished_01':False})
-                        # self.signal_workflow('lixiang_to_draft')
-                        # processes = self.env['dtdream_rd_process'].search([('process_id','=',self.id)])
-                        # for process in processes:
-                        #     process.write({'is_new':False})
                         processes = self.env['dtdream_rd_process'].search([('process_id','=',self.id)])
                         processes.unlink()
 
@@ -253,49 +349,17 @@ class dtdream_prod_appr(models.Model):
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
-                self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
+                # self.message_post(body=process.approver_old.name+u'将审批权限授给'+process.approver.name)
+                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,process.approver_old.name,u'将审批权限授给'+process.approver.name))
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
                 self.add_follower(employee_id=process.approver.id)
         if self.state=='state_02' and self.is_appred:
             processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id),('pro_state','=','state_02'),('level','=','level_01'),('is_new','=',True)])
-
-            for process in processes:
-                if self.is_Qa:
-                    processesztsj = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id),('pro_state','=','state_02'),('level','=','level_02'),('is_new','=',True)])
-                    if len(processesztsj)==0:
-                        if process.is_pass:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:通过')
-                        if process.is_risk:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:带风险通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:带风险通过')
-                        if process.is_refuse:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:不通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:不通过')
-                else:
-                    if process.approver.user_id.id == self.env.user.id:
-                        if process.is_pass:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:通过')
-                        if process.is_risk:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:带风险通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:带风险通过')
-                        if process.is_refuse:
-                            if process.reason:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:不通过,原因：'+process.reason)
-                            else:
-                                self.message_post(body=process.approver.name+u'在总体设计阶段一级审批意见:不通过')
 
             self.is_finsished_02 = True
             for process in processes:
@@ -316,6 +380,7 @@ class dtdream_prod_appr(models.Model):
                     if len(appro)==0:
                         self.write({'overall_actual_time':datetime.now()})
                         self.signal_workflow('btn_to_ddkf')
+                        self.write({'is_appred':False})
                     else:
                         for record in appro:
                             self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":self.id,'pro_state':self.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
@@ -352,28 +417,43 @@ class dtdream_prod_appr(models.Model):
                         self.write({'is_appred':False})
                         if processes.is_pass:
                             if processes.reason:
-                                self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:通过,原因：'+processes.reason)
+                                # self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:通过,原因：'+processes.reason)
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在总体设计阶段二级审批意见:通过,原因：'+processes.reason))
                             else:
-                                self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:通过')
+                                # self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:通过')
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在总体设计阶段二级审批意见:通过'))
                         if processes.is_risk:
                             if processes.reason:
-                                self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:带风险通过,原因：'+processes.reason)
+                                # self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:带风险通过,原因：'+processes.reason)
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在总体设计阶段二级审批意见:带风险通过,原因：'+processes.reason))
                             else:
-                                self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:带风险通过')
+                                # self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批意见:带风险通过')
+                                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在总体设计阶段二级审批意见:带风险通过'))
                     elif processes.is_refuse:
-                        self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批不同意，原因:'+processes.reason)
-                        # self.write({'is_lixiangappred':False})
+                        # self.message_post(body=processes.approver.name+u'在总体设计阶段二级审批不同意，原因:'+processes.reason)
+                        self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,processes.approver.name,u'在总体设计阶段二级审批不同意，原因:'+processes.reason))
                         self.write({'is_appred':False})
-                        # self.write({'is_finsished_01':False})
                         self.write({'is_finsished_02':False})
-                        # self.signal_workflow('ztsj_to_draft')
-
-                        # processes = self.env['dtdream_rd_process'].search([('process_id','=',self.id)])
-                        # for process in processes:
-                        #     process.write({'is_new':False})
-                        # ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id)])
-                        # for process in ztsj_processes:
-                        #     process.write({'is_new':False})
                         ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id)])
                         ztsj_processes.unlink()
 
@@ -390,6 +470,8 @@ class dtdream_prod_appr(models.Model):
         self.followers_user = False
         for foll in self.message_follower_ids:
             self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
+            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+                self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4,foll.partner_id.user_ids.id)]})
 
     followers_user = fields.Many2many("res.users" ,"f_u_u",string="关注者")
     is_appred = fields.Boolean(string="标识总体设计阶段提交按钮",default=False)
@@ -419,7 +501,15 @@ class dtdream_prod_appr(models.Model):
 
     @api.model
     def _compute_create(self):
-        if self.create_uid==self.env.user:
+        role = self.env["dtdream_rd_config"].search([("name", "=", u"PDT经理")])
+        pdt = False
+        for rec in self.role_ids:
+            if role ==rec.cof_id:
+                if rec.person:
+                    if rec.person.user_id == self.env.user:
+                        pdt =True
+                        break
+        if self.create_uid==self.env.user or pdt:
             self.is_create=True
         else:
             self.is_create=False
@@ -469,13 +559,26 @@ class dtdream_prod_appr(models.Model):
             self.write({'is_finsished_01':False})
             processes = self.env['dtdream_rd_process'].search([('process_id','=',self.id)])
             processes.unlink()
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 立项->草稿'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->草稿'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->草稿'))
         self.write({'state': 'state_00'})
         self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_lixiang(self):
         self.message_follower_ids
-        # lg = len(self.version_ids)
         if self.state=="state_02":
             self.write({'is_lixiangappred':False})
             self.write({'is_appred':False})
@@ -484,9 +587,26 @@ class dtdream_prod_appr(models.Model):
             processes.unlink()
             ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id)])
             ztsj_processes.unlink()
-        # if lg<=0:
-        #     raise ValidationError("提交项目时必须至少有一个版本")
-        self.write({'state': 'state_01'})
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 总体设计->立项'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->立项'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->立项'))
+        elif self.state=='state_00':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 草稿->立项'))
+        self.write({'state': 'state_01'},flag=False)
 
     @api.multi
     def wkf_ztsj(self):
@@ -495,27 +615,171 @@ class dtdream_prod_appr(models.Model):
             self.write({'is_finsished_02':False})
             ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id)])
             ztsj_processes.unlink()
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 迭代开发->总体设计'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->总体设计'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->总体设计'))
+        elif self.state=='state_01':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 立项->总体设计'))
         self.write({'state': 'state_02'})
 
     @api.multi
     def wkf_ddkf(self):
+        if self.state=="state_02":
+             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 总体设计->迭代开发'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->迭代开发'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->迭代开发'))
+        if self.state=="state_04":
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 验证发布->迭代开发'))
         self.write({'state': 'state_03'})
 
     @api.multi
     def wkf_yzfb(self):
+        if self.state=="state_03":
+             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 迭代开发->验证发布'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->验证发布'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->验证发布'))
+        if self.state=="state_05":
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 完成->验证发布'))
         self.write({'state': 'state_04'})
 
     @api.multi
     def wkf_jieshu(self):
+        if self.state=="state_04":
+             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 验证发布->完成'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->完成'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->完成'))
         self.write({'state': 'state_05'})
 
     @api.multi
     def wkf_zanting(self):
+        if self.state=='state_00':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 草稿->暂停'))
+        elif self.state=='state_01':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 立项->暂停'))
+        elif self.state=='state_02':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 总体设计->暂停'))
+        elif self.state=='state_03':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 迭代开发->暂停'))
+        elif self.state=='state_04':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 验证发布->暂停'))
+        elif self.state=='state_05':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 完成->暂停'))
+        elif self.state=='state_07':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 中止->暂停'))
         self.write({'state':'state_06'})
 
 
     @api.multi
     def wkf_zhongzhi(self):
+        if self.state=='state_00':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 草稿->中止'))
+        elif self.state=='state_01':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 立项->中止'))
+        elif self.state=='state_02':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 总体设计->中止'))
+        elif self.state=='state_03':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 迭代开发->中止'))
+        elif self.state=='state_04':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 验证发布->中止'))
+        elif self.state=='state_05':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 完成->中止'))
+        elif self.state=='state_06':
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'产品状态: 暂停->中止'))
         self.write({'state':'state_07'})
 
     #返回上一部
@@ -534,10 +798,21 @@ class dtdream_prod_appr(models.Model):
 
     @api.constrains('role_ids')
     def _com_role_ids(self):
+        for index, journey in enumerate(self.role_ids):
+            for j in range(index):
+                if journey.cof_id == self.role_ids[j].cof_id:
+                    raise ValidationError(u"角色不能重复")
         for role in self.role_ids:
-            self.add_follower(employee_id=role.person.id)
+            if role.person:
+                if role.person.user_id not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+                    self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4, role.person.user_id.id)]})
+                self.add_follower(employee_id=role.person.id)
 
-    #草稿提交
+        exceptions = self.env["dtdream_execption"].search([('name', '=',self.id)])
+        for exception in exceptions:
+            exception.role_person = [(5,)]
+            for role in self.role_ids:
+                exception.write({'role_person': [(4,role.person.user_id.id)]})
     @api.multi
     def do_cgtj(self):
         if self.state=='state_00':
@@ -629,7 +904,7 @@ class dtdream_prod_appr(models.Model):
                             'email_from':self.get_mail_server_name(),
                         }).send()
 
-    reason_request = fields.Text(string="申请原因",track_visibility='onchange')
+    reason_request = fields.Text(string="申请原因")
     agree = fields.Boolean(string="同意")
 
     @api.onchange("agree")
@@ -646,7 +921,7 @@ class dtdream_prod_appr(models.Model):
             if rec.disagree:
                 rec.agree = False
 
-    comments = fields.Text(string="审批意见",track_visibility='onchange')
+    comments = fields.Text(string="审批意见")
     is_zanting = fields.Boolean(string="标记是否申请暂停")
     is_zanting_back = fields.Boolean(string="标记是否申请恢复暂停")
     is_zhongzhi = fields.Boolean(string="标记是否申请中止")
@@ -708,7 +983,34 @@ class dtdream_prod_appr(models.Model):
             if self.state_old=='state_04':
                 self.signal_workflow('zanting_to_yzfb')
             self.write({'is_zanting_back':False,'is_zanting_backtj':False})
+        if self.comments and self.agree:
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,self.department.manager_id.name,u'审批意见:同意,意见：'+self.comments))
 
+
+    @api.constrains('disagree')
+    def _com_disagree(self):
+        if self.is_zhongzhitj and self.disagree:
+            if not self.comments:
+                raise ValidationError(u'不同意时意见必填')
+            self.write({'is_zhongzhitj':False})
+        elif not self.is_zhongzhitj and self.is_zantingtj and self.disagree:
+            if not self.comments:
+                raise ValidationError(u'不同意时意见必填')
+            self.write({'is_zantingtj':False})
+        if self.is_zanting_backtj and self.disagree:
+            if not self.comments:
+                raise ValidationError(u'不同意时意见必填')
+            self.write({'is_zanting_backtj':False})
+        if self.comments and self.disagree:
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,self.department.manager_id.name,u'审批意见:不同意,意见：'+self.comments))
     #申请暂停
     @api.multi
     def do_zanting(self):
@@ -719,6 +1021,8 @@ class dtdream_prod_appr(models.Model):
     #提交暂停
     @api.multi
     def do_zantingtj(self):
+        if self.disagree:
+            self.write({'disagree':'','comments':''})
         if self.reason_request:
             self.write({'is_zantingtj':True})
             self.current_approver_user = [(5,)]
@@ -747,6 +1051,11 @@ class dtdream_prod_appr(models.Model):
                 'email_from':self.get_mail_server_name(),
             }).send()
             self.write({'current_approver_user': [(4,self.department.manager_id.user_id.id)]})
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'提交暂停',self.reason_request))
         else:
             raise ValidationError('申请原因未填写')
 
@@ -758,6 +1067,8 @@ class dtdream_prod_appr(models.Model):
     #恢复暂停提交
     @api.multi
     def do_zanting_backtj(self):
+        if self.disagree:
+            self.write({'disagree':'','comments':''})
         if self.reason_request:
             self.write({'is_zanting_backtj':True})
             self.current_approver_user = [(5,)]
@@ -786,6 +1097,11 @@ class dtdream_prod_appr(models.Model):
                 'email_from':self.get_mail_server_name(),
             }).send()
             self.write({'current_approver_user': [(4,self.department.manager_id.user_id.id)]})
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'恢复暂停',self.reason_request))
         else:
             raise ValidationError('申请原因未填写')
 
@@ -799,6 +1115,8 @@ class dtdream_prod_appr(models.Model):
     #中止提交
     @api.multi
     def do_zhongzhitj(self):
+        if self.disagree:
+            self.write({'disagree':'','comments':''})
         if self.reason_request:
             self.write({'is_zhongzhitj':True})
             self.current_approver_user = [(5,)]
@@ -827,6 +1145,11 @@ class dtdream_prod_appr(models.Model):
                 'email_from':self.get_mail_server_name(),
             }).send()
             self.write({'current_approver_user': [(4,self.department.manager_id.user_id.id)]})
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name,u'提交中止',self.reason_request))
         else:
             raise ValidationError('申请原因未填写')
 
@@ -1071,17 +1394,34 @@ class dtdream_rd_process(models.Model):
 class dtdream_execption(models.Model):
     _name = "dtdream_execption"
     _inherit =['mail.thread']
+    _description = "例外"
     name=fields.Many2one("dtdream_prod_appr" ,required=True,string="产品名称")
     version = fields.Many2one("dtdream_rd_version",string="版本")
-    reason = fields.Text(string="例外原因")
-    state= fields.Selection([('dsp','待审批'),('yjsp','一级审批'),('ejsp','二级审批'),('ysp','已审批')],string="状态",default='dsp',track_visibility='onchange')
+    reason = fields.Text(string="例外原因",track_visibility='onchange')
+    state= fields.Selection([('dsp','待审批'),('yjsp','一级审批'),('Nyjsp','一级审批不通过'),('ejsp','二级审批'),('Nejsp','二级审批不通过'),('ysp','已审批')],string="状态",default='dsp')
     flag = fields.Boolean(string="标记保存取消按钮是否可见")
     mark = fields.Boolean(string="用于区分是从产品还是版本")
+    is_apped = fields.Boolean(string="标记是否提交")
 
     approver_fir = fields.Many2one("hr.employee" ,string="第一审批人")
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
 
     agree = fields.Boolean(string="同意")
+
+    def add_follower(self, cr, uid, ids, employee_id, context=None):
+        employee = self.pool.get('hr.employee').browse(cr, uid, employee_id, context=context)
+        if employee and employee.user_id:
+            self.message_subscribe_users(cr, uid, ids, user_ids=[employee.user_id.id], context=context)
+
+    @api.constrains('approver_fir')
+    def _conp_approver_fir(self):
+        if self.approver_fir:
+            self.add_follower(employee_id=self.approver_fir.id)
+
+    @api.constrains('approver_sec')
+    def _conp_approver_sec(self):
+        if self.approver_sec:
+            self.add_follower(employee_id=self.approver_sec.id)
 
     @api.onchange("agree")
     def is_agree_change(self):
@@ -1104,12 +1444,14 @@ class dtdream_execption(models.Model):
         return base_url
 
     def get_mail_server_name(self):
-        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
     #产品申请例外提交
     @api.multi
     def btn_execption_submit(self):
-        res= self.write({'name':self.name.id,'version':self.version.id,'reason':self.reason,'state':'dsp','flag':True})
+        res= self.write({'name':self.name.id,'version':self.version.id,'reason':self.reason,'state':'dsp','flag':True,'is_apped':True})
+        if not self.reason:
+            raise ValidationError(u'例外原因不能为空')
         if self.mark:
             if not self.approver_fir:
                 raise ValidationError(u"第一审批人不能为空")
@@ -1137,6 +1479,11 @@ class dtdream_execption(models.Model):
             }).send()
             self.current_approver_user = [(5,)]
             self.write({'state':'yjsp','current_approver_user':[(4,self.approver_fir.user_id.id)]})
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">动作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name.name,u'例外提交',u'状态变化：草稿->一级审批；申请原因：'+self.reason))
         else:
             if not self.approver_fir:
                 raise ValidationError(u"第一审批人不能为空")
@@ -1164,11 +1511,19 @@ class dtdream_execption(models.Model):
             }).send()
             self.current_approver_user = [(5,)]
             self.write({'state':'yjsp','current_approver_user':[(4,self.approver_fir.user_id.id)]})
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">动作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name.name,u'例外提交',u'状态变化：草稿->一级审批；申请原因：'+self.reason))
         return res
 
 
     @api.multi
     def execptiontj(self):
+        self.write({'is_apped':True})
+        if not self.reason:
+            raise ValidationError(u'例外原因不能为空')
         if not self.approver_fir:
             raise ValidationError(u"第一审批人不能为空")
         if self.name.department_2:
@@ -1195,6 +1550,11 @@ class dtdream_execption(models.Model):
         }).send()
         self.current_approver_user = [(5,)]
         self.write({'state':'yjsp','current_approver_user':[(4,self.approver_fir.user_id.id)]})
+        self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">动作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name.name,u'例外提交',u'状态变化：草稿->一级审批；申请原因：'+self.reason))
 
     @api.multi
     def do_agree(self):
@@ -1260,3 +1620,18 @@ class dtdream_execption(models.Model):
         else:
             self.is_Qa=False
     is_Qa = fields.Boolean(string="是否在QA组",compute=_compute_is_Qa,readonly=True)
+
+
+    role_person = fields.Many2many("res.users" ,"dtdream_execption_role_user",string="对应产品角色中的人员用户")
+
+    his_app_user = fields.Many2many("res.users" ,"dtdream_execption_his_user",string="历史审批人用户")
+    #
+    @api.constrains('name')
+    def con_name_role(self):
+        self.role_person=[(5,)]
+        for role in self.name.role_ids:
+            if role.person:
+                self.write({'role_person': [(4,role.person.user_id.id)]})
+
+
+
