@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from openerp.osv import expression
 from lxml import etree
 import time
 import re
@@ -232,15 +233,18 @@ class dtdream_hr_performance(models.Model):
             else:
                 uid = self._context.get('uid', '')
                 if domain:
-                    value = []
-                    for key in domain:
-                        value += ['&', key]
-                    value.pop(-2)
-                    a = ['|', '&'] + [('department.parent_id.manager_id.user_id', '=', uid)] + value
-                    b = ['|', '&'] +  [('officer.user_id', '=', uid)] + value
-                    c = ['|', '&'] + [('officer_sec.user_id', '=', uid)] + value
-                    d = ['&', ('name.user_id', '=', uid), '&', ('state', '!=', '0')] + value
-                    domain = a + b + c + d
+                    domain = expression.AND([['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
+                                              ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
+                                              '&', ('name.user_id', '=', uid), ('state', '!=', '0')], domain])
+                    # value = []
+                    # for key in domain:
+                    #     value += ['&', key]
+                    # value.pop(-2)
+                    # a = ['|', '&'] + [('department.parent_id.manager_id.user_id', '=', uid)] + value
+                    # b = ['|', '&'] +  [('officer.user_id', '=', uid)] + value
+                    # c = ['|', '&'] + [('officer_sec.user_id', '=', uid)] + value
+                    # d = ['&', ('name.user_id', '=', uid), '&', ('state', '!=', '0')] + value
+                    # domain = a + b + c + d
                 else:
                     domain = ['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
                               ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
@@ -309,6 +313,8 @@ class dtdream_hr_performance(models.Model):
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
                                 <p><a href="%s">点击进入查看</a></p>
+                                <p><a href='http://confluence.dtdream.com/pages/viewpage.action?pageId=46465483'>
+                                点此查看绩效考核具体流程</a></p>
                                 <p>dodo</p>
                                 <p>万千业务，简单有do</p>
                                 <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
@@ -347,6 +353,7 @@ class dtdream_hr_performance(models.Model):
     officer = fields.Many2one('hr.employee', string='一考主管', required=True)
     officer_sec = fields.Many2one('hr.employee', string='二考主管', required=True)
     result = fields.Char(string='考核结果')
+    evaluate_officer = fields.Text(string='总体评价', help='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)')
     onwork = fields.Selection([('Inaugural_state_01', '在职'), ('Inaugural_state_02', '离职')],
                               string="在职状态", compute=_compute_employee_info)
     state = fields.Selection([('0', '待启动'),
@@ -375,18 +382,21 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def wkf_wait_write(self):
         if self.state == '0':
+            subject = u'【通知】%s个人绩效目标填写已启动' % self.quarter
             content = u'''您的个人季度绩效目标填写已启动,请根据部门季度绩效目标、及与主管沟通的情况,详细填写%s的工作目标,
             并描述将如何达成该目标,采取哪些措施。''' % self.quarter
-            self.send_mail(self.name, subject=content, content=content)
+            self.send_mail(self.name, subject=subject, content=content)
             self.message_post(body=u'个人绩效目标填写启动')
         elif self.state != '3':
+            subject = u'【通知】个人绩效目标已被返回修改'
             content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
-            self.send_mail(self.name, subject=content, content=content)
+            self.send_mail(self.name, subject=subject, content=content)
         self.write({'state': '1'})
 
     @api.multi
     def wkf_confirm(self):
         self.write({'state': '2'})
+        subject = u'【通知】%s提交了个人绩效目标' % self.name.name
         content = u'%s的个人季度绩效目标已制定,请确认;如该季度绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % self.name.name
         self.send_mail(self.officer, subject=content, content=content)
         self.message_post(body=u'%s提交了个人绩效目标' % self.name.name)
@@ -498,7 +508,7 @@ class dtdream_hr_pbc_employee(models.Model):
 
     perform = fields.Many2one('dtdream.hr.performance')
     work = fields.Char(string='工作目标')
-    detail = fields.Text(string='具体描述(请具体说明主要工作成果及关键措施)')
+    detail = fields.Text(string='请清晰说明完成该目标所需要的关键措施')
     result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
     login = fields.Boolean(compute=_compute_name_is_login)

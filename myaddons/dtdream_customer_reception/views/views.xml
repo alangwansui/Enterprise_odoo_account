@@ -8,12 +8,12 @@
             <form>
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':['|',('state','not in',('0', '3', '4')),'|','&amp;',('state','in',('0','4')),('is_shenqingren','=', False),'&amp;',('state','=','3'),('is_receptionist','=', False)]}"/>
+                            attrs="{'invisible':['|',('state','not in',('0', '3', '4')),'|','&amp;',('state','in',('0','4')),('is_shenqingren','=', False),'&amp;',('state','=','3'),('is_receptionist','=', False)]}" confirm="请确认是否提交?"/>
                     <button name="btn_back" string="撤回" type="workflow" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1', '2', '3')),('is_shenqingren','=',False)]}" confirm="请确认是否撤回?"/>
                     <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':['|',('state','not in',('1', '2')),('is_current','=',False)]}"/>
-                    <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','not in',('1', '2')),('is_current','=',False)]}" confirm="请确认是否同意?"/>
+                    <button name="%(act_customer_reception_reject_wizard)d" string="驳回" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1', '2')),('is_current','=',False)]}"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,1,2,3,4,99"/>
@@ -50,17 +50,17 @@
 
                   <group string="客户信息">
                       <group>
-                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','1')]}"/>
-                          <field name="customer_char" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','0')]}"/>
-                          <field name="customer_level" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="customer_source" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)],'invisible':[('customer_v','=','1')]}"/>
+                          <field name="customer_char" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','0')]}"/>
+                          <field name="inter_tel" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="visit_count" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="background" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
-                          <field name="visit_count" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)],'invisible':[('customer_v','=','1')]}"/>
-                          <field name="inter_tel" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','1')]}"/>
+                          <field name="customer_level" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="customer_source" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="visit_date" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
@@ -248,7 +248,7 @@
                       <group>
                           <field name="dinner_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="advertise_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="total_fee"/>
+                          <field name="total_fee" readonly="True"/>
                       </group>
                   </group>
 

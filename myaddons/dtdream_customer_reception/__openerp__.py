@@ -27,6 +27,7 @@
         'views/importcss.xml',
         'views/actions.xml',
         'views/menu.xml',
+        'wizard/customer_reception_wizard.xml',
         'views/views.xml',
         'workflow/workflow.xml',
         'security/ir.model.access.csv',

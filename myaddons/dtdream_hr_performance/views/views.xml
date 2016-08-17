@@ -7,7 +7,7 @@
             <form>
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':['|',('state','!=','0'),'&amp;',('manage','=',False),('inter_edit','=',False)]}"/>
+                            attrs="{'invisible':['|',('state','!=','0'),'&amp;',('manage','=',False),('inter_edit','=',False)]}" confirm="请确认是否提交?"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="0,99"/>
                </header>
@@ -101,7 +101,7 @@
         <field name="arch" type="xml">
             <form>
               <header>
-                  <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                  <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
                           attrs="{'invisible':['|',('state', 'not in',('1','4','5')),'|','&amp;',('manage','=',False),'&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','in',('1', '4')),'&amp;',('login','=',False),('manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
                   <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
@@ -162,7 +162,7 @@
                                     <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
-                                    <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}" invisible="True"/>
                                     <field name="state" invisible="True"/>
                                     <field name="login" invisible="True"/>
                                     <field name="officer" invisible="True"/>
@@ -172,6 +172,15 @@
                             </field>
                         </page>
                     </notebook>
+                </group>
+
+                <group string="总体评价">
+                    <group>
+                        <div style="margin-left:10px">
+                            <field name="evaluate_officer" placeholder='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)' attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                        </div>
+                    </group>
+                    <group></group>
                 </group>
 
               </sheet>
@@ -318,7 +327,7 @@
           view_mode="form"
           view_type="form"
           target="new"
-          groups="group_hr_manage_performance"/>
+          groups="group_hr_inter_performance"/>
 
      <record id="view_dtdream_hr_pbc_submit_from" model="ir.ui.view">
         <field name="name">view.dtdream.hr.pbc.submit.from</field>

@@ -1,1 +1,1 @@
-from . import pbc_wizard
+from . import customer_wizard_reception
