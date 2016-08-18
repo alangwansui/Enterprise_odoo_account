@@ -1,4 +1,10 @@
-
 .dtdream_hr_performance_tree .o_list_text {
     word-break:break-all;
 }
+
+.dtdream_hr_pbc_tree table td:nth-child(1){width:20%}
+.dtdream_hr_pbc_tree table td:nth-child(2){width:40%}
+.dtdream_hr_pbc_tree table td:nth-child(3){width:40%}
+
+.dtdream_pbc_target_tree table td:nth-child(1){width:40%}
+.dtdream_pbc_target_tree table td:nth-child(2){width:60%}

@@ -129,10 +129,10 @@ class dtdream_hr_performance(models.Model):
 
     def track_pbc_value_change(self, vals):
         tab = u"<ul class='o_mail_thread_message_tracking'>"
-        message = u'''<li>个人绩效目标:<table width='840px' border='1px' style='table-layout:fixed;'><thead><tr>
-                    <th style='width: 40px;'>动作</th><th style='width: 100px;'>工作目标</th><th style='width: 300px'>
-                    具体描述(请具体说明主要工作成果及关键措施)</th><th style='width: 300px;'>关键事件达成</th>
-                    <th style='width: 100px;'>主管评价</th></tr></thead><tbody>'''
+        message = u'''<li>个人绩效目标:<table width='750px' border='1px' style='table-layout:fixed;'><thead><tr>
+                    <th style='width: 40px;'>动作</th><th style='width: 100px;'>工作目标</th><th style='width: 310px'>
+                    具体描述(请清晰说明完成该目标所需要的关键措施)</th><th style='width: 300px;'>关键事件达成</th>
+                    </tr></thead><tbody>'''
         tracked = False
         add = u''
         if vals.get('name', ''):
@@ -171,23 +171,21 @@ class dtdream_hr_performance(models.Model):
                     message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('result')
                 else:
                     message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.result
-                if field.get('evaluate', None):
-                    message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('evaluate')
-                else:
-                    message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.evaluate
+                # if field.get('evaluate', None):
+                #     message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('evaluate')
+                # else:
+                #     message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.evaluate
             elif rec[0] == 0:
                 tracked = True
                 field = rec[2]
                 add += u'''<tr style='color: red;'><td>新增</td><td style='word-wrap:break-word;'>{0}</td>
-                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td>
-                <td style='word-wrap:break-word;'>{3}</td></tr>'''.format(field.get('work', ''), field.get('detail', ''),
-                                                                          field.get('result', ''), field.get('evaluate', ''))
+                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td></tr>'''.format(
+                    field.get('work', ''), field.get('detail', ''), field.get('result', ''))
             elif rec[0] == 2:
                 tracked = True
                 message += u'''<tr style='color: red;'><td>删除</td><td style='word-wrap:break-word;'>{0}</td>
-                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td>
-                <td style='word-wrap:break-word;'>{3}</td></tr>'''.format(cr.work, cr.detail,
-                                                                          cr.result, cr.evaluate)
+                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td></tr>'''.format(
+                    cr.work, cr.detail, cr.result)
         if not tracked:
             message = tab + u'</ul>'
             if message == u"<ul class='o_mail_thread_message_tracking'></ul>":
@@ -208,8 +206,9 @@ class dtdream_hr_performance(models.Model):
             if self.state == "6":
                 self.signal_workflow('btn_import')
             else:
+                subject = u'【通知】您的绩效考核结果已导入'
                 content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
-                self.send_mail(self.name, subject=content, content=content)
+                self.send_mail(self.name, subject=subject, content=content)
                 self.message_post(body=u'绩效考核结果导入')
         return super(dtdream_hr_performance, self).write(vals)
 
@@ -398,27 +397,30 @@ class dtdream_hr_performance(models.Model):
         self.write({'state': '2'})
         subject = u'【通知】%s提交了个人绩效目标' % self.name.name
         content = u'%s的个人季度绩效目标已制定,请确认;如该季度绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % self.name.name
-        self.send_mail(self.officer, subject=content, content=content)
+        self.send_mail(self.officer, subject=subject, content=content)
         self.message_post(body=u'%s提交了个人绩效目标' % self.name.name)
 
     @api.multi
     def wkf_evaluate(self):
         self.write({'state': '3'})
+        subject = u'【通知】%s确认了您的个人绩效目标' % self.officer.name
         content = u"%s已针对您的个人季度绩效目标完成确认,请查阅。" % self.officer.name
-        self.send_mail(self.name, subject=content, content=content)
+        self.send_mail(self.name, subject=subject, content=content)
 
     @api.multi
     def wkf_conclud(self):
         self.write({'state': '4'})
+        subject = u'【通知】%s个人绩效考核已启动' % self.quarter
         content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写%s关键事项达成情况与主要工作成果。" % self.quarter
-        self.send_mail(self.name, subject=content, content=content)
+        self.send_mail(self.name, subject=subject, content=content)
         self.message_post(body=u'个人绩效考评启动')
 
     @api.multi
     def wkf_rate(self):
         self.write({'state': '5'})
+        subject = u'【通知】%s提交了个人绩效目标总结' % self.name.name
         content = u'%s已完成个人工作总结，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % self.name.name
-        self.send_mail(self.officer, subject=content, content=content)
+        self.send_mail(self.officer, subject=subject, content=content)
         self.message_post(body=u'%s提交了个人绩效目标总结' % self.name.name)
 
     @api.multi
@@ -428,15 +430,17 @@ class dtdream_hr_performance(models.Model):
 
         else:
             self.write({'state': '6'})
+        subject = u'【通知】%s对您的个人绩效目标做了评价' % self.officer.name
         content = u'%s已针对您的工作总结完成了评价,请查阅!' % self.officer.name
-        self.send_mail(self.name, subject=content, content=content)
+        self.send_mail(self.name, subject=subject, content=content)
         self.message_post(body=u'%s对个人绩效目标做了评价' % self.officer.name)
 
     @api.multi
     def wkf_done(self):
         self.write({'state': '99'})
+        subject = u'【通知】您的绩效考核结果已导入'
         content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
-        self.send_mail(self.name, subject=content, content=content)
+        self.send_mail(self.name, subject=subject, content=content)
         self.message_post(body=u'绩效考核结果导入')
 
 
@@ -507,8 +511,8 @@ class dtdream_hr_pbc_employee(models.Model):
         return rec
 
     perform = fields.Many2one('dtdream.hr.performance')
-    work = fields.Char(string='工作目标')
-    detail = fields.Text(string='请清晰说明完成该目标所需要的关键措施')
+    work = fields.Text(string='工作目标')
+    detail = fields.Text(string='具体描述(请清晰说明完成该目标所需要的关键措施)')
     result = fields.Text(string='关键事件达成')
     evaluate = fields.Text(string='主管评价')
     login = fields.Boolean(compute=_compute_name_is_login)
@@ -610,7 +614,7 @@ class dtdream_hr_pbc(models.Model):
     def track_pbc_value_change(self, vals):
         tab = u"<ul class='o_mail_thread_message_tracking'>"
         message = u'''<li>部门目标:<table width='800px' border='1px' style='table-layout:fixed;'><thead><tr>
-                    <th style='width: 40px;'>动作</th><th style='width: 200px;'>业务目标</th><th style='width: 600px'>
+                    <th style='width: 40px;'>动作</th><th style='width: 300px;'>业务目标</th><th style='width: 460px'>
                     关键指标,关键动作,行为</th></tr></thead><tbody>'''
         tracked = False
         add = u''
@@ -770,8 +774,9 @@ class dtdream_hr_pbc(models.Model):
         self.write({'state': '99'})
         employee = self.env['hr.employee'].search(['|', ('department_id', '=', self.name.id), ('department_id', 'in', [cr.id for cr in self.name.child_ids])])
         for name in employee:
+            subject = u'【通知】%s%s部门绩效业务目标已制定' % (self.name.complete_name,self.quarter)
             content = u'%s%s部门绩效业务目标已制定，请查看' % (self.name.complete_name,self.quarter)
-            self.send_mail(name, subject=content, content=content)
+            self.send_mail(name, subject=subject, content=content)
             time.sleep(0.01)
 
 
@@ -790,7 +795,7 @@ class dtdream_pbc_target(models.Model):
     target = fields.Many2one('dtdream.hr.pbc', string='部门绩效目标')
     depart_target = fields.Char(compute=_compute_department_target)
     level = fields.Integer(default=lambda self: 1, string="部门类型")
-    num = fields.Char(string='业务目标', required=True)
+    num = fields.Text(string='业务目标', required=True)
     works = fields.Text(string='关键指标,关键动作,行为', required=True)
 
 
@@ -868,17 +873,21 @@ class dtdream_hr_pbc_start(models.TransientModel):
         performance = self.env['dtdream.hr.performance'].browse(pbc)
         for rec in performance:
             if rec.state == '1':
+                subject = u'【通知】请尽快填写您的个人季度绩效目标'
                 content = u'您的个人季度绩效目标仍未完成填写,请尽快提交。'
-                rec.send_mail(rec.name, subject=content, content=content)
+                rec.send_mail(rec.name, subject=subject, content=content)
             elif rec.state == '2':
+                subject = u'【通知】请尽快审阅%s的个人季度绩效目标' % rec.name.name
                 content = u'您对%s的个人季度绩效目标仍未完成确认,请尽快审阅。'% rec.name.name
-                rec.send_mail(rec.officer, subject=content, content=content)
+                rec.send_mail(rec.officer, subject=subject, content=content)
             elif rec.state == '4':
+                subject = u'【通知】请尽快填写您的个人季度关键事项达成情况与主要工作成果'
                 content = u'您的个人季度关键事项达成情况与主要工作成果仍未完成填写,请尽快提交。'
-                rec.send_mail(rec.name, subject=content, content=content)
+                rec.send_mail(rec.name, subject=subject, content=content)
             elif rec.state == '5':
+                subject = u'【通知】请尽快评价%s的个人工作总结' % rec.name.name
                 content = u'您对%s的个人工作总结仍未完成评价,请尽快提交。'% rec.name.name
-                rec.send_mail(rec.officer, subject=content, content=content)
+                rec.send_mail(rec.officer, subject=subject, content=content)
             time.sleep(0.01)
         return {'type': 'ir.actions.act_window_close'}
 

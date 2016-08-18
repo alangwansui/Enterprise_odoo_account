@@ -29,7 +29,7 @@
                     <notebook>
                         <page>
                             <field name="target" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}">
-                                <tree editable="bottom" class="dtdream_hr_performance_tree">
+                                <tree editable="bottom" class="dtdream_hr_performance_tree dtdream_pbc_target_tree">
                                     <field name="num"/>
                                     <field name="works" class="jsz"/>
                                     <field name="depart_target" invisible="True" string="部门"/>
@@ -103,11 +103,11 @@
               <header>
                   <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
                           attrs="{'invisible':['|',('state', 'not in',('1','4','5')),'|','&amp;',('manage','=',False),'&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','in',('1', '4')),'&amp;',('login','=',False),('manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
-                  <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" type="action" class="oe_highlight"
+                  <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" confirm="请确认是否返回修改?" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
                   <button name="%(act_dtdream_pbc_agree_wizard)d" string="同意" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
-                  <button name="btn_back" string="绩效目标修改" type="workflow" class="oe_highlight"
+                  <button name="btn_back" string="绩效目标修改" type="workflow" class="oe_highlight" confirm="请确认是否返回修改?"
                           attrs="{'invisible':['|',('login','=',False),('state','!=','3')]}"/>
                   <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,5,6,99"/>
               </header>
@@ -158,7 +158,7 @@
                     <notebook>
                         <page>
                             <field name="pbc_employee" attrs="{'readonly':['|','&amp;','&amp;',('state','not in',('1','4','5')),('login','=',True),'&amp;',('manage','=',False),('inter','=',True),'|','&amp;',('state','not in',('1','4','5')),'&amp;',('manage','=',False),('inter','=',False),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),'&amp;',('manage','=',False),('inter','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),'&amp;',('manage','=',False),('inter','=',False)]}">
-                                <tree editable="bottom" name="personal_pbc" class="dtdream_hr_performance_tree">
+                                <tree editable="bottom" name="personal_pbc" class="dtdream_hr_performance_tree dtdream_hr_pbc_tree">
                                     <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
@@ -174,7 +174,7 @@
                     </notebook>
                 </group>
 
-                <group string="总体评价">
+                <group string="总体评价" attrs="{'invisible':[('state', 'not in',('5','6','99'))]}">
                     <group>
                         <div style="margin-left:10px">
                             <field name="evaluate_officer" placeholder='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)' attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
@@ -408,7 +408,7 @@
                       </group>
                       <group>
                           <field name="result" readonly="True"/>
-                          <field name="evaluate" readonly="True"/>
+                          <field name="evaluate" readonly="True" invisible="True"/>
                       </group>
                   </group>
               </sheet>
