@@ -77,7 +77,7 @@
             <field name="perm_create" eval="0"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="domain_force">[("department",'in',[x.id for x in user.user_access_office]),('status','=','1')]</field>
+            <field name="domain_force">[("complete_name",'in',[u"市场部/%s" % x.name for x in user.user_access_office]),('status','=','1')]</field>
             <field name="groups" eval="[(4, ref('dtdream_sale.group_dtdream_management_manager'))]"/>
         </record>
 
@@ -88,7 +88,8 @@
             <field name="perm_create" eval="0"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="domain_force">[("department",'in',[x.id for x in user.user_access_office]),('status','=','1')]</field>
+            <!--<field name="domain_force">[("job_number",'=','s0719'),('status','=','1')]</field>-->
+            <field name="domain_force">[("complete_name",'in',[u"市场部/%s" % x.name for x in user.user_access_office]),('status','=','1')]</field>
             <field name="groups" eval="[(4, ref('dtdream_sale.group_dtdream_management_vice_manager'))]"/>
         </record>
 

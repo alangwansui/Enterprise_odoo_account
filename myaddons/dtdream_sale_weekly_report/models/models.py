@@ -17,7 +17,7 @@ class dtdream_sale_own_report(models.Model):
     @api.depends('report_person')
     def _compute_reportor_info(self):
         for ref in self:
-            ref.report_person_name = ref.report_person.name
+            ref.report_person_name = ref.report_person.name+"."+ref.report_person.full_name+"  "+ref.report_person.job_number
             ref.job_number = ref.report_person.job_number
             ref.department = ref.report_person.department_id.name
             try:
@@ -79,7 +79,10 @@ class dtdream_sale_own_report(models.Model):
         a_report_end_time = report_end_time - relativedelta(days=(week-int(self.week.name))*7)
         self.report_end_time = a_report_end_time
         self.report_start_time = report_start_time - relativedelta(days=(week-int(self.week.name))*7)
-        self.compute_project_info(a_report_end_time)
+        try:
+            self.id - self.id
+        except:
+            self.compute_project_info(a_report_end_time)
 
     @api.onchange('zhengwu_project','lead_project')
     def _onchange_zhengwu_project(self):
@@ -105,10 +108,10 @@ class dtdream_sale_own_report(models.Model):
                 zhengwu_important_project = zhengwu_important_project + 1;
                 zhengwu_important_space = zhengwu_important_space + rec.project_id.space_total
             if rec.project_id.create_date:
-                if rec.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
                     week_add_spaces = week_add_spaces + rec.project_id.space_total
             if rec.project_id.write_date:
-                if rec.project_id.write_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
                     weekly_project_totals = weekly_project_totals + 1
         for recc in self.lead_project:
             if recc.project_id.id != False:
@@ -120,10 +123,10 @@ class dtdream_sale_own_report(models.Model):
                 leads_important_project = leads_important_project + 1;
                 leads_important_space = leads_important_space + recc.project_id.space_total
             if recc.project_id.create_date:
-                if recc.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                if recc.project_id.create_date[:10] > self.report_start_time and recc.project_id.create_date[:10] <= self.report_end_time:
                     week_add_spaces = week_add_spaces + recc.project_id.space_total
             if recc.project_id.write_date:
-                if recc.project_id.write_date[:10] >= (datetime.now() - relativedelta(month=1)).strftime('%Y-%m-%d'):
+                if recc.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(month=1)).strftime('%Y-%m-%d'):
                     monthly_lead_project_totals = monthly_lead_project_totals + 1
         sys_compute_list = []
         lead_project_total = 0
@@ -148,10 +151,10 @@ class dtdream_sale_own_report(models.Model):
                         important_project = important_project + 1;
                         important_space = important_space + rec.project_id.space_total
                     if rec.project_id.create_date:
-                        if rec.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                        if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
                             week_new_space = week_new_space + rec.project_id.space_total
                     if rec.project_id.write_date:
-                        if rec.project_id.write_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                        if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
                             weekly_project_total = weekly_project_total + 1
             for lead_rec in self.lead_project:
                 if lead_rec.project_id.system_department_id == sys_name and lead_rec.project_id.id != False:
@@ -161,10 +164,10 @@ class dtdream_sale_own_report(models.Model):
                         lead_important_project = lead_important_project + 1;
                         lead_important_space = lead_important_space + lead_rec.project_id.space_total
                     if lead_rec.project_id.create_date:
-                        if lead_rec.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                        if lead_rec.project_id.create_date[:10] > self.report_start_time and lead_rec.project_id.create_date[:10] <= self.report_end_time:
                             week_new_space = week_new_space + lead_rec.project_id.space_total
                     if lead_rec.project_id.write_date:
-                        if lead_rec.project_id.write_date[:10] >= (datetime.now() - relativedelta(month=1)).strftime('%Y-%m-%d'):
+                        if lead_rec.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(month=1)).strftime('%Y-%m-%d'):
                             monthly_lead_project_total = monthly_lead_project_total + 1
             if lead_project_total != 0:
                 monthly_laed_refresh_rate = float(monthly_lead_project_total)/lead_project_total*100
@@ -207,19 +210,27 @@ class dtdream_sale_own_report(models.Model):
                 for person in rec.send_person:
                     if person.name not in person_list:
                         person_list.append(person.name)
-                        arr[person.name] = [{"name":rec.ask_help,"work_email":person.work_email}]
+                        arr[person.name] = [{"partner_id":rec.partner_id.name,"system_department_id":rec.system_department_id.name,"office_id":rec.office_id.name,"industry_id":rec.industry_id.name,"visit_date":rec.visit_date,"visit_object":rec.visit_object,"content":rec.content,"next_plan":rec.next_plan,"ask_help":rec.ask_help,"work_email":person.work_email}]
                     else:
-                        arr[person.name].append({"name":rec.ask_help,"work_email":person.work_email})
+                        arr[person.name].append({"partner_id":rec.partner_id.name,"system_department_id":rec.system_department_id.name,"office_id":rec.office_id.name,"industry_id":rec.industry_id.name,"visit_date":rec.visit_date,"visit_object":rec.visit_object,"content":rec.content,"next_plan":rec.next_plan,"ask_help":rec.ask_help,"work_email":person.work_email})
             for rec in arr:
-                body_html = u"""<table border="1px" width="500px" style="border-collapse: collapse;"><thead>
-                                <th>困难求助</th>
+                body_html = u"""<table border="1px" width="800px" style="border-collapse: collapse;"><thead>
+                                <th>客户名称</th>
+                                <th>系统部</th>
+                                <th>办事处</th>
+                                <th>行业</th>
+                                <th>拜访时间</th>
+                                <th>拜访对象</th>
+                                <th width="20%">交流主要内容</th>
+                                <th width="20%">下一步计划</th>
+                                <th width="25%">困难求助</th>
                                 </thead><tbody>"""
                 for a_rec in arr[rec]:
                     work_email = a_rec['work_email']
-                    body_html = body_html + u"<tr><td>%s</td></tr>"%(a_rec['name'])
+                    body_html = body_html + u"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(a_rec['partner_id'],a_rec['system_department_id'],a_rec['office_id'],a_rec['industry_id'],a_rec['visit_date'],a_rec['visit_object'],a_rec['content'],a_rec['next_plan'],a_rec['ask_help'])
                 body_html = body_html + u"</tbody></table>"
                 self.dtdream_send_mail(u"{0}于{1}提交了个人周报,并向您发起困难求助!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                   u"%s提交了个人周报,并就以下困难向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
+                   u"%s提交了个人周报,并就以下困难向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,reply_to=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
                    appellation = u'{0},您好：'.format(rec),body_html = body_html)
 
         if len(self.dtdream_problem_help) > 0:
@@ -242,7 +253,7 @@ class dtdream_sale_own_report(models.Model):
                     body_html = body_html + u"<tr><td>%s</td><td>%s</td></tr>"%(a_rec['type'],a_rec['name'])
                 body_html = body_html + u"</tbody></table>"
                 self.dtdream_send_mail(u"{0}于{1}提交了个人周报,并向您发起问题求助!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                   u"%s提交了个人周报,并就以下问题向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
+                   u"%s提交了个人周报,并就以下问题向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,reply_to=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
                    appellation = u'{0},您好：'.format(rec),body_html = body_html)
 
     def domain_week(self):
@@ -255,7 +266,7 @@ class dtdream_sale_own_report(models.Model):
         return [('id','>=',start_week),('id','<=',end_week)]
 
     report_person = fields.Many2one('hr.employee','报告人',default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]))
-    report_person_name = fields.Char(string="报告人花名",compute=_compute_reportor_info,store=True)
+    report_person_name = fields.Char(string="报告人",compute=_compute_reportor_info,store=True)
     job_number = fields.Char(string="工号",compute=_compute_reportor_info,store=True)
     department = fields.Char(string="部门",compute=_compute_reportor_info,store=True)
     week = fields.Many2one("report.week",string="周别",help="默认为当前周，可往前取三周。",domain=domain_week)
@@ -343,7 +354,7 @@ class dtdream_sale_own_report(models.Model):
             rec.industry_id = rec.project_id.industry_id
             report_end_time = self.report_end_time + " 00:00:00"
             if len(rec.project_id) == 0:
-                    self.zhengwu_project = [(2,rec.id)]
+                self.zhengwu_project = [(2,rec.id)]
             if rec.project_id.project_number:
                 crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
                 crm_rec.write({"project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time})
@@ -464,7 +475,7 @@ class dtdream_sale_own_report(models.Model):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
-    def dtdream_send_mail(self, subject, content, email_to,email_from,appellation,body_html=""):
+    def dtdream_send_mail(self, subject, content, email_to,email_from,reply_to,appellation,body_html=""):
         email_to = email_to
         subject = subject
         content = content
@@ -477,14 +488,40 @@ class dtdream_sale_own_report(models.Model):
                                 <p>%s</p>''' % (appellation, content, body_html,self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_from': '%s' % email_from,
+                'reply_to': '%s' % reply_to,
                 'email_to': '%s' % email_to,
                 'auto_delete': False,
             }).send()
 
 class report_week(models.Model):
     _name = "report.week"
+    _order = "id desc"
 
     name = fields.Char(string="周别")
+
+    @api.multi
+    def name_get(self):
+        list = []
+        for cat in self:
+            flag = 0
+            if cat.id == int(datetime.strftime(datetime.now(),"%W")):
+                list.append((cat.id,u"第%s周(本周)"%cat.name))
+                flag = 1
+            if cat.id == int(datetime.strftime(datetime.now(),"%W"))-1:
+                list.append((cat.id,u"第%s周(上周)"%cat.name))
+                flag = 1
+            if cat.id == int(datetime.strftime(datetime.now(),"%W"))-2:
+                list.append((cat.id,u"第%s周(上二周)"%cat.name))
+                flag = 1
+            if cat.id == int(datetime.strftime(datetime.now(),"%W"))-3:
+                list.append((cat.id,u"第%s周(上三周)"%cat.name))
+                flag = 1
+            if cat.id == int(datetime.strftime(datetime.now(),"%W"))-4:
+                list.append((cat.id,u"第%s周(上四周)"%cat.name))
+                flag = 1
+            if flag == 0:
+                list.append((cat.id,u"第%s周"%cat.name))
+        return list
 
 class sys_list(models.Model):
     _name = "sys.list"
@@ -778,34 +815,6 @@ class dtdream_problem_type(models.Model):
 
     name = fields.Char("问题类型")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class dtdream_sale_manager_report(models.Model):
     _name = 'dtdream.sale.manager.report'
     _description = u"主管周报"
@@ -813,9 +822,10 @@ class dtdream_sale_manager_report(models.Model):
     @api.depends('report_person')
     def _compute_reportor_info(self):
         for ref in self:
-            ref.report_person_name = ref.report_person.name
+            ref.report_person_name = ref.report_person.name+"."+ref.report_person.full_name+"  "+ref.report_person.job_number
             ref.job_number = ref.report_person.job_number
             ref.department = ref.report_person.department_id.id
+            ref.complete_name = ref.report_person.department_id.complete_name.replace(' ', '')
             if datetime.weekday(datetime.now()) >= 4:
                 report_end_time = datetime.now() - relativedelta(days=((datetime.weekday(datetime.now())) - 4))
                 ref.a_report_end_time = report_end_time
@@ -849,10 +859,10 @@ class dtdream_sale_manager_report(models.Model):
                 zhengwu_important_project = zhengwu_important_project + 1;
                 zhengwu_important_space = zhengwu_important_space + rec.project_id.space_total
             if rec.project_id.create_date:
-                if rec.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
                     week_add_spaces = week_add_spaces + rec.project_id.space_total
             if rec.project_id.write_date:
-                if rec.project_id.write_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
                     weekly_project_totals = weekly_project_totals + 1
         for recc in self.lead_project:
             if recc.project_id.id != False:
@@ -864,10 +874,10 @@ class dtdream_sale_manager_report(models.Model):
                 leads_important_project = leads_important_project + 1;
                 leads_important_space = leads_important_space + recc.project_id.space_total
             if recc.project_id.create_date:
-                if recc.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                if recc.project_id.create_date[:10] > self.report_start_time and recc.project_id.create_date[:10] <= self.report_end_time:
                     week_add_spaces = week_add_spaces + recc.project_id.space_total
             if recc.project_id.write_date:
-                if recc.project_id.write_date[:10] >= (datetime.now() - relativedelta(month=1)).strftime('%Y-%m-%d'):
+                if recc.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time + " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(month=1)).strftime('%Y-%m-%d'):
                     monthly_lead_project_totals = monthly_lead_project_totals + 1
         sys_compute_list = []
         lead_project_total = 0
@@ -892,10 +902,10 @@ class dtdream_sale_manager_report(models.Model):
                         important_project = important_project + 1;
                         important_space = important_space + rec.project_id.space_total
                     if rec.project_id.create_date:
-                        if rec.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                        if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
                             week_new_space = week_new_space + rec.project_id.space_total
                     if rec.project_id.write_date:
-                        if rec.project_id.write_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                        if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
                             weekly_project_total = weekly_project_total + 1
             for lead_rec in self.lead_project:
                 if lead_rec.project_id.system_department_id == sys_name and lead_rec.project_id.id != False:
@@ -905,10 +915,10 @@ class dtdream_sale_manager_report(models.Model):
                         lead_important_project = lead_important_project + 1;
                         lead_important_space = lead_important_space + lead_rec.project_id.space_total
                     if lead_rec.project_id.create_date:
-                        if lead_rec.project_id.create_date[:10] >= (datetime.now() - relativedelta(days=7)).strftime('%Y-%m-%d'):
+                        if lead_rec.project_id.create_date[:10] > self.report_start_time and lead_rec.project_id.create_date[:10] <= self.report_end_time:
                             week_new_space = week_new_space + lead_rec.project_id.space_total
                     if lead_rec.project_id.write_date:
-                        if lead_rec.project_id.write_date[:10] >= (datetime.now() - relativedelta(month=1)).strftime('%Y-%m-%d'):
+                        if lead_rec.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(month=1)).strftime('%Y-%m-%d'):
                             monthly_lead_project_total = monthly_lead_project_total + 1
             if lead_project_total != 0:
                 monthly_laed_refresh_rate = float(monthly_lead_project_total)/lead_project_total*100
@@ -983,12 +993,15 @@ class dtdream_sale_manager_report(models.Model):
         a_report_end_time = report_end_time - relativedelta(days=(week-int(self.week.name))*7)
         self.report_end_time = a_report_end_time
         self.report_start_time = report_start_time - relativedelta(days=(week-int(self.week.name))*7)
-        self.compute_project_info(int(datetime.strftime(a_report_end_time,"%W")))
+        try:
+            self.id - self.id
+        except:
+            self.compute_project_info(int(datetime.strftime(a_report_end_time,"%W")))
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
-    def dtdream_send_mail(self, subject, content, email_to,email_from,appellation,body_html="",email_cc=None):
+    def dtdream_send_mail(self, subject, content, email_to,email_from,reply_to,appellation,body_html="",email_cc=None):
         email_to = email_to
         subject = subject
         content = content
@@ -1002,6 +1015,7 @@ class dtdream_sale_manager_report(models.Model):
                 'subject': '%s' % subject,
                 'email_from': '%s' % email_from,
                 'email_to': '%s' % email_to,
+                'reply_to': '%s' % reply_to,
                 'email_cc': '%s' % email_cc,
                 'auto_delete': False,
             }).send()
@@ -1016,19 +1030,27 @@ class dtdream_sale_manager_report(models.Model):
                 for person in rec.send_person:
                     if person.name not in person_list:
                         person_list.append(person.name)
-                        arr[person.name] = [{"name":rec.ask_help,"work_email":person.work_email}]
+                        arr[person.name] = [{"partner_id":rec.partner_id.name,"system_department_id":rec.system_department_id.name,"office_id":rec.office_id.name,"industry_id":rec.industry_id.name,"visit_date":rec.visit_date,"visit_object":rec.visit_object,"content":rec.content,"next_plan":rec.next_plan,"ask_help":rec.ask_help,"work_email":person.work_email}]
                     else:
-                        arr[person.name].append({"name":rec.ask_help,"work_email":person.work_email})
+                        arr[person.name].append({"partner_id":rec.partner_id.name,"system_department_id":rec.system_department_id.name,"office_id":rec.office_id.name,"industry_id":rec.industry_id.name,"visit_date":rec.visit_date,"visit_object":rec.visit_object,"content":rec.content,"next_plan":rec.next_plan,"ask_help":rec.ask_help,"work_email":person.work_email})
             for rec in arr:
-                body_html = u"""<table border="1px" width="500px"  style="border-collapse: collapse;"><thead>
-                                <th>困难求助</th>
+                body_html = u"""<table border="1px" width="800px" style="border-collapse: collapse;"><thead>
+                                <th>客户名称</th>
+                                <th>系统部</th>
+                                <th>办事处</th>
+                                <th>行业</th>
+                                <th>拜访时间</th>
+                                <th>拜访对象</th>
+                                <th width="20%">交流主要内容</th>
+                                <th width="20%">下一步计划</th>
+                                <th width="25%">困难求助</th>
                                 </thead><tbody>"""
                 for a_rec in arr[rec]:
                     work_email = a_rec['work_email']
-                    body_html = body_html + u"<tr><td>%s</td></tr>"%(a_rec['name'])
+                    body_html = body_html + u"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(a_rec['partner_id'],a_rec['system_department_id'],a_rec['office_id'],a_rec['industry_id'],a_rec['visit_date'],a_rec['visit_object'],a_rec['content'],a_rec['next_plan'],a_rec['ask_help'])
                 body_html = body_html + u"</tbody></table>"
                 self.dtdream_send_mail(u"{0}于{1}提交了主管周报,并向您发起困难求助!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                   u"%s提交了主管周报,并就以下困难向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
+                   u"%s提交了主管周报,并就以下困难向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,reply_to=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
                    appellation = u'{0},您好：'.format(rec),body_html = body_html)
 
         if len(self.dtdream_problem_help) > 0:
@@ -1051,7 +1073,7 @@ class dtdream_sale_manager_report(models.Model):
                     body_html = body_html + u"<tr><td>%s</td><td>%s</td></tr>"%(a_rec['type'],a_rec['name'])
                 body_html = body_html + u"</tbody></table>"
                 self.dtdream_send_mail(u"{0}于{1}提交了主管周报,并向您发起问题求助!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                   u"%s提交了主管周报,并就以下问题向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
+                   u"%s提交了主管周报,并就以下问题向您求助" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=work_email,email_from=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,reply_to=self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
                    appellation = u'{0},您好：'.format(rec),body_html = body_html)
 
         email_to = ""
@@ -1077,6 +1099,7 @@ class dtdream_sale_manager_report(models.Model):
                                     <p>%s</p>''' % (u'您好：', content, url, self.write_date[:10]),
                     'subject': '%s' % subject,
                     'email_from': self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
+                    'reply_to': self.env['hr.employee'].search([('login','=',self.create_uid.login)]).work_email,
                     'email_to': '%s' % email_to,
                     'email_cc': '%s' % email_cc,
                     'auto_delete': False,
@@ -1095,7 +1118,7 @@ class dtdream_sale_manager_report(models.Model):
          ('1', '已提交')],string="状态", default="0",track_visibility='onchange')
 
     report_person = fields.Many2one('hr.employee','报告人',default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]))
-    report_person_name = fields.Char(string="报告人花名",compute=_compute_reportor_info,store=True)
+    report_person_name = fields.Char(string="报告人",compute=_compute_reportor_info,store=True)
     job_number = fields.Char(string="工号",compute=_compute_reportor_info,store=True)
     department = fields.Many2one("hr.department",string="部门",compute=_compute_reportor_info,store=True)
     week = fields.Many2one("report.week",string="周别",help="默认为当前周，可往前取三周。",domain=domain_week)
@@ -1134,6 +1157,8 @@ class dtdream_sale_manager_report(models.Model):
 
     next_sale_other = fields.One2many("manager.sale.other","manager_next_sale_other_id")
     sys_compute_lists = fields.One2many("manager.sys.list","manager_rec_id",string="系统部列表")
+
+    complete_name = fields.Char(string="部门")
 
     # if_see_manager_report = fields.Char(string="是否可查看主管周报",default="0",compute=_compute_if_see_manager_report,store=True)
 
@@ -1288,7 +1313,6 @@ class dtdream_sale_manager_report(models.Model):
                     self.other_project = [(2,rec.id)]
                     self._onchange_zhengwu_project
 
-
     @api.constrains('next_zhengwu_project')
     def _cons_next_zhengwu_project(self):
         list = []
@@ -1336,8 +1360,13 @@ class dtdream_sale_manager_report(models.Model):
         system_department_ids = [recc.id for recc in self.create_system]
         self.create_office_ids = str(create_office_ids)[1:-1]
         self.create_system_ids = str(system_department_ids)[1:-1]
+        week = str(week)
         # 近三个月招投标项目
-        zhengwu_project = self.env['zhengwu.system.project'].search([('zhengwu_project_id.state','=','submit'),('zhengwu_project_id.week','=',week),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        sql = "select z.id from zhengwu_system_project z left join dtdream_sale_own_report d on z.zhengwu_project_id = d.id where d.state = 'submit' and d.week = " + week
+        self._cr.execute(sql)
+        result = self._cr.fetchall()
+        res_ids = [rec[0] for rec in result]
+        zhengwu_project = self.env['zhengwu.system.project'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
         if len(zhengwu_project) > 0:
             for rec in zhengwu_project:
@@ -1346,7 +1375,11 @@ class dtdream_sale_manager_report(models.Model):
                               "project_process":rec.project_process,'project_leave':rec.project_leave,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
         self.zhengwu_project = list or False
         # 近三个月招投标机会点
-        lead_project = self.env['lead.project'].search([('lead_project_id.state','=','submit'),('lead_project_id.week','=',week),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        sql = "select z.id from lead_project z left join dtdream_sale_own_report d on z.lead_project_id = d.id where d.state = 'submit' and d.week = " + week
+        self._cr.execute(sql)
+        result = self._cr.fetchall()
+        res_ids = [rec[0] for rec in result]
+        lead_project = self.env['lead.project'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
         if len(lead_project) > 0:
             for rec in lead_project:
@@ -1355,7 +1388,11 @@ class dtdream_sale_manager_report(models.Model):
                               "project_process":rec.project_process,'project_leave':rec.project_leave,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
         self.lead_project = list or False
         # 含投资项目及其他重要项目进展
-        other_project = self.env['other.project'].search([('other_project_id.state','=','submit'),('other_project_id.week','=',week),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        sql = "select z.id from other_project z left join dtdream_sale_own_report d on z.other_project_id = d.id where d.state = 'submit' and d.week = " + week
+        self._cr.execute(sql)
+        result = self._cr.fetchall()
+        res_ids = [rec[0] for rec in result]
+        other_project = self.env['other.project'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
         if len(other_project) > 0:
             for rec in other_project:
@@ -1364,7 +1401,11 @@ class dtdream_sale_manager_report(models.Model):
                               "project_process":rec.project_process,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
         self.other_project = list or False
         # 重点客户高层拜访
-        visit_customer = self.env['visit.customer'].search([('visit_customer_id.state','=','submit'),('visit_customer_id.week','=',week),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        sql = "select z.id from visit_customer z left join dtdream_sale_own_report d on z.visit_customer_id = d.id where d.state = 'submit' and d.week = " + week
+        self._cr.execute(sql)
+        result = self._cr.fetchall()
+        res_ids = [rec[0] for rec in result]
+        visit_customer = self.env['visit.customer'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
         if len(visit_customer) > 0:
             for rec in visit_customer:
@@ -1372,7 +1413,11 @@ class dtdream_sale_manager_report(models.Model):
                               "visit_object":rec.visit_object,"content":rec.content,"next_plan":rec.next_plan,"ask_help":rec.ask_help,'send_person':rec.send_person,'industry_id':rec.industry_id}))
         self.visit_customer = list or False
         # 重大项目下周计划
-        next_zhengwu_project = self.env['zhengwu.system.project'].search([('next_zhengwu_project_id.state','=','submit'),('next_zhengwu_project_id.week','=',week),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        sql = "select z.id from zhengwu_system_project z left join dtdream_sale_own_report d on z.next_zhengwu_project_id = d.id where d.state = 'submit' and d.week = " + week
+        self._cr.execute(sql)
+        result = self._cr.fetchall()
+        res_ids = [rec[0] for rec in result]
+        next_zhengwu_project = self.env['zhengwu.system.project'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
         if len(next_zhengwu_project) > 0:
             for rec in next_zhengwu_project:
@@ -1381,7 +1426,11 @@ class dtdream_sale_manager_report(models.Model):
                               "project_process":rec.project_process,'next_process':rec.next_process,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
         self.next_zhengwu_project = list or False
         # 重点客户拜访计划
-        customer_visit_plan = self.env['customer.visit.plan'].search([('customer_visit_plan_id.state','=','submit'),('customer_visit_plan_id.week','=',week),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        sql = "select z.id from customer_visit_plan z left join dtdream_sale_own_report d on z.customer_visit_plan_id = d.id where d.state = 'submit' and d.week = " + week
+        self._cr.execute(sql)
+        result = self._cr.fetchall()
+        res_ids = [rec[0] for rec in result]
+        customer_visit_plan = self.env['customer.visit.plan'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
         if len(customer_visit_plan) > 0:
             for rec in customer_visit_plan:

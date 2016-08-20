@@ -18,11 +18,12 @@ class dtdream_special_approval(models.Model):
     def _compute_employee(self):
         for rec in self:
             rec.job_number=rec.applicant.job_number
-            rec.department=rec.applicant.department_id.complete_name
+            rec.department=rec.applicant.department_id
             rec.mobile_phone = rec.applicant.mobile_phone
 
     job_number = fields.Char(compute=_compute_employee,string="工号")
-    department = fields.Char(compute=_compute_employee,string="部门" ,store=True)
+    department = fields.Many2one("hr.department",compute=_compute_employee,string="部门" ,store=True)
+    department_sy = fields.Many2one("hr.department",string="受益部门",required=True)
     mobile_phone = fields.Char(compute=_compute_employee,string="联系电话")
     business_type = fields.Selection([('type1','公司/样板点考察类'),('type2','品牌/解决方案类'),('type3','渠道扩展类'),('type4','行政事物类')],string='业务类型',required=True)
     business_item = fields.Char(string="业务事项",required=True)
@@ -36,8 +37,16 @@ class dtdream_special_approval(models.Model):
 
     current_approver_user = fields.Many2one("res.users",string="当前审批人用户")
 
+    @api.depends("current_approver_user")
+    def _depends_user(self):
+        for rec in self :
+            em = self.env['hr.employee'].search([('user_id','=',rec.current_approver_user.id)])
+            rec.current_approver=em.id
+    current_approver = fields.Many2one("hr.employee",compute="_depends_user",string="当前审批人")
+
     #流程流向审批人
     shenpi_zer = fields.Many2one("hr.employee",string="部门审批人")
+    shenpi_zer_shouyi = fields.Many2one("hr.employee",string="受益部门审批人")
     shenpi_fir = fields.Many2one("hr.employee",string="权签一审批人")
     shenpi_sec = fields.Many2one("hr.employee",string="权签二审批人")
     shenpi_thr = fields.Many2one("hr.employee",string="权签三审批人")
@@ -46,7 +55,7 @@ class dtdream_special_approval(models.Model):
     shenpi_six = fields.Many2one("hr.employee",string="财务最终审批人")
     deadline = fields.Char(string="审批截至时间")
 
-    help_state = fields.Selection([('quanqian_01','第一权签'),('quanqian_02','第二权签'),('quanqian_03','第三权签'),('quanqian_04','最终审批'),('cw_01','第一财务权签'),('cw_02','最终财务权签')],string="详细状态")
+    help_state = fields.Selection([('department_01','部门审批'),('department_02','受益部门审批'),('quanqian_01','第一权签'),('quanqian_02','第二权签'),('quanqian_03','第三权签'),('quanqian_04','最终审批'),('cw_01','第一财务权签'),('cw_02','最终财务权签')],string="详细状态")
 
     @api.model
     def _compute_create(self):
@@ -91,7 +100,6 @@ class dtdream_special_approval(models.Model):
 
     his_approver_user = fields.Many2many("res.users" ,"dtdream_special_approval_his",string="历史审批人员")
 
-    # partnerss = fields.Many2one("res.partner",string="客户")
 
     #判断上级部门是否有权签路径
     @api.multi
@@ -186,10 +194,15 @@ class dtdream_special_approval(models.Model):
 
     @api.multi
     def do_cgtj(self):
+        if len(self.detail_ids)<1:
+            raise ValidationError(u'专项活动议程简述必须有一条')
+        if self.total<=0:
+            raise ValidationError(u'合计金额必须大于0')
         if not self.applicant.department_id.manager_id:
             raise ValidationError(u"请配置本部门主管信息")
-        if not self.applicant.department_id.zxfirst_person and not self._com_department(department=self.applicant.department_id):
-        # if not self.applicant.department_id.zxfirst_person or (self.applicant.department_id.parent_id and not self.applicant.department_id.parent_id.zxfirst_person):
+        if not self.department_sy.manager_id:
+            raise ValidationError(u"请配置受益部门主管信息")
+        if not self.department_sy.zxfirst_person and not self._com_department(department=self.department_sy):
             raise ValidationError(u'请配置一级审批人')
         self.write({'deadline':datetime.now() + relativedelta(days=2)})
         specificlist = self.env['dtdream.specific.people'].search([])
@@ -198,48 +211,51 @@ class dtdream_special_approval(models.Model):
             specific=specificlist[0]
         if not specific:
             raise ValidationError(u'请配置特定权签人')
-        if self.applicant.department_id.zxfirst_person:#走自己部门的权签路径
-            department = self.applicant.department_id
+        if self.department_sy.zxfirst_person:#走受益部门的权签路径
+            department_sy = self.department_sy
             if specific.cw_quanqian:
-                self.write({'shenpi_zer':department.manager_id.id,'shenpi_fir': department.zxfirst_person.id,'shenpi_fif':specific.cw_quanqian.id})
+                self.write({'shenpi_zer':self.applicant.department_id.manager_id.id,'shenpi_zer_shouyi':department_sy.manager_id.id,'shenpi_fir': department_sy.zxfirst_person.id,'shenpi_fif':specific.cw_quanqian.id})
             else:
-                self.write({'shenpi_zer':department.manager_id.id,'shenpi_fir': department.zxfirst_person.id,'shenpi_six':specific.last_quanqian.id})
-            if self.total>department.zxfirst_money:
-                if department.zxsec_person:
-                    self.write({'shenpi_sec':department.zxsec_person.id})
-                    if self.total>department.zxsec_money:
-                        if department.zxthird_person:
-                            self.write({'shenpi_thr':department.zxthird_person.id})
-                            if self.total>department.zxthird_money:
+                self.write({'shenpi_zer':self.applicant.department_id.manager_id.id,'shenpi_zer_shouyi':department_sy.manager_id.id,'shenpi_fir': department_sy.zxfirst_person.id,'shenpi_six':specific.last_quanqian.id})
+            if self.applicant.department_id.manager_id==department_sy.manager_id:
+                self.write({'shenpi_zer_shouyi':False})
+            if self.total>department_sy.zxfirst_money:
+                if department_sy.zxsec_person:
+                    self.write({'shenpi_sec':department_sy.zxsec_person.id})
+                    if self.total>department_sy.zxsec_money:
+                        if department_sy.zxthird_person:
+                            self.write({'shenpi_thr':department_sy.zxthird_person.id})
+                            if self.total>department_sy.zxthird_money:
                                 self.write({'shenpi_fou':specific.last_shenpi.id})
-                            if self.applicant==department.zxthird_person:
-                                self.write({'shenpi_zer':False,'shenpi_fir':False,'shenpi_sec':False,'shenpi_thr':False})
+                            if self.applicant==department_sy.zxthird_person:
+                                self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False,'shenpi_fir':False,'shenpi_sec':False,'shenpi_thr':False})
                         else:
                             self.write({'shenpi_fou':specific.last_shenpi.id})
-                    if self.applicant==department.zxsec_person:
-                        self.write({'shenpi_zer':False,'shenpi_fir':False,'shenpi_sec':False})
+                    if self.applicant==department_sy.zxsec_person:
+                        self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False,'shenpi_fir':False,'shenpi_sec':False})
                 else:
                     self.write({'shenpi_fou': specific.last_shenpi.id})
-
-            if self.applicant ==department.manager_id:
-                self.shenpi_zer=False
-            if self.applicant == department.zxfirst_person:
-                self.write({'shenpi_zer':False,'shenpi_fir':False})
-            if department.manager_id==department.zxfirst_person:
+            if self.applicant == self.applicant.department_id.manager_id:
+                self.write({'shenpi_zer':False})
+            if self.applicant ==department_sy.manager_id:
+                self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False})
+            if self.applicant == department_sy.zxfirst_person:
+                self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False,'shenpi_fir':False})
+            if department_sy.manager_id==department_sy.zxfirst_person:
                 self.shenpi_fir=False
             if specific.cw_quanqian and self.total>specific.money:
                 self.write({'shenpi_six': specific.last_quanqian.id})
                 if specific.cw_quanqian==specific.last_quanqian:
                     self.shenpi_fif=False
 
-
-        # elif self.applicant.department_id.parent_id and self.applicant.department_id.parent_id.zxfirst_person:
-        elif self._com_department(department=self.applicant.department_id):#走上级部门的权签路径
-            pardepartment =self._com_department_info(department=self.applicant.department_id)
+        elif self._com_department(department=self.department_sy):#走受益部门上级部门的权签路径
+            pardepartment =self._com_department_info(department=self.department_sy)
             if specific.cw_quanqian:
-                self.write({'shenpi_zer':pardepartment.manager_id.id,'shenpi_fir': pardepartment.zxfirst_person.id,'shenpi_fif':specific.cw_quanqian.id})
+                self.write({'shenpi_zer':self.applicant.department_id.manager_id.id,'shenpi_zer_shouyi':self.department_sy.manager_id.id,'shenpi_fir': pardepartment.zxfirst_person.id,'shenpi_fif':specific.cw_quanqian.id})
             else:
-                self.write({'shenpi_zer':pardepartment.manager_id.id,'shenpi_fir': pardepartment.zxfirst_person.id,'shenpi_six':specific.last_quanqian.id})
+                self.write({'shenpi_zer':self.applicant.department_id.manager_id.id,'shenpi_zer_shouyi':self.department_sy.manager_id.id,'shenpi_fir': pardepartment.zxfirst_person.id,'shenpi_six':specific.last_quanqian.id})
+            if self.applicant.department_id==self.department_sy:
+                self.write({'shenpi_zer_shouyi':False})
             if self.total>pardepartment.zxfirst_money:
                 if pardepartment.zxsec_person:
                     self.write({'shenpi_sec':pardepartment.zxsec_person.id})
@@ -249,30 +265,36 @@ class dtdream_special_approval(models.Model):
                             if self.total>pardepartment.zxthird_money:
                                 self.write({'shenpi_fou':specific.last_shenpi.id})
                             if self.applicant==pardepartment.zxthird_person:
-                                self.write({'shenpi_zer':False,'shenpi_fir':False,'shenpi_sec':False,'shenpi_thr':False})
+                                self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False,'shenpi_fir':False,'shenpi_sec':False,'shenpi_thr':False})
                         else:
                             self.write({'shenpi_fou':specific.last_shenpi.id})
                     if self.applicant==pardepartment.zxsec_person:
-                        self.write({'shenpi_zer':False,'shenpi_fir':False,'shenpi_sec':False})
+                        self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False,'shenpi_fir':False,'shenpi_sec':False})
                 else:
                     self.write({'shenpi_fou': specific.last_shenpi.id})
-            if self.applicant ==pardepartment.manager_id:
+            if self.applicant ==self.applicant.department_id.manager_id:
                 self.shenpi_zer=False
+            if self.applicant ==self.department_sy.manager_id:
+                self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False})
             if self.applicant == pardepartment.zxfirst_person:
-                self.write({'shenpi_zer':False,'shenpi_fir':False})
-            if pardepartment.manager_id==pardepartment.zxfirst_person:
+                self.write({'shenpi_zer':False,'shenpi_zer_shouyi':False,'shenpi_fir':False})
+            if self.department_sy.manager_id==pardepartment.zxfirst_person:
                 self.shenpi_fir=False
             if specific.cw_quanqian and self.total>specific.money:
                 self.write({'shenpi_six': specific.last_quanqian.id})
                 if specific.cw_quanqian==specific.last_quanqian:
                     self.shenpi_fif=False
 
-
-        if self.shenpi_zer:
+        if self.shenpi_zer or self.shenpi_zer_shouyi:
             self.signal_workflow('cg_to_zgsp')
-            self.write({'current_approver_user': self.shenpi_zer.user_id.id})
-            self._message_poss(statechange=u'草稿->主管审批',action=u'提交',next_shenpiren=self.shenpi_zer.name)
-            self._send_email(next_approver=self.shenpi_zer)
+            if self.shenpi_zer:
+                self.write({'current_approver_user': self.shenpi_zer.user_id.id,'help_state':'department_01'})
+                self._message_poss(statechange=u'草稿->主管审批',action=u'提交',next_shenpiren=self.shenpi_zer.name)
+                self._send_email(next_approver=self.shenpi_zer)
+            elif self.shenpi_zer_shouyi:
+                self.write({'current_approver_user': self.shenpi_zer_shouyi.user_id.id,'help_state':'department_02'})
+                self._message_poss(statechange=u'草稿->主管审批',action=u'提交',next_shenpiren=self.shenpi_zer_shouyi.name)
+                self._send_email(next_approver=self.shenpi_zer_shouyi)
         elif self.shenpi_fir or self.shenpi_sec or self.shenpi_thr or self.shenpi_fou:
             self.signal_workflow('cg_to_qqrsp')
             if self.shenpi_fir:
@@ -312,7 +334,7 @@ class dtdream_special_approval(models.Model):
                 num = int(approvs[0].name[-3:])+1
             if num < 100:
                 num = "%03d"%num
-            vals['name'] = ''.join([em.job_number,datetime.now().strftime('%y%m%d'),num]) or 'New'
+            vals['name'] = ''.join(['ZX',datetime.now().strftime('%Y%m%d'),num]) or 'New'
         result = super(dtdream_special_approval, self).create(vals)
         return result
 
@@ -339,7 +361,7 @@ class dtdream_special_approval(models.Model):
 
     @api.model
     def timing_send_email(self):
-        applications=self.sudo().search([('state','in',('state_02','state_03','state_04')),('deadline','<',datetime.now())])
+        applications=self.env['dtdream.special.approval'].sudo().search([('state','in',('state_02','state_03','state_04')),('deadline','<',datetime.now())])
         for application in applications:
             em = self.env['hr.employee'].search([('user_id','=',application.current_approver_user.id)])
             base_url = self.get_base_url()
@@ -371,8 +393,9 @@ class dtdream_events_agenda(models.Model):
     date = fields.Date(string="年月日",required=True)
     period = fields.Selection([('period1','上午'),('period2','下午'),('period3','晚上')],string="时间段")
     place = fields.Char(string="地点/场所",required=True)
-    issues = fields.Char(string="行程/议题")
+    issues = fields.Char(string="行程/议题",required=True)
     clients = fields.Integer(string="客户人数",required=True)
+    accompany_num = fields.Integer(string="内部陪同人数",required=True)
     remark = fields.Char(string="备注")
 
     approval = fields.Many2one("dtdream_special_approval",ondelete="cascade")
@@ -381,9 +404,9 @@ class dtdream_events_agenda(models.Model):
 class dtdream_approval_fee(models.Model):
     _name = "dtdream.approval.fee"
     name=fields.Char()
-    fee_type = fields.Selection([('fee_type1','餐费(含酒水)'),('fee_type2','会务场租'),('fee_type3','住宿费'),('fee_type4','交通费用'),('fee_type5','礼品费用'),('fee_type6','其他')],string="费用类别")
-    money =fields.Integer(string="金额(元)")
-    remark = fields.Char(string="费用事项说明")
+    fee_type = fields.Selection([('fee_type1','餐费(含酒水)'),('fee_type2','会务场租'),('fee_type3','住宿费'),('fee_type4','交通费用'),('fee_type5','礼品费用'),('fee_type6','其他')],string="费用类别",required=True)
+    money =fields.Integer(string="金额(元)",required=True)
+    remark = fields.Char(string="费用事项说明",required=True)
     fee= fields.Many2one("dtdream_special_approval",ondelete="cascade")
 
 #部门权签人设置

@@ -18,19 +18,18 @@
                       <group>
                           <field name="report_person" invisible="True"></field>
                           <field name="report_person_name"></field>
-                          <field name="department"></field>
                           <field name="report_start_time" ></field>
+                          <field name="week" options='{"no_open": True, "no_create": True}' attrs="{'readonly':[('state','=','submit')]}"></field>
                       </group>
                       <group>
-                          <field name="job_number"></field>
-                          <field name="week" options='{"no_open": True, "no_create": True}' attrs="{'readonly':[('state','=','submit')]}"></field>
+                          <field name="department"></field>
                           <field name="report_end_time" ></field>
                       </group>
                   </group>
                 <notebook colspan="4">
                     <page string="本周工作总结">
                         <group string="空间情况总结"></group>
-                        <field name="sys_compute_lists" string="空间情况总结">
+                        <field name="sys_compute_lists" string="空间情况总结"  attrs="{'readonly':[('state','=','submit')]}">
                             <tree delete="false" create="false">
                                 <field name="system_name"/>
                                 <field name="bid_amount"/>
@@ -272,7 +271,7 @@
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
                                 <field name="sale_apply_id" readonly="True"/>
                                 <field name="space_total" readonly="True"/>
-                                <field name="bidding_time" readonly="True"/>
+                                <field name="bidding_time"/>
                                 <field name="project_master_degree"/>
                                 <field name="next_process"/>
                             </tree>
@@ -371,6 +370,25 @@
           </field>
       </record>
 
+      <!-- 个人周报搜索视图 -->
+        <record id="view_dtdream_sale_own_report_search" model="ir.ui.view">
+            <field name="name">view.dtdream.sale.own.report.search</field>
+            <field name="model">dtdream.sale.own.report</field>
+            <field name="arch" type="xml">
+                <search string="个人周报搜索">
+                    <field name="report_person_name" string="花名"/>
+                    <field name="job_number" string="工号"/>
+                    <field name="week" string="周别"/>
+                    <separator />
+                    <group expand="0" string="Group By">
+                        <filter string="部门" name="groupby_department" domain="[]" context="{'group_by':'department'}"/>
+                        <filter string="周别" name="groupby_week" domain="[]" context="{'group_by':'week'}"/>
+                        <filter string="报告人" name="groupby_report_person" domain="[]" context="{'group_by':'report_person'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
       <!--个人周报tree视图-->
       <record id="dtdream_sale_own_report_tree" model="ir.ui.view">
           <field name="name">dtdream.sale.own.report.tree</field>
@@ -379,11 +397,32 @@
               <tree string="个人周报">
                   <field name="report_person_name"></field>
                   <field name="department"></field>
-                  <field name="job_number"></field>
                   <field name="week"></field>
+                  <field name="report_start_time"></field>
+                  <field name="report_end_time"></field>
+                  <field name="state"></field>
               </tree>
           </field>
       </record>
+
+      <!-- 主管周报搜索视图 -->
+        <record id="view_dtdream_sale_manager_report_search" model="ir.ui.view">
+            <field name="name">view.dtdream.sale.manager.report.search</field>
+            <field name="model">dtdream.sale.manager.report</field>
+            <field name="arch" type="xml">
+                <search string="主管周报搜索">
+                    <field name="report_person_name" string="花名"/>
+                    <field name="job_number" string="工号"/>
+                    <field name="week" string="周别"/>
+                    <separator />
+                    <group expand="0" string="Group By">
+                        <filter string="部门" name="groupby_department" domain="[]" context="{'group_by':'department'}"/>
+                        <filter string="周别" name="groupby_week" domain="[]" context="{'group_by':'week'}"/>
+                        <filter string="报告人" name="groupby_report_person" domain="[]" context="{'group_by':'report_person'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
       <!--主管周报FORM视图-->
       <record model="ir.ui.view" id="dtdream_sale_manager_report_form">
@@ -397,6 +436,7 @@
                     <field name="status"  widget="statusbar"/>
                     <field name="create_office_ids" invisible="True"/>
                     <field name="create_system_ids" invisible="True"/>
+                    <field name="complete_name" invisible="True"/>
                     <!--<field name="if_see_manager_report" invisible="True"/>-->
                 </header>
                 <sheet attrs="{'invisible':[('state','!=','0')]}">
@@ -420,12 +460,11 @@
                           <field name="state" invisible="True"></field>
                           <field name="report_person" invisible="True"></field>
                           <field name="report_person_name"></field>
-                          <field name="department"></field>
                           <field name="report_start_time"></field>
+                          <field name="week" options='{"no_open": True, "no_create": True}' attrs="{'readonly':[('status','=','1')]}"></field>
                       </group>
                       <group>
-                          <field name="job_number"></field>
-                          <field name="week" options='{"no_open": True, "no_create": True}' attrs="{'readonly':[('status','=','1')]}"></field>
+                          <field name="department"></field>
                           <field name="report_end_time"></field>
                       </group>
                   </group>
@@ -521,7 +560,7 @@
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
                                 <field name="sale_apply_id" readonly="True"/>
                                 <field name="space_total" readonly="True"/>
-                                <field name="bidding_time" readonly="True"/>
+                                <field name="bidding_time"/>
                                 <field name="project_master_degree"/>
                                 <field name="project_process"/>
                             </tree>
@@ -554,7 +593,7 @@
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
                                 <field name="sale_apply_id" readonly="True"/>
                                 <field name="space_total" readonly="True"/>
-                                <field name="bidding_time" readonly="True"/>
+                                <field name="bidding_time"/>
                                 <field name="project_master_degree" />
                                 <field name="project_process"/>
                             </tree>
@@ -586,7 +625,7 @@
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
                                 <field name="sale_apply_id" readonly="True"/>
                                 <field name="space_total" readonly="True"/>
-                                <field name="bidding_time" readonly="True"/>
+                                <field name="bidding_time"/>
                                 <field name="project_master_degree" />
                                 <field name="project_process"/>
                             </tree>
@@ -612,7 +651,7 @@
                         <group string="重点客户(含阿里)高层拜访"></group>
                         <field name="visit_customer" mode="tree" string="重点客户(含阿里)高层拜访" attrs="{'readonly':[('status','=','1')]}">
                             <tree editable="bottom" class="visit_customer_tree">
-                                <field name="partner_id" options='{"no_open": True, "no_create": True}'/>
+                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True)]"/>
                                 <field name="system_department_id" options='{"no_open": True}'/>
                                 <field name="office_id" options='{"no_open": True}'/>
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
@@ -627,7 +666,7 @@
                               <sheet>
                                 <group>
                                     <group>
-                                        <field name="partner_id" options='{"no_open": True, "no_create": True}'/>
+                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True)]"/>
                                         <field name="visit_date"/>
                                         <field name="content"/>
                                         <field name="ask_help"/>
@@ -717,7 +756,7 @@
                                 <field name="industry_id"  readonly="True" options='{"no_open": True}'/>
                                 <field name="sale_apply_id" readonly="True"/>
                                 <field name="space_total"  readonly="True"/>
-                                <field name="bidding_time" readonly="True"/>
+                                <field name="bidding_time"/>
                                 <field name="project_master_degree"/>
                                 <field name="next_process"/>
                             </tree>
@@ -824,8 +863,11 @@
               <tree string="主管周报">
                   <field name="report_person_name"></field>
                   <field name="department"></field>
-                  <field name="job_number"></field>
+                  <!--<field name="job_number"></field>-->
                   <field name="week"></field>
+                  <field name="report_start_time"></field>
+                  <field name="report_end_time"></field>
+                  <field name="status"></field>
               </tree>
           </field>
       </record>

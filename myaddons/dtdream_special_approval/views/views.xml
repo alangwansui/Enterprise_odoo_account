@@ -27,8 +27,6 @@
             <field name="domain">[('his_approver_user','=',uid)]</field>
         </record>
 
-
-
         <record id="act_dtdream_special_approval_all" model="ir.actions.act_window">
             <field name="name">所有单据</field>
             <field name="res_model">dtdream.special.approval</field>
@@ -43,9 +41,33 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="business_type"/>
+                    <field name="business_item"/>
+                    <field name="customer_unit"/>
                     <field name="applicant"/>
-                    <field name="job_number"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="total"/>
                     <field name="state" />
+                    <field name="current_approver"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dtdream_special_approval_all_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.special.approval.tree</field>
+            <field name="model">dtdream.special.approval</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="business_type"/>
+                    <field name="business_item"/>
+                    <field name="customer_unit"/>
+                    <field name="applicant"/>
+                    <field name="department"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="total"/>
+                    <field name="state" />
+                    <field name="current_approver"/>
                 </tree>
             </field>
         </record>
@@ -73,15 +95,16 @@
                             <group>
                                 <field name="business_type" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 <field name="applicant" />
-                                <field name="job_number" />
+                                <!--<field name="job_number" />-->
                                 <field name="department" />
+                                <field name="department_sy" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 <field name="is_create" invisible="1"/>
                                 <field name="is_shenpiren" invisible="1"/>
                                 <field name="is_manager" invisible="1"/>
                             </group>
                             <group>
                                 <field name="business_item" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
-                                <field name="mobile_phone" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="mobile_phone" />
                                 <field name="event_location" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 <field name="customer_unit" domain="[('customer','=',True)]" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                             </group>
@@ -99,6 +122,7 @@
                                         <field name="place"/>
                                         <field name="issues"/>
                                         <field name="clients"/>
+                                        <field name="accompany_num"/>
                                         <field name="remark"/>
                                     </tree>
                                 </field>
@@ -127,6 +151,57 @@
                 </form>
             </field>
         </record>
+
+
+        <record model="ir.ui.view" id="dtdream_events_agenda_form">
+            <field name="name">dtdream_events_agenda_form</field>
+            <field name="model">dtdream.events.agenda</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="period"/>
+                                <field name="place"/>
+                            </group>
+                            <group>
+                                <field name="issues"/>
+                                <field name="clients"/>
+                                <field name="accompany_num"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="remark"/>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_approval_fee_form">
+            <field name="name">dtdream_approval_fee_form</field>
+            <field name="model">dtdream.approval.fee</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="fee_type"/>
+                            </group>
+                            <group>
+                                <field name="money"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="remark"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
 
         <!--特定权签设置-->
         <record model="ir.actions.server" id="act_dtdream_specific_people">
@@ -193,8 +268,12 @@
             </field>
         </record>
 
-
-
+        <record id="action_dtdream_approval_self_menu_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_dtdream_special_approval_tree"/>
+            <field name="act_window_id" ref="act_dtdream_special_approval_self"/>
+        </record>
 
         <menuitem name="专项审批" id="dtdream_special_approval_root" icon="fa-user" web_icon="dtdream_special_approval,static/description/dtdream_special_approval.png"></menuitem>
         <menuitem name="我的申请" sequence="100" id="dtdream_special_approval_self_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_self" ></menuitem>

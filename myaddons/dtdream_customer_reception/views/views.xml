@@ -28,6 +28,7 @@
                           <field name="is_current" invisible="True"/>
                           <field name="is_shenqingren" invisible="True"/>
                           <field name="is_receptionist" invisible="True"/>
+                          <field name="is_officer" invisible="False"/>
                       </group>
                       <group>
                           <field name="duty_tel"/>
@@ -79,7 +80,7 @@
                   </group>
                   <group string="客户接待执行人" attrs="{'invisible':[('state','in',('0','1'))]}">
                       <group>
-                          <field name="receptionist" attrs="{'readonly':[('state','!=', '2'),('is_manage','=',False)]}"/>
+                          <field name="receptionist" attrs="{'readonly':['|','&amp;',('state','!=', '2'),('is_manage','=',False),'&amp;',('state','=','2'),('is_officer','=',False)]}"/>
                       </group>
                   </group>
 
@@ -261,7 +262,7 @@
                       <group>
                           <label for="score" string="请对本次的客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
                           <div class="o_row">
-                              <field name="score" attrs="{'readonly':['|',('is_shenqingren','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)]}"/>
+                              <field name="score" attrs="{'readonly':['|',('is_shenqingren','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)],'required':[('state','=','4')]}"/>
                           </div>
                       </group>
                   </group>

@@ -96,9 +96,9 @@ class dtdream_hr_performance(models.Model):
                 raise ValidationError("HR接口人只能创建所接口部门员工的绩效考核单!")
 
     def validate_quarter_check(self, quarter):
-        p = re.match(u'\d{4}财年Q[1-4]', quarter)
+        p = re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年$)', quarter)
         if not p:
-            raise ValidationError('考核季度格式必须是xxxx财年Q1~Q4, 如2016财年Q1')
+            raise ValidationError('考核季度的格式必须是XXXX财年Q1~Q4，或XXXX财年；如2016财年Q1，或2016财年')
 
     @api.model
     def create(self, vals):
@@ -387,7 +387,7 @@ class dtdream_hr_performance(models.Model):
             self.send_mail(self.name, subject=subject, content=content)
             self.message_post(body=u'个人绩效目标填写启动')
         elif self.state != '3':
-            subject = u'【通知】个人绩效目标已被返回修改'
+            subject = u'【通知】您的个人绩效目标已被返回修改'
             content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
             self.send_mail(self.name, subject=subject, content=content)
         self.write({'state': '1'})
@@ -655,9 +655,9 @@ class dtdream_hr_pbc(models.Model):
         return message
 
     def validate_quarter_check(self, quarter):
-        p = re.match(u'\d{4}财年Q[1-4]', quarter)
+        p = re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年$)', quarter)
         if not p:
-            raise ValidationError('考核季度格式必须是xxxx财年Q1~Q4, 如2016财年Q1')
+            raise ValidationError('考核季度的格式必须是XXXX财年Q1~Q4，或XXXX财年；如2016财年Q1，或2016财年')
 
     @api.multi
     def write(self, vals, flag=True):

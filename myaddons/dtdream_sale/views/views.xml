@@ -342,10 +342,10 @@
                     <field name="sale_apply_id_uid" invisible="True"/>
                     <field name="project_leave" string="项目级别"/>
                     <field name="project_place"/>
-                    <field name="project_province"/>
-                    <field name="office_id"/>
-                    <field name="system_department_id" domain="[('parent_id','=',False)]"/>
-                    <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
+                    <field name="project_province" options="{'no_create': True}"/>
+                    <field name="office_id" options="{'no_create': True}"/>
+                    <field name="system_department_id" domain="[('parent_id','=',False)]" options="{'no_create': True}"/>
+                    <field name="industry_id" domain="[('parent_id.parent_id','=',False)]" options="{'no_create': True}"/>
                     <field name="project_detail"/>
                     <field name="sale_channel"/>
                     <field name="product_category_type_id" widget="many2many_tags" invisible="True"/>
@@ -489,7 +489,7 @@
                         <tree string="项目进展">
                             <field name="name"/>
                             <field name="write_uid" string="更新人"/>
-                            <field name="create_date" string="更新时间"/>
+                            <field name="write_date" string="更新时间"/>
                         </tree>
                         <form>
                             <sheet>
@@ -512,13 +512,15 @@
                     <page string="项目空间">
                             <field name="project_space" mode="tree">
                                 <tree string="项目空间" editable="bottom">
-                                    <field name="categ_id" domain="[('parent_id.parent_id','=',False)]"/>
+                                    <field name="categ_id_parent" options="{'no_create': True}"/>
+                                    <field name="categ_id" options="{'no_create': True}"/>
                                     <field name="project_space"/>
                                 </tree>
                                 <form>
                                     <sheet>
                                         <group>
                                             <group>
+                                                <field name="categ_id_parent"/>
                                                 <field name="categ_id"/>
                                             </group>
                                             <group>
@@ -707,7 +709,7 @@
                       </field>
                   </page>
                   <page name="access_product_type" string="产品类">
-                      <field name="user_access_product_type" widget="many2many_kanban">
+                      <field name="user_access_product_type" widget="many2many_kanban" context="{'search_default_group_by_parent_id':'parent_id'}">
                           <kanban quick_create="false" create="true" delete="true">
                               <field name="name"/>
                               <templates>
@@ -751,10 +753,10 @@
                   <field name="project_number"/>
                   <field name="project_leave" string="项目级别"/>
                   <field name="project_place"/>
-                  <field name="project_province"/>
-                  <field name="office_id"/>
-                  <field name="system_department_id" domain="[('parent_id','=',False)]"/>
-                  <field name="industry_id" domain="[('parent_id.parent_id','=',False)]"/>
+                  <field name="project_province"  options="{'no_create': True}"/>
+                  <field name="office_id"  options="{'no_create': True}"/>
+                  <field name="system_department_id" domain="[('parent_id','=',False)]" options="{'no_create': True}"/>
+                  <field name="industry_id" domain="[('parent_id.parent_id','=',False)]" options="{'no_create': True}"/>
                   <field name="project_detail"/>
                   <field name="sale_channel"/>
                   <field name="product_category_type_id" widget="many2many_tags" invisible="True"/>
@@ -859,7 +861,7 @@
                       <tree string="项目进展">
                           <field name="name"/>
                           <field name="write_uid" string="更新人"/>
-                          <field name="create_date" string="更新时间"/>
+                          <field name="write_date" string="更新时间"/>
                       </tree>
                       <form>
                           <sheet>
@@ -879,13 +881,15 @@
                     <page string="项目空间">
                             <field name="project_space" mode="tree">
                                 <tree string="项目空间" editable="bottom">
-                                    <field name="categ_id" domain="[('parent_id.parent_id','=',False)]"/>
+                                    <field name="categ_id_parent" options="{'no_create': True}"/>
+                                    <field name="categ_id" options="{'no_create': True}"/>
                                     <field name="project_space"/>
                                 </tree>
                                 <form>
                                     <sheet>
                                         <group>
                                             <group>
+                                                <field name="categ_id_parent"/>
                                                 <field name="categ_id"/>
                                             </group>
                                             <group>
@@ -1067,6 +1071,18 @@
                <!--</field>-->
           <!--</field>-->
       <!--</record>-->
+      <record id="dtdream_product_category_search_view" model="ir.ui.view">
+          <field name="name">dtdream.product.category.search</field>
+          <field name="model">product.category</field>
+          <field name="inherit_id" ref="product.product_category_search_view"/>
+          <field name="arch" type="xml">
+              <field name="parent_id" position="after">
+                  <group expand="0" string="Group By">
+                      <filter string="一级分类" context="{'group_by':'parent_id'}" name="group_by_parent_id"/>
+                  </group>
+              </field>
+          </field>
+      </record>
 
       <!--机会点转项目-->
       <record model="ir.ui.view" id="dtdream_sale.res_view_crm_lead2opportunity_partner">

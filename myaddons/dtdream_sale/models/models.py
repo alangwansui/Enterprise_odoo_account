@@ -503,7 +503,7 @@ class dtdream_sale(models.Model):
             if vals.get('project_leave') == "normal_leave":
                 vals['project_number'] = self.project_number[:-1]+"N"
                 self.project_number = self.project_number[:-1]+"N"
-        if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid:
+        if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid and not self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
             raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
         if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
             raise ValidationError("请录入项目进展")
@@ -749,8 +749,44 @@ class dtdream_project_space_line(models.Model):
 
     project_line_id = fields.Many2one('crm.lead',string="关联到项目")
 
-    categ_id = fields.Many2one('product.category',string="产品分类")
+    # categ_id = fields.Many2one('product.category',string="产品分类")
+    categ_id_parent = fields.Many2one('product.category',string="产品一级分类",domain="[('parent_id','=',False)]",required=True)
+    categ_id = fields.Many2one('product.category',string="产品二级分类",domain="[('parent_id.parent_id','=',False)]",required=True)
+
+    @api.onchange("categ_id_parent")
+    def onchange_categ_id_parent(self):
+        if self.categ_id_parent:
+            if self.categ_id.parent_id != self.categ_id_parent:
+                self.categ_id = ""
+            return {
+                'domain': {
+                    "categ_id":[('parent_id','=',self.categ_id_parent.id)]
+                }
+            }
+
+    @api.onchange("categ_id")
+    def onchange_categ_id(self):
+        if self.categ_id:
+            self.categ_id_parent = self.categ_id.parent_id
+        else:
+            return {
+                'domain': {
+                    "categ_id":[('parent_id.parent_id','=',False)]
+                }
+            }
+
     project_space = fields.Float('项目空间(万元)')
+
+class dtdream_product_category(models.Model):
+    _inherit = "product.category"
+
+    @api.multi
+    def name_get(self):
+        def get_names(cat):
+            """ Return the list [cat.name, cat.parent_id.name, ...] """
+            return cat.name
+        return [(cat.id,get_names(cat)) for cat in self]
+
 
 # 进展记录
 class dtdream_des_records(models.Model):

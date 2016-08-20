@@ -30,7 +30,8 @@
         'views/configureViews.xml',
         'views/views.xml',
         'views/templates.xml',
-        'workflow/workflow.xml'
+        'workflow/workflow.xml',
+        'views/report.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

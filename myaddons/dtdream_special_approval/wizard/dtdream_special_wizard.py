@@ -61,45 +61,74 @@ class dtdream_special_wizard(models.Model):
     @api.one
     def btn_agree(self):
         approval = self.env['dtdream.special.approval'].browse(self._context['active_id'])
-        # approval.current_approver_user=False
         self.write({'deadline':datetime.now() + relativedelta(days=2)})
+        approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
         if approval.state=='state_02':
-            approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
-            if approval.shenpi_fir or approval.shenpi_sec or approval.shenpi_thr or approval.shenpi_fou:
-                approval.signal_workflow('zgsp_to_qqrsp')
-                # self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason)
-                if approval.shenpi_fir:
-                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fir.name)
-                    approval.write({'current_approver_user': approval.shenpi_fir.user_id.id,'help_state':'quanqian_01'})
-                    self._send_email(approval=approval,next_approver=approval.shenpi_fir)
-                elif approval.shenpi_sec:
-                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_sec.name)
-                    approval.write({'current_approver_user': approval.shenpi_sec.user_id.id,'help_state':'quanqian_02'})
-                    self._send_email(approval=approval,next_approver=approval.shenpi_sec)
-                elif approval.shenpi_thr:
-                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_thr.name)
-                    approval.write({'current_approver_user': approval.shenpi_thr.user_id.id,'help_state':'quanqian_03'})
-                    self._send_email(approval=approval,next_approver=approval.shenpi_thr)
-                elif approval.shenpi_fou:
-                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fou.name)
-                    approval.write({'current_approver_user': approval.shenpi_fou.user_id.id,'help_state':'quanqian_04'})
-                    self._send_email(approval=approval,next_approver=approval.shenpi_fou)
-            elif approval.shenpi_fif or approval.shenpi_six:
-                # self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason)
-                approval.signal_workflow('zgsp_to_cwsp')
-                if approval.shenpi_fif:
-                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
-                    approval.write({'current_approver_user': approval.shenpi_fif.user_id.id,'help_state':'cw_01'})
-                    self._send_email(approval=approval,next_approver=approval.shenpi_fif)
-                elif approval.shenpi_six:
-                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_six.name)
-                    approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
-                    self._send_email(approval=approval,next_approver=approval.shenpi_six)
+            if approval.help_state=='department_01':
+                if approval.shenpi_zer_shouyi:
+                    self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_zer_shouyi.name)
+                    approval.write({'current_approver_user': approval.shenpi_zer_shouyi.user_id.id,'help_state':'department_02'})
+                    self._send_email(approval=approval,next_approver=approval.shenpi_zer_shouyi)
+                elif approval.shenpi_fir or approval.shenpi_sec or approval.shenpi_thr or approval.shenpi_fou:
+                    approval.signal_workflow('zgsp_to_qqrsp')
+                    if approval.shenpi_fir:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fir.name)
+                        approval.write({'current_approver_user': approval.shenpi_fir.user_id.id,'help_state':'quanqian_01'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_fir)
+                    elif approval.shenpi_sec:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_sec.name)
+                        approval.write({'current_approver_user': approval.shenpi_sec.user_id.id,'help_state':'quanqian_02'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_sec)
+                    elif approval.shenpi_thr:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_thr.name)
+                        approval.write({'current_approver_user': approval.shenpi_thr.user_id.id,'help_state':'quanqian_03'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_thr)
+                    elif approval.shenpi_fou:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fou.name)
+                        approval.write({'current_approver_user': approval.shenpi_fou.user_id.id,'help_state':'quanqian_04'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_fou)
+                elif approval.shenpi_fif or approval.shenpi_six:
+                    approval.signal_workflow('zgsp_to_cwsp')
+                    if approval.shenpi_fif:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
+                        approval.write({'current_approver_user': approval.shenpi_fif.user_id.id,'help_state':'cw_01'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_fif)
+                    elif approval.shenpi_six:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_six.name)
+                        approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_six)
+            elif approval.help_state=='department_02':
+                if approval.shenpi_fir or approval.shenpi_sec or approval.shenpi_thr or approval.shenpi_fou:
+                    approval.signal_workflow('zgsp_to_qqrsp')
+                    if approval.shenpi_fir:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fir.name)
+                        approval.write({'current_approver_user': approval.shenpi_fir.user_id.id,'help_state':'quanqian_01'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_fir)
+                    elif approval.shenpi_sec:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_sec.name)
+                        approval.write({'current_approver_user': approval.shenpi_sec.user_id.id,'help_state':'quanqian_02'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_sec)
+                    elif approval.shenpi_thr:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_thr.name)
+                        approval.write({'current_approver_user': approval.shenpi_thr.user_id.id,'help_state':'quanqian_03'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_thr)
+                    elif approval.shenpi_fou:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fou.name)
+                        approval.write({'current_approver_user': approval.shenpi_fou.user_id.id,'help_state':'quanqian_04'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_fou)
+                elif approval.shenpi_fif or approval.shenpi_six:
+                    approval.signal_workflow('zgsp_to_cwsp')
+                    if approval.shenpi_fif:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
+                        approval.write({'current_approver_user': approval.shenpi_fif.user_id.id,'help_state':'cw_01'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_fif)
+                    elif approval.shenpi_six:
+                        self._message_poss(approval=approval,current_approver=approval.shenpi_zer,statechange=u'主管审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_six.name)
+                        approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
+                        self._send_email(approval=approval,next_approver=approval.shenpi_six)
         elif approval.state=='state_03':
             if approval.help_state=='quanqian_01':
-                approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
                 if approval.shenpi_sec or approval.shenpi_thr or approval.shenpi_fou:
-                    # self._message_poss(approval=approval,current_approver=approval.shenpi_fir,statechange=u'权签人审批',result=u'同意',reason=self.reason)
                     if approval.shenpi_sec:
                         self._message_poss(approval=approval,current_approver=approval.shenpi_fir,statechange=u'权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_sec.name)
                         approval.write({'current_approver_user': approval.shenpi_sec.user_id.id,'help_state':'quanqian_02'})
@@ -113,7 +142,6 @@ class dtdream_special_wizard(models.Model):
                         approval.write({'current_approver_user': approval.shenpi_fou.user_id.id,'help_state':'quanqian_04'})
                         self._send_email(approval=approval,next_approver=approval.shenpi_fou)
                 elif approval.shenpi_fif or approval.shenpi_six:
-                    # self._message_poss(approval=approval,current_approver=approval.shenpi_fir,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason)
                     approval.signal_workflow('qqrsp_to_cwsp')
                     if approval.shenpi_fif:
                         self._message_poss(approval=approval,current_approver=approval.shenpi_fir,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
@@ -124,9 +152,7 @@ class dtdream_special_wizard(models.Model):
                         approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
                         self._send_email(approval=approval,next_approver=approval.shenpi_six)
             elif approval.help_state=='quanqian_02':
-                approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
-                if  approval.shenpi_thr or approval.shenpi_fou:
-                    # self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批',result=u'同意',reason=self.reason)
+                if approval.shenpi_thr or approval.shenpi_fou:
                     if approval.shenpi_thr:
                         self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_thr.name)
                         approval.write({'current_approver_user': approval.shenpi_thr.user_id.id,'help_state':'quanqian_03'})
@@ -136,7 +162,6 @@ class dtdream_special_wizard(models.Model):
                         approval.write({'current_approver_user': approval.shenpi_fou.user_id.id,'help_state':'quanqian_04'})
                         self._send_email(approval=approval,next_approver=approval.shenpi_fou)
                 elif approval.shenpi_fif or approval.shenpi_six:
-                    # self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason)
                     approval.signal_workflow('qqrsp_to_cwsp')
                     if approval.shenpi_fif:
                         self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
@@ -147,15 +172,12 @@ class dtdream_special_wizard(models.Model):
                         approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
                         self._send_email(approval=approval,next_approver=approval.shenpi_six)
             elif approval.help_state=='quanqian_03':
-                approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
                 if approval.shenpi_fou:
-                    # self._message_poss(approval=approval,current_approver=approval.shenpi_thr,statechange=u'权签人审批',result=u'同意',reason=self.reason)
                     if approval.shenpi_fou:
                         self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fou.name)
                         approval.write({'current_approver_user': approval.shenpi_fou.user_id.id,'help_state':'quanqian_04'})
                         self._send_email(approval=approval,next_approver=approval.shenpi_fou)
                 elif approval.shenpi_fif or approval.shenpi_six:
-                    # self._message_poss(approval=approval,current_approver=approval.shenpi_thr,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason)
                     approval.signal_workflow('qqrsp_to_cwsp')
                     if approval.shenpi_fif:
                         self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
@@ -166,8 +188,6 @@ class dtdream_special_wizard(models.Model):
                         approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
                         self._send_email(approval=approval,next_approver=approval.shenpi_six)
             elif approval.help_state=='quanqian_04':
-                approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
-                # self._message_poss(approval=approval,current_approver=approval.shenpi_fou,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason)
                 approval.signal_workflow('qqrsp_to_cwsp')
                 if approval.shenpi_fif:
                     self._message_poss(approval=approval,current_approver=approval.shenpi_sec,statechange=u'权签人审批->财务审批',result=u'同意',reason=self.reason,next_shenpiren=approval.shenpi_fif.name)
@@ -179,7 +199,6 @@ class dtdream_special_wizard(models.Model):
                     self._send_email(approval=approval,next_approver=approval.shenpi_six)
         elif approval.state=='state_04':
             if approval.help_state=='cw_01':
-                approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
                 if approval.shenpi_six:
                     self._message_poss(approval=approval,current_approver=approval.shenpi_fif,statechange=u'财务审批',result=u'同意',reason=self.reason,next_approver=approval.shenpi_six.name)
                     approval.write({'current_approver_user': approval.shenpi_six.user_id.id,'help_state':'cw_02'})
@@ -189,7 +208,6 @@ class dtdream_special_wizard(models.Model):
                     approval.write({'current_approver_user': False})
                     approval.signal_workflow('cwsp_to_wc')
             elif approval.help_state=='cw_02':
-                approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
                 self._message_poss(approval=approval,current_approver=approval.shenpi_six,statechange=u'财务审批->完成',result=u'同意',reason=self.reason)
                 approval.signal_workflow('cwsp_to_wc')
                 approval.write({'current_approver_user': False})

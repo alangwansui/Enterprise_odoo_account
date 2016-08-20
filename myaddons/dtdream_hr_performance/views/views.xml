@@ -103,7 +103,7 @@
               <header>
                   <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
                           attrs="{'invisible':['|',('state', 'not in',('1','4','5')),'|','&amp;',('manage','=',False),'&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','in',('1', '4')),'&amp;',('login','=',False),('manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
-                  <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" confirm="请确认是否返回修改?" type="action" class="oe_highlight"
+                  <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
                   <button name="%(act_dtdream_pbc_agree_wizard)d" string="同意" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
@@ -174,11 +174,9 @@
                     </notebook>
                 </group>
 
-                <group string="总体评价" attrs="{'invisible':[('state', 'not in',('5','6','99'))]}">
+                <group string="主管评价">
                     <group>
-                        <div style="margin-left:10px">
-                            <field name="evaluate_officer" placeholder='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)' attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
-                        </div>
+                        <field name="evaluate_officer" placeholder='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)' attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('is_officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                     </group>
                     <group></group>
                 </group>

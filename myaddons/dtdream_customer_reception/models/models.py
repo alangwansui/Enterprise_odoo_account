@@ -110,6 +110,13 @@ class dtdream_customer_reception(models.Model):
         else:
             self.is_receptionist = False
 
+    def _compute_is_officer(self):
+        officer = self.env['dtdream.customer.reception.config'].search([], limit=1).officer
+        if officer.user_id == self.env.user:
+            self.is_officer = True
+        else:
+            self.is_officer = False
+
     @api.onchange('customer_v')
     def update_bill_num(self):
         if self.bill_num:
@@ -321,6 +328,7 @@ class dtdream_customer_reception(models.Model):
     is_current = fields.Boolean(string='是否当前审批人', compute=_compute_login_is_approve)
     is_shenqingren = fields.Boolean(string='是否申请人', compute=_compute_login_is_shenqinren, default=lambda self: True)
     is_receptionist = fields.Boolean(string='是否接待执行人', compute=_compute_login_is_receptionist)
+    is_officer = fields.Boolean(string='是否客工部主管', compute=_compute_is_officer)
     is_manage = fields.Boolean(string='是否客户接待管理员', compute=_compute_is_customer_manage)
     entry_way = fields.Boolean(string='创建客户接待方式')
     state = fields.Selection([('0', '草稿'),
@@ -339,16 +347,18 @@ class dtdream_customer_reception(models.Model):
         else:
             if self.state == '3':
                 # 通知接待安排执行人
-                subject = u'%s提交的客户接待申请已被撤回,请您知悉!' % self.name.name
-                self.send_mail(self.receptionist, subject=subject, content=subject)
+                subject = u'【通知】客户接待申请已被撤回'
+                content = u'%s提交的客户接待申请已被撤回,请您知悉!' % self.name.name
+                self.send_mail(self.receptionist, subject=subject, content=content)
                 # 通知车辆负责人
                 cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
                 inter = cr.inter
                 if (self.car and self.car_num) or (self.commercial_vehicle and self.commercial_vehicle_num):
                     car = cr.car
-                    self.send_mail(car, subject=subject, content=subject)
+                    self.send_mail(car, subject=subject, content=content)
                 # 通知企划部接口人
-                self.send_mail(inter, subject=subject, content=subject)
+                if self.camera == '0' or self.camera == '1':
+                    self.send_mail(inter, subject=subject, content=content)
             if self.state != '0':
                 state = {'1': u'部门审批', '2': u'客工部审批', '3': u'接待安排与执行'}
                 self._message_poss(state=u'%s-->草稿' % state.get(self.state), action=u'撤回', approve=self.name.name)
@@ -358,8 +368,9 @@ class dtdream_customer_reception(models.Model):
     def wkf_approve1(self):
         current_approve = self.name.department_id.manager_id
         self.write({"state": '1',  'current_approve': current_approve.id})
-        subject = u'%s提交了客户接待申请进入部门审批阶段,请您审批!' % self.name.name
-        self.send_mail(current_approve, subject=subject, content=subject)
+        subject = u'【通知】请您审批%s提交的客户接待申请!' % self.name.name
+        content = u'%s提交了客户接待申请进入部门审批阶段,请您审批!' % self.name.name
+        self.send_mail(current_approve, subject=subject, content=content)
         self._message_poss(state=u'草稿-->部门审批', action=u'提交', approve=current_approve.name)
 
     @api.multi
@@ -367,8 +378,9 @@ class dtdream_customer_reception(models.Model):
         approve = self.current_approve.id
         current_approve = self.env['dtdream.customer.reception.config'].search([], limit=1).officer
         self.write({"state": '2', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
-        subject = u'%s提交的客户接待申请进入客工部审批阶段,请您审批!' % self.name.name
-        self.send_mail(current_approve, subject=subject, content=subject)
+        subject = u'【通知】请您审批%s提交的客户接待申请!' % self.name.name
+        content = u'%s提交的客户接待申请进入客工部审批阶段,请您审批!' % self.name.name
+        self.send_mail(current_approve, subject=subject, content=content)
         self._message_poss(state=u'部门审批-->客工部审批', action=u'审批同意', approve=current_approve.name)
 
     @api.multi
@@ -379,18 +391,22 @@ class dtdream_customer_reception(models.Model):
         current_approve = self.receptionist
         self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
         # 通知接待安排执行人
-        subject = u'%s提交的客户接待申请进入接待安排与执行阶段,请您与申请人沟通,落实安排,待接待完成填写接待小结!' % self.name.name
-        self.send_mail(current_approve, subject=subject, content=subject)
+        subject = u'【通知】请您落实安排%s的客户接待申请,待接待完成填写接待小结!' % self.name.name
+        content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您与申请人沟通,落实安排,待接待完成填写接待小结!' % self.name.name
+        self.send_mail(current_approve, subject=subject, content=content)
         # 通知车辆负责人
         cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
         inter = cr.inter
         if (self.car and self.car_num) or (self.commercial_vehicle and self.commercial_vehicle_num):
             car = cr.car
-            subject = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看及安排相关接送车辆!' % self.name.name
-            self.send_mail(car, subject=subject, content=subject)
+            subject = u'【通知】请您安排客户接待相关接送车辆!'
+            content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看及安排相关接送车辆!' % self.name.name
+            self.send_mail(car, subject=subject, content=content)
         # 通知企划部接口人
-        subject = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看!' % self.name.name
-        self.send_mail(inter, subject=subject, content=subject)
+        if self.camera == '0' or self.camera == '1':
+            subject = u'【通知】请您安排客户接待摄影相关事宜'
+            content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看,及安排摄影相关事宜!' % self.name.name
+            self.send_mail(inter, subject=subject, content=content)
         self._message_poss(state=u'客工部审批-->接待安排与执行', action=u'审批同意', approve=current_approve.name)
 
     @api.multi
@@ -398,16 +414,18 @@ class dtdream_customer_reception(models.Model):
         approve = self.current_approve.id
         current_approve = self.name
         self.write({"state": '4', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
-        subject = u'您提交的客户接待申请进入执行评价阶段,请您对接待效果做出评价!'
-        self.send_mail(current_approve, subject=subject, content=subject)
+        subject = u'【通知】请您对接待效果做出评价!'
+        content = u'您提交的客户接待申请进入执行评价阶段,请您对接待效果做出评价!'
+        self.send_mail(current_approve, subject=subject, content=content)
         self._message_poss(state=u'接待安排与执行-->执行评价', action=u'提交', approve=current_approve.name)
 
     @api.multi
     def wkf_done(self):
         self.write({"state": '99', 'current_approve': ''})
         officer = self.env['dtdream.customer.reception.config'].search([], limit=1).officer
-        subject = u'%s对客户接待效果做出了评价,请您查看!' % self.name.name
-        self.send_mail(officer, subject=subject, content=subject)
+        subject = u'【通知】请您查看接待效果评价!'
+        content = u'%s对客户接待效果做出了评价,评分:%s分,请您查看!' % (self.name.name, self.score)
+        self.send_mail(officer, subject=subject, content=content)
         self._message_poss(state=u'执行评价-->完成', action=u'提交')
 
 
