@@ -51,17 +51,17 @@
 
                   <group string="客户信息">
                       <group>
-                          <field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)],'invisible':[('customer_v','=','1')]}"/>
-                          <field name="customer_char" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','0')]}"/>
+                          <!--<field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>-->
+                          <field name="customer_source" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)],'invisible':[('customer_source','!=','0')]}"/>
                           <field name="inter_tel" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="visit_count" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="background" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
                       <group>
-                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_v','=','1')]}"/>
+                          <field name="customer_char" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_source','=','0')]}"/>
+                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_source','!=','0')]}"/>
                           <field name="customer_level" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="customer_source" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="visit_date" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                       </group>
@@ -242,14 +242,14 @@
 
                   <group string="费用预算">
                       <group>
-                          <field name="hotel_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="car_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="other_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <!--<field name="hotel_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
+                          <!--<field name="car_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
+                          <!--<field name="other_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
                       </group>
                       <group>
-                          <field name="dinner_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="advertise_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
-                          <field name="total_fee" readonly="True"/>
+                          <!--<field name="dinner_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
+                          <!--<field name="advertise_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
+                          <!--<field name="total_fee" readonly="True"/>-->
                       </group>
                   </group>
 

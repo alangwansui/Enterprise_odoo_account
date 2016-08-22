@@ -14,63 +14,6 @@ class dtdream_customer_reception(models.Model):
     _description = u"客户接待"
     _inherit = ['mail.thread']
 
-    warning = {"warning": {'title': u"提示",
-                           'message': u"只可输入数字!"}}
-
-    @api.onchange('hotel_fee')
-    @api.constrains('hotel_fee')
-    def _check_hotel_fee(self):
-        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
-        if self.hotel_fee:
-            if not p.search(self.hotel_fee.encode("utf-8")):
-                self.hotel_fee = False
-                return self.warning
-        self._compute_total_fee()
-
-    @api.onchange('dinner_fee')
-    @api.constrains('dinner_fee')
-    def _check_dinner_fee(self):
-        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
-        if self.dinner_fee:
-            if not p.search(self.dinner_fee.encode("utf-8")):
-                self.dinner_fee = False
-                return self.warning
-        self._compute_total_fee()
-
-    @api.onchange('car_fee')
-    @api.constrains('car_fee')
-    def _check_car_fee(self):
-        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
-        if self.car_fee:
-            if not p.search(self.car_fee.encode("utf-8")):
-                self.car_fee = False
-                return self.warning
-        self._compute_total_fee()
-
-    @api.onchange('advertise_fee')
-    @api.constrains('advertise_fee')
-    def _check_advertise_fee(self):
-        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
-        if self.advertise_fee:
-            if not p.search(self.advertise_fee.encode("utf-8")):
-                self.advertise_fee = False
-                return self.warning
-        self._compute_total_fee()
-
-    @api.onchange('other_fee')
-    @api.constrains('other_fee')
-    def _check_other_fee(self):
-        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
-        if self.other_fee:
-            if not p.search(self.other_fee.encode("utf-8")):
-                self.other_fee = False
-                return self.warning
-        self._compute_total_fee()
-
-    def _compute_total_fee(self):
-        self.total_fee = float(self.hotel_fee) + float(self.dinner_fee) +\
-                     float(self.car_fee) + float(self.advertise_fee) + float(self.other_fee)
-
     @api.depends('name')
     def compute_employee_info(self):
         for rec in self:
@@ -117,11 +60,22 @@ class dtdream_customer_reception(models.Model):
         else:
             self.is_officer = False
 
-    @api.onchange('customer_v')
+    @api.onchange('customer_source')
     def update_bill_num(self):
         if self.bill_num:
-            letter = 'V' if self.customer_v == '0' else 'N'
+            letter = 'V' if self.customer_source == '0' else 'N'
             self.bill_num = self.bill_num[:-1] + letter
+        if self.customer_source != '0':
+            self.customer = False
+            self.project = False
+
+    @api.onchange('customer')
+    def compute_customer_level(self):
+        for rec in self:
+            if rec.customer:
+                rec.customer_level = rec.customer.partner_important
+            else:
+                rec.customer_level = False
 
     @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
@@ -179,6 +133,10 @@ class dtdream_customer_reception(models.Model):
 
     @api.multi
     def write(self, vals):
+        if self.bill_num:
+            letter = 'V' if vals.get('customer_source') == '0' else 'N'
+            bill_num = self.bill_num[:-1] + letter
+            vals.update({'bill_num': bill_num})
         result = super(dtdream_customer_reception, self).write(vals)
         if result:
             self.update_customer_activities()
@@ -186,7 +144,7 @@ class dtdream_customer_reception(models.Model):
 
     @api.model
     def create(self, vals):
-        letter = 'V' if vals.get('customer_v') == '0' else 'N'
+        letter = 'V' if vals.get('customer_source') not in ('1', '2') else 'N'
         bill_num = datetime.now().strftime("%Y%m%d")
         cr = self.search([('bill_num', 'like', bill_num)], order='id desc', limit=1)
         if cr:
@@ -195,6 +153,7 @@ class dtdream_customer_reception(models.Model):
             bill_num = bill_num + '01' + letter
         vals.update({'bill_num': bill_num})
         result = super(dtdream_customer_reception, self).create(vals)
+        result.write({'customer_source': result.customer_source})
         self.create_customer_activities(result)
         return result
 
@@ -263,7 +222,7 @@ class dtdream_customer_reception(models.Model):
     customer_char = fields.Char(string='客户名称')
     customer_level = fields.Selection([('SS', 'SS'), ('S', 'S'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
                                       string='客户重要级')
-    customer_source = fields.Char(string='客户来源')
+    customer_source = fields.Selection([('0', '营销体系邀请'), ('1', '政府邀请'), ('2', '合作伙伴邀请')], string='客户来源', default='0')
     customer_v = fields.Selection([('0', '是'), ('1', '否')], string='是否价值客户', default='0')
     project = fields.Many2one('crm.lead', string='项目名称')
     visit_count = fields.Integer(string='来访人数')
@@ -314,12 +273,12 @@ class dtdream_customer_reception(models.Model):
     memories = fields.Many2one('dtdream.customer.memories', string='纪念品')
     remark = fields.Text(string='备注')
     memories_num = fields.Integer()
-    hotel_fee = fields.Char(string='住宿费(元)')
-    dinner_fee = fields.Char(string='就餐费(元)')
-    car_fee = fields.Char(string='车辆费(元)')
-    advertise_fee = fields.Char(string='公司宣传费(元)')
-    other_fee = fields.Char(string='其它费用(元)')
-    total_fee = fields.Float(string='总计(元)')
+    # hotel_fee = fields.Char(string='住宿费(元)')
+    # dinner_fee = fields.Char(string='就餐费(元)')
+    # car_fee = fields.Char(string='车辆费(元)')
+    # advertise_fee = fields.Char(string='公司宣传费(元)')
+    # other_fee = fields.Char(string='其它费用(元)')
+    # total_fee = fields.Float(string='总计(元)')
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
@@ -533,7 +492,8 @@ class dtdream_customer_res_partner(models.Model):
             'view_mode': 'form',
             'res_model': 'dtdream.customer.reception',
             'res_id': '',
-            'context': {'default_customer': self.id, 'default_customer_level': self.partner_important},
+            'context': {'default_customer': self.id, 'default_customer_level': self.partner_important,
+                        'default_customer_source': '0'},
             }
         return action
 
