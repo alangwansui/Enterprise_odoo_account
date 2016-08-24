@@ -131,8 +131,34 @@ class dtdream_customer_reception(models.Model):
             {'activity': activity, 'activity_time': self.visit_date,
              'customer': ';'.join([guest.name_guest for guest in self.guest if guest]), 'company': ';'.join(set(company))})
 
+    @api.constrains('cost')
+    def constraint_cost_save(self):
+        if self.has_special == '1':
+            total = 0
+            for rec in self.cost:
+                total += rec.money
+            if total > 5000:
+                raise ValidationError('总费用已超5000元,需先申请专项!')
+
+    @api.onchange('has_special', 'special_code')
+    def _update_customer_cost(self):
+        if self.has_special == '0' and self.special_code:
+            cr = self.env['dtdream.approval.fee'].search([('fee', '=', self.special_code.id)])
+            target = [(0, 0, {'fee_type': crr.fee_type, 'money': crr.money, 'remark': crr.remark}) for crr in cr]
+            self.cost = target
+        else:
+            self.cost = False
+            self.special_code = False
+
     @api.multi
     def write(self, vals):
+        if vals.has_key('special_code') and (vals.get('has_special', None) == '0' or self.has_special == '0')and vals.get('special_code'):
+            cr = self.env['dtdream.approval.fee'].search([('fee', '=', vals.get('special_code'))])
+            target = [(0, 0, {'fee_type': crr.fee_type, 'money': crr.money, 'remark': crr.remark}) for crr in cr]
+            if self.cost and self.cost != target:
+                self.cost = [(6, 0, [])]
+            vals['cost'] = target
+
         if self.bill_num:
             letter = 'V' if vals.get('customer_source') == '0' else 'N'
             bill_num = self.bill_num[:-1] + letter
@@ -144,6 +170,11 @@ class dtdream_customer_reception(models.Model):
 
     @api.model
     def create(self, vals):
+        if vals.has_key('special_code') and vals.get('has_special') == '0':
+            cr = self.env['dtdream.approval.fee'].search([('fee', '=', vals.get('special_code'))])
+            target = [(0, 0, {'fee_type': crr.fee_type, 'money': crr.money, 'remark': crr.remark}) for crr in cr]
+            vals.update({'cost': target})
+
         letter = 'V' if vals.get('customer_source') not in ('1', '2') else 'N'
         bill_num = datetime.now().strftime("%Y%m%d")
         cr = self.search([('bill_num', 'like', bill_num)], order='id desc', limit=1)
@@ -273,12 +304,9 @@ class dtdream_customer_reception(models.Model):
     memories = fields.Many2one('dtdream.customer.memories', string='纪念品')
     remark = fields.Text(string='备注')
     memories_num = fields.Integer()
-    # hotel_fee = fields.Char(string='住宿费(元)')
-    # dinner_fee = fields.Char(string='就餐费(元)')
-    # car_fee = fields.Char(string='车辆费(元)')
-    # advertise_fee = fields.Char(string='公司宣传费(元)')
-    # other_fee = fields.Char(string='其它费用(元)')
-    # total_fee = fields.Float(string='总计(元)')
+    cost = fields.One2many('dtdream.customer.cost', 'fee', string='费用')
+    has_special = fields.Selection([('0', '是'), ('1', '否')], string='是否有专项')
+    special_code = fields.Many2one('dtdream.special.approval', string='专项编码')
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
@@ -388,11 +416,22 @@ class dtdream_customer_reception(models.Model):
         self._message_poss(state=u'执行评价-->完成', action=u'提交')
 
 
+class dtdream_customer_cost(models.Model):
+    _name = 'dtdream.customer.cost'
+
+    fee_type = fields.Selection([('fee_type1', '餐费(含酒水)'), ('fee_type2', '会务场租'), ('fee_type3', '住宿费'),
+                                 ('fee_type4', '交通费用'), ('fee_type5', '礼品费用'), ('fee_type6', '其他')],
+                                string='费用类别')
+    money = fields.Integer(string="金额(元)")
+    remark = fields.Text(string="费用事项说明")
+    fee = fields.Many2one("dtdream.customer.reception", ondelete="cascade")
+
+
 class dtdream_guest_honour(models.Model):
     _name = 'dtdream.guest.honour'
 
-    name_guest = fields.Char(string='主宾姓名')
-    post_guest = fields.Char(string='职务')
+    name_guest = fields.Char(string='主宾姓名', size=20)
+    post_guest = fields.Char(string='职务', size=30)
     customer_reception = fields.Many2one('dtdream.customer.reception')
 
 
@@ -414,9 +453,9 @@ class dtdream_visit_path(models.Model):
     _name = 'dtdream.visit.path'
 
     start_time = fields.Datetime(string='出发时间')
-    starting = fields.Char(string='出发地点')
+    starting = fields.Char(string='出发地点', size=25)
     end_time = fields.Datetime(string='到达时间')
-    destination = fields.Char(string='到达地点')
+    destination = fields.Char(string='到达地点', size=25)
     customer_reception = fields.Many2one('dtdream.customer.reception')
 
 
@@ -506,6 +545,20 @@ class dtdream_hr_department(models.Model):
         reception = self.env['dtdream.customer.reception'].search([('state', '=', '1')])
         for cr in reception:
             cr.write({'current_approve': self.manager_id.id})
+
+
+class dtdream_customer_special(models.Model):
+    _inherit = 'dtdream.special.approval'
+
+    @api.multi
+    def name_get(self):
+        if self._context.get('params', None):
+            return super(dtdream_customer_special, self).name_get()
+        result = []
+        for cr in self:
+            name = cr.name + ' ' + cr.business_item
+            result.append((cr.id, name))
+        return result
 
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_customer_reception",
+    'name': "客户接待",
 
     'summary': """
         申请客户接待资源""",

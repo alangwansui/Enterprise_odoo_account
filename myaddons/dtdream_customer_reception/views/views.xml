@@ -28,7 +28,7 @@
                           <field name="is_current" invisible="True"/>
                           <field name="is_shenqingren" invisible="True"/>
                           <field name="is_receptionist" invisible="True"/>
-                          <field name="is_officer" invisible="False"/>
+                          <field name="is_officer" invisible="True"/>
                       </group>
                       <group>
                           <field name="duty_tel"/>
@@ -60,7 +60,7 @@
                       </group>
                       <group>
                           <field name="customer_char" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_source','=','0')]}"/>
-                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_source','!=','0')]}"/>
+                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)], 'invisible':[('customer_source','!=','0')],'required':[('customer_source','=','0')]}"/>
                           <field name="customer_level" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="visit_date" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
@@ -158,7 +158,7 @@
                       <notebook>
                         <page>
                             <field name="path" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}" string="行程路线">
-                                <tree editable="bottom">
+                                <tree editable="bottom" class="dtdream_customer_path">
                                     <field name="start_time"/>
                                     <field name="starting"/>
                                     <field name="end_time"/>
@@ -240,17 +240,27 @@
                       </group>
                   </group>
 
+                  <group string="相关专项">
+                      <group>
+                          <field name="has_special" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                      </group>
+                      <group>
+                          <field name="special_code" domain="[('applicant.user_id','=', uid),('state','=','state_05')]" attrs="{'invisible':[('has_special','!=','0')],'required':[('has_special','=','0')],'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>
+                      </group>
+                  </group>
+
                   <group string="费用预算">
-                      <group>
-                          <!--<field name="hotel_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
-                          <!--<field name="car_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
-                          <!--<field name="other_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
-                      </group>
-                      <group>
-                          <!--<field name="dinner_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
-                          <!--<field name="advertise_fee" required="True" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
-                          <!--<field name="total_fee" readonly="True"/>-->
-                      </group>
+                      <notebook>
+                          <page>
+                              <field name="cost" attrs="{'readonly':['|',('has_special','=','0'),'&amp;',('state','!=', '0'),('is_manage','=',False)]}">
+                                  <tree editable="bottom" class="dtdream_customer_info">
+                                      <field name="fee_type"/>
+                                      <field name="money"/>
+                                      <field name="remark"/>
+                                  </tree>
+                              </field>
+                          </page>
+                      </notebook>
                   </group>
 
                   <group string="接待小结" attrs="{'invisible':[('state','in',('0','1', '2'))]}">
@@ -436,6 +446,26 @@
                       </group>
                       <group>
                           <field name="post_guest"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+     </record>
+
+     <record id="view_dtdream_customer_cost_form" model="ir.ui.view">
+        <field name="name">view.dtdream.customer.cost.form</field>
+        <field name="model">dtdream.customer.cost</field>
+        <field name="arch" type="xml">
+            <form string="费用预算">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="fee_type"/>
+                          <field name="money"/>
+                      </group>
+                      <group>
+                          <field name="remark"/>
                       </group>
                   </group>
               </sheet>
