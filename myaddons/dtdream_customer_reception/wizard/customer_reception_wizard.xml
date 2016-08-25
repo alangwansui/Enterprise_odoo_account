@@ -31,5 +31,34 @@
         <field name="target">new</field>
     </record>
 
+    <record id="view_dtdream_customer_reception_wizard_back_form" model="ir.ui.view">
+        <field name="name">view.dtdream.customer.reception.wizard.back.form</field>
+        <field name="model">dtdream.customer.reception.back.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="liyou" placeholder="请填写理由"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_customer_reception_back_wizard" model="ir.actions.act_window">
+        <field name="name">撤回</field>
+        <field name="res_model">dtdream.customer.reception.back.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
     </data>
 </openerp>

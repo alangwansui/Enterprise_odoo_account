@@ -77,6 +77,19 @@ class dtdream_customer_reception(models.Model):
             else:
                 rec.customer_level = False
 
+    @api.depends('cost')
+    def _compute_total_cost(self):
+        total = 0
+        for rec in self.cost:
+            total += rec.money
+            self.total_cost = total
+
+    def _compute_is_create(self):
+        if self.create_uid == self.env.user:
+            self.is_create = True
+        else:
+            self.is_create = False
+
     @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
         params = self._context.get('params', {})
@@ -92,11 +105,11 @@ class dtdream_customer_reception(models.Model):
             else:
                 uid = self._context.get('uid', '')
                 if domain:
-                    domain = expression.AND([['|', '|', ('approves.user_id', '=', uid), ('name.user_id', '=', uid),
-                                              ('current_approve.user_id', '=', uid)], domain])
+                    domain = expression.AND([['|', '|', '|', ('approves.user_id', '=', uid), ('name.user_id', '=', uid),
+                                              ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)], domain])
                 else:
-                    domain = ['|', '|', ('approves.user_id', '=', uid), ('name.user_id', '=', uid),
-                              ('current_approve.user_id', '=', uid)]
+                    domain = ['|', '|', '|',('approves.user_id', '=', uid), ('name.user_id', '=', uid),
+                              ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)]
         return super(dtdream_customer_reception, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                    limit=limit, order=order)
 
@@ -279,9 +292,9 @@ class dtdream_customer_reception(models.Model):
     meeting = fields.Many2one('dtdream.meeting.room', string='会议室预订')
     reserve_time = fields.Datetime(string='会议室预订时间')
     car = fields.Boolean(string='小车')
-    car_num = fields.Integer()
+    car_num = fields.Integer(string='小车')
     commercial_vehicle = fields.Boolean(string='商务车')
-    commercial_vehicle_num = fields.Integer()
+    commercial_vehicle_num = fields.Integer(string='商务车')
     bicycle = fields.Boolean(string='自行乘车')
     path = fields.One2many('dtdream.visit.path', 'customer_reception')
     driver = fields.Boolean(string='司机')
@@ -289,9 +302,9 @@ class dtdream_customer_reception(models.Model):
     card = fields.Boolean(string='接机牌')
     flower = fields.Boolean(string='鲜花')
     single_room = fields.Boolean(string='标准单人房')
-    single_room_num = fields.Integer()
+    single_room_num = fields.Integer(string='标准单人房')
     double_room = fields.Boolean(string='标准双人房')
-    double_room_num = fields.Integer()
+    double_room_num = fields.Integer(string='标准双人房')
     room_self = fields.Boolean(string='自理安排酒店')
     hotel = fields.Selection([('5', '五星级'), ('4', '四星级'), ('3', '三星级或快捷酒店'), ('0', '其它')],
                              string='酒店标准', default='5')
@@ -303,13 +316,14 @@ class dtdream_customer_reception(models.Model):
     payment_dinner = fields.Selection([('0', '申请人垫付'), ('1', '客户自理')], string='用餐结算方式', default='0')
     memories = fields.Many2one('dtdream.customer.memories', string='纪念品')
     remark = fields.Text(string='备注')
-    memories_num = fields.Integer()
+    memories_num = fields.Integer(string='纪念品')
     cost = fields.One2many('dtdream.customer.cost', 'fee', string='费用')
+    total_cost = fields.Integer(string='合计(元)', compute=_compute_total_cost)
     has_special = fields.Selection([('0', '是'), ('1', '否')], string='是否有专项')
     special_code = fields.Many2one('dtdream.special.approval', string='专项编码')
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
-    score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)])
+    score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)], string='评分')
     current_approve = fields.Many2one('hr.employee', string='当前审批人')
     approves = fields.Many2many('hr.employee', string='已审批的人')
     is_current = fields.Boolean(string='是否当前审批人', compute=_compute_login_is_approve)
@@ -317,6 +331,7 @@ class dtdream_customer_reception(models.Model):
     is_receptionist = fields.Boolean(string='是否接待执行人', compute=_compute_login_is_receptionist)
     is_officer = fields.Boolean(string='是否客工部主管', compute=_compute_is_officer)
     is_manage = fields.Boolean(string='是否客户接待管理员', compute=_compute_is_customer_manage)
+    is_create = fields.Boolean(string='是否创建人', compute=_compute_is_create, default=lambda self: True)
     entry_way = fields.Boolean(string='创建客户接待方式')
     state = fields.Selection([('0', '草稿'),
                               ('1', '部门审批'),
@@ -346,9 +361,9 @@ class dtdream_customer_reception(models.Model):
                 # 通知企划部接口人
                 if self.camera == '0' or self.camera == '1':
                     self.send_mail(inter, subject=subject, content=content)
-            if self.state != '0':
-                state = {'1': u'部门审批', '2': u'客工部审批', '3': u'接待安排与执行'}
-                self._message_poss(state=u'%s-->草稿' % state.get(self.state), action=u'撤回', approve=self.name.name)
+            #if self.state != '0':
+                # state = {'1': u'部门审批', '2': u'客工部审批', '3': u'接待安排与执行'}
+                # self._message_poss(state=u'%s-->草稿' % state.get(self.state), action=u'撤回', approve=self.name.name)
             self.write({"state": '0', 'current_approve': ''})
 
     @api.multi
@@ -552,7 +567,8 @@ class dtdream_customer_special(models.Model):
 
     @api.multi
     def name_get(self):
-        if self._context.get('params', None):
+        if self._context.get('params', None) and self._context.get('params').\
+                get('model', None) != 'dtdream.customer.reception':
             return super(dtdream_customer_special, self).name_get()
         result = []
         for cr in self:
