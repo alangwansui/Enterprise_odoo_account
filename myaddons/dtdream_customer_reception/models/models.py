@@ -66,16 +66,31 @@ class dtdream_customer_reception(models.Model):
             letter = 'V' if self.customer_source == '0' else 'N'
             self.bill_num = self.bill_num[:-1] + letter
         if self.customer_source != '0':
+            self.has_special = '1'
             self.customer = False
             self.project = False
+        else:
+            self.has_special = '0'
 
     @api.onchange('customer')
     def compute_customer_level(self):
         for rec in self:
             if rec.customer:
                 rec.customer_level = rec.customer.partner_important
+                if rec.customer_level in ["SS", "S"]:
+                    rec.camera = "0"
+                else:
+                    rec.camera = '2'
             else:
                 rec.customer_level = False
+
+    @api.onchange('customer_level')
+    def compute_camera_value(self):
+        for rec in self:
+            if rec.customer_level in ["SS", "S"]:
+                rec.camera = "0"
+            else:
+                rec.camera = '2'
 
     @api.depends('cost')
     def _compute_total_cost(self):
@@ -254,7 +269,7 @@ class dtdream_customer_reception(models.Model):
     title = fields.Char(default='客户接待')
     write_time = fields.Datetime(string='填单时间', default=lambda self: fields.Datetime.now())
     duty_tel = fields.Char(string='客工部值班电话', compute=_compute_phone_num)
-    name = fields.Many2one('hr.employee', string='员工姓名',
+    name = fields.Many2one('hr.employee', string='申请人',
                            default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
     workid = fields.Char('工号', compute=compute_employee_info, store=True)
     iphone = fields.Char(string='联系电话', compute=compute_employee_info)
@@ -281,7 +296,7 @@ class dtdream_customer_reception(models.Model):
     room_capacity = fields.Integer(string='会议室大小')
     busy_time_room = fields.Datetime(string='会议室使用时间')
     ppt = fields.Boolean(string='PPT')
-    camera = fields.Selection(string='摄影', selection=[('0', '全程摄影'), ('1', '会议室摄影'), ('2', '无需摄影')])
+    camera = fields.Selection(string='摄影', selection=[('0', '全程摄影'), ('1', '会议室摄影'), ('2', '无需摄影')], default='2')
     water = fields.Boolean(string='瓶装水')
     tea = fields.Boolean(string='茶水')
     meeting_document = fields.Boolean(string='公司资料')
@@ -310,8 +325,8 @@ class dtdream_customer_reception(models.Model):
                              string='酒店标准', default='5')
     hotel_position = fields.Selection([('0', '商业区'), ('1', '景区')], string='酒店位置', default='0')
     payment_hotel = fields.Selection([('0', '申请人垫付'), ('1', '客户自理')], string='住宿结算方式', default='0')
-    dinner = fields.Selection([('100', '人均100元以下'), ('300', '人均101-300元'), ('500', '人均301-500元'),
-                               ('501', '人均500元以上')], string='用餐标准', default='100')
+    dinner = fields.Selection([('100', '100元以下'), ('300', '101-300元'), ('500', '301-500元'),
+                               ('501', '500元以上')], string='用餐标准(人均)', default='100')
     dinner_position = fields.Selection([('0', '商业区'), ('1', '景区')], string='用餐地点', default='0')
     payment_dinner = fields.Selection([('0', '申请人垫付'), ('1', '客户自理')], string='用餐结算方式', default='0')
     memories = fields.Many2one('dtdream.customer.memories', string='纪念品')
