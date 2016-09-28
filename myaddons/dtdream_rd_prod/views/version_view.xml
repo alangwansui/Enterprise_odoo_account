@@ -32,7 +32,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]</field>
+            <field name="domain">[]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
             <field name="context">{'search_default_group_by_department_ver':'department','search_default_group_by_department_2_ver':'department_2','search_default_group_by_canpname':'name','search_default_group_by_version_numb':'version_numb'}</field>
         </record>
@@ -105,6 +105,8 @@
                         <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': proName,'default_version': active_id,'default_mark':False}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
 
 
+                        <button name="%(dtdream_rd_prod.act_dtdream_rd_replanning_wizard)d" string="申请重计划" type="action" context="{'default_proname': proName,'default_version': active_id,'default_old_plan_time':plan_pub_time}" attrs="{'invisible':['|',('version_state','in',('draft','pause','stop','released')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
                         <field name="version_state" widget="statusbar" statusbar_visible="draft,initialization,Development,pending,pause,stop,released" />
                     </header>
                     <sheet>
@@ -161,12 +163,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
                                                 </tree>
                                             </field>
                                         </page>
@@ -190,12 +194,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
                                                 </tree>
                                             </field>
                                         </page>
@@ -211,6 +217,20 @@
                                 </group>
                                 <group>
                                     <notebook>
+                                        <page string="重计划">
+                                            <field name="replanning_ids">
+                                                <tree create="false" delete="false">
+                                                    <field name="old_plan_time"/>
+                                                    <field name="new_plan_time"/>
+                                                    <field name="shenpi_date"/>
+                                                    <field name="state"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
+                                </group>
+                                <group>
+                                    <notebook>
                                         <page string="审批意见">
                                             <div>
                                               <p><font color="red">注：当修改审批人时相当于授权</font></p>
@@ -221,12 +241,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
                                                 </tree>
                                             </field>
                                         </page>

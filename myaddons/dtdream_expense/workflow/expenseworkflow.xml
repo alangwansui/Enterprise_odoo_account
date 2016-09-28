@@ -67,6 +67,14 @@
             <field name="act_from" ref="draft"/>
             <field name="act_to" ref="xingzheng"/>
             <field name="signal">btn_submit</field>
+            <field name="condition">is_zongcai==False</field>
+        </record>
+
+         <record model="workflow.transition" id="dtdream_expense_draft_to_jiekoukuaiji">
+            <field name="act_from" ref="draft"/>
+            <field name="act_to" ref="jiekoukuaiji"/>
+            <field name="signal">btn_submit</field>
+             <field name="condition">is_zongcai==True</field>
         </record>
 
         <record model="workflow.transition" id="dtdream_expense_xingzheng_to_draft">
@@ -95,11 +103,38 @@
 
 
 
+
+
+
+
+
+
+
+
+
         <record model="workflow.transition" id="dtdream_expense_zhuguan_to_quanqianren">
             <field name="act_from" ref="zhuguan"/>
             <field name="act_to" ref="quanqianren"/>
             <field name="signal">btn_agree</field>
+            <field name="condition">zhuguan_quanqian_jiekoukuaiji=="1"</field>
         </record>
+
+
+        <record model="workflow.transition" id="dtdream_expense_zhuguan_to_jiekoukuaiji">
+            <field name="act_from" ref="zhuguan"/>
+            <field name="act_to" ref="jiekoukuaiji"/>
+            <field name="condition">zhuguan_quanqian_jiekoukuaiji=="2"</field>
+            <field name="signal">btn_agree</field>
+        </record>
+
+
+
+
+
+
+
+
+
 
         <record model="workflow.transition" id="dtdream_expense_quanqianren_to_zhuguan">
             <field name="act_from" ref="quanqianren"/>
@@ -117,8 +152,6 @@
             <field name="act_to" ref="draft"/>
             <field name="signal">btn_refuse_quanqianren_to_draft</field>
         </record>
-
-
 
 
 

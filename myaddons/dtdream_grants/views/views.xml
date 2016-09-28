@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record model="ir.ui.view" id="grants_allocation_form">
+      <field name="name">grants.allocation.form</field>
+      <field name="model">dtdream.grants.allocation</field>
+      <field name="arch" type="xml">
+        <form create="false">
+          <sheet>
+            <group class="zx_group_label">
+              <field name="name" invisible="1"></field>
+              <field name="you" class="int_cls"></field>
+              <field name="fan" class="int_cls"></field>
+              <field name="cash"></field>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <record id="view_grants_filter" model="ir.ui.view">
+            <field name="name">view.grants.filter</field>
+            <field name="model">dtdream.grants</field>
+            <field name="arch" type="xml">
+                <search string="Search employee_budget">
+                    <field name="name"/>
+                    <field name="department"></field>
+                    <field name="month"></field>
+                    <group expand="0" string="Group By">
+                      <filter name="group_name_grants" string="员工" context="{'group_by':'name'}"></filter>
+                      <filter name="group_department_grants" string="部门" context="{'group_by':'department'}"></filter>
+                      <filter name="group_month_grants" string="年月" context="{'group_by':'month'}"></filter>
+                    </group>
+                </search>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="grants_allocation_detail_form">
+      <field name="name">grants.allocation.detail.form</field>
+      <field name="model">dtdream.grants</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="name" attrs="{'readonly':[('if_created','=',False)]}" required="1"></field>
+                <field name="full_name" invisible="1"></field>
+                <field name="job_number" invisible="1"></field>
+                <field name="top_department" invisible="1"></field>
+                <field name="department"></field>
+                <field name="you_id"></field>
+                <field name="job_state"></field>
+              </group>
+              <group>
+                <field name="month" readonly="1"></field>
+                <field name="you_fill" attrs="{'readonly':[('if_last_month','=',False),('if_created','=',False)]}" class="int_cls"></field>
+                <field name="fan_fill" attrs="{'readonly':[('if_last_month','=',False),('if_created','=',False)]}" class="int_cls"></field>
+                <field name="cash"></field>
+                <field name="if_last_month" invisible="1"></field>
+                <field name="if_created" invisible="1"></field>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="grants_allocation_detail_pivot">
+      <field name="name">grants.allocation.detail.pivot</field>
+      <field name="model">dtdream.grants</field>
+      <field name="arch" type="xml">
+        <pivot disable_linking="true">
+          <field name="month" type="row"/>
+          <field name="name" type="row"/>
+          <field name="you_fill" type="measure"/>
+          <field name="fan_fill" type="measure"/>
+          <field name="cash" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="grants_allocation_detail_tree">
+      <field name="name">grants.allocation.detail.tree</field>
+      <field name="model">dtdream.grants</field>
+      <field name="arch" type="xml">
+        <tree create="false">
+          <field name="department"></field>
+          <field name="name"></field>
+          <field name="month"></field>
+          <field name="you_fill"></field>
+          <field name="fan_fill"></field>
+          <field name="cash"></field>
+        </tree>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="grants_allocation_detail_admin_tree">
+      <field name="name">grants.allocation.detail.admin.tree</field>
+      <field name="model">dtdream.grants</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="top_department"></field>
+          <field name="full_name"></field>
+          <field name="job_number"></field>
+          <field name="month"></field>
+          <field name="you_id"></field>
+          <field name="you_fill"></field>
+          <field name="fan_fill"></field>
+          <field name="cash"></field>
+          <field name="job_state"></field>
+        </tree>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="grants_config_form">
+      <field name="name">grants.config.form</field>
+      <field name="model">dtdream.grants.config</field>
+      <field name="arch" type="xml">
+        <form create="false">
+          <sheet>
+            <group class="zx_group_label">
+              <field name="name" invisible="1"></field>
+              <field name="total" class="int_cls"></field>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+  </data>
+</openerp>

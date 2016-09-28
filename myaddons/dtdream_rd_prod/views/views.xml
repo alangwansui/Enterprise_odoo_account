@@ -60,8 +60,6 @@
             <field name="arch" type="xml">
                 <search string="Search">
                     <field name="name"/>
-                    <!--<field name="department"/>-->
-                    <!--<field name="department_2"/>-->
                     <filter string="草稿" domain="[('state','=','state_00')]" name='state_cg'/>
                     <filter string="立项" domain="[('state','=','state_01')]" name='state_lixiang'/>
                     <filter string="总体设计" domain="[('state','=','state_02')]" name='state_ztsj'/>
@@ -85,7 +83,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]</field>
+            <field name="domain">[]</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
             <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
         </record>
@@ -157,7 +155,7 @@
                         <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>
 
-                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|',('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_06,state_07,state_05" />
                     </header>
                     <sheet>
@@ -181,7 +179,6 @@
                                  <field name="department" domain="[('parent_id','=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                  <field name="is_create" invisible="1"/>
                                  <field name="is_appred" invisible="1"/>
-                                 <field name="is_lixiangappred" invisible="1"/>
                                  <field name="sameDept" invisible="1"/>
                              </group>
                              <group>
@@ -207,12 +204,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
                                                 </tree>
                                             </field>
                                         </page>
@@ -235,12 +234,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_pass" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_risk" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
-                                                    <field name="reason" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
                                                 </tree>
                                             </field>
                                         </page>
@@ -505,6 +506,9 @@
                     </header>
                     <sheet>
                         <group>
+                        <div><p><font color="red">注：第一审批人QA，第二审批人PL-CCB</font></p></div>
+                        </group>
+                        <group>
                             <group>
                                 <field name="name" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                                 <field name="flag" invisible="1"/>
@@ -563,6 +567,11 @@
         <menuitem id="menu_finance_rd_version_my" name="我相关的" parent="menu_finance_rd_version" sequence="100" action="act_dtdream_rd_version"/>
         <menuitem id="menu_finance_rd_version_wait" name="待我审批的" parent="menu_finance_rd_version" sequence="200" action="act_dtdream_prod_version_wait"/>
 
+        <menuitem id="menu_finance_replanning" name="版本重计划" parent="menu_finance_rd" sequence="250" action="act_dtdream_replanning_menu"/>
+
+        <menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300"/>
+        <menuitem id="menu_finance_exception_self" name="我相关的" parent="menu_finance_exception" sequence="100" action="act_dtdream_exception_meun_self"/>
+        <menuitem id="menu_finance_exception_wait" name="待我审批的" parent="menu_finance_exception" sequence="200" action="act_dtdream_exception_meun_wait"/>
 
         <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="400" groups="group_dtdream_rd_qa"/>
         <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="100"  action="act_dtdream_rd_Rconfig"/>
@@ -574,8 +583,6 @@
         <menuitem id="menu_finance_prod_version_all" name="所有版本" parent="menu_finance_prod_all" sequence="200" action="act_dtdream_prod_version_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_liwai_all" name="所有例外" parent="menu_finance_prod_all" sequence="300" action="act_dtdream_exception_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
 
-        <menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300"/>
-        <menuitem id="menu_finance_exception_self" name="我相关的" parent="menu_finance_exception" sequence="100" action="act_dtdream_exception_meun_self"/>
-        <menuitem id="menu_finance_exception_wait" name="待我审批的" parent="menu_finance_exception" sequence="200" action="act_dtdream_exception_meun_wait"/>
+
     </data>
 </openerp>

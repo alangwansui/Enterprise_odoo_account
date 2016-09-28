@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+
+        <template id="index" name="Timesheet Index">
+            &lt;!DOCTYPE html&gt;
+            <html>
+                <head>
+                    <meta charset="utf-8"/>
+                    <title>费用报销</title>
+                    <meta name="HandheldFriendly" content="True"/>
+                    <meta name="MobileOptimized" content="320"/>
+                    <meta name="viewport"
+                          content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+                    <meta http-equiv="cleartype" content="on"/>
+                    <meta name="apple-mobile-web-app-capable" content="yes"/>
+                    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+                    <meta name="apple-mobile-web-app-title" content=""/>
+                    <meta name="format-detection" content="telephone=no"/>
+                    <meta name="format-detection" content="email=no"/>
+
+                     <script type="text/javascript" src="/web/static/lib/es5-shim/es5-shim.min.js"></script>
+                    <script type="text/javascript" src="/web/static/lib/underscore/underscore.js"></script>
+                    <script type="text/javascript"
+                            src="/web/static/lib/underscore.string/lib/underscore.string.js"></script>
+                    <script type="text/javascript" src="/web/static/lib/spinjs/spin.js"></script>
+                    <!--<script type="text/javascript" src="/web/static/lib/moment/moment.js"></script>-->
+
+                    <script type="text/javascript" src="/web/static/lib/jquery/jquery.js"></script>
+                    <!--<script type="text/javascript" src="/web/static/lib/jquery.ui/jquery-ui.js"></script>-->
+                    <script type="text/javascript" src="/web/static/lib/jquery/jquery.browser.js"></script>
+                    <!--<script type="text/javascript" src="/web/static/lib/jquery.blockUI/jquery.blockUI.js"></script>-->
+                    <!--<script type="text/javascript" src="/web/static/lib/jquery.timeago/jquery.timeago.js"></script>-->
+
+                    <script type="text/javascript" src="/web/static/lib/jquery.ba-bbq/jquery.ba-bbq.js"></script>
+
+                    <script type="text/javascript" src="/web/static/lib/qweb/qweb2.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/boot.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/class.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/translation.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/ajax.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/time.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/mixins.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/widget.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/registry.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/session.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/model.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/utils.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/core.js"></script>
+
+                    <script type="text/javascript" src="/web/static/lib/py.js/lib/py.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/data_model.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/pyeval.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/data.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/session_instance.js"></script>
+
+
+                    <!-- 外部脚本资源加载 -->
+                    <!--<t t-call-assets="web.assets_common" t-css="false"/>-->
+                    <!--<t t-call-assets="web.assets_backend" t-css="false"/>-->
+                    <!--<t t-call-assets="project_timesheet_synchro.assets_timesheet_app"/>-->
+
+
+                    <!--<script type="text/javascript" id="loading-script" t-raw="init">-->
+                        <!--odoo.define('web.web_client', function (require) {-->
+                        <!--var WebClient = require('web.WebClient');-->
+                        <!--var web_client = new WebClient();-->
+                        <!--return web_client;-->
+                        <!--});-->
+                    <!--</script>-->
+
+                    <!--<script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>-->
+                    <script src="/dtdream_expense_dingtalk/static/src/js/main.js?version=31"></script>
+                    <!--<script src="/dtdream_expense_dingtalk/static/src/js/init.js"></script>-->
+
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/light7/css/light7.css"/>
+                    <!--<script type='text/javascript' src='dtdream_expense_dingtalk/static/lib/light7/js/jquery.min.js' charset='utf-8'></script>-->
+                    <script type='text/javascript' src='/dtdream_expense_dingtalk/static/lib/light7/js/light7.js'
+                            charset='utf-8'></script>
+                    <!--如果你用到了拓展包中的组件，还需要引用对应的JS文件-->
+                    <script type='text/javascript'
+                            src='/dtdream_expense_dingtalk/static/lib/light7/js/light7-swiper.min.js'
+                            charset='utf-8'></script>
+                    <script type='text/javascript'
+                            src='/dtdream_expense_dingtalk/static/lib/light7/js/light7-swipeout.js'
+                            charset='utf-8'></script>
+                    <link rel="stylesheet"
+                          href="/dtdream_expense_dingtalk/static/lib/light7/css/light7-swiper.min.css"/>
+                    <link rel="stylesheet"
+                          href="/dtdream_expense_dingtalk/static/lib/light7/css/light7-swipeout.css"/>
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/iconfont/iconfont.css"/>
+                    <script type='text/javascript'
+                            src='/dtdream_expense_dingtalk/static/lib/localResizeIMG/dist/lrz.bundle.js'></script>
+                </head>
+
+                <body>
+                    <script>
+                        <t t-js="ctx">
+                            _config ={
+                            'jsticket':'<t t-esc="jsticket"/>',
+                            'signature': '<t t-esc="signature"/>',
+                            'nonceStr': '<t t-esc="nonceStr"/>',
+                            'timeStamp': '<t t-esc="timeStamp"/>',
+                            'corpId': '<t t-esc="corpId"/>',
+                            'agentId': '<t t-esc="agentId"/>',
+                            'token': '<t t-esc="token"/>'
+                            }
+                        </t>
+                    </script>
+                    <div id="App"></div>
+                    <div id="content"></div>
+
+                    <script src="https://g.alicdn.com/ilw/ding/0.9.2/scripts/dingtalk.js"></script>
+                    <script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/app.js"></script>
+
+                    <main>
+                        <div class="page">
+                            <t t-raw="0"/>
+                            <div class="content o_main_content infinite-scroll" data-distance="100"/>
+                        </div>
+                        <div class="main">
+                            <div class="nav"/>
+                        </div>
+                    </main>
+
+                </body>
+            </html>
+
+        </template>
+
+        <template id="layout" name="Main Layout">
+            &lt;!DOCTYPE html&gt;
+            <html>
+                <head>
+                    <meta charset="utf-8"/>
+                    <title>费用报销</title>
+                    <meta name="HandheldFriendly" content="True"/>
+                    <meta name="MobileOptimized" content="320"/>
+                    <meta name="viewport"
+                          content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+                    <meta http-equiv="cleartype" content="on"/>
+                    <meta name="apple-mobile-web-app-capable" content="yes"/>
+                    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+                    <meta name="apple-mobile-web-app-title" content=""/>
+                    <meta name="format-detection" content="telephone=no"/>
+                    <meta name="format-detection" content="email=no"/>
+
+
+                    <script type="text/javascript" src="/web/static/lib/es5-shim/es5-shim.min.js"></script>
+                    <script type="text/javascript" src="/web/static/lib/underscore/underscore.js"></script>
+                    <script type="text/javascript"
+                            src="/web/static/lib/underscore.string/lib/underscore.string.js"></script>
+                    <script type="text/javascript" src="/web/static/lib/spinjs/spin.js"></script>
+                    <!--<script type="text/javascript" src="/web/static/lib/moment/moment.js"></script>-->
+
+                    <script type="text/javascript" src="/web/static/lib/jquery/jquery.js"></script>
+                    <!--<script type="text/javascript" src="/web/static/lib/jquery.ui/jquery-ui.js"></script>-->
+                    <script type="text/javascript" src="/web/static/lib/jquery/jquery.browser.js"></script>
+                    <!--<script type="text/javascript" src="/web/static/lib/jquery.blockUI/jquery.blockUI.js"></script>-->
+                    <!--<script type="text/javascript" src="/web/static/lib/jquery.timeago/jquery.timeago.js"></script>-->
+
+                    <script type="text/javascript" src="/web/static/lib/jquery.ba-bbq/jquery.ba-bbq.js"></script>
+
+                    <script type="text/javascript" src="/web/static/lib/qweb/qweb2.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/boot.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/class.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/translation.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/ajax.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/time.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/mixins.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/widget.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/registry.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/session.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/model.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/utils.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/core.js"></script>
+
+                    <script type="text/javascript" src="/web/static/lib/py.js/lib/py.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/data_model.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/pyeval.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/data.js"></script>
+                    <script type="text/javascript" src="/web/static/src/js/framework/session_instance.js"></script>
+
+
+                    <!-- 外部脚本资源加载 -->
+                    <!--<t t-call-assets="web.assets_common" t-css="false"/>-->
+                    <!--<t t-call-assets="web.assets_backend" t-css="false"/>-->
+                    <!--<t t-call-assets="project_timesheet_synchro.assets_timesheet_app"/>-->
+
+
+                    <!--<script type="text/javascript" id="loading-script" t-raw="init">-->
+                    <!--odoo.define('web.web_client', function (require) {-->
+                    <!--var WebClient = require('web.WebClient');-->
+                    <!--var web_client = new WebClient();-->
+                    <!--return web_client;-->
+                    <!--});-->
+                    <!--</script>-->
+
+                    <!--<script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>-->
+                    <script src="/dtdream_expense_dingtalk/static/src/js/main.js"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/init.js"></script>
+
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/light7/css/light7.css"/>
+                    <!--<script type='text/javascript' src='dtdream_expense_dingtalk/static/lib/light7/js/jquery.min.js' charset='utf-8'></script>-->
+                    <script type='text/javascript' src='/dtdream_expense_dingtalk/static/lib/light7/js/light7.min.js'
+                            charset='utf-8'></script>
+                    <!--如果你用到了拓展包中的组件，还需要引用对应的JS文件-->
+                    <script type='text/javascript'
+                            src='/dtdream_expense_dingtalk/static/lib/light7/js/light7-swiper.min.js'
+                            charset='utf-8'></script>
+                    <script type='text/javascript'
+                            src='/dtdream_expense_dingtalk/static/lib/light7/js/light7-swipeout.js'
+                            charset='utf-8'></script>
+                    <link rel="stylesheet"
+                          href="/dtdream_expense_dingtalk/static/lib/light7/css/light7-swiper.min.css"/>
+                    <link rel="stylesheet"
+                          href="/dtdream_expense_dingtalk/static/lib/light7/css/light7-swipeout.css"/>
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/iconfont/iconfont.css"/>
+                    <script type='text/javascript'
+                            src='/dtdream_expense_dingtalk/static/lib/localResizeIMG/dist/lrz.bundle.js'></script>
+
+                </head>
+                <body>
+                    <div id="App"></div>
+
+                    <div id="content"></div>
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <script src="https://g.alicdn.com/ilw/ding/0.9.2/scripts/dingtalk.js"></script>
+
+                    <script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>
+
+                    <main>
+                        <div class="page">
+                            <t t-raw="0"/>
+                            <div class="content o_main_content infinite-scroll" data-distance="100"/>
+                        </div>
+                        <div class="main">
+                            <div class="nav"/>
+                        </div>
+                    </main>
+                </body>
+            </html>
+        </template>
+
+
+        <template id="main" name="main_expense">
+            <t t-call="dtdream_expense_dingtalk.layout"></t>
+        </template>
+
+
+    </data>
+</openerp>

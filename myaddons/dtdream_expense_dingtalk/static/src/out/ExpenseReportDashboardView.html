@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: ExpenseReportDashboardView</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: ExpenseReportDashboardView</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>ExpenseReportDashboardView</h2>
+        
+            <div class="class-description">费用报销看板</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="ExpenseReportDashboardView"><span class="type-signature"></span>new ExpenseReportDashboardView<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>KanbanView</li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".display_name"><span class="type-signature">(static) </span>display_name<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    标题
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".events"><span class="type-signature">(static) </span>events<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    事件
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>on_dashboard_action_clicked</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">method</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">跳转界面</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line50">line 50</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".icon"><span class="type-signature">(static) </span>icon<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    图标
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".searchview_hidden"><span class="type-signature">(static) </span>searchview_hidden<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    是否显示搜索栏
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".view_type"><span class="type-signature">(static) </span>view_type<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    新的视图类型 expense_dashboard
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".fetch_data"><span class="type-signature">(static) </span>fetch_data<span class="signature">()</span><span class="type-signature"> &rarr; {*|jQuery.Deferred}</span></h4>
+
+    
+
+
+
+<div class="description">
+    从服务端获取数据
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line58">line 58</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+|
+
+<span class="param-type">jQuery.Deferred</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".on_dashboard_action_clicked"><span class="type-signature">(static) </span>on_dashboard_action_clicked<span class="signature">(ev)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    跳转界面
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ev</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line92">line 92</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".render"><span class="type-signature">(static) </span>render<span class="signature">()</span><span class="type-signature"> &rarr; {*|Promise|Promise.&lt;TResult>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    显示看板视图内容
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="expense_dashboard.js.html">expense_dashboard.js</a>, <a href="expense_dashboard.js.html#line68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+|
+
+<span class="param-type">Promise</span>
+|
+
+<span class="param-type">Promise.&lt;TResult></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BasicScreenWidget.html">BasicScreenWidget</a></li><li><a href="DingtalkUI.html">DingtalkUI</a></li><li><a href="Expense_category_screen.html">Expense_category_screen</a></li><li><a href="Expense_detail_screen.html">Expense_detail_screen</a></li><li><a href="Expense_screen.html">Expense_screen</a></li><li><a href="ExpenseDashboard.html">ExpenseDashboard</a></li><li><a href="ExpenseReportDashboardView.html">ExpenseReportDashboardView</a></li><li><a href="Havecheck_screen.html">Havecheck_screen</a></li><li><a href="Havepay_screen.html">Havepay_screen</a></li><li><a href="Main.html">Main</a></li><li><a href="My_screen.html">My_screen</a></li><li><a href="Outtime_screen.html">Outtime_screen</a></li><li><a href="Province_city_screen.html">Province_city_screen</a></li><li><a href="Report_detail_screen.html">Report_detail_screen</a></li><li><a href="Report_screen.html">Report_screen</a></li><li><a href="Workflow_screen.html">Workflow_screen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Sun Sep 18 2016 22:18:52 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

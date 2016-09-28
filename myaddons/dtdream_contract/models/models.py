@@ -30,6 +30,7 @@ class dtdream_contract(models.Model):
     his_approve=fields.Many2many('hr.employee',string="历史审批人")
     name = fields.Char(string="合同名称")
 
+    @api.constrains('constract_type')
     @api.onchange('constract_type')
     def _compute_constract_id(self):
         if self.constract_type:
@@ -195,8 +196,12 @@ class dtdream_contract(models.Model):
                 }).send()
         return url
 
-
-
+    @api.one
+    def copy(self, default=None):
+        default = dict(default or {}, constract_id="")
+        print default
+        return super(dtdream_contract, self).copy(default=default)
+    
     @api.model
     def create(self,vals):
         config=self.env['dtdream.contract.config'].search([('name','=',vals['constract_type_char'])])
@@ -385,7 +390,7 @@ class dtdream_contract(models.Model):
         my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
         res = super(dtdream_contract, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
-        if my_action.name == u"待我审批" or my_action.name == u"我已审批" or my_action.name == u"所有合同":
+        if my_action.name != u"我的申请":
             if res['type'] == "form":
                 doc.xpath("//form")[0].set("create", "false")
             if res['type'] == "tree":

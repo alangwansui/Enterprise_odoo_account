@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>dodo</title>
+  <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/web/static/lib/fontawesome/css/font-awesome.css">
+  <link rel="stylesheet" href="/web/static/lib/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="/web/static/src/css/ad.css"/>
+  <script src="/web/static/lib/jquery/jquery.js" type="text/javascript"></script>
+  <script src="/web/static/lib/bootstrap/js/modal.js"></script>
+  <script src="/web/static/lib/bootstrap/js/tooltip.js"></script>
+  <script src="/web/static/lib/bootstrap/js/dropdown.js"></script>
+  <script src="/web/static/src/js/json2.js"></script>
+  <script src="/web/static/src/js/ad.js"></script>
+  <script type="text/javascript">
+  $(function() {
+      // Little eye
+      $('body').on('mousedown','.o_little_eye',function(ev) {
+          $(ev.target).siblings('input').prop('type','text');
+      });
+      $('body').on('mouseup','.o_little_eye',function(ev) {
+          $(ev.target).siblings('input').prop('type','password');
+      });
+      // db modal
+      $('body').on('click','.o_database_action', function(ev) {
+          ev.preventDefault();
+          var db = $(ev.currentTarget).data('db');
+          var target = $(ev.currentTarget).data('target');
+          $(target).find('input[name=name]').val(db);
+          $(target).modal();
+      });
+  });
+
+  </script>
+</head>
+<body style="background-color: #ECECEC;">
+<!--<div class="row">-->
+    <!--  <div class="text-center">
+        <img src="../static/src/img/logo2.png" class="img-responsive center-block"/>
+      </div>-->
+<div class="ad-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1">
+                <img class="logo" src="../static/src/img/ad-logo.png" />
+            </div>
+            <div class="col-md-offset-8 col-md-2">
+                <a class="f-link" href="http://all.dtdream.com" target="_blank">数梦工场门户</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+      {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+-->
+      <div class="ad-main">
+      <div class="border">
+      <div class="inner">
+         <!-- <div class="inner_header">
+              <div class="online" id="online_id">
+                  <p>重置域密码</p>
+              </div>
+          </div>-->
+          <div class="inner-title">
+                    <h2>重置域密码</h2>
+              <p>已有账号，请<a href="/web/login">登录</a></p>
+          </div>
+
+          <div class="inner_body" id="tag_one">
+
+            <div id="first" class="new">
+                <label class="newtext">用户名</label>
+                    <input class="input-text " type="text" value="" id="textde1" placeholder="用户名 (姓首字母+工号, 如z0999)"　required="required">
+                <div class="box-error" >
+                    <label class="ft-error">请按格式输入正确的用户名</label>
+                </div>
+            </div>
+
+            <div class="new">
+                <label class="newtext">接收方式</label>
+                 <div class="newbox select">
+                   <img id="down" src="/web/static/src/img/down.png">
+                   <input type="text" id="textde2" class="myselect" readonly value="手机">
+                   <ul class="myoption" id="myOption">
+                     <li class="option" id="mobile" onclick="choosePhone(id)">手机</li>
+                     <li class="option" id="mail" onclick="chooseMail(id)">邮箱</li>
+                   </ul>
+                 </div>
+            </div>
+
+            <div class="new" id="myMobile">
+                <label class="newtext" id="mobileMail">手机号</label>
+                <input class="input-no " type="text" value="" id="textde3" placeholder="请填入个人手机号">
+                <input class="input-btn" type="button" value="获取验证码"  onclick="getCodeByPhone()" id="sjbtn" >
+                <div class="box-error" style="margin-left: 20px;" >
+                    <label class="ft-error">手机号码输入不正确</label>
+                </div>
+            </div>
+
+            <div class="new" id="myMail">
+                <label class="newtext">邮箱</label>
+                <input class="input-no" type="text" value="" id="textde4" placeholder="xxx@dtdream.com">
+                <input class="input-btn"  type="button" value="获取验证码"  onclick="getCodeByMail()" id="yxbtn" >
+                <div class="box-error" style="margin-left: 20px;">
+                    <label class="ft-error">邮箱格式输入不正确</label>
+                </div>
+            </div>
+
+            <div class="new">
+                <label class="newtext">验证码</label>
+                <input class="input-text" type="text" value="" id="textde5" required="required">
+                <div class="box-error" style="margin-left: 20px;">
+                    <label class="ft-error">请输入验证码</label>
+                </div>
+            </div>
+
+            <div class="new">
+                <label class="newtext">新密码</label>
+                <input class="input-text" type="password" value="" id="textde6"　required="required">
+                <div class="box-error" style="margin-left: 20px;">
+                    <label class="ft-error">请输入新密码</label>
+                </div>
+            </div>
+
+            <div class="new">
+                <label class="newtext">密码确认</label>
+                <input  class="input-text" type="password" value="" id="textde7"　required="required">
+                <div class="box-error" >
+                    <label class="ft-error">两次密码输入不一致</label>
+                </div>
+           </div>
+
+           <div class="new">
+               <label class="newtext"></label>
+               <input  type="button" value="保存" onclick="save()" class="savebnt" id="dosave">
+           </div>
+
+          </div>
+          </div>
+          </div>
+          </div>
+
+<script type="text/javascript">
+var select=document.getElementById("textde2");
+document.onclick = function ()
+{
+		document.getElementById("myOption").style.display = "none";
+};
+
+select.onclick = function (event)
+{
+    var style = document.getElementById("myOption").style;
+    style.display = style.display == "block" ? "none" : "block";
+    //阻止事件冒泡
+    (event || window.event).cancelBubble = true;
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<openerp>
+    <data>
+
+        <record id="view_dtdream_rd_replanning_shenpi_wizard_agree_form" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.replanning.shenpi.wizard.agree.form</field>
+            <field name="model">dtdream.rd.replanning.shenpi.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="btn_agree" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_agree" model="ir.actions.act_window">
+            <field name="name">同意</field>
+            <field name="res_model">dtdream.rd.replanning.shenpi.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_rd_replanning_shenpi_wizard_agree_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_rd_replanning_shenpi_wizard_agree_form"/>
+            <field name="act_window_id" ref="act_agree"/>
+        </record>
+
+
+        <record id="view_dtdream_rd_replanning_shenpi_wizard_disagree_form" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.replanning.shenpi.wizard.disagree.form</field>
+            <field name="model">dtdream.rd.replanning.shenpi.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="btn_disagree" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_disagree" model="ir.actions.act_window">
+            <field name="name">不同意</field>
+            <field name="res_model">dtdream.rd.replanning.shenpi.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_rd_replanning_shenpi_wizard_disagree_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_rd_replanning_shenpi_wizard_disagree_form"/>
+            <field name="act_window_id" ref="act_disagree"/>
+        </record>
+
+        <record id="act_dtdream_replanning_menu" model="ir.actions.act_window">
+            <field name="name">版本重计划</field>
+            <field name="res_model">dtdream.rd.replanning</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_dtdream_rd_replanning_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.replanning.tree</field>
+            <field name="model">dtdream.rd.replanning</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="proname" />
+                    <field name="version" />
+                    <field name="old_plan_time"/>
+                    <field name="new_plan_time"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_replanning_form" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.replanning.form</field>
+            <field name="model">dtdream.rd.replanning</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="btn_replanning_tj"  string="提交"  type="object" attrs="{'invisible':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_agree)d" string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('state_02')),'&amp;',('is_shenpiren','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_disagree)d" string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('state_02')),'&amp;',('is_shenpiren','=',False),('is_Qa','=',False)]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="state_01,state_02,state_03" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="proname" />
+                                <field name="old_plan_time" attrs="{'readonly':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                                <field name="is_create" invisible="1"/>
+                                <field name="is_Qa" invisible="1"/>
+                                <field name="is_shenpiren" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="version" />
+                                <field name="new_plan_time" attrs="{'readonly':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="reason" attrs="{'readonly':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_dtdream_rd_replanning_wizard" model="ir.actions.act_window">
+            <field name="name">版本重计划</field>
+            <field name="res_model">dtdream.rd.replanning.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_dtdream_rd_replanning_wizard_form" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.replanning.wizard.form</field>
+            <field name="model">dtdream.rd.replanning.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="btn_replanning_tj"  string="提交"  type="object" attrs="{'invisible':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="proname" />
+                                <field name="old_plan_time"/>
+                                <field name="is_create" invisible="1"/>
+                                <field name="is_Qa" invisible="1"/>
+                                <field name="is_shenpiren" invisible="1"/>
+                                <field name="state" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="version" />
+                                <field name="new_plan_time"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="reason"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

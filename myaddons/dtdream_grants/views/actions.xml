@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+      <record model="ir.actions.act_window" id="act_grants_dashborad">
+          <field name="name">仪表盘</field>
+          <field name="res_model">dtdream.grants</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">pivot</field>
+      </record>
+      <record model="ir.actions.server" id="act_grants_allocation">
+          <field name="name">补助金分配设置</field>
+          <field name="model_id" ref="model_dtdream_grants_allocation"/>
+          <field name="code">
+              action = {
+              'name':'补助金分配设置',
+              'type': 'ir.actions.act_window',
+              'view_type': 'form',
+              'view_mode': 'form',
+              'res_model': 'dtdream.grants.allocation',
+              'res_id': self.search(cr,uid,[('create_uid','=',uid)],context=None)[0] if self.search(cr,uid,[('create_uid','=',uid)],context=None) else "",
+              'context':context
+              }
+          </field>
+      </record>
+      <record model="ir.actions.act_window" id="act_grants_detail">
+          <field name="name">补助金分配明细</field>
+          <field name="res_model">dtdream.grants</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="domain">[('name.user_id','=',uid)]</field>
+          <field name="view_id" ref="grants_allocation_detail_tree"></field>
+      </record>
+      <record model="ir.actions.act_window" id="act_grants_admin">
+          <field name="name">补助金分配管理</field>
+          <field name="res_model">dtdream.grants</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="view_id" ref="grants_allocation_detail_admin_tree"></field>
+      </record>
+      <record model="ir.actions.server" id="act_grants_config">
+          <field name="name">配置</field>
+          <field name="model_id" ref="model_dtdream_grants_config"/>
+          <field name="code">
+              action = {
+              'name':'配置',
+              'type': 'ir.actions.act_window',
+              'view_type': 'form',
+              'view_mode': 'form',
+              'res_model': 'dtdream.grants.config',
+              'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+              'context':context
+              }
+          </field>
+      </record>
+  </data>
+</openerp>

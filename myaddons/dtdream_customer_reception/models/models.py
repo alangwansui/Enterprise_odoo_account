@@ -106,6 +106,21 @@ class dtdream_customer_reception(models.Model):
             self.is_create = False
 
     @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_customer_reception, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if my_action.name != u"我的申请":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
         params = self._context.get('params', {})
         action = params.get('action', None)
@@ -131,7 +146,7 @@ class dtdream_customer_reception(models.Model):
     def create_customer_activities(self, result):
         if result.purpose.name == u'公司展厅参观' or result.purpose.name == u"小镇展厅参观":
             activity = '1'
-        elif result.purpose.name == u'会议交流':
+        elif result.purpose.name == u'公司展厅参观+会议交流':
             activity = '0'
         else:
             activity = ''

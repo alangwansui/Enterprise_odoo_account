@@ -21,16 +21,19 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','hr','dtdream_expense'],
+    'depends': ['base','hr','dtdream_hr'],
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/wizard_view.xml',
         'views/views.xml',
         'workflow/workflow.xml',
         'views/templates.xml',
         'importjscss.xml',
+        'dtdream_budget_month_data.xml',
+        'send_email_regularly_data.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

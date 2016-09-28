@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-
+from openerp.osv import expression
 
 class dtdream_hr(models.Model):
     _inherit = 'hr.department'
@@ -12,7 +12,15 @@ class dtdream_hr(models.Model):
     def search_read(self, cr, uid, domain=None, fields=None, offset=0, limit=None, order=None, context=None):
         if 'child_ids' not in fields:
             domain = [ex for ex in domain if ex != ['parent_id', '=', False]]
+        domain = expression.AND([[('name', 'not in', ('Administration', 'Sales'))], domain])
         return super(dtdream_hr, self).search_read(cr, uid, domain=domain)
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = [('name', 'not in', ('Administration', 'Sales'))]
+        pos = self.search(domain + args, limit=limit)
+        return pos.name_get()
 
 
 class dtdream_hr_employee(models.Model):

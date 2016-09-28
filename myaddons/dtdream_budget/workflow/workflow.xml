@@ -23,11 +23,17 @@
         <field name="kind">function</field>
         <field name="action">wkf_manager_review()</field>
     </record>
-    <record id="activity_signer_review" model="workflow.activity">
+    <record id="activity_signer_one_review" model="workflow.activity">
         <field name="wkf_id" ref="dtdream_budget_workflow"/>
-        <field name="name">权签人审批</field>
+        <field name="name">第一权签人审批</field>
         <field name="kind">function</field>
-        <field name="action">wkf_signer_review()</field>
+        <field name="action">wkf_signer_one_review()</field>
+    </record>
+    <record id="activity_signer_two_review" model="workflow.activity">
+        <field name="wkf_id" ref="dtdream_budget_workflow"/>
+        <field name="name">第二权签人审批</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_signer_two_review()</field>
     </record>
     <record id="activity_reviewed" model="workflow.activity">
         <field name="wkf_id" ref="dtdream_budget_workflow"/>
@@ -37,42 +43,97 @@
     </record>
 
     <!--      ============================================transition============================================                 -->
+
     <record model="workflow.transition" id="budget_draft2manager_review">
         <field name="act_from" ref="activity_draft" />
         <field name="act_to" ref="activity_manager_review" />
         <field name="signal">btn_submit</field>
+        <field name="condition">applicant!=manager and applicant!=signer_one and applicant!=signer_two</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="budget_manager_review2signer_review">
+    <record model="workflow.transition" id="budget_draft2signer_one_review">
+        <field name="act_from" ref="activity_draft" />
+        <field name="act_to" ref="activity_signer_one_review" />
+        <field name="signal">btn_submit</field>
+        <field name="condition">applicant==manager and applicant!=signer_one and applicant!=signer_two</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_draft2signer_two_review">
+        <field name="act_from" ref="activity_draft" />
+        <field name="act_to" ref="activity_signer_two_review" />
+        <field name="signal">btn_submit</field>
+        <field name="condition">applicant==signer_one and applicant!=signer_two and signer_two</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_draft2reviewed">
+        <field name="act_from" ref="activity_draft" />
+        <field name="act_to" ref="activity_reviewed" />
+        <field name="signal">btn_submit</field>
+        <field name="condition">applicant==signer_two or (applicant==signer_one and not signer_two)</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+     <record model="workflow.transition" id="budget_manager_review2draft">
         <field name="act_from" ref="activity_manager_review" />
-        <field name="act_to" ref="activity_signer_review" />
+        <field name="act_to" ref="activity_draft" />
+        <field name="signal">btn_reject</field>
+        <field name="condition">check_approve_rights()</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_manager_review2signer_one_review">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_signer_one_review" />
         <field name="signal">btn_agree</field>
-        <field name="condition">not is_sign</field>
+        <field name="condition">manager!=signer_one and manager!=signer_two and check_approve_rights()</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_manager_review2signer_two_review">
+        <field name="act_from" ref="activity_manager_review" />
+        <field name="act_to" ref="activity_signer_two_review" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">manager==signer_one and manager!=signer_two and signer_two and check_approve_rights()</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
     <record model="workflow.transition" id="budget_manager_review2reviewed">
         <field name="act_from" ref="activity_manager_review" />
         <field name="act_to" ref="activity_reviewed" />
         <field name="signal">btn_agree</field>
-        <field name="condition">is_sign</field>
+        <field name="condition">(manager==signer_two or (manager==signer_one and not signer_two))and check_approve_rights()</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="budget_manager_review2draft">
-        <field name="act_from" ref="activity_manager_review" />
+     <record model="workflow.transition" id="budget_signer_one_review2draft">
+        <field name="act_from" ref="activity_signer_one_review" />
         <field name="act_to" ref="activity_draft" />
         <field name="signal">btn_reject</field>
+        <field name="condition">check_approve_rights()</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="budget_signer_review2reviewed">
-        <field name="act_from" ref="activity_signer_review" />
+    <record model="workflow.transition" id="budget_signer_one_review2signer_two_review">
+        <field name="act_from" ref="activity_signer_one_review" />
+        <field name="act_to" ref="activity_signer_two_review" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">signer_two and signer_one != signer_two and check_approve_rights()</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="budget_signer_one_review2reviewed">
+        <field name="act_from" ref="activity_signer_one_review" />
         <field name="act_to" ref="activity_reviewed" />
         <field name="signal">btn_agree</field>
+        <field name="condition">(signer_one==signer_two or not signer_two) and check_approve_rights()</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
-    <record model="workflow.transition" id="budget_signer_review2draft">
-        <field name="act_from" ref="activity_signer_review" />
+    <record model="workflow.transition" id="budget_signer_two_review2draft">
+        <field name="act_from" ref="activity_signer_two_review" />
         <field name="act_to" ref="activity_draft" />
         <field name="signal">btn_reject</field>
+        <field name="condition">check_approve_rights()</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+
+    <record model="workflow.transition" id="budget_signer_two_review2reviewed">
+        <field name="act_from" ref="activity_signer_two_review" />
+        <field name="act_to" ref="activity_reviewed" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">check_approve_rights()</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
 

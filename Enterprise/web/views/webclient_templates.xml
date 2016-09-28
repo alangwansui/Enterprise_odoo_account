@@ -192,8 +192,9 @@
             <html style="height: 100%">
                 <head>
                     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
                     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-                    <title>数梦企业信息管理系统</title>
+                    <title>dodo</title>
                     <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
                     <t t-raw="head or ''"/>
                 </head>
@@ -212,7 +213,7 @@
                 </t>
                 <t t-set="body_classname" t-value="'container'"/>
                 <div class="row">
-                  <div class="col-md-6 col-md-offset-3 o_database_list">
+                  <div class="col-md-6 col-md-offset-3 o_database_list col-xs-12 col-ms-12">
                     <div class="text-center">
                       <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}"/>
                     </div>
@@ -265,6 +266,11 @@
                     </p>
 
                     <input type="hidden" name="redirect" t-att-value="redirect"/>
+
+                    <div class="form-group text-right">
+                        <a href="/web/ad/manager">忘记密码?</a>
+                    </div>
+
                     <div class="clearfix oe_login_buttons" style="text-align:right">
                         <button type="submit" class="btn btn-primary">登 录</button>
                     </div>
@@ -333,7 +339,7 @@
             <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-            <title>Odoo</title>
+            <title>dodo</title>
 
             <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
 

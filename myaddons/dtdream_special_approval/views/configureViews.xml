@@ -1,5 +1,22 @@
 <openerp>
     <data>
+
+        <record id="act_dtdream_department_form_special" model="ir.actions.act_window">
+            <field name="name">部门</field>
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id','=',active_id)]</field>
+        </record>
+
+        <record id="ir_open_department_special" model="ir.values">
+            <field name='key2'>tree_but_open</field>
+            <field name='model'>hr.department</field>
+            <field name="name">专项部门</field>
+            <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form_special" name='value'/>
+        </record>
+
         <record id="act_dtdream_approval_right_peo" model="ir.actions.act_window">
             <field name="name">部门权签配置</field>
             <field name="res_model">hr.department</field>
@@ -7,6 +24,8 @@
             <field name="view_type">tree</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('parent_id','=',False)]</field>
+            <field name='context'>{
+                'default_tree_but_open':'专项部门'}</field>
         </record>
 
         <record id="view_department_form_approval_inherit" model="ir.ui.view">
@@ -17,13 +36,13 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="name"/>
-                                <field name="manager_id" string="主管"/>
-                                <field name="parent_id"/>
+                                <field name="name" attrs="{'readonly':True}"/>
+                                <field name="manager_id" string="主管" attrs="{'readonly':True}"/>
+                                <field name="parent_id" attrs="{'readonly':True}"/>
                             </group>
                             <group>
-                                <field name="code"/>
-                                <field name="assitant_id" widget="many2many_tags"/>
+                                <field name="code" attrs="{'readonly':True}"/>
+                                <field name="assitant_id" widget="many2many_tags" attrs="{'readonly':True}"/>
                                 <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                             </group>
                         </group>
@@ -66,21 +85,7 @@
         </record>
 
 
-        <record id="act_dtdream_department_form_special" model="ir.actions.act_window">
-            <field name="name">部门</field>
-            <field name="res_model">hr.department</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[('id','=',active_id)]</field>
-        </record>
 
-        <record id="ir_open_department_special" model="ir.values">
-            <field name='key2'>tree_but_open</field>
-            <field name='model'>hr.department</field>
-            <field name="name">模型</field>
-            <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form_special" name='value'/>
-        </record>
 
         <record id="action_dtdream_approval_right_peo_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>

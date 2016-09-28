@@ -6,49 +6,49 @@
       <field name="name">view.dtdream.budget.form</field>
       <field name="model">dtdream.budget</field>
       <field name="arch" type="xml">
-        <form>
+        <form class="zx_form">
           <header>
-            <button name="btn_submit" string="提交"></button>
-            <button name="%(dtdream_budget.act_dtdream_budget_wizard_agree)d" type="action" string="同意"></button>
-            <button name="%(dtdream_budget.act_dtdream_budget_wizard_reject)d" type="action" string="驳回"></button>
+            <button name="btn_submit" string="提交" attrs="{'invisible':['|',('state','!=','0'),('is_applicant','=',False)]}" class="oe_highlight zx_edit_invisible"></button>
+            <button name="%(dtdream_budget.act_dtdream_budget_wizard_agree)d" type="action" string="同意" attrs="{'invisible':[('is_current_handler','=',False)]}" class="zx_edit_invisible"></button>
+            <button name="%(dtdream_budget.act_dtdream_budget_wizard_reject)d" type="action" string="驳回" attrs="{'invisible':[('is_current_handler','=',False)]}" class="zx_edit_invisible"></button>
             <field name="state" widget="statusbar"></field>
           </header>
           <sheet>
             <group string="基本信息">
               <group>
-                <field name="current_handler"></field>
+                <field name="current_handler" readonly="1" options="{'no_open':True}" invisible="1"></field>
+                <field name="is_current_handler" invisible="1"></field>
+                <field name="is_applicant" invisible="1"></field>
                 <field name="his_handler" widget="many2many_tags" invisible="1"></field>
-                <field name="is_sign" invisible="1"></field>
-                <field name="manager" invisible="1"></field>
-                <field name="signer" invisible="1"></field>
+
                 <field name="applicant" readonly="1"></field>
+                <field name="manager" invisible="1"></field>
+                <field name="signer_one" invisible="1"></field>
+                <field name="signer_two" invisible="1"></field>
                 <field name="apply_time" readonly="1"></field>
-                <field name="department_code" readonly="1"/>
               </group>
               <group>
-                <field name="full_name" readonly="1"/>
-                <field name="job_number" readonly="1"/>
                 <field name="department" readonly="1"/>
+                <field name="department_code" readonly="1"/>
               </group>
 
             </group>
             <group string="预算信息">
               <group>
                 <field name="budget_id"></field>
-                <field name="expensed_travel"></field>
-                <field name="expensed_daily"></field>
+                <field name="expensed_travel" invisible="1"></field>
+                <field name="expensed_daily" invisible="1"></field>
               </group>
               <group>
-                <field name="name"></field>
-                <field name="expensed_zhuanx"></field>
-                <field name="expensed_xingz"></field>
+                <field name="name" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="expensed_zhuanx" invisible="1"></field>
+                <field name="expensed_xingz" invisible="1"></field>
 
               </group>
             </group>
-            <group>
-              <field name="fee_types" widget="many2many_tags" invisible="1"></field>
-              <field name="fee_travel" options="{'no_open':True}" widget="one2many_list">
-                <tree editable="bottom" create="false" delete="false" class="zx_left" options="{'no_open':True}">
+            <group class="zx_group_border">
+              <field name="fee_travel" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
+                <tree editable="bottom" create="false" delete="false" class="zx_left zx_four" options="{'no_open':True}">
                   <field name="travel_travel" options="{'no_open':True}"></field>
                   <field name="travel_bus"></field>
                   <field name="travel_mobile"></field>
@@ -56,7 +56,9 @@
                 </tree>
               </field>
               <field name="fee_travel_total"></field>
-              <field name="fee_daily" widget="one2many_list">
+            </group>
+            <group class="zx_group_border">
+              <field name="fee_daily" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
                   <field name="daily_name"></field>
                   <field name="daily_fee"></field>
@@ -64,7 +66,9 @@
                 </tree>
               </field>
               <field name="fee_daily_total"></field>
-              <field name="fee_zhuanx">
+            </group>
+            <group class="zx_group_border">
+              <field name="fee_zhuanx" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
                   <field name="zhuanx_name"></field>
                   <field name="zhuanx_fee"></field>
@@ -72,7 +76,9 @@
                 </tree>
               </field>
               <field name="fee_zhuanx_total"></field>
-              <field name="fee_xingz">
+            </group>
+            <group class="zx_group_border">
+              <field name="fee_xingz" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
                   <field name="xingz_name"></field>
                   <field name="xingz_fee"></field>
@@ -80,10 +86,15 @@
                 </tree>
               </field>
               <field name="fee_xingz_total"></field>
+            </group>
+            <group>
               <field name="all_total"></field>
             </group>
           </sheet>
-
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
         </form>
       </field>
     </record>
@@ -95,15 +106,20 @@
         <tree class="zx_left">
           <field name="budget_id"></field>
           <field name="name"></field>
-          <field name="all_total"></field>
-          <field name="applicant"></field>
-          <field name="department"></field>
-          <field name="apply_time"></field>
           <field name="state"></field>
+          <field name="applicant"></field>
+          <field name="fee_travel_total"></field>
+          <field name="fee_daily_total"></field>
+          <field name="fee_zhuanx_total"></field>
+          <field name="fee_xingz_total"></field>
+          <field name="all_total"></field>
+          <field name="department"></field>
           <field name="current_handler"></field>
+          <field name="is_current_handler" invisible="1"></field>
         </tree>
       </field>
     </record>
+
 
     <record id="edit_hr_employee_inher" model="ir.ui.view">
           <field name="name">edit.holiday.new.inher</field>
@@ -121,14 +137,97 @@
             <field name="arch" type="xml">
                 <search string="Search employee_budget">
                     <field name="name"/>
-                    <filter string="上上月预算未填写" domain="[('budget_ids', '!=', (context_today() - relativedelta(months=2)).strftime('%Y%m'))]" name="employee_budget1"/>
-                    <filter string="上月预算未填写" domain="[('budget_ids', '!=', (context_today() - relativedelta(months=1)).strftime('%Y%m'))]" name="employee_budget2"/>
-                    <filter string="本月预算未填写" domain="[('budget_ids', '!=', (context_today() - relativedelta(months=0)).strftime('%Y%m'))]" name="employee_budget3"/>
-                    <filter string="下月预算未填写" domain="[('budget_ids', '!=', (context_today() + relativedelta(months=1)).strftime('%Y%m'))]" name="employee_budget4"/>
-                    <filter string="下下月预算未填写" domain="[('budget_ids', '!=', (context_today() + relativedelta(months=2)).strftime('%Y%m'))]" name="employee_budget5"/>
+                    <field name="department_id"></field>
+                    <filter string="上月预算未填写" domain="['&amp;',('department_id.is_budget_department','=',True),'|',('budget_ids', '!=', (context_today() + relativedelta(months=-1)).strftime('%Y%m')),('budget_ids','=',False)]" name="employee_budget2"/>
+                    <filter string="本月预算未填写" domain="['&amp;',('department_id.is_budget_department','=',True),'|',('budget_ids', '!=', (context_today() + relativedelta(months=0)).strftime('%Y%m')),('budget_ids','=',False)]" name="employee_budget3"/>
+                    <filter string="下月预算未填写" domain="['&amp;',('department_id.is_budget_department','=',True),'|',('budget_ids', '!=', (context_today() + relativedelta(months=1)).strftime('%Y%m')),('budget_ids','=',False)]" name="employee_budget4"/>
+                    <group expand="0" string="Group By">
+                      <filter name="group_department" string="部门" context="{'group_by':'department_id'}"></filter>
+                    </group>
+
 
                 </search>
             </field>
+    </record>
+    <record id="view_budget_filter" model="ir.ui.view">
+      <field name="name">view.budget.filter</field>
+      <field name="model">dtdream.budget</field>
+      <field name="arch" type="xml">
+        <search string="Search employee_budget">
+          <field name="name"/>
+          <field name="budget_id"></field>
+          <field name="applicant"></field>
+          <field name="department"></field>
+          <filter domain="[('state','=','0')]" string="草稿" name="draft"/>
+          <filter domain="[('state','=','1')]" string="主管审批" name="manager_review"/>
+          <filter domain="[('state','=','2')]" string="第一权签人审批" name="signer_one_review"/>
+          <filter domain="[('state','=','3')]" string="第二权签人审批" name="signer_two_review"/>
+          <filter domain="[('state','=','4')]" string="已审批" name="reviewed"/>
+          <group expand="0" string="Group By">
+            <filter name="group_applicant" string="申请人" context="{'group_by':'applicant'}"/>
+            <filter name="group_state" string="状态" context="{'group_by':'state'}"></filter>
+            <filter name="group_department" string="部门" context="{'group_by':'department'}"></filter>
+            <filter name="group_name" string="预算月份" context="{'group_by':'name'}"></filter>
+          </group>
+        </search>
+      </field>
+    </record>
+    <record id="batch_email" model="ir.ui.view">
+      <field name="name">bacth.email</field>
+      <field name="model">dtdream.budget.batch.operation</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <field name="temp" invisible="1"></field>
+            <p>确定进行批量审批？</p>
+          </sheet>
+          <footer>
+            <button special="cancel" string="取消" class="oe_highlight zx_button" style="float:right;margin-right:20px"/>
+            <button name="batch_approval" type="object" string="确定" class="oe_highlight zx_button" style="border-radius:5px;float:right;margin-right:20px" id="zx_button"></button>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_sign_config" model="ir.ui.view">
+      <field name="name">view.sign.config</field>
+      <field name="model">hr.department</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="name" readonly="1"></field>
+                <field name="code" readonly="1"></field>
+                <field name="manager_id" readonly="1"></field>
+                <field name="parent_id" readonly="1"></field>
+                <field name="child_ids" invisible="1"></field>
+              </group>
+              <group>
+                <field name="is_budget_department"></field>
+                <field name="budget_sign_one"></field>
+                <field name="budget_sign_two"></field>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_sign_config_tree" model="ir.ui.view">
+      <field name="name">view.sign.config.tree</field>
+      <field name="model">hr.department</field>
+      <field name="field_parent">child_ids</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"></field>
+          <field name="code"></field>
+          <field name="parent_id"></field>
+          <field name="budget_sign_one"></field>
+          <field name="budget_sign_two"></field>
+          <field name="is_budget_department"></field>
+        </tree>
+      </field>
     </record>
 
 
@@ -171,22 +270,83 @@
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
+      <field name="domain">['|','|',('applicant.user_id','=',uid),('current_handler.user_id','=',uid),('his_handler.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_report1">
-      <field name="name">报表1</field>
+      <field name="name">报表</field>
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_report2">
-      <field name="name">报表2</field>
+      <field name="name">查看未填写预算员工</field>
       <field name="res_model">hr.employee</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">kanban,tree,form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="context">{"search_default_employee_budget4":1}</field>
       <field name="search_view_id" ref="view_budget_employee_filter"></field>
+      <field name="domain">[('department_id.is_budget_department','=',True)]</field>
     </record>
+
+    <record model="ir.actions.act_window" id="open_budget_config">
+      <field name="name">部门权签人配置</field>
+      <field name="res_model">hr.department</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">tree</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('parent_id','=',False)]</field>
+      <field name='context'>{
+                'default_tree_but_open':'预算部门'}</field>
+    </record>
+    <record model="ir.actions.act_window" id="open_budget_config_department">
+      <field name="name">部门</field>
+      <field name="res_model">hr.department</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('id','=',active_id)]</field>
+    </record>
+
+    <record id="ir_open_department_ys" model="ir.values">
+        <field name='key2'>tree_but_open</field>
+        <field name='model'>hr.department</field>
+        <field name="name">预算部门</field>
+        <field eval="'ir.actions.act_window,%d'%open_budget_config_department" name='value'/>
+    </record>
+    <record id="action_view_open_budget_config_tree" model="ir.actions.act_window.view">
+      <field eval="1" name="sequence"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="view_sign_config_tree"/>
+      <field name="act_window_id" ref="open_budget_config"/>
+    </record>
+    <record id="action_open_budget_config_tree" model="ir.actions.act_window.view">
+      <field eval="2" name="sequence"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="view_sign_config_tree"/>
+      <field name="act_window_id" ref="open_budget_config_department"/>
+    </record>
+    <record id="action_view_open_budget_config_form" model="ir.actions.act_window.view">
+      <field eval="3" name="sequence"/>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="view_sign_config"/>
+      <field name="act_window_id" ref="open_budget_config_department"/>
+    </record>
+
+
+    <act_window
+        multi="True"
+        key2="client_action_multi"
+        id="act_batch_approval"
+        name="批量审批"
+        src_model="dtdream.budget"
+        res_model="dtdream.budget.batch.operation"
+        view_mode="form"
+        view_type="form"
+        context="{'default_temp':'batch_approval'}"
+        target="new"
+        groups="base.group_user"/>
     <!--menu-->
     <menuitem name="预算管理" id="dtdream_budget_menu_root" web_icon="dtdream_budget,static/src/img/dtdream_budget.png"/>
     <menuitem name="我的申请" id="menu_my_budget" parent="dtdream_budget_menu_root" action="open_my_budget"/>
@@ -194,8 +354,9 @@
     <menuitem name="我已审批" id="menu_budget_approved" parent="dtdream_budget_menu_root" action="open_budget_approved"/>
     <menuitem name="草稿箱" id="menu_budget_draft" parent="dtdream_budget_menu_root" action="open_budget_draft"/>
     <menuitem name="所有单据" id="menu_budget_all" parent="dtdream_budget_menu_root" action="open_budget_all"/>
-    <menuitem name="报表" id="menu_budget_report" parent="dtdream_budget_menu_root"/>
-    <menuitem name="报表1" id="menu_budget_report1" parent="menu_budget_report" action="open_budget_report1"/>
-    <menuitem name="报表2" id="menu_budget_report2" parent="menu_budget_report" action="open_budget_report2"/>
+    <menuitem name="报告" id="menu_budget_report" parent="dtdream_budget_menu_root" groups="group_budget_admin"/>
+    <menuitem name="报表" id="menu_budget_report1" parent="menu_budget_report" action="open_budget_report1"/>
+    <menuitem name="查看未填写预算员工" id="menu_budget_report2" parent="menu_budget_report" action="open_budget_report2"/>
+    <menuitem name="部门权签人配置" id="menu_budget_config" parent="dtdream_budget_menu_root" action="open_budget_config" groups="group_budget_admin"></menuitem>
   </data>
 </openerp>

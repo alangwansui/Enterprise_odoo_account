@@ -104,6 +104,46 @@ class res_users_read_access(models.Model):
 
     sale_res_team_id = fields.Many2many('crm.team',string='Sales Team')
 
+    def _get_company(self,cr, uid, context=None, uid2=False):
+        if not uid2:
+            uid2 = uid
+        # Use read() to compute default company, and pass load=_classic_write to
+        # avoid useless name_get() calls. This will avoid prefetching fields
+        # while computing default values for new db columns, as the
+        # db backend may not be fully initialized yet.
+        user_data = self.pool['res.users'].read(cr, uid, uid2, ['company_id'],
+                                                context=context, load='_classic_write')
+        comp_id = user_data['company_id']
+        return comp_id or False
+
+    def _get_companies(self, cr, uid, context=None):
+        c = self._get_company(cr, uid, context)
+        if c:
+            return [c]
+        return False
+
+    def _get_group(self,cr, uid, context=None):
+        dataobj = self.pool.get('ir.model.data')
+        result = []
+        try:
+            dummy,group_id = dataobj.get_object_reference(cr, 1, 'base', 'group_user')
+            result.append(group_id)
+            # dummy,group_id = dataobj.get_object_reference(cr, 1, 'base', 'group_partner_manager')
+            # result.append(group_id)
+        except ValueError:
+            # If these groups does not exists anymore
+            pass
+        return result
+
+    _defaults = {
+        'password': '',
+        'active': True,
+        'customer': False,
+        'company_id': _get_company,
+        'company_ids': _get_companies,
+        'groups_id': _get_group,
+    }
+
 
 class res_crm_team(models.Model):
     _inherit = 'crm.team'
@@ -324,32 +364,37 @@ class dtdream_sale(models.Model):
     #
     #     else:
 
+    @api.one
+    def _compute_software_space(self):
+        self.software_space = self.project_space.software_space
+
     description = fields.Text('项目进展')
 
-    name = fields.Char('项目名称',required=True,select=1)
+    name = fields.Char('项目名称',required=True,select=1,track_visibility='onchange')
     user_id = fields.Many2one(string="Salesperson")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
     project_leave = fields.Selection([
         ('company_leave', '公司级'),
         ('department_leave', '部门级'),
         ('normal_leave', '一般项目'),
-    ],required=True)
-    system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True)
-    industry_id = fields.Many2one("dtdream.industry", string="行业",required=True)
-    office_id = fields.Many2one("dtdream.office", string="办事处",required=True)
-    bidding_time = fields.Date("招标时间",required=True,default=lambda self:datetime.now())
-    supply_time = fields.Date("供货时间",required=True,default=lambda self:(datetime.now() + relativedelta(months=1)))
+    ],required=True,track_visibility='onchange',string="项目级别")
+    system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True,track_visibility='onchange')
+    industry_id = fields.Many2one("dtdream.industry", string="行业",required=True,track_visibility='onchange')
+    office_id = fields.Many2one("dtdream.office", string="办事处",required=True,track_visibility='onchange')
+    bidding_time = fields.Date("招标时间",required=True,default=lambda self:datetime.now(),track_visibility='onchange')
+    supply_time = fields.Date("供货时间",required=True,default=lambda self:(datetime.now() + relativedelta(months=1)),track_visibility='onchange')
     pre_implementation_time = fields.Date("预计开始实施时间",default=lambda self:(datetime.now() + relativedelta(months=2)))
     pre_check_time = fields.Date("预计验收时间",default=lambda self:(datetime.now() + relativedelta(months=3)))
-    sale_channel = fields.Char("渠道",required=True)
+    sale_channel = fields.Char("渠道",required=True,track_visibility='onchange')
     project_master_degree = fields.Selection([
         ('1', 'A'),
         ('2', 'B'),
         ('3', 'C'),
         ('4', 'D'),
-    ],'项目把握度',required=True)
+    ],'项目把握度',required=True,track_visibility='onchange')
     project_space = fields.One2many('dtdream.project.space.line', 'project_line_id', string='项目空间',copy=True)
-    partner_id = fields.Many2one(required=True)
+    software_space = fields.Float('软件空间(万元)',digits=(16,0),compute=_compute_software_space)
+    partner_id = fields.Many2one(required=True,track_visibility='onchange')
     ali_division = fields.Selection([
         ('1','数据中国'),
         ('2','部委事业部'),
@@ -367,27 +412,58 @@ class dtdream_sale(models.Model):
     is_dtdream_integrated = fields.Selection([
         ('1', '是'),
         ('0', '否'),
-    ],string='是否数梦集成项目',required=True)
+    ],string='是否数梦集成项目',required=True,track_visibility='onchange')
     is_invest_project = fields.Selection([
         ('1', '是'),
         ('0', '否'),
-    ],string='是否投资类项目',required=True)
+    ],string='是否投资类项目',required=True,track_visibility='onchange')
 
-    project_province = fields.Many2one("res.country.state", '省份',required=True)
+    @api.onchange("project_province_new")
+    def onchange_project_province_new(self):
+        if self.project_province_new:
+            if self.project_place_new.parent_id != self.project_province_new:
+                self.project_place_new = ""
+            return {
+                'domain': {
+                    "project_place_new":[('parent_id','=',self.project_province_new.id)]
+                }
+            }
+
+    @api.onchange("project_place_new")
+    def onchange_project_place_new(self):
+        if self.project_place_new:
+            self.project_province_new = self.project_place_new.parent_id
+            if self.project_country.parent_id != self.project_place_new:
+                self.project_country = ""
+            return {
+                'domain': {
+                    "project_country":[('parent_id','=',self.project_place_new.id)]
+                }
+            }
+
+    @api.onchange("project_country")
+    def onchange_project_country(self):
+        if self.project_country:
+            self.project_place_new = self.project_country.parent_id
+            self.project_province_new = self.project_country.parent_id.parent_id
+
+
+    project_province_new = fields.Many2one("dtdream.area", '省份',required=True,domain=[('parent_id','=',False)],track_visibility='onchange')
 
     product_category_type_id = fields.Many2many("product.category", string="产品分类")
-    project_place = fields.Char('城市')
-    sale_apply_id = fields.Many2one("hr.employee",string="营销责任人",required=True)
+    project_place_new = fields.Many2one("dtdream.area", '城市',required=True,domain=[('parent_id.parent_id','=',False)],track_visibility='onchange')
+    project_country = fields.Many2one("dtdream.area", '区县',domain=[('parent_id.parent_id.parent_id','=',False)],track_visibility='onchange')
+    sale_apply_id = fields.Many2one("hr.employee",string="营销责任人",required=True,track_visibility='onchange')
     sale_apply_id_uid = fields.Integer(string="营销责任人id")
 
     product_line = fields.One2many('dtdream.product.line', 'product_line_id', string='产品配置',copy=True)
 
-    project_detail = fields.Text("项目详情",required=True)
+    project_detail = fields.Text("项目详情",required=True,track_visibility='onchange')
 
     total_list_price = fields.Float('目录价总计',store=True,compute=_onchange_product_line)
     total_ref_price = fields.Float('参考折扣价总计',store=True,compute=_onchange_product_line)
     total_apply_price = fields.Float('申请折扣价总计',store=True,compute=_onchange_product_line)
-    space_total = fields.Float('合计(万元)',store=True,compute=_onchange_project_space)
+    space_total = fields.Float('合计(万元)',store=True,compute=_onchange_project_space,digits=(16,0))
 
     dt_partner_name = fields.Char(compute=_compute_partner_fields,store=True,string="公司名称")
     dt_contact_name = fields.Char(compute=_compute_partner_fields,store=True,string="联系人名称")
@@ -399,6 +475,26 @@ class dtdream_sale(models.Model):
     is_red = fields.Boolean(string="判断招标时间是否早于当天")
 
     pro_background = fields.Text("投资类项目背景")
+
+    @api.multi
+    def _message_track(self, tracked_fields, initial):
+        self.ensure_one()
+        changes = set()
+        tracking_value_ids = []
+
+        # generate tracked_values data structure: {'col_name': {col_info, new_value, old_value}}
+        for col_name, col_info in tracked_fields.items():
+            initial_value = initial[col_name]
+            new_value = getattr(self, col_name)
+
+            if new_value != initial_value and (new_value or initial_value):  # because browse null != False
+                if col_name != "user_id":
+                    tracking = self.env['mail.tracking.value'].create_tracking_values(initial_value, new_value, col_name, col_info)
+                if tracking:
+                    tracking_value_ids.append([0, 0, tracking])
+                if col_name in tracked_fields and col_name != "user_id":
+                    changes.add(col_name)
+        return changes, tracking_value_ids
 
     @api.constrains("name")
     def check_name(self):
@@ -425,6 +521,8 @@ class dtdream_sale(models.Model):
     def create(self, vals):
         if len(vals.get('des_records',"")) == 0 :
             raise ValidationError("请录入项目进展")
+        if len(vals.get('project_space',"")) == 0 :
+            raise ValidationError("请录入项目空间")
         if vals.get('project_number', 'New') == 'New':
             o_id = vals.get('office_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
@@ -507,6 +605,8 @@ class dtdream_sale(models.Model):
             raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
         if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
             raise ValidationError("请录入项目进展")
+        if vals.has_key('project_space') and vals.get('project_space')[0][0]==2 :
+            raise ValidationError("请录入项目空间")
         if vals.has_key('description'):
             self.env['dtdream.des.records'].create({"name":self.description,"des_id":self.id})
         result = super(dtdream_sale, self).write(vals)
@@ -775,7 +875,38 @@ class dtdream_project_space_line(models.Model):
                 }
             }
 
-    project_space = fields.Float('项目空间(万元)')
+    @api.onchange("project_space")
+    def _onchange_project_space(self):
+        if self.project_space < 0:
+            self.project_space = 0
+            return {'warning': {
+                "title": u"提示",
+                "message": u"项目空间不能小于0"
+            }}
+        if self.project_space < self.software_space:
+            self.project_space = 0
+            return {'warning': {
+                "title": u"提示",
+                "message": u"软件空间必须小于项目空间"
+            }}
+
+    @api.onchange("software_space")
+    def _onchange_software_space(self):
+        if self.software_space < 0:
+            self.software_space = 0
+            return {'warning': {
+                "title": u"提示",
+                "message": u"软件空间不能小于0"
+            }}
+        if self.project_space < self.software_space:
+            self.software_space = 0
+            return {'warning': {
+                "title": u"提示",
+                "message": u"软件空间必须小于项目空间"
+            }}
+			
+    software_space = fields.Float('软件空间(万元)',digits=(16,0))
+    project_space = fields.Float('项目空间(万元)',digits=(16,0))
 
 class dtdream_product_category(models.Model):
     _inherit = "product.category"
@@ -801,3 +932,23 @@ class DtdreamCrmLeadLost(models.TransientModel):
     _inherit = 'crm.lead.lost'
 
     lead_id = fields.Many2one(ondelete="cascade")
+
+# 定义区域
+class dtdream_area(models.Model):
+    _name = 'dtdream.area'
+
+    child_ids = fields.One2many('dtdream.area', 'parent_id')
+    name = fields.Char(string='区划名称',required=True)
+    code = fields.Char(string='行政代号',required=True)
+    parent_code = fields.Char(string='上级行政代号')
+    parent_id = fields.Many2one('dtdream.area', string='上级行政id')
+    province = fields.Char(string="省级")
+    country = fields.Char(string="市级",required=True)
+    area_code = fields.Char(string="区号")
+    area_leave = fields.Integer(string="行政等级",required=True)
+    area_type = fields.Char(string="区域类别",required=True)
+
+    def search_read(self, cr, uid, domain=None, fields=None, offset=0, limit=None, order=None, context=None):
+        if 'child_ids' not in fields:
+            domain = [ex for ex in domain if ex != ['parent_id', '=', False]]
+        return super(dtdream_area, self).search_read(cr, uid, domain=domain)

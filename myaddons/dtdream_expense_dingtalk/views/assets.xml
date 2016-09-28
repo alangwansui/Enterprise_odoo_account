@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="assets_common" name="account_reports_assets_common" inherit_id="web.assets_common">
+            <xpath expr="." position="inside">
+               <!--<script type='text/javascript' src='dtdream_expense_dingtalk/static/lib/light7/js/light7-seiper.min.js' charset='utf-8'></script>-->
+
+                <!--<script type="text/javascript" src="/dtdream_expense_dingtalk/static/src/js/main.js"/>-->
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

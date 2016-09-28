@@ -588,6 +588,9 @@ class dtdream_crm_lead(models.Model):
                 raise ValidationError("只有营销责任人可以创建对应订单执行审批。")
         cr = self.env['dtdream.sale.order.approval'].search([('rep_pro_name.id', '=', self.id)])
         res_id = cr.id if cr else ''
+        import json
+        context = json.loads(json.dumps(self._context))
+        context.update({'active_id': self.id})
         action = {
             'name': '订单执行审批',
             'type': 'ir.actions.act_window',
@@ -595,7 +598,7 @@ class dtdream_crm_lead(models.Model):
             'view_mode': 'form',
             'res_model': 'dtdream.sale.order.approval',
             'res_id': res_id,
-            'context': self._context,
+            'context': context,
             }
         return action
 

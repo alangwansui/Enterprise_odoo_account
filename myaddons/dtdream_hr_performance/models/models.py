@@ -312,8 +312,8 @@ class dtdream_hr_performance(models.Model):
                 'body_html': u'''<p>%s</p>
                                 <p>%s</p>
                                 <p><a href="%s">点击进入查看</a></p>
-                                <p><a href='http://confluence.dtdream.com/pages/viewpage.action?pageId=46465483'>
-                                点此查看绩效考核具体流程</a></p>
+                                <h3>具体流程如图所示:</h3>
+                                <img src='http://www.dtdream.com/pub/res/jxgl.png'/>
                                 <p>dodo</p>
                                 <p>万千业务，简单有do</p>
                                 <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
@@ -514,7 +514,7 @@ class dtdream_hr_pbc_employee(models.Model):
     work = fields.Text(string='工作目标')
     detail = fields.Text(string='具体描述(请清晰说明完成该目标所需要的关键措施)')
     result = fields.Text(string='关键事件达成')
-    evaluate = fields.Text(string='主管评价')
+    evaluate = fields.Text(string='主管评价(选择性点评)')
     login = fields.Boolean(compute=_compute_name_is_login)
     officer = fields.Boolean(compute=_compute_login_is_officer)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)

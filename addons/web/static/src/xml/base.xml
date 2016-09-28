@@ -194,6 +194,7 @@
 </t>
 
 <t t-name="WebClient.DebugManager">
+
     <li class="oe_debug_manager">
         <a href="#" title="Open Debug Menu" class="dropdown-toggle oe_debug_button" data-toggle="dropdown">
             <span class="fa fa-bug"/>
@@ -201,6 +202,7 @@
         </a>
         <ul class="dropdown-menu js_debug_dropdown" role="menu"/>
     </li>
+
 </t>
 <t t-name="WebClient.DebugDropdown">
     <t t-if="active_view.type === 'form'">

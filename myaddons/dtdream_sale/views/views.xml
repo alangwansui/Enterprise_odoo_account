@@ -301,6 +301,7 @@
                     <field name="system_department_id"/>
                     <field name="bidding_time"/>
                     <field name="space_total" string="项目空间（万元）"/>
+                    <field name="software_space"/>
                     <field name="project_master_degree"/>
                     <field name="sale_apply_id"/>
                     <field name="user_id" string="创建人" invisible="True" on_change="on_change_user(user_id, context)" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'dtdream_sale.group_dtdream_sale_salesman_all_leads'], 'team_id': team_id}"/>
@@ -337,12 +338,14 @@
             <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="before">
+                    <field name="software_space" invisible="True"/>
                     <field name="is_red" invisible="1"/>
                     <field name="project_number"/>
                     <field name="sale_apply_id_uid" invisible="True"/>
                     <field name="project_leave" string="项目级别"/>
-                    <field name="project_place"/>
-                    <field name="project_province" options="{'no_create': True}"/>
+                    <field name="project_province_new" options="{'no_create': True}"/>
+                    <field name="project_place_new" options="{'no_create': True}"/>
+                    <field name="project_country" options="{'no_create': True}"/>
                     <field name="office_id" options="{'no_create': True}"/>
                     <field name="system_department_id" domain="[('parent_id','=',False)]" options="{'no_create': True}"/>
                     <field name="industry_id" domain="[('parent_id.parent_id','=',False)]" options="{'no_create': True}"/>
@@ -515,6 +518,7 @@
                                     <field name="categ_id_parent" options="{'no_create': True}"/>
                                     <field name="categ_id" options="{'no_create': True}"/>
                                     <field name="project_space"/>
+                                    <field name="software_space"/>
                                 </tree>
                                 <form>
                                     <sheet>
@@ -636,6 +640,7 @@
                     <field name="system_department_id"/>
                     <field name="bidding_time"/>
                     <field name="space_total" string="项目空间（万元）"/>
+                    <field name="software_space"/>
                     <field name="project_master_degree"/>
                     <field name="sale_apply_id"/>
                     <field name="write_date" string="更新时间"/>
@@ -748,12 +753,14 @@
           <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
           <field name="arch" type="xml">
               <field name="partner_id" position="before">
+                  <field name="software_space" invisible="True"/>
                   <field name="is_red" invisible="1"/>
                   <field name="sale_apply_id_uid" invisible="True"/>
                   <field name="project_number"/>
                   <field name="project_leave" string="项目级别"/>
-                  <field name="project_place"/>
-                  <field name="project_province"  options="{'no_create': True}"/>
+                  <field name="project_province_new"  options="{'no_create': True}"/>
+                  <field name="project_place_new" options="{'no_create': True}"/>
+                  <field name="project_country" options="{'no_create': True}"/>
                   <field name="office_id"  options="{'no_create': True}"/>
                   <field name="system_department_id" domain="[('parent_id','=',False)]" options="{'no_create': True}"/>
                   <field name="industry_id" domain="[('parent_id.parent_id','=',False)]" options="{'no_create': True}"/>
@@ -884,6 +891,7 @@
                                     <field name="categ_id_parent" options="{'no_create': True}"/>
                                     <field name="categ_id" options="{'no_create': True}"/>
                                     <field name="project_space"/>
+                                    <field name="software_space"/>
                                 </tree>
                                 <form>
                                     <sheet>
@@ -932,7 +940,7 @@
                     <field name="name" string="Lead / Customer" filter_domain="['|','|','|',('partner_name','ilike',self),('email_from','ilike',self),('contact_name','ilike',self),('name','ilike',self)]"/>
                     <!--<field name="tag_ids" string="Tag" filter_domain="[('tag_ids', 'ilike', self)]"/>-->
                     <field name="team_id"/>
-                    <field name="user_id"/>
+                    <field name="sale_apply_id"/>
                     <field name="partner_id" operator="child_of" string="Customer"/>
                     <field name="create_date"/>
                     <field name="country_id"/>
@@ -1268,5 +1276,66 @@
       <!--<menuitem name="产品层级图" id="product_tree_view_menuitem" action="action_product_tree_view" parent="base.menu_top_dtdream_product" sequence="2"/>-->
 
       <menuitem name="产品列表" id="product_list_view_menuitem" action="product.product_template_action" parent="base.menu_top_dtdream_product" sequence="1"/>
+
+
+      <!--定义行政区域-->
+      <record id="view_dtdream_area_form" model="ir.ui.view">
+          <field name="name">view.dtdream.area.form</field>
+          <field name="model">dtdream.area</field>
+          <field name="arch" type="xml">
+              <form>
+                  <sheet>
+                      <group>
+                          <group>
+                              <field name="name"/>
+                              <field name="code"/>
+                              <field name="parent_code"/>
+                              <field name="province"/>
+                              <field name="parent_id"/>
+                          </group>
+                          <group>
+                              <field name="country"/>
+                              <field name="area_code"/>
+                              <field name="area_leave"/>
+                              <field name="area_type"/>
+                          </group>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="view_dtdream_area_tree" model="ir.ui.view">
+          <field name="name">view.dtdrean.area.tree</field>
+          <field name="model">dtdream.area</field>
+          <field name="field_parent">child_ids</field>
+          <field name="arch" type="xml">
+              <tree>
+                  <field name="parent_id" invisible="True"/>
+                  <field name="name"/>
+                  <field name="code"/>
+                  <field name="parent_code"/>
+                  <field name="province"/>
+                  <field name="country"/>
+                  <field name="area_code"/>
+                  <field name="area_leave"/>
+                  <field name="area_type"/>
+              </tree>
+          </field>
+      </record>
+
+      <!--行政区域action定义-->
+      <record id="act_dtdream_area" model="ir.actions.act_window">
+          <field name="name">行政区域</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">dtdream.area</field>
+          <field name="view_type">tree</field>
+          <field name="view_mode">tree,list,form</field>
+          <field name="domain">[('parent_id','=',False)]</field>
+      </record>
+
+      <!--定义行政区域菜单-->
+      <menuitem name='行政区域配置' id='menu_setting_dtdream_area' parent='base.menu_sale_config' sequence="65" action="act_dtdream_area"/>
+
   </data>
 </openerp>

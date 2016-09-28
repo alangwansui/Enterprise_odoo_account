@@ -38,7 +38,7 @@
 
                   <group string="申请人信息">
                       <group>
-                          <field name="name" required="True" attrs="{'readonly':['|','&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
+                          <field name="name" required="True" attrs="{'readonly':['|','&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>
                           <field name="iphone"/>
                           <field name="post" invisible="True"/>
                           <field name="home" invisible="True"/>
@@ -53,24 +53,24 @@
                   <group string="客户信息">
                       <group>
                           <!--<field name="customer_v" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False)]}"/>-->
-                          <field name="customer_source" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)],'invisible':[('customer_source','!=','0')]}"/>
-                          <field name="inter_tel" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                          <field name="visit_count" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                          <field name="background" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="customer_source" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="project" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)],'invisible':[('customer_source','!=','0')]}"/>
+                          <field name="inter_tel" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="visit_count" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="background" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                       </group>
                       <group>
-                          <field name="customer_char" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)], 'invisible':[('customer_source','=','0')]}"/>
-                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)], 'invisible':[('customer_source','!=','0')],'required':[('customer_source','=','0')]}"/>
-                          <field name="customer_level" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                          <field name="visit_date" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                          <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="customer_char" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)], 'invisible':[('customer_source','=','0')]}"/>
+                          <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)], 'invisible':[('customer_source','!=','0')],'required':[('customer_source','=','0')]}"/>
+                          <field name="customer_level" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="visit_date" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                       </group>
                   </group>
                   <group string="主宾信息">
                       <notebook>
                         <page>
-                            <field name="guest" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}" string="主宾信息">
+                            <field name="guest" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}" string="主宾信息">
                                 <tree editable="bottom">
                                     <field name="name_guest" required="True"/>
                                     <field name="post_guest"/>
@@ -81,24 +81,24 @@
                   </group>
                   <group string="客户接待执行人" attrs="{'invisible':[('state','in',('0','1'))]}">
                       <group>
-                          <field name="receptionist" attrs="{'readonly':['|','&amp;',('state','!=', '2'),('is_manage','=',False),'&amp;',('state','=','2'),('is_officer','=',False)]}"/>
+                          <field name="receptionist" attrs="{'readonly':['|','&amp;',('state','!=', '2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_officer','=',False),('is_manage','=',False)]}"/>
                       </group>
                   </group>
                   <notebook>
                       <page string="费用预算">
                           <group>
                               <group>
-                                  <field name="has_special" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="has_special" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                               <group>
-                                  <field name="special_code" options="{'no_create': True}" domain="[('applicant.user_id','=', uid),('state','=','state_05')]" attrs="{'invisible':[('has_special','!=','0')],'required':[('has_special','=','0')],'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="special_code" options="{'no_create': True}" domain="[('applicant.user_id','=', uid),('state','=','state_05')]" attrs="{'invisible':[('has_special','!=','0')],'required':[('has_special','=','0')],'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                           </group>
 
                           <group string="费用预算">
                               <notebook>
                                   <page>
-                                      <field name="cost" attrs="{'readonly':['|','|',('has_special','=','0'),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}">
+                                      <field name="cost" attrs="{'readonly':['|','|',('has_special','=','0'),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}">
                                           <tree editable="bottom" class="dtdream_customer_info">
                                               <field name="fee_type"/>
                                               <field name="money"/>
@@ -116,11 +116,11 @@
                       <page string="接待要求">
                           <group string="接待资源需求">
                               <group>
-                                  <field name="accompany_leads" widget="many2many_tags" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                                  <field name="participants" widget="many2many_tags" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="accompany_leads" widget="many2many_tags" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="participants" widget="many2many_tags" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                               <group>
-                                  <field name="interpreter" widget="many2many_tags" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="interpreter" widget="many2many_tags" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                           </group>
 
@@ -129,34 +129,34 @@
                                   <!--<field name="meeting" options="{'no_open': True,'no_create': True}" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
                                   <label for="room_capacity"/>
                                   <div class="o_row dtdream_customer_integer_input">
-                                      <field name="room_capacity" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="room_capacity" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span>人</span>
                                   </div>
                                   <!--<field name="reserve_time" attrs="{'readonly':[('state','!=', '0'),('is_manage','=',False)]}"/>-->
                               </group>
                               <group>
-                                  <field name="busy_time_room" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="busy_time_room" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                               <group style="margin-top: -10px;" colspan="12">
                                   <label string="会议室准备" colspan="4" style="font-weigh:bold"/>
                                   <div class="o_row dtdream_customer_checkbox">
-                                      <field name="ppt" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="ppt" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:30px">PPT</span>
-                                      <field name="water" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="water" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:30px">瓶装水</span>
-                                      <field name="tea" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="tea" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:30px">茶水</span>
-                                      <field name="meeting_document" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="meeting_document" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:30px">公司资料</span>
-                                      <field name="seat_board" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="seat_board" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:30px">席位牌</span>
-                                      <field name="banner" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="banner" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:30px">横幅</span>
-                                      <field name="other_more" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="other_more" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span>其它</span>
                                   </div>
                                   <group>
-                                      <field name="other_more_text" attrs="{'invisible':[('other_more','=',False)],'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}" />
+                                      <field name="other_more_text" attrs="{'invisible':[('other_more','=',False)],'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}" />
                                   </group>
                               </group>
                           </group>
@@ -164,25 +164,25 @@
                           <group string="用车安排">
                               <group>
                                   <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
-                                      <field name="car" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="car" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <div class="transport">
                                           <span >小车</span>
-                                          <field name="car_num" attrs="{'readonly':['|',('car', '=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                          <field name="car_num" attrs="{'readonly':['|',('car', '=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                           <span>部</span>
                                       </div>
                                   </div>
                                   <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
-                                      <field name="commercial_vehicle" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="commercial_vehicle" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <div class="transport">
                                           <span>商务车</span>
-                                          <field name="commercial_vehicle_num" attrs="{'readonly':['|',('commercial_vehicle','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                          <field name="commercial_vehicle_num" attrs="{'readonly':['|',('commercial_vehicle','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                           <span>部</span>
                                       </div>
                                   </div>
                               </group>
                               <group>
                                   <div class="dtdream_customer_input dtdream_customer_checkbox">
-                                      <field name="bicycle" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="bicycle" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <div class="transport">
                                           <span>自行乘车</span>
                                       </div>
@@ -193,7 +193,7 @@
                           <group string="行程路线">
                               <notebook>
                                 <page>
-                                    <field name="path" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}" string="行程路线">
+                                    <field name="path" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}" string="行程路线">
                                         <tree editable="bottom" class="dtdream_customer_path">
                                             <field name="start_time"/>
                                             <field name="starting"/>
@@ -208,21 +208,21 @@
                           <group string="接送要求">
                               <group>
                                   <div class="o_row dtdream_customer_checkbox">
-                                      <field name="driver" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="driver" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-top:-5px">司机</span>
                                   </div>
                                   <div class="dtdream_customer_checkbox">
-                                       <field name="card" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                       <field name="card" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                        <span>接机牌</span>
                                   </div>
                               </group>
                               <group>
                                   <div class="o_row dtdream_customer_checkbox">
-                                      <field name="assistance" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="assistance" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span>接机/接站人员</span>
                                   </div>
                                   <div class="dtdream_customer_checkbox">
-                                      <field name="flower" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="flower" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span>鲜花</span>
                                   </div>
                               </group>
@@ -232,47 +232,47 @@
                               <group>
                                   <label for="single_room" string="酒店住宿"/>
                                   <div class="o_row dtdream_customer_checkbox">
-                                      <field name="single_room" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="single_room" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span attrs="{'invisible':[('room_self','=',True)]}">标准单人房</span>
-                                      <field name="single_room_num" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|',('single_room','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="single_room_num" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|',('single_room','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:20px" attrs="{'invisible':[('room_self','=',True)]}">间</span>
-                                      <field name="double_room" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="double_room" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span attrs="{'invisible':[('room_self','=',True)]}">标准双人房</span>
-                                      <field name="double_room_num" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|',('double_room','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="double_room_num" attrs="{'invisible':[('room_self','=',True)], 'readonly':['|',('double_room','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-right:20px" attrs="{'invisible':[('room_self','=',True)]}">间</span>
-                                      <field name="room_self" attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)], 'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="room_self" attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)], 'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span attrs="{'invisible':['|',('double_room','=',True),('single_room','=',True)]}">自理安排酒店</span>
                                   </div>
                                   <label for="hotel"/>
                                   <div class="o_row">
-                                      <field name="hotel" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="hotel" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                   </div>
                                   <label for="dinner"/>
                                   <div class="o_row">
-                                      <field name="dinner" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="dinner" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                   </div>
                                   <label for="memories"/>
                                   <div class="o_row" style="margin: -2px 0 5px -30px;">
-                                      <field name="memories" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="memories" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <span style="margin-left: 30px;font-weight:bold">数量</span>
-                                      <field name="memories_num" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="memories_num" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                   </div>
                                   <label for="remark"/>
                                   <div class="o_row" style="margin: -2px 0 5px -30px;">
-                                      <field name="remark" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <field name="remark" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                   </div>
                               </group>
                               <group>
-                                  <field name="hotel_position" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                                  <field name="payment_hotel" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                                  <field name="dinner_position" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
-                                  <field name="payment_dinner" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="hotel_position" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="payment_hotel" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="dinner_position" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="payment_dinner" widget="radio" options="{'horizontal': true}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                           </group>
 
                           <group string="摄影">
                               <group>
-                                  <field name="camera" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                  <field name="camera" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                               </group>
                           </group>
                       </page>
@@ -280,14 +280,14 @@
 
                   <group string="接待小结" attrs="{'invisible':[('state','in',('0','1', '2'))]}">
                       <group>
-                          <field name="summary" attrs="{'readonly':['|','|',('is_receptionist','=',False),'&amp;',('state','!=', '3'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="summary" attrs="{'readonly':['|','&amp;',('is_receptionist','=',False),'&amp;',('state','=', '3'),('is_manage','=',False),'&amp;',('state','!=', '3'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
                   <group string="评价" attrs="{'invisible':[('state','not in',('4','99'))]}">
                       <group>
                           <label for="score" string="请对本次的客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
                           <div class="o_row">
-                              <field name="score" attrs="{'readonly':['|','|',('is_shenqingren','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False),'&amp;',('state','=', '0'),'&amp;',('is_shenqingren','=',False),('is_create','=', False)],'required':[('state','=','4')]}"/>
+                              <field name="score" attrs="{'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)],'required':[('state','=','4')]}"/>
                           </div>
                       </group>
                   </group>

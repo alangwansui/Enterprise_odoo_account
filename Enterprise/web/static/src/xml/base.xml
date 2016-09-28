@@ -73,11 +73,11 @@
           </a>
         </t>
     </div>
-    <!--
+
     <div class="o_application_switcher_footer">
-        <img src="/web/static/src/img/odoo.png" alt="Odoo"/>
+        <img src="/web/static/src/img/dodo.png" alt="dodo"/>
     </div>
-    -->
+
 </div>
 
 <!-- <div t-name="WebClient.database_expiration_panel">
@@ -179,8 +179,9 @@
             t-att-data-view-type="view.type" t-att-title="view.label"/>
     </t>
 </t>
-
+<!--lucongjin-->
 <t t-name="WebClient.DebugManager">
+    <t t-if="widget.session.uid===1">
     <div class="navbar navbar-inverse o_debug_manager hidden-xs">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -207,7 +208,9 @@
             </div>
         </div>
     </div>
+    </t>
 </t>
+
 <t t-name="WebClient.DebugManager.Global">
     <!-- TODO: open timeline + timeline recap; inspector/console -->
     <li class="dropdown">
@@ -1411,12 +1414,12 @@
             <span class="oe_topbar_name"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu" role="menu">
-            <li><a href="#" data-menu="documentation">Documentation</a></li>
+            <!--<li><a href="#" data-menu="documentation">Documentation</a></li>-->
             <li><a href="#" data-menu="support">Support</a></li>
             <li><a href="#" data-menu="about">About</a></li>
             <li class="divider"/>
             <li><a href="#" data-menu="settings">Preferences</a></li>
-            <li><a href="#" data-menu="account">My Odoo.com account</a></li>
+            <!--<li><a href="#" data-menu="account">My dodo.com account</a></li>-->
             <li><a href="#" data-menu="logout">Log out</a></li>
         </ul>
     </li>
@@ -1424,9 +1427,11 @@
 
 <div t-name="UserMenu.about" class="oe_about">
     <div class="container-fluid">
+
         <div class="row">
-            <a class="oe_activate_debug_mode oe_right label label-primary" href="?debug" >Activate the developer mode</a>
+           <!-- <a class="oe_activate_debug_mode oe_right label label-primary" href="?debug" >Activate the developer mode</a>-->
         </div>
+
         <div class="row">
             <div class="col-sm-offset-2 col-md-offset-2 col-sm-8 col-md-8 user-details">
                 <div class="user-image">
@@ -1434,18 +1439,22 @@
                 </div>
                 <div class="user-info-block">
                     <div class="user-heading">
-                        <h3>
+                       <!-- <h3>
                             Version <t t-esc="db_info.server_version"/>
                             (Enterprise Edition)
                         </h3>
                         <t t-if="db_info.expiration_date">
                             <h5>Database expiration: <t t-esc="new moment(db_info.expiration_date).format('LL')"/></h5>
                         </t>
+                        -->
+                        <h3>版本 : v1.0.0 (Enterprise Edition)</h3>
                     </div>
                     <div class="user-body">
                         <div class="tab-content">
                             <div id="settings" class="tab-pane active">
-                                <h4>Copyright © 2004-2015 Odoo S.A.</h4>
+                                <h4>版权所有 © 杭州数梦工场科技有限公司 2015-2016。</h4>
+                                <p>帮助手册请拜访信息 <a target="_blank" href="http://confluence.dtdream.com/display/CON/dodo" style="text-decoration: underline;">帮助手册</a></p>
+                                <!--
                                 <p>Odoo is a trademark of <a target="_blank" href="https://www.odoo.com" style="text-decoration: underline;">Odoo S.A.</a></p>
                                 <p>Licenced under the terms of <a target="_blank" href="http://www.gnu.org/licenses/lgpl.html" style="text-decoration: underline;">GNU Lesser General Public License</a></p>
                                 <p>For more information visit <a target="_blank" href="https://www.odoo.com" style="text-decoration: underline;">Odoo.com</a></p>
@@ -1455,6 +1464,7 @@
                                   <a href="https://www.odoo.com/web/about/googleplus"><i class="fa fa-google-plus-square fa-3x social-gp"></i></a>
                                   <a href="https://www.odoo.com/web/about/linkedin"><i class="fa fa-linkedin-square fa-3x social-lk"></i></a>
                                 </p>
+                                -->
                             </div>
                         </div>
                     </div>

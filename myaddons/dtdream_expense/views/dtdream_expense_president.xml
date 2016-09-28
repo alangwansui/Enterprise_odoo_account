@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record model="ir.ui.view" id="dtdream_expense_president_tree_view">
+            <field name="name">dtdream.expense.president.tree</field>
+            <field name="model">dtdream.expense.president</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="type"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_president_form_view">
+            <field name="name">dtdream.expense.president.form</field>
+            <field name="model">dtdream.expense.president</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
+
+
+                            <group>
+
+                                <field name="type"/>
+                                <field name="name"/>
+                            </group>
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_president">
+            <field name="name">公司总裁</field>
+            <field name="res_model">dtdream.expense.president</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem name="公司总裁" id="dtdream_expense_president" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_president" sequence="400" groups="group_dtdream_expense_admin"/>
+
+    </data>
+    </openerp>

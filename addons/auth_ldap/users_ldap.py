@@ -77,6 +77,20 @@ class CompanyLDAP(osv.osv):
             connection.start_tls_s()
         return connection
 
+    def connect_ssl(self, conf, certfile):
+
+        uri = 'ldaps://%s:%d' % (conf['ldap_server'],
+                                 conf['ldap_server_port'])
+        ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)
+        ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, certfile)
+        ldap.set_option(ldap.OPT_X_TLS, ldap.OPT_X_TLS_DEMAND)
+        ldap.set_option(ldap.OPT_X_TLS_DEMAND, True)
+
+        connection = ldap.initialize(uri)
+        if conf['ldap_tls']:
+            connection.start_tls_s()
+        return connection
+
     def authenticate(self, conf, login, password):
         """
         Authenticate a user against the specified LDAP server.
@@ -200,11 +214,44 @@ class CompanyLDAP(osv.osv):
             values = self.map_ldap_attributes(cr, uid, conf, login, ldap_entry)
             if conf['user']:
                 values['active'] = True
+                values['ldap_user'] = True
                 user_id = user_obj.copy(cr, SUPERUSER_ID, conf['user'],
                                         default=values)
             else:
+                values['ldap_user'] = True
                 user_id = user_obj.create(cr, SUPERUSER_ID, values)
         return user_id
+
+
+    def change_password(self, conf, login, new_passwd):
+
+        try:
+            ldap_ssl = openerp.tools.config['ldap_ssl']
+            if ldap_ssl:
+                conf['ldap_server'] = openerp.tools.config['ldap_domain']
+                conf['ldap_server_port'] = 636
+                ldap_cert_file = openerp.tools.config['ldap_cert_file']
+                connect = self.connect_ssl(conf, ldap_cert_file)
+            else:
+                connect = self.connect(conf)
+
+            ldap_password = conf['ldap_password'] or ''
+            ldap_binddn = conf['ldap_binddn'] or ''
+            connect.simple_bind_s(ldap_binddn.encode('utf-8'), ldap_password.encode('utf-8'))
+
+            password = new_passwd
+            cn = login
+
+            unicode_pass = unicode('\"' + str(password) + '\"')
+            password_value = unicode_pass.encode('utf-16-le')
+            reset_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
+
+            dn = ('cn=%s,' % cn) + conf['ldap_base']
+            connect.modify_s(dn, reset_pass)
+        except Exception, e:
+            raise
+        finally:
+            connect.unbind()
 
     _columns = {
         'sequence': fields.integer('Sequence'),
@@ -248,6 +295,10 @@ class res_company(osv.osv):
 
 class users(osv.osv):
     _inherit = "res.users"
+    _columns = {
+        'ldap_user': fields.boolean('ldap', required=False, default=False),
+    }
+
     def _login(self, db, login, password):
         user_id = super(users, self)._login(db, login, password)
         if user_id:
@@ -282,5 +333,53 @@ class users(osv.osv):
                     if ldap_obj.authenticate(conf, res[0], password):
                         return
             raise
-        
+
+    def change_password(self, cr, uid, old_passwd, new_passwd, context=None):
+        """Change current user password. Old password must be provided explicitly
+        to prevent hijacking an existing user session, or for cases where the cleartext
+        password is not used to authenticate requests.
+
+        :return: True
+        :raise: openerp.exceptions.AccessDenied when old password is wrong
+        :raise: except_osv when new password is not set or empty
+        """
+        cr.execute('SELECT ldap_user FROM res_users WHERE id=%s AND active=TRUE',
+                   (int(uid),))
+        res = cr.fetchone()
+        if not res[0]:
+            cr.execute('SELECT login FROM res_users WHERE id=%s AND active=TRUE',
+                       (int(uid),))
+            login = cr.fetchone()
+            user_id = super(users, self)._login(cr.dbname, login[0], old_passwd)
+            if user_id:
+                return self.write(cr, SUPERUSER_ID, uid, {'password': new_passwd})
+            else:
+                raise openerp.exceptions.AccessDenied
+        else:
+            try:
+                super(users, self).check(cr.dbname, uid, old_passwd)
+            except openerp.exceptions.AccessDenied:
+                raise
+
+            cr.execute('SELECT login FROM res_users WHERE id=%s AND active=TRUE',
+                       (int(uid),))
+            res = cr.fetchone()
+            if not res:
+                raise openerp.exceptions.AccessDenied()
+
+            login = res[0]
+            registry = RegistryManager.get(cr.dbname)
+            with registry.cursor() as cr:
+                ldap_obj = registry.get('res.company.ldap')
+                for conf in ldap_obj.get_ldap_dicts(cr):
+                    entry = ldap_obj.authenticate(conf, login, old_passwd)
+                    if entry:
+                        # todo
+                        # modify password
+                        try:
+                            ldap_obj.change_password(conf, login, new_passwd)
+                            return res
+                        except:
+                            raise
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

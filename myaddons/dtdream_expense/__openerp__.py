@@ -23,12 +23,23 @@
 
     # always loaded
     'data': [
-         'security/ir.model.access.csv',
-        'wizard/expense_wizard.xml',
-        'views/views.xml',
-        'views/templates.xml',
-        'workflow/expenseworkflow.xml',
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'wizard/expense_wizard_reject.xml',
+        'wizard/expense_wizard_agree.xml',
 
+        'views/dtdream_expense_record.xml',
+        'views/dtdream_expense_report.xml',
+        'views/dtdream_expense_catelog.xml',
+        'views/dtdream_expense_detail.xml',
+        'views/dtdream_expense_president.xml',
+        'views/dtdream_expense_quanqian.xml',
+        'views/dtdream_expense_city.xml',
+        'views/dtdream_expense_province.xml',
+
+        'workflow/expenseworkflow.xml',
+        'views/expense_data.xml',
+        'print/dtdream_expense_report.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

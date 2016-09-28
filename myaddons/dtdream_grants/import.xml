@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="assets_backend" name="document assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/dtdream_grants/static/src/css/grants.css"></link>
+                <script type="text/javascript" src="/dtdream_grants/static/src/js/grants.js"></script>
+            </xpath>
+        </template>
+    </data>
+</openerp>

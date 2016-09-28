@@ -12,6 +12,13 @@ access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ve
 access_dtdream_execption,dtdream_execption,model_dtdream_execption,group_dtdream_rd_user_all,1,1,1,0
 
 
+access_dtdream_rd_replanning,dtdream_rd_replanning,model_dtdream_rd_replanning,group_dtdream_rd_user_all,1,1,1,1
+
+
+
+
+
+
 qa_access_dtdream_rd_prod,dtdream_rd_prod,model_dtdream_rd_prod,group_dtdream_rd_qa,1,1,1,1
 qa_access_dtdream_prod_appr,dtdream_prod_appr,model_dtdream_prod_appr,group_dtdream_rd_qa,1,1,1,1
 qa_access_dtdream_rd_version,dtdream_rd_version,model_dtdream_rd_version,group_dtdream_rd_qa,1,1,1,1
@@ -23,6 +30,8 @@ qa_access_dtdream_rd_process,dtdream_rd_process,model_dtdream_rd_process,group_d
 qa_access_dtdream_rd_approver_ver,dtdream_rd_approver_ver,model_dtdream_rd_approver_ver,group_dtdream_rd_qa,1,1,1,1
 qa_access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ver,group_dtdream_rd_qa,1,1,1,1
 qa_access_dtdream_execption,dtdream_execption,model_dtdream_execption,group_dtdream_rd_qa,1,1,1,1
+
+qa_access_dtdream_rd_replanning,dtdream_rd_replanning,model_dtdream_rd_replanning,group_dtdream_rd_qa,1,1,1,1
 
 
 base_access_dtdream_rd_prod,dtdream_rd_prod,model_dtdream_rd_prod,group_dtdream_rd_user,1,0,0,0
@@ -36,5 +45,12 @@ bass_access_dtdream_rd_process,dtdream_rd_process,model_dtdream_rd_process,group
 bass_access_dtdream_rd_approver_ver,dtdream_rd_approver_ver,model_dtdream_rd_approver_ver,group_dtdream_rd_user,1,0,0,0
 bass_access_dtdream_rd_process_ver,dtdream_rd_process_ver,model_dtdream_rd_process_ver,group_dtdream_rd_user,1,0,0,0
 bass_access_dtdream_execption,dtdream_execption,model_dtdream_execption,group_dtdream_rd_user,1,0,0,0
+
+
+base_access_dtdream_rd_replanning,dtdream_rd_replanning,model_dtdream_rd_replanning,group_dtdream_rd_user,1,0,0,0
+
+
+
+
 
 

@@ -44,5 +44,28 @@
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
              <field name="domain_force">[('is_create','=',True),('version_state','=','draft')]</field>
          </record>
+
+        <record id="rd_prod_rule_03" model="ir.rule">
+             <field name="name">版本创建时产品查看</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">['|','|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),('his_app_user','=',user.id),('followers_user','=',user.id),('department_2','=',user.employee_ids.department_id.id)]</field>
+         </record>
+
+        <record id="rd_prod_rule_04" model="ir.rule">
+             <field name="name">版本重计划删除</field>
+             <field name="model_id" ref="model_dtdream_rd_replanning"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">[('state','=','state_01')]</field>
+         </record>
+
         </data>
     </openerp>

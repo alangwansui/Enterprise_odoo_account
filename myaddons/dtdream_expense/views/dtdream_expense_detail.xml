@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="dtdream_expense_detail_tree_view">
+            <field name="name">dtdream.expense.detail.tree</field>
+            <field name="model">dtdream.expense.detail</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="parentid"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_detail_form_view">
+            <field name="name">dtdream.expense.detail.form</field>
+            <field name="model">dtdream.expense.detail</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
+
+
+                            <group>
+
+                                <field name="name"/>
+                                <field name="parentid"/>
+                            </group>
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_detail">
+            <field name="name">费用明细</field>
+
+            <field name="res_model">dtdream.expense.detail</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="费用明细" id="dtdream_expense_detail" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_detail" sequence="400" groups="group_dtdream_expense_admin"/>
+    </data>
+    </openerp>

@@ -162,7 +162,7 @@
                                     <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
-                                    <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}" invisible="True"/>
+                                    <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="state" invisible="True"/>
                                     <field name="login" invisible="True"/>
                                     <field name="officer" invisible="True"/>
@@ -174,7 +174,8 @@
                     </notebook>
                 </group>
 
-                <group string="主管评价">
+
+                <group string="总体评价">
                     <group>
                         <field name="evaluate_officer" placeholder='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)' attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('is_officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                     </group>

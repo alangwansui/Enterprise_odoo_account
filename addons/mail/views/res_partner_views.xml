@@ -19,7 +19,7 @@
                 </xpath>
             </field>
         </record>
-
+<!--
        <record model="ir.ui.view" id="res_partner_opt_out_search">
             <field name="name">res.partner.opt_out.search</field>
             <field name="model">res.partner</field>
@@ -33,6 +33,7 @@
                     </filter>
             </field>
         </record>
+        -->
 
         <!--Definition of an email template with an empty body that will be used in partner mailing. Used to give a
             basis for email recipients, name and to ease the definition of a further elaborated template. -->

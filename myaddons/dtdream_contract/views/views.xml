@@ -186,7 +186,15 @@
       <field name="domain">[('his_approve.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_all_contract">
-      <field name="name">所有合同</field>
+      <field name="name">所有单据</field>
+      <field name="res_model">dtdream.contract</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">['|','|','|',('current_handler_ids.user_id','=',uid),('his_approve.user_id','=',uid),('create_uid','=',uid),('applicant.user_id','=',uid)]</field>
+    </record>
+    <record model="ir.actions.act_window" id="open_all_all_contract">
+      <field name="name">报告</field>
       <field name="res_model">dtdream.contract</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
@@ -209,11 +217,12 @@
 
     <!-- ====================================================菜单===================================================== -->
     <menuitem name="合同评审" id="menu_contract_root" web_icon="dtdream_contract,static/src/img/dtdream_contract.png"></menuitem>
-    <menuitem name="我的申请" id="menu_contract_my_request" parent="menu_contract_root" action="open_contract_my_request"></menuitem>
-    <menuitem name="待我审批" id="menu_contract_to_approve" parent="menu_contract_root" action="open_wait_to_approve"></menuitem>
-    <menuitem name="我已审批" id="menu_contract_approved" parent="menu_contract_root" action="open_approved"></menuitem>
-    <menuitem name="所有合同" id="menu_contract_all" parent="menu_contract_root" action="open_all_contract" groups="group_contract_view_all"></menuitem>
-    <menuitem name="审批人维护" id="menu_contract_config" parent="menu_contract_root" action="open_contract_config" groups="group_contract_config"></menuitem>
-    <menuitem name="标准合同下载地址管理" id="menu_contract_url" parent="menu_contract_root" action="open_contract_url" groups="group_contract_config"></menuitem>
+    <menuitem name="我的申请" id="menu_contract_my_request" parent="menu_contract_root" action="open_contract_my_request" sequence="10"></menuitem>
+    <menuitem name="待我审批" id="menu_contract_to_approve" parent="menu_contract_root" action="open_wait_to_approve" sequence="20"></menuitem>
+    <menuitem name="我已审批" id="menu_contract_approved" parent="menu_contract_root" action="open_approved" sequence="30"></menuitem>
+    <menuitem name="所有单据" id="menu_contract_all" parent="menu_contract_root" action="open_all_contract" sequence="40"></menuitem>
+    <menuitem name="报告" id="menu_contract_all_all" parent="menu_contract_root" action="open_all_all_contract" groups="group_contract_view_all" sequence="50"></menuitem>
+    <menuitem name="审批人维护" id="menu_contract_config" parent="menu_contract_root" action="open_contract_config" groups="group_contract_config" sequence="60"></menuitem>
+    <menuitem name="标准合同下载地址管理" id="menu_contract_url" parent="menu_contract_root" action="open_contract_url" groups="group_contract_config" sequence="70"></menuitem>
   </data>
 </openerp>

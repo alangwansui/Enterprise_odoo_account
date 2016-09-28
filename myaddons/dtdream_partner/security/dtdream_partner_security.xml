@@ -41,7 +41,7 @@
         <field name="perm_create" eval="0"/>
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="0"/>
-        <field name="domain_force">[('customer','=',True),'|','|','|',('user_id','=',user.id),('user_id','=',False),('partner_sale_apply_id.login','=', user.login),('partner_sale_apply_id','=',False)]</field>
+        <field name="domain_force">[('customer','=',True),'|','|',('user_id','=',user.id),('partner_sale_apply_id.login','=', user.login),('partner_sale_apply_id','=',False)]</field>
         <field name="groups" eval="[(4, ref('group_dtdream_partner_self'))]"/>
     </record>
 

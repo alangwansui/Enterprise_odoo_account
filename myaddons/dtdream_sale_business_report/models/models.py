@@ -172,6 +172,22 @@ class dtdream_sale_business_report(models.Model):
         self.total_list_price = list_price
         self.total_apply_price = apply_price
 
+    @api.onchange("system_department_id")
+    def onchange_system_department(self):
+        if self.system_department_id:
+            if self.industry_id.parent_id != self.system_department_id:
+                self.industry_id = ""
+            return {
+                'domain': {
+                    "industry_id":[('parent_id','=',self.system_department_id.id)]
+                }
+            }
+
+    @api.onchange("industry_id")
+    def onchange_industry_id(self):
+        if self.industry_id:
+            self.system_department_id = self.industry_id.parent_id
+
     is_business_approveds = fields.Boolean(string="是否历史商务审批人",default=False)
     is_pro_approveds = fields.Boolean(string="是否历史产品审批人",default=False)
     pro_zongbu_finish = fields.Char(string='产品总部并行审批完成标识',default="0")
@@ -557,6 +573,9 @@ class dtdream_crm_lead(models.Model):
                 raise ValidationError("只有营销责任人可以创建对应商务报备申请。")
         cr = self.env['dtdream.sale.business.report'].search([('rep_pro_name.id', '=', self.id)])
         res_id = cr.id if cr else ''
+        import json
+        context = json.loads(json.dumps(self._context))
+        context.update({'active_id': self.id})
         action = {
             'name': '商务提前报备',
             'type': 'ir.actions.act_window',
@@ -564,7 +583,7 @@ class dtdream_crm_lead(models.Model):
             'view_mode': 'form',
             'res_model': 'dtdream.sale.business.report',
             'res_id': res_id,
-            'context': self._context,
+            'context': context,
             }
         return action
 

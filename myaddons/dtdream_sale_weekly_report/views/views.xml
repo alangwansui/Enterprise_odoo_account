@@ -30,11 +30,11 @@
                     <page string="本周工作总结">
                         <group string="空间情况总结"></group>
                         <field name="sys_compute_lists" string="空间情况总结"  attrs="{'readonly':[('state','=','submit')]}">
-                            <tree delete="false" create="false">
-                                <field name="system_name"/>
-                                <field name="bid_amount"/>
-                                <field name="contract_signing_amount"/>
-                                <field name="received"/>
+                            <tree delete="false" create="false" editable="bottom" class="dtdream_tree_cls">
+                                <field name="system_name" readonly="True"/>
+                                <field name="bid_amount" />
+                                <field name="contract_signing_amount" />
+                                <field name="received" />
                                 <field name="accounts_payable"/>
                                 <field name="project_total" readonly="True"></field>
                                 <field name="space_total" readonly="True"></field>
@@ -49,13 +49,14 @@
                                     <group>
                                         <group>
                                             <field name="system_name" readonly="True"/>
-                                            <field name="bid_amount"></field>
-                                            <field name="contract_signing_amount"/>
-                                            <field name="accounts_payable"/>
-                                            <field name="received"/>
+                                            <field name="bid_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"></field>
+                                            <field name="contract_signing_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="accounts_payable"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="received"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
                                         </group>
                                         <group>
-                                            <field name="lead_space_total" readonly="True"></field>
+                                            <field name="project_total"  readonly="True"/>
+                                            <field name="lead_space_total" readonly="True" class="form_cls"></field>
                                             <field name="week_new_space" readonly="True"></field>
                                             <field name="space_total" readonly="True"></field>
                                             <field name="project_count" readonly="True"></field>
@@ -66,6 +67,21 @@
                                 </sheet>
                             </form>
                         </field>
+                        <div name="heji" class="dtdream_tree_cls2">
+                            <label name="heji" string="合计"/>
+                            <field name="bid_amount" />
+                            <field name="contract_signing_amount"/>
+                            <field name="received" />
+                            <field name="accounts_payable"/>
+                            <field name="project_total" />
+                            <field name="space_total"></field>
+                            <field name="lead_space_total" ></field>
+                            <field name="project_count" ></field>
+                            <field name="week_new_space" ></field>
+                            <field name="weekly_refresh_rate" ></field>
+                            <field name="monthly_laed_refresh_rate"></field>
+                            <div class="mask"></div>
+                        </div>
                         <group string="近三个月招投标项目进展"></group>
                         <field name="zhengwu_project" mode="tree" string="近三个月招投标项目进展" attrs="{'readonly':[('state','=','submit')]}">
                             <tree editable="bottom" class="dtdream_weekly_report_tree"  delete="false" create="false">
@@ -134,7 +150,7 @@
                         <group string="含投资项目及其他重要项目进展"></group>
                         <field name="other_project" mode="tree" string="含投资项目及其他重要项目进展" attrs="{'readonly':[('state','=','submit')]}">
                             <tree editable="bottom" class="dtdream_weekly_report_tree">
-                                <field name="project_id" options='{"no_open": True}'/>
+                                <field name="project_id" options='{"no_open": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
                                 <field name="system_department_id" readonly="True"  options='{"no_open": True}'/>
                                 <field name="office_id" readonly="True" options='{"no_open": True}'/>
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
@@ -166,7 +182,7 @@
                         <group string="重点客户(含阿里)高层拜访"></group>
                         <field name="visit_customer" mode="tree" string="重点客户(含阿里)高层拜访" attrs="{'readonly':[('state','=','submit')]}" >
                             <tree editable="bottom" class="visit_customer_tree">
-                                <field name="partner_id" options='{"no_open": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="partner_id" options='{"no_open": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
                                 <field name="system_department_id" options='{"no_open": True}'/>
                                 <field name="office_id" options='{"no_open": True}'/>
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
@@ -181,7 +197,7 @@
                               <sheet>
                                 <group>
                                     <group>
-                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid)]"/>
+                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
                                         <field name="visit_date"/>
                                         <field name="content"/>
                                         <field name="ask_help"/>
@@ -297,7 +313,7 @@
                         <group string="重点客户(含阿里)拜访计划"></group>
                         <field name="customer_visit_plan" mode="tree" string="重点客户(含阿里)拜访计划" attrs="{'readonly':[('state','=','submit')]}">
                             <tree editable="bottom" class="customer_visit_plan_tree">
-                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
                                 <field name="system_department_id" options='{"no_open": True}'/>
                                 <field name="office_id" options='{"no_open": True}'/>
                                 <field name="industry_id" options='{"no_open": True}'/>
@@ -309,7 +325,7 @@
                               <sheet>
                                 <group>
                                   <group>
-                                      <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
                                       <field name="visit_date"/>
                                       <field name="content"/>
                                   </group>
@@ -380,6 +396,8 @@
                     <field name="job_number" string="工号"/>
                     <field name="week" string="周别"/>
                     <separator />
+                    <filter string="近一个月周报" name="groupby_create_date" domain="[('create_date','&gt;', (context_today() -  relativedelta(months=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <separator />
                     <group expand="0" string="Group By">
                         <filter string="部门" name="groupby_department" domain="[]" context="{'group_by':'department'}"/>
                         <filter string="周别" name="groupby_week" domain="[]" context="{'group_by':'week'}"/>
@@ -414,6 +432,8 @@
                     <field name="report_person_name" string="花名"/>
                     <field name="job_number" string="工号"/>
                     <field name="week" string="周别"/>
+                    <separator />
+                    <filter string="近一个月周报" name="groupby_create_date" domain="[('create_date','&gt;', (context_today() -  relativedelta(months=1)).strftime('%%Y-%%m-%%d') )]"/>
                     <separator />
                     <group expand="0" string="Group By">
                         <filter string="部门" name="groupby_department" domain="[]" context="{'group_by':'department'}"/>
@@ -514,12 +534,12 @@
                     <page string="本周工作总结">
                         <group string="空间情况总结"></group>
                         <field name="sys_compute_lists" string="空间情况总结"  attrs="{'readonly':[('status','=','1')]}">
-                            <tree create="false" delete="false">
-                                <field name="system_name"/>
+                            <tree create="false" delete="false" editable="bottom"  class="dtdream_tree_cls">
+                                <field name="system_name" readonly="True"/>
                                 <field name="bid_amount"/>
                                 <field name="contract_signing_amount"/>
-                                <field name="received"/>
-                                <field name="accounts_payable"/>
+                                <field name="received" />
+                                <field name="accounts_payable" />
                                 <field name="project_total" readonly="True"/>
                                 <field name="space_total" readonly="True"></field>
                                 <field name="lead_space_total" readonly="True"></field>
@@ -533,14 +553,14 @@
                                     <group>
                                         <group>
                                             <field name="system_name" readonly="True"/>
-                                            <field name="bid_amount"></field>
-                                            <field name="contract_signing_amount"/>
-                                            <field name="accounts_payable"/>
-                                            <field name="received"/>
+                                            <field name="bid_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"></field>
+                                            <field name="contract_signing_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="accounts_payable"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="received"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
                                         </group>
                                         <group>
-                                            <field name="project_total"/>
-                                            <field name="lead_space_total" readonly="True"></field>
+                                            <field name="project_total"  readonly="True"/>
+                                            <field name="lead_space_total" readonly="True" class="form_cls"></field>
                                             <field name="week_new_space" readonly="True"></field>
                                             <field name="space_total" readonly="True"></field>
                                             <field name="project_count" readonly="True"></field>
@@ -551,6 +571,21 @@
                                 </sheet>
                             </form>
                         </field>
+                        <div name="heji" class="dtdream_tree_cls2">
+                            <label name="heji" string="合计"/>
+                            <field name="bid_amount" />
+                            <field name="contract_signing_amount"/>
+                            <field name="received" />
+                            <field name="accounts_payable"/>
+                            <field name="project_total" />
+                            <field name="space_total"></field>
+                            <field name="lead_space_total" ></field>
+                            <field name="project_count" ></field>
+                            <field name="week_new_space" ></field>
+                            <field name="weekly_refresh_rate" ></field>
+                            <field name="monthly_laed_refresh_rate"></field>
+                            <div class="mask"></div>
+                        </div>
                         <group string="近三个月招投标项目进展"></group>
                         <field name="zhengwu_project" mode="tree" string="近三个月招投标项目进展" attrs="{'readonly':[('status','=','1')]}">
                             <tree editable="bottom" class="dtdream_weekly_report_tree">
@@ -651,7 +686,7 @@
                         <group string="重点客户(含阿里)高层拜访"></group>
                         <field name="visit_customer" mode="tree" string="重点客户(含阿里)高层拜访" attrs="{'readonly':[('status','=','1')]}">
                             <tree editable="bottom" class="visit_customer_tree">
-                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True)]"/>
+                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True),('industry_id','!=',False)]"/>
                                 <field name="system_department_id" options='{"no_open": True}'/>
                                 <field name="office_id" options='{"no_open": True}'/>
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
@@ -666,7 +701,7 @@
                               <sheet>
                                 <group>
                                     <group>
-                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True)]"/>
+                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True),('industry_id','!=',False)]"/>
                                         <field name="visit_date"/>
                                         <field name="content"/>
                                         <field name="ask_help"/>
@@ -782,7 +817,7 @@
                         <group string="重点客户(含阿里)拜访计划"></group>
                         <field name="customer_visit_plan" mode="tree" string="重点客户(含阿里)拜访计划" attrs="{'readonly':[('status','=','1')]}">
                             <tree editable="bottom" class="customer_visit_plan_tree">
-                                <field name="partner_id"/>
+                                <field name="partner_id"  domain="[('customer','=',True),('industry_id','!=',False)]"/>
                                 <field name="system_department_id"  options='{"no_open": True}'/>
                                 <field name="office_id" options='{"no_open": True}'/>
                                 <field name="industry_id" readonly="True" options='{"no_open": True}'/>
@@ -794,7 +829,7 @@
                               <sheet>
                                 <group>
                                   <group>
-                                      <field name="partner_id"/>
+                                      <field name="partner_id"  domain="[('customer','=',True),('industry_id','!=',False)]"/>
                                       <field name="visit_date"/>
                                       <field name="content"/>
                                   </group>

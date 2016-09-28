@@ -20,22 +20,31 @@ class dtdream_special_approval(models.Model):
             rec.job_number=rec.applicant.job_number
             rec.department=rec.applicant.department_id
             rec.mobile_phone = rec.applicant.mobile_phone
+            rec.sq_depart_number = rec.applicant.department_id.code
 
     job_number = fields.Char(compute=_compute_employee,string="工号")
-    department = fields.Many2one("hr.department",compute=_compute_employee,string="部门" ,store=True)
-    department_sy = fields.Many2one("hr.department",string="受益部门",required=True)
+    department = fields.Many2one("hr.department",compute=_compute_employee,string="申请部门" ,store=True)
+    sq_depart_number=fields.Char(compute=_compute_employee,string="申请部门编码" ,store=True)
+    department_sy = fields.Many2one("hr.department",string="受益部门",required=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]).department_id)
+    sy_depart_number=fields.Char(compute=_compute_employee,string="受益部门编码" ,store=True)
     mobile_phone = fields.Char(compute=_compute_employee,string="联系电话")
-    business_type = fields.Selection([('type1','公司/样板点考察类'),('type2','品牌/解决方案类'),('type3','渠道扩展类'),('type4','行政事物类')],string='业务类型',required=True)
+    business_type = fields.Selection([('type1','公司/样板点考察类'),('type2','品牌/解决方案类'),('type3','渠道扩展类'),('type4','行政事务类')],string='业务类型',required=True)
     business_item = fields.Char(string="业务事项",required=True)
     event_location = fields.Char(string="活动地点",required=True)
     customer_unit = fields.Many2one('res.partner',string="客户单位",required=True)
     activities_desc = fields.Text(string="专项活动必要性描述",required=True)
     state = fields.Selection([('state_01','草稿'),('state_02','主管审批'),('state_03','权签人审批'),('state_04','财务审批'),('state_05','完成')],string="状态",default='state_01')
+    product = fields.Many2one('crm.lead',string="项目")
 
     detail_ids = fields.One2many("dtdream.events.agenda","approval","专项活动议程简述")
     fee_ids = fields.One2many("dtdream.approval.fee","fee","费用详情")
 
     current_approver_user = fields.Many2one("res.users",string="当前审批人用户")
+
+    @api.onchange("department_sy")
+    def _onchang_department_sy(self):
+        for rec in self :
+            rec.sy_depart_number=rec.department_sy.code
 
     @api.depends("current_approver_user")
     def _depends_user(self):
@@ -88,7 +97,7 @@ class dtdream_special_approval(models.Model):
         for rec in self.fee_ids:
             total+=rec.money
         self.total = total
-    total = fields.Integer(string="合计",store=True,compute=_onchange_fee)
+    total = fields.Integer(string="合计(元)",store=True,compute=_onchange_fee)
 
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
@@ -194,6 +203,9 @@ class dtdream_special_approval(models.Model):
 
     @api.multi
     def do_cgtj(self):
+        list=['type1']
+        if self.business_type in list and not self.product:
+            raise ValidationError(u'当业务类型为"公司/样板点考察类",项目必填')
         if len(self.detail_ids)<1:
             raise ValidationError(u'专项活动议程简述必须有一条')
         if self.total<=0:

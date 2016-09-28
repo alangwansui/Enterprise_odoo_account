@@ -5,10 +5,9 @@ var core = require('web.core');
 var Dialog = require('web.Dialog');
 var Model = require('web.Model');
 var SystrayMenu = require('web.SystrayMenu');
-var Widget = require('web.Widget');
+    var Widget = require('web.Widget');
 var planner = require('web.planner.common');
 var webclient = require('web.web_client');
-
 var QWeb = core.qweb;
 var _t = core._t;
 var PlannerDialog = planner.PlannerDialog;

@@ -44,19 +44,19 @@
                 <field name="total_chuhuo_price" invisible="True"></field>
                 <field name="total_market_price" invisible="True"></field>
                 <field name="total_sale_price" invisible="True"></field>
-                <field name="apply_person"></field>
-                <field name="rep_pro_name" domain="[('type','=','opportunity'),('sale_apply_id.user_id.id','=',uid)]" attrs="{'readonly':['|',('state','not in',('0')),('is_current','=',False)]}"></field>
+                <field name="apply_person"  invisible="True"></field>
+                <field name="rep_pro_name" options='{"no_create": True}' domain="[('type','=','opportunity'),('sale_apply_id.user_id.id','=',uid)]" attrs="{'readonly':['|',('state','not in',('0')),('is_current','=',False)]}"></field>
                 <field name="project_number" readonly="True"></field>
-                <field name="office_id" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="system_department_id" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="industry_id" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="office_id" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="system_department_id" domain="[('parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="industry_id"  domain="[('parent_id.parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <!--<field name="sale_money" ></field>-->
                 <field name="partner_budget" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="have_hardware" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
               </group>
               <group>
-                <field name="partner_id" domain="[('customer','=','True')]" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="final_partner_id" domain="[('customer','=','True')]" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="final_partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="need_ali_grant" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="bidding_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="pre_implementation_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>

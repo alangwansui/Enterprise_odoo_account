@@ -49,7 +49,7 @@
 }
 
 .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
@@ -70,7 +70,7 @@
   float: left;
 }
 .btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
-  border-radius: 0;
+  border-radius: 2px;
 }
 .btn-group > .btn-group:first-child:not(:last-child) {
   > .btn:last-child,
@@ -170,7 +170,7 @@
 
 .btn-group-vertical > .btn {
   &:not(:first-child):not(:last-child) {
-    border-radius: 0;
+    border-radius: 2px;
   }
   &:first-child:not(:last-child) {
     border-top-right-radius: @btn-border-radius-base;
@@ -182,7 +182,7 @@
   }
 }
 .btn-group-vertical > .btn-group:not(:first-child):not(:last-child) > .btn {
-  border-radius: 0;
+  border-radius: 2px;
 }
 .btn-group-vertical > .btn-group:first-child:not(:last-child) {
   > .btn:last-child,

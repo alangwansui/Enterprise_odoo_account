@@ -6,7 +6,7 @@
                     <field name="sequence">2</field>
                 </record>
                 <record id="group_contract_config" model="res.groups">
-                    <field name="name">合同类型以及审批人配置</field>
+                    <field name="name">合同类型、审批人、标准合同下载地址配置</field>
                     <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
                     <field name="category_id" ref="module_contract_group"></field>
                 </record>

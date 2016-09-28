@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="rd_replanning_workflow" model="workflow">
+            <field name="name">重计划工作流</field>
+            <field name="osv">dtdream.rd.replanning</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="activity_cg" model="workflow.activity">
+            <field name="wkf_id" ref="rd_replanning_workflow"/>
+            <field name="flow_start">True</field>
+            <field name="name">创建草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_cg()</field>
+        </record>
+
+        <record id="activity_spz" model="workflow.activity">
+            <field name="wkf_id" ref="rd_replanning_workflow"/>
+            <field name="name">审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_spz()</field>
+        </record>
+
+        <record id="activity_ysp" model="workflow.activity">
+            <field name="wkf_id" ref="rd_replanning_workflow"/>
+            <field name="flow_stop">True</field>
+            <field name="name">完成</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_ysp()</field>
+        </record>
+
+        <record id="tran_a_b" model="workflow.transition">
+            <field name="act_from" ref="activity_cg"/>
+            <field name="act_to" ref="activity_spz"/>
+            <field name="signal">cg_to_spz</field>
+        </record>
+
+        <record id="tran_b_c" model="workflow.transition">
+            <field name="act_from" ref="activity_spz"/>
+            <field name="act_to" ref="activity_ysp"/>
+            <field name="signal">spz_to_ysp</field>
+        </record>
+
+        <record id="tran_b_a" model="workflow.transition">
+            <field name="act_from" ref="activity_spz"/>
+            <field name="act_to" ref="activity_cg"/>
+            <field name="signal">spz_to_cg</field>
+        </record>
+
+    </data>
+</openerp>

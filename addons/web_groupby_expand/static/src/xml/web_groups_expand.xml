@@ -1,0 +1,12 @@
+<templates id="template" xml:space="preserve">
+    <t t-name="ViewManager.switch-buttons">
+    <t t-foreach="views" t-as="view">
+        <button type="button" t-att-accesskey="view.accesskey"
+            t-attf-class="btn btn-default fa #{view.icon} oe-cp-switch-#{view.type}"
+            t-att-data-view-type="view.type" t-att-title="view.label"/>
+    </t>
+        <li class="btn btn-default fa o-list-expand"  style="display:none;" title="Expand">
+                <i class="fa fa-expand" id="expand_icon"></i>
+            </li>
+</t>
+</templates>
