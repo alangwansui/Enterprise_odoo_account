@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template">
+    <t t-name="main">
+        <div>
+            <nav class="bar bar-tab o_main_bar">
+                <a class="tab-item active" href="#" data-item-id="expense">
+                    <span class="icon">
+                        <i class="icon iconfont">&#xe6a6;</i>
+                    </span>
+                    <span class="tab-label">费用明细</span>
+                </a>
+                <a class="tab-item" href="#" data-item-id="report">
+                    <span class="icon">
+                        <i class="icon iconfont">&#xe660;</i>
+                    </span>
+                    <span class="tab-label">费用报销</span>
+                </a>
+                <a class="tab-item" href="#" data-item-id="workflow">
+                    <span class="icon">
+                        <i class="icon iconfont">&#xe61b;</i>
+                    </span>
+                    <span class="tab-label">待我审批</span>
+                </a>
+                <a class="tab-item" href="#" data-item-id="my">
+                    <span class="icon">
+                        <i class="icon iconfont">&#x3575;</i>
+                    </span>
+                    <span class="tab-label">我的</span>
+                </a>
+            </nav>
+        </div>
+    </t>
+
+    <t t-name="expense">
+        <div>
+            <div class="o_expense"></div>
+        </div>
+    </t>
+
+    <t t-name="report_expense_list">
+        <div class="list-block media-list">
+            <ul>
+                <t t-foreach="expense_records" t-as="i">
+                    <li class="o_report_expense_record" t-att-data-id="i.id">
+                        <label class=" label-checkbox item-content">
+                            <div class="item-inner o_expense_list" t-att-data-id="i.id">
+                                <div class="item-title-row">
+                                    <div class="item-title">
+                                        <t t-esc="i.expensedetail[1]"/>
+                                    </div>
+                                    <div class="item-after">
+                                        <i class="icon iconfont">&#xe602;</i>
+                                        <t t-esc="i.invoicevalue"/>
+                                    </div>
+                                </div>
+                                <div class="item-text">
+                                    <div class="row">
+                                        <div class="col-40">
+                                            <t t-esc="i.currentdate"/>
+                                        </div>
+                                        <div class="col-60">
+                                            <t t-if="i.province">
+                                                <t t-esc="i.province[1]"/>
+                                            </t>
+                                            <t t-if="city">-
+                                                <t t-esc="city[1]"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <t t-if="state=='draft'">
+                                <div class="item-media o_delete_report_expense">
+                                    <i class="icon iconfont " style="font-size:24px;">&#xe66a;</i>
+                                </div>
+                            </t>
+                        </label>
+                    </li>
+                </t>
+            </ul>
+        </div>
+
+    </t>
+
+    <t t-name="search_expense_list">
+        <div class="list-block media-list">
+            <ul>
+                <t t-foreach="expense_records" t-as="i">
+                    <li class="o_select_expense" t-att-data-id="i.id">
+                        <label class=" label-checkbox item-content">
+                            <input type="checkbox" name="ck_report_expense" t-att-data-id="i.id"/>
+                            <div class="item-media o_select_expense">
+                                <i class="icon icon-form-checkbox"></i>
+                            </div>
+                            <div class="item-inner o_search_expense" t-att-data-id="i.id">
+                                <div class="item-title-row">
+                                    <div class="item-title">
+                                        <t t-esc="i.expensedetail[1]"/>
+                                    </div>
+                                    <div class="item-after">
+                                        <i class="icon iconfont">&#xe602;</i>
+                                        <t t-esc="i.invoicevalue"/>
+                                    </div>
+                                </div>
+                                <div class="item-text">
+                                    <div class="row">
+                                        <div class="col-40">
+                                            <t t-esc="i.currentdate"/>
+                                        </div>
+                                        <div class="col-60">
+                                            <t t-if="i.province">
+                                                <t t-esc="i.province[1]"/>
+                                            </t>
+                                            <t t-if="city">-
+                                                <t t-esc="city[1]"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </li>
+                </t>
+            </ul>
+
+
+        </div>
+
+    </t>
+
+    <t t-name="expense_list">
+
+        <t t-if="expense_records ==false">
+            <div style="position: absolute;
+            top: 50%;
+            left: 50%;
+             -webkit-transform: translate(-50%, -50%);
+             -moz-transform: translate(-50%, -50%);
+             -ms-transform: translate(-50%, -50%);
+             -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);">
+                <div class="row">
+                    <div class="col-33"></div>
+                    <div class="col-33">
+                        <i class="icon iconfont" style="font-size: 60px; color: #0894ec;">&#xe6a6;</i>
+                    </div>
+                    <div class="col-33"></div>
+                </div>
+            </div>
+        </t>
+
+        <t t-if="expense_records!=false">
+            <div class="content-block-title o_title_expense">
+                <div class="row">
+                    <div class="col-80">点击右边图标进入选取模式</div>
+                    <div class="col-20">
+                        <a class="pull-right o_select_expense_list">
+                            <i class="icon iconfont">&#xe78a;</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+        <div class="list-block media-list">
+            <ul>
+                <t t-foreach="expense_records" t-as="i">
+                    <li>
+                        <label class=" label-checkbox item-content">
+                            <input type="checkbox" name="ck_expense" t-att-data-id="i.id"/>
+                            <div class="item-media o_select_expense" style="display: none;">
+                                <i class="icon icon-form-checkbox"></i>
+                            </div>
+                            <div class="item-inner o_expense_list" t-att-data-id="i.id">
+                                <div class="item-title-row">
+                                    <div class="item-title">
+                                        <t t-esc="i.expensedetail[1]"/>
+                                    </div>
+                                    <div class="item-after">
+                                        <i class="icon iconfont">&#xe602;</i>
+                                        <t t-esc="i.invoicevalue"/>
+                                    </div>
+                                </div>
+                                <div class="item-text">
+                                    <div class="row">
+                                        <div class="col-40">
+                                            <t t-esc="i.currentdate"/>
+                                        </div>
+                                        <div class="col-60">
+                                            <t t-if="i.province">
+                                                <t t-esc="i.province[1]"/>
+                                            </t>
+                                            <t t-if="city">-
+                                                <t t-esc="city[1]"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+
+                    </li>
+                </t>
+            </ul>
+        </div>
+        <nav class="bar bar-tab o_create_report" style="display: none;">
+
+            <a class="tab-item active" data-item-id="create_report" href="#">
+                生成报销单
+            </a>
+            <a class="tab-item " href="#" data-item-id="cancel_create_report">
+                返回
+            </a>
+        </nav>
+    </t>
+
+    <t t-name="report">
+        <div>
+            <div class="o_report"></div>
+            <!--<div class="infinite-scroll-preloader">-->
+            <!--<div class="preloader"></div>-->
+            <!--</div>-->
+        </div>
+    </t>
+
+    <t t-name="report_list">
+        <t t-if="expense_reports">
+            <div class="list-block media-list">
+                <ul>
+                    <t t-foreach="expense_reports" t-as="i">
+                        <li>
+                            <a href="#" class="item-content" t-att-data-id="i.id">
+                                <div class="item-inner">
+                                    <div class="item-title-row">
+                                        <div class="item-title">
+                                            <t t-esc="i.name"/>
+                                        </div>
+                                        <div class="item-after">
+                                            <t t-esc="i.state_name"/>
+                                        </div>
+                                    </div>
+                                    <t t-if="show_name_type=='create_uid_self'">
+                                       <div class="item-subtitle"><t t-esc="i.create_uid_self[1]"/></div>
+                                    </t>
+                                    <t t-if="show_name_type=='currentauditperson'">
+                                       <div class="item-subtitle"><t t-esc="i.currentauditperson[1]"/></div>
+                                    </t>
+
+                                    <div class="item-text">
+                                        <div class="row">
+                                            <div class="col-40">
+                                                <i class="icon iconfont">&#xe602;</i>
+                                                <t t-esc="i.total_invoicevalue"/>
+                                            </div>
+                                            <div class="col-60">
+                                                <div class="pull-right">
+                                                    <t t-esc="create_date"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <t t-if="i.state=='draft'">
+                                    <div class="item-media o_report_tijiao">提交
+                                        <!--<i class="icon iconfont" style="font-size:24px;">&#xe61d;</i>-->
+                                    </div>
+                                </t>
+
+                                <t t-if="i.state!='draft'">
+                                    <div class="item-media o_report_cuiban">催办
+                                        <!--<i class="icon iconfont" style="font-size:24px;">&#xf0081;</i>-->
+                                    </div>
+                                </t>
+                            </a>
+
+                        </li>
+                    </t>
+                </ul>
+
+            </div>
+
+            <div class="next_report_page"/>
+        </t>
+
+        <t t-if="expense_reports ==false">
+            <div style="position: absolute;
+            top: 50%;
+            left: 50%;
+             -webkit-transform: translate(-50%, -50%);
+             -moz-transform: translate(-50%, -50%);
+             -ms-transform: translate(-50%, -50%);
+             -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);">
+                <div class="row">
+                    <div class="col-33"></div>
+                    <div class="col-33">
+                        <i class="icon iconfont" style="font-size: 60px; color: #0894ec;">&#xe660;</i>
+                    </div>
+                    <div class="col-33"></div>
+                </div>
+            </div>
+        </t>
+
+    </t>
+
+    <t t-name="workflow">
+        <div>
+            <div class="o_workflow"></div>
+        </div>
+    </t>
+
+    <t t-name="expense_detail_screen">
+        <div>
+            <div class="o_expense_detail">
+                <div class="content">
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">消费明细</div>
+                                        <div class="item-input">
+                                            <input type="text" data-id="expensedetail" readonly="true"/>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">发生日期</div>
+                                        <div class="item-input">
+                                            <input type="text" id="currentdate" data-toggle='date' readonly="true"
+                                                   data-id="currentdate"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">票据金额</div>
+                                        <div class="item-input">
+                                            <input type="text" pattern="^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$" data-id="invoicevalue"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">发生城市</div>
+                                        <div class="item-input">
+                                            <div class="row">
+                                                <div class="col-100">
+                                                    <input type="text" data-id="province_city" readonly="true"/>
+                                                </div>
+                                                <!--<div class="col-15">-->
+                                                <!--<i class="icon iconfont o_expense_map"-->
+                                                <!--style="font-size: 24px; color: #0894ec;">&#xe640;</i>-->
+                                                <!--</div>-->
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="content-block-title">
+                        <div class="row">
+                            <div class="col-80">附件</div>
+                            <div class="col-20">
+                                <a class="pull-right">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o_uploader_bd">
+                        <ul class="o_expense_img">
+
+                        </ul>
+                        <div class="o_uploader_input_wrp">
+                            <input class="o_uploader_input" type="file" accept="image/*" multiple="">
+                                <i class="icon iconfont o_image_select" style="font-size: 60px;    margin-left: 10px; margin-top: -5px;">&#xe73e;</i>
+                            </input>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <nav class="bar bar-tab">
+                <a class="tab-item active" href="#" data-item-id="save">
+                    保存
+                </a>
+                <a class="tab-item" href="#" data-item-id="delete">
+                    删除
+                </a>
+
+                <a class="tab-item" href="#" data-item-id="cancel">
+                    返回
+                </a>
+            </nav>
+
+            <div class="popup popup-catelog login-screen">
+                <div class="content">
+
+                    <div class="o_expense_catelog"></div>
+                </div>
+
+            </div>
+
+            <div class="popup popup-province_city login-screen">
+                <div class="content">
+
+                    <div class="o_province_city"></div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+    <t t-name="expense_category">
+        <div>
+            <div class="searchbar">
+                <div class="search-input">
+                    <label class="icon icon-search" for="search"></label>
+                    <input type="text" class="o_search_expense" id='search' placeholder='搜索...'/>
+                </div>
+            </div>
+            <div class="o_expense_category"></div>
+        </div>
+    </t>
+
+    <t t-name="expense_category_list">
+        <div class="o_expense_category_list">
+            <div class="list-block contacts-block">
+                <div class="list-group">
+                    <ul>
+                        <t t-foreach="category_list" t-as="i">
+                            <li class="list-group-title" t-att-data-id="i.id">
+                                <t t-esc="i.name"/>
+
+                            </li>
+                            <t t-foreach="i.detail_ids" t-as="l">
+                                <li>
+                                    <div class="item-content" t-att-data-expensedetail-id="l.id"
+                                         t-att-data-expensecatelog-id="i.id" t-att-data-name="i.name +'-' + l.name">
+                                        <div class="item-inner">
+                                            <div class="item-title">
+                                                <t t-esc="l.name"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </t>
+                        </t>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="province_city">
+        <div>
+            <div class="searchbar">
+                <div class="search-input">
+                    <label class="icon icon-search" for="search"></label>
+                    <input type="text" class="o_search_province_city" id='search' placeholder='搜索...'/>
+                </div>
+            </div>
+            <div class="o_content_province_city"></div>
+        </div>
+    </t>
+
+    <t t-name="province_city_list">
+        <div class="o_province_city_list">
+            <div class="list-block contacts-block">
+                <div class="list-group">
+                    <ul>
+                        <t t-foreach="province_city_list" t-as="i">
+                            <li class="list-group-title" t-att-data-id="i.id">
+                                <t t-esc="i.name"/>
+
+                            </li>
+                            <t t-foreach="i.detail_ids" t-as="l">
+                                <li>
+                                    <div class="item-content" t-att-data-city-id="l.id" t-att-data-province-id="i.id"
+                                         t-att-data-name="i.name +'-' + l.name">
+                                        <div class="item-inner">
+                                            <div class="item-title">
+                                                <t t-esc="l.name"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </t>
+                        </t>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="expense_report_detail">
+        <div class="content">
+            <div class="list-block">
+                <ul>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">单据号</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="name" readonly="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">支付方式</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="paytype" readonly="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">支付类别</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="paycatelog" readonly="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">行政助理</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="xingzhengzhuli" readonly="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">收款人姓名</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="shoukuanrenxinming"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">开户行</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="kaihuhang"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li >
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">银行卡号</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="yinhangkahao"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li class="o_currentauditperson">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">当前处理人</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="currentauditperson"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">报销事由</div>
+                                <div class="item-input">
+                                    <textarea data-id="expensereason"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                </ul>
+                <div class="o_report_expense_ids">
+                    <div class="content-block-title">
+                        <div class="row">
+                            <div class="col-80">费用明细</div>
+                            <div class="col-20">
+                                <a class="pull-right o_add_expense">
+                                    <i class="icon iconfont" style="font-size: 24px">&#xe641;</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_report_benefitdep_ids">
+                    <div class="content-block-title">
+                        <div class="row">
+                            <div class="col-80">收益部分分摊比例</div>
+                            <div class="col-20">
+                                <a class="pull-right o_add_benefitdep">
+                                    <i class="icon iconfont" style="font-size: 24px">&#xe641;</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="o_report_chuchai_ids">
+                    <div class="content-block-title">
+                        <div class="row">
+                            <div class="col-80">出差时间</div>
+                            <div class="col-20">
+                                <a class="pull-right o_add_chuchai">
+                                    <i class="icon iconfont" style="font-size: 24px">&#xe641;</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <nav class="bar bar-tab">
+             <a class="tab-item active" href="#" data-item-id="save">
+                保存
+            </a>
+            <a class="tab-item" href="#" data-item-id="qianshou">
+                签收纸件
+            </a>
+
+            <a class="tab-item" href="#" data-item-id="reject">
+                拒绝
+            </a>
+
+            <a class="tab-item active" href="#" data-item-id="accept">
+                同意
+            </a>
+
+            <a class="tab-item active" href="#" data-item-id="confirm_pay">
+                确认付款
+            </a>
+             <a class="tab-item" href="#" data-item-id="delete">
+                删除
+            </a>
+
+            <a class="tab-item" href="#" data-item-id="cancel">
+                返回
+            </a>
+        </nav>
+
+
+        <div class="popup popup-expense login-screen">
+            <div class="content">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <label class="icon icon-search" for="search"></label>
+                        <input type="text" class="o_search_expense_record" id='search' placeholder='搜索...'/>
+                    </div>
+                </div>
+
+                <div class="o_report_expense"></div>
+
+            </div>
+            <nav class="bar bar-tab o_create_report">
+
+
+                <a class="tab-item active" data-item-id="add_expense" href="#">
+                    添加
+                </a>
+                <a class="tab-item " href="#" data-item-id="cancel_add_expense">
+                    返回
+                </a>
+            </nav>
+        </div>
+
+        <div class="popup popup-chuchai login-screen">
+            <div class="content">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <label class="icon icon-search" for="search"></label>
+                        <input type="text" class="o_search_chuchai" id='search' placeholder='搜索...'/>
+                    </div>
+                </div>
+
+                <div class="o_report_chuchai"></div>
+            </div>
+            <nav class="bar bar-tab o_create_chuchai">
+
+                <a class="tab-item active" data-item-id="add_chuchai" href="#">
+                    添加
+                </a>
+                 <a class="tab-item " href="#" data-item-id="cancel_add_chuchai">
+                    返回
+                </a>
+            </nav>
+
+        </div>
+
+
+        <div class="popup popup-benefitdep login-screen">
+            <div class="content">
+                <div class="list-block o_benefitdep_form">
+                    <ul>
+                        <!-- Text inputs -->
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">部门</div>
+                                    <div class="item-input">
+                                        <input type="text" data-name="dep_name" readonly="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">分摊比例</div>
+                                    <div class="item-input">
+                                        <input type="text" data-id="sharepercent"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+            <nav class="bar bar-tab o_create_report">
+
+                <a class="tab-item active" data-item-id="sumbit_benefitdep" href="#">
+                    确定
+                </a>
+                 <a class="tab-item " href="#" data-item-id="cancel_add_benefitdep">
+                    返回
+                </a>
+            </nav>
+        </div>
+
+        <div class="popup popup-department login-screen">
+            <div class="content">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <label class="icon icon-search" for="search"></label>
+                        <input type="text" class="o_search_department" id='search' placeholder='搜索...'/>
+                    </div>
+                </div>
+
+                <div class="o_report_department"></div>
+            </div>
+
+        </div>
+
+         <div class="popup popup-xingzhengzhuli login-screen">
+            <div class="content">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <label class="icon icon-search" for="search"></label>
+                        <input type="text" class="o_search_xingzengzhuli" id='search' placeholder='搜索...'/>
+                    </div>
+                </div>
+
+                <div class="o_report_xingzhengzhuli"></div>
+            </div>
+
+        </div>
+
+        <div class="popup popup-reject login-screen">
+            <div class="content">
+                <div class="list-block">
+                    <ul>
+                        <!-- Text inputs -->
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">节点</div>
+                                    <div class="item-input">
+                                        <input type="text" class="o_reject_state" readonly="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">意见</div>
+                                    <div class="item-input">
+                                        <textarea class="o_reject_advice"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <nav class="bar bar-tab o_report_reject">
+
+
+                <a class="tab-item active" data-item-id="sumbit_reject" href="#">
+                    确定
+                </a>
+                <a class="tab-item " href="#" data-item-id="cancel_reject">
+                    返回
+                </a>
+            </nav>
+        </div>
+
+    </t>
+
+    <t t-name="search_chuchai_list">
+        <div class="list-block media-list">
+            <ul>
+                <t t-foreach="chuchai_ids" t-as="i">
+                    <li class="o_select_chuchai_ids" t-att-data-id="i.id">
+                        <label class="label-checkbox item-content">
+                            <input type="checkbox" name="ck_report_chuchai" t-att-data-id="i.id"/>
+                            <div class="item-media o_select_chuchai">
+                                <i class="icon icon-form-checkbox"></i>
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title"><t t-esc="i.startaddress"/>-
+                                        <t t-esc="i.endaddress"/>
+                                    </div>
+                                    <div class="item-after">
+                                        <t t-esc="i.endtime"/>
+                                    </div>
+                                </div>
+                                <div class="item-text">
+                                    <t t-esc="i.reason"/>
+                                </div>
+                            </div>
+                        </label>
+                    </li>
+
+                </t>
+            </ul>
+        </div>
+
+
+    </t>
+
+    <t t-name="report_chuchai_list">
+        <div class="list-block media-list">
+            <ul>
+                <t t-foreach="chuchai_ids" t-as="i">
+                    <li class="o_report_chuchai_id" t-att-data-id="i.id">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title"><t t-esc="i.startaddress"/>-
+                                        <t t-esc="i.endaddress"/>
+                                    </div>
+                                    <div class="item-after">
+                                        <t t-esc="i.endtime"/>
+                                    </div>
+                                </div>
+                                <div class="item-text">
+                                    <t t-esc="i.reason"/>
+                                </div>
+                            </div>
+                            <t t-if="state=='draft'">
+                                <div class="item-media o_delete_report_chuchai">
+                                    <i class="icon iconfont " style="font-size:24px;">&#xe66a;</i>
+                                </div>
+                            </t>
+                        </div>
+
+                    </li>
+
+                </t>
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="dep">
+        <div class="list-block">
+            <ul>
+                <t t-foreach="departments" t-as="i">
+                    <li class="item-content o_select_dep" t-att-data-id="i.id" t-att-data-name="i.name">
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <t t-esc="i.name"/>
+                            </div>
+                        </div>
+                    </li>
+
+                </t>
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="xingzhengzhuli">
+        <div class="list-block">
+            <ul>
+                <t t-foreach="xingzhengzhulis" t-as="i">
+                    <li class="item-content o_select_xingzhengzhuli" t-att-data-id="i.id" t-att-data-name="i.name">
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <t t-esc="i.name"/>
+                            </div>
+                        </div>
+                    </li>
+
+                </t>
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="benefitdep_list">
+        <div class="list-block">
+            <ul>
+                <t t-foreach="benefitdep_records" t-as="i">
+                    <li class="item-content o_benefitdep_list" t-att-data-id="i.id" t-att-data-name="i.name[0]"
+                        t-att-data-sharepercent="i.sharepercent">
+
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <t t-esc="i.name[1]"/>
+                            </div>
+                            <div class="item-after">
+                                <a class="pull-center">
+                                    <t t-esc="i.sharepercent+'%'"/>
+                                </a>
+                            </div>
+                        </div>
+                        <t t-if="state=='draft'">
+                            <div class="item-media o_delete_benefitdep">
+                                <i class="icon iconfont" style="font-size:24px;">&#xe66a;</i>
+                            </div>
+                        </t>
+                    </li>
+                </t>
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="search_report_expense_list">
+        <div>
+
+        </div>
+    </t>
+
+    <t t-name="FieldBinaryImage-img">
+        <img t-att-src='url'
+             border='1'
+             name="name"
+             width='80px'
+             height='80px'/>
+    </t>
+
+
+    <t t-name="Expense-img">
+        <li class="o_uploader_file o_uploader_status" t-attf-style="background-image:url( #{url} )" t-att-data-id="id">
+            <div class="o_uploader_status_content">
+                <i class="icon iconfont o_expense_delete" style="font-size: 24px; color: red;">&#xe682;</i>
+            </div>
+        </li>
+    </t>
+
+    <t t-name="report_accept">
+        <div class="swiper-container" style="height: 100px;">
+            <div class="content">
+                <div class="list-block">
+                    <ul>
+                        <!-- Text inputs -->
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-input">
+                                        <textarea class="o_accept"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </t>
+
+
+    <t t-name="report_reject">
+        <div class="o_report_state" style="display:none;" t-att-value="state"></div>
+        <div class="swiper-container" style="height: 120px;">
+            <div class="content">
+                <div class="list-block">
+                    <ul>
+                        <!-- Text inputs -->
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">节点</div>
+                                    <div class="item-input">
+                                        <input type="text" class="o_reject_state" readonly="true" onclick="aa()"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">意见</div>
+                                    <div class="item-input">
+                                        <textarea class="o_reject"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="my_screen">
+        <div>
+            <div class="o_my_screen"></div>
+        </div>
+    </t>
+
+    <t t-name="my_detail">
+        <div id="page-settings" class="page page-settings page-current page-inited">
+
+            <div class="content">
+                <div class="page-settings">
+                    <div class="row text-center">
+                        <div class="col-33 o_my_report" data-name="have_check">
+                            <h4>
+                                <t t-esc="have_check_port"/>
+                            </h4>
+                            <div class="color-gray">我审批的报销单</div>
+                        </div>
+                        <div class="col-33 o_my_report"  data-name="havepay">
+                            <h4>
+                                <t t-esc="have_pay_report"/>
+                            </h4>
+                            <div class="color-gray">已付款的报销单</div>
+                        </div>
+                        <div class="col-33 o_my_report" data-name="outtime">
+                            <h4><t t-esc="override_report"/>/<t t-esc="override_report_amount"/>元
+                            </h4>
+                            <div class="color-gray">超期报销单</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </t>
+</templates>

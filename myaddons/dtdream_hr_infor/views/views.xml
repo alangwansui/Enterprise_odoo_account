@@ -1,0 +1,250 @@
+<openerp>
+  <data>
+
+    <record id="view_employee_form_infor_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.infor.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_title']" position="replace">
+                <div class="oe_title">
+                    <label for="name" string="花名" class="oe_edit_only" attrs="{'invisible':[('edit_public_info','=',False)]}"/>
+                    <h1>
+                        <field name="name" placeholder="请输入花名" string="花名" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                    </h1>
+                </div>
+            </xpath>
+
+            <xpath expr="//notebook/page[1]" position="replace">
+                <page name="public" string="公开信息">
+                    <group>
+                        <group>
+                            <field name="edit_public_info" invisible="True"/>
+                            <field name="nick_name" invisible="True"/>
+                             <field name="full_name" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                            <field name="job_number" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                            <field name="work_email" widget="email" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                        </group>
+                        <group>
+                            <field name="department_id" on_change="onchange_department_id(department_id)" required="True" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                            <field name="mobile_phone" string="手机号" attrs="{'readonly':[('edit_public_info','=',False)]}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <xpath expr="//notebook/page[2]" position="replace">
+              <page string="基础信息" attrs="{'invisible':[('can_view_info_basic','=',False)]}">
+                <group>
+                    <group>
+                      <field name="account" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="gender" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="duties" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
+                      <field name="post" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
+                      <field name="Inaugural_state" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="entry_day" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="can_view_info_basic" invisible="True"/>
+                      <field name="can_view_info_self" invisible="True"/>
+                      <field name="edit_basic_info" invisible="True"/>
+                      <field name="login_info_employee" invisible="True"/>
+                  </group>
+                  <group>
+                      <field name="education" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="recruit" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="recruit_place" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="work_place" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
+                      <field name="expatriate" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
+                  </group>
+                  <div>
+                    <p>*<b>填写说明</b>：以上信息由人力资源部录入。如需修改，请与人力资源部联系</p>
+                  </div>
+                </group>
+              </page>
+            </xpath>
+
+            <xpath expr="//notebook/page[2]" position="after">
+              <page string="自助信息" attrs="{'invisible':[('can_view_info_self','=',False)]}">
+                <group string="个人信息" name="personal">
+                    <group>
+                      <field name="byname" placeholder="花名格式:花名1|花名2" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                      <label for="Birthplace_province" string="籍贯"/>
+                      <div class="o_row">
+                          <field name="Birthplace_province" options="{'no_open': True,'no_create': True}" placeholder="请选择省份"
+                          attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                          <field name="Birthplace_state" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
+                          attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      </div>
+                      <field name="birthday" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      <field name="postcode" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      <field name="edit_self_info" invisible="True"/>
+                    </group>
+                    <group>
+                      <field name="nation" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      <field name="political" attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                      <field name="graduate" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                    </group>
+                </group>
+
+                <group string="家庭成员">
+                  <div>
+                      <p style="padding-left: 40px">至少设置一名紧急联系人，紧急联系人各项信息需填写完整。信息不确定处可填『无』</p>
+                      <notebook>
+                          <page>
+                            <field name="family" attrs="{'readonly':[('edit_self_info','=',False)]}">
+                               <tree editable="bottom">
+                                  <field name="relation" required="True"/>
+                                  <field name="name" required="True"/>
+                                  <field name="company" required="True"/>
+                                  <field name="address" required="True"/>
+                                  <field name="postcode"/>
+                                  <field name="mail"/>
+                                  <field name="tel" required="True"/>
+                                  <field name="emergency"/>
+                               </tree>
+                            </field>
+                          </page>
+                      </notebook>
+                  </div>
+                </group>
+
+                <group string="社保公积金">
+                    <group>
+                        <label for="province_hukou" string="户口所在地"/>
+                        <div class="o_row">
+                            <field name="province_hukou" options="{'no_open': True, 'no_create': True}" placeholder="请选择省份"
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                            <field name="state_hukou" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                        </div>
+                        <label for="now_prov" string="申请社保缴纳地"/>
+                        <div class="o_row">
+                            <field name="now_prov" options="{'no_open': True, 'no_create': True}" placeholder="请选择省份"
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                            <field name="now_state" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"
+                            attrs="{'readonly':[('edit_self_info','=',False)],}"/>
+                        </div>
+                        <label for="shebao_prov" string="原公积金缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
+                        <div class="o_row">
+                            <field name="shebao_prov" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                            <field name="gongjijin_state" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                        </div>
+                        <label for="ahead_prov" string="原社保缴纳地" attrs="{'invisible':[('graduate','=',True)]}"/>
+                        <div class="o_row">
+                            <field name="ahead_prov" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择省份"/>
+                            <field name="ahead_state" options="{'no_open': True, 'no_create': True}"
+                                   attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}" placeholder="请选择市区"/>
+                        </div>
+                    </group>
+                    <group>
+                        <field name="nature_hukou" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                        <field name="endtime_gongjijin" attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
+                        <field name="endtime_shebao" attrs="{'readonly':[('edit_self_info','=',False)],'invisible':[('graduate','=',True)]}"/>
+                    </group>
+                </group>
+
+                <group string="其它信息">
+                    <group>
+                       <field name="oil_card" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                    </group>
+                    <group>
+                       <field name="has_oil" attrs="{'readonly':[('edit_self_info','=',False)]}"/>
+                    </group>
+
+                     <group>
+                       <field name="bankcardno" />
+                    </group>
+                    <group>
+                       <field name="bankaddr" />
+                    </group>
+                </group>
+
+                <p>*<b>填写说明</b>：以上信息修改即生效，无需HR审核。该处信息将被报销系统、社保金积金系统、微信、钉钉、油卡充值系统等多个系统引用。请谨慎填写，保证相关业务的准确性</p>
+              </page>
+            </xpath>
+
+            <xpath expr="//field[@name='user_id']" position="replace">
+                <field name="user_id" on_change="onchange_user(name, image, user_id)" string="相关用户"
+                                            context="{'default_groups_ref': ['base.group_user']}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="hr_employee_infor_view_search" model="ir.ui.view">
+        <field name="name">hr.employee.infor.search.view.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <filter string="我" domain="[('user_id', '=', uid)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_provinve_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.province.tree</field>
+        <field name="model">dtdream.hr.province</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_provinve_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.province.form</field>
+        <field name="model">dtdream.hr.province</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="abbre" placeholder="例如,浙江省的缩写:ZJ"/>
+                        </group>
+                        <group>
+                            <field name="code"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_state_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.state.tree</field>
+        <field name="model">dtdream.hr.state</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="pro_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_state_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.state.form</field>
+        <field name="model">dtdream.hr.state</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="province" required="True"/>
+                            <field name="abbre" placeholder="例如,杭州市的缩写:HZ"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+  </data>
+</openerp>

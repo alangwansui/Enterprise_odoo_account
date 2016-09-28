@@ -1,34 +1,118 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_product_pro_type_user,product.pro.type.user,model_product_pro_type,base.group_user,1,1,1,1
-access_product_dtdream_office,product.dtdream.office,model_dtdream_office,base.group_user,1,1,1,1
-access_product_dtdream_industry,product.dtdream.industry,model_dtdream_industry,base.group_user,1,1,1,1
-access_product_template,product.template,model_product_template,group_dtdream_sale_read,1,0,0,0
-access_product_template_product_query,product.template ,model_product_template,group_product_query,1,0,0,0
-access_product_product_product_query,product.product ,product.model_product_product,group_product_query,1,0,0,0
-access_product_template_product_manage,product.template ,model_product_template,group_product_manage,1,1,1,1
-access_product_product_product_manage,product.product ,product.model_product_product,group_product_manage,1,1,1,1
-access_product_dtdream_product_line,dtdream.product.line,dtdream_sale.model_dtdream_product_line,base.group_sale_salesman,1,1,1,1
+
+
+
+
+access_product_dtdream_product_line,dtdream.product.line,dtdream_sale.model_dtdream_product_line,group_dtdream_sale_salesman,1,1,1,1
 access_product_dtdream_product_line_sale_read,dtdream.product.line.sale.read,dtdream_sale.model_dtdream_product_line,group_dtdream_sale_read,1,1,1,1
+access_product_dtdream_product_line_all,dtdream.product.line.all,dtdream_sale.model_dtdream_product_line,group_dtdream_sale_salesman_all_leads,1,1,1,1
 
-access_product_template_sale_manager,product.template salemanager,model_product_template,base.group_sale_manager,1,0,0,0
-access_product_product_sale_manager,product.product salemanager,product.model_product_product,base.group_sale_manager,1,0,0,0
 
-access_crm_lead,crm.lead,model_crm_lead,group_dtdream_sale_read,1,0,0,0
-access_res_partner,res.partner.crm.user,base.model_res_partner,group_dtdream_sale_read,1,1,1,0
 access_res_partner_category,res.partner.category.crm.user,base.model_res_partner_category,group_dtdream_sale_read,1,1,1,0
 mail_mailgate_thread,mail.thread,mail.model_mail_thread,group_dtdream_sale_read,1,1,1,1
 
 access_res_sale_order,sale.order,sale.model_sale_order,group_dtdream_sale_read,1,1,1,1
 
 
-access_product_product,product.product,product.model_product_product,group_dtdream_sale_read,1,1,1,1
+
 access_product_product_price_history,product.price.history,product.model_product_price_history,group_dtdream_sale_read,1,1,1,1
 
 
-access_crm_team_user,crm.team.user,model_crm_team,base.group_sale_salesman,1,1,1,1
+access_stock_group_user,stock.move user,stock.model_stock_move,base.group_user,1,0,0,0
+access_stock_warehouse_group_user,stock.warehouse.orderpoint user,stock.model_stock_warehouse_orderpoint,base.group_user,1,0,0,0
 
-access_product_template_list_query,product.template listquery,model_product_template,group_product_list_query,1,0,0,0
-access_product_product_list_query,product.product listquery,product.model_product_product,group_product_list_query,1,0,0,0
+access_ir_property_product_manager,ir.property manager,base.model_ir_property,group_product_manage,1,1,1,1
+access_product_price_history_manager,product.price.history manager,product.model_product_price_history,group_product_manage,1,1,1,1
 
-access_crm_stage_salesman,crm.stage salesman,crm.model_crm_stage,base.group_sale_salesman,1,1,1,0
 
+
+
+
+
+access_crm_lead_salesman_all_leads,crm.lead,crm.model_crm_lead,group_dtdream_sale_salesman_all_leads,1,0,0,0
+crm.access_crm_lead_manager,crm.lead.manager,crm.model_crm_lead,group_dtdream_sale_manager,1,1,1,1
+crm.access_crm_lead,crm.lead,crm.model_crm_lead,group_dtdream_sale_salesman,1,1,1,0
+crm.access_crm_lead_read,crm.lead,crm.model_crm_lead,group_dtdream_sale_read,1,1,0,0
+crm_partner_assign.partner_access_crm_lead,crm.lead,crm.model_crm_lead,base.group_portal,0,0,0,0
+crm.access_crm_lead_partner_manager,crm.lead.partner.manager,crm.model_crm_lead,base.group_partner_manager,0,0,0,0
+
+
+access_product_dtdream_office,product.dtdream.office,model_dtdream_office,group_dtdream_sale_manager,1,1,1,1
+access_product_dtdream_industry,product.dtdream.industry,model_dtdream_industry,group_dtdream_sale_manager,1,1,1,1
+access_product_dtdream_office_user,product.dtdream.office,model_dtdream_office,base.group_user,1,0,0,0
+access_product_dtdream_industry_user,product.dtdream.industry,model_dtdream_industry,base.group_user,1,0,0,0
+
+
+access_product_product_product_manage,product.product ,product.model_product_product,group_product_manage,1,1,1,1
+stock.access_product_product_stock_user,product_product_stock_user,product.model_product_product,stock.group_stock_user,0,0,0,0
+stock.access_product_product_stock_manager,product.product stock_manager,product.model_product_product,stock.group_stock_manager,0,0,0,0
+
+stock.access_product_template_stock_user,product_product_stock_user,product.model_product_template,stock.group_stock_user,0,0,0,0
+stock.access_product_template_stock_manager,product.product stock_manager,product.model_product_template,stock.group_stock_manager,0,0,0,0
+
+access_product_template_product_manage,product.template ,model_product_template,group_product_manage,1,1,1,1
+
+
+stock.access_product_category_stock_manager,product.category stock_manager,product.model_product_category,stock.group_stock_manager,1,0,0,0
+stock.access_product_category_product_manager,product.category product_manager,product.model_product_category,group_product_manage,1,1,1,1
+access_product_pro_type_user,product.pro.type.user,model_product_pro_type,group_product_manage,1,1,1,1
+
+account.access_product_product_account_user,product.product.account.user,product.model_product_product,account.group_account_user,0,0,0,0
+
+
+
+
+crm.access_res_partner,res.partner.crm.user,base.model_res_partner,group_dtdream_sale_salesman,0,0,0,0
+crm.access_res_partner_manager,res.partner.crm.manager,base.model_res_partner,group_dtdream_sale_manager,0,0,0,0
+product.access_product_product_sale_manager,product.product salemanager,product.model_product_product,base.group_sale_manager,0,0,0,0
+sale.access_product_product_sale_user,product.product sale use,product.model_product_product,base.group_sale_salesman,0,0,0,0
+
+product.access_product_template_sale_manager,product.template salemanager,product.model_product_template,base.group_sale_manager,0,0,0,0
+sale.access_product_template_sale_user,product.template sale use,product.model_product_template,base.group_sale_salesman,0,0,0,0
+
+
+access_product_dtdream_product_line_manager,dtdream.product.line manager,dtdream_sale.model_dtdream_product_line,group_dtdream_sale_manager,1,1,1,1
+
+access_res_sale_order_manager,sale.order manager,sale.model_sale_order,group_dtdream_sale_manager,1,1,1,1
+access_res_sale_order_salesman,sale.order salesman,sale.model_sale_order,group_dtdream_sale_salesman,1,1,1,1
+
+access_crm_team_user_dtdream_salesman,crm.team.user,sales_team.model_crm_team,group_dtdream_sale_salesman,1,1,1,1
+access_crm_stage__dtdream_salesman,crm.stage salesman,crm.model_crm_stage,group_dtdream_sale_salesman,1,0,0,0
+
+access_crm_team_user_dtdream_manager,crm.team.user dtdream manager,sales_team.model_crm_team,group_dtdream_sale_manager,1,1,1,1
+access_crm_stage_dtdream_manager,crm.stage dtdream manager,crm.model_crm_stage,group_dtdream_sale_manager,1,1,1,1
+
+
+access_account_invoice_dtdream_salesman,account.invoice dtdream salesman,account.model_account_invoice,group_dtdream_sale_salesman,1,1,1,1
+access_account_invoice_dtdream_manager,account.invoice dtdream manager,account.model_account_invoice,group_dtdream_sale_manager,1,1,1,1
+
+crm.access_crm_stage_manager,crm.stage,crm.model_crm_stage,base.group_sale_manager,0,0,0,0
+
+crm.access_crm_lost_reason_manager,crm.lost.reason.manager,crm.model_crm_lost_reason,base.group_sale_manager,0,0,0,0
+crm.access_crm_lost_reason_salesman,crm.lost.reason.salesman,crm.model_crm_lost_reason,base.group_sale_salesman,0,0,0,0
+
+access_crm_lost_reason_dtdream_manager,crm.lost.reason.dtdream.manager,crm.model_crm_lost_reason,group_dtdream_sale_manager,1,1,1,1
+
+
+access_product_supplierinfo_product_manager,product.supplierinfo product.manager,product.model_product_supplierinfo,group_product_manage,1,1,1,1
+access_res_partner_modify_product_manager,res.partner.modify.product.manager,base.model_res_partner,group_product_manage,1,0,0,0
+
+
+
+access_dtdream_child_product_line,product.dtdream.child.product.line,model_dtdream_child_product_line,group_product_manage,1,1,1,1
+access_dtdream_child_product_line users,product.dtdream.child.product.line_users,model_dtdream_child_product_line,,1,0,0,0
+
+access_product_pro_type_users,product.pro.type.users,model_product_pro_type,,1,0,0,0
+
+
+access_crm_lead2opportunity_partner_salesman,crm.lead2opportunity salesman,crm.model_crm_lead2opportunity_partner,group_dtdream_sale_salesman,1,1,1,1
+access_crm_lead2opportunity_partner_manager,crm.lead2opportunity manager,crm.model_crm_lead2opportunity_partner,group_dtdream_sale_manager,1,1,1,1
+
+access_crm_lead2opportunity_partner_mass_salesman,crm.lead2opportunity.mass salesman,crm.model_crm_lead2opportunity_partner_mass,group_dtdream_sale_salesman,1,1,1,1
+access_crm_lead2opportunity_partner_mass_manager,crm.lead2opportunity.mass manager,crm.model_crm_lead2opportunity_partner_mass,group_dtdream_sale_manager,1,1,1,1
+
+access_dtdream_project_space_line,dtdream.project.space.line user,model_dtdream_project_space_line,base.group_user,1,1,1,1
+
+access_dtdream_des_records,dtdream.des.records user,model_dtdream_des_records,base.group_user,1,1,1,1
+
+access_dtdream_area,dtdream_area,model_dtdream_area,,1,1,1,1

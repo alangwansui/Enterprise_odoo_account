@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+    <record model="ir.module.category" id="module_hr_performance_group">
+            <field name="name">绩效管理</field>
+            <field name="description">绩效管理</field>
+            <field name="sequence">2</field>
+    </record>
+
+    <record id="group_hr_inter_performance" model="res.groups">
+        <field name="name">HR接口人</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_hr_performance_group"/>
+    </record>
+
+    <record id="group_hr_manage_performance" model="res.groups">
+        <field name="name">HR绩效管理员</field>
+        <field name="implied_ids" eval="[(4,ref('group_hr_inter_performance'))]"/>
+        <field name="category_id" ref="module_hr_performance_group"/>
+    </record>
+
+
+    </data>
+</openerp>

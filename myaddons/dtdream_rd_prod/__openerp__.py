@@ -23,12 +23,19 @@
 
     # always loaded
     'data': [
+        # 'data/dtdream_rd_prod_data.xml',
          'wizard/lixiang_wizard.xml',
+        'wizard/process_wizard.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
+        'views/replanning.xml',
+        'views/version_view.xml',
         'views/views.xml',
         'views/templates.xml',
+        'workflow/replanningWkf.xml',
         'workflow/workflow.xml',
+        'workflow/versionWorkflow.xml',
+        'data/timingData.xml',
 
     ],
     # only loaded in demonstration mode

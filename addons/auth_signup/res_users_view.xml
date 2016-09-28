@@ -11,10 +11,10 @@
                 <xpath expr="//header" position="inside">
                     <button string="Send Reset Password Instructions"
                                 type="object" name="action_reset_password"
-                                attrs="{'invisible': [('state', '!=', 'active')]}"/>
+                                attrs="{'invisible': True}"/>
                     <button string="Send an Invitation Email"
                                 type="object" name="action_reset_password" context="{'create_user': 1}"
-                                attrs="{'invisible': [('state', '!=', 'new')]}"/>
+                                attrs="{'invisible': True}"/>
                     <field name="state" widget="statusbar"/>
                 </xpath>
 

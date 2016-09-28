@@ -145,18 +145,23 @@
     </t>
 
     <t t-name="mail.ChatThread.MessageTracking">
-        <ul class="o_mail_thread_message_tracking">
+        <table class="o_mail_thread_message_tracking" border="1">
+            <tr style="text-align: center"><th style="padding:10px;text-align: center">字段</th><th style="padding:10px;text-align: center">原值</th><th style="padding:10px;text-align: center">新值</th></tr>
             <t t-foreach='message.tracking_value_ids' t-as='value'>
-                <li>
-                    <t t-esc="value.changed_field"/>:
+                <tr>
+                    <td style="padding:10px"><t t-esc="value.changed_field"/></td>
                     <t t-if="value.old_value">
-                        <span> <t t-esc="value.old_value"/> </span>
-                        <span class="fa fa-long-arrow-right"/>
+                        <td style="padding:10px"> <t t-esc="value.old_value"/> </td>
+
                     </t>
-                    <span> <t t-esc="value.new_value"/> </span>
-                </li>
+                    <t t-if="!value.old_value">
+                        <td style="padding:10px"></td>
+
+                    </t>
+                    <td style="padding:10px"> <t t-esc="value.new_value"/> </td>
+                </tr>
             </t>
-        </ul>
+        </table>
     </t>
 
     <t t-name="mail.ChatComposer.Attachments">

@@ -518,7 +518,7 @@ var ChatterComposer = composer.BasicComposer.extend({
                     var parsed_email = parse_email(recipient[1]);
                     if (_.indexOf(email_addresses, parsed_email[1]) === -1) {
                         self.suggested_partners.push({
-                            checked: true,
+                            checked: false,
                             partner_id: recipient[0],
                             full_name: recipient[1],
                             name: parsed_email[0],

@@ -2,17 +2,20 @@
 
 from openerp import models, fields, api
 from openerp.osv import osv
+from openerp.exceptions import ValidationError
 from datetime import datetime
+from lxml import etree
 import re
 
 
 class dtdream_travel(models.Model):
     _name = 'dtdream.travel.chucha'
+    _description = u'出差'
     _inherit = ['mail.thread']
 
     warning_digit = {
                     'title': u"提示",
-                    'message': u"费用必须输入数字!"
+                    'message': u"只可输入数字!"
                 }
 
     warning_order = {
@@ -23,36 +26,36 @@ class dtdream_travel(models.Model):
     @api.onchange('traveling_fee')
     @api.constrains('traveling_fee')
     def _check_traveling_fee(self):
-        p = re.compile(r'(\d+)|(\d+\.\d+)')
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.traveling_fee:
-            if not p.search(str(self.traveling_fee)):
+            if not p.search(self.traveling_fee.encode("utf-8")):
                 self.traveling_fee = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
 
     @api.onchange('incity_fee')
     def _check_incity_fee(self):
-        p = re.compile(r'(\d+)|(\d+\.\d+)')
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.incity_fee:
-            if not p.search(str(self.incity_fee)):
+            if not p.search(self.incity_fee.encode("utf-8")):
                 self.incity_fee = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
 
     @api.onchange('hotel_expense')
     def _check_hotel_fee(self):
-        p = re.compile(r'(\d+)|(\d+\.\d+)')
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.hotel_expense:
-            if not p.search(str(self.hotel_expense)):
+            if not p.search(self.hotel_expense.encode("utf-8")):
                 self.hotel_expense = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
 
     @api.onchange('other_expense')
     def _check_other_fee(self):
-        p = re.compile(r'(\d+)|(\d+\.\d+)')
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
         if self.other_expense:
-            if not p.search(str(self.other_expense)):
+            if not p.search(self.other_expense.encode("utf-8")):
                 self.other_expense = False
                 return {"warning": self.warning_digit}
         self._compute_total_fee()
@@ -119,11 +122,18 @@ class dtdream_travel(models.Model):
             self.shenpi_fifth = False
             return {"warning": self.warning_order}
 
-    def unlink(self, cr, uid, ids, context=None):
-        for rec in self.browse(cr, uid, ids, context=context):
-            if (rec.state != '0' and uid != 1) or (rec.state != '99' and uid == 1):
+    @api.constrains("journey_id")
+    def _check_journey_details(self):
+        if len(self.journey_id) <= 0:
+            raise ValidationError(u"请至少填写一条行程记录!")
+
+    @api.multi
+    def unlink(self):
+        manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
+        for rec in self:
+            if not manager and rec.state != '0':
                 raise osv.except_osv(u'审批流程中的出差申请单无法删除!')
-            return super(dtdream_travel, self).unlink(cr, uid, ids, context)
+            return super(dtdream_travel, self).unlink()
 
     @api.one
     def _compute_is_current(self):
@@ -149,66 +159,126 @@ class dtdream_travel(models.Model):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
         return base_url
 
-    def send_mail(self, subject, content):
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream.travel.chucha' % self.id
         url = base_url+link
-        email_to = self.name.work_email
-        if self.name.user_id != self.create_uid:
-            email_cc = self.create_uid.email
-        else:
-            email_cc = ""
+        email_to = email_to
+        email_cc = "" if email_cc == email_to else email_cc
         subject = subject
-        appellation = u'您好：'
+        if wait:
+            appellation = u'{0},您好：'.format(self.name.user_id.name)
+        else:
+            appellation = u'{0},您好：'.format(self.shenpiren.user_id.name)
         content = content
         self.env['mail.mail'].create({
-                'body_html': '''<p>%s</p>
+                'body_html': u'''<p>%s</p>
                                 <p>%s</p>
-                                <p>点击链接进入查看:</p>
-                                <ul><li><a href="%s">%s</a></li></ul>
-                                <pre>
-                                <p>数梦企业应用平台<p>
-                                <p>%s<p></pre>''' % (appellation, content, url, url, self._get_current_time(state=True)),
+                                <p>点击链接进入查看:
+                                <a href="%s">%s</a></p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, url, self.write_date[:10]),
                 'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
-                'email_cc': '%s' % email_cc,
                 'auto_delete': False,
             }).send()
 
     @api.onchange('name')
     def _shenpi_first_domain(self):
+        self._compute_shouyi_department()
         assitand = self.name.department_id.assitant_id
         ancestors = []
         if assitand:
             self.shenpi_first = assitand[0]
-            if len(assitand) > 1:
-                for x in assitand:
-                    ancestors.append(x.id)
-                return {'domain': {'shenpi_first': [('id', 'in', ancestors)]}}
+            for x in assitand:
+                ancestors.append(x.id)
+            return {'domain': {'shenpi_first': [('id', 'in', ancestors)]}}
         else:
             self.shenpi_first = False
             return {'domain': {'shenpi_first': [('id', '=', False)]}}
 
-    name = fields.Many2one('hr.employee', string="申请人", required=True)
+    def _compute_shouyi_department(self):
+        self.department_shouyi = self.name.department_id
+
+    @api.constrains("journey_id")
+    def _check_start_end_time(self):
+        """检查各行程间时间是否冲突，是否与外出公干时间冲突,是否与之前提交的出差申请时间冲突"""
+        cr = self.env["dtdream_hr_business.business_detail"].search([("business.name.id", "=", self.name.id),
+                                                                     ("business.state", "not in", ('-8','99'))])
+        crr = self.env["dtdream.travel.journey"].search([("travel_id.name.id", "=", self.name.id)])
+        for index, journey in enumerate(self.journey_id):
+            start = journey.starttime
+            end = journey.endtime
+            for j in range(index):
+                if not(self.journey_id[j].starttime > end or self.journey_id[j].endtime < start):
+                    raise ValidationError("出差时间与结束时间填写不合理,各行程间时间存在冲突!")
+        for journey in self.journey_id:
+            for travel in crr:
+                if travel.id == journey.id:
+                    continue
+                if travel.starttime[:10] <= journey.starttime <= travel.endtime[:10] or \
+                                        travel.starttime[:10] <= journey.endtime <= travel.endtime[:10]:
+                    raise ValidationError("{0}到{1}时间与之前提交的出差申请时间冲突!".format(journey.starttime, journey.endtime))
+            for detail in cr:
+                if detail.startTime[:10] <= journey.starttime <= detail.endTime[:10] or \
+                                        detail.startTime[:10] <= journey.endtime <= detail.endTime[:10]:
+                    raise ValidationError("{0}到{1}时间与外出公干时间重合".format(journey.starttime, journey.endtime))
+
+    @api.multi
+    def check_submit_dtdream_travel(self):
+        """提交时做检查时间冲突检查"""
+        self._check_start_end_time()
+        self.signal_workflow('btn_submit')
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_travel, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if my_action.name != u"我的申请":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    def create(self, cr, uid, values, context=None):
+        """申请人默认添加关注"""
+        name = self.pool.get('hr.employee').browse(cr, uid, values['name'])
+        result = super(dtdream_travel, self).create(cr, uid, values, context=context)
+        if uid != name.user_id.id:
+            self.message_subscribe_users(cr, uid, [result], user_ids=[name.user_id.id], context=context)
+        return result
+
+    name = fields.Many2one('hr.employee', string="申请人", required=True, default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
     shenpi_first = fields.Many2one('hr.employee', string="第一审批人", help="部门行政助理", required=True)
     shenpi_second = fields.Many2one('hr.employee', string="第二审批人", help="部门主管", default=_compute_shenpi_person)
     shenpi_third = fields.Many2one('hr.employee', string="第三审批人", help="受益部门权签人(当受益部门与权签部门不一致时)", default=_compute_shenpi_person)
     shenpi_fourth = fields.Many2one('hr.employee', string="第四审批人", default=_compute_shenpi_person)
     shenpi_fifth = fields.Many2one('hr.employee', string="第五审批人", default=_compute_shenpi_person)
     shenpiren = fields.Many2one('hr.employee', string="当前审批人")
-    can_restart = fields.Boolean(string="是否有权限重启", compute=_compute_can_restart)
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
+    can_restart = fields.Boolean(string="是否有权限重启", compute=_compute_can_restart)
     has_edit = fields.Boolean(compute=has_edit_shenpiren, string="是否有权限编辑审批人", default=True)
     workid = fields.Char(string="工号", compute=_compute_shenpi_person)
-    department = fields.Char(string="部门", compute=_compute_shenpi_person)
-    department_shouyi = fields.Many2one('hr.department', string="受益部门")
-    create_time = fields.Char(string="申请时间", default=lambda self: self._get_current_time(), readonly=True)
-    traveling_fee = fields.Char(string="在途交通费", required=True)
-    incity_fee = fields.Char(string="市内交通费", required=True)
-    hotel_expense = fields.Char(string="住宿费", required=True)
-    other_expense = fields.Char(string="其它费", required=True)
-    total = fields.Float(string="合计", readonly=True)
+    department = fields.Char(string="部门", compute=_compute_shenpi_person, store=True)
+    department_shouyi = fields.Many2one('hr.department', string="受益部门", required=True)
+    create_time = fields.Datetime(string="申请时间", default=lambda self: datetime.now(), readonly=True)
+    traveling_fee = fields.Char(string="在途交通费(元)", required=True)
+    incity_fee = fields.Char(string="市内交通费(元)", required=True)
+    hotel_expense = fields.Char(string="住宿费(元)", required=True)
+    other_expense = fields.Char(string="其它费(元)", required=True)
+    total = fields.Float(string="合计(元)", readonly=True)
     journey_id = fields.One2many("dtdream.travel.journey", "travel_id", string="行程")
+    employ = fields.Many2one("hr.employee", string="员工")
     approve = fields.Many2many("hr.employee", string="已批准的审批人")
     state = fields.Selection(
         [('0', '草稿'),
@@ -223,93 +293,133 @@ class dtdream_travel(models.Model):
     @api.multi
     def wkf_draft(self):
         if self.state == "-1":
-            self.message_post(body=u'重启流程,驳回 --> 草稿 '+u'下一审批人:'+self.shenpi_first.name + u" 操作时间:" +
-                                   self._get_current_time())
+            self.message_post(body=u'重启流程,驳回 --> 草稿 '+u'下一审批人:'+self.shenpi_first.name)
         self.write({'state': '0', "shenpiren": ''})
 
     @api.multi
     def wkf_approve1(self):
-        content = u'您于%s提交了出差申请！<p>申请单创建人:%s</p>' % (self._get_current_time(state=True), self.create_uid.name)
-        self.send_mail(subject=u'出差申请提交', content=content)
         self.write({'state': '1', "shenpiren": self.shenpi_first.id})
-        self.message_post(body=u'提交,草稿 --> 一级审批 '+u'下一审批人:' + self.shenpi_first.name + u" 操作时间:" +
-                               self._get_current_time())
+        self.message_post(body=u'提交,草稿 --> 一级审批 '+u'下一审批人:' + self.shenpi_first.name)
+        self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                       u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_first.work_email)
 
     @api.multi
     def wkf_approve2(self):
         if self.shenpi_second.id:
-            content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_first.name, self._get_current_time(state=True), self.shenpi_second.name)
-            self.send_mail(subject=u'出差申请审批通过', content=content)
+            if self.department_shouyi != self.name.department_id and not self.shenpi_third:
+                raise osv.except_osv(u'申请人与受益部门不是同一部门，请填写第三审批人!')
             self.write({'state': '2', "shenpiren": self.shenpi_second.id, "approve": [(4, self.shenpi_first.id)]})
-            self.message_post(body=u'批准,一级审批 --> 二级审批 '+u'下一审批人:' + self.shenpi_second.name +
-                                   u" 操作时间:" + self._get_current_time())
+            # content = u'%s批准了您的出差申请！' % self.shenpi_first.name
+            # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+            #     self.name.name, self.create_time[:10], self.shenpi_first.name), content=content,
+            #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_second.work_email)
+            self.message_post(body=u'批准,一级审批 --> 二级审批 '+u'下一审批人:' + self.shenpi_second.name)
         else:
-            raise osv.except_osv(u'第二审批人不能为空!')
+            raise osv.except_osv(u'第二审批人为必填项!')
 
     @api.multi
     def wkf_approve3(self):
         if self.shenpi_third.id:
             self.write({'state': '3', "shenpiren": self.shenpi_third.id, "approve": [(4, self.shenpi_second.id)]})
-            self.message_post(body=u' 批准,二级审批 --> 三级审批 '+u'下一审批人:' + self.shenpi_third.name +
-                                   u" 操作时间:" + self._get_current_time())
-        elif self.department_shouyi:
-            raise osv.except_osv(u'第三审批人不能为空!')
+            self.message_post(body=u' 批准,二级审批 --> 三级审批 '+u'下一审批人:' + self.shenpi_third.name)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_third.work_email)
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_second.id)]})
-            self.message_post(body=u' 批准,二级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
-        content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_second.name, self._get_current_time(state=True), self.shenpi_third.name)
-        self.send_mail(subject=u'出差申请审批通过', content=content)
+            self.message_post(body=u' 批准,二级审批 --> 完成 ')
+        # content = u'%s批准了您的出差申请！' % self.shenpi_second.name
+        # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+        #     self.name.name, self.create_time[:10], self.shenpi_second.name), content=content,
+        #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
 
     @api.multi
     def wkf_approve4(self):
         if self.shenpi_fourth.id:
             self.write({'state': '4', "shenpiren": self.shenpi_fourth.id, "approve": [(4, self.shenpi_third.id)]})
-            self.message_post(body=u' 批准,三级审批 --> 四级审批 '+u'下一审批人:' + self.shenpi_fourth.name +
-                                   u" 操作时间:" + self._get_current_time())
+            self.message_post(body=u' 批准,三级审批 --> 四级审批 '+u'下一审批人:' + self.shenpi_fourth.name)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_fourth.work_email)
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_third.id)]})
-            self.message_post(body=u' 批准,三级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
-        content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_third.name, self._get_current_time(state=True), self.shenpi_fourth.name)
-        self.send_mail(subject=u'出差申请审批通过', content=content)
+            self.message_post(body=u' 批准,三级审批 --> 完成 ')
+        # content = u'%s批准了您的出差申请！' % self.shenpi_third.name
+        # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+        #     self.name.name, self.create_time[:10], self.shenpi_third.name), content=content,
+        #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
 
     @api.multi
     def wkf_approve5(self):
         if self.shenpi_fifth.id:
             self.write({'state': '5', "shenpiren": self.shenpi_fifth.id, "approve": [(4, self.shenpi_fourth.id)]})
-            self.message_post(body=u' 批准,四级审批 --> 五级审批 '+u'下一审批人:' + self.shenpi_fifth.name +
-                                   u" 操作时间:" + self._get_current_time())
+            self.message_post(body=u' 批准,四级审批 --> 五级审批 '+u'下一审批人:' + self.shenpi_fifth.name)
+            self.send_mail(u"{0}于{1}提交了出差申请,请您审批!".format(self.name.name, self.create_time[:10]),
+                           u"%s提交了出差申请,等待您的审批" % self.name.name, email_to=self.shenpi_fifth.work_email)
         else:
             self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fourth.id)]})
-            self.message_post(body=u' 批准,四级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
-        content = u'%s于%s批准了您的出差申请！<p>下一审批人:%s</p>' % (self.shenpi_fourth.name, self._get_current_time(state=True), self.shenpi_fifth.name)
-        self.send_mail(subject=u'出差申请审批通过', content=content)
+            self.message_post(body=u' 批准,四级审批 --> 完成 ')
+        # content = u'%s批准了您的出差申请！' % self.shenpi_fourth.name
+        # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+        #     self.name.name, self.create_time[:10], self.shenpi_fourth.name), content=content,
+        #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
 
     @api.multi
     def wkf_done(self):
-        content = u'%s于%s批准了您的出差申请,审批已完成！' % (self.shenpi_fifth.name, self._get_current_time(state=True))
-        self.send_mail(subject=u'出差申请审批通过', content=content)
+        # content = u'%s批准了您的出差申请,审批已完成！' % self.shenpi_fifth.name
+        # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}批准,请您查看!".format(
+        #     self.name.name, self.create_time[:10], self.shenpi_fifth.name), content=content,
+        #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
         self.write({'state': '99', "shenpiren": '', "approve": [(4, self.shenpi_fifth.id)]})
-        self.message_post(body=u' 批准,五级审批 --> 完成 '+u" 操作时间:" + self._get_current_time())
+        self.message_post(body=u' 批准,五级审批 --> 完成 ')
 
     @api.multi
     def wkf_reject(self):
-        content = u'%s于%s驳回了您的出差申请！' % (self.shenpiren.name, self._get_current_time(state=True))
-        self.send_mail(subject=u'出差申请审批驳回', content=content)
-        self.write({'state': '-1', "shenpiren": ''})
+        # content = u'%s驳回了您的出差申请！' % self.shenpiren.name
+        # self.send_mail(subject=u"{0}您于{1}提交的出差申请已被{2}驳回,请您查看!".format(
+        #     self.name.name, self.create_time[:10], self.shenpiren.name), content=content,
+        #     email_to=self.name.work_email, email_cc=self.create_uid.email, wait=True)
+        self.write({'state': '-1', "shenpiren": '', "approve": [(4, self.shenpiren.id)]})
 
 
 class dtdream_travel_journey(models.Model):
     _name = "dtdream.travel.journey"
+    _rec_name = "starttime"
+
+    @api.constrains("startaddress", "endaddress", "starttime", "endtime", "reason")
+    def _check_start_end_address(self):
+        if not self.startaddress or not self.endaddress or not self.starttime or not self.endtime or not self.reason:
+            raise ValidationError(u"出发地,目的地,出差时间,结束时间,出差原因为必填项!")
 
     travel_id = fields.Many2one("dtdream.travel.chucha", string="申请人")
     name = fields.Char(related="travel_id.name.full_name", string="姓名")
-    starttime = fields.Date(default=fields.Date.today, string="出差时间")
+    starttime = fields.Date(default=fields.Date.today, string="开始时间")
     endtime = fields.Date(string="结束时间")
     startaddress = fields.Char(string="出发地")
     endaddress = fields.Char(string="目的地")
     reason = fields.Text(string="出差原因")
 
     _sql_constraints = [
-        ("date_check", "CHECK(starttime < endtime)", u'结束时间必须大于出差时间')
+        ("date_check", "CHECK(starttime <= endtime)", u'结束时间必须大于等于出差时间')
     ]
 
+
+class dtdream_hr(models.Model):
+    _inherit = 'hr.employee'
+
+    @api.depends("travel_ids")
+    def _compute_chucha_log(self):
+        for rec in self:
+            cr = rec.env["dtdream.travel.chucha"].search([("name.id", "=", rec.id)])
+            rec.chucha_log_nums = len(cr)
+
+    @api.one
+    def _compute_has_view(self):
+        if self.user_id == self.env.user:
+            self.can_view = True
+        else:
+            self.can_view = False
+
+    can_view = fields.Boolean(compute="_compute_has_view")
+    travel_ids = fields.One2many("dtdream.travel.chucha", "employ", string="出差")
+    chucha_log_nums = fields.Integer(compute='_compute_chucha_log', string="出差记录")

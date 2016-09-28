@@ -4,18 +4,23 @@ from openerp import models, fields, api
 from datetime import datetime,time
 from openerp.osv import fields, osv
 from openerp import models,fields
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DF, re
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import ValidationError
 from openerp.exceptions import UserError, AccessError
-from openerp import tools
-import math
+from lxml import etree
 
 
 class dtdream_hr_holidays_extend(models.Model):
     # _name = "dtdream.hr.holidays.extend"
     _inherit = "hr.holidays"
     # number_of_days_temp=fields.float('Allocation',default=123,required=1)
+    warning_digit = {
+        'title': "提示",
+        'message': "天数必须为数字"
+    }
+    name = fields.Text('说明',required=True)
+    number_of_days_temp_char = fields.Float("天数",required=True)
     attachment=fields.Binary(string="附件",store=True)
     attachment_name=fields.Char(string="附件名")
     create_type=fields.Char(string="创建类型")
@@ -25,13 +30,12 @@ class dtdream_hr_holidays_extend(models.Model):
         self.gonghao=self.employee_id.job_number
     gonghao=fields.Char(string="工号",compute=_compute_gonghao,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
-    create_time= fields.Char(string='申请时间',default=lambda self: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),readonly=1)
+    create_time= fields.Datetime(string='申请时间',default=lambda self: datetime.now(),readonly=1)
     # create_time=openerp.fields.Datetime.now()
     # approver1_auto = fields.Many2one("hr.employee",string="第一审批人(只用于显示)",compute=_compute_approver1)
 
 
     shenpiren1=fields.Many2one('hr.employee',string="第一审批人")
-
     shenpiren2=fields.Many2one('hr.employee',string="第二审批人")
     shenpiren3=fields.Many2one('hr.employee',string="第三审批人")
     shenpiren4=fields.Many2one('hr.employee',string="第四审批人")
@@ -47,24 +51,48 @@ class dtdream_hr_holidays_extend(models.Model):
     is_confirm42approved=fields.Boolean(default=False,string="四审批后直接通过")
 
     year= fields.Selection([
-        ('0',datetime.strftime(datetime.today()+relativedelta(years=1),"%Y")),
-        ('1',datetime.strftime(datetime.today(),"%Y")),
-        ('2',datetime.strftime(datetime.today()-relativedelta(years=1),"%Y")),
-        ('3',datetime.strftime(datetime.today()-relativedelta(years=2),"%Y")),
-        ('4',datetime.strftime(datetime.today()-relativedelta(years=3),"%Y")),
-        ('5',datetime.strftime(datetime.today()-relativedelta(years=4),"%Y")),
-        ('6',datetime.strftime(datetime.today()-relativedelta(years=5),"%Y")),
+        ('-3','2020'),
+        ('-2','2019'),
+        ('-1','2018'),
+        ('0','2017'),
+        ('1','2016'),
+        ('2','2015'),
+        ('3','2014'),
+        ('4','2013'),
+        ('5','2012'),
+        ('6','2011'),
 
     ],string="年休假年份")
+    _check_holidays = lambda self, cr, uid, ids, context=None: self.check_holidays(cr, uid, ids, context=context)
+
+    def _check_date(self, cr, uid, ids, context=None):
+        for holiday in self.browse(cr, uid, ids, context=context):
+            domain = [
+                ('date_from', '<=', holiday.date_to),
+                ('date_to', '>=', holiday.date_from),
+                ('employee_id', '=', holiday.employee_id.id),
+                ('id', '!=', holiday.id),
+                ('state', 'not in', ['cancel', 'refuse']),
+            ]
+            nholidays = self.search_count(cr, uid, domain, context=context)
+            if nholidays:
+                return False
+        return True
+    _constraints = [
+        (_check_date, 'You can not have 2 leaves that overlaps on same day!', ['date_from', 'date_to']),
+        (_check_holidays, '所休假期余额不足！', ['state', 'number_of_days_temp'])
+    ]
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5','employee_id','holiday_status_id','number_of_days_temp')
     def change(self):
-
         nianjia=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('holiday_status_id','=',5),('state','!=','draft')],order="id desc")
         length=len(nianjia)
         remain_nianjia_days=0
         for record in nianjia:
-            if record.type=="add":
+            if record.type=="add" and record.state =="validate":
                 remain_nianjia_days +=record.number_of_days_temp
             elif record.type=="remove":
                 remain_nianjia_days -=record.number_of_days_temp
@@ -95,7 +123,14 @@ class dtdream_hr_holidays_extend(models.Model):
         if self.number_of_days_temp<=0:
             raise ValidationError('天数必须大于0')
 
-
+    @api.onchange('number_of_days_temp_char')
+    def onchange_number_of_days_temp_char(self):
+        p = re.compile(r'(^[0-9]*$)|(^[0-9]+(\.[0-9]+)?$)')
+        if p.search(str(self.number_of_days_temp_char)):
+            self.number_of_days_temp = self.number_of_days_temp_char
+        elif self.number_of_days_temp_char:
+            self.number_of_days_temp_char = False
+            return {"warning": self.warning_digit}
 
     @api.onchange('employee_id')
     def onchange_employee1(self):
@@ -104,17 +139,26 @@ class dtdream_hr_holidays_extend(models.Model):
             self.gonghao=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).job_number
             self.department_id=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.id
             if not self.create_type:
-                self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
+                # self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
                 self.shenpiren2=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren2
                 self.shenpiren3=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren3
                 self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren4
                 self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=',False)],order="id desc",limit=1).shenpiren5
+                if len(self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id)==1:
+                    self.shenpiren1=self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id
+
+                return {
+                    'domain': {
+                        "shenpiren1":[('id','in',[x.id for x in self.env['hr.employee'].search([('id','=',self.employee_id.id)]).department_id.assitant_id])]
+                    }
+                }
             elif self.create_type:
                 self.shenpiren1=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren1
                 self.shenpiren2=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren2
                 self.shenpiren3=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren3
                 self.shenpiren4=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren4
                 self.shenpiren5=self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('create_type','=','manage')],order="id desc",limit=1).shenpiren5
+
 
 
 
@@ -152,13 +196,33 @@ class dtdream_hr_holidays_extend(models.Model):
             return False
         return True
 
+    def create(self, cr, uid, values, context=None):
+
+        """ Override to avoid automatic logging of creation """
+        # print self.pool.get('hr.holidays').browse(cr, uid,values=values)
+        print "create-----------"
+        if context is None:
+            context = {}
+        employee_id = values.get('employee_id', False)
+        context = dict(context, mail_create_nolog=True, mail_create_nosubscribe=True)
+        if not self._check_state_access_right(cr, uid, values, context):
+            raise AccessError(('您不能分配年休假 \'%s\'. 请联系管理员') % values.get('state'))
+        if not values.get('name'):
+            values['name'] = " "
+        hr_holiday_id = super(dtdream_hr_holidays_extend, self).create(cr, uid, values, context=context)
+        self.add_follower(cr, uid, [hr_holiday_id], employee_id, context=context)
+        damn_this= self.pool.get('hr.holidays').browse(cr, uid,hr_holiday_id,context=context)
+        for this in damn_this:
+            this.message_post(body=u'创建，状态：草稿 ')
+        # print rrrrrrrr
+        return hr_holiday_id
 
     def get_base_url(self,cr,uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
         return base_url
     @api.multi
     def holidays_confirm(self):
-
+        self.message_post(body=u'提交，状态：草稿 --> 一级审批 ')
         self.shenpiren_his1=self.shenpiren1.user_id
         self.write({'state':'confirm','current_shenpiren':self.shenpiren1.id})
 
@@ -167,26 +231,23 @@ class dtdream_hr_holidays_extend(models.Model):
         url=self.get_base_url()+link
         if self.create_type==False:
             self.env['mail.mail'].create({
-                 'subject': u'%s 请假'%self.employee_id.name,
-                'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
-                'email_from': 'postmaster-odoo@dtdream.com',
+                'subject': u'%s于%s提交请假申请，请您审批！' %(self.employee_id.name,self.create_time[:10]),
+                'body_html': u'''
+                <p>%s，您好：</p>
+                <p>%s提交的请假申请正等待您的审批！</p>
+                <p> 请点击链接进入审批:
+                <a href="%s">%s</a></p>
+               <p>dodo</p>
+                <p>万千业务，简单有do</p>
+                <p>%s</p>''' % (self.shenpiren1.name, self.employee_id.name, url, url, self.write_date[:10]),
+                'email_from':self.get_mail_server_name(),
 
                 'email_to': self.shenpiren1.work_email,
             }).send()
 
-            self.env['mail.mail'].create({
-                 'subject': u'%s 请假'%self.employee_id.name,
-                'body_html': u'<p>%s</p><p>您提交了一个请假单,点击<a href="%s">此处查看</p>'%(self.shenpiren1.name,url),
-                'email_from': 'postmaster-odoo@dtdream.com',
-
-                'email_to': self.employee_id.work_email,
-            }).send()
-
-
-
-
     @api.multi
     def holidays_confirm2(self):
+            self.message_post(body=u'批准，状态：一级审批 --> 二级审批 ')
             if self.shenpiren2==False and self.create_type==False:
                 raise ValidationError('请先填写第二审批人')
             else:
@@ -198,23 +259,23 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren2.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''
+                    <p>%s，您好：</p>
+                    <p>%s提交的请假申请正等待您的审批！</p>
+                    <p> 请点击链接进入审批:
+                    <a href="%s">%s</a></p>
+                   <p>dodo</p>
+                    <p>万千业务，简单有do</p>
+                    <p>%s</p>''' % (self.shenpiren2.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.shenpiren2.work_email,
                 }).send()
 
-            self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：一级审批 -> 二级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
-                    'email_to': self.employee_id.work_email,
-                }).send()
 
     @api.multi
     def holidays_confirm3(self):
+            self.message_post(body=u'批准，状态：二级审批 --> 三级审批 ')
             self.shenpiren_his3=self.shenpiren3.user_id
             self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
 
@@ -223,24 +284,24 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren3.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''
+                    <p>%s，您好：</p>
+                    <p>%s提交的请假申请正等待您的审批！</p>
+                    <p> 请点击链接进入审批:
+                    <a href="%s">%s</a></p>
+                   <p>dodo</p>
+                    <p>万千业务，简单有do</p>
+                    <p>%s</p>''' % (self.shenpiren3.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.shenpiren3.work_email,
                 }).send()
 
-            self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：二级审批 -> 三级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
 
-                    'email_to': self.employee_id.work_email,
-                }).send()
 
     @api.multi
     def holidays_confirm4(self):
-
+            self.message_post(body=u'批准，状态：三级审批 --> 四级审批 ')
             self.shenpiren_his4=self.shenpiren4.user_id
             self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
 
@@ -249,24 +310,24 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren4.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
+                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                    'body_html': u'''
+                             <p>%s，您好：</p>
+                             <p>%s提交的请假申请正等待您的审批！</p>
+                             <p> 请点击链接进入审批:
+                             <a href="%s">%s</a></p>
+                            <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (self.shenpiren4.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
                     'email_to': self.shenpiren2.work_email,
                 }).send()
 
-            self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：三级审批 -> 四级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
 
-                    'email_to': self.employee_id.work_email,
-                }).send()
 
     @api.multi
     def holidays_confirm5(self):
-
+            self.message_post(body=u'批准，状态：四级审批 --> 五级审批 ')
             self.shenpiren_his5=self.shenpiren5.user_id
             self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
 
@@ -275,24 +336,31 @@ class dtdream_hr_holidays_extend(models.Model):
             url=self.get_base_url()+link
 
             self.env['mail.mail'].create({
-                     'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有一个请假单待审批,点击<a href="%s">此处</a>查看</p>'%(self.shenpiren5.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+                'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+                'body_html': u'''
+                         <p>%s，您好：</p>
+                         <p>%s提交的请假申请正等待您的审批！</p>
+                         <p> 请点击链接进入审批:
+                         <a href="%s">%s</a></p>
+                        <p>dodo</p>
+                         <p>万千业务，简单有do</p>
+                         <p>%s</p>''' % (self.shenpiren5.name, self.employee_id.name, url, url, self.write_date[:10]),
+                    'email_from':self.get_mail_server_name(),
 
                     'email_to': self.shenpiren2.work_email,
                 }).send()
 
-            self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：四级审批 -> 五级审批,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
 
-                    'email_to': self.employee_id.work_email,
-                }).send()
 
 
 
     def holidays_reset(self, cr, uid, ids, context=None):#重写该方法，开放重置按钮权限
+        # print "reset------------"
+        this_self=''
+        for id in ids:
+            this_self=self.pool.get('hr.holidays').browse(cr, uid,id)
+        if this_self.state!="draft":
+            this_self.message_post(body=u'重置，状态：拒绝 --> 草稿 ')
 
         self.write(cr, uid, ids, {
             'state': 'draft',
@@ -312,19 +380,29 @@ class dtdream_hr_holidays_extend(models.Model):
     @api.multi
     def holidays_refuse(self):
 
+        dic={"confirm":"一级审批","confirm2":"二级审批","confirm3":"三级审批","confirm4":"四级审批","confirm5":"五级审批",}
+        message = ("驳回，状态：%s --> 拒绝") % (dic[self.state])
+        self.message_post(body=message)
         # 邮件通知
-        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-        url=self.get_base_url()+link
-        state=dict(self.env['hr.holidays']._columns['state'].selection)[self.state]
-        state_code=unicode(state,'utf-8')
-        if self.create_type==False:
-            self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 驳回,点击<a href="%s">此处</a>查看</p>'%(self.employee_id.name,state_code,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
+        # link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        # url=self.get_base_url()+link
+        # state=dict(self.env['hr.holidays']._columns['state'].selection)[self.state]
+        # state_code=unicode(state,'utf-8')
+        # if self.create_type==False:
+        #     self.env['mail.mail'].create({
+        #             'subject': u'%s您于%s提交请假申请已被驳回，请您查看！' % (self.employee_id.name, self.create_time[:10]),
+        #             'body_html': u'''<p>%s，您好：</p>
+        #                      <p>您提交的请假申请已被驳回，请您查看！</p>
+        #                      <p> 请点击链接进入查看:
+        #                      <a href="%s">%s</a></p>
+        #                       <p>dodo</p>
+        #                      <p>万千业务，简单有do</p>
+        #                      <p>%s</p>''' % (self.employee_id.name, url,url,self.write_date[:10]),
+        #             'email_from':self.get_mail_server_name(),
+        #
+        #             'email_to': self.employee_id.work_email,
+        #         }).send()
 
-                    'email_to': self.employee_id.work_email,
-                }).send()
 
 
 
@@ -337,28 +415,36 @@ class dtdream_hr_holidays_extend(models.Model):
             if self.pool.get('hr.holidays').browse(cr, uid,id).state=='confirm' and self.pool.get('hr.holidays').browse(cr, uid,id).shenpiren2.id==False and self.pool.get('hr.holidays').browse(cr, uid,id).create_type==False:
                 raise ValidationError('请先填写第二审批人')
 
-
+        dic={"confirm":"一级审批","confirm2":"二级审批","confirm3":"三级审批","confirm4":"四级审批","confirm5":"五级审批",}
+        message = ("批准，状态：%s --> 完成") % (dic[this_self.state])
+        this_self.message_post(body=message)
         # 邮件通知
-        link='/web?#id=%s&view_type=form&model=hr.holidays'%this_self.id
-        url=this_self.get_base_url()+link
-        state=dict(this_self.env['hr.holidays']._columns['state'].selection)[this_self.state]
-        state_code=unicode(state,'utf-8')
-        if this_self.create_type==False:
-            this_self.env['mail.mail'].create({
-                    'subject': u'%s 请假'%this_self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您的请假单状态：%s -> 完成,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,state_code,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
-                    'email_to': this_self.employee_id.work_email,
-                }).send()
-        elif this_self.create_type=='manage':
-            this_self.env['mail.mail'].create({
-                    'subject': u'%s 年休假分配'%this_self.employee_id.name,
-                    'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
-                    'email_from': 'postmaster-odoo@dtdream.com',
-
-                    'email_to': this_self.employee_id.work_email,
-                }).send()
+        # link='/web?#id=%s&view_type=form&model=hr.holidays'%this_self.id
+        # url=this_self.get_base_url()+link
+        # state=dict(this_self.env['hr.holidays']._columns['state'].selection)[this_self.state]
+        # state_code=unicode(state,'utf-8')
+        # if this_self.create_type==False:
+        #     this_self.env['mail.mail'].create({
+        #             'subject': u'您于%s提交请假申请已经审批通过，请您查看！' % (this_self.create_time[:10]),
+        #             'body_html': u'''<p>%s，您好：</p>
+        #                      <p>您提交的请假申请已经审批通过，请您查看！</p>
+        #                      <p> 请点击链接进入查看:
+        #                      <a href="%s">%s</a></p>
+        #                       <p>dodo</p>
+        #                      <p>万千业务，简单有do</p>
+        #                      <p>%s</p>''' % (this_self.employee_id.name, url,url,this_self.write_date[:10]),
+        #             'email_from':this_self.get_mail_server_name(),
+        #
+        #             'email_to': this_self.employee_id.work_email,
+        #         }).send()
+        # elif this_self.create_type=='manage':
+        #     this_self.env['mail.mail'].create({
+        #             'subject': u'%s 年休假分配'%this_self.employee_id.name,
+        #             'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
+        #             'email_from':self.get_mail_server_name(),
+        #
+        #             'email_to': this_self.employee_id.work_email,
+        #         }).send()
 
 
         obj_emp = self.pool.get('hr.employee')
@@ -452,17 +538,58 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
         result = {'value': {}}
-
-
-
+        #
+        #
+        #
         # Compute and update the number of days
-        if (date_to and date_from) and (date_from <= date_to):
-            diff_day = self._get_number_of_days(date_from, date_to)
-            result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
-        else:
-            result['value']['number_of_days_temp'] = 0
+        # if (date_to and date_from) and (date_from <= date_to):
+        #     diff_day = self._get_number_of_days(date_from, date_to)
+        #     result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
+        # else:
+        #     result['value']['number_of_days_temp'] = 0
 
         return result
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_hr_holidays_extend, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if my_action.name != u"休假摘要" and my_action.name != u"年休假分配" and my_action.name != u"年休假扣除" and my_action.name != u"休假申请":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("create", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    @api.multi
+    def _message_track(self, tracked_fields, initial):
+        self.ensure_one()
+        changes = set()
+        tracking_value_ids = []
+
+        # generate tracked_values data structure: {'col_name': {col_info, new_value, old_value}}
+        for col_name, col_info in tracked_fields.items():
+            initial_value = initial[col_name]
+            new_value = getattr(self, col_name)
+
+            if new_value != initial_value and (new_value or initial_value):  # because browse null != False
+                tracking = self.env['mail.tracking.value'].create_tracking_values(initial_value, new_value, col_name, col_info)
+                if tracking:
+                    tracking_value_ids.append([0, 0, tracking])
+
+                if col_name in tracked_fields:
+                    changes.add(col_name)
+        print new_value
+        print initial_value
+        return changes, tracking_value_ids
+    @api.multi
+    def message_track(self, tracked_fields, initial_values):
+
+        return
 
     def onchange_date_to(self, cr, uid, ids, date_to, date_from):
         """
@@ -474,11 +601,11 @@ class dtdream_hr_holidays_extend(models.Model):
         result = {'value': {}}
 
         # Compute and update the number of days
-        if (date_to and date_from) and (date_from <= date_to):
-            diff_day = self._get_number_of_days(date_from, date_to)
-            result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
-        else:
-            result['value']['number_of_days_temp'] = 0
+        # if (date_to and date_from) and (date_from <= date_to):
+        #     diff_day = self._get_number_of_days(date_from, date_to)
+        #     result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
+        # else:
+        #     result['value']['number_of_days_temp'] = 0
         return result
 
 
@@ -529,8 +656,10 @@ class batch_approval(models.Model):
                 elif record.state in ('confirm'):
                     record.signal_workflow('validate')
             else:
-                raise ValidationError('只有年休假才具备该功能')
+                raise ValidationError('只有年休假分配和年休假扣除才具备该功能')
         return {'type': 'ir.actions.act_window_close'}
+
+
 
 class hr_holidays_wizard(models.TransientModel):
      _name = "hr.holidays.wizard"
@@ -550,11 +679,11 @@ class hr_holidays_status_extend(osv.osv):
 
         result = dict((id, dict(max_leaves=0, leaves_taken=0, remaining_leaves=0,
                                 virtual_remaining_leaves=0)) for id in ids)
-        holiday_ids = self.pool['hr.holidays'].search(cr, uid, [('employee_id', '=', employee_id),
+        holiday_ids = self.pool['hr.holidays'].search(cr, openerp.SUPERUSER_ID, [('employee_id', '=', employee_id),
                                                                 ('state', 'in', ['confirm', 'validate1','confirm2','confirm3','confirm4','confirm5', 'validate']),
                                                                 ('holiday_status_id', 'in', ids)
                                                                 ], context=context)
-        for holiday in self.pool['hr.holidays'].browse(cr, uid, holiday_ids, context=context):
+        for holiday in self.pool['hr.holidays'].browse(cr, openerp.SUPERUSER_ID, holiday_ids, context=context):
             status_dict = result[holiday.holiday_status_id.id]
             if holiday.type == 'add':
                 if holiday.state == 'validate':
@@ -570,7 +699,21 @@ class hr_holidays_status_extend(osv.osv):
                     status_dict['leaves_taken'] += holiday.number_of_days_temp
                     status_dict['remaining_leaves'] -= holiday.number_of_days_temp
         return result
+class dtdream_holidays_hr(models.Model):
+    _inherit = 'hr.employee'
 
+    def _compute_holidays_nums(self):
+        cr = self.env["hr.holidays"].search([('type','=','remove'),("employee_id.id", "=", self.id)])
+        self.holidays_nums = len(cr)
+
+    @api.one
+    def _compute_has_holidays_view(self):
+        if self.user_id == self.env.user:
+            self.can_view_holidays = True
+        else:
+            self.can_view_holidays = False
+    can_view_holidays = fields.Boolean(compute=_compute_has_holidays_view)
+    holidays_nums = fields.Integer(compute=_compute_holidays_nums, string="休假记录",stroe=True)
 
 
 

@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dtdream_hr_business_dtdream_hr_business,dtdream_hr_business.dtdream_hr_business,model_dtdream_hr_business_dtdream_hr_business,,1,1,1,1
 access_dtdream_hr_business_business_detail,dtdream_hr_business.business_detail,model_dtdream_hr_business_business_detail,,1,1,1,1
+access_ir_mail_server,ir.mail_server all_user,base.model_ir_mail_server,,1,0,0,0

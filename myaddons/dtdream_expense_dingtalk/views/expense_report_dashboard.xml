@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <template id="assets_backend" name="expense_dingtalk assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/src/css/expense.css"/>
+                <script type="text/javascript"
+                        src="/dtdream_expense_dingtalk/static/src/js/expense_dashboard.js"></script>
+            </xpath>
+        </template>
+
+        <record id="dtdream_expense_report_dashboard_view_kanban" model="ir.ui.view">
+            <field name="name">dtdream.expense.report.dashboard</field>
+            <field name="model">dtdream.expense.report.dashboard</field>
+            <field name="arch" type="xml">
+                <expense_dashboard create="0">
+                </expense_dashboard>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="act_open_dtdream_expense_report_dashboard_view">
+            <field name="name">费用报销</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dtdream.expense.report.dashboard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">expense_dashboard,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_expense_dashboard"
+                  parent="dtdream_expense.dtdream_expense_menu_root"
+                  sequence="1"
+                  action="act_open_dtdream_expense_report_dashboard_view"/>
+    </data>
+</openerp>

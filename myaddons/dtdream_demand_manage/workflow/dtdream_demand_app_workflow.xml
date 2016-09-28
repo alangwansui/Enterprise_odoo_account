@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_dtdream_demand_app">
+            <field name="name">应用开发及优化流程</field>
+            <field name="osv">dtdream.demand.app</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="flow_start">True</field>
+            <field name="name">提交申请</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="act_department_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="name">部门主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_department_approve()</field>
+        </record>
+
+        <record id="act_demand_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="name">IT需求审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_demand_approve()</field>
+        </record>
+
+        <record id="act_plan_analyst" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="name">IT方案分析</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_plan_analyst()</field>
+        </record>
+
+        <record id="act_plan_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="name">IT方案审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_plan_approve()</field>
+        </record>
+
+        <record id="act_plan_doing" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="name">IT实施</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_plan_doing()</field>
+        </record>
+
+        <record id="act_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_demand_app"/>
+            <field name="name">完成</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_done()</field>
+        </record>
+
+
+        <record id="trans_draft_department_approve" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_department_approve"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_department_approve_demand_approve" model="workflow.transition">
+            <field name="act_from" ref="act_department_approve"/>
+            <field name="act_to" ref="act_demand_approve"/>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_demand_approve_plan_analyst" model="workflow.transition">
+            <field name="act_from" ref="act_demand_approve"/>
+            <field name="act_to" ref="act_plan_analyst"/>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_plan_analyst_plan_approve" model="workflow.transition">
+            <field name="act_from" ref="act_plan_analyst"/>
+            <field name="act_to" ref="act_plan_approve"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_plan_approve_plan_doing" model="workflow.transition">
+            <field name="act_from" ref="act_plan_approve"/>
+            <field name="act_to" ref="act_plan_doing"/>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_plan_doing_done" model="workflow.transition">
+            <field name="act_from" ref="act_plan_doing"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+    </data>
+</openerp>

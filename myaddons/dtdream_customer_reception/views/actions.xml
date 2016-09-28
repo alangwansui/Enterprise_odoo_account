@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="act_dtdream_customer_reception_mine" model="ir.actions.act_window">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.customer.reception</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|',('name.user_id','=',uid),('create_uid','=',uid)]</field>
+        </record>
+
+        <record id="act_dtdream_customer_reception_approve" model="ir.actions.act_window">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.customer.reception</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_approve.user_id','=',uid),('name.user_id','!=',uid)]</field>
+        </record>
+
+        <record id="act_dtdream_customer_reception_all" model="ir.actions.act_window">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.customer.reception</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.server" id="act_dtdream_customer_reception_config">
+            <field name="name">配置</field>
+            <field name="model_id" ref="model_dtdream_customer_reception_config"/>
+            <field name="code">
+                action = {
+                'name':'配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dtdream.customer.reception.config',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+                'context':context,
+                }
+            </field>
+        </record>
+
+    <record model="ir.module.category" id="module_customer_reception_group">
+        <field name="name">客户接待</field>
+        <field name="description">客户接待</field>
+        <field name="sequence">2</field>
+    </record>
+
+    <record id="customer_reception_manage" model="res.groups">
+        <field name="name">客户接待管理员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_customer_reception_group"/>
+    </record>
+
+    <record id="customer_reception_member" model="res.groups">
+        <field name="name">客工部成员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_customer_reception_group"/>
+    </record>
+
+    </data>
+</openerp>

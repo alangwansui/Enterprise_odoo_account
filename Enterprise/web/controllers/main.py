@@ -40,6 +40,11 @@ from openerp import http
 from openerp.http import request, serialize_exception as _serialize_exception
 from openerp.exceptions import AccessError
 
+# Begin to import by g0335
+from common.dterror import DTError
+from ad import DTAD
+# End to import by g0335
+
 # Monkey patch release to set the edition as 'enterprise'
 # from openerp.release import RELEASE_LEVELS_DISPLAY
 # version_info = (9, 0, 0, 'final', 0, 'e')
@@ -307,6 +312,17 @@ def set_cookie_and_redirect(redirect_url):
 def load_actions_from_ir_values(key, key2, models, meta):
     Values = request.session.model('ir.values')
     actions = Values.get(key, key2, models, meta, request.context)
+
+    try:
+        tmp = []
+        for action in actions:
+            if request.context['default_tree_but_open'] == action[1]:
+                tmp.append(action)
+                break;
+        actions = tmp
+    except Exception, e:
+        return [(id, name, clean_action(action))
+            for id, name, action in actions]
 
     return [(id, name, clean_action(action))
             for id, name, action in actions]
@@ -654,6 +670,95 @@ class Proxy(http.Controller):
             headers = {'X-Openerp-Session-Id': request.session.sid}
             return client.post('/' + path, base_url=base_url, query_string=query_string,
                                headers=headers, data=data)
+class AD(http.Controller):
+    '''
+    author: g0335
+    description: 实现域账号重置功能
+    '''
+
+    def _render_template(self, **d):
+        return env.get_template("ad_manager.html").render(d)
+
+    @http.route('/web/ad/manager', type='http', auth="none")
+    def manager(self, **kw):
+        d = {}
+        return self._render_template(**d)
+
+    @http.route('/web/ad/ms/mail', type='json', auth="none", methods=['POST'], csrf=False)
+    def getKeyByMail(self, **kw):
+
+        '''
+        :author: g0335
+        :description: 通过邮件获取验证码
+        :param kw:
+        :return:
+        '''
+
+        try:
+
+            kw = {}
+            kw['login'] = request.jsonrequest['login']
+            kw['mail'] = request.jsonrequest['mail']
+            kw['db_name'] = request.session.db
+            kw['uid'] = openerp.SUPERUSER_ID
+
+        except Exception, e:
+            _logger.exception('[getKeyByMail] invalid parameters')
+            return DTError.get_error_msg(DTError.DT_ERROR_NUM_INVALID_MAIL_PARM)
+
+        ad = DTAD()
+        return ad.send_msg(t=DTAD.TYPE_MAIL, **kw)
+
+    @http.route('/web/ad/ms/phone', type='json', auth="none", methods=['POST'], csrf=False)
+    def getKeyByPhone(self, **kw):
+        '''
+                :author: g0335
+                :description: 通过手机获取验证码
+                :param kw:
+                :return:
+        '''
+
+        try:
+
+            kw = {}
+            kw['login'] = request.jsonrequest['login']
+            kw['phone'] = request.jsonrequest['phone']
+            kw['db_name'] = request.session.db
+            kw['uid'] = openerp.SUPERUSER_ID
+
+        except Exception, e:
+            _logger.exception('[getKeyByPhone] invalid parameters')
+            return DTError.get_error_msg(DTError.DT_ERROR_NUM_INVALID_PHONE_PARM)
+
+        ad = DTAD()
+        result = ad.send_msg(t=DTAD.TYPE_PHONE, **kw)
+        return  result
+
+    @http.route('/web/ad/reset', type='json', auth="none", methods=['POST'], csrf=False)
+    def resetpasswd(self, **kw):
+
+        '''
+        :author: g0335
+        :description: 重置域密码
+        :param kw:
+        :return:
+        '''
+
+        try:
+
+            kw = {}
+            kw['login'] = request.jsonrequest['login']
+            kw['sn'] = request.jsonrequest['sn']
+            kw['passwd'] = request.jsonrequest['passwd']
+            kw['passwd2'] = request.jsonrequest['passwd2']
+            kw['db_name'] = request.session.db
+            kw['uid'] = openerp.SUPERUSER_ID
+
+        except Exception,e:
+            return DTError.get_error_msg(DTError.DT_ERROR_NUM_INVALID_RESET_PARAM)
+
+        ad = DTAD()
+        return ad.resetPasswd(**kw)
 
 class Database(http.Controller):
 
@@ -779,6 +884,14 @@ class Session(http.Controller):
             return {'error':_('You cannot leave any password empty.'),'title': _('Change Password')}
         if new_password != confirm_password:
             return {'error': _('The new password and its confirmation must be identical.'),'title': _('Change Password')}
+
+        import re
+        result = re.match(
+            r'^(?![0-9_]+$)(?![a-z_]+$)(?![A-Z_]+$)(?![\W_]+$)(?![0-9a-z]+$)(?![A-Za-z]+$)(?![\Wa-z]+$)(?![0-9A-Z]+$)(?![\WA-Z]+$)(?![0-9\W]+$)[\w\W]{8,}$',
+            new_password)
+        if not result:
+            return {'error': _('密码要符合规则:1、密码长度至少8位字符；2、同时包含大、小写字母，数字、特殊字符中的三种类型混合组成'),
+                    'title': _('Change Password')}
         try:
             if request.session.model('res.users').change_password(
                 old_password, new_password):

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+    <openerp>
+        <data>
+            <template id="dtdream_customer_reception_css" name="dtdream_customer_reception_css" inherit_id="web.assets_backend">
+                <xpath expr="." position="inside">
+                    <link rel="stylesheet" href="/dtdream_customer_reception/static/css/custmoer.css"></link>
+                </xpath>
+            </template>
+        </data>
+    </openerp>

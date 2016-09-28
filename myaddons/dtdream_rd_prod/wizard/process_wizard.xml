@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_dtdream_process_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.process.wizard.form</field>
+        <field name="model">dtdream.process.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_agree" type="object" string="通过" class="oe_highlight oe_edit_only"/>
+                    <button name="btn_other" type="object" string="带风险通过" class="oe_highlight oe_edit_only"/>
+                    <button name="btn_reject" type="object" string="不通过" class="oe_highlight oe_edit_only"/>
+                    <button special="cancel" string="取消" class="oe_edit_only"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="act_dtdream_process_wizard" model="ir.actions.act_window">
+        <field name="name">审批</field>
+        <field name="res_model">dtdream.process.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_dtdream_ver_process_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.ver.process.wizard.form</field>
+        <field name="model">dtdream.ver.process.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_agree" type="object" string="通过" class="oe_highlight oe_edit_only"/>
+                    <button name="btn_other" type="object" string="带风险通过" class="oe_highlight oe_edit_only"/>
+                    <button name="btn_reject" type="object" string="不通过" class="oe_highlight oe_edit_only"/>
+                    <button special="cancel" string="取消" class="oe_edit_only"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="act_dtdream_ver_process_wizard" model="ir.actions.act_window">
+        <field name="name">审批</field>
+        <field name="res_model">dtdream.ver.process.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    </data>
+</openerp>

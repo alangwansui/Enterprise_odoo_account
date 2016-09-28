@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="act_dtdream_hr_pbc" model="ir.actions.act_window">
+            <field name="name">部门绩效目标</field>
+            <field name="res_model">dtdream.hr.pbc</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_hr_pbc_mine" model="ir.actions.act_window">
+            <field name="name">我的考评</field>
+            <field name="res_model">dtdream.hr.performance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('name.user_id','=',uid),('state', '!=', '0')]</field>
+        </record>
+
+        <record id="act_dtdream_hr_pbc_approve" model="ir.actions.act_window">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.hr.performance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('officer.user_id','=',uid),('state', 'in', ('2','5')),('name.Inaugural_state','=','Inaugural_state_01')]</field>
+        </record>
+
+        <record id="act_dtdream_hr_pbc_all" model="ir.actions.act_window">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.hr.performance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('name.Inaugural_state','=','Inaugural_state_01')]</field>
+        </record>
+
+        <record id="act_dtdream_hr_pbc_manage" model="ir.actions.act_window">
+            <field name="name">绩效管理</field>
+            <field name="res_model">dtdream.hr.performance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('name.Inaugural_state','=','Inaugural_state_01')]</field>
+        </record>
+
+    </data>
+</openerp>

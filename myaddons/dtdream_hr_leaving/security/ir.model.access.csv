@@ -1,4 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_leaving_handle,leaving.handle,model_leaving_handle,,1,1,1,1
+access_leaving_handle,leaving.handle,model_leaving_handle,base.group_user,1,1,1,1
+access_leaving_handle_admin,leaving.handle,model_leaving_handle,group_dtdream_leaving_admin,1,1,1,1
 access_leaving_handle_process,leaving.handle.process,model_leaving_handle_process,,1,1,1,1
 access_process_process,process.process,model_process_process,,1,1,1,1
+access_leaving_handle_approver,leaving.handle.approver,model_leaving_handle_approver,,1,1,0,0
+access_leaving_handle_approve_record,leaving.handle.approve.record,model_leaving_handle_approve_record,,1,1,1,1
+access_ir_mail_server,ir.mail_server all_user,base.model_ir_mail_server,,1,0,0,0

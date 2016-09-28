@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <menuitem id="dtdream_grants_root" name="补助金管理" web_icon="dtdream_grants,static/src/img/grants.png"></menuitem>
+    <menuitem id="dtdream_grants_dashborad" name="仪表盘" action="act_grants_dashborad" parent="dtdream_grants_root" sequence="10"></menuitem>
+    <menuitem id="dtdream_grants_allocation" name="补助金分配设置" action="act_grants_allocation" parent="dtdream_grants_root" sequence="20"></menuitem>
+    <menuitem id="dtdream_grants_allo_detail" name="补助金分配明细" action="act_grants_detail" parent="dtdream_grants_root" sequence="30"></menuitem>
+    <menuitem id="dtdream_grants_admin" name="补助金分配管理" action="act_grants_admin" parent="dtdream_grants_root" sequence="40" groups="group_grants_admin,group_grants_view_all"></menuitem>
+    <menuitem id="dtdream_grants_config" name="配置" action="act_grants_config" parent="dtdream_grants_root" sequence="50" groups="group_grants_admin"></menuitem>
+  </data>
+</openerp>

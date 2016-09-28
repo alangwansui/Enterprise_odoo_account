@@ -3,6 +3,8 @@
                 <data noupdate="0">
 
                     <delete id = "hr_holidays.holiday_status_cl" model="hr.holidays.status"/>
+                    <delete id="hr_holidays.holiday_status_unpaid" model="hr.holidays.status"></delete>
+                    <delete id="hr_holidays.holiday_status_comp" model="hr.holidays.status"></delete>
                     <!-- Casual leave -->
 
                      <record model="hr.holidays.status" id="hr_holidays.holiday_status_cl1">

@@ -122,6 +122,8 @@
         </record>
         <menuitem action="action_res_groups" id="menu_action_res_groups" parent="base.menu_users" groups="base.group_no_one" sequence="3"/>
 
+
+
         <!-- res.users -->
         <record id="view_users_simple_form" model="ir.ui.view">
             <field name="name">res.users.simplified.form</field>

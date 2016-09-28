@@ -77,19 +77,19 @@
         <field name="action">wkf_approve7()</field>
      </record>
 
+    <record model="workflow.activity" id="act_approve8"> <!-- 离职结算支付确认  -->
+        <field name="wkf_id" ref="wkf_leaving_handle" />
+        <field name="name">离职结算支付确认 </field>
+        <field name="kind">function</field>
+        <field name="action">wkf_approve8()</field>
+     </record>
+
      <record model="workflow.activity" id="act_done"> <!-- 审批通过 -->
         <field name="wkf_id" ref="wkf_leaving_handle" />
         <field name="name">审批完</field>
         <field name="flow_stop" eval="True"/>
         <field name="kind">function</field>
         <field name="action">wkf_done()</field>
-     </record>
-
-    <record model="workflow.activity" id="act_reject"> <!-- 审批驳回 -->
-        <field name="wkf_id" ref="wkf_leaving_handle" />
-        <field name="name">驳回</field>
-        <field name="kind">function</field>
-        <field name="action">wkf_reject()</field>
      </record>
 
     <!--
@@ -127,14 +127,20 @@
         <field name="act_from" ref="act_approve5" />
         <field name="act_to" ref="act_approve6" />
         <field name="signal">btn_submit</field>
+        <field name="condition">is_finish2</field>
     </record>
     <record model="workflow.transition" id="trans_approve6_approve7"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve6" />
         <field name="act_to" ref="act_approve7" />
         <field name="signal">btn_agree</field>
     </record>
-    <record model="workflow.transition" id="trans_approve7_done"> <!-- 2. submitted->draft (reset signal) -->
+    <record model="workflow.transition" id="trans_approve7_approve8"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve7" />
+        <field name="act_to" ref="act_approve8" />
+        <field name="signal">btn_agree</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve8_done"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve8" />
         <field name="act_to" ref="act_done" />
         <field name="signal">btn_agree</field>
     </record>
@@ -171,6 +177,11 @@
     <record model="workflow.transition" id="trans_approve7_reject"> <!-- 2. submitted->draft (reset signal) -->
         <field name="act_from" ref="act_approve7" />
         <field name="act_to" ref="act_approve6" />
+        <field name="signal">btn_reject</field>
+    </record>
+    <record model="workflow.transition" id="trans_approve8_reject"> <!-- 2. submitted->draft (reset signal) -->
+        <field name="act_from" ref="act_approve8" />
+        <field name="act_to" ref="act_approve7" />
         <field name="signal">btn_reject</field>
     </record>
 </data>

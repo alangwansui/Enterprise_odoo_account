@@ -1,0 +1,929 @@
+<openerp>
+  <data>
+
+      <!--个人周报FORM视图-->
+      <record model="ir.ui.view" id="dtdream_sale_own_report_form">
+          <field name="name">dtdream.sale.own.report.form</field>
+          <field name="model">dtdream.sale.own.report</field>
+          <field name="arch" type="xml">
+            <form string="个人周报">
+                <header>
+                    <button name="btn_submit" string="提交" type="object" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','0')]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="draft,submit"/>
+                </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="report_person" invisible="True"></field>
+                          <field name="report_person_name"></field>
+                          <field name="report_start_time" ></field>
+                          <field name="week" options='{"no_open": True, "no_create": True}' attrs="{'readonly':[('state','=','submit')]}"></field>
+                      </group>
+                      <group>
+                          <field name="department"></field>
+                          <field name="report_end_time" ></field>
+                      </group>
+                  </group>
+                <notebook colspan="4">
+                    <page string="本周工作总结">
+                        <group string="空间情况总结"></group>
+                        <field name="sys_compute_lists" string="空间情况总结"  attrs="{'readonly':[('state','=','submit')]}">
+                            <tree delete="false" create="false" editable="bottom" class="dtdream_tree_cls">
+                                <field name="system_name" readonly="True"/>
+                                <field name="bid_amount" />
+                                <field name="contract_signing_amount" />
+                                <field name="received" />
+                                <field name="accounts_payable"/>
+                                <field name="project_total" readonly="True"></field>
+                                <field name="space_total" readonly="True"></field>
+                                <field name="lead_space_total" readonly="True"></field>
+                                <field name="project_count" readonly="True"></field>
+                                <field name="week_new_space" readonly="True"></field>
+                                <field name="weekly_refresh_rate" readonly="True"></field>
+                                <field name="monthly_laed_refresh_rate" readonly="True"></field>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="system_name" readonly="True"/>
+                                            <field name="bid_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"></field>
+                                            <field name="contract_signing_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="accounts_payable"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="received"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                        </group>
+                                        <group>
+                                            <field name="project_total"  readonly="True"/>
+                                            <field name="lead_space_total" readonly="True" class="form_cls"></field>
+                                            <field name="week_new_space" readonly="True"></field>
+                                            <field name="space_total" readonly="True"></field>
+                                            <field name="project_count" readonly="True"></field>
+                                            <field name="weekly_refresh_rate" readonly="True"></field>
+                                            <field name="monthly_laed_refresh_rate" readonly="True"></field>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                        <div name="heji" class="dtdream_tree_cls2">
+                            <label name="heji" string="合计"/>
+                            <field name="bid_amount" />
+                            <field name="contract_signing_amount"/>
+                            <field name="received" />
+                            <field name="accounts_payable"/>
+                            <field name="project_total" />
+                            <field name="space_total"></field>
+                            <field name="lead_space_total" ></field>
+                            <field name="project_count" ></field>
+                            <field name="week_new_space" ></field>
+                            <field name="weekly_refresh_rate" ></field>
+                            <field name="monthly_laed_refresh_rate"></field>
+                            <div class="mask"></div>
+                        </div>
+                        <group string="近三个月招投标项目进展"></group>
+                        <field name="zhengwu_project" mode="tree" string="近三个月招投标项目进展" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree"  delete="false" create="false">
+                                <field name="project_id" options='{"no_open": True,"no_create":True}'/>
+                                <field name="system_department_id" readonly="True"  options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree"/>
+                                <field name="project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]" />
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                      <field name="project_leave" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time" />
+                                      <field name="project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="近三个月招投标机会点进展"></group>
+                        <field name="lead_project" mode="tree" string="近三个月招投标机会点进展" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree"  delete="false">
+                                <field name="project_id" options='{"no_open": True}'/>
+                                <field name="system_department_id" readonly="True"  options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree"/>
+                                <field name="project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree" />
+                                      <field name="bidding_time" />
+                                      <field name="project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="含投资项目及其他重要项目进展"></group>
+                        <field name="other_project" mode="tree" string="含投资项目及其他重要项目进展" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="system_department_id" readonly="True"  options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree" />
+                                <field name="project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree" />
+                                      <field name="bidding_time" />
+                                      <field name="project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重点客户(含阿里)高层拜访"></group>
+                        <field name="visit_customer" mode="tree" string="重点客户(含阿里)高层拜访" attrs="{'readonly':[('state','=','submit')]}" >
+                            <tree editable="bottom" class="visit_customer_tree">
+                                <field name="partner_id" options='{"no_open": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
+                                <field name="system_department_id" options='{"no_open": True}'/>
+                                <field name="office_id" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="visit_date"/>
+                                <field name="visit_object"/>
+                                <field name="content"/>
+                                <field name="next_plan"/>
+                                <field name="ask_help"/>
+                                <field name="send_person" widget="many2many_tags"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                    <group>
+                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
+                                        <field name="visit_date"/>
+                                        <field name="content"/>
+                                        <field name="ask_help"/>
+                                    </group>
+                                    <group>
+                                        <field name="system_department_id"  options='{"no_open": True}'/>
+                                        <field name="office_id" options='{"no_open": True}'/>
+                                        <field name="visit_object"/>
+                                        <field name="next_plan"/>
+                                        <field name="send_person" widget="many2many_tags"/>
+                                    </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重点渠道进展"></group>
+                        <field name="sale_channel" mode="tree" string="重点渠道进展" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="sale_channel_tree">
+                                <field name="name"/>
+                                <field name="project_total"/>
+                                <field name="project_space_total"/>
+                                <field name="channer_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="channer_process"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_total"/>
+                                      <field name="project_space_total"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="竞争对手情况"></group>
+                        <field name="competitor_situation" mode="tree" string="竞争对手情况" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom"  class="competitor_situation_tree">
+                                <field name="name"/>
+                                <field name="recent_dynamics"/>
+                                <field name="compute_strategy"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="compute_strategy"/>
+                                  </group>
+                                  <group>
+                                      <field name="recent_dynamics"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="sale_other" mode="tree" string="其他" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="competitor_situation_tree">
+                                <field name="name"/>
+                                <field name="week_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                      <field name="week_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="下周工作计划">
+                        <group string="重大项目下周计划"></group>
+                        <field name="next_zhengwu_project" mode="tree" string="重大项目下周计划" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                <field name="system_department_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree"/>
+                                <field name="next_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" options='{"no_open": True, "no_create": True}' domain="[('sale_apply_id.user_id.id','=',uid)]"/>
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time" />
+                                      <field name="next_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重点客户(含阿里)拜访计划"></group>
+                        <field name="customer_visit_plan" mode="tree" string="重点客户(含阿里)拜访计划" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom" class="customer_visit_plan_tree">
+                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
+                                <field name="system_department_id" options='{"no_open": True}'/>
+                                <field name="office_id" options='{"no_open": True}'/>
+                                <field name="industry_id" options='{"no_open": True}'/>
+                                <field name="visit_date"/>
+                                <field name="visit_object"/>
+                                <field name="content"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('partner_sale_apply_id.user_id.id','=',uid),('industry_id','!=',False)]"/>
+                                      <field name="visit_date"/>
+                                      <field name="content"/>
+                                  </group>
+                                  <group>
+                                      <field name="system_department_id" options='{"no_open": True}'/>
+                                      <field name="office_id" options='{"no_open": True}'/>
+                                      <field name="visit_object"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="next_sale_other" mode="tree" string="其他" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom"  class="next_sale_other_tree">
+                                <field name="name"/>
+                                <field name="week_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="week_process"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="问题与求助" class="pro_help_tree">
+                        <field name="dtdream_problem_help" string="问题与求助" mode="tree" attrs="{'readonly':[('state','=','submit')]}">
+                            <tree editable="bottom">
+                                <field name="type" options='{"no_open": True, "no_create": True}'/>
+                                <field name="name"/>
+                                <field name="report_help_people" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="report_help_people"/>
+                                  </group>
+                                  <group>
+                                      <field name="type"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+              </sheet>
+            </form>
+          </field>
+      </record>
+
+      <!-- 个人周报搜索视图 -->
+        <record id="view_dtdream_sale_own_report_search" model="ir.ui.view">
+            <field name="name">view.dtdream.sale.own.report.search</field>
+            <field name="model">dtdream.sale.own.report</field>
+            <field name="arch" type="xml">
+                <search string="个人周报搜索">
+                    <field name="report_person_name" string="花名"/>
+                    <field name="job_number" string="工号"/>
+                    <field name="week" string="周别"/>
+                    <separator />
+                    <filter string="近一个月周报" name="groupby_create_date" domain="[('create_date','&gt;', (context_today() -  relativedelta(months=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <separator />
+                    <group expand="0" string="Group By">
+                        <filter string="部门" name="groupby_department" domain="[]" context="{'group_by':'department'}"/>
+                        <filter string="周别" name="groupby_week" domain="[]" context="{'group_by':'week'}"/>
+                        <filter string="报告人" name="groupby_report_person" domain="[]" context="{'group_by':'report_person'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+      <!--个人周报tree视图-->
+      <record id="dtdream_sale_own_report_tree" model="ir.ui.view">
+          <field name="name">dtdream.sale.own.report.tree</field>
+          <field name="model">dtdream.sale.own.report</field>
+          <field name="arch" type="xml">
+              <tree string="个人周报">
+                  <field name="report_person_name"></field>
+                  <field name="department"></field>
+                  <field name="week"></field>
+                  <field name="report_start_time"></field>
+                  <field name="report_end_time"></field>
+                  <field name="state"></field>
+              </tree>
+          </field>
+      </record>
+
+      <!-- 主管周报搜索视图 -->
+        <record id="view_dtdream_sale_manager_report_search" model="ir.ui.view">
+            <field name="name">view.dtdream.sale.manager.report.search</field>
+            <field name="model">dtdream.sale.manager.report</field>
+            <field name="arch" type="xml">
+                <search string="主管周报搜索">
+                    <field name="report_person_name" string="花名"/>
+                    <field name="job_number" string="工号"/>
+                    <field name="week" string="周别"/>
+                    <separator />
+                    <filter string="近一个月周报" name="groupby_create_date" domain="[('create_date','&gt;', (context_today() -  relativedelta(months=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <separator />
+                    <group expand="0" string="Group By">
+                        <filter string="部门" name="groupby_department" domain="[]" context="{'group_by':'department'}"/>
+                        <filter string="周别" name="groupby_week" domain="[]" context="{'group_by':'week'}"/>
+                        <filter string="报告人" name="groupby_report_person" domain="[]" context="{'group_by':'report_person'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+      <!--主管周报FORM视图-->
+      <record model="ir.ui.view" id="dtdream_sale_manager_report_form">
+          <field name="name">dtdream.sale.manager.report.form</field>
+          <field name="model">dtdream.sale.manager.report</field>
+          <field name="arch" type="xml">
+            <form string="主管周报">
+                <header>
+                    <button name="btn_submit" string="提交" type="object" class="oe_highlight"
+                            attrs="{'invisible':['|',('status','!=',('0')),('state','=','0')]}"/>
+                    <field name="status"  widget="statusbar"/>
+                    <field name="create_office_ids" invisible="True"/>
+                    <field name="create_system_ids" invisible="True"/>
+                    <field name="complete_name" invisible="True"/>
+                    <!--<field name="if_see_manager_report" invisible="True"/>-->
+                </header>
+                <sheet attrs="{'invisible':[('state','!=','0')]}">
+                    <group>
+                        <group>
+                            <field name="create_office" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                            <field name="a_report_start_time"></field>
+                            <field name="a_week" options='{"no_open": True, "no_create": True}'></field>
+                        </group>
+                        <group>
+                            <field name="create_system" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                            <field name="a_report_end_time"></field>
+                            <button name="new_report" string="生成主管周报" type="object" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','0')]}"/>
+                        </group>
+                    </group>
+                </sheet>
+              <sheet attrs="{'invisible':[('state','=','0')]}">
+                  <group>
+                      <group>
+                          <field name="state" invisible="True"></field>
+                          <field name="report_person" invisible="True"></field>
+                          <field name="report_person_name"></field>
+                          <field name="report_start_time"></field>
+                          <field name="week" options='{"no_open": True, "no_create": True}' attrs="{'readonly':[('status','=','1')]}"></field>
+                      </group>
+                      <group>
+                          <field name="department"></field>
+                          <field name="report_end_time"></field>
+                      </group>
+                  </group>
+                  <group>
+                      <div>
+                          <field name="zhuguan_zongjie" mode="tree" class="dtdream_zhuguan_zongjie_tree" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom">
+                                <field name="week_important" />
+                                <field name="week_zongjie"/>
+                                <field name="next_week_plan"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="week_important"/>
+                                      <field name="next_week_plan"/>
+                                  </group>
+                                  <group>
+                                      <field name="week_zongjie"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <field name="zhuguan_qiuzhu" mode="tree" class="dtdream_zhuguan_qiuzhu_tree" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom">
+                                <field name="problem_description"/>
+                                <field name="problem_content" />
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="problem_description"/>
+                                  </group>
+                                  <group>
+                                      <field name="problem_content"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                      </div>
+                  </group>
+                <notebook colspan="4">
+                    <page string="本周工作总结">
+                        <group string="空间情况总结"></group>
+                        <field name="sys_compute_lists" string="空间情况总结"  attrs="{'readonly':[('status','=','1')]}">
+                            <tree create="false" delete="false" editable="bottom"  class="dtdream_tree_cls">
+                                <field name="system_name" readonly="True"/>
+                                <field name="bid_amount"/>
+                                <field name="contract_signing_amount"/>
+                                <field name="received" />
+                                <field name="accounts_payable" />
+                                <field name="project_total" readonly="True"/>
+                                <field name="space_total" readonly="True"></field>
+                                <field name="lead_space_total" readonly="True"></field>
+                                <field name="project_count" readonly="True"></field>
+                                <field name="week_new_space" readonly="True"></field>
+                                <field name="weekly_refresh_rate" readonly="True"></field>
+                                <field name="monthly_laed_refresh_rate" readonly="True"></field>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="system_name" readonly="True"/>
+                                            <field name="bid_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"></field>
+                                            <field name="contract_signing_amount"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="accounts_payable"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                            <field name="received"  attrs="{'readonly':[('system_name','=',u'合计')]}"/>
+                                        </group>
+                                        <group>
+                                            <field name="project_total"  readonly="True"/>
+                                            <field name="lead_space_total" readonly="True" class="form_cls"></field>
+                                            <field name="week_new_space" readonly="True"></field>
+                                            <field name="space_total" readonly="True"></field>
+                                            <field name="project_count" readonly="True"></field>
+                                            <field name="weekly_refresh_rate" readonly="True"></field>
+                                            <field name="monthly_laed_refresh_rate" readonly="True"></field>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                        <div name="heji" class="dtdream_tree_cls2">
+                            <label name="heji" string="合计"/>
+                            <field name="bid_amount" />
+                            <field name="contract_signing_amount"/>
+                            <field name="received" />
+                            <field name="accounts_payable"/>
+                            <field name="project_total" />
+                            <field name="space_total"></field>
+                            <field name="lead_space_total" ></field>
+                            <field name="project_count" ></field>
+                            <field name="week_new_space" ></field>
+                            <field name="weekly_refresh_rate" ></field>
+                            <field name="monthly_laed_refresh_rate"></field>
+                            <div class="mask"></div>
+                        </div>
+                        <group string="近三个月招投标项目进展"></group>
+                        <field name="zhengwu_project" mode="tree" string="近三个月招投标项目进展" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True,"no_create":True}'/>
+                                <field name="system_department_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree"/>
+                                <field name="project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" />
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                      <field name="project_leave" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time" />
+                                      <field name="project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="近三个月招投标机会点进展"></group>
+                        <field name="lead_project" mode="tree" string="近三个月招投标机会点进展" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True}'/>
+                                <field name="system_department_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree" />
+                                <field name="project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id"/>
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree" />
+                                      <field name="bidding_time" />
+                                      <field name="project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="含投资项目及其他重要项目进展"></group>
+                        <field name="other_project" mode="tree" string="含投资项目及其他重要项目进展" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True,}'/>
+                                <field name="system_department_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total" readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree" />
+                                <field name="project_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id" />
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree" />
+                                      <field name="bidding_time" />
+                                      <field name="project_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重点客户(含阿里)高层拜访"></group>
+                        <field name="visit_customer" mode="tree" string="重点客户(含阿里)高层拜访" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="visit_customer_tree">
+                                <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True),('industry_id','!=',False)]"/>
+                                <field name="system_department_id" options='{"no_open": True}'/>
+                                <field name="office_id" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="visit_date"/>
+                                <field name="visit_object"/>
+                                <field name="content"/>
+                                <field name="next_plan"/>
+                                <field name="ask_help"/>
+                                <field name="send_person" widget="many2many_tags"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                    <group>
+                                        <field name="partner_id" options='{"no_open": True, "no_create": True}' domain="[('customer','=',True),('industry_id','!=',False)]"/>
+                                        <field name="visit_date"/>
+                                        <field name="content"/>
+                                        <field name="ask_help"/>
+                                    </group>
+                                    <group>
+                                        <field name="system_department_id" options='{"no_open": True}'/>
+                                        <field name="office_id" options='{"no_open": True}'/>
+                                        <field name="visit_object"/>
+                                        <field name="next_plan"/>
+                                        <field name="send_person" widget="many2many_tags"/>
+                                    </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重点渠道进展"></group>
+                        <field name="sale_channel" mode="tree" string="重点渠道进展" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="sale_channel_tree">
+                                <field name="name"/>
+                                <field name="project_total"/>
+                                <field name="project_space_total"/>
+                                <field name="channer_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="channer_process"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_total"/>
+                                      <field name="project_space_total"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="竞争对手情况"></group>
+                        <field name="competitor_situation" mode="tree" string="竞争对手情况" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom"  class="competitor_situation_tree">
+                                <field name="name"/>
+                                <field name="recent_dynamics"/>
+                                <field name="compute_strategy"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="compute_strategy"/>
+                                  </group>
+                                  <group>
+                                      <field name="recent_dynamics"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="sale_other" mode="tree" string="其他" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="week_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                  </group>
+                                  <group>
+                                      <field name="week_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="下周工作计划">
+                        <group string="重大项目下周计划"></group>
+                        <field name="next_zhengwu_project" mode="tree" string="重大项目下周计划" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="dtdream_weekly_report_tree">
+                                <field name="project_id" options='{"no_open": True}'/>
+                                <field name="system_department_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="office_id" readonly="True" options='{"no_open": True}' />
+                                <field name="industry_id"  readonly="True" options='{"no_open": True}'/>
+                                <field name="sale_apply_id" readonly="True"/>
+                                <field name="space_total"  readonly="True"/>
+                                <field name="bidding_time"/>
+                                <field name="project_master_degree"/>
+                                <field name="next_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="project_id"/>
+                                      <field name="office_id"  options='{"no_open": True}'/>
+                                      <field name="sale_apply_id" />
+                                      <field name="space_total" />
+                                      <field name="project_number" invisible="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="project_master_degree"/>
+                                      <field name="bidding_time" />
+                                      <field name="next_process"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="重点客户(含阿里)拜访计划"></group>
+                        <field name="customer_visit_plan" mode="tree" string="重点客户(含阿里)拜访计划" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="customer_visit_plan_tree">
+                                <field name="partner_id"  domain="[('customer','=',True),('industry_id','!=',False)]"/>
+                                <field name="system_department_id"  options='{"no_open": True}'/>
+                                <field name="office_id" options='{"no_open": True}'/>
+                                <field name="industry_id" readonly="True" options='{"no_open": True}'/>
+                                <field name="visit_date"/>
+                                <field name="visit_object"/>
+                                <field name="content"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="partner_id"  domain="[('customer','=',True),('industry_id','!=',False)]"/>
+                                      <field name="visit_date"/>
+                                      <field name="content"/>
+                                  </group>
+                                  <group>
+                                      <field name="system_department_id"  options='{"no_open": True}'/>
+                                      <field name="office_id" options='{"no_open": True}'/>
+                                      <field name="visit_object"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                        <group string="其他"></group>
+                        <field name="next_sale_other" mode="tree" string="其他" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom" class="next_sale_other_tree">
+                                <field name="name"/>
+                                <field name="week_process"/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="week_process"/>
+                                  </group>
+                                  <group>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="问题与求助" class="pro_help_tree">
+                        <field name="dtdream_problem_help" mode="tree" string="问题与求助" attrs="{'readonly':[('status','=','1')]}">
+                            <tree editable="bottom">
+                                <field name="type" options='{"no_open": True, "no_create": True}'/>
+                                <field name="name"/>
+                                <field name="report_help_people" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                            </tree>
+                            <form>
+                              <sheet>
+                                <group>
+                                  <group>
+                                      <field name="name"/>
+                                      <field name="report_help_people"/>
+                                  </group>
+                                  <group>
+                                      <field name="type"/>
+                                  </group>
+                                </group>
+                              </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+              </sheet>
+            </form>
+          </field>
+      </record>
+
+      <!--主管周报tree视图-->
+      <record id="dtdream_sale_manager_report_tree" model="ir.ui.view">
+          <field name="name">dtdream.sale.manager.report.tree</field>
+          <field name="model">dtdream.sale.manager.report</field>
+          <field name="arch" type="xml">
+              <tree string="主管周报">
+                  <field name="report_person_name"></field>
+                  <field name="department"></field>
+                  <!--<field name="job_number"></field>-->
+                  <field name="week"></field>
+                  <field name="report_start_time"></field>
+                  <field name="report_end_time"></field>
+                  <field name="status"></field>
+              </tree>
+          </field>
+      </record>
+
+      <!--求助问题类型配置FORM视图-->
+      <record model="ir.ui.view" id="dtdream_problem_help_form">
+          <field name="name">dtdream.problem.help.form</field>
+          <field name="model">problem.type</field>
+          <field name="arch" type="xml">
+            <form string="求助问题类型配置">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+          </field>
+      </record>
+  </data>
+</openerp>

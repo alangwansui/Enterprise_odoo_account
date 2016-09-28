@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <menuitem name="商务提前报备" id="dtdream_menu_business_report" parent="base.menu_base_partner" sequence="5"></menuitem>
+
+    <menuitem name="我的申请" id="menu_my_report_applys" parent="dtdream_menu_business_report" sequence="10" action="act_my_applys"></menuitem>
+    <menuitem name="待我审批" id="menu_reports_to_approve" parent="dtdream_menu_business_report"  sequence="20" action="act_to_approve"></menuitem>
+    <menuitem name="我已审批" id="menu_reports_already_approve" parent="dtdream_menu_business_report"  sequence="30" action="act_already_approve"></menuitem>
+    <menuitem name="所有单据" id="menu_all_business_reports" parent="dtdream_menu_business_report" sequence="40" action="act_all_reports"></menuitem>
+
+    <menuitem name='销售流程审批配置' id='menu_shenpi_config' parent='base.menu_sale_config' sequence="66" action="act_shenpi_config" />
+
+    </data>
+</openerp>

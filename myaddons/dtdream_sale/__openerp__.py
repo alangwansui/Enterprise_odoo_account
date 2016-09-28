@@ -19,11 +19,12 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','crm','sale'],
+    'depends': ['base','crm','sale','hr','stock','sale_crm'],
 
     # always loaded
     'data': [
         'security/dtdream_sale_security.xml',
+        'security/dtdream_sale_permission_groups.xml',
         'security/ir.model.access.csv',
         'sale_sequence.xml',
         'views/views.xml',

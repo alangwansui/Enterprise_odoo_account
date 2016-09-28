@@ -28,14 +28,17 @@
                 <span class="o_channel_name"> <i class="fa fa-star-o"/> Starred </span>
             </div>
 
+<!--
             <t t-set="channel_type" t-value="'public'"/>
             <t t-call="mail.chat.SidebarTitle">
                 <t t-set="channel_title">Channels</t>
             </t>
+
             <t t-call="mail.chat.SidebarItems">
-                <t t-set="display_hash" t-value="true"/>
+                <t t-set="display_hash" t-value="false"/>
                 <t t-set="input_placeholder">Add a channel</t>
             </t>
+-->
 
             <t t-set="channel_type" t-value="'dm'"/>
             <t t-call="mail.chat.SidebarTitle">
@@ -48,7 +51,8 @@
 
             <t t-set="channel_type" t-value="'private'"/>
             <t t-call="mail.chat.SidebarTitle">
-                <t t-set="channel_title">Private Channels</t>
+                <!--<t t-set="channel_title">Private Channels</t>-->
+                 <t t-set="channel_title"> Channels</t>
             </t>
             <t t-call="mail.chat.SidebarItems">
                 <t t-set="input_placeholder">Add a channel</t>
@@ -74,7 +78,7 @@
         </t>
         <t t-if="!disable_add_channel || !empty">
             <div class="o_mail_sidebar_title">
-                <h4><t t-esc="channel_title"/></h4>
+               <h4><t t-esc="channel_title"/></h4>
                 <span t-if="!disable_add_channel" class="fa fa-plus o_add" title="Add" t-attf-data-type="#{channel_type}"/>
             </div>
         </t>
@@ -134,7 +138,7 @@
             <button type="button" class="btn btn-primary btn-sm o_mail_chat_button_unstar_all" title="Unstar all messages">Unstar all</button>
             <button type="button" class="btn btn-default btn-sm o_mail_chat_button_new_message" title="Compose a new message">Send mail</button>
             <button type="button" class="btn btn-default btn-sm o_mail_chat_button_unsubscribe" title="Unsubscribe from channel">Unsubscribe</button>
-            <button type="button" class="btn btn-default btn-sm o_mail_chat_button_settings" title="Open channel settings">Settings</button>
+            <!--<button type="button" class="btn btn-default btn-sm o_mail_chat_button_settings" title="Open channel settings">Settings</button>-->
         </div>
     </t>
 

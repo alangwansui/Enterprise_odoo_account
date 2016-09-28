@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+    <openerp>
+        <data>
+            <template id="dtdream_hr_pbc_css" name="dtdream_hr_pbc_css" inherit_id="web.assets_backend">
+                <xpath expr="." position="inside">
+                    <link rel="stylesheet" href="/dtdream_hr_performance/static/css/pbc.css"></link>
+                </xpath>
+            </template>
+        </data>
+    </openerp>

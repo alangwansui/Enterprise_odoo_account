@@ -300,7 +300,7 @@ var ViewManager = Widget.extend(ControlPanelMixin, {
 
         // Inner function to render and prepare switch_buttons
         var _render_switch_buttons = function(views) {
-            if (views.length > 1) {
+            if (views.length >= 1) {
                 var $switch_buttons = $(QWeb.render('ViewManager.switch-buttons', {views: views}));
                 // Create bootstrap tooltips
                 _.each(views, function(view) {

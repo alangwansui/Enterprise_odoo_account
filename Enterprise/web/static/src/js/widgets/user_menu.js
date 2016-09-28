@@ -58,7 +58,7 @@ var UserMenu = Widget.extend({
         window.open('https://www.odoo.com/documentation/user', '_blank');
     },
     on_menu_support: function () {
-        window.location.href = 'mailto:help@odoo.com';
+        window.location.href = 'mailto:it-hotline@dtdream.com';
     },
     on_menu_about: function () {
         var self = this;

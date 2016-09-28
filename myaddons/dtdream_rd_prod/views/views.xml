@@ -1,281 +1,28 @@
 <openerp>
-  <data>
+    <data>
 <!--会计项目-->
-    <record id="act_dtdream_rd_prod" model="ir.actions.act_window">
-        <field name="name">会计项目</field>
-        <field name="res_model">dtdream_rd_prod.dtdream_rd_prod</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="view_dtdream_rd_prod_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.rd.prod.tree</field>
-        <field name="model">dtdream_rd_prod.dtdream_rd_prod</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="code"/>
-                <field name="name"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_dtdream_rd_prod_form" model="ir.ui.view">
-        <field name="name">view.dtdream.rd.prod.form</field>
-        <field name="model">dtdream_rd_prod.dtdream_rd_prod</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name" />
-                            <!--<field name="department" domain="[('parent_id.parent_id','=',False),('child_ids','!=',False)]"/>-->
-                        </group>
-                        <group>
-                            <field name="code" />
-                            <!--<field name="department_2" domain="[('parent_id.parent_id.parent_id','=',False)]"/>-->
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-
-<!--研发产品-->
-      <record id="act_dtdream_prod_appr" model="ir.actions.act_window">
-            <field name="name">研发产品</field>
-            <field name="res_model">dtdream_rd_prod.dtdream_prod_appr</field>
+        <record id="act_dtdream_rd_prod" model="ir.actions.act_window">
+            <field name="name">会计项目</field>
+            <field name="res_model">dtdream_rd_prod</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-      </record>
+        </record>
 
-
-     <!-- <record model="ir.ui.view" id="view_dtdream_prod_appr_kanban">
-            <field name="name">view.dtdream.prod.appr.kanban</field>
-            <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
-            <field name="arch" type="xml">
-                <kanban default_group_by="state_id">
-                    <field name="state_id"/>
-                    <field name="color"/>
-                    <field name="active"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
-                                <div class="o_dropdown_kanban dropdown">
-
-                                    <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" >
-                                        <span class="fa fa-bars fa-lg"/>
-                                    </a>
-                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                        <t t-if="widget.editable"><li><a type="edit">编辑</a></li></t>
-                                        <t t-if="widget.deletable"><li><a type="delete">删除</a></li></t>
-&lt;!&ndash;                                        <li t-if="! record.active.value"><a name="action_set_active" type="object">取消归档</a></li>
-                                        <li t-if="record.active.value"><a name="action_set_unactive" type="object">归档</a></li>&ndash;&gt;
-                                        <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
-                                    </ul>
-                                </div>
-                                <div class="oe_kanban_content">
-                                    <div>
-                                        <strong><field name="name"/></strong>
-                                    </div>
-                                </div>
-                                <div class="oe_clear"></div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-      </record>-->
-
-
-
-
-      <record id="view_dtdream_prod_appr_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.prod.appr.tree</field>
-        <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="state" />
-                <field name="department"/>
-            </tree>
-        </field>
-    </record>
-
-      <record id="view_dtdream_prod_appr_form" model="ir.ui.view">
-          <field name="name">view.dtdream.prod.appr.form</field>
-            <field name="model">dtdream_rd_prod.dtdream_prod_appr</field>
-            <field name="arch" type="xml">
-                <form>
-                    <header>
-                         <!--<button name="btn_submit" string="提交"  type="object" states="state_00"/>
-                        <button name="btn_next" string="下一步"  type="object" states="state_01,state_02,state_03"/>
-                         <button name="btn_end" string="结束"  type="object" states="state_04"/>-->
-                        <button name="%(dtdream_rd_prod.act_lixiang_wizard)d" string="提交" type="action" states="state_00"/>
-                        <button name="%(dtdream_rd_prod.act_lixiang_wizard)d"  string="下一步"  type="action" states="state_01,state_02,state_03"/>
-                        <button name="%(dtdream_rd_prod.act_lixiang_wizard)d"  string="结束"  type="action" states="state_04"/>
-                        <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
-                    </header>
-                    <sheet>
-                        <group>
-                            <field name="name" />
-                        </group>
-                        <notebook>
-                            <page name="public" string="基本信息">
-                                <group>
-                                    <group>
-                                        <field name="department" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>
-                                         <!--<field name="state" />-->
-                                    </group>
-                                    <group>
-                                        <field name="department_2" domain="[('parent_id.parent_id','=',False)]"/>
-                                    </group>
-                                </group>
-                            </page>
-                            <page name="detail" string="详细信息">
-                                <field name="role_ids" string="角色">
-                                    <tree default_order="id">
-                                        <field name="name"/>
-                                        <field name="person"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page name="version" string="进度与计划">
-                                <group>
-                                    <field name="pro_time"/>
-                                </group>
-                                <group>
-                                    <group>
-                                        <field name="overall_plan_time"/>
-                                    </group>
-                                    <group>
-                                        <field name="overall_actual_time" attrs="{'readonly':[('state','not in',('state_02'))]}"/>
-                                    </group>
-                                </group>
-                                 <field name="version_ids" context="{'default_proName':id}">   <!--context="{'default_proName':id}"-->
-                                <tree>
-                                    <field name="proName"/>
-                                    <field name="version_numb"/>
-                                    <field name="pro_flag"/>
-                                    <field name="version_state"/>
-                                    <field name="plan_dev_time"/>
-                                    <field name="plan_pub_time"/>
-                                    <field name="actual_dev_time"/>
-                                    <field name="actual_check_pub_time"/>
-                                </tree>
-                            </field>
-                            </page>
-                            <page string="立项材料" attrs="{'invisible':[('state','in',('state_00'))]}">
-                                <group>
-                                    <field name="start_pro_mar" attrs="{'readonly':[('state','not in',('state_01'))]}"/>
-                                </group>
-                            </page>
-                            <page string="总体设计材料" attrs="{'invisible':[('state','in',('state_00','state_01'))]}">
-                                <group>
-                                    <field name="overall_mar" attrs="{'readonly':[('state','not in',('state_02'))]}"/>
-                                </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-          </field>
-    </record>
-
-
-<!--版本-->
-      <record id="act_dtdream_rd_version" model="ir.actions.act_window">
-          <field name="name">版本</field>
-          <field name="res_model">dtdream_rd_prod.dtdream_rd_version</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
-      </record>
-
-      <record id="view_dtdream_rd_version_tree" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.version.tree</field>
-            <field name="model">dtdream_rd_prod.dtdream_rd_version</field>
+        <record id="view_dtdream_rd_prod_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.prod.tree</field>
+            <field name="model">dtdream_rd_prod</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="proName"/>
-                    <field name="pro_flag" />
-                    <field name="version_numb"/>
-                    <field name="version_state" />
+                    <field name="code"/>
+                    <field name="name"/>
                 </tree>
             </field>
-      </record>
+        </record>
 
-      <record id="view_dtdream_rd_version_form" model="ir.ui.view">
-        <field name="name">view.dtdream.rd.version.form</field>
-        <field name="model">dtdream_rd_prod.dtdream_rd_version</field>
-        <field name="arch" type="xml">
-            <form>
-                <header>
-                     <button name="%(dtdream_rd_prod.act_version_wizard)d" string="下一步"  type="action" attrs="{'invisible':[('version_state','not in',('initialization','Development','pending'))]}"/>
-                     <field name="version_state" widget="statusbar" statusbar_visible="initialization,Development,pending,released" />
-                </header>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name" invisible="1"/>
-                            <!--<field name="proState" invisible="1"/>-->
-                            <field name="proName" />
-                            <field name="pro_flag" />
-                        </group>
-                        <group>
-                            <field name="version_numb" />
-                             <!--<field name="version_state" />-->
-                        </group>
-                    </group>
-                    <notebook>
-                        <page  string="版本计划">
-                            <group>
-                                <field name="plan_dev_time" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
-                                <field name="plan_check_pub_time" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
-                                <field name="plan_pub_time" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
-                                <field name="plan_mater" attrs="{'readonly':[('version_state','not in',('initialization'))]}" />
-                            </group>
-                        </page>
-                        <page string="版本开发" attrs="{'invisible':[('version_state','in',('initialization'))]}">
-                            <group>
-                                <field name="actual_dev_time" attrs="{'readonly':[('version_state','not in',('Development'))]}"/>
-                                <field name="dev_mater" attrs="{'readonly':[('version_state','not in',('Development'))]}"/>
-                            </group>
-                        </page>
-                        <page string="版本发布" attrs="{'invisible':[('version_state','in',('Development','initialization'))]}">
-                            <group>
-                                <group>
-                                    <group>
-                                        <field name="actual_check_pub_time" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
-                                    </group>
-                                    <group>
-                                        <field name="actual_pub_time" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
-                                    </group>
-                                </group>
-                            </group>
-                             <group>
-                                    <field name="place" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
-                                    <field name="Material" attrs="{'readonly':[('version_state','not in',('pending'))]}"/>
-                                </group>
-                        </page>
-                     </notebook>
-                </sheet>
-            </form>
-        </field>
-    </record>
-<!--角色配置-->
-      <record id="act_dtdream_rd_Rconfig" model="ir.actions.act_window">
-          <field name="name">角色配置</field>
-          <field name="res_model">dtdream_rd_prod.dtdream_rd_config</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">tree</field>
-      </record>
-
-      <record id="view_dtdream_rd_config_from" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.config.from</field>
-            <field name="model">dtdream_rd_prod.dtdream_rd_config</field>
+        <record id="view_dtdream_rd_prod_form" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.prod.form</field>
+            <field name="model">dtdream_rd_prod</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -284,31 +31,558 @@
                                 <field name="name" />
                             </group>
                             <group>
+                                <field name="code" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--例外-->
+        <!--例外修改-->
+        <record id="act_dtdream_exceptionedit" model="ir.actions.act_window">
+            <field name="name">例外</field>
+            <field name="res_model">dtdream_execption</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'default_flag':False}</field>
+            <field name="target">new</field>
+        </record>
+
+
+<!--研发产品-->
+
+        <record id="view_dtdream_prod_appr_filter" model="ir.ui.view">
+            <field name="name">dtdream.prod.appr.filter</field>
+            <field name="model">dtdream_prod_appr</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <filter string="草稿" domain="[('state','=','state_00')]" name='state_cg'/>
+                    <filter string="立项" domain="[('state','=','state_01')]" name='state_lixiang'/>
+                    <filter string="总体设计" domain="[('state','=','state_02')]" name='state_ztsj'/>
+                    <filter string="迭代开发" domain="[('state','=','state_03')]" name="state_ddkf"/>
+                    <filter string="验证发布" domain="[('state','=','state_04')]" name="state_yzfb"/>
+                    <filter string="暂停" domain="[('state','=','state_06')]" name="state_zanting"/>
+                    <filter string="中止" domain="[('state','=','state_07')]" name="state_zhongzhi"/>
+                    <filter string="完成" domain="[('state','=','state_05')]" name="state_wancheng"/>
+                    <group expand="1" string="Group By">
+                        <filter string="部门" context="{'group_by':'department'}" name="group_by_department"/>
+                        <filter string="二级部门" context="{'group_by':'department_2'}" name="group_by_department_2"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="act_dtdream_prod_appr" model="ir.actions.act_window">
+            <field name="name">我相关的</field>
+            <field name="res_model">dtdream_prod_appr</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
+            <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
+        </record>
+
+        <record id="act_dtdream_prod_appr_wait" model="ir.actions.act_window">
+            <field name="name">待我审批的</field>
+            <field name="res_model">dtdream_prod_appr</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_approver_user','=',uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
+            <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
+        </record>
+
+
+        <record id="act_dtdream_prod_appr_all" model="ir.actions.act_window">
+            <field name="name">所有研发产品</field>
+            <field name="res_model">dtdream_prod_appr</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
+            <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
+        </record>
+
+
+        <record id="view_dtdream_prod_appr_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.prod.appr.tree</field>
+            <field name="model">dtdream_prod_appr</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="state" />
+                    <field name="department"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="act_dtdream_exception_quickly" model="ir.actions.act_window">
+            <field name="name">例外</field>
+            <field name="res_model">dtdream_execption</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_flag':True}</field>
+            <field name="domain">[('name.id','=',active_id)]</field>
+        </record>
+
+        <record id="view_dtdream_prod_appr_form" model="ir.ui.view">
+            <field name="name">view.dtdream.prod.appr.form</field>
+            <field name="model">dtdream_prod_appr</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="do_cgtj" string="进入下一阶段" type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_00')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_lixiang_wizardappr)d"  string="进入下一阶段"  type="action" attrs="{'invisible':['|','|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('is_lixiangappred','=',True),('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_ztsjtj"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('is_appred','=',True),('state','not in',('state_02')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','in',('state_00','state_06','state_07')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                        <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
+                        <button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？" attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zhongzhi','=',True),('state','in',('state_00','state_05','state_07','state_06')),('is_zanting','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('state','in',('state_00','state_05','state_07','state_06')),('is_zantingtj','=',True),('is_zanting','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zanting_back','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitj','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('state','!=','state_06'),('is_zanting_back','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|',('state','!=','state_06'),('is_zanting_backtj','=',True),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>
+
+                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_06,state_07,state_05" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="action" name="%(act_dtdream_exception_quickly)d"
+                                icon="fa-strikethrough">
+                                <field string="例外" name="liwai_nums" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="产品名称" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="请输入产品名称" string="产品名称" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                <field name="execption_flag" invisible="1"/>
+                                <field name="execption_id" invisible="1"/>
+                                <field name="is_lixiangappred" invisible="1"/>
+                            </h1>
+                        </div>
+                         <group>
+                             <group>
+                                 <field name="department" domain="[('parent_id','=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                 <field name="is_create" invisible="1"/>
+                                 <field name="is_appred" invisible="1"/>
+                                 <field name="sameDept" invisible="1"/>
+                             </group>
+                             <group>
+                                 <field name="department_2" domain="[('parent_id.parent_id','=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                 <field name="is_Qa" invisible="1"/>
+                                 <field name="is_shenpiren" invisible="1"/>
+                             </group>
+                        </group>
+                        <notebook>
+                            <page string="总体设计阶段" attrs="{'invisible':[('state','in',('state_00','state_01'))]}">
+                                <group>
+                                    <field name="overall_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
+                                </group>
+                                <group>
+                                    <notebook>
+                                        <page string="审批意见" states="state_00,state_01,state_02,state_03,state_04,state_05">
+                                            <div>
+                                              <p><font color="red">注：当修改审批人时相当于授权</font></p>
+                                            </div>
+                                            <field name="ztsj_process_ids">
+                                                <tree editable="bottom" create="false" delete="false" >
+                                                    <field name="pro_state" />
+                                                    <field name="role" />
+                                                    <field name="level"/>
+                                                    <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
+                                                    <field name="editable" invisible="1"/>
+                                                    <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
+                                </group>
+                            </page>
+                            <page string="立项阶段" >
+                                <group>
+                                    <field name="start_pro_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01'))]}"/>
+                                </group>
+                                <group>
+                                    <notebook>
+                                        <page string="审批意见" states="state_00,state_01,state_02,state_03,state_04,state_05">
+                                            <div>
+                                              <p><font color="red">注：当修改审批人时相当于授权</font></p>
+                                            </div>
+                                            <field name="process_ids">
+                                                <tree editable="bottom" create="false" delete="false" >
+                                                    <field name="pro_state" />
+                                                    <field name="role" />
+                                                    <field name="level"/>
+                                                    <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <field name="is_pass" attrs="{'readonly':True}"/>
+                                                    <field name="is_risk" attrs="{'readonly':True}"/>
+                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
+                                                    <field name="editable" invisible="1"/>
+                                                    <field name="is_Qa" invisible="1"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
+                                </group>
+                            </page>
+                            <page name="detail" string="角色信息">
+                                <field name="role_ids" string="角色" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}">
+                                    <tree default_order="id" editable="bottom">
+                                        <field name="cof_id"/>
+                                        <field name="person"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="version" string="进度与计划" >
+                                <group >
+                                    <field name="pro_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="overall_plan_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="overall_actual_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
+                                    </group>
+                                </group>
+                                <field name="version_ids" context="{'default_proName':id}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01','state_03'))]}">   <!--context="{'default_proName':id}"-->
+                                    <tree>
+                                        <field name="proName" string="产品名称"/>
+                                        <field name="version_numb"/>
+                                        <field name="pro_flag"/>
+                                        <field name="version_state"/>
+                                        <field name="plan_check_pub_time"/>
+                                        <field name="plan_pub_time"/>
+                                        <field name="actual_check_pub_time" string="实际开发完成时间"/>
+                                        <field name="actual_pub_time"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="暂停或中止" attrs="{'invisible':[('is_ztpage','=',False)]}">
+                                <div>
+                                  <p><font color="red">注：此页面为申请暂停、恢复暂停、中止填写与审批页面</font></p>
+                                </div>
+                                    <group>
+                                        <field name="reason_request" attrs="{'readonly':['|','|','|',('is_zhongzhitj','=',True),('is_zantingtj','=',True),('is_zanting_backtj','=',True),'|','&amp;','&amp;',('is_zanting','=',False),('is_zhongzhi','=',False),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                                        <field name="is_ztpage" invisible="1"/>
+                                        <field name="comments" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhitj','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <group>
+                                               <field name="agree" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhitj','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
+                                           </group>
+                                           <group>
+                                               <field name="disagree" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhitj','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
+                                           </group>
+                                        </group>
+                                        <group>
+                                            <field name="is_zanting" invisible="1"/>
+                                            <field name="is_zanting_back" invisible="1"/>
+                                            <field name="is_zhongzhi" invisible="1"/>
+                                            <field name="is_zantingtj" invisible="1"/>
+                                            <field name="is_zanting_backtj" invisible="1"/>
+                                            <field name="is_zhongzhitj" invisible="1"/>
+                                        </group>
+                                    </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+          </field>
+        </record>
+
+    <!--审批意见-->
+        <record id="view_dtdream_rd_process_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.process.from</field>
+            <field name="model">dtdream_rd_process</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name='pro_state'/>
+                                <field name='role'/>
+                                <field name='approver' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name="level"/>
+                            </group>
+                            <group>
+                                <field name='is_pass' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name='is_refuse' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name='is_risk' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name="process_id" invisible="1"/>
+                                <field name="is_new" invisible="1"/>
+                                <field name="editable" invisible="1"/>
+                                <field name="approver_old" invisible="1"/>
+                            </group>
+                            <field name="reason" attrs="{'readonly':[('editable','=',False)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+<!--角色配置-->
+        <record id="act_dtdream_rd_Rconfig" model="ir.actions.act_window">
+            <field name="name">角色配置</field>
+            <field name="res_model">dtdream_rd_config</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_config_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.config.from</field>
+            <field name="model">dtdream_rd_config</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_config_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.config.tree</field>
+            <field name="model">dtdream_rd_config</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name='name'/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_role_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.role.from</field>
+            <field name="model">dtdream_rd_role</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="cof_id" />
+                                <field name="role_id" invisible="1"/>
+                            </group>
+                            <group>
                                 <field name="person" />
                             </group>
                         </group>
                     </sheet>
                 </form>
             </field>
-      </record>
+        </record>
 
-      <record id="view_dtdream_rd_config_tree" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.config.tree</field>
-            <field name="model">dtdream_rd_prod.dtdream_rd_config</field>
+      <!--审批人配置-->
+        <record id="act_dtdream_rd_approver" model="ir.actions.act_window">
+            <field name="name">产品审批人配置</field>
+            <field name="res_model">dtdream_rd_approver</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_approver_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.approver.from</field>
+            <field name="model">dtdream_rd_approver</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name='pro_state'/>
+                                <field name='level'/>
+                                <field name="is_level" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_approver_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.approver.tree</field>
+            <field name="model">dtdream_rd_approver</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name='name'/>
-                    <field name="person"/>
+                    <field name='pro_state'/>
+                    <field name='level'/>
+                    <field name="is_level" invisible="1"/>
                 </tree>
             </field>
-      </record>
+        </record>
+
+        <!--例外菜单栏-->
+
+          <record id="view_dtdream_execption_filter" model="ir.ui.view">
+            <field name="name">dtdream.execption.filter</field>
+            <field name="model">dtdream_execption</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="产品名称" context="{'group_by':'name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="act_dtdream_exception_meun" model="ir.actions.act_window">
+            <field name="name">所有例外</field>
+            <field name="res_model">dtdream_execption</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_flag':True}</field>
+            <field name="search_view_id" ref="view_dtdream_execption_filter"/>
+        </record>
+
+        <record id="act_dtdream_exception_meun_self" model="ir.actions.act_window">
+            <field name="name">我相关的</field>
+            <field name="res_model">dtdream_execption</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_flag':True}</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_execption_filter"/>
+        </record>
+
+        <record id="act_dtdream_exception_meun_wait" model="ir.actions.act_window">
+            <field name="name">待我审批的</field>
+            <field name="res_model">dtdream_execption</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_flag':True}</field>
+            <field name="domain">[('current_approver_user','=',uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_execption_filter"/>
+        </record>
+
+
+        <record id="view_dtdream_exception_from" model="ir.ui.view">
+            <field name="name">view.dtdream.exception.from</field>
+            <field name="model">dtdream_execption</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object" attrs="{'invisible':['|','|',('flag','=',False),('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}" />
+                        <button name="%(dtdream_rd_prod.act_liwaiwizardagree)d"  string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp','Nyjsp','Nejsp')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_liwaiwizard)d"  string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp','Nyjsp','Nejsp')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="dsp,yjsp,Nyjsp,ejsp,Nejsp,ysp" />
+                    </header>
+                    <sheet>
+                        <group>
+                        <div><p><font color="red">注：第一审批人QA，第二审批人PL-CCB</font></p></div>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="name" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                                <field name="flag" invisible="1"/>
+                                <field name="is_create" invisible="1"/>
+                                <field name="is_shenpiren" invisible="1"/>
+                                <field name="is_Qa" invisible="1"/>
+
+                                <field name='version' domain="[('proName','=',name)]" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="approver_fir" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                                <field name="approver_sec" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="is_apped" invisible="1"/>
+                            <field name="reason" attrs="{'readonly':['|',('is_apped','=',True),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
+                        </group>
+                        <footer attrs="{'invisible':[('flag','=',True)]}">
+                            <button name="btn_execption_submit" type="object"
+                                    string="提交" class="oe_highlight"/>
+                            或
+                            <button special="cancel" string="取消"/>
+                        </footer>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_execption_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.execption.tree</field>
+            <field name="model">dtdream_execption</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name='name'/>
+                    <field name="version"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
 
 <!--菜单-->
-    <menuitem id="menu_finance_rd" name="研发" groups ="base.group_user"/>
-    <!--<menuitem id="menu_finance_rd_prod" name="会计项目" parent="hr_expense.menu_hr_expense_root" sequence="500"  action="act_dtdream_rd_prod" groups="group_dtdream_rd_qa"/>-->
-    <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"  action="act_dtdream_prod_appr"/>
-    <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200" action="act_dtdream_rd_version"/>
-    <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="300"/>
-    <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="500"  action="act_dtdream_rd_Rconfig"/>
-  </data>
+
+        <menuitem id="menu_finance_rd" name="研发"  icon="fa-user" web_icon="dtdream_rd_prod,static/description/rd.png" groups="group_dtdream_rd_qa,group_dtdream_rd_user,group_dtdream_rd_user_all"/>
+
+        <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"/>
+        <menuitem id="menu_finance_prod_appr_my" name="我相关的" parent="menu_finance_prod_appr" sequence="100"  action="act_dtdream_prod_appr"/>
+        <menuitem id="menu_finance_prod_appr_wait" name="待我审批的" parent="menu_finance_prod_appr" sequence="200"  action="act_dtdream_prod_appr_wait"/>
+
+
+        <menuitem id="menu_finance_rd_version" name="版本" parent="menu_finance_rd" sequence="200"/>
+        <menuitem id="menu_finance_rd_version_my" name="我相关的" parent="menu_finance_rd_version" sequence="100" action="act_dtdream_rd_version"/>
+        <menuitem id="menu_finance_rd_version_wait" name="待我审批的" parent="menu_finance_rd_version" sequence="200" action="act_dtdream_prod_version_wait"/>
+
+        <menuitem id="menu_finance_replanning" name="版本重计划" parent="menu_finance_rd" sequence="250" action="act_dtdream_replanning_menu"/>
+
+        <menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300"/>
+        <menuitem id="menu_finance_exception_self" name="我相关的" parent="menu_finance_exception" sequence="100" action="act_dtdream_exception_meun_self"/>
+        <menuitem id="menu_finance_exception_wait" name="待我审批的" parent="menu_finance_exception" sequence="200" action="act_dtdream_exception_meun_wait"/>
+
+        <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="400" groups="group_dtdream_rd_qa"/>
+        <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="100"  action="act_dtdream_rd_Rconfig"/>
+        <menuitem id="menu_finance_rd_approver" name="产品审批人配置" parent="menu_finance_rd_config" sequence="200"  action="act_dtdream_rd_approver"/>
+         <menuitem id="menu_finance_rd_approver_ver" name="版本审批人配置" parent="menu_finance_rd_config" sequence="300"  action="act_dtdream_rd_approver_ver"/>
+
+        <menuitem id="menu_finance_prod_all" name="所有" parent="menu_finance_rd" sequence="500" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_prod_appr_all" name="所有产品" parent="menu_finance_prod_all" sequence="100" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_prod_version_all" name="所有版本" parent="menu_finance_prod_all" sequence="200" action="act_dtdream_prod_version_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_liwai_all" name="所有例外" parent="menu_finance_prod_all" sequence="300" action="act_dtdream_exception_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+
+
+    </data>
 </openerp>

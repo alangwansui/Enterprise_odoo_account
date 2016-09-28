@@ -1,0 +1,35 @@
+
+.dtdream_customer_input input{
+    max-width: 30px;
+}
+
+.dtdream_customer_integer_input input{
+    max-width: 60px;
+}
+
+.dtdream_customer_checkbox div.o_checkbox>input:disabled+span {
+    border: 1px solid #8f8f8f;
+}
+
+ .o_form_view .o_group .dtdream_customer_checkbox .o_form_field {
+    width: auto;
+}
+ .o_form_view .o_group.o_inner_group>tbody>tr>td .dtdream_customer_checkbox .o_form_field{
+     margin-bottom:0;
+ }
+ .dtdream_customer_checkbox .transport{
+     display:inline-block;
+ }
+
+.dtdream_customer_info .o_list_text {
+    word-break:break-all;
+}
+
+.dtdream_customer_info table td:nth-child(1){width:20%}
+.dtdream_customer_info table td:nth-child(2){width:20%}
+.dtdream_customer_info table td:nth-child(3){width:60%}
+
+.dtdream_customer_path table td:nth-child(1){width:25%}
+.dtdream_customer_path table td:nth-child(2){width:25%}
+.dtdream_customer_path table td:nth-child(3){width:25%}
+.dtdream_customer_path table td:nth-child(4){width:25%}

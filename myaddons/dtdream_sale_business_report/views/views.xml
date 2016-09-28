@@ -1,0 +1,264 @@
+<openerp>
+  <data>
+
+    <!--商务报备申请FORM视图-->
+    <record model="ir.ui.view" id="dtdream_sale_business_report_form">
+      <field name="name">dtdream.sale.business.report.form</field>
+      <field name="model">dtdream.sale.business.report</field>
+      <field name="arch" type="xml">
+        <form string="商务报备申请">
+            <header>
+                <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                        attrs="{'invisible':[('state','!=','0')]}"/>
+                <button name="btn_to_se" string="退回重新配置" type="workflow" class="oe_highlight"
+                        attrs="{'invisible':['|',('rejust_state','!=',1),('is_current','=',False)]}"/>
+                <button name="btn_to_interface" string="商务审批" type="workflow" class="oe_highlight"
+                        attrs="{'invisible':['|',('rejust_state','!=',1),('is_current','=',False)]}"/>
+                <button name="%(act_report_approve_wizard)d" string="通过" type="action" class="oe_highlight"
+                attrs="{'invisible':['|','|',('is_current','=',False),('state','not in',('1','2','3','4','5','6','7','8','9')),('rejust_state','=',1)]}"/>
+                <button name="%(act_report_wizard)d" string="驳回" type="action" class="oe_highlight"
+                attrs="{'invisible':['|',('is_current','=',False),('state','not in',('2','3','5','6','7','8','9'))]}"/>
+                <!--<button name="btn_finish" string="完成" type="object" class="oe_highlight"-->
+                <!--attrs="{'invisible':['|',('is_current','=',False),('state','not in',('7','8'))]}"/>-->
+                <field name="state"  widget="statusbar"
+                       statusbar_visible="0,done"/>
+            </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="is_business_approveds" invisible="True"/>
+                <field name="is_pro_approveds" invisible="True"/>
+                <field name="shenpiren_version" invisible="True"></field>
+                <field name="approveds" invisible="True"></field>
+                <field name="product_approveds" invisible="True"></field>
+                <field name="business_approveds" invisible="True"></field>
+                <field name="is_current" invisible="True"></field>
+                <field name="if_out_grant" invisible="True"></field>
+                <field name="rejust_state" invisible="True"></field>
+                <field name="a_apply_discount" invisible="True"></field>
+                <field name="sale_grant_discount" invisible="True"></field>
+                <field name="market_grant_discount" invisible="True"></field>
+                <!--<field name="maoli" invisible="True"></field>-->
+                <field name="total_zhuren_price" invisible="True"></field>
+                <field name="zhuren_grant_discount" invisible="True"></field>
+                <field name="total_chuhuo_price" invisible="True"></field>
+                <field name="total_market_price" invisible="True"></field>
+                <field name="total_sale_price" invisible="True"></field>
+                <field name="apply_person"  invisible="True"></field>
+                <field name="rep_pro_name" options='{"no_create": True}' domain="[('type','=','opportunity'),('sale_apply_id.user_id.id','=',uid)]" attrs="{'readonly':['|',('state','not in',('0')),('is_current','=',False)]}"></field>
+                <field name="project_number" readonly="True"></field>
+                <field name="office_id" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="system_department_id" domain="[('parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="industry_id"  domain="[('parent_id.parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <!--<field name="sale_money" ></field>-->
+                <field name="partner_budget" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="have_hardware" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+              </group>
+              <group>
+                <field name="partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="final_partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="need_ali_grant" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="bidding_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="pre_implementation_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="supply_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="apply_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="product_manager" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="sale_business_interface_person" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+              </group>
+            </group>
+            <span style="color:red">
+                <field name="warn_text"  readonly="True" ></field>
+            </span>
+            <notebook colspan="4">
+                <page string="项目概况">
+                    <group>
+                      <group>
+                        <field name="pro_background" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="apply_discription" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="service_detail" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="channel_discription" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                      </group>
+                      <group>
+                        <field name="other_discription" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="estimate_payment_condition" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="service_deliver_object" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"/>
+                      </group>
+                    </group>
+                    <group>
+                      <group>
+                        <field name="project_promise" nolabel="True"></field>
+                      </group>
+                      <group>
+                        <field name="if_promise" nolabel="True" attrs="{'readonly':['|',('state','not in',('0')),('is_current','=',False)]}"></field>
+                      </group>
+                    </group>
+                </page>
+                <page string="产品配置">
+                    <field name="product_line">
+                      <tree string="产品配置">
+                          <field name="report_state" invisible="True"/>
+                          <field name="report_is_current" invisible="True"/>
+                          <field name="is_pro_approveds" invisible="True"/>
+                          <field name="is_business_approveds" invisible="True"/>
+                          <field name="pro_name" string="产品型号"/>
+                          <field name="bom" string="BOM" />
+                          <field name="pro_type" string="产品类别" />
+                          <field name="pro_description" string="产品对内中文描述" />
+                          <field name="list_price" string="目录价" />
+                          <field name="ref_discount" string="参考折扣(%)"/>
+                          <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
+                          <field name="pro_num" string="数量" />
+                          <field name="config_set" string="发货地"/>
+                          <field name="remark" string="备注"/>
+                      </tree>
+                      <form>
+                          <sheet>
+                              <group>
+                                  <group>
+                                      <field name="report_state" invisible="True"/>
+                                      <field name="report_is_current" invisible="True"/>
+                                      <field name="is_pro_approveds" invisible="True"/>
+                                      <field name="is_business_approveds" invisible="True"/>
+                                      <field name="pro_name" invisible="True"/>
+                                      <field name="product_id" string="产品型号" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="bom" string="BOM" readonly="True"/>
+                                      <field name="pro_type" string="产品类别" readonly="True"/>
+                                      <field name="pro_description" string="产品对内中文描述" readonly="True"/>
+                                      <field name="list_price" string="目录价" readonly="True"/>
+                                  </group>
+                                  <group>
+                                      <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
+                                      <field name="apply_discount" string="申请折扣(%)" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)],'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
+                                      <field name="pro_num" string="数量" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="config_set" string="发货地" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="remark" string="备注" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)]}"/>
+                                  </group>
+                              </group>
+                          </sheet>
+                      </form>
+                    </field>
+                    <group class="oe_subtotal_footer oe_right" name="product_total">
+                        <field name="total_list_price"  class="oe_subtotal_footer_separator"/>
+                        <field name="total_apply_price" class="oe_subtotal_footer_separator" attrs="{'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('state','in',('1','2','3')),('is_current','=',True)]}"/>
+                    </group>
+                </page>
+                <page string="历史审批记录">
+                    <field name="approve_records" readonly="True">
+                      <tree string="历史审批记录">
+                          <field name="name"/>
+                          <field name="result"/>
+                          <field name="liyou"/>
+                          <field name="shenpiren"/>
+                          <field name="create_date" string="审批时间"/>
+                      </tree>
+                    </field>
+                </page>
+            </notebook>
+          </sheet>
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <!--商务报备申请TREE视图-->
+    <record model="ir.ui.view" id="dtdream_sale_business_report_list">
+      <field name="name">dtdream.sale.business.report.list</field>
+      <field name="model">dtdream.sale.business.report</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="apply_person"></field>
+            <field name="rep_pro_name"></field>
+            <field name="project_number"></field>
+            <field name="final_partner_id"></field>
+            <field name="bidding_time"></field>
+            <field name="pre_implementation_time"></field>
+            <field name="supply_time"></field>
+            <field name="apply_time"></field>
+            <field name="state" string="审批环节"></field>
+            <field name="shenpiren" string="当前审批人" widget="many2many_tags"></field>
+        </tree>
+      </field>
+    </record>
+
+      <!--商务提前报备报备豆腐块action-->
+      <!--<record model="ir.actions.server" id="action_dtdream_sale_business">-->
+            <!--<field name="name">商务提前报备</field>-->
+            <!--<field name="model_id" ref="model_dtdream_sale_business_report"/>-->
+            <!--<field name="code">-->
+                <!--action = {-->
+                <!--'name':'商务提前报备',-->
+                <!--'type': 'ir.actions.act_window',-->
+                <!--'view_type': 'form',-->
+                <!--'view_mode': 'form',-->
+                <!--'res_model': 'dtdream.sale.business.report',-->
+                <!--'res_id': self.search(cr,uid,[('rep_pro_name.id','=', context.get("active_id"))],context=None)[0] if self.search(cr,uid,[('rep_pro_name.id','=', context.get("active_id"))],context=None) else "",-->
+                <!--'context':context-->
+                <!--}-->
+            <!--</field>-->
+        <!--</record>-->
+
+    <!--项目管理中增加商务提前报备豆腐块-->
+    <record id="view_business_res_product_oppr_form" model="ir.ui.view">
+            <field name="name">view.business.res.product.oppr</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <button name="toggle_active" position="after">
+                    <button name="action_dtdream_sale_business" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="business_count" class="o_stat_value"/>
+                              <span class="o_stat_text">商务提前报备</span>
+                          </div>
+                    </button>
+                </button>
+            </field>
+    </record>
+
+      <!--销售审批配置FORM-->
+    <record model="ir.ui.view" id="dtdream_shenpi_config_form">
+      <field name="name">dtdream.shenpi.config.form</field>
+      <field name="model">dtdream.shenpi.config</field>
+      <field name="arch" type="xml">
+        <form string="销售审批配置" create='0' delete="0">
+          <sheet>.
+            <group>
+              <group>
+                <field name="business_interface_person" options='{"no_open": True, "no_create": True}' widget="many2many_tags"></field>
+                <field name="sales_manager" options='{"no_open": True, "no_create": True}'></field>
+                <field name="sale_grant_discount"></field>
+              </group>
+              <group>
+                <field name="market_manager" options='{"no_open": True, "no_create": True}'></field>
+                <field name="company_manager" options='{"no_open": True, "no_create": True}'></field>
+              </group>
+            </group>
+             <notebook colspan="4">
+                <page string="部门审批配置">
+                    <field name="shenpi_line">
+                        <tree editable="bottom">
+                            <field name="department" options='{"no_open": True, "no_create": True}'/>
+                            <field name="product_charge" options='{"no_open": True, "no_create": True}'/>
+                            <field name="director" options='{"no_open": True, "no_create": True}'/>
+                          </tree>
+                    </field>
+                </page>
+                 <page string="产品线审批配置">
+                    <field name="shenpi_product_line">
+                        <tree editable="bottom">
+                            <field name="categ_id" options='{"no_open": True, "no_create": True}'/>
+                            <field name="zongbu_product_charge" options='{"no_open": True, "no_create": True}'/>
+                            <field name="zongbu_service_charge" options='{"no_open": True, "no_create": True}'/>
+                          </tree>
+                    </field>
+                </page>
+            </notebook>
+            </sheet>
+       </form>
+     </field>
+  </record>
+
+  </data>
+</openerp>

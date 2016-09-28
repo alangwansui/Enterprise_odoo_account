@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="workflow_hr_pbc_handle" model="workflow">
+        <field name="name">部门PBC工作流</field>
+        <field name="osv">dtdream.hr.pbc</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record id="act_submit" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_pbc_handle"/>
+        <field name="flow_start">True</field>
+        <field name="name">提交</field>
+    </record>
+
+    <record id="act_pbc_done" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_hr_pbc_handle" />
+        <field name="name">完成</field>
+        <field name="flow_stop">True</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="trans_submit_done" model="workflow.transition">
+        <field name="act_from" ref="act_submit"/>
+        <field name="act_to" ref="act_pbc_done"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+
+
+    <record id="workflow_hr_per_handle" model="workflow">
+        <field name="name">员工PBC工作流</field>
+        <field name="osv">dtdream.hr.performance</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record id="act_start" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_per_handle"/>
+        <field name="flow_start">True</field>
+        <field name="name">启动PBC填写</field>
+    </record>
+
+    <record id="act_wait_write" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_per_handle"/>
+        <field name="name">填写PBC</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_wait_write()</field>
+    </record>
+
+    <record id="act_confirm" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_per_handle"/>
+        <field name="name">主管确认</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_confirm()</field>
+    </record>
+
+    <record id="act_evaluate" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_per_handle"/>
+        <field name="name">考评启动</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_evaluate()</field>
+    </record>
+
+    <record id="act_conclud" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_per_handle"/>
+        <field name="name">总结</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_conclud()</field>
+    </record>
+
+    <record id="act_rate" model="workflow.activity">
+        <field name="wkf_id" ref="workflow_hr_per_handle"/>
+        <field name="name">主管评价</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_rate()</field>
+    </record>
+
+    <record id="act_final" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_hr_per_handle" />
+        <field name="name">最终考评</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_final()</field>
+    </record>
+
+    <record id="act_done" model="workflow.activity" >
+        <field name="wkf_id" ref="workflow_hr_per_handle" />
+        <field name="name">考评完成</field>
+        <field name="flow_stop">True</field>
+        <field name="kind">function</field>
+        <field name="action">wkf_done()</field>
+    </record>
+
+    <record id="trans_start_write" model="workflow.transition">
+        <field name="act_from" ref="act_start"/>
+        <field name="act_to" ref="act_wait_write"/>
+        <field name="signal">btn_start</field>
+    </record>
+
+    <record id="trans_write_confirm" model="workflow.transition">
+        <field name="act_from" ref="act_wait_write"/>
+        <field name="act_to" ref="act_confirm"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_confirm_evaluate" model="workflow.transition">
+        <field name="act_from" ref="act_confirm"/>
+        <field name="act_to" ref="act_evaluate"/>
+        <field name="signal">btn_agree</field>
+    </record>
+
+    <record id="trans_evaluate_conclud" model="workflow.transition">
+        <field name="act_from" ref="act_evaluate"/>
+        <field name="act_to" ref="act_conclud"/>
+        <field name="signal">btn_start2</field>
+    </record>
+
+    <record id="trans_conclud_rate" model="workflow.transition">
+        <field name="act_from" ref="act_conclud"/>
+        <field name="act_to" ref="act_rate"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_rate_final" model="workflow.transition">
+        <field name="act_from" ref="act_rate"/>
+        <field name="act_to" ref="act_final"/>
+        <field name="signal">btn_submit</field>
+    </record>
+
+    <record id="trans_final_done" model="workflow.transition">
+        <field name="act_from" ref="act_final"/>
+        <field name="act_to" ref="act_done"/>
+        <field name="signal">btn_import</field>
+    </record>
+
+    <record id="trans_confirm_write" model="workflow.transition">
+        <field name="act_from" ref="act_confirm"/>
+        <field name="act_to" ref="act_wait_write"/>
+        <field name="signal">btn_revise</field>
+    </record>
+
+    <record id="trans_evaluate_write" model="workflow.transition">
+        <field name="act_from" ref="act_evaluate"/>
+        <field name="act_to" ref="act_wait_write"/>
+        <field name="signal">btn_back</field>
+    </record>
+
+    </data>
+</openerp>

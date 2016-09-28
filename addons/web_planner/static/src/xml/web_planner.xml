@@ -2,9 +2,9 @@
 
 <templates id="template">
     <t t-name="PlannerLauncher">
-        <li class="o_planner_systray hidden-xs">
-            <div class="progress"><div class="progress-bar"/></div>
-        </li>
+        <!--<li class="o_planner_systray hidden-xs">-->
+            <!--<div class="progress"><div class="progress-bar"/></div>-->
+        <!--</li>-->
     </t>
 
     <div t-name="PlannerDialog" class="modal" id="PlannerDialog" tabindex="-1" role="dialog" aria-labelledby="PlannerDialogLabel" aria-hidden="true">

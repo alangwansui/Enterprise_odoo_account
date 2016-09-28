@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record model="ir.ui.view" id="dtdream_expense_province_tree_view">
+            <field name="name">dtdream.expense.province.tree</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                     <field name="code"/>
+                     <field name="country_id"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_province_form_view">
+            <field name="name">dtdream.expense.province.form</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="基本信息">
+
+
+                            <group>
+
+                                <field name="name"/>
+                     <field name="code"/>
+                     <field name="country_id"/>
+                            </group>
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_province">
+            <field name="name">省份</field>
+            <field name="res_model">res.country.state</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem name="省份" id="dtdream_expense_province" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_province" sequence="400" groups="group_dtdream_expense_admin"/>
+    </data>
+    </openerp>

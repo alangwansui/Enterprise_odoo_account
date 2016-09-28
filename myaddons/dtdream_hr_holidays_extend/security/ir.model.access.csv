@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_batch_approval,access_batch_approval,model_batch_approval,base.group_hr_user,1,1,1,0
+access_ir_mail_server,ir.mail_server all_user,base.model_ir_mail_server,,1,0,0,0

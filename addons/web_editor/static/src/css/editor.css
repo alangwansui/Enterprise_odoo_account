@@ -90,7 +90,7 @@
   border-bottom-right-radius: 0;
 }
 .note-popover .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle), .o_css_editor .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle), .web_editor-dialog .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle), .note-image-dialog .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
-  border-radius: 0;
+  border-radius: 2px;
 }
 .note-popover .btn-group > .btn:last-child:not(:first-child), .note-popover .btn-group > .btn > .dropdown-toggle:not(:first-child), .o_css_editor .btn-group > .btn:last-child:not(:first-child), .o_css_editor .btn-group > .btn > .dropdown-toggle:not(:first-child), .web_editor-dialog .btn-group > .btn:last-child:not(:first-child), .web_editor-dialog .btn-group > .btn > .dropdown-toggle:not(:first-child), .note-image-dialog .btn-group > .btn:last-child:not(:first-child), .note-image-dialog .btn-group > .btn > .dropdown-toggle:not(:first-child) {
   border-bottom-left-radius: 0;

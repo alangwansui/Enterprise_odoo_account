@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+<template id="report_travel_document">
+        <div class="page">
+            <h2 style="text-align:center">出差申请单</h2>
+            <div style="margin-left:100px; font-size: 20px;">
+                <div style="text-align:right; margin-right:90px;">
+                   审批状态：
+                    <span t-field="doc.state"/>
+                </div>
+                <table class="table-condensed" style="width: 50%; float: left;">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="width: 100%;">
+                                <div style="font-size: 30px;margin: 5px 0;">
+                                    基本信息
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>申请人</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>工号</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.workid"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>部门</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.department"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>受益部门</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.department_shouyi"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>申请时间</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.create_time"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="table-condensed" style="width: 50%;">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="width: 100%;">
+                                <div style="font-size: 30px;margin: 5px 0;">
+                                    节点流程
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>第一审批人</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.shenpi_first"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>第二审批人</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.shenpi_second"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>第三审批人</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.shenpi_third"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>第四审批人</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.shenpi_fourth"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>第五审批人</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.shenpi_fifth"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin:20 0 0 100px; font-size: 20px;">
+                <table class="table-condensed">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="width: 100%;">
+                                <div style="font-size: 30px;margin: 5px 0;">
+                                    费用预算
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>在途交通费(元)</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.traveling_fee"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>市内交通费(元)</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.incity_fee"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>住宿费(元)</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.hotel_expense"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>其它费(元)</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.other_expense"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <label>合计(元)</label>
+                            </td>
+                            <td colspan="1">
+                                <span t-field="doc.total"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin:20 0 0 100px; font-size: 20px;">
+                <div style="font-size: 30px;margin: 5px 0;">行程</div>
+                 <table class="table-condensed" width="90%" style="border-top: 1px solid;">
+                    <tbody>
+                        <thead>
+                            <th>
+                                出发地
+                            </th>
+                            <th>
+                                目的地
+                            </th>
+                            <th>
+                                出差时间
+                            </th>
+                            <th>
+                                结束时间
+                            </th>
+                            <th>
+                                出差原因
+                            </th>
+                        </thead>
+                        <t t-foreach="doc.journey_id" t-as="journey">
+                            <tr>
+                                <td colspan="1">
+                                    <span t-field="journey.startaddress"/>
+                                </td>
+                                <td colspan="1">
+                                    <span t-field="journey.endaddress"/>
+                                </td>
+                                <td colspan="1">
+                                    <span t-field="journey.starttime"/>
+                                </td>
+                                <td colspan="1">
+                                    <span t-field="journey.endtime"/>
+                                </td>
+                                <td colspan="1">
+                                    <span t-field="journey.reason"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                 </table>
+            </div>
+        </div>
+</template>
+
+
+<template id="report_travel">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="dtdream_travel.report_travel_document"/>
+        </t>
+    </t>
+</template>
+</data>
+</openerp>

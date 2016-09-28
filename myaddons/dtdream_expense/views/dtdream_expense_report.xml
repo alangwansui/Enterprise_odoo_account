@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="dtdream_expense_myreport_kanban_view">
+            <field name="name">dtdream.expense.myreport.kanban</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban">
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="currentauditperson"/>
+                    <field name="create_uid_self"/>
+                    <field name="create_date" />
+                    <field name="department_id"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+
+                                <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                </div>
+
+
+
+                                <div class="oe_kanban_details">
+                                  <div name="tags"/>
+                                    <ul>
+                                        <li > <strong>单号:</strong><field name="name" /></li>
+                                        <li > <strong>状态:</strong><field name="state" /></li>
+                                        <li > <strong>申请人:</strong><field name="create_uid_self" /></li>
+                                        <li > <strong>申请日期:</strong><field name="create_date" /></li>
+
+                                    </ul>
+                                  <div name="tags"/>
+                                </div>
+                            </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
+         <record id="dtdream_expense_myreport_form_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.myreport.form</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="提交" name="btn_submit" type="workflow" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('draft'))]}"/>
+                        <button string="同意" name="%(act_expense_agree_wizard)d" type="action" class="oe_highlight"
+                                attrs="{'invisible':['|','|','|','|',('compute_currentaudit','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))
+                                ,'&amp;',('state','=','xingzheng'),('showcuiqian','=','0'),'&amp;',('state','=','jiekoukuaiji'),('showcuiqian','=','1'),'&amp;',('state','=','jiekoukuaiji'),('showcuiqian','=','0')]}"/>
+                        <button string="驳回" name="%(act_expense_wizard)d" type="action" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))]}"/>
+                        <button string="签收纸件" name="btn_checkpaper" type="object" class="oe_highlight"
+                                confirm="确定收到报销单纸件吗?"
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('jiekoukuaiji','xingzheng'))]}"/>
+                        <button string="确认付款" name="btn_confirmmoney" type="workflow" class="oe_highlight" states=""
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('daifukuan'))]}"
+                                confirm="确定已付款吗?"/>
+                        <button string="催签" name="btn_cuiqian" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji','daifukuan'))]}"
+                                confirm="确定要催签吗?"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,xingzheng,zhuguan,quanqianren,jiekoukuaiji,daifukuan,yifukuan,"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="基本信息">
+                                <field name="job_number" readonly="1"/>
+                                <field name="full_name" readonly="1"/>
+                                <field name="work_place" readonly="1"/>　
+                                <field name="department_id" readonly="1"/>
+                                <field name="department_number" readonly="1"/>
+                                <field name="xingzhengzhuli" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}"/>
+
+
+                                <field name="compute_shenqingren" invisible="1"/>
+                                <field name="compute_currentaudit" invisible="1"/>
+                                <field name="showcuiqian" invisible="1"/>
+                                <field name="zhuguan_quanqian_jiekoukuaiji" invisible="1"/>
+
+
+                                <!--<field name="expensecode"/>-->
+                                <!--<field name="name"/>
+                                 <field name="state"/>-->
+                                <!--<field name="currentauditperson"/>-->
+                                <!--<field name="zhuanxiangshiqianshenpidanhao"/>-->
+                                <field name="expensereason" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+
+
+                            <group string="支付信息">
+                                <field name="paytype" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="paycatelog" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="shoukuanrenxinming" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="kaihuhang" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="yinhangkahao" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="is_zongcai" invisible="1"/>
+                            </group>
+
+                        </group>
+
+
+                        <notebook>
+                            <page string="受益部门分摊比例">
+                                <field name="benefitdep_ids" mode="tree,kanban" attrs="{'readonly':[('state','!=','draft')]}" >
+                                    <tree editable="bottom">
+
+                                        <field name="name" options="{'no_create': True}"/>
+                                        <field name="sharepercent"/>
+                                        <field name="depcode"/>
+                                    </tree>
+
+
+                                     <kanban class="o_res_partner_kanban" >
+                                         <field name="name" />
+                                        <field name="sharepercent"/>
+                                        <field name="depcode"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                      <!--<img t-att-src="/static/description/expense.png" class="o_kanban_image oe_kanban_avatar_smallbox"/>-->
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>部门名称:</strong> <field name="name" /></li>
+                                                            <li > <strong>分摊比例(%):</strong><field name="sharepercent" /></li>
+                                                            <li > <strong>部门编码:</strong><field name="depcode" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                            </page>
+                        </notebook>
+
+                        <notebook>
+                            <page string="出差时间">
+
+                                <field name="chuchaishijian_ids" mode="tree,kanban" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}">
+                                    <tree editable="bottom">
+
+                                        <field name="name" options="{'no_create': True}"/>
+                                        <field name="endtime"/>
+                                        <field name="startaddress"/>
+                                        <field name="endaddress"/>
+                                        <field name="reason"/>
+                                    </tree>
+
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="name" />
+                                        <field name="endtime"/>
+                                        <field name="startaddress"/>
+                                        <field name="endaddress"/>
+                                        <!--<field name="reason"/>-->
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                      <!--<img t-att-src="/static/description/expense.png" class="o_kanban_image oe_kanban_avatar_smallbox"/>-->
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>开始日期:</strong> <field name="name" /></li>
+                                                            <li > <strong>结束日期:</strong><field name="endtime" /></li>
+                                                            <li > <strong>出发地:</strong><field name="startaddress" /></li>
+                                                            <li > <strong>目的地:</strong><field name="endaddress" /></li>
+
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
+                                </field>
+                            </page>
+                        </notebook>
+
+
+                        <notebook>
+                            <page string="费用明细">
+                                <field name="create_uid_self" invisible="1"/>
+                                <field name="record_ids"   mode="tree,kanban" attrs="{'readonly':[('state','!=',('draft'))]}" domain="[('create_uid','=',create_uid_self),('report_ids','=',False)]">
+                                    <tree  >
+                                        <!--<field name="record_id"/>-->
+                                        <!--<field name="expensecatelog"/>-->
+                                        <field name="expensedetail" />
+                                        <field name="currentdate" />
+                                        <field name="invoicevalue"/>
+                                        <field name="koujianamount" />
+                                        <field name="shibaoamount" />
+                                        <field name="outtimenumber" />
+                                        <field name="state" readonly="1"/>
+                                        <!--<field name="attachment"/>-->
+                                        <field name="create_date" string="创建时间" readonly="1"/>
+                                        <field name="create_uid" string="创建人" readonly="1"/>
+                                    </tree>
+
+
+
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="expensedetail"/>
+                                        <field name="currentdate"/>
+                                        <field name="invoicevalue"/>
+                                        <field name="koujianamount"/>
+                                        <field name="province"  />
+                                        <field name="city"  />
+                                         <field name="state" />
+                                        <field name="create_date"/>　　
+                                        <field name="create_uid"/>
+                                         <field name="attachment_ids" />
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                      <!--<img t-att-src="/static/description/expense.png" class="o_kanban_image oe_kanban_avatar_smallbox"/>-->
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>费用明细:</strong> <field name="expensedetail" /></li>
+                                                            <li > <strong>发生日期:</strong><field name="currentdate" /></li>
+                                                            <li > <strong>票据金额(元):</strong><field name="invoicevalue" /></li>
+                                                            <!--<li > <strong>发生城市:</strong><field name="city" /></li>-->
+
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
+
+
+
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" name="expense_total_invoicevalue">
+                                    <field name="total_invoicevalue" class="oe_subtotal_footer_separator" readonly="1"/>
+                                    <field name="total_koujianamount" class="oe_subtotal_footer_separator"
+                                           readonly="1"/>
+                                    <field name="total_shibaoamount" class="oe_subtotal_footer_separator" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="dtdream_expense_myreport_tree_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.myreport.tree</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <!--<field name="title"/>-->
+                    <field name="state"/>
+                    <field name="currentauditperson"/>
+                    <field name="create_uid_self" string="申请人"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="department_id"/>
+
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="dtdream_expense_myreport_form_jiekoukuaiji_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.myreport.jiekoukuaiji.form</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="提交" name="btn_submit" type="workflow" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('draft'))]}"/>
+                        <button string="同意" name="%(act_expense_agree_wizard)d" type="action" class="oe_highlight"
+                                attrs="{'invisible':['|','|','|','|',('compute_currentaudit','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))
+                                ,'&amp;',('state','=','xingzheng'),('showcuiqian','=','0'),'&amp;',('state','=','jiekoukuaiji'),('showcuiqian','=','1'),'&amp;',('state','=','jiekoukuaiji'),('showcuiqian','=','0')]}"/>
+                        <button string="驳回" name="%(act_expense_wizard)d" type="action" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))]}"/>
+                        <button string="签收纸件" name="btn_checkpaper" type="object" class="oe_highlight"
+                                confirm="确定收到报销单纸件吗?"
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('jiekoukuaiji','xingzheng'))]}"/>
+                        <button string="确认付款" name="btn_confirmmoney" type="workflow" class="oe_highlight" states=""
+                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('daifukuan'))]}"
+                                confirm="确定已付款吗?"/>
+                        <button string="催签" name="btn_cuiqian" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji','daifukuan'))]}"
+                                confirm="确定要催签吗?"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,xingzheng,zhuguan,quanqianren,jiekoukuaiji,daifukuan,yifukuan,"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="基本信息">
+                                <field name="job_number" readonly="1"/>
+                                <field name="full_name" readonly="1"/>
+                                <field name="work_place" readonly="1"/>　
+                                <field name="department_id" readonly="1"/>
+                                <field name="department_number" readonly="1"/>
+                                <field name="xingzhengzhuli" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}"/>
+                                <field name="compute_shenqingren" invisible="1"/>
+                                <field name="compute_currentaudit" invisible="1"/>
+                                <field name="showcuiqian" invisible="1"/>
+
+
+                                <!--<field name="expensecode"/>-->
+                                <!--<field name="name"/>
+                                 <field name="state"/>-->
+                                <!--<field name="currentauditperson"/>-->
+                                <!--<field name="zhuanxiangshiqianshenpidanhao"/>-->
+                                <field name="expensereason" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+
+
+                            <group string="支付信息">
+                                <field name="paytype" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="paycatelog" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="shoukuanrenxinming" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="kaihuhang" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="yinhangkahao" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="is_zongcai" invisible="1"/>
+                            </group>
+
+                        </group>
+
+
+                        <notebook>
+                            <page string="受益部门分摊比例">
+                                <field name="benefitdep_ids" attrs="{'readonly':[('state','!=','draft')]}" >
+                                    <tree editable="bottom">
+
+                                        <field name="name" options="{'no_create': True}"/>
+                                        <field name="sharepercent"/>
+                                        <field name="depcode"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                        <notebook>
+                            <page string="出差时间">
+
+                                <field name="chuchaishijian_ids"  attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}">
+                                    <tree editable="bottom">
+
+                                        <field name="name" options="{'no_create': True}"/>
+                                        <field name="endtime"/>
+                                        <field name="startaddress"/>
+                                        <field name="endaddress"/>
+                                        <field name="reason"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+
+                        <notebook>
+                            <page string="费用明细">
+                                <field name="create_uid_self" invisible="1"/>
+                                <field name="record_ids"    attrs="{'readonly':[('state','!=',('jiekoukuaiji'))]}" domain="[('create_uid','=',create_uid_self),('report_ids','=',False)]">
+                                    <tree >
+                                        <!--<field name="record_id"/>-->
+                                        <!--<field name="expensecatelog"/>-->
+                                        <field name="expensedetail" />
+                                        <field name="currentdate" readonly="1"/>
+                                        <field name="invoicevalue" readonly="1"/>
+                                        <field name="koujianamount" />
+                                        <field name="shibaoamount"  readonly="1"/>
+                                        <field name="outtimenumber"  readonly="1"/>
+                                        <field name="state" readonly="1"/>
+                                        <!--<field name="attachment"/>-->
+                                        <field name="create_date" string="创建时间" readonly="1"/>
+                                        <field name="create_uid" string="创建人" readonly="1"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" name="expense_total_invoicevalue">
+                                    <field name="total_invoicevalue" class="oe_subtotal_footer_separator" readonly="1"/>
+                                    <field name="total_koujianamount" class="oe_subtotal_footer_separator"
+                                           readonly="1"/>
+                                    <field name="total_shibaoamount" class="oe_subtotal_footer_separator" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="dtdream_expense_myreport_tree_jiekoukuaiji_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.myreport.jiekoukuaiji.tree</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <!--<field name="title"/>-->
+                    <field name="state"/>
+                    <field name="currentauditperson"/>
+                    <field name="create_uid_self" string="申请人"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="department_id"/>
+
+
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_expense_report_search_view">
+            <field name="name">dtdream.expense.report.search</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="currentauditperson"/>
+                    <field name="create_uid_self" string="申请人"/>
+                    <field name="create_date" string="申请时间"/>
+                    <filter string="待处理" name="search_willaudit" domain="[('state','!=','yifukuan')]" />
+                </search>
+            </field>
+        </record>
+
+
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_myreport">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{'search_default_search_willaudit':1}</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_pending">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('currentauditperson_userid','=',uid)]</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+
+
+         <record model="ir.actions.act_window.view" id="action_dtdream_expense_pending_form">
+            <field name="act_window_id" ref="action_dtdream_expense_pending"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_expense_myreport_form_view"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_dtdream_expense_pending_tree">
+            <field name="act_window_id" ref="action_dtdream_expense_pending"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_expense_myreport_tree_view"/>
+        </record>
+
+
+
+         <record model="ir.actions.act_window" id="action_dtdream_expense_pending_jiekoukuaiji">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('currentauditperson_userid','=',uid)]</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+
+
+         <record model="ir.actions.act_window.view" id="action_dtdream_expense_pending_form_jiekoukuaiji">
+            <field name="act_window_id" ref="action_dtdream_expense_pending_jiekoukuaiji"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_expense_myreport_form_jiekoukuaiji_view"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_dtdream_expense_pending_tree_jiekoukuaiji">
+            <field name="act_window_id" ref="action_dtdream_expense_pending_jiekoukuaiji"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_expense_myreport_tree_jiekoukuaiji_view"/>
+        </record>
+
+
+
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_audited">
+            <field name="name">我已审批</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('hasauditor.user_id','=',uid)]</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_outtime">
+            <field name="name">已超期报销单</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('is_outtime','=',True)]</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_draft">
+            <field name="name">草稿箱</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('create_uid','=',uid),('state','=','draft')]</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_all">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_all_aboutme">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('hasauditor.user_id','=',uid),('currentauditperson_userid','=',uid),('followers_user','=',uid)]</field>
+        </record>
+
+        <!--<menuitem name="报销单" id="dtdream_expense_report" parent="dtdream_expense_menu_root" />-->
+
+        <menuitem name="我的申请" id="dtdream_expense_myreport" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_myreport" sequence="201"/>
+
+        <menuitem name="待我审批" id="dtdream_expense_pending" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_pending" groups="dtdream_expense.group_dtdream_expense_alluser" sequence="202"/>
+
+         <menuitem name="待我审批" id="dtdream_expense_pending_jiekoukuaiji" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_pending_jiekoukuaiji" groups="dtdream_expense.group_dtdream_expense_jiekoukuaiji" sequence="203"/>
+
+        <menuitem name="我已审批" id="dtdream_expense_audited" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_audited" sequence="204"  />
+        <!--<menuitem name="草稿箱" id="dtdream_expense_draft" parent="dtdream_expense_menu_root"-->
+                  <!--action="action_dtdream_expense_draft" sequence="205"/>-->
+
+        <!--<menuitem name="所有单据(管理员)" id="dtdream_expense_all" parent="dtdream_expense_report"-->
+                  <!--action="action_dtdream_expense_all" sequence="400" groups="group_dtdream_expense_admin"/>-->
+
+         <menuitem name="所有单据" id="dtdream_expense_all_aboutme" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_all_aboutme" sequence="206" />
+
+
+    </data>
+    </openerp>

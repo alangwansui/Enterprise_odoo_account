@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <openerp>
+            <data>
+                <record id="view_dtdream_budget_wizard" model="ir.ui.view">
+                    <field name="name">view.dtdream.budget.wizard</field>
+                    <field name="model">dtdream.budget.wizard</field>
+                    <field name="arch" type="xml">
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="reason" required="1"></field>
+                                    <field name="temp" invisible="1"></field>
+                                </group>
+                            </group>
+                            <footer>
+                                <button special="cancel" string="取消" class="oe_highlight zx_button" style="float:right;margin-right:20px"/>
+                                <button name="btn_confirm" type="object" string="确定" class="oe_highlight zx_button" style="border-radius:5px;float:right;margin-right:20px" id="zx_button"></button>
+
+                            </footer>
+                        </form>
+
+                    </field>
+                </record>
+                <record id="act_dtdream_budget_wizard_agree" model="ir.actions.act_window">
+                    <field name="name">意见</field>
+                    <field name="res_model">dtdream.budget.wizard</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">form</field>
+                    <field name="target">new</field>
+                    <field name="context">{'default_temp':'agree'}</field>
+                </record>
+                <record id="act_dtdream_budget_wizard_reject" model="ir.actions.act_window">
+                    <field name="name">意见</field>
+                    <field name="res_model">dtdream.budget.wizard</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">form</field>
+                    <field name="target">new</field>
+                    <field name="context">{'default_temp':'reject'}</field>
+                </record>
+
+            </data>
+
+        </openerp>

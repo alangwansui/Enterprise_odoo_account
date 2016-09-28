@@ -1,0 +1,74 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="dtdream_group_assignment.list">
+      <field name="name">dtdream_group_assignment list</field>
+      <field name="model">dtdream_group_assignment.dtdream_group_assignment</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="dtdream_group_assignment.action_window">
+      <field name="name">dtdream_group_assignment window</field>
+      <field name="res_model">dtdream_group_assignment.dtdream_group_assignment</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="dtdream_group_assignment.action_server">
+      <field name="name">dtdream_group_assignment server</field>
+      <field name="model_id" ref="model_dtdream_group_assignment_dtdream_group_assignment"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="dtdream_group_assignment" id="dtdream_group_assignment.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="dtdream_group_assignment.menu_1" parent="dtdream_group_assignment.menu_root"/>
+    <menuitem name="Menu 2" id="dtdream_group_assignment.menu_2" parent="dtdream_group_assignment.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="dtdream_group_assignment.menu_1_list" parent="dtdream_group_assignment.menu_1"
+              action="dtdream_group_assignment.action_window"/>
+    <menuitem name="Server to list" id="dtdream_group_assignment" parent="dtdream_group_assignment.menu_2"
+              action="dtdream_group_assignment.action_server"/>
+    -->
+            <record id="action_res_groups" model="ir.actions.act_window">
+            <field name="name">人员维护</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.groups</field>
+            <field name="view_type">form</field>
+            <field name="context">{'search_default_no_share': 1}</field>
+            <field name="help">A group is a set of functional areas that will be assigned to the user in order to give them access and rights to specific applications and tasks in the system. You can create custom groups or edit the ones existing by default in order to customize the view of the menu that users will be able to see. Whether they can have a read, write, create and delete access right can be managed from here.</field>
+            </record>
+          <menuitem action="action_res_groups" id="menu_action_res_groups" groups="base.group_no_one" sequence="3"  icon="fa-user"
+            web_icon="dtdream_group_assignment,static/src/img/person.png"/>
+
+
+          <menuitem id="base.menu_management" name="Apps" sequence="310" parent="base.menu_administration" web_icon="base,static/description/modules.png" groups="base.group_system"/>
+
+
+  </data>
+</openerp>

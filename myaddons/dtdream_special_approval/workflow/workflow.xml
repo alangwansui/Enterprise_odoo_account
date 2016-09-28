@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="special_approval_workflow" model="workflow">
+            <field name="name">专项审批工作流</field>
+            <field name="osv">dtdream.special.approval</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="activity_cg" model="workflow.activity">
+            <field name="wkf_id" ref="special_approval_workflow"/>
+            <field name="flow_start">True</field>
+            <field name="name">创建草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_cg()</field>
+        </record>
+
+        <record id="activity_zgsp" model="workflow.activity">
+            <field name="wkf_id" ref="special_approval_workflow"/>
+            <field name="name">主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_zgsp()</field>
+        </record>
+
+        <record id="activity_qqrsp" model="workflow.activity">
+            <field name="wkf_id" ref="special_approval_workflow"/>
+            <field name="name">权签人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_qqrsp()</field>
+        </record>
+
+        <record id="activity_cwsp" model="workflow.activity">
+            <field name="wkf_id" ref="special_approval_workflow"/>
+            <field name="name">财务审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_cwsp()</field>
+        </record>
+
+        <record id="activity_wc" model="workflow.activity">
+            <field name="wkf_id" ref="special_approval_workflow"/>
+            <field name="flow_stop">True</field>
+            <field name="name">完成</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_wc()</field>
+        </record>
+
+        <record id="trans_a_b" model="workflow.transition">
+            <field name="act_from" ref="activity_cg"/>
+            <field name="act_to" ref="activity_zgsp"/>
+            <field name="signal">cg_to_zgsp</field>
+        </record>
+
+        <record id="trans_a_c" model="workflow.transition">
+            <field name="act_from" ref="activity_cg"/>
+            <field name="act_to" ref="activity_qqrsp"/>
+            <field name="signal">cg_to_qqrsp</field>
+        </record>
+
+        <record id="trans_a_d" model="workflow.transition">
+            <field name="act_from" ref="activity_cg"/>
+            <field name="act_to" ref="activity_cwsp"/>
+            <field name="signal">cg_to_cwsp</field>
+        </record>
+
+        <record id="trans_b_a" model="workflow.transition">
+            <field name="act_from" ref="activity_zgsp"/>
+            <field name="act_to" ref="activity_cg"/>
+            <field name="signal">zgsp_to_cg</field>
+        </record>
+
+        <record id="trans_c_a" model="workflow.transition">
+            <field name="act_from" ref="activity_qqrsp"/>
+            <field name="act_to" ref="activity_cg"/>
+            <field name="signal">qqrsp_to_cg</field>
+        </record>
+
+        <record id="trans_d_a" model="workflow.transition">
+            <field name="act_from" ref="activity_cwsp"/>
+            <field name="act_to" ref="activity_cg"/>
+            <field name="signal">cwsp_to_cg</field>
+        </record>
+
+        <record id="trans_b_c" model="workflow.transition">
+            <field name="act_from" ref="activity_zgsp"/>
+            <field name="act_to" ref="activity_qqrsp"/>
+            <field name="signal">zgsp_to_qqrsp</field>
+        </record>
+
+        <record id="trans_b_d" model="workflow.transition">
+            <field name="act_from" ref="activity_zgsp"/>
+            <field name="act_to" ref="activity_cwsp"/>
+            <field name="signal">zgsp_to_cwsp</field>
+        </record>
+
+        <record id="trans_c_d" model="workflow.transition">
+            <field name="act_from" ref="activity_qqrsp"/>
+            <field name="act_to" ref="activity_cwsp"/>
+            <field name="signal">qqrsp_to_cwsp</field>
+        </record>
+
+        <record id="trans_d_e" model="workflow.transition">
+            <field name="act_from" ref="activity_cwsp"/>
+            <field name="act_to" ref="activity_wc"/>
+            <field name="signal">cwsp_to_wc</field>
+        </record>
+    </data>
+</openerp>

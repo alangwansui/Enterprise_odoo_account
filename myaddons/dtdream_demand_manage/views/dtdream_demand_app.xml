@@ -1,0 +1,189 @@
+<openerp>
+  <data>
+    <record id="view_dtdream_demand_app_form" model="ir.ui.view">
+        <field name="name">view.dtdream.demand.app.form</field>
+        <field name="model">dtdream.demand.app</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
+                            attrs="{'invisible':['|',('state','not in',('0','3','5')),'|','&amp;',('is_creator','=',False),'&amp;',('is_applicant','=',False),('state','=','0'),'|','&amp;',('is_analyst','=',False),'&amp;',('is_entrusted_analyst','=',False),('state','=','3'),'|','&amp;',('is_analyst','=',True),'&amp;',('entrusted_analyst','!=',False),('state','=','3'),'&amp;',('is_practice_man','=',False),('state','=','5')]}"/>
+                    <button name="btn_approve" string="同意" type="workflow" class="oe_highlight" confirm="请确认是否同意?"
+                            attrs="{'invisible':['|',('state','not in',('1','2','4')),'|','&amp;',('is_direct_manage','=',False),('state','=','1'),'&amp;',('is_IT_manage','=', False),('state','in',('2','4'))]}"/>
+                    <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','not in',('1','2','4')),'|','&amp;',('is_direct_manage','=',False),('state','=','1'),'&amp;',('is_IT_manage','=', False),('state','in',('2','4'))]}"/>
+                    <button name="entrust_others_analysis" string="委托他人分析" type="object" class="oe_highlight"
+                            attrs="{'invisible':['|',('is_current','=', False),'|',('state','!=','3'),'|','&amp;',('entrusted_analyst','=',False),('state','=','3'),'&amp;',('is_entrusted_analyst','=',True),('state','=','3')]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,1,2,3,4,5,99"/>
+               </header>
+              <sheet>
+                <group string="项目信息">
+                  <group>
+                      <field name="name" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
+                      <field name="expect_complete_time" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
+                      <field name="is_applicant" invisible="True"/>
+                      <field name="is_creator" invisible="True"/>
+                      <field name="is_analyst" invisible="True"/>
+                      <field name="is_entrusted_analyst" invisible="True"/>
+                      <field name="is_practice_man" invisible="True"/>
+                      <field name="is_direct_manage" invisible="True"/>
+                      <field name="is_IT_manage" invisible="True"/>
+                      <field name="is_current" invisible="True"/>
+                      <field name="is_manage" invisible="True"/>
+                  </group>
+                  <group>
+                      <field name="department" required="True" options="{'no_open': True,'no_create': True}"/>
+                      <field name="operate_type" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
+                  </group>
+                  <group colspan="12">
+                      <field name="app_name" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
+                  </group>
+                  <group colspan="12">
+                      <field name="description" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
+                  </group>
+                  <group colspan="12">
+                      <field name="attachment_name" invisible="True"/>
+                      <field name="attachment" widget="binary" filename="attachment_name" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
+                  </group>
+                </group>
+
+                <notebook attrs="{'invisible':[('state','=','0')]}" class="dtdream_demand_notebook">
+                    <page string="部门主管审批" attrs="{'invisible':[('state','=','0')]}" class="manage_page">
+                        <group colspan="12">
+                            <field name="comments" attrs="{'required':[('state','!=', '0')],'readonly':['|','&amp;',('state','!=','1'),('is_manage','=',False),'&amp;',('state','=','1'),'&amp;',('is_direct_manage','=',False),('is_manage','=',False)]}"/>
+                        </group>
+                    </page>
+
+                    <page string="IT需求审批" attrs="{'invisible':[('state','in',('0','1'))]}" class="manage_page">
+                        <group colspan="12">
+                            <group colspan="12">
+                                <field name="require_comments" attrs="{'required':[('state','not in', ('0','1'))],'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="analyst" attrs="{'required':[('state','not in', ('0','1'))],'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <page string="IT方案分析" attrs="{'invisible':[('state','in',('0','1','2'))]}" class="manage_page">
+                        <group>
+                            <group attrs="{'invisible':[('state','in',('4','5','6')),('entrusted_analyst','=',False)]}">
+                                <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group colspan="12" attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
+                                <field name="conclude" attrs="{'required':[('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
+                                <field name="man_hours" class="demand_app_check" attrs="{'required':[('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
+                                <field name="priority" attrs="{'required':[('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <page string="IT方案审批" attrs="{'invisible':[('state','in',('0','1', '2','3'))]}" class="manage_page">
+                        <group colspan="12">
+                            <group colspan="12">
+                                <field name="plan_comments" attrs="{'required':[('state','in', ('4','5','6'))],'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="practice_man" attrs="{'required':[('state','in', ('4','5','6'))],'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <page string="IT实施" attrs="{'invisible':[('state','in',('0','1','2','3','4'))]}" class="manage_page">
+                        <group colspan="12">
+                            <group>
+                                <field name="plan_time" attrs="{'required':[('state','in', ('5','6'))],'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="done_time" attrs="{'required':[('state','in', ('5','6'))],'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                            <group colspan="12">
+                                <field name="remark" attrs="{'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+
+              </sheet>
+
+              <div class="oe_chatter">
+                  <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                  <field name="message_ids" widget="mail_thread"/>
+              </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_demand_app_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.demand.app.tree</field>
+        <field name="model">dtdream.demand.app</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="department"/>
+                <field name="app_name"/>
+                <field name="expect_complete_time"/>
+                <field name="state"/>
+                <field name="current_approve" string="当前处理人"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="act_dtdream_demand_manage" model="ir.actions.act_window">
+        <field name="name">我的申请</field>
+        <field name="res_model">dtdream.demand.app</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">['|',('name.user_id','=',uid),('create_uid','=',uid)]</field>
+    </record>
+
+    <record id="act_dtdream_demand_manage_approve" model="ir.actions.act_window">
+        <field name="name">待我审批</field>
+        <field name="res_model">dtdream.demand.app</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('current_approve.user_id','=',uid)]</field>
+    </record>
+
+    <record id="act_dtdream_demand_manage_all" model="ir.actions.act_window">
+        <field name="name">所有单据</field>
+        <field name="res_model">dtdream.demand.app</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.module.category" id="module_dtdream_demand_manage_group">
+        <field name="name">IT需求管理</field>
+        <field name="description">需求管理</field>
+        <field name="sequence">2</field>
+    </record>
+
+    <record id="dtdream_demand_manage" model="res.groups">
+        <field name="name">IT需求管理员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_dtdream_demand_manage_group"/>
+    </record>
+
+    <menuitem name="IT需求管理" id="menu_dtdream_demand_manage_root" icon="fa-user"/>
+
+    <menuitem name="我的申请" id="menu_dtdream_demand_manage" parent="menu_dtdream_demand_manage_root" sequence="12"/>
+    <menuitem name="应用开发及优化" id="menu_dtdream_customer_mine" parent="menu_dtdream_demand_manage" sequence="4" action="act_dtdream_demand_manage"/>
+
+    <menuitem name="待我审批" id="dtdream_demand_manage_approve" parent="menu_dtdream_demand_manage_root" sequence="14"/>
+    <menuitem name="应用开发及优化" id="menu_dtdream_customer_approve" parent="dtdream_demand_manage_approve" sequence="4" action="act_dtdream_demand_manage_approve"/>
+
+    <menuitem name="所有单据" id="dtdream_demand_manage_all" parent="menu_dtdream_demand_manage_root" sequence="16"/>
+    <menuitem name="应用开发及优化" id="menu_dtdream_customer_all" parent="dtdream_demand_manage_all" sequence="4" action="act_dtdream_demand_manage_all"/>
+
+    <menuitem name="配置" id="dtdream_demand_manage_config" parent="menu_dtdream_demand_manage_root" sequence="18"/>
+
+  </data>
+</openerp>

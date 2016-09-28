@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.cron" id="ir_cron_timing_send_email">
+            <field name='name'>预算定时提醒</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">dtdream.budget</field>
+            <field name="function">send_email_regularly</field>
+            <field name="args">()</field>
+        </record>
+
+    </data>
+</openerp>

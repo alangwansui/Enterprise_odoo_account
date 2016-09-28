@@ -1,0 +1,112 @@
+<openerp>
+    <data>
+
+        <record id="act_dtdream_department_form_special" model="ir.actions.act_window">
+            <field name="name">部门</field>
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id','=',active_id)]</field>
+        </record>
+
+        <record id="ir_open_department_special" model="ir.values">
+            <field name='key2'>tree_but_open</field>
+            <field name='model'>hr.department</field>
+            <field name="name">专项部门</field>
+            <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form_special" name='value'/>
+        </record>
+
+        <record id="act_dtdream_approval_right_peo" model="ir.actions.act_window">
+            <field name="name">部门权签配置</field>
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name='context'>{
+                'default_tree_but_open':'专项部门'}</field>
+        </record>
+
+        <record id="view_department_form_approval_inherit" model="ir.ui.view">
+            <field name="name">hr.department.form.approva.inherit</field>
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <form string="department">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" attrs="{'readonly':True}"/>
+                                <field name="manager_id" string="主管" attrs="{'readonly':True}"/>
+                                <field name="parent_id" attrs="{'readonly':True}"/>
+                            </group>
+                            <group>
+                                <field name="code" attrs="{'readonly':True}"/>
+                                <field name="assitant_id" widget="many2many_tags" attrs="{'readonly':True}"/>
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <group>
+                        <div><p><font color="red">注：第三权签人权利最大，审批金额也最大；设置金额一元起，设置权签人则必须设置金额</font></p></div>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="zxfirst_person" />
+                                <field name="zxsec_person" />
+                                <field name="zxthird_person"/>
+                            </group>
+                            <group>
+                                <field name="zxfirst_money" />
+                                <field name="zxsec_money" />
+                                <field name="zxthird_money"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="dtdream_view_department_tree_approval_inherit" model="ir.ui.view">
+            <field name="name">dtdream.hr.department.tree.approval.inherit</field>
+            <field name="model">hr.department</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="complete_name"/>
+                    <field name="manager_id" string="主管"/>
+                    <field name="assitant_id"/>
+                    <field name="zxfirst_person"/>
+                    <field name="zxsec_person"/>
+                    <field name="zxthird_person"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+
+        <record id="action_dtdream_approval_right_peo_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_view_department_tree_approval_inherit"/>
+            <field name="act_window_id" ref="act_dtdream_approval_right_peo"/>
+        </record>
+
+        <record id="action_dtdream_approval_right_peo_tree_a" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_view_department_tree_approval_inherit"/>
+            <field name="act_window_id" ref="act_dtdream_department_form_special"/>
+        </record>
+
+        <record id="action_dtdream_approval_right_peo_form" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_department_form_approval_inherit"/>
+            <field name="act_window_id" ref="act_dtdream_department_form_special"/>
+        </record>
+
+    </data>
+</openerp>

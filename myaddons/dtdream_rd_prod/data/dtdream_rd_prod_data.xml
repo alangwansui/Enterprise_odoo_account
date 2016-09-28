@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record model="mail.message.subtype" id="dtdream_rd_mt_note">
+            <field name="name">研发产品备注</field>
+             <field name="default" eval="True"/>
+            <field name="res_model">dtdream_prod_appr</field>
+        </record>
+    </data>
+</openerp>

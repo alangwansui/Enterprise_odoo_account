@@ -1,23 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data noupdate="0">
 
         <record model="ir.module.category" id="module_rd_prod_group">
             <field name="name">研发</field>
             <field name="description">关于研发菜单的组</field>
             <field name="sequence">2</field>
         </record>
-        <!--<record id="group_dtdream_rd_user" model="res.groups">
-            <field name="name">研发人员</field>
-            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
-            <field name="category_id" ref="module_rd_prod_group"/>
-        </record>-->
 
         <record id="group_dtdream_rd_qa" model="res.groups">
             <field name="name">研发QA</field>
-            <!--<field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>-->
             <field name="category_id" ref="module_rd_prod_group"/>
         </record>
+
+        <record id="group_dtdream_rd_user" model="res.groups">
+            <field name="name">研发查看</field>
+            <field name="category_id" ref="module_rd_prod_group"/>
+        </record>
+
+        <record id="group_dtdream_rd_user_all" model="res.groups">
+            <field name="name">研发可创建</field>
+            <field name="category_id" ref="module_rd_prod_group"/>
+        </record>
+
+        <record id="rd_prod_rule_01" model="ir.rule">
+             <field name="name">研发产品删除</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">[('is_create','=',True),('state','=','state_00')]</field>
+         </record>
+
+        <record id="rd_prod_rule_02" model="ir.rule">
+             <field name="name">研发版本删除</field>
+             <field name="model_id" ref="model_dtdream_rd_version"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">[('is_create','=',True),('version_state','=','draft')]</field>
+         </record>
+
+        <record id="rd_prod_rule_03" model="ir.rule">
+             <field name="name">版本创建时产品查看</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">['|','|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),('his_app_user','=',user.id),('followers_user','=',user.id),('department_2','=',user.employee_ids.department_id.id)]</field>
+         </record>
+
+        <record id="rd_prod_rule_04" model="ir.rule">
+             <field name="name">版本重计划删除</field>
+             <field name="model_id" ref="model_dtdream_rd_replanning"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
+             <field name="domain_force">[('state','=','state_01')]</field>
+         </record>
 
         </data>
     </openerp>

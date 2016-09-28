@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record id="view_dtdream_hr_resume_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.resume.form</field>
+        <field name="model">dtdream.hr.resume</field>
+        <field name="arch" type="xml">
+            <form string="履历">
+               <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','0'),('is_login','=',False)]}"/>
+                    <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
+                    <button name="%(act_resume_wizard)d" string="驳回" type="action" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
+                    <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('is_shenqingren','=',False),('state','!=','-1')]}"/>
+                    <button name="act_dtdream_hr_resume_modify" string="履历信息修改" type="object" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','99'),('is_login','=',False)]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,1,99"/>
+               </header>
+              <sheet>
+                <group string="基本信息">
+                    <group>
+                        <field name="name" readonly="True"/>
+                        <field name="department"/>
+                        <field name="mobile" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                        <field name="icard" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                        <field name="home_address" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                    </group>
+                    <group>
+                        <field name="workid"/>
+                        <field name="marry" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                        <field name="child" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                        <field name="has_title" attrs="{'readonly':[('has_edit', '=',False)]}"/>
+                        <field name="is_graduate" invisible="True"/>
+                        <field name="has_edit" invisible="True"/>
+                        <field name="is_login" invisible="True"/>
+                        <field name="is_current" invisible="True"/>
+                        <field name="is_shenqingren" invisible="True"/>
+                    </group>
+                </group>
+                <group string="工作经历">
+                    <div>
+                         <p style="padding-left: 40px">入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
+                        <notebook>
+                            <page>
+                              <field name="experince" attrs="{'readonly':[('has_edit', '=',False)]}">
+                                  <tree editable="bottom">
+                                     <field name="start_time"/>
+                                     <field name="end_time"/>
+                                     <field name="age_work"/>
+                                     <field name="company"/>
+                                     <field name="post"/>
+                                     <field name="remark"/>
+                                  </tree>
+                              </field>
+                              <group style="margin-top:-5px" class="oe_subtotal_footer" name="age_work_total">
+                                <field name="total_work"  class="oe_subtotal_footer_separator"/>
+                              </group>
+                            </page>
+                        </notebook>
+                    </div>
+                </group>
+
+                <group string="职称信息" attrs="{'invisible':[('has_title','!=',True)]}">
+                    <div>
+                        <p style="padding-left: 40px">所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
+                        <notebook>
+                            <page>
+                                  <field name="title" attrs="{'readonly':[('has_edit', '=',False)]}">
+                                      <tree editable="bottom">
+                                          <field name="name"/>
+                                          <field name="depertment"/>
+                                          <field name="date"/>
+                                          <field name="remark"/>
+                                      </tree>
+                                  </field>
+                            </page>
+                        </notebook>
+                    </div>
+                </group>
+
+                <group string="学历信息">
+                    <notebook>
+                        <page>
+                            <field name="degree" attrs="{'readonly':[('has_edit', '=',False)]}">
+                              <tree editable="bottom">
+                                 <field name="degree"/>
+                                 <field name="has_degree"/>
+                                 <field name="entry_time"/>
+                                 <field name="leave_time"/>
+                                 <field name="school"/>
+                                 <field name="major"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
+                </group>
+
+                <group string="外语信息">
+                    <notebook>
+                        <page>
+                            <field name="language" attrs="{'readonly':[('has_edit', '=',False)]}">
+                              <tree editable="bottom">
+                                  <field name="langange"/>
+                                  <field name="cerdit"/>
+                                  <field name="result"/>
+                                  <field name="remark"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
+                </group>
+                <p>*<b>填写说明</b>:以上信息修改后，需『提交』至人力资源部审核后才生效</p>
+              </sheet>
+
+              <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+              </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_resume_approve_form" model="ir.ui.view">
+        <field name="name">view.hr.resume.approve.form</field>
+        <field name="model">hr.resume.approve</field>
+        <field name="arch" type="xml">
+            <form string="员工入职相关配置">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="approve" options="{'no_open': True}" required="True"/>
+                            <field name="email" options="{'no_open': True}" required="True"/>
+                            <field name="dingding" options="{'no_open': True}" required="True"/>
+                            <field name="bbs" options="{'no_open': True}" required="True"/>
+                            <field name="dodo" options="{'no_open': True}" required="True"/>
+                        </group>
+                        <group>
+                            <field name="account" options="{'no_open': True}" required="True"/>
+                            <field name="weixin" options="{'no_open': True}" required="True"/>
+                            <field name="cloud" options="{'no_open': True}" required="True"/>
+                            <field name="oa" options="{'no_open': True}" required="True"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_resume_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.resume.tree</field>
+        <field name="model">dtdream.hr.resume</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="state"/>
+                <field name="resume_approve"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_employee_form_resume_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.resume.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+               <field name="resume_view" invisible="True"/>
+               <button class="oe_stat_button" type="object" name="act_dtdream_hr_resume"
+                icon="fa-info" attrs="{'invisible':[('resume_view','=',False)]}">
+                   <field string="履历" name="resume_log_nums" widget="statinfo"/>
+               </button>
+            </button>
+        </field>
+    </record>
+
+     <record id="view_dtdream_hr_resume_modify_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.resume.modify.form</field>
+        <field name="model">dtdream.hr.resume.modify</field>
+        <field name="arch" type="xml">
+            <form string="修改履历">
+               <header>
+                    <button name="track_fields_change" string="提交" type="object" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','0'),('is_login','=',False)]}"/>
+                    <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
+                    <button name="%(act_resume_modify_wizard)d" string="驳回" type="action" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','1'),('is_current','=',False)]}"/>
+                    <button name="btn_restart" string="重启流程" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('is_shenqingren','=',False),('state','!=','-1')]}"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,1,99"/>
+               </header>
+              <sheet>
+                <group string="基本信息">
+                    <group>
+                        <field name="name"/>
+                        <field name="department"/>
+                        <field name="mobile" attrs="{'readonly':[('state','!=','0')]}"/>
+                        <field name="icard" attrs="{'readonly':[('state','!=','0')]}"/>
+                        <field name="home_address" attrs="{'readonly':[('state', '!=','0')]}"/>
+                        <field name="is_current" invisible="True"/>
+                        <field name="is_graduate" invisible="True"/>
+                        <field name="is_login" invisible="True"/>
+                        <field name="is_shenqingren" invisible="True"/>
+                    </group>
+                    <group>
+                        <field name="workid"/>
+                        <field name="marry" attrs="{'readonly':[('state', '!=','0')]}"/>
+                        <field name="child" attrs="{'readonly':[('state', '!=','0')]}"/>
+                        <field name="has_title" attrs="{'readonly':[('state', '!=','0')]}"/>
+                    </group>
+                </group>
+
+                <group string="工作经历">
+                    <div>
+                         <p style="padding-left: 40px">入职前的合计工龄将影响年休假计算，请如实填写。在校阶段实习经历不纳入工作经历</p>
+                        <notebook>
+                            <page>
+                              <field name="experince" attrs="{'readonly':[('state', '!=','0')]}">
+                                  <tree editable="bottom">
+                                     <field name="start_time"/>
+                                     <field name="end_time"/>
+                                     <field name="age_work"/>
+                                     <field name="company"/>
+                                     <field name="post"/>
+                                     <field name="remark"/>
+                                  </tree>
+                              </field>
+                              <group style="margin-top:-5px" class="oe_subtotal_footer" name="age_work_total">
+                                <field name="total_work"  class="oe_subtotal_footer_separator"/>
+                              </group>
+                            </page>
+                        </notebook>
+                    </div>
+                </group>
+
+                <group string="职称信息" attrs="{'invisible':[('has_title','!=',True)]}">
+                    <div>
+                        <p style="padding-left: 40px">所提交的职称信息，需提交相关证件至人力资源审核。如有信息无法确定，可先不填写。</p>
+                        <notebook>
+                            <page>
+                                  <field name="title" attrs="{'readonly':[('state', '!=','0')]}">
+                                      <tree editable="bottom">
+                                          <field name="name"/>
+                                          <field name="depertment"/>
+                                          <field name="date"/>
+                                          <field name="remark"/>
+                                      </tree>
+                                  </field>
+                            </page>
+                        </notebook>
+                    </div>
+                </group>
+
+                <group string="学历信息">
+                    <notebook>
+                        <page>
+                            <field name="degree" attrs="{'readonly':[('state', '!=','0')]}">
+                              <tree editable="bottom">
+                                 <field name="degree"/>
+                                 <field name="has_degree"/>
+                                 <field name="entry_time"/>
+                                 <field name="leave_time"/>
+                                 <field name="school"/>
+                                 <field name="major"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
+                </group>
+
+                <group string="外语信息">
+                    <notebook>
+                        <page>
+                            <field name="language" attrs="{'readonly':[('state', '!=','0')]}">
+                              <tree editable="bottom">
+                                  <field name="langange"/>
+                                  <field name="cerdit"/>
+                                  <field name="result"/>
+                                  <field name="remark"/>
+                              </tree>
+                          </field>
+                        </page>
+                    </notebook>
+                </group>
+                <p>*<b>填写说明</b>:以上信息修改后，需『提交』至人力资源部审核后才生效</p>
+              </sheet>
+
+              <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+              </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_resume_modify_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.resume.modify.tree</field>
+        <field name="model">dtdream.hr.resume.modify</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="state"/>
+                <field name="resume_approve"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_contract_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.contract.tree</field>
+        <field name="model">dtdream.hr.contract</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="num"/>
+                <field name="department"/>
+                <field name="date_start"/>
+                <field name="date_stop"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_contract_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.contract.form</field>
+        <field name="model">dtdream.hr.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="num"/>
+                            <field name="date_stop"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="date_start"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_dtdream_hr_contract" model="ir.actions.act_window">
+        <field name="name">合同</field>
+        <field name="res_model">dtdream.hr.contract</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('name.id','=',active_id)]</field>
+    </record>
+
+    <record id="view_employee_form_contract_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.contract.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+               <field name="contract_view" invisible="True"/>
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_hr_contract)d"
+                icon="fa-edit" attrs="{'invisible':[('resume_view','=',False)]}">
+                    <field string="合同" name="contract_log_nums" widget="statinfo"/>
+               </button>
+            </button>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_resume_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.resume.filter</field>
+        <field name="model">dtdream.hr.resume</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <filter string="草稿" domain="[('state','=','0')]" name='state_draft'/>
+                <filter string="人力资源部审批" domain="[('state','=','1')]" name='state_approve'/>
+                <filter string="驳回" domain="[('state','=','-1')]" name='state_reject'/>
+                <filter string="完成" domain="[('state','=','99')]" name="state_done"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_resume_modify_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.resume.modify.filter</field>
+        <field name="model">dtdream.hr.resume.modify</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <filter string="草稿" domain="[('state','=','0')]" name='state_draft'/>
+                <filter string="人力资源部审批" domain="[('state','=','1')]" name='state_approve'/>
+                <filter string="驳回" domain="[('state','=','-1')]" name='state_reject'/>
+                <filter string="完成" domain="[('state','=','99')]" name="state_done"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_experience_form" model="ir.ui.view">
+        <field name="name">view.hr.employee.experience.form</field>
+        <field name="model">hr.employee.experience</field>
+        <field name="arch" type="xml">
+            <form string="工作经历">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="start_time"/>
+                          <field name="end_time"/>
+                          <field name="age_work"/>
+                      </group>
+                      <group>
+                          <field name="company"/>
+                          <field name="post"/>
+                          <field name="remark"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_title_form" model="ir.ui.view">
+        <field name="name">view.hr.employee.title.form</field>
+        <field name="model">hr.employee.title</field>
+        <field name="arch" type="xml">
+            <form string="职称信息">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="name"/>
+                          <field name="depertment"/>
+                      </group>
+                      <group>
+                          <field name="date"/>
+                          <field name="remark"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_degree_form" model="ir.ui.view">
+        <field name="name">view.hr.employee.degree.form</field>
+        <field name="model">hr.employee.degree</field>
+        <field name="arch" type="xml">
+            <form string="学历信息">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="degree"/>
+                          <field name="entry_time"/>
+                          <field name="school"/>
+                      </group>
+                      <group>
+
+                          <field name="has_degree"/>
+                          <field name="leave_time"/>
+                          <field name="major"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_language_form" model="ir.ui.view">
+        <field name="name">view.hr.employee.language.form</field>
+        <field name="model">hr.employee.language</field>
+        <field name="arch" type="xml">
+            <form string="外语信息">
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="langange"/>
+                          <field name="result"/>
+
+                      </group>
+                      <group>
+                          <field name="cerdit"/>
+                          <field name="remark"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+  </data>
+</openerp>

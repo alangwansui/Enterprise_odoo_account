@@ -1,0 +1,420 @@
+<openerp>
+  <data>
+    <record id="view_dtdream_hr_pbc_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.form</field>
+        <field name="model">dtdream.hr.pbc</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','0'),'&amp;',('manage','=',False),('inter_edit','=',False)]}" confirm="请确认是否提交?"/>
+                    <field name="state"  widget="statusbar"
+                           statusbar_visible="0,99"/>
+               </header>
+              <sheet>
+                <group string="基本信息">
+                  <group>
+                    <field name="name" options="{'no_create': True}" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}"/>
+                    <field name="is_inter" invisible="True"/>
+                    <field name="manage" invisible="True"/>
+                    <field name="inter_edit" invisible="True"/>
+                    <field name="is_in_department" invisible="True"/>
+                  </group>
+                  <group>
+                    <field name="quarter" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}"/>
+                  </group>
+                </group>
+
+                <group string="部门目标">
+                    <notebook>
+                        <page>
+                            <field name="target" attrs="{'readonly':[('manage','=',False),('inter_edit','=',False)]}">
+                                <tree editable="bottom" class="dtdream_hr_performance_tree dtdream_pbc_target_tree">
+                                    <field name="num"/>
+                                    <field name="works" class="jsz"/>
+                                    <field name="depart_target" invisible="True" string="部门"/>
+                                </tree>
+                            </field>
+                        </page>
+                      </notebook>
+                </group>
+
+              </sheet>
+
+              <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+              </div>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_pbc_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.tree</field>
+        <field name="model">dtdream.hr.pbc</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="quarter" string="考核季度" />
+              <field name="state"/>
+              <field name="is_inter" invisible="True"/>
+              <field name="is_in_department" invisible="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_pbc_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.pbc.filter</field>
+        <field name="model">dtdream.hr.pbc</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="quarter"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dtdream_pbc_target_form" model="ir.ui.view">
+        <field name="name">view.dtdream.pbc.target.form</field>
+        <field name="model">dtdream.pbc.target</field>
+        <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <group>
+                  <group>
+                       <field name="num"/>
+                       <field name="level" invisible="True"/>
+                  </group>
+                  <group>
+                      <field name="works"/>
+                  </group>
+                </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_performance_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.form</field>
+        <field name="model">dtdream.hr.performance</field>
+        <field name="arch" type="xml">
+            <form>
+              <header>
+                  <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
+                          attrs="{'invisible':['|',('state', 'not in',('1','4','5')),'|','&amp;',('manage','=',False),'&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','in',('1', '4')),'&amp;',('login','=',False),('manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
+                  <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" type="action" class="oe_highlight"
+                          attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
+                  <button name="%(act_dtdream_pbc_agree_wizard)d" string="同意" type="action" class="oe_highlight"
+                          attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
+                  <button name="btn_back" string="绩效目标修改" type="workflow" class="oe_highlight" confirm="请确认是否返回修改?"
+                          attrs="{'invisible':['|',('login','=',False),('state','!=','3')]}"/>
+                  <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,5,6,99"/>
+              </header>
+
+              <sheet>
+                <group string="基本信息">
+                  <group>
+                    <field name="name" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="workid"/>
+                    <field name="quarter" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="result" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                  </group>
+                  <group>
+                    <field name="department" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="officer" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="officer_sec" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="onwork"/>
+                    <field name="login" invisible="True"/>
+                    <field name="is_officer" invisible="True"/>
+                    <field name="up_officer" invisible="True"/>
+                    <field name="view_all" invisible="True"/>
+                    <field name="inter" invisible="True"/>
+                    <field name="manage" invisible="True"/>
+                    <field name="pbc_log" invisible="True"/>
+                  </group>
+                </group>
+
+                <group string="部门绩效目标">
+                    <div>
+                        <span style="margin-left:20px; color:red;" attrs="{'invisible':[('pbc_log','=',True)]}">
+                           您所在部门的部门绩效目标未录入，请与部门主管沟通了解!
+                        </span>
+                        <notebook>
+                            <page>
+                                <field name="pbc" attrs="{'readonly':['|',('inter','=',False),('state', '!=','0')]}">
+                                    <tree create="0" delete="false" class="dtdream_hr_performance_tree">
+                                        <field name="depart_target" string="部门"/>
+                                        <field name="num"/>
+                                        <field name="works"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </div>
+                </group>
+
+                <group string="个人绩效目标">
+                    <notebook>
+                        <page>
+                            <field name="pbc_employee" attrs="{'readonly':['|','&amp;','&amp;',('state','not in',('1','4','5')),('login','=',True),'&amp;',('manage','=',False),('inter','=',True),'|','&amp;',('state','not in',('1','4','5')),'&amp;',('manage','=',False),('inter','=',False),'|','&amp;',('state', 'in',('1','4')),'&amp;',('login','=', False),'&amp;',('manage','=',False),('inter','=',False),'&amp;',('state', '=','5'),'&amp;',('is_officer','=', False),'&amp;',('manage','=',False),('inter','=',False)]}">
+                                <tree editable="bottom" name="personal_pbc" class="dtdream_hr_performance_tree dtdream_hr_pbc_tree">
+                                    <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="state" invisible="True"/>
+                                    <field name="login" invisible="True"/>
+                                    <field name="officer" invisible="True"/>
+                                    <field name="inter" invisible="True"/>
+                                    <field name="manage" invisible="True"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </group>
+
+
+                <group string="总体评价">
+                    <group>
+                        <field name="evaluate_officer" placeholder='请管理者结合员工的关键目标完成进展，以及过程中的绩效沟通进行综合评价。(不少于50字)' attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('is_officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    </group>
+                    <group></group>
+                </group>
+
+              </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+     <record id="view_dtdream_hr_performance_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.tree</field>
+        <field name="model">dtdream.hr.performance</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="quarter"/>
+                <field name="state"/>
+                <field name="result"/>
+            </tree>
+        </field>
+      </record>
+
+      <record id="view_dtdream_hr_performance_filter" model="ir.ui.view">
+        <field name="name">dtdream.hr.performance.filter</field>
+        <field name="model">dtdream.hr.performance</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="result"/>
+                <field name="quarter"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hr_pbc_manage_submit_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.manage.submit.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="提交">
+                <p>确定提交?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc_manage_submit" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_manage_submit_mail"
+          name="绩效管理员提交"
+          src_model="dtdream.hr.performance"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_manage_submit_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_manage_performance"/>
+
+    <record id="view_dtdream_hr_pbc_start_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.start.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="绩效目标填写">
+                <p>确定启动绩效目标填写?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_start"
+          name="启动绩效目标填写"
+          src_model="dtdream.hr.performance"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_start_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_manage_performance"/>
+
+    <record id="view_dtdream_hr_pbc_evaluate_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.start.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="绩效目标考评">
+                <p>确定启动绩效目标考评?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc_evaluate" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_evaluate"
+          name="启动绩效目标考评"
+          src_model="dtdream.hr.performance"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_evaluate_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_manage_performance"/>
+
+    <record id="view_dtdream_hr_pbc_send_mail_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.send.mail.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="发送邮件">
+                <p>确定发送邮件?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc_send_mail" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_send_mail"
+          name="发送邮催"
+          src_model="dtdream.hr.performance"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_send_mail_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_inter_performance"/>
+
+     <record id="view_dtdream_hr_pbc_submit_from" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.submit.from</field>
+        <field name="model">dtdream.hr.pbc.start</field>
+        <field name="arch" type="xml">
+            <form string="提交">
+                <p>确定提交?</p>
+                <footer>
+                    <button string="确定" name="start_hr_pbc_submit" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_hr_pbc_submit"
+          name="提交"
+          src_model="dtdream.hr.pbc"
+          res_model="dtdream.hr.pbc.start"
+          view_id="view_dtdream_hr_pbc_submit_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_manage_performance,group_hr_inter_performance"/>
+
+    <record id="view_dtdream_hr_pbc_config" model="ir.ui.view">
+        <field name="name">view.dtdream.pbc.hr.config.form</field>
+        <field name="model">dtdream.pbc.hr.config</field>
+        <field name="arch" type="xml">
+            <form string="HR业务接口人设置">
+                <sheet>
+                    <group>
+                        <notebook>
+                            <page>
+                                <field name="interface">
+                                    <tree editable="bottom">
+                                        <field name="department" options="{'no_open': True}" required="True"/>
+                                        <field name="name" options="{'no_open': True}" required="True"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="act_dtdream_hr_pbc_config">
+            <field name="name">绩效相关配置</field>
+            <field name="model_id" ref="model_dtdream_pbc_hr_config"/>
+            <field name="code">
+                action = {
+                'name':'绩效相关配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dtdream.pbc.hr.config',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+                'context':context,
+                }
+            </field>
+        </record>
+
+    <record id="view_dtdream_hr_pbc_employee_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.pbc.employee.form</field>
+        <field name="model">dtdream.hr.pbc.employee</field>
+        <field name="arch" type="xml">
+            <form>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="work" readonly="True"/>
+                          <field name="detail" readonly="True"/>
+                      </group>
+                      <group>
+                          <field name="result" readonly="True"/>
+                          <field name="evaluate" readonly="True" invisible="True"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+      
+  </data>
+</openerp>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+            <openerp>
+                <data noupdate="1">
+
+
+                     <record model="dtdream.contract.config" id="contract_nda">
+                        <field name="name" eval="'保密协议'"/>
+                        <field name="name_id" eval="'NDA'"></field>
+                     </record>
+                     <record model="dtdream.contract.config" id="contract_npp">
+                        <field name="name" eval="'非生产采购协议'"/>
+                        <field name="name_id" eval="'NPP'"></field>
+                     </record>
+                     <record model="dtdream.contract.config" id="contract_cpa">
+                        <field name="name" eval="'商务平台协议'"/>
+                        <field name="name_id" eval="'CPA'"></field>
+                     </record>
+                     <record model="dtdream.contract.config" id="contract_ppa">
+                        <field name="name" eval="'生产采购协议'"/>
+                        <field name="name_id" eval="'PPA'"></field>
+                     </record>
+                     <record model="dtdream.contract.config" id="contract_spa">
+                        <field name="name" eval="'服务采购协议'"/>
+                        <field name="name_id" eval="'SPA'"></field>
+                     </record>
+                     <record model="dtdream.contract.config" id="contract_otr">
+                        <field name="name" eval="'其他类型协议'"/>
+                        <field name="name_id" eval="'OTR'"></field>
+                     </record>
+                     <record model="dtdream.contract.url" id="contract_url">
+                        <field name="name" eval="'http://'"/>
+                     </record>
+
+
+                </data>
+            </openerp>

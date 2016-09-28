@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_hr_infor_contract" model="ir.actions.act_window">
+            <field name="name">合同</field>
+            <field name="res_model">dtdream.hr.contract</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="action_hr_resume_wait" model="ir.actions.act_window">
+            <field name="name">履历信息待审批</field>
+            <field name="res_model">dtdream.hr.resume</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('resume_approve.user_id','=',uid)]</field>
+            <field name="auto_refresh">1</field>
+        </record>
+
+        <record id="action_hr_resume_modify_wait" model="ir.actions.act_window">
+            <field name="name">履历信息修改待审批</field>
+            <field name="res_model">dtdream.hr.resume.modify</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('resume_approve.user_id','=',uid)]</field>
+        </record>
+
+        <record id="action_hr_resume_done" model="ir.actions.act_window">
+            <field name="name">履历信息已审批</field>
+            <field name="res_model">dtdream.hr.resume</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('approved.user_id','=',uid)]</field>
+        </record>
+
+        <record id="action_hr_resume_modify_done" model="ir.actions.act_window">
+            <field name="name">履历信息修改已审批</field>
+            <field name="res_model">dtdream.hr.resume.modify</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('approved.user_id','=',uid)]</field>
+        </record>
+
+         <record id="action_hr_resume_all" model="ir.actions.act_window">
+            <field name="name">履历信息所有单据</field>
+            <field name="res_model">dtdream.hr.resume</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','|',('state', '!=', '0'),('create_uid','=',uid),('name.user_id','=',uid)]</field>
+        </record>
+
+        <record id="action_hr_resume_modify_all" model="ir.actions.act_window">
+            <field name="name">履历信息修改所有单据</field>
+            <field name="res_model">dtdream.hr.resume.modify</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','|',('state', '!=', '0'),('create_uid','=',uid),('name.user_id','=',uid)]</field>
+        </record>
+
+        <record model="ir.actions.server" id="act_dtdream_hr_resume_approve">
+            <field name="name">人员配置</field>
+            <field name="model_id" ref="model_hr_resume_approve"/>
+            <field name="code">
+                action = {
+                'name':'人员配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'hr.resume.approve',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+                'context':context,
+                }
+            </field>
+        </record>
+
+    </data>
+</openerp>

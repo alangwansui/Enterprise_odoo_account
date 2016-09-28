@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+        <openerp>
+            <data noupdate="0">
+                <record model="ir.module.category" id="module_grants_group">
+                    <field name="name">补助金管理</field>
+                    <field name="sequence">5</field>
+                </record>
+                <record id="group_grants_admin" model="res.groups">
+                    <field name="name">补助金管理业务管理员</field>
+                    <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+                    <field name="category_id" ref="module_grants_group"></field>
+                </record>
+                <record id="group_grants_view_all" model="res.groups">
+                    <field name="name">查看所有补助金充值记录</field>
+                    <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+                    <field name="category_id" ref="module_grants_group"></field>
+                </record>
+                <record id="rule_dtdream_grants_read" model="ir.rule">
+                    <field name="name">补助金管理员工读权限</field>
+                    <field name="model_id" ref="model_dtdream_grants"/>
+                    <field name="domain_force">[('name.user_id','=',user.id)]</field>
+                    <field name="perm_read" eval="True"/>
+                    <field name="perm_create" eval="False"/>
+                    <field name="perm_write" eval="False"/>
+                    <field name="perm_unlink" eval="False"/>
+                    <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+                </record>
+                <record id="rule_dtdream_grants_read_view_all" model="ir.rule">
+                    <field name="name">补助金管理查看所有记录人员读权限</field>
+                    <field name="model_id" ref="model_dtdream_grants"/>
+                    <field name="domain_force">[]</field>
+                    <field name="perm_read" eval="True"/>
+                    <field name="perm_create" eval="False"/>
+                    <field name="perm_write" eval="False"/>
+                    <field name="perm_unlink" eval="False"/>
+                    <field name="groups" eval="[(4,ref('group_grants_view_all'))]"/>
+                </record>
+                <record id="rule_dtdream_grants_read_admin" model="ir.rule">
+                    <field name="name">补助金管理业务管理员读权限</field>
+                    <field name="model_id" ref="model_dtdream_grants"/>
+                    <field name="domain_force">[]</field>
+                    <field name="perm_read" eval="True"/>
+                    <field name="perm_create" eval="False"/>
+                    <field name="perm_write" eval="False"/>
+                    <field name="perm_unlink" eval="False"/>
+                    <field name="groups" eval="[(4,ref('group_grants_admin'))]"/>
+                </record>
+                <record id="rule_dtdream_grants_write_admin" model="ir.rule">
+                    <field name="name">补助金管理业务管理员写权限</field>
+                    <field name="model_id" ref="model_dtdream_grants"/>
+                    <field name="domain_force">[]</field>
+                    <field name="perm_read" eval="False"/>
+                    <field name="perm_create" eval="False"/>
+                    <field name="perm_write" eval="True"/>
+                    <field name="perm_unlink" eval="False"/>
+                    <field name="groups" eval="[(4,ref('group_grants_admin'))]"/>
+                </record>
+
+            </data>
+    </openerp>

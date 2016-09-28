@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                    <button name="check_submit_dtdream_travel" string="提交" type="object" class="oe_highlight"
                             attrs="{'invisible':[('state','!=','0')]}"/>
                     <button name="btn_approve" string="通过" type="workflow" class="oe_highlight"
                     attrs="{'invisible':['|',('is_current','=',False),('state','not in',('1','2','3','4','5'))]}"/>
@@ -26,11 +26,6 @@
                           <field name="department"/>
                           <field name="department_shouyi" attrs="{'readonly':[('state', '!=','0')]}"/>
                           <field name="create_time"></field>
-                          <field name="traveling_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="incity_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="other_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
-                          <field name="total"/>
                       </group>
                       <group string="节点流程">
                           <field name="shenpi_first" attrs="{'readonly':[('state', '!=','0')]}"/>
@@ -43,13 +38,22 @@
                           <field name="can_restart" invisible="True"/>
                       </group>
                   </group>
-
-                  <group string="流程描述">
-                      <div>
-                          <p>第一审批人：部门行政助理</p>
-                          <p>第二审批人：部门主管</p>
-                          <p>第三审批人：受益部门权签人</p>
-                      </div>
+                  <group>
+                      <group string="费用预算">
+                          <field name="traveling_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="incity_fee" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="hotel_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="other_expense" attrs="{'readonly':[('state', '!=','0')]}"/>
+                          <field name="total"/>
+                      </group>
+                      <group string="流程描述">
+                          <div>
+                              <br/>
+                              <p>第一审批人：部门行政助理</p>
+                              <p>第二审批人：部门主管</p>
+                              <p>第三审批人：受益部门权签人</p>
+                          </div>
+                      </group>
                   </group>
 
                   <notebook>
@@ -85,7 +89,47 @@
               <field name="department"/>
               <field name="create_time"/>
               <field name="state"/>
+              <field name="shenpiren"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="act_dtdream_travel_chucha_log" model="ir.actions.act_window">
+        <field name="name">出差申请</field>
+        <field name="res_model">dtdream.travel.chucha</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('name.id','=',active_id)]</field>
+    </record>
+
+    <record id="view_employee_form_travel_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.travel.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+               <button class="oe_stat_button" type="action" name="%(act_dtdream_travel_chucha_log)d"
+                icon="fa-strikethrough" attrs="{'invisible':[('can_view','=',False)]}">
+                <field string="出差" name="chucha_log_nums" widget="statinfo"/>
+               </button>
+               <field name="can_view" invisible="True"/>
+            </button>
+        </field>
+    </record>
+
+    <record id="view_dtdream_travel_filter" model="ir.ui.view">
+        <field name="name">dtdream.travel.filter</field>
+        <field name="model">dtdream.travel.chucha</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="department"/>
+                <filter string="草稿" domain="[('state','=','0')]" name='state_draft'/>
+                <filter string="一级审批" domain="[('state','=','1')]" name='state_approve'/>
+                <filter string="驳回" domain="[('state','=','-1')]" name='state_reject'/>
+                <filter string="完成" domain="[('state','=','99')]" name="state_done"/>
+            </search>
         </field>
     </record>
   </data>

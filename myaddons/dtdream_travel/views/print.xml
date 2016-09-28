@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <report
+            id="dtdream_travel_print"
+            string="出差申请单"
+            model="dtdream.travel.chucha"
+            report_type="qweb-pdf"
+            name="dtdream_travel.report_travel"
+            file="dtdream_travel.report_travel"/>
+
+    </data>
+</openerp>

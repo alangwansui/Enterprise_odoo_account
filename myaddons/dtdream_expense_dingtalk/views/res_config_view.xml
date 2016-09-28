@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record id="view_expense_config_settings_form" model="ir.ui.view">
+            <field name="name">dtdream.expense.config.settings.form</field>
+            <field name="model">dtdream.expense.config.settings</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="设置" class="oe_form_configuration">
+                    <header>
+                        <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <group string="钉钉">
+                        <field name="agentId"/>
+                        <field name="agentUrl"/>
+                        <field name="corpId"/>
+                        <field name="corpSecret"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+         <record id="action_expense_configuration" model="ir.actions.act_window">
+            <field name="name">报销单设置</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dtdream.expense.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_expense_general_settings" name="设置" parent="dtdream_expense.dtdream_expense_configration"
+            sequence="0" action="action_expense_configuration"/>
+    </data>
+</openerp>

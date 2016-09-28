@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <report
+            id="root_dtdream_expense_report_print"
+            string="打印报销单"
+            model="dtdream.expense.report"
+            report_type="qweb-pdf"
+            name="dtdream_expense.con_dtdream_expense_report_print"
+            file="dtdream_expense.con_dtdream_expense_report_print"/>
+
+     <template id="con_dtdream_expense_report_print">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="dtdream_expense.print_dtdream_expense_report"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="print_dtdream_expense_report">
+         <t t-call="report.external_layout">
+            <div class="page info">
+
+                <div class="oe_structure"/>
+                <style>
+                   .info tbody tr .o_td_label{  min-width:150px;
+                                                padding:0 15px 5px 0;
+                                                }
+                    .info h4{margin-bottom:5px;font-weight:bold;}
+                    .info h2{margin-bottom:10px;font-weight:bold;}
+                    .info .billcode{text-align:right;margin-bottom:30px; }
+                </style>
+
+                    <div class="row ">
+                        <div class="col-xs-12">
+                            <h2 align="center">报销申请单</h2>
+                        </div>
+                    </div>
+
+                    <div class="row" name="total">
+                         <div class="col-xs-11 ">
+                             <div class="billcode" size="7" >单据号:<span t-field="doc.name"/></div>
+  <!--填单时间:<span t-field="doc.create_date"/>-->
+                         </div>
+                    </div>
+
+
+                    <div class="row ">
+
+
+                            <div class="col-xs-6">
+                                <h4>基本信息</h4>
+                               <table>
+                                   <tbody>
+                                       <tr>
+                                           <td class="o_td_label">员工工号:</td>
+                                           <td><span t-field="doc.job_number"/></td>
+                                       </tr>
+                                       <tr>
+                                           <td class="o_td_label">姓名:</td>
+                                           <td><span t-field="doc.full_name"/></td>
+                                       </tr>
+                                        <tr>
+                                           <td class="o_td_label">工作常驻地:</td>
+                                           <td><span t-field="doc.work_place"/></td>
+                                       </tr>
+                                        <tr>
+                                           <td class="o_td_label">所属部门:</td>
+                                           <td><span t-field="doc.department_id"/></td>
+                                       </tr>
+                                       <tr>
+                                           <td class="o_td_label">部门编码:</td>
+                                           <td><span t-field="doc.department_number"/></td>
+                                       </tr>
+                                   </tbody>
+                               </table>
+                            </div>
+
+
+
+                            <div class="col-xs-6">
+                                <h4>支付信息</h4>
+                                <table>
+                                   <tbody>
+                                       <tr>
+                                           <td class="o_td_label">支付方式:</td>
+                                           <td><span t-field="doc.paytype"/></td>
+                                       </tr>
+                                       <tr>
+                                           <td class="o_td_label">支付类别:</td>
+                                           <td><span t-field="doc.paycatelog"/></td>
+                                       </tr>
+                                       <tr>
+                                           <td class="o_td_label">收款人姓名:</td>
+                                           <td><span t-field="doc.shoukuanrenxinming"/></td>
+                                       </tr>
+                                       <tr>
+                                           <td class="o_td_label">开户行:</td>
+                                           <td><span t-field="doc.kaihuhang"/></td>
+                                       </tr>
+                                       <tr>
+                                           <td class="o_td_label">银行卡号:</td>
+                                           <td><span t-field="doc.yinhangkahao"/></td>
+                                       </tr>
+                                   </tbody>
+                               </table>
+                            </div>
+                            <div class="col-xs-12">
+                                <table>
+                                   <tbody>
+                                       <tr>
+                                           <td class="o_td_label">报销事由:</td>
+                                           <td><span t-field="doc.expensereason"/></td>
+                                       </tr>
+                                   </tbody>
+                                </table>
+                            </div>
+
+                    </div>
+<br />
+
+
+                <div class="row ">
+                    <div class="col-xs-12">
+                        <h4>受益部门分摊比例</h4>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>受益部门名称</th>
+                                <th class="text-right">分摊比例</th>
+                                <th class="text-right">受益部门编码</th>
+                            </tr>
+                       </thead>
+                       <tbody class="sale_tbody">
+                            <t t-foreach="doc.benefitdep_ids" t-as="d">
+                                <tr >
+                                    <td>
+                                       <span t-field="d.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.sharepercent"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.depcode"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                 </table>
+<br />
+
+                <div class="row ">
+                    <div class="col-xs-12">
+                        <h4>出差时间</h4>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>出差时间</th>
+                                <th class="text-right">结束时间</th>
+                                <th class="text-right">出发地</th>
+                                <th class="text-right">目的地</th>
+                                <th class="text-right">出差原因</th>
+                            </tr>
+                       </thead>
+                       <tbody class="sale_tbody">
+                            <t t-foreach="doc.chuchaishijian_ids" t-as="d">
+                                <tr >
+                                    <td>
+                                       <span t-field="d.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.endtime"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.startaddress"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.endaddress"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.reason"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                 </table>
+
+<br />
+
+                <div class="row ">
+                    <div class="col-xs-12">
+                        <h4>费用明细</h4>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>消费明细</th>
+                                <th class="text-right">发生日期</th>
+                                <th class="text-right">票据金额</th>
+                                <th class="text-right">扣减金额</th>
+                                <th class="text-right">实报金额</th>
+                                <th class="text-right">超期时长</th>
+                                <th class="text-right">创建时间</th>
+                            </tr>
+                       </thead>
+                       <tbody class="sale_tbody">
+                            <t t-foreach="doc.record_ids" t-as="d">
+                                <tr >
+                                    <td>
+                                       <span t-field="d.expensedetail"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.currentdate"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.invoicevalue"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.koujianamount"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.shibaoamount"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.outtimenumber"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.create_date"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                </table>
+<br /><br />
+
+                <div class="row" name="total">
+
+                    <div class="col-xs-4">
+                        <table class="table table-condensed">
+                            <tr class="border-black">
+                                <td><strong>申请人签字:</strong></td>
+                                <td class="text-right">
+
+                                </td>
+                            </tr>
+                            <tr class="border-black">
+                                <td><strong>直接主管签字:</strong></td>
+                                <td class="text-right">
+
+                                </td>
+                            </tr>
+                            <tr class="border-black">
+                                <td><strong>权签人签字:</strong></td>
+                                <td class="text-right">
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <div class="col-xs-4 pull-right">
+                        <table class="table table-condensed">
+                            <tr class="border-black">
+                                <td><strong>票据总金额</strong></td>
+                                <td class="text-right">
+                                    <span t-field="doc.total_invoicevalue"/>
+                                </td>
+                            </tr>
+                            <tr class="border-black">
+                                <td><strong>扣减总金额</strong></td>
+                                <td class="text-right">
+                                    <span t-field="doc.total_koujianamount"/>
+                                </td>
+                            </tr>
+                            <tr class="border-black">
+                                <td><strong>实报总金额</strong></td>
+                                <td class="text-right">
+                                    <span t-field="doc.total_shibaoamount"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </t>
+    </template>
+
+
+
+</data>
+</openerp>

@@ -1,6 +1,21 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dtdream_partner,dtdream_partner,model_dtdream_partner,,1,0,0,0
 access_res_partner_self,res.partner.self,model_res_partner,dtdream_partner.group_dtdream_partner_self,1,1,1,0
-access_res_partner_by_industry_office,res.partner.by.industry.office,model_res_partner,dtdream_partner.group_dtdream_partner_by_industry_office,1,0,1,0
-access_res_partner_all,res.partner.all,model_res_partner,dtdream_partner.group_dtdream_partner_all,1,0,1,0
+access_res_partner_by_industry_office,res.partner.by.industry.office,model_res_partner,dtdream_partner.group_dtdream_partner_by_industry_office,1,0,0,0
+access_res_partner_all,res.partner.all,model_res_partner,dtdream_partner.group_dtdream_partner_all,1,0,0,0
 access_res_partner_modify,res.partner.modify,model_res_partner,dtdream_partner.group_dtdream_partner_modify,1,1,1,1
+
+"base.access_res_partner_public","res_partner group_public","base.model_res_partner","base.group_public",0,0,0,0
+"base.access_res_partner_portal","res_partner group_portal","base.model_res_partner","base.group_portal",0,0,0,0
+"base.access_res_partner_group_partner_manager","res_partner group_partner_manager","base.model_res_partner","base.group_partner_manager",0,0,0,0
+"base.access_res_partner_group_user","res_partner group_user","base.model_res_partner","base.group_user",1,0,0,0
+account.access_res_partner_group_account_manager,res_partner group_account_manager,base.model_res_partner,account.group_account_manager,0,0,0,0
+stock.access_product_group_res_partner_stock_manager,res_partner group_stock_manager,base.model_res_partner,stock.group_stock_manager,0,0,0,0
+
+sale.access_res_partner_sale_user,res.partner.sale.user,base.model_res_partner,base.group_sale_salesman,0,0,0,0
+sale.access_res_partner_sale_manager,res.partner.sale.manager,base.model_res_partner,base.group_sale_manager,0,0,0,0
+sale.access_product_group_res_partner_sale_manager,res_partner group_sale_manager,base.model_res_partner,base.group_sale_manager,0,0,0,0
+
+"base.access_res_partner_title_group_user","res_partner_title group_user","base.model_res_partner_title","base.group_partner_manager",0,0,0,0
+"base.access_res_partner_title_group_partner_manager","res_partner_title group_partner_manager","base.model_res_partner_title","base.group_user",1,0,0,0
+

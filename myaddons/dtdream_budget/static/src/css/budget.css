@@ -1,0 +1,30 @@
+.zx_left .o_list_view .o_list_number{
+    text-align:left;
+}
+.zx_left.o_list_editable .o_form_view.o_list_editable_form .o_form_field_number {
+    text-align: left;
+}
+.zx_three table th:nth-child(1){
+    width:30%;
+}
+.zx_three table th:nth-child(2){
+    width:30%;
+}
+.zx_three table th:nth-child(3){
+    width:30%;
+}
+.zx_four table th{
+    width:25%;
+}
+.zx_group_border{
+    border:1px #999 solid}
+.o_form_label.zx_label{
+    position:relative;
+    top:-10px;
+    left:10px;
+    background: #fff;
+    padding: 0 5px 0 5px;
+}
+.o_form_view.zx_form.o_form_editable .zx_edit_invisible{
+    display: none;
+}

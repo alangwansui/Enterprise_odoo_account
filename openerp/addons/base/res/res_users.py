@@ -1029,6 +1029,13 @@ class change_password_user(osv.TransientModel):
     }
 
     def change_password_button(self, cr, uid, ids, context=None):
+
+        cr.execute('SELECT ldap_user FROM res_users WHERE id=%s AND active=TRUE',
+                   (int(context['active_id']),))
+        res = cr.fetchone()
+        if res[0]:
+            raise openerp.exceptions.ValidationError("无法对域账号用户重置密码")
+
         for line in self.browse(cr, uid, ids, context=context):
             line.user_id.write({'password': line.new_passwd})
         # don't keep temporary passwords in the database longer than necessary
