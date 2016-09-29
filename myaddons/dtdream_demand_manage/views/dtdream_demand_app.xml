@@ -72,13 +72,13 @@
                                 <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group colspan="12" attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
-                                <field name="conclude" attrs="{'required':[('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                                <field name="conclude" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
-                                <field name="man_hours" class="demand_app_check" attrs="{'required':[('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                                <field name="man_hours" class="demand_app_check" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
-                                <field name="priority" attrs="{'required':[('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                                <field name="priority" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
                             </group>
                         </group>
                     </page>
@@ -100,7 +100,7 @@
                                 <field name="plan_time" attrs="{'required':[('state','in', ('5','6'))],'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="done_time" attrs="{'required':[('state','in', ('5','6'))],'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>
+                                <field name="done_time" attrs="{'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group colspan="12">
                                 <field name="remark" attrs="{'readonly':['|','&amp;',('state','!=','5'),('is_manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_practice_man','=',False),('is_manage','=',False)]}"/>

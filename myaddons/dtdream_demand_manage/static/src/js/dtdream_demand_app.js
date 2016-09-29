@@ -28,17 +28,20 @@ FormView.include({
 
     load_record:function(record) {
         this._super.apply(this, arguments);
-        var num = parseInt(record.state);
+        var num = parseInt(record.state)|| 0;
         if (num == 0 || num == 99)
-            num = 1;
-        if (num != 1) {
+            num = 0;
+        if (num != 0) {
             var timer = window.setInterval(function(){
                 if ($('.dtdream_demand_notebook').length != 0) {
-                    $('.dtdream_demand_notebook li:nth-child(1)').removeClass('active');
-                    $('.dtdream_demand_notebook li:nth-child(' + num + ')').addClass('active');
-                    $('.manage_page:nth-child(1)').removeClass('active');
-                    $('.manage_page:nth-child('+ (num-1) + ')').removeClass('active');
-                    $('.manage_page:nth-child(' + num + ')').addClass('active');
+                    $('.manage_page:eq(0)').removeClass('active');
+                    $('.manage_page:eq(5)').removeClass('active');
+                    if(num > 1 && $('.manage_page:eq('+ (num-2) + ')').hasClass('active')){
+                         $('.manage_page:eq('+ (num-2) + ')').removeClass('active');
+                         $('.manage_page:eq('+ (num+3) + ')').removeClass('active');
+                    }
+                    $('.manage_page:eq(' + (num-1) + ')').addClass('active');
+                    $('.manage_page:eq(' + (num+4) + ')').addClass('active');
                     clearInterval(timer);
                     }
                 }, 100);
