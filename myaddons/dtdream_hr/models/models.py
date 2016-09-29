@@ -18,7 +18,7 @@ class dtdream_hr(models.Model):
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         args = args or []
-        domain = [('name', 'not in', ('Administration', 'Sales'))]
+        domain = [('name', 'not in', ('Administration', 'Sales')), ('name', operator, name)]
         pos = self.search(domain + args, limit=limit)
         return pos.name_get()
 
