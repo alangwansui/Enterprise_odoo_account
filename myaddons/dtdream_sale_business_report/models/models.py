@@ -9,6 +9,13 @@ from openerp .exceptions import ValidationError
 class dtdream_product_line(models.Model):
     _inherit = 'dtdream.product.line'
 
+    def _compute_is_pro_shenpiren(self):
+        for rec in self:
+            rec.is_pro_shenpiren = rec.product_business_line_id.is_pro_shenpiren
+            rec.is_pro_shenpiren_value = rec.product_business_line_id.is_pro_shenpiren
+            rec.is_bus_shenpiren = rec.product_business_line_id.is_bus_shenpiren
+            rec.is_bus_shenpiren_value = rec.product_business_line_id.is_bus_shenpiren
+
     @api.one
     def _compute_is_pro_approveds(self):
         for pro_shenpiren in self.product_business_line_id.product_approveds:
@@ -31,10 +38,11 @@ class dtdream_product_line(models.Model):
     is_business_approveds = fields.Boolean(string="是否历史商务审批人",default=False,compute=_compute_is_pro_approveds)
     product_business_line_id = fields.Many2one('dtdream.sale.business.report',string="产品", ondelete='cascade', index=True, copy=False)
     product_line_id = fields.Many2one(required=False)
-    report_state = fields.Char(string="报备流程状态",default="1")
+    report_state = fields.Char(string="报备流程状态",default="0")
     report_is_current = fields.Boolean(string="是否报备流程当前审批人",default=True)
-    # report_create = fields.Char(string="是否可创建产品")
     is_pro_approveds = fields.Boolean(string="是否历史产品审批人",default=False,compute=_compute_is_pro_approveds)
+    is_pro_shenpiren = fields.Boolean(string="是否产品审批人",compute=_compute_is_pro_shenpiren)
+    is_bus_shenpiren = fields.Boolean(string="是否商务审批人",compute=_compute_is_pro_shenpiren)
     remark = fields.Selection([
         ('1','借货核销'),
         ('2','正常发货'),
@@ -55,7 +63,7 @@ class dtdream_sale_business_report(models.Model):
     @api.one
     def _compute_is_current(self):
         self.is_current = False
-        if self.state == "0":
+        if self.apply_person == self.env['hr.employee'].search([('login','=',self.env.user.login)]).name and self.state == "0":
             self.is_current = True
         for shenpiren in self.shenpiren:
             if self.env.user == shenpiren.user_id:
@@ -92,40 +100,20 @@ class dtdream_sale_business_report(models.Model):
                     self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，整单平均折扣（%s%%），在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_zhuren_price,self.a_apply_discount)})
             if self.state == "7":
                 if self.a_apply_discount < self.sale_grant_discount :
-                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%），已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
+                    self.write({'warn_text':u'此项目成本%s万元，总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%），已经超出您的审批权限。'%(self.total_chengben,self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
                 else :
-                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%），在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
+                    self.write({'warn_text':u'此项目成本%s万元，总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%），在您的授权审批权限内。'%(self.total_chengben,self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
             if self.state == "8":
                 if self.a_apply_discount < self.market_grant_discount :
-                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,已经超出您的审批权限。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
+                    self.write({'warn_text':u'此项目成本%s万元，总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,已经超出您的审批权限。'%(self.total_chengben,self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
                 else :
-                    self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,在您的授权审批权限内。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
+                    self.write({'warn_text':u'此项目成本%s万元，总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）,在您的授权审批权限内。'%(self.total_chengben,self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
             if self.state == "9":
-                self.write({'warn_text':u'此项目总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）。'%(self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
+                self.write({'warn_text':u'此项目成本%s万元，总销售额%s万元，主任授权价%s万元，营销管理部授权价%s万元，市场部授权价%s万元，整单平均折扣（%s%%）。'%(self.total_chengben,self.total_chuhuo_price,self.total_zhuren_price,self.total_sale_price,self.total_market_price,self.a_apply_discount)})
         for rec in self.product_line:
             rec.write({'report_state':self.state})
         for rec in self.product_line:
             rec.write({'report_is_current':self.is_current})
-        # if self.state == "1" and self.is_current == "True":
-        #     self.product_line.write({'report_create':"1"})
-        # else:
-        #     self.product_line.write({'report_create':"0"})
-
-
-    @api.onchange("sale_business_interface_person")
-    def _onchange_sale_business_interface_person(self):
-        if self.state == "0":
-            self.is_current = True
-        rec = self.env['dtdream.shenpi.config'].search([])
-        if rec:
-            business_interface_person = self.env['dtdream.shenpi.config'].search([])[0].business_interface_person
-            persons = []
-            if business_interface_person:
-                for x in business_interface_person:
-                    persons.append(x.id)
-                return {'domain': {'sale_business_interface_person': [('id', 'in', persons)]}}
-            else:
-                return {'domain': {'sale_business_interface_person': [('id', '=', False)]}}
 
     @api.multi
     def btn_finish(self):
@@ -161,7 +149,6 @@ class dtdream_sale_business_report(models.Model):
                 'auto_delete': False,
             }).send()
 
-
     @api.depends('product_line')
     def _onchange_product_line(self):
         list_price = 0
@@ -188,6 +175,21 @@ class dtdream_sale_business_report(models.Model):
         if self.industry_id:
             self.system_department_id = self.industry_id.parent_id
 
+    def _compute_is_pro_shenpiren(self):
+        for record in self:
+            if record.env.user.has_group("dtdream_sale.group_dtdream_office_product_vice_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_headquarters_server_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_server_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_system_product_vice_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_headquarters_product_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_product_director") or record.env.user.has_group("dtdream_sale.group_dtdream_management_product_vice_manager"):
+                record.is_pro_shenpiren = True
+            else:
+                record.is_pro_shenpiren = False
+            if record.env.user.has_group("dtdream_sale.group_dtdream_sale_office_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_marketing_department_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_marketing_department_vice_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_marketing_department_business_interface_person") or record.env.user.has_group("dtdream_sale.group_dtdream_system_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_system_vice_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_market_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_management_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_management_vice_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_company_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_devolopement_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_sale_high_manager") or record.env.user.has_group("dtdream_sale.group_dtdream_weekly_report_manager") :
+                record.is_bus_shenpiren = True
+            else:
+                record.is_bus_shenpiren = False
+            if record.create_uid == record.env.user.id:
+                record.is_bus_shenpiren = True
+
+    is_pro_shenpiren = fields.Boolean(string="是否产品审批人",default=False,compute=_compute_is_pro_shenpiren)
+    is_bus_shenpiren = fields.Boolean(string="是否商务审批人",default=False,compute=_compute_is_pro_shenpiren)
     is_business_approveds = fields.Boolean(string="是否历史商务审批人",default=False)
     is_pro_approveds = fields.Boolean(string="是否历史产品审批人",default=False)
     pro_zongbu_finish = fields.Char(string='产品总部并行审批完成标识',default="0")
@@ -198,9 +200,9 @@ class dtdream_sale_business_report(models.Model):
     system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True,track_visibility='onchange')
     industry_id = fields.Many2one("dtdream.industry", string="行业",required=True,track_visibility='onchange')
     office_id = fields.Many2one("dtdream.office", string="办事处",required=True,track_visibility='onchange')
+    product_category_type_id = fields.Many2many("product.category", string="产品分类")
     total_list_price = fields.Float('目录价总计',store=True,compute=_onchange_product_line)
     total_apply_price = fields.Float('申请折扣价总计',store=True,compute=_onchange_product_line)
-
     need_ali_grant = fields.Selection([
         ('shi','是'),
         ('fou','否')
@@ -209,14 +211,13 @@ class dtdream_sale_business_report(models.Model):
     pre_implementation_time = fields.Date("预计开始实施时间", required=True,track_visibility='onchange')
     partner_id = fields.Many2one('res.partner',string="客户",required=True,track_visibility='onchange')
     final_partner_id = fields.Many2one('res.partner',string="最终用户",required=True,track_visibility='onchange')
-    partner_budget = fields.Float(string="客户整体预算", required=True,track_visibility='onchange')
+    partner_budget = fields.Float(string="客户整体预算（万元）", required=True,track_visibility='onchange')
     have_hardware = fields.Selection([
         ('yse','是'),
         ('no','否')
     ],string="是否含硬件", required=True,track_visibility='onchange')
     supply_time = fields.Date(string="预计要货时间",required=True,track_visibility='onchange')
     apply_time = fields.Date(string="申请日期",default=lambda self:datetime.now(), required=True,track_visibility='onchange')
-
     pro_background = fields.Text(string="项目背景",track_visibility='onchange')
     apply_discription = fields.Text(string="商务申请说明",track_visibility='onchange')
     service_detail = fields.Text(string="原厂维保或服务年限",track_visibility='onchange')
@@ -229,38 +230,26 @@ class dtdream_sale_business_report(models.Model):
     product_line = fields.One2many('dtdream.product.line', 'product_business_line_id', string='产品配置',copy=True)
     shenpiren = fields.Many2many('hr.employee', 's_t_e',string="当前审批人")
     shenpiren_version = fields.Char(string='审批版本',default="V1")
-
     approveds = fields.Many2many("hr.employee",'a_t_e', string="历史审批人")
     product_approveds = fields.Many2many("hr.employee",'p_a_t_e',string="历史产品审批人")
     business_approveds = fields.Many2many("hr.employee",'b_a_t_e',string="历史商务审批人")
-    is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current)
-
+    is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current,default=True)
     a_apply_discount = fields.Float(string="平均折扣")
     sale_grant_discount = fields.Float(string="营销管理部授权折扣")
     market_grant_discount = fields.Float(string="市场部授权折扣")
-    # maoli = fields.Float(string="毛利")
     total_chuhuo_price = fields.Float(string="总销售额")
     total_market_price = fields.Float(string="市场部部长授权价")
     total_sale_price = fields.Float(string="营销管理部授权价")
     total_zhuren_price = fields.Float(string="主任授权价")
     zhuren_grant_discount = fields.Float(string="主任授权折扣")
-
-
+    total_chengben = fields.Float(string="成本")
     if_out_grant = fields.Char(default=0)
-    product_manager = fields.Many2one('hr.employee',string="产品SE（配置产品人员）",required=True)
-    sale_business_interface_person = fields.Many2one('hr.employee',string="商务接口人",required=True)
-
     approve_records = fields.One2many("report.handle.approve.record","report_handle_id",string="审批记录")
-
     rejust_state = fields.Integer(string='驳回到销售',default=0)
-    warn_text = fields.Char()
+    warn_text = fields.Char(compute=_compute_is_current,store=True)
     state = fields.Selection(
         [('0', '草稿'),
-         ('1', '配置产品'),
-         ('2', '办事处审核产品'),
-         ('3', '总部审核产品'),
-         ('4', '完善商务'),
-         ('5', '规范性审核'),
+         ('2', '规范性审核、配置清单审核'),
          ('6', '办事处商务审批'),
          ('7', '营销管理部商务审批'),
          ('8', '市场部商务审批'),
@@ -270,23 +259,22 @@ class dtdream_sale_business_report(models.Model):
 
     @api.multi
     def wkf_draft(self):
+        self.pro_zongbu_finish = "0"
+        self.write({'rejust_state':0})
         self.write({'state': '0'})
+        self.write({"shenpiren": [(6,0,[])]})
 
     def get_shenpiren(self):
         department = self.env['hr.employee'].search([('user_id','=',self.create_uid.id)]).department_id
         shenpiren = ""
-        if self.state=="1":
-            shenpiren = self.product_manager
-        if self.state=="2":
-            if len(self.env['dtdream.shenpi.line'].search([('department','=',department.id)])) > 0:
-                shenpiren = self.env['dtdream.shenpi.line'].search([('department','=',department.id)])[0].product_charge
-            else :
-                raise ValidationError('请先配置产品主管')
         if self.state=="6":
-            shenpiren = self.env['dtdream.shenpi.line'].search([('department','=',department.id)])[0].director
-            if not shenpiren:
+            if len(self.env['dtdream.shenpi.line'].search([('department','=',department.id)])) > 0:
+                shenpiren = self.env['dtdream.shenpi.line'].search([('department','=',department.id)])[0].director
+                if not shenpiren:
+                    raise ValidationError('请先配置部门主管')
+            else :
                 raise ValidationError("请先配置部门主管")
-        if self.state=="3":
+        if self.state=="2":
             self.write({"shenpiren": [(6,0,[])]})
             for pro_rec in self.product_line:
                 categ_id = self.env['product.template'].search([('bom','=',pro_rec.bom)])[0].categ_id
@@ -294,21 +282,26 @@ class dtdream_sale_business_report(models.Model):
                     pro_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])[0].zongbu_product_charge
                     if not pro_shenpiren:
                         raise ValidationError('请先配置总部产品经理')
-                    service_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id','=',categ_id.id)])[0].zongbu_service_charge
-                    if not service_shenpiren:
-                        raise ValidationError('请先配置总部服务经理')
                 else :
-                    raise ValidationError("请先配置总部产品经理与服务经理")
+                    raise ValidationError("请先配置总部产品经理")
+                self.write({"product_approveds": [(4,[pro_shenpiren.id])]})
                 self.write({"shenpiren": [(4,[pro_shenpiren.id])]})
-                self.write({"shenpiren": [(4,[service_shenpiren.id])]})
+            service_shenpiren = self.env['dtdream.shenpi.config'].search([])[0].zongbu_service_charge
+            if not service_shenpiren:
+                raise ValidationError('请先配置总部服务经理')
+            self.write({"product_approveds": [(4,[service_shenpiren.id])]})
+            self.write({"shenpiren": [(4,[service_shenpiren.id])]})
+            if len(self.env['dtdream.business.shenpi.line'].search([('industry_id','=',self.industry_id.id),('office_id','=',self.office_id.id)])) > 0:
+                business_shenpiren = self.env['dtdream.business.shenpi.line'].search([('industry_id','=',self.industry_id.id),('office_id','=',self.office_id.id)])[0].business_interface_person
+                if not business_shenpiren:
+                    raise ValidationError('请先配置商务审批人')
+            else:
+                raise ValidationError('请先配置商务审批人')
+            self.write({"shenpiren": [(4,[business_shenpiren.id])]})
             for shenpiren in self.shenpiren:
-                self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审核产品配置!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了商务提前报备申请,等待您审核产品配置" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=shenpiren.work_email,
+                self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
+                       u"%s提交了商务提前报备申请,等待您审核" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=shenpiren.work_email,
                        appellation = u'{0},您好：'.format(shenpiren.name))
-        if self.state=="4":
-            shenpiren = self.env['hr.employee'].search([('user_id','=',self.create_uid.id)])
-        if self.state=="5":
-            shenpiren = self.sale_business_interface_person
         if self.state=="7":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].sales_manager
             if not shenpiren:
@@ -316,7 +309,7 @@ class dtdream_sale_business_report(models.Model):
         if self.state=="8":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].market_manager
             if not shenpiren:
-                raise ValidationError("请先配置市场部总裁")
+                raise ValidationError("请先配置市场部部长")
         if self.state=="9":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].company_manager
             if not shenpiren:
@@ -324,19 +317,8 @@ class dtdream_sale_business_report(models.Model):
         return shenpiren
 
     @api.multi
-    def wkf_approve1(self):
-        self.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
-        self.pro_zongbu_finish = "0"
-        self.write({'rejust_state':0})
-        self.write({'state':'1'})
-        shenpiren = self.get_shenpiren()
-        self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您配置产品!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了商务提前报备申请,等待您配置产品" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
-
-    @api.multi
     def wkf_approve2(self):
+        self.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         if len(self.product_line)==0:
             raise ValidationError("至少添加一行产品才可提交审核")
         for product in self.product_line:
@@ -344,45 +326,8 @@ class dtdream_sale_business_report(models.Model):
                 raise ValidationError("产品目录价不能为0")
             if not product.pro_num:
                 raise ValidationError("产品数量不能为0")
-
         self.write({'state':'2'})
-        shenpiren = self.get_shenpiren()
-        self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审核产品配置!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了商务提前报备申请,等待您审核产品配置" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
-
-    @api.multi
-    def wkf_approve3(self):
-        self.write({'state':'3'})
         self.get_shenpiren()
-
-    @api.multi
-    def wkf_approve4(self):
-        self.pro_zongbu_finish = "0"
-        if self.state != "3":
-            self.write({'rejust_state':1})
-        self.write({'state':'4'})
-        shenpiren = self.get_shenpiren()
-        self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您完善商务信息!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了商务提前报备申请,等待您完善商务信息" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
-
-
-    @api.multi
-    def wkf_approve5(self):
-        for product in self.product_line:
-            if not product.apply_discount:
-                raise ValidationError("产品申请折扣不能为0")
-        self.write({'rejust_state':0})
-        self.write({'state':'5'})
-        shenpiren = self.get_shenpiren()
-        self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审批!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
-
 
     @api.multi
     def wkf_approve6(self):
@@ -391,6 +336,8 @@ class dtdream_sale_business_report(models.Model):
         total_chengben_price = 0
         total_market_price = 0
         total_zhuren_price = 0
+        total_sale_price = 0
+        total_chengben = 0
         i=0
         for product in self.product_line:
             i = i + 1
@@ -399,16 +346,17 @@ class dtdream_sale_business_report(models.Model):
             total_chengben_price = total_chengben_price + product.list_price*product.pro_num
             total_market_price = total_market_price + real_pro.list_price*real_pro.market_president_discount*product.pro_num/100
             total_zhuren_price = total_zhuren_price + real_pro.list_price*real_pro.office_manager_discount*product.pro_num/100
+            total_sale_price = total_sale_price + real_pro.list_price*real_pro.sale_grant_discount*product.pro_num/100
+            total_chengben = total_chengben + real_pro.cost_price*product.pro_num
+        self.total_chengben = round(total_chengben/10000,2)
         self.a_apply_discount = round(total_chuhuo_price*100/total_chengben_price,2)
-        self.sale_grant_discount = round(self.env['dtdream.shenpi.config'].search([])[0].sale_grant_discount,2)
         self.total_chuhuo_price = round(total_chuhuo_price/10000,2)
         self.total_market_price = round(total_market_price/10000,2)
         self.total_zhuren_price = round(total_zhuren_price/10000,2)
-        self.total_sale_price = round(total_chuhuo_price*(self.env['dtdream.shenpi.config'].search([])[0].sale_grant_discount/1000000),2)
+        self.total_sale_price = round(total_sale_price/10000,2)
+        self.sale_grant_discount = round(total_sale_price*100/total_chengben_price,2)
         self.market_grant_discount = round(total_market_price*100/total_chengben_price,2)
         self.zhuren_grant_discount = round(total_zhuren_price*100/total_chengben_price,2)
-        # self.maoli = round((total_chuhuo_price - total_chengben_price)/total_chuhuo_price)
-
         self.pro_zongbu_finish = "0"
         self.write({'state':'6'})
         shenpiren = self.get_shenpiren()
@@ -416,7 +364,6 @@ class dtdream_sale_business_report(models.Model):
         self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审批!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
                        appellation = u'{0},您好：'.format(self.shenpiren.name))
-
 
     @api.multi
     def wkf_approve7(self):
@@ -432,7 +379,6 @@ class dtdream_sale_business_report(models.Model):
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
                        appellation = u'{0},您好：'.format(self.shenpiren.name))
 
-
     @api.multi
     def wkf_approve8(self):
         # 判断市场部部长是否超权限审批
@@ -446,7 +392,6 @@ class dtdream_sale_business_report(models.Model):
         self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审批!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
                        appellation = u'{0},您好：'.format(self.shenpiren.name))
-
 
     @api.multi
     def wkf_approve9(self):
@@ -469,6 +414,7 @@ class dtdream_sale_business_report(models.Model):
             self.rep_pro_name = self.env['crm.lead'].search([('id','=', self.env.context.get('active_id'))])[0].id
         self.system_department_id = self.rep_pro_name.system_department_id
         self.industry_id = self.rep_pro_name.industry_id
+        self.product_category_type_id = self.rep_pro_name.product_category_type_id
         self.office_id = self.rep_pro_name.office_id
         self.bidding_time = self.rep_pro_name.bidding_time
         self.pre_implementation_time = self.rep_pro_name.pre_implementation_time
@@ -518,11 +464,12 @@ class dtdream_sale_business_report(models.Model):
 
     @api.multi
     def unlink(self):
-        if (self.state == "0" and self.create_uid.id == self._uid) or self.env.user.login=="admin":
-            self.env['crm.lead'].search([('id','=',self.rep_pro_name.id)]).write({'business_count':0})
-            return super(dtdream_sale_business_report, self).unlink()
-        else :
-            raise ValidationError("只有草稿状态的报备申请可由创建者删除。")
+        for rec in self:
+            if (rec.state == "0" and rec.create_uid.id == rec._uid) or rec.env.user.login=="admin" or rec.env.user.has_group("dtdream_sale.group_dtdream_sale_high_manager"):
+                rec.env['crm.lead'].search([('id','=',rec.rep_pro_name.id)]).write({'business_count':0})
+                return super(dtdream_sale_business_report, rec).unlink()
+            else :
+                raise ValidationError("只有草稿状态的报备申请可由创建者删除。")
 
     # 有记录时从豆腐块跳转到报备隐藏新建按钮
     @api.model
@@ -571,6 +518,8 @@ class dtdream_crm_lead(models.Model):
         if self.business_count == 0:
             if self.sale_apply_id.user_id.id != self._uid:
                 raise ValidationError("只有营销责任人可以创建对应商务报备申请。")
+        if not self.env['crm.lead'].search([('id','=', self.id)]):
+            raise ValidationError("项目已归档，无法创建商务报备申请")
         cr = self.env['dtdream.sale.business.report'].search([('rep_pro_name.id', '=', self.id)])
         res_id = cr.id if cr else ''
         import json
@@ -592,10 +541,18 @@ class dtdream_shenpi_line(models.Model):
     _name = "dtdream.shenpi.line"
 
     shenpi_line_id = fields.Many2one('dtdream.shenpi.config')
-
     department = fields.Many2one('hr.department',string="部门")
-    product_charge = fields.Many2one('hr.employee',string="产品主管")
     director = fields.Many2one('hr.employee',string="部门主管")
+
+# 商务审批人配置行
+class dtdream_business_shenpi_line(models.Model):
+    _name = "dtdream.business.shenpi.line"
+
+    business_shenpi_line_id = fields.Many2one('dtdream.shenpi.config')
+    industry_id = fields.Many2one("dtdream.industry", string="行业",required=True)
+    office_id = fields.Many2one("dtdream.office", string="办事处",required=True)
+    business_interface_person = fields.Many2one('hr.employee',string="商务接口人",required=True)
+
 
 # 按产品线配置审批
 class dtdream_shenpi_by_product_line(models.Model):
@@ -603,7 +560,6 @@ class dtdream_shenpi_by_product_line(models.Model):
 
     shenpi_by_product_line_id = fields.Many2one('dtdream.shenpi.config')
     zongbu_product_charge = fields.Many2one('hr.employee',string="总部产品经理")
-    zongbu_service_charge = fields.Many2one('hr.employee',string="总部服务经理")
     categ_id = fields.Many2one('product.category',string="产品线")
 
 
@@ -611,25 +567,14 @@ class dtdream_shenpi_by_product_line(models.Model):
 class dtdream_shenpi_config(models.Model):
     _name = "dtdream.shenpi.config"
 
-    name = fields.Char(default="销售审批配置")
-
-    shenpi_product_line = fields.One2many('dtdream.shenpi.by.product.line','shenpi_by_product_line_id', string='销售产品线审批配置',copy=True)
-    shenpi_line = fields.One2many('dtdream.shenpi.line','shenpi_line_id', string='销售部门审批配置',copy=True)
-    business_interface_person = fields.Many2many('hr.employee',string="商务接口人")
+    name = fields.Char(default="商务报备/报单审批配置")
+    shenpi_product_line = fields.One2many('dtdream.shenpi.by.product.line','shenpi_by_product_line_id', string='销售产品线审批配置')
+    shenpi_line = fields.One2many('dtdream.shenpi.line','shenpi_line_id', string='销售部门审批配置')
+    business_shenpi_line = fields.One2many('dtdream.business.shenpi.line','business_shenpi_line_id', string='商务接口人配置')
     sales_manager = fields.Many2one('hr.employee',string="营销管理部部长")
-    market_manager = fields.Many2one('hr.employee',string="市场部总裁")
+    market_manager = fields.Many2one('hr.employee',string="市场部部长")
     company_manager = fields.Many2one('hr.employee',string="公司总裁")
-    sale_grant_discount = fields.Float(string="营销管理部授权折扣(%)")
-
-    @api.onchange("sale_grant_discount")
-    def _onchange_sale_discount(self):
-        if self.sale_grant_discount > 100 or self.sale_grant_discount < 0:
-            self.sale_grant_discount = ""
-            warning = {
-                    'title': '警告：',
-                    'message': '授权折扣应在0%到100%之间',
-                }
-            return {'warning': warning}
+    zongbu_service_charge = fields.Many2one('hr.employee',string="总部服务经理")
 
 # 审批记录
 class report_handle_approve_record(models.Model):

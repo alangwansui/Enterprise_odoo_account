@@ -20,7 +20,7 @@
 
 
         <record model="ir.actions.act_window" id="act_open_dtdream_expense_report_dashboard_view">
-            <field name="name">费用报销</field>
+            <field name="name">仪表盘</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">dtdream.expense.report.dashboard</field>
             <field name="view_type">form</field>

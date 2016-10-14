@@ -54,6 +54,22 @@ class dtdream_rd_version(models.Model):
     place = fields.Char('版本存放位置',track_visibility='onchange')
     Material =fields.Text('版本发布材料',track_visibility='onchange')
 
+    acceptance_results = fields.Selection([
+        ('A','A'),
+        ('B','B'),
+        ('C','C'),
+        ('D','D')],
+        string="验收结果"
+    )
+
+    ys_jy = fields.Char(string="验收发现紧要问题数")
+    ys_yz = fields.Char(string="验收发现严重问题数")
+    ys_yb = fields.Char(string="验收发现一般问题数")
+    ys_ts = fields.Char(string="验收发现提示问题数")
+    yl_jy = fields.Char(string="遗留紧要问题数")
+    yl_yz = fields.Char(string="遗留严重问题数")
+    yl_yb = fields.Char(string="遗留一般问题数")
+    yl_ts = fields.Char(string="遗留提示问题数")
 
     replanning_ids= fields.One2many('dtdream.rd.replanning','version',string="重计划",domain=[('state','=','state_03')])
 
@@ -553,17 +569,26 @@ class dtdream_rd_version(models.Model):
         if self.disagree:
             self.write({'disagree':'','comments':''})
         if self.reason_request:
+            is_plccb = False
+            plccb=None
+            for role in self.proName.role_ids:
+                if role.cof_id.name=="PL-CCB":
+                    is_plccb=True
+                    plccb=role.person
+                    break
+            if not is_plccb or not plccb:
+                raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zantingtj':True})
             self.current_approver_user = [(5,)]
-            if not self.proName.department.manager_id:
-                raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            self.write({'current_approver_user': [(4,self.proName.department.manager_id.user_id.id)]})
-            self.add_follower(employee_id=self.proName.department.manager_id.id)
+            # if not self.proName.department.manager_id:
+            #     raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
+            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
+            # self.add_follower(employee_id=self.proName.department.manager_id.id)
             if self.proName.department_2:
                 subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
             else:
                 subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            appellation = self.proName.department.manager_id.name+u",您好"
+            appellation = plccb.name+u",您好"
             content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的暂停申请，待您审批"
             base_url = self.get_base_url()
             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
@@ -577,7 +602,7 @@ class dtdream_rd_version(models.Model):
                              <p>万千业务，简单有do</p>
                              <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
-                'email_to': '%s' % self.proName.department.manager_id.work_email,
+                'email_to': '%s' % plccb.work_email,
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()
@@ -603,15 +628,24 @@ class dtdream_rd_version(models.Model):
         if self.disagree:
             self.write({'disagree':'','comments':''})
         if self.reason_request:
+            is_plccb = False
+            plccb=None
+            for role in self.proName.role_ids:
+                if role.cof_id.name=="PL-CCB":
+                    is_plccb=True
+                    plccb=role.person
+                    break
+            if not is_plccb or not plccb:
+                raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zanting_backtj':True})
             self.current_approver_user = [(5,)]
-            if not self.proName.department.manager_id:
-                raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
+            # if not self.proName.department.manager_id:
+            #     raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
             if self.proName.department_2:
                 subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
             else:
                 subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            appellation = self.proName.department.manager_id.name+u",您好"
+            appellation = plccb.name+u",您好"
             content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的恢复暂停申请，待您审批"
             base_url = self.get_base_url()
             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
@@ -625,11 +659,11 @@ class dtdream_rd_version(models.Model):
                              <p>万千业务，简单有do</p>
                              <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
-                'email_to': '%s' % self.proName.department.manager_id.work_email,
+                'email_to': '%s' % plccb.work_email,
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()
-            self.write({'current_approver_user': [(4,self.proName.department.manager_id.user_id.id)]})
+            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><th style="padding:10px">版本号</th><th style="padding:10px">%s</th></tr>
@@ -671,17 +705,26 @@ class dtdream_rd_version(models.Model):
         if self.disagree:
             self.write({'disagree':'','comments':''})
         if self.reason_request:
+            is_plccb = False
+            plccb=None
+            for role in self.proName.role_ids:
+                if role.cof_id.name=="PL-CCB":
+                    is_plccb=True
+                    plccb=role.person
+                    break
+            if not is_plccb or not plccb:
+                raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zhongzhitj':True})
             self.current_approver_user = [(5,)]
-            if not self.proName.department.manager_id:
-                raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            self.write({'current_approver_user': [(4,self.proName.department.manager_id.user_id.id)]})
-            self.add_follower(employee_id=self.proName.department.manager_id.id)
+            # if not self.proName.department.manager_id:
+            #     raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
+            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
+            # self.add_follower(employee_id=self.proName.department.manager_id.id)
             if self.proName.department_2:
                 subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
             else:
                 subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            appellation = self.proName.department.manager_id.name+u",您好"
+            appellation = plccb.name+u",您好"
             content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的中止申请，待您审批"
             base_url = self.get_base_url()
             link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
@@ -695,7 +738,7 @@ class dtdream_rd_version(models.Model):
                              <p>万千业务，简单有do</p>
                              <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
-                'email_to': '%s' % self.proName.department.manager_id.work_email,
+                'email_to': '%s' % plccb.work_email,
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()

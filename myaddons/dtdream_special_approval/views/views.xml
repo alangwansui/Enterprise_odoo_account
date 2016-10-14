@@ -109,9 +109,7 @@
                                 <field name="sq_depart_number"/>
                                 <field name="sy_depart_number"/>
                                 <field name="product"/>
-
-
-                            </group>
+                            </group> 
                         </group>
                         <group>
                             <field name="activities_desc" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>

@@ -116,9 +116,10 @@
             <field name="model">dtdream_prod_appr</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="department"/>
+                    <field name="department_2"/>
                     <field name="name"/>
                     <field name="state" />
-                    <field name="department"/>
                 </tree>
             </field>
         </record>

@@ -10,7 +10,7 @@ import time
 class ExpenseWizard(models.TransientModel):
     _name = 'dtdream.expense.agree.wizard'
 
-    advice = fields.Text(string="审批意见",required=True)
+    advice = fields.Text(string="审批意见")
 
     # 发送邮件公共方法
     def get_base_url(self, cr, uid):
@@ -19,6 +19,47 @@ class ExpenseWizard(models.TransientModel):
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_dingding_msg(self, report, user_id, content=None, model="receipts", action="approval"):
+        from openerp.dingding.message import send as ding
+
+        # if content == None:
+        #     content = u"%s提交了费用报销单,等待您的审批!" % report.create_uid.name
+
+        user_id = self.env['hr.employee'].search([('id', '=', user_id)]).user_id
+
+        token = self.env['ir.config_parameter'].get_param('dtdream.dingtalk.token', default='')
+        agentid = self.env['ir.config_parameter'].get_param('dtdream.expense.agentId', default="")
+        url = self.env['ir.config_parameter'].get_param('dtdream.expense.agentUrl', default="")
+        url = "%s?model=%s&action=%s&id=%d" % (url, model, action, report.id)
+
+        text = u"数梦报销"
+        oa = {
+            "message_url": url,
+            "head": {
+                "bgcolor": "51bcec",
+                "text": text
+            },
+            "body": {
+                "form": [
+                    {"key": u"具体信息如下:", "value": ""},
+                    {"key": u"单据号:", "value": report.name},
+                    {"key": u"报销人:", "value": report.create_uid.name},
+                    {"key": u"创建时间:", "value": report.create_date[:10]},
+                    {"key": u"报销金额:", "value": report.total_shibaoamount}
+                ],
+                "content": content
+            }
+        }
+
+        dd_id = self.env['res.users'].search([('id', '=', user_id)]).dd_userid
+        try:
+            print "Begin to send dingding message to %s" % (dd_id)
+            ding(token, dd_id, '', 'oa', oa, agentid)
+            print "End to send dingding message to %s" % (dd_id)
+        except Exception,e:
+            print "Only support operate in ding ding"
+            pass
 
     def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
@@ -205,7 +246,9 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已通过行政助理审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
-
+            content=u"【提醒】{0}于{1}提交的费用报销单已通过行政助理审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                           current_expense_model.create_date[:10])
+            user_id = re_currentauditperson
 
         elif current_expense_model.state=="zhuguan":
 
@@ -249,6 +292,10 @@ class ExpenseWizard(models.TransientModel):
                                u"%s提交的费用报销单已通过主管审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                                email_to=emailto)
             current_expense_model.write({'zhuguan_quanqian_jiekoukuaiji': zhuguan_quanqian_jiekou})
+
+            content = u"【提醒】{0}于{1}提交的费用报销单已通过主管审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                               current_expense_model.create_date[:10])
+            user_id = re_currentauditperson
 
         elif current_expense_model.state == "quanqianren":
 
@@ -340,7 +387,9 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已通过权签人审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
-
+            content = u"【提醒】{0}于{1}提交的费用报销单已通过权签人审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                          current_expense_model.create_date[:10])
+            user_id=re_currentauditperson
 
         elif current_expense_model.state == "jiekoukuaiji":
             if current_expense_model.showcuiqian != '2':
@@ -356,7 +405,19 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已通过接口会计审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=assistant_ids)
 
+            content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                           current_expense_model.create_date[:10])
+            user_id=self.env['hr.department'].search([('id', '=', depid)]).chunakuaiji[0].id
 
-        current_expense_model.message_post(body=message + u"，审批意见:" + self.advice)
+
+        self.send_dingding_msg(current_expense_model, user_id, content=content)
+
+        # print '-------->',self.advice
+        auditadvice=''
+        if self.advice == False:
+            auditadvice = ''
+        else:
+            auditadvice  =self.advice
+        current_expense_model.message_post(body=message + u"，审批意见:" + auditadvice)
 
         current_expense_model.signal_workflow('btn_agree')

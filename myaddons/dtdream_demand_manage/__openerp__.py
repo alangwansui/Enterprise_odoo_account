@@ -23,10 +23,11 @@
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
+        'wizard/dtdream_demand_app_wizard_reject.xml',
         'views/dtdream_demand_app.xml',
+        'security/ir.model.access.csv',
         'workflow/dtdream_demand_app_workflow.xml',
-        'views/dtdream_demand_app_js.xml'
+        'views/dtdream_demand_app_js.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

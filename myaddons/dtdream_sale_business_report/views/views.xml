@@ -9,9 +9,9 @@
         <form string="商务报备申请">
             <header>
                 <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                        attrs="{'invisible':[('state','!=','0')]}"/>
+                        attrs="{'invisible':['|',('state','!=','0'),('is_current','=',False)]}"/>
                 <button name="btn_to_se" string="退回重新配置" type="workflow" class="oe_highlight"
-                        attrs="{'invisible':['|',('rejust_state','!=',1),('is_current','=',False)]}"/>
+                            attrs="{'invisible':['|',('rejust_state','!=',1),('is_current','=',False)]}"/>
                 <button name="btn_to_interface" string="商务审批" type="workflow" class="oe_highlight"
                         attrs="{'invisible':['|',('rejust_state','!=',1),('is_current','=',False)]}"/>
                 <button name="%(act_report_approve_wizard)d" string="通过" type="action" class="oe_highlight"
@@ -26,6 +26,9 @@
           <sheet>
             <group>
               <group>
+                <field name="is_pro_shenpiren" invisible="True"/>
+                <field name="is_bus_shenpiren" invisible="True"/>
+                <field name="product_category_type_id" invisible="True"/>
                 <field name="is_business_approveds" invisible="True"/>
                 <field name="is_pro_approveds" invisible="True"/>
                 <field name="shenpiren_version" invisible="True"></field>
@@ -45,7 +48,7 @@
                 <field name="total_market_price" invisible="True"></field>
                 <field name="total_sale_price" invisible="True"></field>
                 <field name="apply_person"  invisible="True"></field>
-                <field name="rep_pro_name" options='{"no_create": True}' domain="[('type','=','opportunity'),('sale_apply_id.user_id.id','=',uid)]" attrs="{'readonly':['|',('state','not in',('0')),('is_current','=',False)]}"></field>
+                <field name="rep_pro_name" options='{"no_create": True}' domain="[('business_count','!=','1'),('type','=','opportunity'),('sale_apply_id.user_id.id','=',uid)]" attrs="{'readonly':['|',('state','not in',('0')),('is_current','=',False)]}"></field>
                 <field name="project_number" readonly="True"></field>
                 <field name="office_id" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="system_department_id" domain="[('parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
@@ -62,12 +65,12 @@
                 <field name="pre_implementation_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="supply_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="apply_time" attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="product_manager" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="sale_business_interface_person" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <!--<field name="product_manager" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>-->
+                <!--<field name="sale_business_interface_person" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|',('state','not in',('0','4')),('is_current','=',False)]}"></field>-->
               </group>
             </group>
             <span style="color:red">
-                <field name="warn_text"  readonly="True" ></field>
+                <field name="warn_text" attrs="{'invisible':[('is_current','=',False)]}"></field>
             </span>
             <notebook colspan="4">
                 <page string="项目概况">
@@ -94,10 +97,12 @@
                     </group>
                 </page>
                 <page string="产品配置">
-                    <field name="product_line">
-                      <tree string="产品配置">
+                    <field name="product_line" attrs="{'readonly':['|',('state','!=','0'),('is_current','=',False)]}">
+                      <tree string="产品配置" class="apply_dis_sale_report">
                           <field name="report_state" invisible="True"/>
                           <field name="report_is_current" invisible="True"/>
+                          <field name="is_bus_shenpiren" invisible="True"/>
+                          <field name="is_pro_shenpiren" invisible="True"/>
                           <field name="is_pro_approveds" invisible="True"/>
                           <field name="is_business_approveds" invisible="True"/>
                           <field name="pro_name" string="产品型号"/>
@@ -106,7 +111,7 @@
                           <field name="pro_description" string="产品对内中文描述" />
                           <field name="list_price" string="目录价" />
                           <field name="ref_discount" string="参考折扣(%)"/>
-                          <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
+                          <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
                           <field name="pro_num" string="数量" />
                           <field name="config_set" string="发货地"/>
                           <field name="remark" string="备注"/>
@@ -116,11 +121,13 @@
                               <group>
                                   <group>
                                       <field name="report_state" invisible="True"/>
+                                      <field name="is_bus_shenpiren" invisible="True"/>
+                                      <field name="is_pro_shenpiren" invisible="True"/>
                                       <field name="report_is_current" invisible="True"/>
                                       <field name="is_pro_approveds" invisible="True"/>
                                       <field name="is_business_approveds" invisible="True"/>
                                       <field name="pro_name" invisible="True"/>
-                                      <field name="product_id" string="产品型号" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="product_id" string="产品型号" attrs="{'readonly':['|',('report_state','not in',('0')),('report_is_current','=',False)]}"/>
                                       <field name="bom" string="BOM" readonly="True"/>
                                       <field name="pro_type" string="产品类别" readonly="True"/>
                                       <field name="pro_description" string="产品对内中文描述" readonly="True"/>
@@ -128,10 +135,10 @@
                                   </group>
                                   <group>
                                       <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
-                                      <field name="apply_discount" string="申请折扣(%)" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)],'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
-                                      <field name="pro_num" string="数量" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
-                                      <field name="config_set" string="发货地" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
-                                      <field name="remark" string="备注" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)]}"/>
+                                      <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
+                                      <field name="pro_num" string="数量"/>
+                                      <field name="config_set" string="发货地"/>
+                                      <field name="remark" string="备注"/>
                                   </group>
                               </group>
                           </sheet>
@@ -139,7 +146,7 @@
                     </field>
                     <group class="oe_subtotal_footer oe_right" name="product_total">
                         <field name="total_list_price"  class="oe_subtotal_footer_separator"/>
-                        <field name="total_apply_price" class="oe_subtotal_footer_separator" attrs="{'invisible':['|','&amp;',('is_pro_approveds','=',True),('is_business_approveds','=',False),'&amp;',('state','in',('1','2','3')),('is_current','=',True)]}"/>
+                        <field name="total_apply_price" class="oe_subtotal_footer_separator" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
                     </group>
                 </page>
                 <page string="历史审批记录">
@@ -169,6 +176,8 @@
       <field name="model">dtdream.sale.business.report</field>
       <field name="arch" type="xml">
         <tree>
+            <field name="is_current" invisible="True"></field>
+            <field name="is_pro_shenpiren" invisible="True"/>
             <field name="apply_person"></field>
             <field name="rep_pro_name"></field>
             <field name="project_number"></field>
@@ -222,13 +231,14 @@
       <field name="name">dtdream.shenpi.config.form</field>
       <field name="model">dtdream.shenpi.config</field>
       <field name="arch" type="xml">
-        <form string="销售审批配置" create='0' delete="0">
+        <form string="商务报备/报单审批配置" create='0'>
           <sheet>.
             <group>
               <group>
-                <field name="business_interface_person" options='{"no_open": True, "no_create": True}' widget="many2many_tags"></field>
+                <!--<field name="business_interface_person" options='{"no_open": True, "no_create": True}' widget="many2many_tags"></field>-->
                 <field name="sales_manager" options='{"no_open": True, "no_create": True}'></field>
-                <field name="sale_grant_discount"></field>
+                <!--<field name="sale_grant_discount"></field>-->
+                <field name="zongbu_service_charge" options='{"no_open": True, "no_create": True}'/>
               </group>
               <group>
                 <field name="market_manager" options='{"no_open": True, "no_create": True}'></field>
@@ -240,8 +250,18 @@
                     <field name="shenpi_line">
                         <tree editable="bottom">
                             <field name="department" options='{"no_open": True, "no_create": True}'/>
-                            <field name="product_charge" options='{"no_open": True, "no_create": True}'/>
+                            <!--<field name="product_charge" options='{"no_open": True, "no_create": True}'/>-->
                             <field name="director" options='{"no_open": True, "no_create": True}'/>
+                            <!--<field name="business_interface_person" options='{"no_open": True, "no_create": True}'/>-->
+                          </tree>
+                    </field>
+                </page>
+                 <page string="商务接口人配置">
+                    <field name="business_shenpi_line">
+                        <tree editable="bottom">
+                            <field name="office_id" options='{"no_open": True, "no_create": True}'/>
+                            <field name="industry_id" options='{"no_open": True, "no_create": True}' domain="[('parent_id.parent_id','=',False)]"/>
+                            <field name="business_interface_person" options='{"no_open": True, "no_create": True}'/>
                           </tree>
                     </field>
                 </page>
@@ -250,7 +270,6 @@
                         <tree editable="bottom">
                             <field name="categ_id" options='{"no_open": True, "no_create": True}'/>
                             <field name="zongbu_product_charge" options='{"no_open": True, "no_create": True}'/>
-                            <field name="zongbu_service_charge" options='{"no_open": True, "no_create": True}'/>
                           </tree>
                     </field>
                 </page>

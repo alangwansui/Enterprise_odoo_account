@@ -15,6 +15,10 @@
                 </div>
             </xpath>
 
+            <field name="image" position="replace">
+                <field name="image" widget='image' class="oe_avatar" options='{"preview_image":"image_medium"}' attrs="{'readonly':[('login_info_employee','=',False),('edit_public_info','=',False)]}"/>
+            </field>
+
             <xpath expr="//notebook/page[1]" position="replace">
                 <page name="public" string="公开信息">
                     <group>

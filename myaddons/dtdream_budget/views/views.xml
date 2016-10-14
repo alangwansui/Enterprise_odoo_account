@@ -40,7 +40,7 @@
                 <field name="expensed_daily" invisible="1"></field>
               </group>
               <group>
-                <field name="name" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="name" widget="selection" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"></field>
                 <field name="expensed_zhuanx" invisible="1"></field>
                 <field name="expensed_xingz" invisible="1"></field>
 
@@ -49,9 +49,9 @@
             <group class="zx_group_border">
               <field name="fee_travel" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" create="false" delete="false" class="zx_left zx_four" options="{'no_open':True}">
-                  <field name="travel_travel" options="{'no_open':True}"></field>
-                  <field name="travel_bus"></field>
-                  <field name="travel_mobile"></field>
+                  <field name="travel_travel" class="budget_int_cls" options="{'no_open':True}"></field>
+                  <field name="travel_bus" class="budget_int_cls"></field>
+                  <field name="travel_mobile" class="budget_int_cls"></field>
                   <field name="travel_remark"></field>
                 </tree>
               </field>
@@ -61,7 +61,7 @@
               <field name="fee_daily" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
                   <field name="daily_name"></field>
-                  <field name="daily_fee"></field>
+                  <field name="daily_fee" class="budget_int_cls"></field>
                   <field name="daily_remark"></field>
                 </tree>
               </field>
@@ -71,7 +71,7 @@
               <field name="fee_zhuanx" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
                   <field name="zhuanx_name"></field>
-                  <field name="zhuanx_fee"></field>
+                  <field name="zhuanx_fee" class="budget_int_cls"></field>
                   <field name="zhuanx_remark"></field>
                 </tree>
               </field>
@@ -81,7 +81,7 @@
               <field name="fee_xingz" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
                   <field name="xingz_name"></field>
-                  <field name="xingz_fee"></field>
+                  <field name="xingz_fee" class="budget_int_cls"></field>
                   <field name="xingz_remark"></field>
                 </tree>
               </field>

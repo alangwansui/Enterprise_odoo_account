@@ -45,7 +45,7 @@
             <field name="field_parent">child_ids</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="name"/>
+                    <field name="complete_name"/>
                     <field name="manager_id" string="主管"/>
                     <field name="assitant_id"/>
                     <field name="code"/>

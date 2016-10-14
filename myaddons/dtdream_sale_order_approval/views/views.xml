@@ -120,7 +120,7 @@
                                       <field name="is_order_pro_approveds" invisible="True"/>
                                       <field name="is_order_bus_approveds" invisible="True"/>
                                       <field name="pro_name" invisible="True"/>
-                                      <field name="product_id" string="产品型号" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="product_id" string="产品型号" attrs="{'readonly':['|',('report_state','not in',('0')),('report_is_current','=',False)]}"/>
                                       <field name="bom" string="BOM" readonly="True"/>
                                       <field name="pro_type" string="产品类别" readonly="True"/>
                                       <field name="pro_description" string="产品对内中文描述" readonly="True"/>
@@ -129,8 +129,8 @@
                                   <group>
                                       <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
                                       <field name="apply_discount" string="申请折扣(%)" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)],'invisible':['|','&amp;',('is_order_pro_approveds','=',True),('is_order_bus_approveds','=',False),'&amp;',('report_state','in',('1','2','3')),('report_is_current','=',True)]}"/>
-                                      <field name="pro_num" string="数量" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
-                                      <field name="config_set" string="发货地" attrs="{'readonly':['|',('report_state','not in',('1')),('report_is_current','=',False)]}"/>
+                                      <field name="pro_num" string="数量" attrs="{'readonly':['|',('report_state','not in',('0')),('report_is_current','=',False)]}"/>
+                                      <field name="config_set" string="发货地" attrs="{'readonly':['|',('report_state','not in',('0')),('report_is_current','=',False)]}"/>
                                       <field name="remark" string="备注" attrs="{'readonly':['|',('report_state','not in',('4')),('report_is_current','=',False)]}"/>
                                   </group>
                               </group>

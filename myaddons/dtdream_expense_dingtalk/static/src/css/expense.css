@@ -265,6 +265,22 @@ table.dataTable thead .sorting:after {
 .panel-red > a:hover {
   color: #b52b27;
 }
+
+.panel-orange {
+  border-color: #950CF0;
+}
+.panel-orange > .panel-heading {
+  border-color: #950CF0;
+  color: white;
+  background-color: #950CF0;
+}
+.panel-orange > a {
+  color: #d9534f;
+}
+.panel-orange > a:hover {
+  color: #b52b27;
+}
+
 .panel-yellow {
   border-color: #f0ad4e;
 }
@@ -448,3 +464,105 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+/**************/
+.panelbox-blue,
+.panelbox-red,
+.panelbox-green,
+.panelbox-gray,
+.panelbox-yellow {
+  margin-bottom: 30px;
+  position: relative;
+  font-family: "Microsoft YaHei", Arial, sans-serif;
+  padding: 0;
+}
+.panelbox-blue .panel-footer,
+.panelbox-red .panel-footer,
+.panelbox-green .panel-footer,
+.panelbox-gray .panel-footer,
+.panelbox-yellow .panel-footer {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+}
+.panelbox-blue h4,
+.panelbox-red h4,
+.panelbox-green h4,
+.panelbox-gray h4,
+.panelbox-yellow h4 {
+  margin: 0;
+  padding: 0 ;
+  font-size: 16px;
+  padding: 15px 0 15px 15px;
+}
+.panelbox-blue a,
+.panelbox-red a,
+.panelbox-green a,
+.panelbox-gray a,
+.panelbox-yellow a {
+  color: #fff;
+  text-decoration: none;
+}
+.panelbox-blue .fy-t,
+.panelbox-red .fy-t,
+.panelbox-green .fy-t,
+.panelbox-gray .fy-t,
+.panelbox-yellow .fy-t {
+  font-size: 36px;
+  color: #fff;
+  padding-left: 15px;
+  padding-bottom: 15px;
+}
+.panelbox-blue .fy-more,
+.panelbox-red .fy-more,
+.panelbox-green .fy-more,
+.panelbox-gray .fy-more,
+.panelbox-yellow .fy-more {
+  font-size: 14px;
+  padding: 8px 20px 8px 15px;
+}
+.panelbox-blue .fy-more img,
+.panelbox-red .fy-more img,
+.panelbox-green .fy-more img,
+.panelbox-gray .fy-more img,
+.panelbox-yellow .fy-more img {
+  float: right;
+}
+.panelbox-blue {
+  background: url("../img/fy-wbx.png") no-repeat 90% 45%;
+  background-color: #7E9FCC ;
+}
+.panelbox-blue .fy-more {
+  background-color: rgba(85, 114, 153, 0.4);
+}
+.panelbox-red {
+  background: url("../img/fy-wtj.png") no-repeat 90% 45%;
+  background-color: #CC7E7E ;
+}
+.panelbox-red .fy-more {
+  background-color: rgba(157, 95, 95, 0.4);
+}
+.panelbox-green {
+  background: url("../img/fy-dsp.png") no-repeat 90% 45%;
+  background-color: #21C09C ;
+}
+.panelbox-green .fy-more {
+  background-color: rgba(5, 142, 112, 0.4);
+}
+.panelbox-gray {
+  background: url("../img/fy-ysp.png") no-repeat 90% 45%;
+  background-color: #A7B3C4 ;
+}
+.panelbox-gray .fy-more {
+  background-color: rgba(131, 142, 161, 0.4);
+}
+.panelbox-yellow {
+  background: url("../img/fy-cq.png") no-repeat 90% 45%;
+  background-color: #D39854 ;
+}
+.panelbox-yellow .fy-more {
+  background-color: rgba(157, 112, 48, 0.4);
+}
+
+

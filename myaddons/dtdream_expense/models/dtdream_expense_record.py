@@ -21,6 +21,19 @@ class dtdream_expense_record(models.Model):
     def _compute_shibaoamount(self):
         for record in self:
             record.shibaoamount = record.invoicevalue - record.koujianamount
+            record.notaxamount =record.shibaoamount
+
+    @api.multi
+    @api.depends('taxamount', 'invoicevalue')
+    def _compute_notaxamount(self):
+        for record in self:
+            record.shibaoamount = record.invoicevalue - record.koujianamount
+            record.notaxamount = record.shibaoamount-record.taxamount
+
+
+    # @api.onchange('shibaoamount')
+    # def _compute_notaxamount(self):
+    #     self.notaxamount = self.shibaoamount
 
     @api.multi
     @api.depends('report_ids')
@@ -39,16 +52,40 @@ class dtdream_expense_record(models.Model):
                              default="draft")
     expensecatelog = fields.Many2one("dtdream.expense.catelog", string="费用类别", required=True,
                                      track_visibility='onchange')
-    expensedetail = fields.Many2one("dtdream.expense.detail", string="消费明细", required=True, track_visibility='onchange')
+    expensedetail = fields.Many2one("dtdream.expense.detail", string="消费类别", required=True, track_visibility='onchange')
     invoicevalue = fields.Float(digits=(11, 2), required=True, string='票据金额(元)', track_visibility='onchange')
     outtimenumber = fields.Float(digits=(11, 2), string="超期时长(月)")
+
+    taxamount = fields.Float(digits=(11, 2), string="税金",default = 0)
+    notaxamount = fields.Float(digits=(11, 2), string="不含税金额",compute = _compute_notaxamount)
+    taxpercent = fields.Selection([('0.03', '3%'), ('0.05', '5%'), ('0.06', '6%'), ('0.11', '11%'),('0.17', '17%')],string='税率')
+
+
+
     koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)", track_visibility='onchange')
     shibaoamount = fields.Float(digits=(11, 2), string="实报金额(元)", compute=_compute_shibaoamount, store=True)
     currentdate = fields.Date(string="发生日期", default=lambda self: datetime.now(), track_visibility='onchange')
     # expenseenddate = fields.Date(string="费用发生结束日期" ,default=lambda self:datetime.now())
-    city = fields.Many2one("dtdream.expense.city", string="发生城市", track_visibility='onchange')
-    province = fields.Many2one("res.country.state", string="发生省份", track_visibility='onchange')
+    city = fields.Many2one("dtdream.expense.city",required=True, string="发生城市", track_visibility='onchange')
+    province = fields.Many2one("res.country.state",required=True, string="发生省份", track_visibility='onchange')
     # attachment = fields.Binary(store=True,string="附件",track_visibility='onchange')
+
+
+    actiondesc = fields.Text(string="活动描述")
+    customernumber=fields.Integer(string="客户人数")
+    peitongnumber = fields.Integer(string="陪同人数")
+
+    @api.multi
+    @api.depends('customernumber', 'invoicevalue','peitongnumber')
+    def _compute_everyonecost(self):
+        for record in self:
+            if (int(record.customernumber)+int(record.peitongnumber)) >0:
+
+                record.everyonecost = record.invoicevalue/(int(record.customernumber)+int(record.peitongnumber))
+
+
+    everyonecost = fields.Float(digits=(11, 2),string="人均消费",compute=_compute_everyonecost, store=True)
+    visible_all = fields.Boolean(default=False,string="是否隐藏客户人数、陪同人数，人均消费")
 
     attachment_ids = fields.One2many('dtdream.expense.record.attachment', 'record_id', u'附件明细')
 
@@ -56,6 +93,7 @@ class dtdream_expense_record(models.Model):
                                   "record_id", string="报销单ID")
 
     report_ids_count = fields.Integer(compute=_compute_report_ids_count, store=True)
+
 
 
 
@@ -109,12 +147,15 @@ class dtdream_expense_record(models.Model):
     def _check_invoicevalue_record(self):
 
         for rec in self:
-            if int(rec.invoicevalue) <= 0:
+            if float(rec.invoicevalue) <= float(0):
                 raise exceptions.ValidationError('票据金额不能小于等于0！')
 
     @api.model
     def create(self, vals):
         # print type(str(vals['currentdate']))
+        if self.env['dtdream.expense.catelog'].search([('id', '=', vals.get('expensecatelog'))]).name == u'日常业务费' and float(vals.get('invoicevalue'))>5000:
+            raise Warning(u'大于5000元的日常业务费,请走专项申请!')
+        # print '--------->',vals.get('expensecatelog')
 
         if vals.has_key('expensedetail'):
             full_name = self.env['hr.employee'].search([('login', '=', self.env.user.login)]).full_name
@@ -144,6 +185,14 @@ class dtdream_expense_record(models.Model):
     def onchange_expensedetail(self):
         if self.expensedetail:
             self.expensecatelog = self.expensedetail.parentid
+
+            if self.expensecatelog.name ==u"日常业务费":
+                self.visible_all = False
+            else:
+                self.visible_all = True
+
+
+
 
             # if self.expensecatelog != self.expensedetail.parentid:
             #     self.expensecatelog = ""

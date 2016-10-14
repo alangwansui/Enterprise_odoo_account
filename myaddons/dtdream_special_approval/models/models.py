@@ -5,6 +5,8 @@ from datetime import datetime
 from openerp.exceptions import ValidationError
 from lxml import etree
 from dateutil.relativedelta import relativedelta
+from babel.dates import format_datetime, format_date
+import time
 #专项主表
 class dtdream_special_approval(models.Model):
     _name = 'dtdream.special.approval'
@@ -49,8 +51,11 @@ class dtdream_special_approval(models.Model):
     @api.depends("current_approver_user")
     def _depends_user(self):
         for rec in self :
-            em = self.env['hr.employee'].search([('user_id','=',rec.current_approver_user.id)])
-            rec.current_approver=em.id
+            if rec.current_approver_user:
+                em = self.env['hr.employee'].search([('user_id','=',rec.current_approver_user.id)])
+                rec.current_approver=em.id
+            else:
+                rec.current_approver=False
     current_approver = fields.Many2one("hr.employee",compute="_depends_user",string="当前审批人")
 
     #流程流向审批人
@@ -66,7 +71,7 @@ class dtdream_special_approval(models.Model):
 
     help_state = fields.Selection([('department_01','部门审批'),('department_02','受益部门审批'),('quanqian_01','第一权签'),('quanqian_02','第二权签'),('quanqian_03','第三权签'),('quanqian_04','最终审批'),('cw_01','第一财务权签'),('cw_02','最终财务权签')],string="详细状态")
 
-    @api.model
+    @api.one
     def _compute_create(self):
         if self.create_uid==self.env.user:
             self.is_create=True
@@ -74,7 +79,7 @@ class dtdream_special_approval(models.Model):
             self.is_create=False
     is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
 
-    @api.model
+    @api.one
     def _compute_is_shenpiren(self):
         if self.env.user in self.current_approver_user:
             self.is_shenpiren=True
@@ -82,7 +87,7 @@ class dtdream_special_approval(models.Model):
             self.is_shenpiren = False
     is_shenpiren = fields.Boolean(string="是否审批人",compute=_compute_is_shenpiren,readonly=True)
 
-    @api.model
+    @api.one
     def _compute_is_manager(self):
         users =  self.env.ref("dtdream_special_approval.group_dtdream_special_approval_manager").users
         if self.env.user in users:
@@ -401,8 +406,7 @@ class dtdream_special_approval(models.Model):
 class dtdream_events_agenda(models.Model):
     _name = "dtdream.events.agenda"
     name=fields.Char()
-
-    date = fields.Date(string="年月日",required=True)
+    date = fields.Date(string="日期",required=True)
     period = fields.Selection([('period1','上午'),('period2','下午'),('period3','晚上')],string="时间段")
     place = fields.Char(string="地点/场所",required=True)
     issues = fields.Char(string="行程/议题",required=True)
@@ -440,7 +444,11 @@ class dtdream_approval_right_peo(models.Model):
             if not self.zxfirst_money or self.zxfirst_money<=0 :
                 raise ValidationError(u'设置了权签人，则必须设置对应的金额')
             elif self.zxsec_money>0 and self.zxfirst_money>=self.zxsec_money:
-                raise ValidationError(u'一级权签金额不应大于二级')
+                raise ValidationError(u'一级权签金额不应大于或等于二级')
+            if self.zxsec_person and self.zxfirst_person == self.zxsec_person:
+                raise ValidationError(u'各级权签人不能相同')
+            if self.zxthird_person and self.zxfirst_person == self.zxthird_person:
+                raise ValidationError(u'各级权签人不能相同')
 
     @api.constrains('zxsec_person','zxsec_money')
     def _con_zxsec_person(self):
@@ -450,9 +458,13 @@ class dtdream_approval_right_peo(models.Model):
             if not self.zxsec_money or self.zxsec_money<=0:
                 raise ValidationError(u'设置了权签人，则必须设置对应的金额')
             elif self.zxfirst_money>=self.zxsec_money:
-                raise ValidationError(u'二级权签金额不应小于一级')
+                raise ValidationError(u'二级权签金额不应小于或等于一级')
             elif self.zxthird_money>0 and self.zxthird_money<=self.zxsec_money:
-                raise ValidationError(u'二级权签金额不应大于三级')
+                raise ValidationError(u'二级权签金额不应大于或等于三级')
+            if self.zxfirst_person and self.zxfirst_person == self.zxsec_person:
+                raise ValidationError(u'各级权签人不能相同')
+            if self.zxthird_person and self.zxsec_person == self.zxthird_person:
+                raise ValidationError(u'各级权签人不能相同')
 
 
     @api.constrains('zxthird_person','zxthird_money')
@@ -463,9 +475,13 @@ class dtdream_approval_right_peo(models.Model):
             if not self.zxthird_money or self.zxthird_money<=0:
                 raise ValidationError(u'设置了权签人，则必须设置对应的金额')
             elif self.zxfirst_money>=self.zxthird_money:
-                raise ValidationError(u'三级权签金额不应小于一级')
+                raise ValidationError(u'三级权签金额不应小于或等于一级')
             elif self.zxthird_money<=self.zxsec_money:
-                raise ValidationError(u'三级权签金额不应小于二级')
+                raise ValidationError(u'三级权签金额不应小于或等于二级')
+            if self.zxfirst_person and self.zxfirst_person == self.zxthird_person:
+                raise ValidationError(u'各级权签人不能相同')
+            if self.zxsec_person and self.zxsec_person == self.zxthird_person:
+                raise ValidationError(u'各级权签人不能相同')
 
 #特殊权签设置
 class dtdream_specific_people(models.Model):

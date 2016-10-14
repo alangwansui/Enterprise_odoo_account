@@ -48,7 +48,7 @@ odoo.define('dtdream_expense_dingtalk.ui.dashboard', function (require) {
          * @property {method} on_dashboard_action_clicked 跳转界面
          */
         events: {
-            'click .panel-footer': 'on_dashboard_action_clicked',
+            'click .panel': 'on_dashboard_action_clicked',
         },
         /**
          * @memberOf ExpenseReportDashboardView
@@ -77,6 +77,7 @@ odoo.define('dtdream_expense_dingtalk.ui.dashboard', function (require) {
                     'have_check_report': result.have_check_report,
                     'override_report': result.override_report,
                     'override_report_amount': result.override_report_amount,
+                    'have_pay_report':result.have_pay_report,
                 });
                 super_render.call(self);
 
@@ -91,6 +92,7 @@ odoo.define('dtdream_expense_dingtalk.ui.dashboard', function (require) {
          */
         on_dashboard_action_clicked: function (ev) {
             ev.preventDefault();
+            ev.stopPropagation();
 
             var self = this;
             var $action = $(ev.currentTarget);

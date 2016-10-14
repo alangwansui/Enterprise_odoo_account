@@ -9,7 +9,7 @@
     <menuitem name="我已审批" id="menu_reports_already_approve" parent="dtdream_menu_business_report"  sequence="30" action="act_already_approve"></menuitem>
     <menuitem name="所有单据" id="menu_all_business_reports" parent="dtdream_menu_business_report" sequence="40" action="act_all_reports"></menuitem>
 
-    <menuitem name='销售流程审批配置' id='menu_shenpi_config' parent='base.menu_sale_config' sequence="66" action="act_shenpi_config" />
+    <menuitem name='商务报备/报单审批配置' id='menu_shenpi_config' parent='base.menu_sale_config' sequence="66" action="act_shenpi_config" />
 
     </data>
 </openerp>

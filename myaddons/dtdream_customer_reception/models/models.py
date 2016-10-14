@@ -193,6 +193,41 @@ class dtdream_customer_reception(models.Model):
             self.cost = False
             self.special_code = False
 
+    @api.onchange('visit_count')
+    def _check_visit_negative(self):
+        if self.visit_count < 0:
+            self.visit_count = 0
+
+    @api.onchange('room_capacity')
+    def _check_room_negative(self):
+        if self.room_capacity < 0:
+            self.room_capacity = 0
+
+    @api.onchange('car_num')
+    def _check_car_negative(self):
+        if self.car_num < 0:
+            self.car_num = 0
+
+    @api.onchange('commercial_vehicle_num')
+    def _check_vehicle_negative(self):
+        if self.commercial_vehicle_num < 0:
+            self.commercial_vehicle_num = 0
+
+    @api.onchange('single_room_num')
+    def _check_single_negative(self):
+        if self.single_room_num < 0:
+            self.single_room_num = 0
+
+    @api.onchange('double_room_num')
+    def _check_double_negative(self):
+        if self.double_room_num < 0:
+            self.double_room_num = 0
+
+    @api.onchange('memories_num')
+    def _check_memories_negative(self):
+        if self.memories_num < 0:
+            self.memories_num = 0
+
     @api.multi
     def write(self, vals):
         if vals.has_key('special_code') and (vals.get('has_special', None) == '0' or self.has_special == '0')and vals.get('special_code'):

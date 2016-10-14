@@ -27,13 +27,16 @@
     """,
     'data': [
         'views/res_config_view.xml',
-        'views/dingtalk_view.xml',
+        # 'views/dingtalk_view.xml',
+        'views/dingtalk/detail.xml',
         'views/res_users_view.xml',
         'views/expense_report_dashboard.xml'
         # 'views/assets.xml'
     ],
     'qweb': [
-        "static/src/xml/*.xml",
+        # "static/src/xml/*.xml",
+        "static/src/xml/dingtalk/detail.xml",
+        "static/src/xml/expense_report_dashboard.xml",
     ],
     "init_xml": [],
     'update_xml': [],

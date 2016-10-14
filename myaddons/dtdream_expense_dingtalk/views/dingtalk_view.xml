@@ -19,7 +19,7 @@
                     <meta name="format-detection" content="telephone=no"/>
                     <meta name="format-detection" content="email=no"/>
 
-                     <script type="text/javascript" src="/web/static/lib/es5-shim/es5-shim.min.js"></script>
+                    <script type="text/javascript" src="/web/static/lib/es5-shim/es5-shim.min.js"></script>
                     <script type="text/javascript" src="/web/static/lib/underscore/underscore.js"></script>
                     <script type="text/javascript"
                             src="/web/static/lib/underscore.string/lib/underscore.string.js"></script>
@@ -62,15 +62,15 @@
 
 
                     <!--<script type="text/javascript" id="loading-script" t-raw="init">-->
-                        <!--odoo.define('web.web_client', function (require) {-->
-                        <!--var WebClient = require('web.WebClient');-->
-                        <!--var web_client = new WebClient();-->
-                        <!--return web_client;-->
-                        <!--});-->
+                    <!--odoo.define('web.web_client', function (require) {-->
+                    <!--var WebClient = require('web.WebClient');-->
+                    <!--var web_client = new WebClient();-->
+                    <!--return web_client;-->
+                    <!--});-->
                     <!--</script>-->
 
                     <!--<script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>-->
-                    <script src="/dtdream_expense_dingtalk/static/src/js/main.js?version=31"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/main.js?version=80"></script>
                     <!--<script src="/dtdream_expense_dingtalk/static/src/js/init.js"></script>-->
 
                     <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/light7/css/light7.css"/>
@@ -91,6 +91,10 @@
                     <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/iconfont/iconfont.css"/>
                     <script type='text/javascript'
                             src='/dtdream_expense_dingtalk/static/lib/localResizeIMG/dist/lrz.bundle.js'></script>
+
+                    <script type="text/javascript"
+                            src="/dtdream_expense_dingtalk/static/lib/jquery-cascading-dropdown/jquery.cascadingdropdown.js"></script>
+
                 </head>
 
                 <body>
@@ -117,7 +121,8 @@
                     <main>
                         <div class="page">
                             <t t-raw="0"/>
-                            <div class="content o_main_content infinite-scroll" data-distance="100"/>
+                            <div class=" o_main_content">
+                            </div>
                         </div>
                         <div class="main">
                             <div class="nav"/>
@@ -220,6 +225,11 @@
                     <script type='text/javascript'
                             src='/dtdream_expense_dingtalk/static/lib/localResizeIMG/dist/lrz.bundle.js'></script>
 
+                    <!--<script type="text/javascript"-->
+                    <!--src="/dtdream_expense_dingtalk/static/lib/linkageSel/comm.js"></script>-->
+                    <script type="text/javascript"
+                            src="/dtdream_expense_dingtalk/static/lib/jquery-cascading-dropdown/jquery.cascadingdropdown.js"></script>
+
                 </head>
                 <body>
                     <div id="App"></div>
@@ -234,7 +244,7 @@
                     <main>
                         <div class="page">
                             <t t-raw="0"/>
-                            <div class="content o_main_content infinite-scroll" data-distance="100"/>
+                            <div class="o_main_content"/>
                         </div>
                         <div class="main">
                             <div class="nav"/>
@@ -249,6 +259,94 @@
             <t t-call="dtdream_expense_dingtalk.layout"></t>
         </template>
 
+        <template id="main_index" name="main_index">
+            <html>
+                <head>
+                    <title>费用报销</title>
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+                    <meta name="viewport"
+                          content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;"/>
+                    <meta name="apple-mobile-web-app-capable" content="yes"/>
+                    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+                    <meta name="format-detection" content="telephone=no"/>
+                    <meta charset="utf-8"/>
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/lib/iconfont/iconfont.css"/>
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/src/css/weui.css"/>
+                    <style type="text/css">
+                        .title {
+                        text-align: center;
+                        font-size: 34px;
+                        color: #3cc51f;
+                        font-weight: 400;
+                        margin: 0 15%;
+                        }
+
+                        .header {
+                        padding: 35px 0;
+                        }
+                    </style>
+                    <script>
+                        <t t-js="ctx">
+                            _config ={
+                            'jsticket':'<t t-esc="jsticket"/>',
+                            'signature': '<t t-esc="signature"/>',
+                            'nonceStr': '<t t-esc="nonceStr"/>',
+                            'timeStamp': '<t t-esc="timeStamp"/>',
+                            'corpId': '<t t-esc="corpId"/>',
+                            'agentId': '<t t-esc="agentId"/>',
+                            'token': '<t t-esc="token"/>'
+                            }
+                        </t>
+                    </script>
+                </head>
+
+                <body>
+                    <script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>
+
+                    <script src="https://g.alicdn.com/ilw/ding/0.9.2/scripts/dingtalk.js"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/main_index.js?version=80"></script>
+
+                    <header class="header">
+                        <h1 class="title">费用报销</h1>
+                    </header>
+                    <div class="weui_grids">
+                        <a href="index" class="weui_grid js_grid">
+                            <div class="weui_grid_icon">
+                                <i class="icon iconfont " style="font-size:24px;">&#xe6a6;</i>
+                            </div>
+                            <p class="weui_grid_label">
+                                消费明细
+                            </p>
+                        </a>
+                        <a href="index?item-id=report" class="weui_grid js_grid">
+                            <div class="weui_grid_icon">
+                                <i class="icon iconfont " style="font-size:24px;">&#xe660;</i>
+                            </div>
+                            <p class="weui_grid_label">
+                                费用报销
+                            </p>
+                        </a>
+                        <a href="index?item-id=workflow" class="weui_grid js_grid">
+                            <div class="weui_grid_icon">
+                                <i class="icon iconfont " style="font-size:24px;">&#xe61b;</i>
+                            </div>
+                            <p class="weui_grid_label">
+                                待我审批
+                            </p>
+                        </a>
+                        <a href="index?item-id=my" class="weui_grid js_grid">
+                            <div class="weui_grid_icon">
+                                <i class="icon iconfont " style="font-size:24px;">&#x3575;</i>
+                            </div>
+                            <p class="weui_grid_label">
+                                我的
+                            </p>
+                        </a>
+                    </div>
+
+                </body>
+            </html>
+        </template>
 
     </data>
 </openerp>

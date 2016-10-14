@@ -386,7 +386,7 @@ class dtdream_liwai(models.TransientModel):
                     appellation = current_execption.approver_sec.name+u",您好"
                     content = current_execption.name.department.name+u"的"+current_execption.name.name+u"的例外申请，待您审批"
                     base_url = self.get_base_url()
-                    link = '/web#id=%s&view_type=form&model=dtdream_execption' % self.id
+                    link = '/web#id=%s&view_type=form&model=dtdream_execption' % current_execption.id
                     url = base_url+link
                     self.env['mail.mail'].create({
                         'body_html': u'''<p>%s</p>

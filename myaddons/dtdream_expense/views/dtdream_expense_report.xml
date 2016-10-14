@@ -28,7 +28,7 @@
                                     <ul>
                                         <li > <strong>单号:</strong><field name="name" /></li>
                                         <li > <strong>状态:</strong><field name="state" /></li>
-                                        <li > <strong>申请人:</strong><field name="create_uid_self" /></li>
+                                        <li > <strong>审批人:</strong><field name="currentauditperson" /></li>
                                         <li > <strong>申请日期:</strong><field name="create_date" /></li>
 
                                     </ul>
@@ -59,7 +59,7 @@
                                 attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji'))]}"/>
                         <button string="签收纸件" name="btn_checkpaper" type="object" class="oe_highlight"
                                 confirm="确定收到报销单纸件吗?"
-                                attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('jiekoukuaiji','xingzheng'))]}"/>
+                                attrs="{'invisible':['|','|','|',('compute_currentaudit','=',False),('state','not in',('jiekoukuaiji','xingzheng')),'&amp;',('state','=','xingzheng'),('showcuiqian','=','1'),'&amp;',('state','=','jiekoukuaiji'),('showcuiqian','=','2')]}"/>
                         <button string="确认付款" name="btn_confirmmoney" type="workflow" class="oe_highlight" states=""
                                 attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('daifukuan'))]}"
                                 confirm="确定已付款吗?"/>
@@ -99,9 +99,9 @@
                             <group string="支付信息">
                                 <field name="paytype" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
                                 <field name="paycatelog" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="shoukuanrenxinming" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="kaihuhang" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="yinhangkahao" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                   <field name="shoukuanrenxinming" readonly="1"/>
+                                <field name="kaihuhang" readonly="1"/>
+                                <field name="yinhangkahao" readonly="1"/>
                                 <field name="is_zongcai" invisible="1"/>
                             </group>
 
@@ -150,17 +150,20 @@
                         </notebook>
 
                         <notebook>
-                            <page string="出差时间">
+                            <page string="出差申请单">
 
-                                <field name="chuchaishijian_ids" mode="tree,kanban" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}">
+                                <field name="chuchaishijian_ids" domain="[('travel_id.name.user_id.id','=',create_uid_self)]" mode="tree,kanban" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}">
                                     <tree editable="bottom">
 
-                                        <field name="name" options="{'no_create': True}"/>
+                                        <field name="name" options="{'no_create': True}" />
                                         <field name="endtime"/>
                                         <field name="startaddress"/>
                                         <field name="endaddress"/>
                                         <field name="reason"/>
                                     </tree>
+
+
+
 
                                     <kanban class="o_res_partner_kanban" >
                                         <field name="name" />
@@ -209,7 +212,7 @@
                                         <field name="currentdate" />
                                         <field name="invoicevalue"/>
                                         <field name="koujianamount" />
-                                        <field name="shibaoamount" />
+                                        <!--<field name="shibaoamount" />-->
                                         <field name="outtimenumber" />
                                         <field name="state" readonly="1"/>
                                         <!--<field name="attachment"/>-->
@@ -288,6 +291,7 @@
                     <!--<field name="title"/>-->
                     <field name="state"/>
                     <field name="currentauditperson"/>
+                    <field name="total_shibaoamount"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <field name="department_id"/>
@@ -316,7 +320,7 @@
                                 attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('jiekoukuaiji','xingzheng'))]}"/>
                         <button string="确认付款" name="btn_confirmmoney" type="workflow" class="oe_highlight" states=""
                                 attrs="{'invisible':['|',('compute_currentaudit','=',False),('state','not in',('daifukuan'))]}"
-                                confirm="确定已付款吗?"/>
+                                confirm="确定付款吗?"/>
                         <button string="催签" name="btn_cuiqian" type="object" class="oe_highlight"
                                 attrs="{'invisible':['|',('compute_shenqingren','=',False),('state','not in',('xingzheng','zhuguan','quanqianren','jiekoukuaiji','daifukuan'))]}"
                                 confirm="确定要催签吗?"/>
@@ -350,9 +354,9 @@
                             <group string="支付信息">
                                 <field name="paytype" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
                                 <field name="paycatelog" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="shoukuanrenxinming" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="kaihuhang" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="yinhangkahao" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="shoukuanrenxinming" readonly="1"/>
+                                <field name="kaihuhang" readonly="1"/>
+                                <field name="yinhangkahao" readonly="1"/>
                                 <field name="is_zongcai" invisible="1"/>
                             </group>
 
@@ -361,7 +365,7 @@
 
                         <notebook>
                             <page string="受益部门分摊比例">
-                                <field name="benefitdep_ids" attrs="{'readonly':[('state','!=','draft')]}" >
+                                <field name="benefitdep_ids" attrs="{'readonly':[('state','!=',('jiekoukuaiji'))]}" >
                                     <tree editable="bottom">
 
                                         <field name="name" options="{'no_create': True}"/>
@@ -373,10 +377,10 @@
                         </notebook>
 
                         <notebook>
-                            <page string="出差时间">
+                            <page string="出差申请单">
 
                                 <field name="chuchaishijian_ids"  attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}">
-                                    <tree editable="bottom">
+                                    <tree>
 
                                         <field name="name" options="{'no_create': True}"/>
                                         <field name="endtime"/>
@@ -400,7 +404,7 @@
                                         <field name="currentdate" readonly="1"/>
                                         <field name="invoicevalue" readonly="1"/>
                                         <field name="koujianamount" />
-                                        <field name="shibaoamount"  readonly="1"/>
+                                        <!--<field name="shibaoamount"  readonly="1"/>-->
                                         <field name="outtimenumber"  readonly="1"/>
                                         <field name="state" readonly="1"/>
                                         <!--<field name="attachment"/>-->
@@ -437,6 +441,7 @@
                     <!--<field name="title"/>-->
                     <field name="state"/>
                     <field name="currentauditperson"/>
+                    <field name="total_shibaoamount"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <field name="department_id"/>
@@ -456,7 +461,7 @@
                     <field name="currentauditperson"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
-                    <filter string="待处理" name="search_willaudit" domain="[('state','!=','yifukuan')]" />
+                    <filter string="草稿" name="search_willaudit" domain="[('state','=','draft')]" />
                 </search>
             </field>
         </record>
@@ -519,6 +524,36 @@
             <field name="view_id" ref="dtdream_expense_myreport_tree_jiekoukuaiji_view"/>
         </record>
 
+        <!--<record model="ir.ui.view" id="dtdream_travel_journey_search_view">-->
+            <!--<field name="name">dtdream.travel.journey.search</field>-->
+            <!--<field name="model">dtdream.travel.journey</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<search>-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="endtime"/>-->
+                    <!--<field name="startaddress"/>-->
+                    <!--<field name="endaddress"/>-->
+                    <!--<field name="reason"/>-->
+                <!--</search>-->
+            <!--</field>-->
+        <!--</record>-->
+        <!---->
+        <!---->
+
+         <record id="dtdream_travel_journey_tree_view" model="ir.ui.view">
+            <field name="name">dtdream.travel.journey.tree</field>
+            <field name="model">dtdream.travel.journey</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="starttime"/>
+                    <field name="endtime"/>
+                    <field name="startaddress"/>
+                    <field name="endaddress"/>
+                    <field name="reason"/>
+                </tree>
+            </field>
+        </record>
 
 
 
@@ -532,7 +567,7 @@
         <record model="ir.actions.act_window" id="action_dtdream_expense_outtime">
             <field name="name">已超期报销单</field>
             <field name="res_model">dtdream.expense.report</field>
-            <field name="domain">[('is_outtime','=',True)]</field>
+            <field name="domain">[('is_outtime','=',True),('create_uid','=',uid)]</field>
             <field name="view_mode">tree,form,kanban</field>
         </record>
 
@@ -578,6 +613,11 @@
          <menuitem name="所有单据" id="dtdream_expense_all_aboutme" parent="dtdream_expense_menu_root"
                   action="action_dtdream_expense_all_aboutme" sequence="206" />
 
-
+        <record model="ir.actions.act_window" id="action_dtdream_expense_have_payed">
+            <field name="name">已付款</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="domain">[('state','=','yifukuan'),('create_uid','=',uid)]</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
     </data>
     </openerp>

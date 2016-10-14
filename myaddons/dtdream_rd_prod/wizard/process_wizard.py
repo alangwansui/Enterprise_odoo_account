@@ -97,6 +97,7 @@ class process_wizard(models.TransientModel):
             for process in processes:
                 if not (process.is_pass or process.is_risk):
                     current_product.is_finsished_02 = False
+                    break
             if current_product.is_finsished_02:
                 records = self.env['dtdream_rd_approver'].search([('pro_state','=',current_product.state),('level','=','level_02')])           #审批人配置
                 rold_ids = []

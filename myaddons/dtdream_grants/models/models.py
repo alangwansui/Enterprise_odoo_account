@@ -88,7 +88,6 @@ class dtdream_grants(models.Model):
     @api.constrains('you_fill','fan_fill','name')
     def check_total(self):
         total = self.env['dtdream.grants.config'].search([]).total
-        self.cash = total-self.you_fill-self.fan_fill
         if self.name.has_oil == False and self.fan_fill != 0:
             raise ValidationError('未办理中大一卡通，无法充值，已办理中大一卡通的，请在自助信息里选择“已办理中大一卡通”!')
         if not self.name.oil_card and self.you_fill != 0:
@@ -98,7 +97,12 @@ class dtdream_grants(models.Model):
         if self.you_fill < 0 or self.fan_fill < 0:
             raise ValidationError('充值金额不能小于0')
 
-    cash = fields.Integer(string='转工资金额(元)',compute=_compute_cash,store=True)
+    @api.constrains('cash')
+    def if_cash_minus(self):
+        if self.cash < 0:
+            raise ValidationError('转工资金额不能小于0')
+
+    cash = fields.Integer(string='转工资金额(元)',store=True)
     job_state = fields.Char(string='在职状态',compute = _compute_employee_info)
     if_created = fields.Boolean(string='是否是创建',default=True)
 

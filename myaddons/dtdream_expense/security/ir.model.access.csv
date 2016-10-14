@@ -14,6 +14,7 @@ access_dtdream_expense_city,dtdream_expense.dtdream_expense_city,model_dtdream_e
 access_dtdream_expense_detail,dtdream_expense.dtdream_expense_detail,model_dtdream_expense_detail,,1,0,0,0
 access_dtdream_expense_catelog,dtdream_expense.dtdream_expense_catelog,model_dtdream_expense_catelog,,1,0,0,0
 access_dtdream_expense_president,dtdream_expense.dtdream_expense_president,model_dtdream_expense_president,,1,0,0,0
+access_dtdream_account_journal,account.journal,account.model_account_journal,base.group_user,1,0,0,0
 
 
 

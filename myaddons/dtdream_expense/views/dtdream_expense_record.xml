@@ -52,7 +52,7 @@
                     <field name="state"/>
                     <field name="create_date" string="创建时间"/>
                     <field name="create_uid" string="创建人"/>
-                    <filter string="草稿" name="search_draft" domain="[('state','=','draft')]" />
+                    <filter string="未报销" name="search_draft" domain="[('report_ids','=',False)]" />
                 </search>
             </field>
         </record>
@@ -162,8 +162,8 @@
                                        context="{'default_parentid':expensecatelog}" options="{'no_create': True}"/>
 
 
-                                <field name="currentdate" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="invoicevalue" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="currentdate" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
+                                <field name="invoicevalue" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
                                 <field name="koujianamount" attrs="{'invisible':[('state','!=','jiekoukuaiji')]}" groups="dtdream_expense.group_dtdream_expense_jiekoukuaiji"/>
                                 <field name="report_ids" invisible="1"/>
 
@@ -172,16 +172,31 @@
                                 <label for="province" string="发生城市"/>
                                 <div class="o_address_format">
                                     <field name="province" placeholder="省份" class="o_address_state"
-                                          attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}"/>
+                                          attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}" options="{'no_create': True}"/>
                                     <field name="city" placeholder="城市" class="o_address_state"
-                                           attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True}"/>
+                                           attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}" options="{'no_create': True}"/>
                                 </div>
+
+                                <field name="visible_all" invisible="1"/>
+                                <field name="customernumber" attrs="{'invisible':[('visible_all','=',True)]}"/>
+                                <field name="peitongnumber" attrs="{'invisible':[('visible_all','=',True)]}"/>
+                                <field name="everyonecost" attrs="{'invisible':[('visible_all','=',True)]}"/>
+                                 <field name="actiondesc"/>
 
                                 <!--<field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>-->
                             </group>
 
 
                             <group>
+
+
+                                 <field name="taxamount"  attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
+                                　　
+                                 <field name="notaxamount" attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
+                                　　
+                                 <field name="taxpercent" attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
+                                　　
+
                                 <field name="state" readonly="1"/>
 
                                 <field name="create_date" string="创建时间" readonly="1"/>

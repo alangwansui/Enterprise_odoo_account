@@ -22,10 +22,13 @@ class dtdream_expense_report(models.Model):
     _inherit = ['mail.thread']
     _description = u"报销单"
 
+    def _get_default_val(self):
+        if self.env['hr.employee'].search([('login', '=', self.env.user.login)]).department_id.assitant_id:
+            return self.env['hr.employee'].search([('login', '=', self.env.user.login)]).department_id.assitant_id[0].id
 
     job_number = fields.Char(string=u"员工工号",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).job_number)
     full_name = fields.Char(string=u"姓名", default=lambda self: self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).full_name)
-    work_place = fields.Char(string=u"工作常驻地", default=lambda self:'' and  self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).work_place)
+    work_place = fields.Char(string=u"工作常驻地", default=lambda self:  self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).work_place)
 
     department_id = fields.Many2one('hr.department', string=u'所属部门',default=lambda self: self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).department_id)
     department_number = fields.Char(string=u"部门编码",default=lambda self: self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).department_id.code)
@@ -33,9 +36,9 @@ class dtdream_expense_report(models.Model):
     paytype = fields.Selection([('yinhangzhuanzhang',u'银行转账'),('hexiaobeiyongjin',u'核销备用金')],string=u"支付方式",default = 'yinhangzhuanzhang')
     paycatelog = fields.Selection([('fukuangeiyuangong',u'付款给员工'),('fukuangeigongyingshang',u'付款给供应商')],string=u"支付类别",required=True,default='fukuangeiyuangong')
 
-    shoukuanrenxinming = fields.Char(string=u'收款人姓名',required=True,default=lambda self:self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).full_name)
-    kaihuhang = fields.Char(string="开户行",required=True,default=lambda self:self.env['hr.employee'].search([('login', '=', self.env.user.login)]).bankaddr)
-    yinhangkahao = fields.Char(string=u'银行卡号',required=True,default=lambda  self:self.env['hr.employee'].search([('login', '=', self.env.user.login)]).bankcardno)
+    shoukuanrenxinming = fields.Char(string=u'收款人姓名',default=lambda self:self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).full_name)
+    kaihuhang = fields.Char(string="开户行",default=lambda self:self.env['hr.employee'].search([('login', '=', self.env.user.login)]).bankaddr)
+    yinhangkahao = fields.Char(string=u'银行卡号',default=lambda  self:self.env['hr.employee'].search([('login', '=', self.env.user.login)]).bankcardno)
     expensereason = fields.Text(string=u'报销事由')
     name = fields.Char(string=u'单据号')
 
@@ -50,7 +53,8 @@ class dtdream_expense_report(models.Model):
                               ('yifukuan', u'已付款')], string="状态", default="draft")
     #create_uid   申请人
     #create_date  申请时间
-    xingzhengzhuli = fields.Many2one("hr.employee",string=u"部门行政助理")
+
+    xingzhengzhuli = fields.Many2one("hr.employee",string=u"部门行政助理",default=_get_default_val)
     currentauditperson = fields.Many2one("hr.employee",string=u"当前处理人")
     currentauditperson_userid = fields.Integer(string=u"当前处理人uid")
     # chuchaishijian_ids = fields.One2many("dtdream.expense.chuchai","report_id",string=u"出差时间")
@@ -185,7 +189,7 @@ class dtdream_expense_report(models.Model):
                     # print '-------------',type(createdate)
 
                     # 计算保存时间与最大值差。
-                    months =(int(self.getYear(createdate)) - int(self.getYear(maxdate)))*12+(int(self.getMonth(createdate)) -int(self.getMonth(maxdate)))
+                    months =(int(self.getYear(createdate)) - int(self.getYear(maxdate)))*12+(int(self.getMonth(createdate)) -int(self.getMonth(maxdate)))-1
                     # _logger.info("------->createdate:" + str(self.getYear(createdate)))
 
                     # print  'months:',months
@@ -204,6 +208,10 @@ class dtdream_expense_report(models.Model):
                         xishu = 0.90
                     elif months > 6:
                         xishu = 0
+
+
+                    if months<0:
+                        months=0
 
 
                         # 循环计算消费记录的超期时长及罚款金额
@@ -291,93 +299,7 @@ class dtdream_expense_report(models.Model):
 
         return result
 
-    #write方法
-    # @api.multi
-    # def write(self, vals):
-    #
-    #     result = super(dtdream_expense_report, self).write(vals)
 
-        # # # 计算消费明细中发生日期最大值。
-        # for ra in self:
-        #     if self.state =='draft':
-        #
-        #         a = []
-        #         for rb in ra.record_ids:
-        #                 a.append(datetime.strptime(rb.currentdate, '%Y-%m-%d'))
-        #
-        #                 # print rb.record_id.invoicevalue
-        #         maxdate = max(a)
-        #         # 建单日期
-        #         createdate = datetime.strptime(self.create_date, '%Y-%m-%d %H:%M:%S')
-        #         # 计算保存时间与最大值差。
-        #         months = (createdate - maxdate).days / 30.0
-        #         # 计算超期罚款系数
-        #         if months <= 1:
-        #             xishu = 1
-        #         elif months > 1 and months <= 2:
-        #             xishu = 0.97
-        #         elif months > 2 and months <= 3:
-        #             xishu = 0.96
-        #         elif months > 3 and months <= 4:
-        #             xishu = 0.94
-        #         elif months > 4 and months <= 5:
-        #             xishu = 0.92
-        #         elif months > 5 and months <= 6:
-        #             xishu = 0.90
-        #         elif months > 6:
-        #             xishu = 0
-        #
-        #         total_invoice = 0.0
-        #         total_koujian = 0.0
-        #         total_shibao = 0.0
-        #
-        #         for rd in ra.record_ids:
-        #             r_shibaoamount = rd.invoicevalue * xishu
-        #             r_koujianamount = rd.invoicevalue - r_shibaoamount
-        #
-        #             rd.outtimenumber = months
-        #             rd.koujianamount = r_koujianamount
-        #             rd.shibaoamount = r_shibaoamount
-        #
-        #             total_invoice += rd.invoicevalue
-        #             total_koujian += r_koujianamount
-        #
-        #         total_shibao = total_invoice - total_koujian
-
-                #print '-----',ra
-                # if ra.total_invoicevalue != total_invoice:
-                #
-                #     ra.total_invoicevalue = total_invoice
-                # if ra.total_koujianamount != total_koujian:
-                #
-                #     ra.total_koujianamount = total_koujian
-                #
-                # if ra.total_shibaoamount != total_shibao:
-                #     ra.total_shibaoamount = total_shibao
-
-        # return result
-
-    # @api.multi
-    # def unlink(self):
-    #
-    #     if self.state == "draft" and self.create_uid.id == self.env.user.id:
-    #         for rec in self:
-    #             # 取消该模型dtdream_expense_record_baoxiao
-    #             # sql = "delete from dtdream_expense_record_baoxiao where report_id =%s" % (rec.id)  # 删除消费明细与报销单的对应关系
-    #             #
-    #             # self.env.cr.execute(sql)
-    #
-    #             sql1 = "delete from dtdream_expense_chuchai where report_id =%s" % (rec.id)  # 删除出差单与报销单的对应关系
-    #
-    #             self.env.cr.execute(sql1)
-    #
-    #             sql2 = "delete from dtdream_expense_benefitdep where report_id =%s" % (rec.id)  # 删除受益部门与报销单的对应关系
-    #
-    #             self.env.cr.execute(sql2)
-    #
-    #         return super(dtdream_expense_report, self).unlink()
-    #     else:
-    #         raise exceptions.ValidationError('报销单只能在草稿状态下删除！')
 
     def get_base_url(self, cr, uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
@@ -566,12 +488,25 @@ class dtdream_expense_report(models.Model):
                 if report.xingzhengzhuli.id == False:
                     raise Warning(u'请选择行政助理!')
 
+                if report.shoukuanrenxinming == False:
+                    raise Warning(u'请联系管理到员工模块-公开信息处填写姓名!')
+
+                if report.kaihuhang == False:
+                    raise Warning(u'请到员工模块-自动信息填写开户行!')
+
+                if report.yinhangkahao == False:
+                    raise Warning(u'请到员工模块-自动信息填写银行卡号!')
+
                 if len(report.record_ids) < 1:
                     raise Warning(u'请选择消费明细!')
                     #raise exceptions.ValidationError("请选择消费明细！")
 
 
                 a=[]#存储费用类别，一张报销单只能有一个费用类别
+                b=[]#存储受益部门名称
+                for dep in report.benefitdep_ids:
+                    b.append(dep.name)
+
                 for rs in report.record_ids:
                     if rs.invoicevalue == False:
                         raise exceptions.ValidationError(u'消费明细不能有空记录，请选择或删除！')
@@ -587,6 +522,9 @@ class dtdream_expense_report(models.Model):
 
                 if len(report.benefitdep_ids)<1:
                     raise exceptions.ValidationError(u"请选择受益部门！")
+
+                if len(report.benefitdep_ids) != len(set(b)):
+                    raise exceptions.ValidationError(u"部门重复,请重新选择！")
 
 
                 total_sharepercent = 0
@@ -665,7 +603,7 @@ class dtdream_expense_report(models.Model):
                 for rc in report.record_ids:
                     rc.write({'state': re_state})
 
-    def send_dingding_msg(self, report, user_id, content=None, itemid="workflow"):
+    def send_dingding_msg(self, report, user_id, content=None, model="receipts", action="approval"):
         from openerp.dingding.message import send as ding
 
         if content == None:
@@ -674,7 +612,7 @@ class dtdream_expense_report(models.Model):
         token = self.env['ir.config_parameter'].get_param('dtdream.dingtalk.token', default='')
         agentid = self.env['ir.config_parameter'].get_param('dtdream.expense.agentId', default="")
         url = self.env['ir.config_parameter'].get_param('dtdream.expense.agentUrl', default="")
-        url = "%s?item-id=%s" % (url, itemid)
+        url = "%s?model=%s&action=%s&id=%d" % (url, model, action, report.id)
 
         text = u"数梦报销"
         oa = {
@@ -686,6 +624,7 @@ class dtdream_expense_report(models.Model):
             "body": {
                 "form": [
                     {"key": u"具体信息如下:", "value": ""},
+                    {"key": u"单据号:", "value": report.name},
                     {"key": u"报销人:", "value": report.create_uid.name},
                     {"key": u"创建时间:", "value": report.create_date[:10]},
                     {"key": u"报销金额:", "value": report.total_shibaoamount}
@@ -694,11 +633,11 @@ class dtdream_expense_report(models.Model):
             }
         }
 
-        job_number = self.env['hr.employee'].search([('user_id', '=', user_id)]).job_number
+        dd_id = self.env['res.users'].search([('id', '=', user_id)]).dd_userid
         try:
-            print "Begin to send dingding message to %s" % (job_number)
-            ding(token, job_number, '', 'oa', oa, agentid)
-            print "End to send dingding message to %s" % (job_number)
+            print "Begin to send dingding message to %s" % (dd_id)
+            ding(token, dd_id, '', 'oa', oa, agentid)
+            print "End to send dingding message to %s" % (dd_id)
         except Exception,e:
             print "Only support operate in ding ding"
             pass
@@ -781,38 +720,42 @@ class dtdream_expense_report(models.Model):
             re_currentauditperson_userid=''
 
             #判断该单审批主管
-            if create_hr_id == zhuguan_id_hr_employee:
-                if parentdepartmentid != False:  # 二级主管提交到一级主管
-                    zhuguanauditperson = self.get_zhuguanfromdepid(parentdepartmentid)
-                else:  # 一级主管提交到总裁
-                    zhuguanauditperson = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name.id
-            else:  # 员工提交到二级主管
-                zhuguanauditperson = zhuguan_id_hr_employee
+            try:
+                if create_hr_id == zhuguan_id_hr_employee:
+                    if parentdepartmentid != False:  # 二级主管提交到一级主管
+                        zhuguanauditperson = self.get_zhuguanfromdepid(parentdepartmentid)
+                    else:  # 一级主管提交到总裁
+                        zhuguanauditperson = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name.id
+                else:  # 员工提交到二级主管
+                    zhuguanauditperson = zhuguan_id_hr_employee
 
-            if zhuguanauditperson == zongcai_hr_employee_id:   #主管审批环节，如果处理人是总裁的话则直接到接口会计
-                re_state = 'jiekoukuaiji'
-                re_currentauditperson = jiekoukuaiji
-                re_currentauditperson_userid = self.get_user_id(jiekoukuaiji)
-            elif zhuguanauditperson == no_two_auditor_hr_employee and report.total_invoicevalue<=no_two_auditor_amount:  # 如果是一级主管到接口会计
-                re_state = 'jiekoukuaiji'
-                re_currentauditperson = jiekoukuaiji
-                re_currentauditperson_userid = self.get_user_id(jiekoukuaiji)
-            elif zhuguanauditperson == no_two_auditor_hr_employee and report.total_invoicevalue > no_two_auditor_amount:  # 如果是一级主管到接口会计
-                re_state = 'quanqianren'
-                re_currentauditperson = zongcai_hr_employee_id
-                re_currentauditperson_userid = self.get_user_id(zongcai_hr_employee_id)
-            elif zhuguanauditperson == no_one_auditor_hr_employee and report.total_invoicevalue<=no_one_auditor_amount:
-                re_state = 'jiekoukuaiji'
-                re_currentauditperson = jiekoukuaiji
-                re_currentauditperson_userid = self.get_user_id(jiekoukuaiji)
-            elif zhuguanauditperson == no_one_auditor_hr_employee and report.total_invoicevalue > no_one_auditor_amount:
-                re_state = 'quanqianren'
-                re_currentauditperson = no_two_auditor_hr_employee
-                re_currentauditperson_userid = self.get_user_id(no_two_auditor_hr_employee)
-            else:
-                re_state = 'quanqianren'
-                re_currentauditperson = no_one_auditor_hr_employee
-                re_currentauditperson_userid = self.get_user_id(no_one_auditor_hr_employee)
+                if zhuguanauditperson == zongcai_hr_employee_id:   #主管审批环节，如果处理人是总裁的话则直接到接口会计
+                    re_state = 'jiekoukuaiji'
+                    re_currentauditperson = jiekoukuaiji
+                    re_currentauditperson_userid = self.get_user_id(jiekoukuaiji)
+                elif zhuguanauditperson == no_two_auditor_hr_employee and report.total_invoicevalue<=no_two_auditor_amount:  # 如果是一级主管到接口会计
+                    re_state = 'jiekoukuaiji'
+                    re_currentauditperson = jiekoukuaiji
+                    re_currentauditperson_userid = self.get_user_id(jiekoukuaiji)
+                elif zhuguanauditperson == no_two_auditor_hr_employee and report.total_invoicevalue > no_two_auditor_amount:  # 如果是一级主管到接口会计
+                    re_state = 'quanqianren'
+                    re_currentauditperson = zongcai_hr_employee_id
+                    re_currentauditperson_userid = self.get_user_id(zongcai_hr_employee_id)
+                elif zhuguanauditperson == no_one_auditor_hr_employee and report.total_invoicevalue<=no_one_auditor_amount:
+                    re_state = 'jiekoukuaiji'
+                    re_currentauditperson = jiekoukuaiji
+                    re_currentauditperson_userid = self.get_user_id(jiekoukuaiji)
+                elif zhuguanauditperson == no_one_auditor_hr_employee and report.total_invoicevalue > no_one_auditor_amount:
+                    re_state = 'quanqianren'
+                    re_currentauditperson = no_two_auditor_hr_employee
+                    re_currentauditperson_userid = self.get_user_id(no_two_auditor_hr_employee)
+                else:
+                    re_state = 'quanqianren'
+                    re_currentauditperson = no_one_auditor_hr_employee
+                    re_currentauditperson_userid = self.get_user_id(no_one_auditor_hr_employee)
+
+            except:
+                raise Warning(u'参数配置不全,请联系管理员!')
 
             # send dingding msg
             self.send_dingding_msg(report, re_currentauditperson_userid)
@@ -912,7 +855,7 @@ class dtdream_expense_report(models.Model):
 
             # send dingding msg
             content = u"您于{0}提交的费用报销单已完成审批!".format(report.create_date[:10])
-            self.send_dingding_msg(report, report.create_uid.id, content=content, itemid="my")
+            self.send_dingding_msg(report, report.create_uid.id, content=content, action="view")
 
     @api.multi
     def btn_checkpaper(self):
@@ -923,14 +866,14 @@ class dtdream_expense_report(models.Model):
                 report.showcuiqian="1"
                 # send dingding msg
                 content = message
-                self.send_dingding_msg(report, report.create_uid.id, content=content)
+                self.send_dingding_msg(report, report.create_uid.id, content=content, action="view")
             elif report.state=="jiekoukuaiji":
                 message = u"接口会计已签收纸件。"
                 self.message_post(body=message)
                 report.showcuiqian = "2"
                 # send dingding msg
                 content = message
-                self.send_dingding_msg(report, report.create_uid.id, content=content)
+                self.send_dingding_msg(report, report.create_uid.id, content=content, action="view")
 
     @api.multi
     def btn_cuiqian(self):

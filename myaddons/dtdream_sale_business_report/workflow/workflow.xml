@@ -16,40 +16,40 @@
             <field name="action">wkf_draft()</field>
         </record>
 
-        <record id="act_approve1" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">配置产品</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_approve1()</field>
-        </record>
+        <!--<record id="act_approve1" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_report_handle"/>-->
+            <!--<field name="name">配置产品</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_approve1()</field>-->
+        <!--</record>-->
 
         <record id="act_approve2" model="workflow.activity">
             <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">办事处审核产品</field>
+            <field name="name">规范性审核、配置清单审核</field>
             <field name="kind">function</field>
             <field name="action">wkf_approve2()</field>
         </record>
 
-        <record id="act_approve3" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">总部审核产品</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_approve3()</field>
-        </record>
+        <!--<record id="act_approve3" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_report_handle"/>-->
+            <!--<field name="name">总部审核产品</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_approve3()</field>-->
+        <!--</record>-->
 
-        <record id="act_approve4" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">完善商务</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_approve4()</field>
-        </record>
+        <!--<record id="act_approve4" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_report_handle"/>-->
+            <!--<field name="name">完善商务</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_approve4()</field>-->
+        <!--</record>-->
 
-        <record id="act_approve5" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">规范性审核</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_approve5()</field>
-        </record>
+        <!--<record id="act_approve5" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_report_handle"/>-->
+            <!--<field name="name">规范性审核</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_approve5()</field>-->
+        <!--</record>-->
 
         <record id="act_approve6" model="workflow.activity">
             <field name="wkf_id" ref="workflow_report_handle"/>
@@ -94,51 +94,51 @@
             <!--<field name="action">wkf_reject()</field>-->
          <!--</record>-->
 
-        <record id="trans_draft_approve1" model="workflow.transition">
+        <record id="trans_draft_approve2" model="workflow.transition">
             <field name="act_from" ref="act_draft"/>
-            <field name="act_to" ref="act_approve1"/>
+            <field name="act_to" ref="act_approve2"/>
             <field name="signal">btn_submit</field>
         </record>
 
-        <record id="trans_approve1_approve2" model="workflow.transition">
-            <field name="act_from" ref="act_approve1"/>
-            <field name="act_to" ref="act_approve2"/>
-            <field name="signal">btn_approve</field>
-        </record>
+        <!--<record id="trans_approve1_approve2" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve1"/>-->
+            <!--<field name="act_to" ref="act_approve2"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve2_approve3" model="workflow.transition">
-            <field name="act_from" ref="act_approve2"/>
-            <field name="act_to" ref="act_approve3"/>
-            <field name="signal">btn_approve</field>
-        </record>
+        <!--<record id="trans_approve2_approve3" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve2"/>-->
+            <!--<field name="act_to" ref="act_approve3"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve2_approve1" model="workflow.transition">
+        <record id="trans_approve2_draft" model="workflow.transition">
             <field name="act_from" ref="act_approve2"/>
-            <field name="act_to" ref="act_approve1"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve3_approve1" model="workflow.transition">
-            <field name="act_from" ref="act_approve3"/>
-            <field name="act_to" ref="act_approve1"/>
-            <field name="signal">btn_reject</field>
-        </record>
+        <!--<record id="trans_approve3_approve1" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve3"/>-->
+            <!--<field name="act_to" ref="act_draft"/>-->
+            <!--<field name="signal">btn_reject</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve3_approve4" model="workflow.transition">
-            <field name="act_from" ref="act_approve3"/>
-            <field name="act_to" ref="act_approve4"/>
-            <field name="signal">btn_approve</field>
-            <field name="condition">pro_zongbu_finish=="1"</field>
-        </record>
+        <!--<record id="trans_approve3_approve4" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve3"/>-->
+            <!--<field name="act_to" ref="act_approve4"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+            <!--<field name="condition">pro_zongbu_finish=="1"</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve4_approve5" model="workflow.transition">
-            <field name="act_from" ref="act_approve4"/>
-            <field name="act_to" ref="act_approve5"/>
-            <field name="signal">btn_approve</field>
-        </record>
+        <!--<record id="trans_approve4_approve5" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve4"/>-->
+            <!--<field name="act_to" ref="act_approve5"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve5_approve6" model="workflow.transition">
-            <field name="act_from" ref="act_approve5"/>
+        <record id="trans_approve2_approve6" model="workflow.transition">
+            <field name="act_from" ref="act_approve2"/>
             <field name="act_to" ref="act_approve6"/>
             <field name="signal">btn_approve</field>
             <field name="condition">pro_zongbu_finish=="1"</field>
@@ -184,47 +184,47 @@
             <field name="signal">btn_approve</field>
         </record>
 
-        <record id="trans_approve5_approve4" model="workflow.transition">
-            <field name="act_from" ref="act_approve5"/>
-            <field name="act_to" ref="act_approve4"/>
-            <field name="signal">btn_reject</field>
-        </record>
+        <!--<record id="trans_approve5_approve4" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve5"/>-->
+            <!--<field name="act_to" ref="act_approve4"/>-->
+            <!--<field name="signal">btn_reject</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve6_approve4" model="workflow.transition">
+        <record id="trans_approve6_draft" model="workflow.transition">
             <field name="act_from" ref="act_approve6"/>
-            <field name="act_to" ref="act_approve4"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve7_approve4" model="workflow.transition">
+        <record id="trans_approve7_draft" model="workflow.transition">
             <field name="act_from" ref="act_approve7"/>
-            <field name="act_to" ref="act_approve4"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve8_approve4" model="workflow.transition">
+        <record id="trans_approve8_draft" model="workflow.transition">
             <field name="act_from" ref="act_approve8"/>
-            <field name="act_to" ref="act_approve4"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve9_approve4" model="workflow.transition">
+        <record id="trans_approve9_draft" model="workflow.transition">
             <field name="act_from" ref="act_approve9"/>
-            <field name="act_to" ref="act_approve4"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve4_approve5_int" model="workflow.transition">
-            <field name="act_from" ref="act_approve4"/>
-            <field name="act_to" ref="act_approve5"/>
-            <field name="signal">btn_to_interface</field>
-        </record>
+        <!--<record id="trans_approve4_approve5_int" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve4"/>-->
+            <!--<field name="act_to" ref="act_approve5"/>-->
+            <!--<field name="signal">btn_to_interface</field>-->
+        <!--</record>-->
 
-        <record id="trans_approve4_approve1" model="workflow.transition">
-            <field name="act_from" ref="act_approve4"/>
-            <field name="act_to" ref="act_approve1"/>
-            <field name="signal">btn_to_se</field>
-        </record>
+        <!--<record id="trans_approve4_approve1" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve4"/>-->
+            <!--<field name="act_to" ref="act_draft"/>-->
+            <!--<field name="signal">btn_to_se</field>-->
+        <!--</record>-->
 
     </data>
 </openerp>

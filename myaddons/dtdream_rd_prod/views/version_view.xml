@@ -68,10 +68,14 @@
             <field name="model">dtdream_rd_version</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="department"/>
+                    <field name="department_2"/>
                     <field name="proName" string="产品名称"/>
                     <field name="pro_flag" />
                     <field name="version_numb"/>
                     <field name="version_state" />
+                    <field name="plan_pub_time"/>
+                    <field name="actual_pub_time"/>
                 </tree>
             </field>
         </record>
@@ -142,12 +146,26 @@
                                 <group>
                                     <group>
                                         <field name="actual_check_pub_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="ys_jy" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="ys_yz" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="ys_yb" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="ys_ts" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
                                     </group>
                                     <group>
                                         <field name="actual_pub_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="yl_jy" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="yl_yz" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="yl_yb" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                        <field name="yl_ts" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
                                     </group>
                                 </group>
                                 <group>
+                                    <group>
+                                        <field name="acceptance_results" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
+                                    </group>
+                                </group>
+                                <group>
+
                                     <field name="place" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
                                     <field name="Material" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('version_state','not in',('pending'))]}"/>
                                 </group>

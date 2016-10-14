@@ -78,6 +78,12 @@
         </field>
     </record>
 
+
+
+
+
+
+
     <record id="view_dtdream_travel_chucha_tree" model="ir.ui.view">
         <field name="name">view.dtdream.travel.chucha.tree</field>
         <field name="model">dtdream.travel.chucha</field>

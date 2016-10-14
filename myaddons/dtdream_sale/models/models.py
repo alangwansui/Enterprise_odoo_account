@@ -22,17 +22,19 @@ class dtdream_product(models.Model):
     pro_description = fields.Text(string="产品对内中文描述")
     pro_description_out = fields.Text(string="产品对外中文描述",required=True)
     effect_time = fields.Date("生效日期",required=True,default=lambda self:datetime.now())
-    ref_discount = fields.Float(string="参考折扣(%)")
+    ref_discount = fields.Float(string="参考折扣(%)",required=True)
     pro_version = fields.Char(string="版本")
     remark = fields.Text(string="备注")
-    office_manager_discount = fields.Float(string="办事处主任折扣(%)")
-    system_department_discount = fields.Float(string="系统部折扣(%)")
-    market_president_discount = fields.Float(string="市场部总裁折扣(%)")
+    office_manager_discount = fields.Float(string="办事处主任折扣(%)",required=True)
+    system_department_discount = fields.Float(string="系统部折扣(%)",required=True)
+    market_president_discount = fields.Float(string="市场部总裁折扣(%)",required=True)
+    sale_grant_discount = fields.Float(string="营销管理部折扣(%)",required=True)
     is_temporary_bom = fields.Selection([
         ('1','是'),
         ('2','否'),
     ],string="是否临时BOM",default="2")
-    list_price = fields.Integer(string="目录价")
+    list_price = fields.Integer(string="目录价",required=True)
+    cost_price = fields.Integer(string="成本价",required=True)
     pro_num = fields.Integer(string="数量")
     pro_source = fields.Selection([
         ('1','自研'),
@@ -366,7 +368,10 @@ class dtdream_sale(models.Model):
 
     @api.one
     def _compute_software_space(self):
-        self.software_space = self.project_space.software_space
+        software_space = 0
+        for rec in self.project_space:
+            software_space = software_space + rec.software_space
+        self.software_space = software_space
 
     description = fields.Text('项目进展')
 

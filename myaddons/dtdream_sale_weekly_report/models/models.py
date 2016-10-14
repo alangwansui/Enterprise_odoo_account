@@ -1465,12 +1465,12 @@ class dtdream_sale_manager_report(models.Model):
                     self.other_project = [(2,rec.id)]
             if rec.project_id.project_number:
                 crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
-                for a_rec in rec.other_project_id.zhengwu_project:
+                for a_rec in rec.manager_other_project_id.zhengwu_project:
                     if a_rec.project_id.project_number == rec.project_id.project_number:
                         a_rec.project_master_degree = rec.project_master_degree
                         a_rec.bidding_time = rec.bidding_time
                         a_rec.project_process = rec.project_process
-                for b_rec in rec.other_project_id.lead_project:
+                for b_rec in rec.manager_other_project_id.lead_project:
                     if b_rec.project_id.project_number == rec.project_id.project_number:
                         b_rec.project_master_degree = rec.project_master_degree
                         b_rec.bidding_time = rec.bidding_time

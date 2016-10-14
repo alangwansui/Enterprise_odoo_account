@@ -276,7 +276,7 @@ class dtdream_travel(models.Model):
     incity_fee = fields.Char(string="市内交通费(元)", required=True)
     hotel_expense = fields.Char(string="住宿费(元)", required=True)
     other_expense = fields.Char(string="其它费(元)", required=True)
-    total = fields.Float(string="合计(元)", readonly=True)
+    total = fields.Float(string="合计(元)", compute=_compute_total_fee)
     journey_id = fields.One2many("dtdream.travel.journey", "travel_id", string="行程")
     employ = fields.Many2one("hr.employee", string="员工")
     approve = fields.Many2many("hr.employee", string="已批准的审批人")

@@ -42,7 +42,7 @@ class ExpenseWizard(models.TransientModel):
 
     state = fields.Selection(selection=_get_states_now, string="节点")
 
-    liyou = fields.Text("驳回原因", required=True)
+    liyou = fields.Text("驳回原因")
 
 #发送邮件公共方法
     def get_base_url(self, cr, uid):
@@ -51,6 +51,47 @@ class ExpenseWizard(models.TransientModel):
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def send_dingding_msg(self, report, user_id, content=None, model="receipts", action="approval"):
+        from openerp.dingding.message import send as ding
+
+        # if content == None:
+        #     content = u"%s提交了费用报销单,等待您的审批!" % report.create_uid.name
+
+        user_id = self.env['hr.employee'].search([('id', '=', user_id)]).user_id
+
+        token = self.env['ir.config_parameter'].get_param('dtdream.dingtalk.token', default='')
+        agentid = self.env['ir.config_parameter'].get_param('dtdream.expense.agentId', default="")
+        url = self.env['ir.config_parameter'].get_param('dtdream.expense.agentUrl', default="")
+        url = "%s?model=%s&action=%s&id=%d" % (url, model, action, report.id)
+
+        text = u"数梦报销"
+        oa = {
+            "message_url": url,
+            "head": {
+                "bgcolor": "51bcec",
+                "text": text
+            },
+            "body": {
+                "form": [
+                    {"key": u"具体信息如下:", "value": ""},
+                    {"key": u"单据号:", "value": report.name},
+                    {"key": u"报销人:", "value": report.create_uid.name},
+                    {"key": u"创建时间:", "value": report.create_date[:10]},
+                    {"key": u"报销金额:", "value": report.total_shibaoamount}
+                ],
+                "content": content
+            }
+        }
+
+        dd_id = self.env['res.users'].search([('id', '=', user_id)]).dd_userid
+        try:
+            print "Begin to send dingding message to %s" % (dd_id)
+            ding(token, dd_id, '', 'oa', oa, agentid)
+            print "End to send dingding message to %s" % (dd_id)
+        except Exception,e:
+            print "Only support operate in ding ding"
+            pass
 
     def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
@@ -214,6 +255,15 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单被行政助理驳回。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = shenqinren
+            action = "edit"
+            content = u"【提醒】{0}于{1}提交的费用报销单被行政助理驳回!".format(current_expense_model.create_uid.name,
+                                                                       current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_xingzheng_to_draft')
 
 
@@ -228,7 +278,16 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单被主管驳回。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+            user_id = shenqinren
+            action = "edit"
+            content = u"【提醒】{0}于{1}提交的费用报销单被主管驳回!".format(current_expense_model.create_uid.name,
+                                                                 current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_zhuguan_to_draft')
+
 
         elif self.state=="xingzheng" and current_expense_model.state=="zhuguan":
             message = u"驳回，状态：主管审批---->行政助理审批。"
@@ -237,6 +296,15 @@ class ExpenseWizard(models.TransientModel):
             xingzhengzhuli=current_expense_model.xingzhengzhuli.id
             emailto = self.env['hr.employee'].search([('id', '=', xingzhengzhuli)]).work_email
             self.send_mail(u"【提醒】{0}于{1}提交的费用报销单已被主管驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,current_expense_model.create_date[:10]),u"%s提交的费用报销单已被主管驳回，现在等待您的审批。" % current_expense_model.create_uid.name,email_to=emailto)
+
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+            user_id = xingzhengzhuli
+            action = "approval"
+            content = u"【提醒】{0}于{1}提交的费用报销单已被主管驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                          current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_zhuguan_to_xingzheng')
 
         elif self.state=="draft" and current_expense_model.state=="quanqianren":
@@ -250,6 +318,15 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单被权签人驳回。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = shenqinren
+            action = "edit"
+            content = u"【提醒】{0}于{1}提交的费用报销单被权签人驳回!".format(current_expense_model.create_uid.name,
+                                                                    current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_quanqianren_to_draft')
 
         elif self.state=="xingzheng" and current_expense_model.state=="quanqianren":
@@ -261,6 +338,15 @@ class ExpenseWizard(models.TransientModel):
             self.send_mail(u"【提醒】{0}于{1}提交的费用报销单已被权签人驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
                                                                          current_expense_model.create_date[:10]),
                            u"%s提交的费用报销单已被主管驳回，现在等待您的审批。" % current_expense_model.create_uid.name, email_to=emailto)
+
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = xingzhengzhuli
+            action = "approval"
+            content = u"【提醒】{0}于{1}提交的费用报销单已被权签人驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                           current_expense_model.create_date[:10]) + suggest
 
             current_expense_model.signal_workflow('btn_refuse_quanqianren_to_xingzheng')
 
@@ -286,7 +372,14 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已被权签人驳回，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
 
+            user_id = re_currentauditperson
+            action = "approval"
+            content = u"【提醒】{0}于{1}提交的费用报销单已被权签人驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                     current_expense_model.create_date[:10]) + suggest
 
         elif self.state=="draft" and current_expense_model.state=="jiekoukuaiji":
             message = u"驳回，状态：接口会计审批---->草稿"
@@ -299,6 +392,15 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单被接口会计驳回。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = shenqinren
+            action = "edit"
+            content = u"【提醒】{0}于{1}提交的费用报销单被接口会计驳回!".format(current_expense_model.create_uid.name,
+                                                                     current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_jiekoukuaiji_to_draft')
 
         elif self.state=="xingzheng" and current_expense_model.state=="jiekoukuaiji":
@@ -310,7 +412,16 @@ class ExpenseWizard(models.TransientModel):
             self.send_mail(u"【提醒】{0}于{1}提交的费用报销单已被接口会计驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
                                                                           current_expense_model.create_date[:10]),
                            u"%s提交的费用报销单已被主管驳回，现在等待您的审批。" % current_expense_model.create_uid.name, email_to=emailto)
-            print "fuck ......"
+
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = xingzhengzhuli
+            action = "approval"
+            content = u"【提醒】{0}于{1}提交的费用报销单已被接口会计驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                            current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_jiekoukuaiji_to_xingzheng')
 
         elif self.state=="zhuguan" and current_expense_model.state=="jiekoukuaiji":
@@ -333,6 +444,15 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已被接口会计驳回，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = re_currentauditperson
+            action = "approval"
+            content = u"【提醒】{0}于{1}提交的费用报销单已被接口会计驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                      current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_jiekoukuaiji_to_zhuguan')
 
         elif self.state == "quanqianren" and current_expense_model.state == "jiekoukuaiji":
@@ -342,26 +462,17 @@ class ExpenseWizard(models.TransientModel):
             # 判断该单审批主管
             if create_hr_id == zhuguan_id_hr_employee:
                 if parentdepartmentid != False:  # 二级主管提交到一级主管
-
-
                     zhuguanauditperson = self.get_zhuguanfromdepid(parentdepartmentid)
 
-
                 else:  # 一级主管提交到总裁
-
                     zhuguanauditperson = self.env['dtdream.expense.president'].search(
                         [('type', '=', 'zongcai')]).name.id
 
-
             else:  # 员工提交到二级主管
-
                 zhuguanauditperson = zhuguan_id_hr_employee
 
 
-
-
             if zhuguanauditperson == zongcai_hr_employee_id:  # 主管审批环节，如果处理人是总裁的话则直接到接口会计
-
 
                 re_currentauditperson = jiekoukuaiji
 
@@ -382,7 +493,20 @@ class ExpenseWizard(models.TransientModel):
                                                                            current_expense_model.create_date[:10]),
                            u"%s提交的费用报销单已被接口会计驳回，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
+
+            suggest = ""
+            if self.liyou:
+                suggest = u"审批意见:" + self.liyou
+
+            user_id = re_currentauditperson
+            action = "approval"
+            content = u"【提醒】{0}于{1}提交的费用报销单已被接口会计驳回，现在等待您的审批!".format(current_expense_model.create_uid.name,
+                                                                      current_expense_model.create_date[:10]) + suggest
+
             current_expense_model.signal_workflow('btn_refuse_jiekoukuaiji_to_quanqianren')
+
+
+        self.send_dingding_msg(current_expense_model, user_id, content=content, action=action)
 
 
 

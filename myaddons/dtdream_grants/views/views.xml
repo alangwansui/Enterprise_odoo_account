@@ -28,7 +28,7 @@
                     <group expand="0" string="Group By">
                       <filter name="group_name_grants" string="员工" context="{'group_by':'name'}"></filter>
                       <filter name="group_department_grants" string="部门" context="{'group_by':'department'}"></filter>
-                      <filter name="group_month_grants" string="年月" context="{'group_by':'month'}"></filter>
+                      <filter name="group_month_grants" string="发放年月" context="{'group_by':'month'}"></filter>
                     </group>
                 </search>
             </field>
@@ -54,7 +54,7 @@
                 <field name="month" readonly="1"></field>
                 <field name="you_fill" attrs="{'readonly':[('if_last_month','=',False),('if_created','=',False)]}" class="int_cls"></field>
                 <field name="fan_fill" attrs="{'readonly':[('if_last_month','=',False),('if_created','=',False)]}" class="int_cls"></field>
-                <field name="cash"></field>
+                <field name="cash" attrs="{'readonly':[('if_last_month','=',False),('if_created','=',False)]}"></field>
                 <field name="if_last_month" invisible="1"></field>
                 <field name="if_created" invisible="1"></field>
               </group>

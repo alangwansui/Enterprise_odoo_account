@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 from lxml import etree
 from openerp.osv import expression
+from openerp.exceptions import ValidationError
 
 
 class dtdream_demand_app(models.Model):
@@ -207,7 +208,11 @@ class dtdream_demand_app(models.Model):
 
     @api.multi
     def wkf_draft(self):
-        self.write({"state": '0', 'current_approve': ''})
+        if self.state != '0':
+            approve = self.name.department_id.manager_id if self.state == '1' else self.env['hr.department'].search(
+                    [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
+            self.write({"state": '0', 'current_approve': self.name.id, 'approves': [(4, approve.id)]})
+            self.add_follower(user_id=approve.user_id)
 
     @api.multi
     def wkf_department_approve(self):
@@ -223,6 +228,8 @@ class dtdream_demand_app(models.Model):
         current_approve = self.env['hr.department'].search(
             [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
         approve = self.name.department_id.manager_id
+        if not self.comments or not self.comments.strip():
+            raise ValidationError('评审意见不能为空，请填写评审意见!')
         self.write({"state": '2', 'current_approve': current_approve.id, 'approves': [(4, approve.id)]})
         self.add_follower(user_id=approve.user_id)
         subject = u'【通知】%s提交了应用开发及优化类需求申请' % self.name.name
@@ -232,15 +239,24 @@ class dtdream_demand_app(models.Model):
 
     @api.multi
     def wkf_plan_analyst(self):
-        current_approve = self.analyst
-        approve = self.env['hr.department'].search(
-            [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
-        self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve.id)]})
-        self.add_follower(user_id=approve.user_id)
-        subject = u'【通知】%s提交了应用开发及优化类需求申请' % self.name.name
-        content = u'%s提交了应用开发及优化类需求申请,请您分析方案!' % self.name.name
-        self.send_mail(current_approve, subject=subject, content=content)
-        self._message_poss(state=u'IT需求审批-->IT方案分析', action=u'同意', approve=current_approve.name)
+        if self.state == '2':
+            if not self.require_comments or not self.require_comments.strip():
+                raise ValidationError('需求评审意见不能为空，请填写需求评审意见!')
+            if not self.analyst:
+                raise ValidationError('方案分析人员不能为空，请指定方案分析人员!')
+            current_approve = self.analyst
+            approve = self.env['hr.department'].search(
+                [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
+            self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve.id)]})
+            self.add_follower(user_id=approve.user_id)
+            subject = u'【通知】%s提交了应用开发及优化类需求申请' % self.name.name
+            content = u'%s提交了应用开发及优化类需求申请,请您分析方案!' % self.name.name
+            self.send_mail(current_approve, subject=subject, content=content)
+            self._message_poss(state=u'IT需求审批-->IT方案分析', action=u'同意', approve=current_approve.name)
+        else:
+            current_approve = self.entrusted_analyst if self.entrusted_analyst else self.analyst
+            self.write({"state": '3', 'current_approve': current_approve.id})
+
 
     @api.multi
     def wkf_plan_approve(self):
@@ -259,6 +275,11 @@ class dtdream_demand_app(models.Model):
 
     @api.multi
     def wkf_plan_doing(self):
+        if not self.plan_comments or not self.plan_comments.strip():
+            raise ValidationError('方案评审意见不能为空，请填写方案评审意见!')
+        if not self.practice_man:
+            raise ValidationError('实施人员不能为空，请指定实施人员!')
+
         current_approve = self.practice_man
         self.write({"state": '5', 'current_approve': current_approve.id})
         subject = u'【通知】%s提交了应用开发类需求,请您按照方案实施' % self.name.name

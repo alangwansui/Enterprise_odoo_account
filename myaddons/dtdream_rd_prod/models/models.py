@@ -662,16 +662,25 @@ class dtdream_prod_appr(models.Model):
         if self.disagree:
             self.write({'disagree':'','comments':''})
         if self.reason_request:
+            # if not self.department.manager_id:
+            #     raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
+            is_plccb = False
+            plccb=None
+            for role in self.role_ids:
+                if role.cof_id.name=="PL-CCB":
+                    is_plccb=True
+                    plccb=role.person
+                    break
+            if not is_plccb or not plccb:
+                raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zantingtj':True})
             self.current_approver_user = [(5,)]
-            if not self.department.manager_id:
-                raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
-            self.add_follower(employee_id=self.department.manager_id.id)
+            # self.add_follower(employee_id=self.department.manager_id.id)
             if self.department_2:
                 subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
             else:
                 subject=self.department.name+u"的"+self.name+u"待您的审批"
-            appellation = self.department.manager_id.name+u",您好"
+            appellation = plccb.name+u",您好"
             content = self.department.name+u"的"+self.name+u"的暂停申请，待您审批"
             base_url = self.get_base_url()
             link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
@@ -685,11 +694,11 @@ class dtdream_prod_appr(models.Model):
                              <p>万千业务，简单有do</p>
                              <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
-                'email_to': '%s' % self.department.manager_id.work_email,
+                'email_to': '%s' % plccb.work_email,
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()
-            self.write({'current_approver_user': [(4,self.department.manager_id.user_id.id)]})
+            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
@@ -709,15 +718,24 @@ class dtdream_prod_appr(models.Model):
         if self.disagree:
             self.write({'disagree':'','comments':''})
         if self.reason_request:
+            is_plccb = False
+            plccb=None
+            for role in self.role_ids:
+                if role.cof_id.name=="PL-CCB":
+                    is_plccb=True
+                    plccb=role.person
+                    break
+            if not is_plccb or not plccb:
+                raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zanting_backtj':True})
             self.current_approver_user = [(5,)]
-            if not self.department.manager_id:
-                raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
+            # if not self.department.manager_id:
+            #     raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
             if self.department_2:
                 subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
             else:
                 subject=self.department.name+u"的"+self.name+u"待您的审批"
-            appellation = self.department.manager_id.name+u",您好"
+            appellation = plccb.name+u",您好"
             content = self.department.name+u"的"+self.name+u"的恢复暂停申请，待您审批"
             base_url = self.get_base_url()
             link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
@@ -731,11 +749,11 @@ class dtdream_prod_appr(models.Model):
                              <p>万千业务，简单有do</p>
                              <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
-                'email_to': '%s' % self.department.manager_id.work_email,
+                'email_to': '%s' % plccb.work_email,
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()
-            self.write({'current_approver_user': [(4,self.department.manager_id.user_id.id)]})
+            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
@@ -757,16 +775,25 @@ class dtdream_prod_appr(models.Model):
         if self.disagree:
             self.write({'disagree':'','comments':''})
         if self.reason_request:
+            is_plccb = False
+            plccb=None
+            for role in self.role_ids:
+                if role.cof_id.name=="PL-CCB":
+                    is_plccb=True
+                    plccb=role.person
+                    break
+            if not is_plccb or not plccb:
+                raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zhongzhitj':True})
             self.current_approver_user = [(5,)]
-            if not self.department.manager_id:
-                raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
-            self.add_follower(employee_id=self.department.manager_id.id)
+            # if not self.department.manager_id:
+            #     raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
+            # self.add_follower(employee_id=self.department.manager_id.id)
             if self.department_2:
                 subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
             else:
                 subject=self.department.name+u"的"+self.name+u"待您的审批"
-            appellation = self.department.manager_id.name+u",您好"
+            appellation = plccb.name+u",您好"
             content = self.department.name+u"的"+self.name+u"的中止申请，待您审批"
             base_url = self.get_base_url()
             link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
@@ -780,11 +807,11 @@ class dtdream_prod_appr(models.Model):
                              <p>万千业务，简单有do</p>
                              <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
                 'subject': '%s' % subject,
-                'email_to': '%s' % self.department.manager_id.work_email,
+                'email_to': '%s' % plccb.work_email,
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()
-            self.write({'current_approver_user': [(4,self.department.manager_id.user_id.id)]})
+            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>

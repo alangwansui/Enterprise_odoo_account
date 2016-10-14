@@ -10,7 +10,7 @@
                             attrs="{'invisible':['|',('state','not in',('0','3','5')),'|','&amp;',('is_creator','=',False),'&amp;',('is_applicant','=',False),('state','=','0'),'|','&amp;',('is_analyst','=',False),'&amp;',('is_entrusted_analyst','=',False),('state','=','3'),'|','&amp;',('is_analyst','=',True),'&amp;',('entrusted_analyst','!=',False),('state','=','3'),'&amp;',('is_practice_man','=',False),('state','=','5')]}"/>
                     <button name="btn_approve" string="同意" type="workflow" class="oe_highlight" confirm="请确认是否同意?"
                             attrs="{'invisible':['|',('state','not in',('1','2','4')),'|','&amp;',('is_direct_manage','=',False),('state','=','1'),'&amp;',('is_IT_manage','=', False),('state','in',('2','4'))]}"/>
-                    <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
+                    <button name="%(act_dtdream_demand_app_reject_wizard)d" string="驳回" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1','2','4')),'|','&amp;',('is_direct_manage','=',False),('state','=','1'),'&amp;',('is_IT_manage','=', False),('state','in',('2','4'))]}"/>
                     <button name="entrust_others_analysis" string="委托他人分析" type="object" class="oe_highlight"
                             attrs="{'invisible':['|',('is_current','=', False),'|',('state','!=','3'),'|','&amp;',('entrusted_analyst','=',False),('state','=','3'),'&amp;',('is_entrusted_analyst','=',True),('state','=','3')]}"/>
@@ -51,17 +51,17 @@
                 <notebook attrs="{'invisible':[('state','=','0')]}" class="dtdream_demand_notebook">
                     <page string="部门主管审批" attrs="{'invisible':[('state','=','0')]}" class="manage_page">
                         <group colspan="12">
-                            <field name="comments" attrs="{'required':[('state','!=', '0')],'readonly':['|','&amp;',('state','!=','1'),('is_manage','=',False),'&amp;',('state','=','1'),'&amp;',('is_direct_manage','=',False),('is_manage','=',False)]}"/>
+                            <field name="comments" attrs="{'readonly':['|','&amp;',('state','!=','1'),('is_manage','=',False),'&amp;',('state','=','1'),'&amp;',('is_direct_manage','=',False),('is_manage','=',False)]}"/>
                         </group>
                     </page>
 
                     <page string="IT需求审批" attrs="{'invisible':[('state','in',('0','1'))]}" class="manage_page">
                         <group colspan="12">
                             <group colspan="12">
-                                <field name="require_comments" attrs="{'required':[('state','not in', ('0','1'))],'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                                <field name="require_comments" attrs="{'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="analyst" attrs="{'required':[('state','not in', ('0','1'))],'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                                <field name="analyst" attrs="{'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
                             </group>
                         </group>
                     </page>
@@ -69,7 +69,7 @@
                     <page string="IT方案分析" attrs="{'invisible':[('state','in',('0','1','2'))]}" class="manage_page">
                         <group>
                             <group attrs="{'invisible':[('state','in',('4','5','6')),('entrusted_analyst','=',False)]}">
-                                <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
+                                <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
                             </group>
                             <group colspan="12" attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
                                 <field name="conclude" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
@@ -86,10 +86,10 @@
                     <page string="IT方案审批" attrs="{'invisible':[('state','in',('0','1', '2','3'))]}" class="manage_page">
                         <group colspan="12">
                             <group colspan="12">
-                                <field name="plan_comments" attrs="{'required':[('state','in', ('4','5','6'))],'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                                <field name="plan_comments" attrs="{'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="practice_man" attrs="{'required':[('state','in', ('4','5','6'))],'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                                <field name="practice_man" attrs="{'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
                             </group>
                         </group>
                     </page>

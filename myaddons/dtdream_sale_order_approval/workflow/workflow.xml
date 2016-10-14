@@ -16,12 +16,12 @@
             <field name="action">wkf_draft()</field>
         </record>
 
-        <record id="act_approve1" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">配置产品</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_approve1()</field>
-        </record>
+        <!--<record id="act_approve1" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_report_handle"/>-->
+            <!--<field name="name">配置产品</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_approve1()</field>-->
+        <!--</record>-->
 
         <record id="act_approve2" model="workflow.activity">
             <field name="wkf_id" ref="workflow_report_handle"/>
@@ -94,17 +94,17 @@
             <!--<field name="action">wkf_reject()</field>-->
          <!--</record>-->
 
-        <record id="trans_draft_approve1" model="workflow.transition">
+        <record id="trans_draft_approve2" model="workflow.transition">
             <field name="act_from" ref="act_draft"/>
-            <field name="act_to" ref="act_approve1"/>
+            <field name="act_to" ref="act_approve2"/>
             <field name="signal">btn_submit</field>
         </record>
 
-        <record id="trans_approve1_approve2" model="workflow.transition">
-            <field name="act_from" ref="act_approve1"/>
-            <field name="act_to" ref="act_approve2"/>
-            <field name="signal">btn_approve</field>
-        </record>
+        <!--<record id="trans_approve1_approve2" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve1"/>-->
+            <!--<field name="act_to" ref="act_approve2"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+        <!--</record>-->
 
         <record id="trans_approve2_approve3" model="workflow.transition">
             <field name="act_from" ref="act_approve2"/>
@@ -114,13 +114,13 @@
 
         <record id="trans_approve2_approve1" model="workflow.transition">
             <field name="act_from" ref="act_approve2"/>
-            <field name="act_to" ref="act_approve1"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
         <record id="trans_approve3_approve1" model="workflow.transition">
             <field name="act_from" ref="act_approve3"/>
-            <field name="act_to" ref="act_approve1"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_reject</field>
         </record>
 
@@ -222,7 +222,7 @@
 
         <record id="trans_approve4_approve1" model="workflow.transition">
             <field name="act_from" ref="act_approve4"/>
-            <field name="act_to" ref="act_approve1"/>
+            <field name="act_to" ref="act_draft"/>
             <field name="signal">btn_to_se</field>
         </record>
 

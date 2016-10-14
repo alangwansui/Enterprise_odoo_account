@@ -39,18 +39,19 @@
                 'view_type': 'form',
                 'view_mode': 'tree,form',
                 'res_model': 'dtdream.sale.business.report',
-                'domain': ['|','|','|',('shenpiren.user_id','=',uid),('approveds.user_id','=',uid),('create_uid','=',uid),('message_follower_ids.partner_id', '=', user.partner_id.id)],
                 'context':context,
                 }
             </field>
         </record>
 
+        <!--'domain': ['|','|','|',('shenpiren.user_id','=',uid),('approveds.user_id','=',uid),('create_uid','=',uid),('message_follower_ids.partner_id', '=', user.partner_id.id)],-->
+
         <record model="ir.actions.server" id="act_shenpi_config">
-            <field name="name">销售流程审批配置</field>
+            <field name="name">商务报备/报单审批配置</field>
             <field name="model_id" ref="model_dtdream_shenpi_config"/>
             <field name="code">
                 action = {
-                'name':'销售流程审批配置',
+                'name':'商务报备/报单审批配置',
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',

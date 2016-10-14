@@ -242,6 +242,8 @@ class dtdream_sale_order_approval(models.Model):
 
     @api.multi
     def wkf_draft(self):
+        self.pro_zongbu_finish = "0"
+        self.write({'rejust_state':0})
         self.write({'state': '0'})
 
     def get_shenpiren(self):
@@ -295,19 +297,8 @@ class dtdream_sale_order_approval(models.Model):
         return shenpiren
 
     @api.multi
-    def wkf_approve1(self):
-        self.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
-        self.pro_zongbu_finish = "0"
-        self.write({'rejust_state':0})
-        self.write({'state':'1'})
-        shenpiren = self.get_shenpiren()
-        self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了订单执行审批申请,请您配置产品!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了订单执行审批申请,等待您配置产品" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
-
-    @api.multi
     def wkf_approve2(self):
+        self.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         if len(self.product_line)==0:
             raise ValidationError("至少添加一行产品才可提交审核")
         for product in self.product_line:
@@ -471,7 +462,7 @@ class dtdream_sale_order_approval(models.Model):
             self.product_line = list_rec
 
     # 报备中项目内容改变时回写到项目及报备申请
-    @api.constrains('system_department_id','industry_id','office_id','bidding_time','pre_implementation_time','partner_id','supply_time','sale_money','partner_budget','have_hardware','final_partner_id','need_ali_grant','product_manager','sale_business_interface_person','pro_background','apply_discription','service_detail','channel_discription','estimate_payment_condition','service_deliver_object','other_discription','apply_time')
+    @api.constrains('system_department_id','industry_id','office_id','bidding_time','pre_implementation_time','partner_id','supply_time','partner_budget','have_hardware','final_partner_id','need_ali_grant','product_manager','sale_business_interface_person','pro_background','apply_discription','service_detail','channel_discription','estimate_payment_condition','service_deliver_object','other_discription','apply_time')
     def update_crm_data(self):
         if len(self.env['crm.lead'].search([('id','=',self.rep_pro_name.id)])) > 0:
             crm_rec = self.env['crm.lead'].search([('id','=',self.rep_pro_name.id)])[0]
@@ -491,7 +482,7 @@ class dtdream_sale_order_approval(models.Model):
             report_rec.write({'pre_implementation_time':self.pre_implementation_time})
             report_rec.write({'partner_id':self.partner_id.id})
             report_rec.write({'supply_time':self.supply_time})
-            report_rec.write({'sale_money':self.sale_money})
+            # report_rec.write({'sale_money':self.sale_money})
             report_rec.write({'partner_budget':self.partner_budget})
             report_rec.write({'have_hardware':self.have_hardware})
             report_rec.write({'final_partner_id':self.final_partner_id.id})
