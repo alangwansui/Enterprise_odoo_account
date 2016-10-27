@@ -285,7 +285,7 @@
 }
 .nav-bx .o_uploader_bd .o_expense_img {
   float: left;
-  width: 75%;
+  width: 72%;
   margin: 0;
 }
 .nav-bx .o_uploader_bd .o_expense_img li {
@@ -295,6 +295,8 @@
   margin-right: .7rem;
   float: left;
   margin-bottom: .7rem;
+  background-size:3rem 3rem;
+  background-repeat:no-repeat;
 }
 .nav-bx .o_uploader_bd .o_uploader_status_content {
   position: relative;
@@ -306,36 +308,39 @@
 }
 .nav-bx .o_uploader_bd .o_uploader_input_wrp {
   float: right;
-  width: 22%;
+  width: 28%;
   position: relative;
   text-align: left;
 }
 .nav-bx .o_uploader_bd .o_uploader_input_wrp .o_uploader_input {
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   position: absolute;
   z-index: 999;
   top: 0;
-  left: 0;
+  left: 1rem;
   opacity: 0;
 }
 .nav-bx .o_uploader_bd .o_uploader_input_wrp .o_image_select {
   font-size: 2rem;
-  margin-left: .5rem;
+  /* margin-left: 1rem;*/
   /* margin-top: -5px; */
   color: #d3d3d3;
   text-align: left;
-  line-height: 2.5rem;
+  line-height: 3rem;
   font-weight: bold;
   position: absolute;
-  padding: .5rem;
+  /*padding: .5rem;*/
   top: 0;
-  left: 0;
+  left: 1rem;
   z-index: -999;
   background-color: #ffffff;
   display: block;
   border: 1px solid #d3d3d3;
-  margin-right: .5rem;
+  /*margin-right: .5rem;*/
+  width: 3rem;
+  height: 3rem;
+  padding-left:.4rem;
 }
 @font-face {
   font-family: "iconfont";
@@ -364,4 +369,18 @@
 }
 .icon-fix_user:before {
   content: "\e60c";
+}
+
+.nav-bx .list-detail .btn-tj {
+  background-color: #6FBA2C;
+  border-radius: 30px;
+  font-size: .7rem;
+  color: #fff;
+  padding: 0.3rem .75rem;
+  cursor: pointer;
+  margin-top: .2rem;
+  display: block;
+}
+.nav-bx .list-detail .btn-tj:active {
+  background-color: #5E9E24;
 }

@@ -10,7 +10,7 @@
                 <group>
                     <group>
 
-                        <field name="advice" placeholder="请填写审批意见！"/>
+                        <field name="advice" placeholder="请填写审批意见！(非必填)"/>
                     </group>
                 </group>
                 <footer>

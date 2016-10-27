@@ -248,7 +248,10 @@ class ver_process_wizard(models.TransientModel):
                     current_version.is_finish_01 = False
                     break
             if current_version.is_finish_01:
-                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02')])           #版本审批配置
+                if current_version.pro_flag=="flag_06":
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02'),('is_formal','=',True)])           #版本审批配置
+                else:
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02'),('is_formal','=',False)])           #版本审批配置
                 rold_ids = []
                 for record in records:
                     rold_ids +=[record.name.id]
@@ -280,7 +283,10 @@ class ver_process_wizard(models.TransientModel):
                     current_version.is_finish_02 = False
                     break
             if current_version.is_finish_02:
-                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02')])           #版本审批配置
+                if current_version.pro_flag=="flag_06":
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02'),('is_formal','=',True)])           #版本审批配置
+                else:
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02'),('is_formal','=',False)])           #版本审批配置
                 rold_ids = []
                 for record in records:
                     rold_ids +=[record.name.id]
@@ -312,7 +318,10 @@ class ver_process_wizard(models.TransientModel):
                     current_version.is_finish_03 = False
                     break
             if current_version.is_finish_03:
-                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02')])           #版本审批配置
+                if current_version.pro_flag=="flag_06":
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02'),('is_formal','=',True)])           #版本审批配置
+                else:
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',current_version.version_state),('level','=','level_02'),('is_formal','=',False)])           #版本审批配置
                 rold_ids = []
                 for record in records:
                     rold_ids +=[record.name.id]

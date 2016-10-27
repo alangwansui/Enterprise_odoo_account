@@ -159,7 +159,8 @@
                 <table class="table table-condensed">
                         <thead>
                             <tr>
-                                <th>出差时间</th>
+                                <th>姓名</th>
+                                <th class="text-right">开始时间</th>
                                 <th class="text-right">结束时间</th>
                                 <th class="text-right">出发地</th>
                                 <th class="text-right">目的地</th>
@@ -171,6 +172,9 @@
                                 <tr >
                                     <td>
                                        <span t-field="d.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.starttime"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-field="d.endtime"/>

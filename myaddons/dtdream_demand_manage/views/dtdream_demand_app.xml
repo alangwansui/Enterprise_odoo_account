@@ -172,7 +172,7 @@
         <field name="category_id" ref="module_dtdream_demand_manage_group"/>
     </record>
 
-    <menuitem name="IT需求管理" id="menu_dtdream_demand_manage_root" icon="fa-user"/>
+    <menuitem name="IT需求管理" id="menu_dtdream_demand_manage_root" icon="fa-user" web_icon="dtdream_demand_manage,static/description/icon.png"/>
 
     <menuitem name="我的申请" id="menu_dtdream_demand_manage" parent="menu_dtdream_demand_manage_root" sequence="12"/>
     <menuitem name="应用开发及优化" id="menu_dtdream_customer_mine" parent="menu_dtdream_demand_manage" sequence="4" action="act_dtdream_demand_manage"/>

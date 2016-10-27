@@ -38,6 +38,24 @@ class dtdream_prod_appr(models.Model):
     start_pro_mar = fields.Text('立项材料',track_visibility='onchange')
     overall_mar = fields.Text('总体设计材料',track_visibility='onchange')
 
+    cg_finsh_time = fields.Datetime(string="草稿阶段完成时间")
+    lx_finsh_time = fields.Datetime(string="立项阶段完成时间")
+    ztsj_finsh_time = fields.Datetime(string="总体设计阶段完成时间")
+    ddfb_finsh_time = fields.Datetime(string="迭代发布阶段完成时间")
+    yzfb_finsh_time = fields.Datetime(string="验证发布阶段完成时间")
+
+    @api.multi
+    def _compute_employee(self):
+        role = self.env["dtdream_rd_config"].search([("name", "=", u"PDT经理")])
+        for recc in self:
+            for rec in recc.role_ids:
+                if role ==rec.cof_id:
+                    if rec.person:
+                        recc.PDT=rec.person.id
+
+    PDT = fields.Many2one("hr.employee",string="PDT经理",compute=_compute_employee)
+
+
 
     color = fields.Integer('Color Index')
     active = fields.Boolean(default=True)
@@ -51,7 +69,7 @@ class dtdream_prod_appr(models.Model):
         cr = self.env["dtdream_execption"].search([("name.id", "=", self.id)])
         self.liwai_nums = len(cr)
 
-    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",stroe=True)
+    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",store=True)
 
     @api.one
     def _compute_dept(self):
@@ -60,7 +78,7 @@ class dtdream_prod_appr(models.Model):
             self.sameDept=True
         else:
             self.sameDept=False
-    sameDept = fields.Boolean(string="是否同一部门",compute=_compute_dept,stroe=True,default=False)
+    sameDept = fields.Boolean(string="是否同一部门",compute=_compute_dept,store=True,default=False)
 
     def add_follower(self, cr, uid, ids, employee_id, context=None):
         employee = self.pool.get('hr.employee').browse(cr, uid, employee_id, context=context)
@@ -155,8 +173,8 @@ class dtdream_prod_appr(models.Model):
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
                 self.add_follower(employee_id=process.approver.id)
 
-    is_finsished_01 = fields.Boolean(string="立项多人审批是否结束",stroe=True)
-    is_finsished_02 = fields.Boolean(string="总体设计多人审批是否结束",stroe=True)
+    is_finsished_01 = fields.Boolean(string="立项多人审批是否结束",store=True)
+    is_finsished_02 = fields.Boolean(string="总体设计多人审批是否结束",store=True)
 
     current_approver_user = fields.Many2many("res.users", "c_a_u_u",string="当前审批人用户")
 
@@ -211,7 +229,7 @@ class dtdream_prod_appr(models.Model):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,store=True,default=True)
 
     @api.one
     def _compute_is_Qa(self):
@@ -295,6 +313,7 @@ class dtdream_prod_appr(models.Model):
             self._wkf_message_post(statechange=u'产品状态: 中止->立项')
         elif self.state=='state_00':
             self._wkf_message_post(statechange=u'产品状态: 草稿->立项')
+            self.write({'cg_finsh_time':datetime.now()})
         self.write({'state': 'state_01'})
 
     @api.multi
@@ -311,12 +330,14 @@ class dtdream_prod_appr(models.Model):
             self._wkf_message_post(statechange=u'产品状态: 中止->总体设计')
         elif self.state=='state_01':
             self._wkf_message_post(statechange=u'产品状态: 立项->总体设计')
+            self.write({'lx_finsh_time':datetime.now()})
         self.write({'state': 'state_02'})
 
     @api.multi
     def wkf_ddkf(self):
         if self.state=="state_02":
             self._wkf_message_post(statechange=u'产品状态: 总体设计->迭代开发')
+            self.write({'ztsj_finsh_time':datetime.now()})
         elif self.state=='state_06':
             self._wkf_message_post(statechange=u'产品状态: 暂停->迭代开发')
         elif self.state=='state_07':
@@ -329,6 +350,7 @@ class dtdream_prod_appr(models.Model):
     def wkf_yzfb(self):
         if self.state=="state_03":
             self._wkf_message_post(statechange=u'产品状态: 迭代开发->验证发布')
+            self.write({'ddfb_finsh_time':datetime.now()})
         elif self.state=='state_06':
             self._wkf_message_post(statechange=u'产品状态: 暂停->验证发布')
         elif self.state=='state_07':
@@ -341,6 +363,7 @@ class dtdream_prod_appr(models.Model):
     def wkf_jieshu(self):
         if self.state=="state_04":
             self._wkf_message_post(statechange=u'产品状态: 验证发布->完成')
+            self.write({'yzfb_finsh_time':datetime.now()})
         elif self.state=='state_06':
             self._wkf_message_post(statechange=u'产品状态: 暂停->完成')
         elif self.state=='state_07':
@@ -414,6 +437,12 @@ class dtdream_prod_appr(models.Model):
         follower = [x.partner_id.user_ids.id for x in self.message_follower_ids]
         qa_user = [x.id for x in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users]
         user_all = [x.id for x in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users]
+        role = self.env["dtdream_rd_config"].search([("name", "=", u"PDT经理")])
+        for rec in self.role_ids:
+            if role ==rec.cof_id:
+                if rec.person:
+                    self.write({'PDT':rec.person.id})
+                    break
         role_ids = self.role_ids
         for index, journey in enumerate(self.role_ids):
             for j in range(index):
@@ -425,7 +454,7 @@ class dtdream_prod_appr(models.Model):
         person = []
         roles_ids_person = [x.person.user_id.id for x in self.role_ids]
         for pers in roles_ids_person:
-            if pers not in person:
+            if pers not in person and pers:
                 person.append(pers)
 
         xxx = [[],[],[],[]]
@@ -786,9 +815,6 @@ class dtdream_prod_appr(models.Model):
                 raise ValidationError(u"该产品没有配置PL-CCB")
             self.write({'is_zhongzhitj':True})
             self.current_approver_user = [(5,)]
-            # if not self.department.manager_id:
-            #     raise ValidationError(u"请配置%s的部门主管" %(self.department.name))
-            # self.add_follower(employee_id=self.department.manager_id.id)
             if self.department_2:
                 subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
             else:
@@ -889,9 +915,14 @@ class dtdream_prod_appr(models.Model):
 
     @api.model
     def read_group(self,domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
-        uid = self._context.get('uid', '')
-        em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-        domain = ['|','|','|','|',('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)]
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu == u"我相关的":
+                uid = self._context.get('uid', '')
+                em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+                domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)], domain])
         res = super(dtdream_prod_appr, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
         return res
 
@@ -901,10 +932,10 @@ class dtdream_prod_appr(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-        if menu == u"我相关的":
-            uid = self._context.get('uid', '')
-            em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-            domain = expression.AND([['|','|','|','|',('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)], domain])
+            if menu == u"我相关的":
+                uid = self._context.get('uid', '')
+                em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+                domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid)], domain])
         return super(dtdream_prod_appr, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                limit=limit, order=order)
 
@@ -986,11 +1017,23 @@ class dtdream_prod_appr(models.Model):
                 elif product.is_zanting_backtj:
                      self.special_send_email(product=product,state=u"恢复暂停")
 
+    @api.model
+    def default_get(self, fields):
+        rec = super(dtdream_prod_appr, self).default_get(fields)
+        results = self.env['dtdream_rd_config'].sudo().search([])
+        list=[]
+        list.append((6,0,[]))
+        for reuslt in results:
+            lit = {'cof_id':reuslt.id,'person':reuslt.person.id}
+            list.append((0,0,lit))
+        rec.update({'role_ids': list})
+        return rec
 
 #角色基础配置
 class dtdream_rd_config(models.Model):
     _name = 'dtdream_rd_config'
     name = fields.Char('角色名称')
+    person = fields.Many2one("hr.employee",'人员')
     cof_ids = fields.One2many('dtdream_rd_role','cof_id')
     @api.model
     def _compute_is_Qa(self):
@@ -1368,7 +1411,7 @@ class dtdream_execption(models.Model):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,store=True,default=True)
 
     @api.one
     def _compute_is_Qa(self):

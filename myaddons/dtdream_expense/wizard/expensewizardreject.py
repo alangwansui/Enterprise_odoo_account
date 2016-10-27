@@ -40,9 +40,9 @@ class ExpenseWizard(models.TransientModel):
                 re = [('draft', '申请人'), ('xingzheng', '行政助理'), ('zhuguan', '主管'), ('quanqianren', '权签人')]
             return re
 
-    state = fields.Selection(selection=_get_states_now, string="节点")
+    state = fields.Selection(selection=_get_states_now, string="节点",required=True)
 
-    liyou = fields.Text("驳回原因")
+    liyou = fields.Text("驳回原因",required=True)
 
 #发送邮件公共方法
     def get_base_url(self, cr, uid):
@@ -60,7 +60,21 @@ class ExpenseWizard(models.TransientModel):
 
         user_id = self.env['hr.employee'].search([('id', '=', user_id)]).user_id
 
-        token = self.env['ir.config_parameter'].get_param('dtdream.dingtalk.token', default='')
+        import redis
+        import openerp
+
+        token = ""
+        try:
+            redis_host = openerp.tools.config['redis_host']
+            redis_port = openerp.tools.config['redis_port']
+            redis_pass = openerp.tools.config['redis_pass']
+            r = redis.Redis(host=redis_host, password=redis_pass, port=redis_port, db=0)
+            if r.get("dtdream.dingtalk.token"):
+                token = r.get("dtdream.dingtalk.token")
+        except Exception, e:
+            print "get token from redis failed"
+            pass
+
         agentid = self.env['ir.config_parameter'].get_param('dtdream.expense.agentId', default="")
         url = self.env['ir.config_parameter'].get_param('dtdream.expense.agentUrl', default="")
         url = "%s?model=%s&action=%s&id=%d" % (url, model, action, report.id)
@@ -84,7 +98,7 @@ class ExpenseWizard(models.TransientModel):
             }
         }
 
-        dd_id = self.env['res.users'].search([('id', '=', user_id)]).dd_userid
+        dd_id = self.env['res.users'].search([('id', '=', user_id.id)]).dd_userid
         try:
             print "Begin to send dingding message to %s" % (dd_id)
             ding(token, dd_id, '', 'oa', oa, agentid)

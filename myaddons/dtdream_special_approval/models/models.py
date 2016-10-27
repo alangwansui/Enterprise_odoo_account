@@ -536,3 +536,17 @@ class dtdream_special_partner(models.Model):
     can_view = fields.Boolean(compute="_compute_can_view")
     approval_ids = fields.One2many("dtdream.special.approval","customer_unit",string="专项")
     approval_nums = fields.Integer(compute='_compute_approval_nums', string="专项数量",stroe=True)
+    is_special = fields.Boolean(default=True)
+
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ["|", ("name", operator, name), ("abbre", operator, name)]
+        if args and args[0][0] == 'is_special' and args[0][2]:
+            pos = self.sudo().search(domain + args, limit=limit)
+        else:
+            pos = self.search(domain + args, limit=limit)
+        return pos.name_get()

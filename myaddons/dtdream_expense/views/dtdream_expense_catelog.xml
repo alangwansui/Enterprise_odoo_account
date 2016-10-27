@@ -7,7 +7,7 @@
             <field name="name">dtdream.expense.catelog.tree</field>
             <field name="model">dtdream.expense.catelog</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree class="expense_catelog_tree">
                     <field name="name"/>
                 </tree>
             </field>
@@ -23,7 +23,7 @@
 
                             <group>
 
-                                <field name="name"/>
+                                <field name="name" class="expense_catelog"/>
 
                             </group>
 

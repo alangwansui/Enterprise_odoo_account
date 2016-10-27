@@ -29,6 +29,7 @@
         'views/res_config_view.xml',
         # 'views/dingtalk_view.xml',
         'views/dingtalk/detail.xml',
+        'views/dingtalk/help.xml',
         'views/res_users_view.xml',
         'views/expense_report_dashboard.xml'
         # 'views/assets.xml'

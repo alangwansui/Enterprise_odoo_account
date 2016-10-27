@@ -97,7 +97,7 @@
                                 <field name="applicant" />
                                 <field name="department" />
                                 <field name="department_sy" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
-                                <field name="customer_unit" domain="[('customer','=',True)]" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="customer_unit" options='{"no_open": True}' domain="[('is_special','=',True)]" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 <field name="event_location" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 <field name="is_create" invisible="1"/>
                                 <field name="is_shenpiren" invisible="1"/>

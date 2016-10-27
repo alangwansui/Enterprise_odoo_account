@@ -40,6 +40,7 @@
         'workflow/expenseworkflow.xml',
         'views/expense_data.xml',
         'print/dtdream_expense_report.xml',
+        'importcssjs.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

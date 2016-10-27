@@ -88,9 +88,9 @@
                                 <div class="item-inner">
                                     <div class="item-title-row">
                                         <div class="item-title">
-                                            <a href="#" class="o_view_expense" t-att-data-id="i.id">
+                                            <!--<a href="#" class="o_view_expense" t-att-data-id="i.id">-->
                                                 <t t-esc="i.expensedetail[1]"/>
-                                            </a>
+                                            <!--</a>-->
                                         </div>
                                         <div class="item-after">￥
                                             <span>
@@ -98,7 +98,11 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="item-subtitle">
+
+                                    <!-- test-->
+                                    <div class="clearfix list-detail">
+                                        <div class="f-l">
+                                            <div class="item-subtitle">
                                         <t t-if="i.province">
                                             <t t-esc="i.province[1]"/>
                                         </t>
@@ -109,6 +113,23 @@
                                     <div class="item-text">
                                         <t t-esc="i.currentdate"/>
                                     </div>
+                                        </div>
+                                        <div class="f-r">
+                                            <a href="#" class="btn-tj o_view_expense" t-att-data-id="i.id">查看</a>
+                                        </div>
+                                    </div>
+                                    <!-- test -->
+                                    <!--<div class="item-subtitle">
+                                        <t t-if="i.province">
+                                            <t t-esc="i.province[1]"/>
+                                        </t>
+                                        <t t-if="city">-
+                                            <t t-esc="city[1]"/>
+                                        </t>
+                                    </div>
+                                    <div class="item-text">
+                                        <t t-esc="i.currentdate"/>
+                                    </div>-->
                                 </div>
                             </label>
                             <!--<label class="label-checkbox item-content o_view_expense" t-att-data-id="i.id">edit&amp;view</label>-->
@@ -222,9 +243,11 @@
                                             <t t-esc="i.currentauditperson[1]"/> <t t-esc="create_date"/>
                                         </div>
                                     </div>
-                                    <div class="f-r">
-                                        <a href="#" class="btn-cb o_receipts_cui" t-att-data-id="i.id">催办</a>
-                                    </div>
+                                    <t t-if="i.cui">
+                                        <div class="f-r">
+                                            <a href="#" class="btn-cb o_receipts_cui" t-att-data-id="i.id">催办</a>
+                                        </div>
+                                    </t>
                                 </div>
                             </div>
                         </div>
@@ -294,7 +317,7 @@
             <div class="circle">
                     <div class="fz-14 je-t">已报销金额</div>
              <div class="money fz-18 fw-b">
-                 ￥<t t-esc="info['finished_receipts_money_create_by_me']"/>
+                 ￥<t t-esc="info['receipts_amount_is_finished']"/>
              </div>
             </div>
             <div class="fz-14 time ">
@@ -311,7 +334,7 @@
                             <div class="item-title-row">
                                 <div class="item-title">待我审批的报销单</div>
                                 <div class="item-after">
-                                    <t t-esc="info['receipts_approval_by_me']"/>
+                                    <t t-esc="info['receipts_approvaling_by_not_caiwu']"/>
                                 </div>
                             </div>
                         </div>
@@ -323,7 +346,7 @@
                             <div class="item-title-row">
                                 <div class="item-title">我的未处理报销单</div>
                                 <div class="item-after">
-                                    <t t-esc="info['receipts_create_by_me']"/>/<t t-esc="info['receipts_money_create_by_me']"/>
+                                    <t t-esc="info['receipts_is_approvaling']"/>/<t t-esc="info['receipts_amount_is_approvaling']"/>元
                                 </div>
                             </div>
                         </div>
@@ -335,7 +358,7 @@
                             <div class="item-title-row">
                                 <div class="item-title">我的未提交消费明细</div>
                                 <div class="item-after">
-                                    <t t-esc="info['no_expense_report']"/>
+                                    <t t-esc="info['details_not_belong_to_details']"/>
                                 </div>
                             </div>
                         </div>
@@ -451,6 +474,7 @@
                                         <div class="item-input">
                                             <input type="number"
                                                    pattern="^\d+$"
+                                                   value="0"
                                                    data-id="kehurenshu" placeholder="请输入客户人数"/>
                                         </div>
                                     </div>
@@ -463,7 +487,19 @@
                                         <div class="item-input">
                                             <input type="number"
                                                    pattern="^\d+$"
-                                                   data-id="peitongrenshu" placeholder="请输入陪同人数"/>
+                                                   value="0" data-id="peitongrenshu" placeholder="请输入陪同人数"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="o_renjunxiaofei">
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">人均消费(元)</div>
+                                        <div class="item-input">
+                                            <input type="number"
+                                                   pattern="^\d+$"
+                                                   data-id="renjunxiaofei" readonly="true"/>
                                         </div>
                                     </div>
                                 </div>
@@ -495,8 +531,7 @@
                         </ul>
                         <div class="o_uploader_input_wrp">
                             <input class="o_uploader_input" type="file" accept="image/*" multiple="">
-                                <i class="icon iconfont o_image_select"
-                                   style="font-size: 60px;    margin-left: 10px; margin-top: -5px;">&#xe73e;</i>
+                                <i class="icon iconfont o_image_select">&#xe73e;</i>
                             </input>
                         </div>
                     </div>
@@ -583,6 +618,39 @@
                                 </div>
                             </div>
 
+                        </div>
+                    </li>
+
+                    <li class="o_shoukuanren">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">收款人姓名</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="shoukuanren"/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="o_kaihuhang">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">开户行</div>
+                                <div class="item-input">
+                                    <input type="text" data-id="kaihuhang"/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="o_yinhangkahao">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">银行卡号</div>
+                                <div class="item-input">
+                                    <input type="number" data-id="yinhangkahao"/>
+                                </div>
+                            </div>
                         </div>
                     </li>
 
@@ -674,7 +742,7 @@
                 <div class="o_report_chuchai_ids">
                     <div class="content-block-title">
                         <div class="row">
-                            <div class="col-80">对应出差申请单</div>
+                            <div class="col-80">出差申请单</div>
                             <div class="col-20">
                                 <a class="pull-right o_add_chuchai" data-popup=".popup-chuchai">
                                     <i class="icon iconfont" style="font-size: 24px">&#xe641;</i>

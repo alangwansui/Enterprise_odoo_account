@@ -71,13 +71,16 @@ odoo.define('dtdream_expense_dingtalk.ui.dashboard', function (require) {
 
             return this.fetch_data().then(function (result) {
                 var report_dashboard = QWeb.render('dtdram_expense_dingtalk.ExpenseReportDashboard', {
-                    'no_expense_report': result.no_expense_report,
-                    'draft_report': result.draft_report,
-                    'wait_confirm_report': result.wait_confirm_report,
-                    'have_check_report': result.have_check_report,
-                    'override_report': result.override_report,
-                    'override_report_amount': result.override_report_amount,
-                    'have_pay_report':result.have_pay_report,
+                    'details_not_belong_to_details': result.details_not_belong_to_details,
+                    'receipts_is_draft': result.receipts_is_draft,
+                    'receipts_is_submited':result.receipts_is_submited,
+                    'receipts_amount_is_submited': result.receipts_amount_is_submited,
+                    'receipts_approvaling_by_me': result.receipts_approvaling_by_me,
+                    'receipts_approvaled_by_me': result.receipts_approvaled_by_me,
+                    'receipts_is_outtime': result.receipts_is_outtime,
+                    'receipts_amount_is_outtime': result.receipts_amount_is_outtime,
+                    'receipts_is_finished':result.receipts_is_finished,
+                    'receipts_amount_is_finished':result.receipts_amount_is_finished
                 });
                 super_render.call(self);
 

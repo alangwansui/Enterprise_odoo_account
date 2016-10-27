@@ -178,8 +178,8 @@
                                 </div>
 
                                 <field name="visible_all" invisible="1"/>
-                                <field name="customernumber" attrs="{'invisible':[('visible_all','=',True)]}"/>
-                                <field name="peitongnumber" attrs="{'invisible':[('visible_all','=',True)]}"/>
+                                <field name="customernumber" attrs="{'invisible':[('visible_all','=',True)]}" class="expense_int_cls"/>
+                                <field name="peitongnumber" attrs="{'invisible':[('visible_all','=',True)]}" class="expense_int_cls"/>
                                 <field name="everyonecost" attrs="{'invisible':[('visible_all','=',True)]}"/>
                                  <field name="actiondesc"/>
 

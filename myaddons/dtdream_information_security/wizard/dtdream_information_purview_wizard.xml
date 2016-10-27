@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_dtdream_information_purview_wizard_agree_form" model="ir.ui.view">
+            <field name="name">view.dtdream.information.purview.wizard.agree.form</field>
+            <field name="model">dtdream.information.purview.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="btn_agree" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_agree" model="ir.actions.act_window">
+            <field name="name">同意</field>
+            <field name="res_model">dtdream.information.purview.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_information_purview_wizard_agree_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_information_purview_wizard_agree_form"/>
+            <field name="act_window_id" ref="act_agree"/>
+        </record>
+
+
+
+
+        <record id="view_dtdream_information_purview_wizard_overrule_form" model="ir.ui.view">
+            <field name="name">view.dtdream.information.purview.wizard.overrule.form</field>
+            <field name="model">dtdream.information.purview.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="btn_overrule" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_overrule" model="ir.actions.act_window">
+            <field name="name">驳回</field>
+            <field name="res_model">dtdream.information.purview.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_information_purview_wizard_overrule_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_information_purview_wizard_overrule_form"/>
+            <field name="act_window_id" ref="act_overrule"/>
+        </record>
+
+
+
+
+        <record id="view_dtdream_information_purview_wizard_disagree_form" model="ir.ui.view">
+            <field name="name">view.dtdream.information.purview.wizard.disagree.form</field>
+            <field name="model">dtdream.information.purview.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason" string="理由"/>
+                    </group>
+                    <footer>
+                        <button name="btn_disagree" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_disagree" model="ir.actions.act_window">
+            <field name="name">不同意</field>
+            <field name="res_model">dtdream.information.purview.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_information_purview_wizard_disagree_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_information_purview_wizard_disagree_form"/>
+            <field name="act_window_id" ref="act_disagree"/>
+        </record>
+
+
+    </data>
+</openerp>

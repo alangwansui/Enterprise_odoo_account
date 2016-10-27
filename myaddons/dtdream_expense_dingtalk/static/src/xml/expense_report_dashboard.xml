@@ -4,103 +4,119 @@
         <style>.container {width:100%;}</style>
         <div class="container">
         <div class="row" style="padding-top: 30px;">
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panelbox-blue" name="dtdream_expense.action_dtdream_expense_record">
-            <a href="#">
-                <div class="panel-footer">
-                    <h4>
-                        未报销费用明细
-                    </h4>
-                    <div class="fy-t"><t t-esc="no_expense_report"/></div>
-                    <div class="fy-more">
-                        <span>显示明细</span>
-                        <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panelbox-blue" name="dtdream_expense.action_dtdream_expense_record">
+                <a href="#">
+                    <div class="panel-footer">
+                        <h4>
+                            我的未报销费用明细
+                        </h4>
+                        <div class="fy-t"><t t-esc="details_not_belong_to_details"/></div>
+                        <div class="fy-more">
+                            <span>显示明细</span>
+                            <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                        </div>
                     </div>
+                </a>
                 </div>
-            </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panelbox-red" name="dtdream_expense.action_dtdream_expense_myreport">
+                    <a href="#"  >
+                        <div class="panel-footer">
+                            <h4>
+                                我的未提交报销单
+                            </h4>
+                            <div class="fy-t"><t t-esc="receipts_is_draft"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panelbox-red-02" name="dtdream_expense.action_dtdream_expense_my_unfinished_reports">
+                <a href="#"  >
+                    <div class="panel-footer">
+                        <h4>
+                            我的未完成报销单
+                        </h4>
+                        <div class="fy-t"><t t-esc="receipts_is_submited"/>/<t t-esc="receipts_amount_is_submited"/>元</div>
+                        <div class="fy-more">
+                            <span>显示明细</span>
+                            <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                        </div>
+                    </div>
+                </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panelbox-yellow-02"  name="dtdream_expense.action_dtdream_expense_have_payed">
+                <a href="#">
+                    <div class="panel-footer">
+                        <h4>
+                            我的已付款报销单
+                        </h4>
+                        <div class="fy-t"><t t-esc="receipts_is_finished"/>/<t t-esc="receipts_amount_is_finished"/>元</div>
+                        <div class="fy-more">
+                            <span>显示明细</span>
+                            <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                        </div>
+                    </div>
+                </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panelbox-yellow" name="dtdream_expense.action_dtdream_expense_outtime">
+                <a href="#"  >
+                    <div class="panel-footer">
+                        <h4>
+                            我的超期报销单
+                        </h4>
+                        <div class="fy-t"><t t-esc="receipts_is_outtime"/>/<t t-esc="receipts_amount_is_outtime"/>元</div>
+                        <div class="fy-more">
+                            <span>显示明细</span>
+                            <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                        </div>
+                    </div>
+                </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panelbox-green" name="dtdream_expense.action_dtdream_expense_pending_jiekoukuaiji">
+                <a href="#" >
+                    <div class="panel-footer" >
+                        <h4>
+                            待我审批报销单
+                        </h4>
+                        <div class="fy-t"><t t-esc="receipts_approvaling_by_me"/></div>
+                        <div class="fy-more">
+                            <span>显示明细</span>
+                            <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                        </div>
+                    </div>
+                </a>
+                    </div>
+            </div>
+            <div class="col-lg-3 col-md-6 ">
+                <div class="panel panelbox-gray" name="dtdream_expense.action_dtdream_expense_audited">
+                <a href="#">
+                    <div class="panel-footer">
+                        <h4>
+                            我已审批报销单
+                        </h4>
+                        <div class="fy-t"><t t-esc="receipts_approvaled_by_me"/></div>
+                        <div class="fy-more">
+                            <span>显示明细</span>
+                            <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
+                        </div>
+                    </div>
+                </a>
+                </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panelbox-red" name="dtdream_expense.action_dtdream_expense_myreport">
-            <a href="#"  >
-                <div class="panel-footer">
-                    <h4>
-                        未提交报销单
-                    </h4>
-                    <div class="fy-t"><t t-esc="draft_report"/></div>
-                    <div class="fy-more">
-                        <span>显示明细</span>
-                        <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
-                    </div>
-                </div>
-            </a>
-                </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panelbox-green" name="dtdream_expense.action_dtdream_expense_pending_jiekoukuaiji">
-            <a href="#" >
-                <div class="panel-footer" >
-                    <h4>
-                        待审批报销单
-                    </h4>
-                    <div class="fy-t"><t t-esc="wait_confirm_report"/></div>
-                    <div class="fy-more">
-                        <span>显示明细</span>
-                        <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
-                    </div>
-                </div>
-            </a>
-                </div>
-        </div>
-        <div class="col-lg-3 col-md-6 ">
-            <div class="panel panelbox-gray" name="dtdream_expense.action_dtdream_expense_audited">
-            <a href="#">
-                <div class="panel-footer">
-                    <h4>
-                        已审批报销单
-                    </h4>
-                    <div class="fy-t"><t t-esc="have_check_report"/></div>
-                    <div class="fy-more">
-                        <span>显示明细</span>
-                        <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
-                    </div>
-                </div>
-            </a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panelbox-yellow" name="dtdream_expense.action_dtdream_expense_outtime">
-            <a href="#"  >
-                <div class="panel-footer">
-                    <h4>
-                        超期报销单
-                    </h4>
-                    <div class="fy-t"><t t-esc="override_report"/>/<t t-esc="override_report_amount"/>元</div>
-                    <div class="fy-more">
-                        <span>显示明细</span>
-                        <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
-                    </div>
-                </div>
-            </a>
-            </div>
-        </div>
-	    <div class="col-lg-3 col-md-6">
-            <div class="panel panelbox-green"  name="dtdream_expense.action_dtdream_expense_have_payed">
-            <a href="#">
-                <div class="panel-footer">
-                    <h4>
-                        已付款报销单
-                    </h4>
-                    <div class="fy-t"><t t-esc="override_report"/>/<t t-esc="have_pay_report"/></div>
-                    <div class="fy-more">
-                        <span>显示明细</span>
-                        <img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />
-                    </div>
-                </div>
-            </a>
-            </div>
-        </div>
-    </div>
         </div>
     </t>
 </templates>

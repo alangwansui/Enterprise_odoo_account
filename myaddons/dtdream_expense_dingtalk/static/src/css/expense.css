@@ -468,9 +468,10 @@ table.dataTable thead .sorting:after {
 /**************/
 .panelbox-blue,
 .panelbox-red,
+.panelbox-red-02,
 .panelbox-green,
 .panelbox-gray,
-.panelbox-yellow {
+.panelbox-yellow,.panelbox-yellow-02 {
   margin-bottom: 30px;
   position: relative;
   font-family: "Microsoft YaHei", Arial, sans-serif;
@@ -478,9 +479,10 @@ table.dataTable thead .sorting:after {
 }
 .panelbox-blue .panel-footer,
 .panelbox-red .panel-footer,
+.panelbox-red-02 .panel-footer,
 .panelbox-green .panel-footer,
 .panelbox-gray .panel-footer,
-.panelbox-yellow .panel-footer {
+.panelbox-yellow .panel-footer,.panelbox-yellow-02 .panel-footer{
   padding: 0;
   background-color: transparent;
   border: none;
@@ -488,9 +490,10 @@ table.dataTable thead .sorting:after {
 }
 .panelbox-blue h4,
 .panelbox-red h4,
+.panelbox-red-02 h4,
 .panelbox-green h4,
 .panelbox-gray h4,
-.panelbox-yellow h4 {
+.panelbox-yellow h4,.panelbox-yellow-02 h4{
   margin: 0;
   padding: 0 ;
   font-size: 16px;
@@ -498,17 +501,19 @@ table.dataTable thead .sorting:after {
 }
 .panelbox-blue a,
 .panelbox-red a,
+.panelbox-red-02 a,
 .panelbox-green a,
 .panelbox-gray a,
-.panelbox-yellow a {
+.panelbox-yellow a,.panelbox-yellow-02 a{
   color: #fff;
   text-decoration: none;
 }
 .panelbox-blue .fy-t,
 .panelbox-red .fy-t,
+.panelbox-red-02 .fy-t,
 .panelbox-green .fy-t,
 .panelbox-gray .fy-t,
-.panelbox-yellow .fy-t {
+.panelbox-yellow .fy-t,.panelbox-yellow-02 .fy-t{
   font-size: 36px;
   color: #fff;
   padding-left: 15px;
@@ -516,17 +521,19 @@ table.dataTable thead .sorting:after {
 }
 .panelbox-blue .fy-more,
 .panelbox-red .fy-more,
+.panelbox-red-02 .fy-more,
 .panelbox-green .fy-more,
 .panelbox-gray .fy-more,
-.panelbox-yellow .fy-more {
+.panelbox-yellow .fy-more,.panelbox-yellow-02 .fy-more{
   font-size: 14px;
   padding: 8px 20px 8px 15px;
 }
 .panelbox-blue .fy-more img,
 .panelbox-red .fy-more img,
+.panelbox-red-02 .fy-more img,
 .panelbox-green .fy-more img,
 .panelbox-gray .fy-more img,
-.panelbox-yellow .fy-more img {
+.panelbox-yellow .fy-more img,.panelbox-yellow-02 .fy-more img{
   float: right;
 }
 .panelbox-blue {
@@ -536,12 +543,23 @@ table.dataTable thead .sorting:after {
 .panelbox-blue .fy-more {
   background-color: rgba(85, 114, 153, 0.4);
 }
+
 .panelbox-red {
   background: url("../img/fy-wtj.png") no-repeat 90% 45%;
   background-color: #CC7E7E ;
 }
+
+.panelbox-red-02 {
+    background: url("../img/fy-wcl.png") no-repeat 90% 45%;
+    background-color: #997992 ;
+}
+
 .panelbox-red .fy-more {
   background-color: rgba(157, 95, 95, 0.4);
+}
+
+.panelbox-red-02 .fy-more {
+  background-color: rgba(118, 90, 112, 0.4);
 }
 .panelbox-green {
   background: url("../img/fy-dsp.png") no-repeat 90% 45%;
@@ -563,6 +581,15 @@ table.dataTable thead .sorting:after {
 }
 .panelbox-yellow .fy-more {
   background-color: rgba(157, 112, 48, 0.4);
+}
+
+.panelbox-yellow-02 {
+    background: url("../img/fy-ybx.png") no-repeat 90% 45%;
+    background-color: #99B37C;
+}
+
+.panelbox-yellow-02 .fy-more {
+    background-color: rgba(106,126,89,0.4);
 }
 
 

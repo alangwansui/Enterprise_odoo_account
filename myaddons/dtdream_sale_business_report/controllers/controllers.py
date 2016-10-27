@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import http
-
+import cgi
 # class DtdreamSaleBusinessReport(http.Controller):
 #     @http.route('/dtdream_sale_business_report/dtdream_sale_business_report/', auth='public')
 #     def index(self, **kw):
@@ -18,3 +18,6 @@ from openerp import http
 #         return http.request.render('dtdream_sale_business_report.object', {
 #             'object': obj
 #         })
+
+
+

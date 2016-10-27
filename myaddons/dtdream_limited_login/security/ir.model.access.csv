@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_limited_login_dtdream_limited_login,dtdream_limited_login.dtdream_limited_login,model_dtdream_limited_login_dtdream_limited_login,,1,0,0,0

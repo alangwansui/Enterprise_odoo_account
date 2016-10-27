@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
                 <form>
                     <group>
-                            <field name="reason"/>
+                            <field name="reason"  class="expense_catelog"/>
                     </group>
                     <footer>
                         <button name="btn_agree" type="object"
@@ -42,7 +42,7 @@
             <field name="arch" type="xml">
                 <form>
                     <group>
-                            <field name="reason"/>
+                            <field name="reason"  class="expense_catelog"/>
                     </group>
                     <footer>
                         <button name="btn_disagree" type="object"
@@ -118,7 +118,7 @@
                             </group>
                         </group>
                         <group>
-                            <field name="reason" attrs="{'readonly':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                            <field name="reason"   class="expense_catelog" attrs="{'readonly':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         </group>
                     </sheet>
                     <div class="oe_chatter">
@@ -162,7 +162,7 @@
                             </group>
                         </group>
                         <group>
-                            <field name="reason"/>
+                            <field name="reason"  class="expense_catelog" />
                         </group>
                     </sheet>
                 </form>

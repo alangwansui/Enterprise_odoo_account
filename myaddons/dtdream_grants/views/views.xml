@@ -67,7 +67,7 @@
       <field name="name">grants.allocation.detail.pivot</field>
       <field name="model">dtdream.grants</field>
       <field name="arch" type="xml">
-        <pivot disable_linking="true">
+        <pivot disable_linking="true" string="仪表盘">
           <field name="month" type="row"/>
           <field name="name" type="row"/>
           <field name="you_fill" type="measure"/>

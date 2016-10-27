@@ -62,7 +62,8 @@ class dtdream_expense_record(models.Model):
 
 
 
-    koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)", track_visibility='onchange')
+    # koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)", track_visibility='onchange')
+    koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)")
     shibaoamount = fields.Float(digits=(11, 2), string="实报金额(元)", compute=_compute_shibaoamount, store=True)
     currentdate = fields.Date(string="发生日期", default=lambda self: datetime.now(), track_visibility='onchange')
     # expenseenddate = fields.Date(string="费用发生结束日期" ,default=lambda self:datetime.now())
@@ -74,6 +75,12 @@ class dtdream_expense_record(models.Model):
     actiondesc = fields.Text(string="活动描述")
     customernumber=fields.Integer(string="客户人数")
     peitongnumber = fields.Integer(string="陪同人数")
+    @api.constrains("expensedetail","customernumber","peitongnumber")
+    def check_id_all_zero(self):
+        if self.expensecatelog.name == u"日常业务费" and self.customernumber == 0 and self.peitongnumber == 0:
+            raise ValidationError(u"日常业务费客户人数和陪同人数不能同时为0")
+        if self.customernumber < 0 or self.peitongnumber < 0:
+            raise ValidationError(u"客户人数和陪同人数不能小于0")
 
     @api.multi
     @api.depends('customernumber', 'invoicevalue','peitongnumber')
@@ -84,7 +91,7 @@ class dtdream_expense_record(models.Model):
                 record.everyonecost = record.invoicevalue/(int(record.customernumber)+int(record.peitongnumber))
 
 
-    everyonecost = fields.Float(digits=(11, 2),string="人均消费",compute=_compute_everyonecost, store=True)
+    everyonecost = fields.Float(digits=(11, 2),string="人均消费(元)",compute=_compute_everyonecost, store=True)
     visible_all = fields.Boolean(default=False,string="是否隐藏客户人数、陪同人数，人均消费")
 
     attachment_ids = fields.One2many('dtdream.expense.record.attachment', 'record_id', u'附件明细')
@@ -95,6 +102,11 @@ class dtdream_expense_record(models.Model):
     report_ids_count = fields.Integer(compute=_compute_report_ids_count, store=True)
 
 
+    @api.constrains('attachment_ids')
+    def check_attachment_ids(self):
+        if self.expensedetail.name != u"出差补助" and \
+                (not self.attachment_ids or len(self.attachment_ids) == 0):
+            raise exceptions.ValidationError(u'请上传费用发票')
 
 
     @api.multi
@@ -113,7 +125,13 @@ class dtdream_expense_record(models.Model):
         active_ids = context.get("active_ids")
         expense_ids = self.browse(active_ids)
         record_ids = []
+        expense_parentids=[]
         for expense in expense_ids:
+            if len(expense_parentids) == 0:
+                expense_parentids.append(expense.expensedetail.parentid.id)
+            else:
+                if expense.expensedetail.parentid.id not in expense_parentids:
+                    raise Warning(u'一张报销单中的费用类别必须相同')
             if expense.create_uid.id != self.env.user.id:
                 raise Warning(u'只能对自己的费用明细生成报销单')
             if expense.report_ids:

@@ -21,9 +21,10 @@ class dtdream_grants_config(models.Model):
     def write(self, vals):
         if vals.has_key('total'):
             allocation_rec = self.env['dtdream.grants.allocation'].search([])
+            res = super(dtdream_grants_config,self).write(vals)
             for recc in allocation_rec:
-                super(dtdream_grants_allocation, recc).unlink()
-        return super(dtdream_grants_config,self).write(vals)
+                super(dtdream_grants_allocation, recc).write({"you":0,"fan":0})
+        return res
 
 class dtdream_grants_allocation(models.Model):
     _name = 'dtdream.grants.allocation'
@@ -144,11 +145,11 @@ class dtdream_grants(models.Model):
                                  'fan_fill':self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.name.user_id.id)]).fan,
                                  'cash':self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.name.user_id.id)]).cash or self.env['dtdream.grants.config'].search([]).total})
 
-    @api.constrains('month')
-    def check_if_last_month(self):
-        last_month = (datetime.today()-relativedelta(months=1)+relativedelta(hours=8)).strftime('%Y%m')
-        if self.month != last_month:
-            raise ValidationError('只能创建上个月的充值记录！')
+    # @api.constrains('month')
+    # def check_if_last_month(self):
+    #     last_month = (datetime.today()-relativedelta(months=1)+relativedelta(hours=8)).strftime('%Y%m')
+    #     if self.month != last_month:
+    #         raise ValidationError('只能创建上个月的充值记录！')
 
     _sql_constraints = [
           ('one_grants_monthly','unique(name,month)','每人每个月只能创建一次补助金充值记录！')

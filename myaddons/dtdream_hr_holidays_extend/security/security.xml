@@ -12,7 +12,6 @@
 
 
         <delete id = "hr_holidays.property_rule_holidays_employee" model="ir.rule"/>
-                                    <!--员工读权限-->
         <record id="hr_holidays.property_rule_holidays_employee" model="ir.rule">
             <field name="name">Employee Holidays rewrite</field>
             <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
@@ -28,7 +27,7 @@
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
         </record>
 
-        <record id="hr_holidays.property_rule_holidays_hr_office" model="ir.rule"><!--hr经理-->
+        <record id="hr_holidays.property_rule_holidays_hr_office" model="ir.rule">
             <field name="name">Employee Holidays hr_office</field>
             <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
             <field name="domain_force">[(1,'=',1)]</field>
@@ -63,7 +62,7 @@
             <field name="perm_unlink" eval="False"/>
             <field name="groups" eval="[(4,ref('base.group_hr_user'))]"/>
         </record>
-                                            <!--员工删除权限-->
+
         <record id="hr_holidays.property_rule_holidays_employee_unlink" model="ir.rule">
             <field name="name">Employee Holidays  Unlink </field>
             <field name="model_id" ref="hr_holidays.model_hr_holidays"/>
@@ -75,7 +74,6 @@
             <field name="groups" eval="[(4,ref('base.group_user'))]"/>
         </record>
 
-        <!--主管删除权限  officer-->
         <delete id="hr_holidays.property_rule_holidays_officer" model="ir.rule"></delete>
         <record id="hr_holidays.property_rule_holidays_officer_unlink" model="ir.rule">
             <field name="name">officer Holidays  Unlink </field>

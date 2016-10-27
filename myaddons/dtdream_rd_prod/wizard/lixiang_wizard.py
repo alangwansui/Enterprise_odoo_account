@@ -136,13 +136,19 @@ class versionWizard(models.TransientModel):
             current_version.write({'is_click_01':True})
             process_01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
             if len(process_01)==0:
-                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01')])           #版本审批配置
+                if current_version.pro_flag=="flag_06":
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01'),('is_formal','=',True)])           #版本审批配置
+                else:
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01'),('is_formal','=',False)])           #版本审批配置
                 rold_ids = []
                 for record in records:
                     rold_ids +=[record.name.id]
                 appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                 if len(appro)==0:
-                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02')])           #版本审批配置
+                    if current_version.pro_flag=="flag_06":
+                        records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02'),('is_formal','=',True)])           #版本审批配置
+                    else:
+                        records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02'),('is_formal','=',False)])           #版本审批配置
                     rold_ids = []
                     for record in records:
                         rold_ids +=[record.name.id]
@@ -206,13 +212,19 @@ class versionWizard(models.TransientModel):
             current_version.write({'is_click_02':True})
             process_02 = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
             if len(process_02)==0:
-                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01')])           #产品审批配置
+                if current_version.pro_flag=="flag_06":
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01'),('is_formal','=',True)])           #版本审批配置
+                else:
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01'),('is_formal','=',False)])           #版本审批配置
                 rold_ids = []
                 for record in records:
                     rold_ids +=[record.name.id]
                 appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                 if len(appro)==0:
-                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02')])           #版本审批配置
+                    if current_version.pro_flag=="flag_06":
+                        records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02'),('is_formal','=',True)])           #版本审批配置
+                    else:
+                        records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02'),('is_formal','=',False)])           #版本审批配置
                     rold_ids = []
                     for record in records:
                         rold_ids +=[record.name.id]
@@ -273,16 +285,24 @@ class versionWizard(models.TransientModel):
                             'email_from':self.get_mail_server_name(),
                         }).send()
         elif state=='pending':
+            if not current_version.actual_pub_time:
+                raise ValidationError("实际发布完成时间必填")
             current_version.write({'is_click_03':True})
             process_03 = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
             if len(process_03)==0:
-                records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01')])           #产品审批配置
+                if current_version.pro_flag=="flag_06":
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01'),('is_formal','=',True)])           #版本审批配置
+                else:
+                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_01'),('is_formal','=',False)])           #版本审批配置
                 rold_ids = []
                 for record in records:
                     rold_ids +=[record.name.id]
                 appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                 if len(appro)==0:
-                    records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02')])           #版本审批配置
+                    if current_version.pro_flag=="flag_06":
+                        records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02'),('is_formal','=',True)])           #版本审批配置
+                    else:
+                        records = self.env['dtdream_rd_approver_ver'].search([('ver_state','=',state),('level','=','level_02'),('is_formal','=',False)])           #版本审批配置
                     rold_ids = []
                     for record in records:
                         rold_ids +=[record.name.id]

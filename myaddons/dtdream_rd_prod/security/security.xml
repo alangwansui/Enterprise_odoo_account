@@ -34,6 +34,17 @@
              <field name="domain_force">[('is_create','=',True),('state','=','state_00')]</field>
          </record>
 
+        <record id="rd_prod_rule_01a" model="ir.rule">
+             <field name="name">研发产品删除</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_qa'))]"/>
+             <field name="domain_force">[]</field>
+         </record>
+
         <record id="rd_prod_rule_02" model="ir.rule">
              <field name="name">研发版本删除</field>
              <field name="model_id" ref="model_dtdream_rd_version"/>
@@ -45,6 +56,17 @@
              <field name="domain_force">[('is_create','=',True),('version_state','=','draft')]</field>
          </record>
 
+        <record id="rd_prod_rule_02a" model="ir.rule">
+             <field name="name">研发版本删除</field>
+             <field name="model_id" ref="model_dtdream_rd_version"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_qa'))]"/>
+             <field name="domain_force">[]</field>
+         </record>
+
         <record id="rd_prod_rule_03" model="ir.rule">
              <field name="name">版本创建时产品查看</field>
              <field name="model_id" ref="model_dtdream_prod_appr"/>
@@ -53,7 +75,29 @@
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="0"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
-             <field name="domain_force">['|','|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),('his_app_user','=',user.id),('followers_user','=',user.id),('department_2','=',user.employee_ids.department_id.id)]</field>
+             <field name="domain_force">['|','|','|','|','|',('department','=',user.employee_ids.department_id.id),('create_uid','=',user.id),('current_approver_user','=',user.id),('his_app_user','=',user.id),('followers_user','=',user.id),('department_2','=',user.employee_ids.department_id.id)]</field>
+         </record>
+
+        <record id="rd_prod_rule_05" model="ir.rule">
+             <field name="name">查看组查看</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user'))]"/>
+             <field name="domain_force">[]</field>
+         </record>
+
+        <record id="rd_prod_rule_06" model="ir.rule">
+             <field name="name">qa组查看</field>
+             <field name="model_id" ref="model_dtdream_prod_appr"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_qa'))]"/>
+             <field name="domain_force">[]</field>
          </record>
 
         <record id="rd_prod_rule_04" model="ir.rule">
@@ -65,6 +109,17 @@
              <field name="perm_unlink" eval="1"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
              <field name="domain_force">[('state','=','state_01')]</field>
+         </record>
+
+        <record id="rd_prod_rule_04a" model="ir.rule">
+             <field name="name">版本重计划删除</field>
+             <field name="model_id" ref="model_dtdream_rd_replanning"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_qa'))]"/>
+             <field name="domain_force">[]</field>
          </record>
 
         </data>

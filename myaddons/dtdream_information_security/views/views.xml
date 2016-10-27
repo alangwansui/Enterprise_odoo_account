@@ -1,0 +1,99 @@
+<openerp>
+    <data>
+        <record id="act_dtdream_information_purview_wait" model="ir.actions.act_window">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.information.purview</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_approver_user','=',uid)]</field>
+        </record>
+
+        <record id="act_dtdream_information_purview_self" model="ir.actions.act_window">
+            <field name="name">我相关的</field>
+            <field name="res_model">dtdream.information.purview</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_approver_user','=',uid),('Co_applicant_user','=',uid)]</field>
+        </record>
+
+         <record id="act_dtdream_information_purview_all" model="ir.actions.act_window">
+            <field name="name">所有权限申请</field>
+            <field name="res_model">dtdream.information.purview</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <record id="dtdream_information_purview_tree" model="ir.ui.view">
+            <field name="name">dtdream_information_purview_tree</field>
+            <field name="model">dtdream.information.purview</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="applicant"/>
+                    <field name="state"/>
+                    <field name="current_approver"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_information_purview_form">
+            <field name="name">dtdream_information_purview_form</field>
+            <field name="model">dtdream.information.purview</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="do_cgtj" string="提交" type="object" confirm="是否确认提交草稿？" attrs="{'invisible':['|',('state','not in',('state_01')),('is_create','=',False)]}"></button>
+                        <button name="%(dtdream_information_security.act_overrule)d"  type="action" string="驳回" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
+                        <button name="%(dtdream_information_security.act_agree)d"  type="action" string="同意" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
+                        <button name="%(dtdream_information_security.act_disagree)d" string="不同意" type="action" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
+                        <button name="%(dtdream_information_security.act_shouquan)d"  type="action" string="授权" attrs="{'invisible':['|',('state','not in',('state_03')),('is_shenpiren','=',False)]}"></button>
+                        <field name="state" widget="statusbar" statusbar_visible="state_01,state_02,state_03,state_04,state_05" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="applicant" />
+                                <field name="department_01"/>
+                                <field name="department_02"/>
+                                <field name="sq_department_code"/>
+                                <field name="manager"/>
+                                <field name="dead_line" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="is_create" invisible="1"/>
+                                <field name="is_shenpiren" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="Co_applicant" widget="many2many_tags" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="origin_department_01" domain="[('parent_id','=',False)]" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="origin_department_02" domain="[('parent_id.parent_id','=',False)]" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="yuan_department_code"/>
+                                <field name="secret_level" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="list" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                        </group>
+                      </sheet>
+                      <div class="oe_chatter">
+                          <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                          <field name="message_ids" widget="mail_thread"/>
+                      </div>
+                </form>
+            </field>
+        </record>
+
+        <menuitem name="信息安全" id="dtdream_information_security_root" icon="fa-user" web_icon="dtdream_information_security,static/description/safe.png"></menuitem>
+
+        <menuitem name="权限申请" sequence="100" id="dtdream_information_purview_menu" parent="dtdream_information_security_root"></menuitem>
+        <menuitem name="我相关的" sequence="100" id="dtdream_information_purview_menu_self" parent="dtdream_information_purview_menu" action="act_dtdream_information_purview_self"></menuitem>
+        <menuitem name="待我审批" sequence="200" id="dtdream_information_purview_menu_wait" parent="dtdream_information_purview_menu" action="act_dtdream_information_purview_wait"></menuitem>
+
+
+        <menuitem name="所有" sequence="150" id="dtdream_informati_security_menu" parent="dtdream_information_security_root" groups="group_dtdream_information_manager"></menuitem>
+        <menuitem name="所有权限申请" sequence="100" id="dtdream_information_purview_menu_all" parent="dtdream_informati_security_menu" action="act_dtdream_information_purview_all" groups="group_dtdream_information_manager"></menuitem>
+
+    </data>
+</openerp>

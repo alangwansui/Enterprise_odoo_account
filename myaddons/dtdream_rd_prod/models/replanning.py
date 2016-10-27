@@ -5,6 +5,7 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from openerp.osv import expression
 from lxml import etree
 
 class dtdream_rd_replanning(models.Model):
@@ -28,8 +29,13 @@ class dtdream_rd_replanning(models.Model):
 
     role_person = fields.Many2many("res.users" ,"dtdream_replanning_role_user",string="对应产品角色中的人员用户")
 
+    department = fields.Many2one('hr.department','部门')
+    department_2 = fields.Many2one('hr.department','二级部门')
+
     @api.constrains('proname')
     def con_name_role(self):
+        self.department=self.proname.department.id
+        self.department_2=self.proname.department_2.id
         self.role_person=[(5,)]
         for role in self.proname.role_ids:
             if role.person:
@@ -59,6 +65,8 @@ class dtdream_rd_replanning(models.Model):
 
     current_approver_user = fields.Many2one("res.users",string="当前审批人用户")
 
+    his_app_user = fields.Many2many("res.users" ,"dtdream_replanning_his_user",string="历史审批人用户")
+
     @api.model
     def _compute_is_shenpiren(self):
         if self.env.user in self.current_approver_user:
@@ -66,6 +74,13 @@ class dtdream_rd_replanning(models.Model):
         else:
             self.is_shenpiren = False
     is_shenpiren = fields.Boolean(string="是否审批人",compute=_compute_is_shenpiren,readonly=True)
+
+    def get_base_url(self,cr,uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -81,6 +96,40 @@ class dtdream_rd_replanning(models.Model):
                 doc.xpath("//tree")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
+
+
+    @api.model
+    def read_group(self,domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
+        users = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users
+        users_a = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user").users
+        users_b = self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users
+        if self.env.user in users:
+            uid = self._context.get('uid', '')
+            em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+            domain = expression.AND([['|','|','|','|','|',('proname.department','=',em.department_id.id),('proname.department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
+        elif self.env.user in users_a or self.env.user in users_b :
+            domain = expression.AND([[], domain])
+        res = super(dtdream_rd_replanning, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+        return res
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        users = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users
+        users_a = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user").users
+        users_b = self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users
+        if self.env.user in users:
+            uid = self._context.get('uid', '')
+            em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+            domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
+        elif self.env.user in users_a or self.env.user in users_b :
+            domain = expression.AND([[], domain])
+        return super(dtdream_rd_replanning, self).search_read(domain=domain, fields=fields, offset=offset,
+                                                               limit=limit, order=order)
+
+
+
+
+
 
     #下方备注
     def _message_post(self,replanning,current_product,current_version,state):
@@ -98,7 +147,7 @@ class dtdream_rd_replanning(models.Model):
         if not self.proname.department.manager_id.id:
             raise ValidationError(u"部门主管未配置")
         else:
-            self.write({'current_approver_user': self.proname.department.manager_id.id})
+            self.write({'current_approver_user': self.proname.department.manager_id.user_id.id})
             self.signal_workflow("cg_to_spz")
 
             next_shenpi = self.proname.department.manager_id
@@ -219,7 +268,7 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
             raise ValidationError(u"部门主管未配置")
         else:
             res = self.env['dtdream.rd.replanning'].create({'proname':self.proname.id,'version':self.version.id,'old_plan_time':self.old_plan_time,'new_plan_time':self.new_plan_time,'reason':self.reason,'state':self.state})
-            res.write({'current_approver_user': self.proname.department.manager_id.id})
+            res.write({'current_approver_user': self.proname.department.manager_id.user_id.id})
             res.signal_workflow("cg_to_spz")
 
             next_shenpi = self.proname.department.manager_id
@@ -274,8 +323,10 @@ class dtdream_rd_replanning_shenpi_wizard(models.TransientModel):
     def btn_agree(self):
         replanning = self.env['dtdream.rd.replanning'].browse(self._context['active_id'])
         replanning.signal_workflow("spz_to_ysp")
+        replanning.write({'his_app_user': [(4, replanning.current_approver_user.id)]})
         self._message_post(replanning=replanning,current_product=replanning.proname,current_version=replanning.version,state=u'审批中->已审批')
         replanning.write({'shenpi_date':datetime.now()})
+
 
     @api.one
     def btn_disagree(self):
@@ -284,4 +335,5 @@ class dtdream_rd_replanning_shenpi_wizard(models.TransientModel):
         else:
              replanning = self.env['dtdream.rd.replanning'].browse(self._context['active_id'])
              replanning.signal_workflow("spz_to_cg")
+             replanning.write({'his_app_user': [(4, replanning.current_approver_user.id)]})
              self._message_post(replanning=replanning,current_product=replanning.proname,current_version=replanning.version,state=u'审批中->草稿')

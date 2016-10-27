@@ -64,8 +64,19 @@ dd.ready(function () {
                 timeout: 9000,
                 success: function (data, status, xhr) {
                     Util.log("dd ready ajax success", location.href.substring(location.href.lastIndexOf('/')+1));
-                    logger.i("userid:"+ data.userid)
-                    logger.i("errcode:"+ data.errcode===0)
+                    logger.i("userid:"+ data.userid);
+                    logger.i("errcode:"+ data.errcode===0);
+
+                    dd.biz.navigation.setIcon({
+                        showIcon : true,//是否显示icon
+                        iconIndex : 1,//显示的iconIndex,如上图
+                        onSuccess : function(result) {
+                            window.open("/dtdream_expense_dingtalk/help", "_blank");
+                        },
+                        onFail : function(err) {
+                        }
+                    });
+
                     dd.userid = data.userid;
                     odoo.define('dtdream_expense.dingtalk', function (require) {
                         var Dingtalk = require('dtdream_expense_dingtalk.detail');

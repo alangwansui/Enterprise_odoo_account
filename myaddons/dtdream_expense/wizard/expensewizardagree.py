@@ -20,15 +20,29 @@ class ExpenseWizard(models.TransientModel):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
-    def send_dingding_msg(self, report, user_id, content=None, model="receipts", action="approval"):
+    def send_dingding_msg(self, report, employee_id, content=None, model="receipts", action="view"):
         from openerp.dingding.message import send as ding
 
         # if content == None:
         #     content = u"%s提交了费用报销单,等待您的审批!" % report.create_uid.name
 
-        user_id = self.env['hr.employee'].search([('id', '=', user_id)]).user_id
+        user_id = self.env['hr.employee'].search([('id', '=', employee_id)]).user_id
 
-        token = self.env['ir.config_parameter'].get_param('dtdream.dingtalk.token', default='')
+        import redis
+        import openerp
+
+        token = ""
+        try:
+            redis_host = openerp.tools.config['redis_host']
+            redis_port = openerp.tools.config['redis_port']
+            redis_pass = openerp.tools.config['redis_pass']
+            r = redis.Redis(host=redis_host, password=redis_pass, port=redis_port, db=0)
+            if r.get("dtdream.dingtalk.token"):
+                token = r.get("dtdream.dingtalk.token")
+        except Exception, e:
+            print "get token from redis failed"
+            pass
+
         agentid = self.env['ir.config_parameter'].get_param('dtdream.expense.agentId', default="")
         url = self.env['ir.config_parameter'].get_param('dtdream.expense.agentUrl', default="")
         url = "%s?model=%s&action=%s&id=%d" % (url, model, action, report.id)
@@ -52,7 +66,7 @@ class ExpenseWizard(models.TransientModel):
             }
         }
 
-        dd_id = self.env['res.users'].search([('id', '=', user_id)]).dd_userid
+        dd_id = self.env['res.users'].search([('id', '=', user_id.id)]).dd_userid
         try:
             print "Begin to send dingding message to %s" % (dd_id)
             ding(token, dd_id, '', 'oa', oa, agentid)
@@ -201,7 +215,7 @@ class ExpenseWizard(models.TransientModel):
     def btn_confirm(self):
         current_expense_model = self.env['dtdream.expense.report'].browse(self._context['active_id'])
 
-
+        create_hr_id = self.get_employee_id(current_expense_model.create_uid.id)
         if current_expense_model.state=="xingzheng":
             if current_expense_model.showcuiqian != '1':
                 raise exceptions.ValidationError('请先确认签收纸件！')
@@ -246,9 +260,9 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已通过行政助理审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
-            content=u"【提醒】{0}于{1}提交的费用报销单已通过行政助理审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+            content=u"【提醒】{0}于{1}提交的费用报销单已通过行政助理审批!".format(current_expense_model.create_uid.name,
                                                                            current_expense_model.create_date[:10])
-            user_id = re_currentauditperson
+            employee_id = create_hr_id
 
         elif current_expense_model.state=="zhuguan":
 
@@ -263,6 +277,7 @@ class ExpenseWizard(models.TransientModel):
                 currentauditperson = current_expense_model.currentauditperson.id  # 本单当前处理人
                 currentauditperson_login = self.get_employee_login(currentauditperson)
                 parentdepartmentid = self.get_employee_parentdepartmentid(currentauditperson_login)  # 上级部门是否为空，为空则为一级，否则为二级
+
             except Exception:
                 raise exceptions.ValidationError("参数配置不全，请联系管理员！")
 
@@ -270,32 +285,64 @@ class ExpenseWizard(models.TransientModel):
             message =''
             emailto = ''
 
-            if currentauditperson == zongcai_hr_employee_id:  # 主管审批环节，如果处理人是总裁的话则直接到接口会计
-                re_currentauditperson = jiekoukuaiji
-                emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
-                message = u"同意，状态：主管审批---->接口会计审批"
-                zhuguan_quanqian_jiekou="2"
-            elif parentdepartmentid != False:  # 如果是二级主管则到第二审批人
-                re_currentauditperson = no_two_auditor_hr_employee
-                emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
-                message = u"同意，状态：主管审批---->权签人审批"
-                zhuguan_quanqian_jiekou = "1"
-            elif parentdepartmentid == False:  # 如果是一级主管到接口会计
-                re_currentauditperson = jiekoukuaiji
-                emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
+            # if currentauditperson == zongcai_hr_employee_id:  # 主管审批环节，如果处理人是总裁的话则直接到接口会计
+            #     re_currentauditperson = jiekoukuaiji
+            #     emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
+            #     message = u"同意，状态：主管审批---->接口会计审批"
+            #     zhuguan_quanqian_jiekou="2"
+            # elif parentdepartmentid != False:  # 如果是二级主管则到第二审批人
+            #     re_currentauditperson = no_two_auditor_hr_employee
+            #     emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
+            #     message = u"同意，状态：主管审批---->权签人审批"
+            #     zhuguan_quanqian_jiekou = "1"
+            # elif parentdepartmentid == False:  # 如果是一级主管到接口会计
+            #     re_currentauditperson = jiekoukuaiji
+            #     emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
+            #     message = u"同意，状态：主管审批---->接口会计审批"
+            #     zhuguan_quanqian_jiekou = "2"
+            # if create_hr_id == zhuguan_id_hr_employee:
+            #     if parentdepartmentid != False:  # 二级主管提交到一级主管
+            #         zhuguanauditperson = self.get_zhuguanfromdepid(parentdepartmentid)
+            #     else:  # 一级主管提交到总裁
+            #         zhuguanauditperson = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name.id
+            # else:  # 员工提交到二级主管
+            #     zhuguanauditperson = zhuguan_id_hr_employee
+
+            if currentauditperson == zongcai_hr_employee_id:   #主管审批环节，如果处理人是总裁的话则直接到接口会计
                 message = u"同意，状态：主管审批---->接口会计审批"
                 zhuguan_quanqian_jiekou = "2"
+                re_currentauditperson = jiekoukuaiji
+            elif currentauditperson == no_two_auditor_hr_employee and current_expense_model.total_invoicevalue<=no_two_auditor_amount:
+                message = u"同意，状态：主管审批---->接口会计审批"
+                zhuguan_quanqian_jiekou = "2"
+                re_currentauditperson = jiekoukuaiji
+            elif currentauditperson == no_two_auditor_hr_employee and current_expense_model.total_invoicevalue > no_two_auditor_amount:
+                message = u"同意，状态：主管审批---->总裁审批"
+                zhuguan_quanqian_jiekou = "1"
+                re_currentauditperson = zongcai_hr_employee_id
+            elif currentauditperson == no_one_auditor_hr_employee and current_expense_model.total_invoicevalue<=no_one_auditor_amount:
+                message = u"同意，状态：主管审批---->接口会计审批"
+                zhuguan_quanqian_jiekou = "2"
+                re_currentauditperson = jiekoukuaiji
+            elif currentauditperson == no_one_auditor_hr_employee and current_expense_model.total_invoicevalue > no_one_auditor_amount:
+                message = u"同意，状态：主管审批---->第二权签人审批"
+                zhuguan_quanqian_jiekou = "1"
+                re_currentauditperson = no_two_auditor_hr_employee
+            else:
+                message = u"同意，状态：主管审批---->第一权签人审批"
+                zhuguan_quanqian_jiekou = "1"
+                re_currentauditperson = no_one_auditor_hr_employee
 
-
+            emailto = self.env['hr.employee'].search([('id', '=', re_currentauditperson)]).work_email
             self.send_mail(u"【提醒】{0}于{1}提交的费用报销单已通过主管审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
                                                                                current_expense_model.create_date[:10]),
                                u"%s提交的费用报销单已通过主管审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                                email_to=emailto)
             current_expense_model.write({'zhuguan_quanqian_jiekoukuaiji': zhuguan_quanqian_jiekou})
 
-            content = u"【提醒】{0}于{1}提交的费用报销单已通过主管审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+            content = u"【提醒】{0}于{1}提交的费用报销单已通过主管审批!".format(current_expense_model.create_uid.name,
                                                                                current_expense_model.create_date[:10])
-            user_id = re_currentauditperson
+            employee_id = create_hr_id
 
         elif current_expense_model.state == "quanqianren":
 
@@ -310,7 +357,6 @@ class ExpenseWizard(models.TransientModel):
             jiekoukuaiji = self.get_jiekoukuaiji(current_expense_model.create_uid.id)  # 接口会计
             zhuguan_login = self.get_employee_login(zhuguan_id_hr_employee)
             parentdepartmentid = self.get_employee_parentdepartmentid(zhuguan_login)  # 上级部门是否为空，为空则为一级，否则为二级
-            create_hr_id = self.get_employee_id(current_expense_model.create_uid.id)  # 本单创建人hr.employee中id
 
 
 
@@ -387,9 +433,9 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已通过权签人审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=emailto)
 
-            content = u"【提醒】{0}于{1}提交的费用报销单已通过权签人审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+            content = u"【提醒】{0}于{1}提交的费用报销单已通过权签人审批!".format(current_expense_model.create_uid.name,
                                                                           current_expense_model.create_date[:10])
-            user_id=re_currentauditperson
+            employee_id=create_hr_id
 
         elif current_expense_model.state == "jiekoukuaiji":
             if current_expense_model.showcuiqian != '2':
@@ -405,12 +451,25 @@ class ExpenseWizard(models.TransientModel):
                            u"%s提交的费用报销单已通过接口会计审批，现在等待您的审批。" % current_expense_model.create_uid.name,
                            email_to=assistant_ids)
 
-            content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批，现在等待您的审批!".format(current_expense_model.create_uid.name,
+            content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批!".format(current_expense_model.create_uid.name,
                                                                            current_expense_model.create_date[:10])
-            user_id=self.env['hr.department'].search([('id', '=', depid)]).chunakuaiji[0].id
+            if current_expense_model.total_koujianamount > 0:
+                if self.advice.strip() != "":
+                    content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批，发生{2}元的扣款!审批意见:{3}".format(
+                              current_expense_model.create_uid.name,
+                              current_expense_model.create_date[:10],
+                              current_expense_model.total_koujianamount,
+                              self.advice.strip())
+                else:
+                    content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批，发生{2}元的扣款!".format(
+                              current_expense_model.create_uid.name,
+                              current_expense_model.create_date[:10],
+                              current_expense_model.total_koujianamount)
+
+            employee_id=create_hr_id
 
 
-        self.send_dingding_msg(current_expense_model, user_id, content=content)
+        self.send_dingding_msg(current_expense_model, employee_id, content=content)
 
         # print '-------->',self.advice
         auditadvice=''

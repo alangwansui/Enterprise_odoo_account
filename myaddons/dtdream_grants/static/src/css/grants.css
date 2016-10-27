@@ -2,3 +2,7 @@
 
     min-width: 180px;
 }
+.dropdown-menu.o_pivot_field_menu{
+    padding-top:0;
+    padding-bottom: 0;
+}

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="dtdream_expense_quanqian_form_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.quanqian.form</field>
+            <field name="model">hr.department</field>
+            <field name="priority">15</field>
+            <field name="arch" type="xml">
+                <form string="department">
+                    <sheet>
+                        <group>
+
+                            <group groups="dtdream_expense.group_dtdream_expense_admin">
+                                <field name="name" attrs="{'readonly':[('is_expense_admin','=',True)]}"/>
+                                <field name="code" attrs="{'readonly':[('is_expense_admin','=',True)]}"/>
+                                <field name="parent_id" attrs="{'readonly':[('is_expense_admin','=',True)]}"/>
+                                <field name="is_expense_admin" invisible="True"/>
+                                <field name="manager_id" string="主管" attrs="{'readonly':[('is_expense_admin','=',True)]}"/>
+                                <field name="assitant_id" widget="many2many_tags" attrs="{'readonly':[('is_expense_admin','=',True)]}"/>
+                            </group>
+
+                            <group groups="dtdream_expense.group_dtdream_expense_admin">
+
+
+                                <field name="no_one_auditor" string="第一审批人" groups="dtdream_expense.group_dtdream_expense_admin"/>
+                                <field name="no_one_auditor_amount" string="第一审批人权签金额" groups="dtdream_expense.group_dtdream_expense_admin"/>
+                                <field name="no_two_auditor" string="第二审批人" groups="dtdream_expense.group_dtdream_expense_admin"/>
+
+                                <field name="no_two_auditor_amount" string="第二审批人权签金额" groups="dtdream_expense.group_dtdream_expense_admin"/>
+                                <field name="no_three_auditor" string="第三审批人" groups="dtdream_expense.group_dtdream_expense_admin"/>
+
+                                <field name="jiekoukuaiji" string="接口会计" groups="dtdream_expense.group_dtdream_expense_admin"/>
+                                <field name="chunakuaiji" string="出纳会计" groups="dtdream_expense.group_dtdream_expense_admin"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="dtdream_expense_quanqian_tree_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.quanqian.tree</field>
+            <field name="model">hr.department</field>
+            <field name="field_parent">child_ids</field>
+            <field name="priority">15</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="complete_name"/>
+                    <field name="manager_id" string="主管"/>
+                    <field name="assitant_id"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="act_dtdream_department_form_expense" model="ir.actions.act_window">
+            <field name="name">部门</field>
+            <field name="res_model">hr.department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id','=',active_id)]</field>
+        </record>
+
+        <record id="ir_open_department_expense" model="ir.values">
+            <field name='key2'>tree_but_open</field>
+            <field name='model'>hr.department</field>
+            <field name="name">报销部门</field>
+            <field eval="'ir.actions.act_window,%d'%act_dtdream_department_form_expense" name='value'/>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_dtdream_expense_quanqian">
+            <field name="name">权签授权设置</field>
+            <field name="view_type">tree</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_mode">tree,list,form</field>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name='context'>{
+                'default_tree_but_open':'报销部门'}</field>
+        </record>
+
+        <record id="action_dtdream_expense_tree_b" model="ir.actions.act_window.view">
+            <field eval="5" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_expense_quanqian_tree_view"/>
+            <field name="act_window_id" ref="act_dtdream_department_form_expense"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_dtdream_expense_quanqian_tree">
+            <field name="act_window_id" ref="action_dtdream_expense_quanqian"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_expense_quanqian_tree_view"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_dtdream_expense_quanqian_form">
+            <field name="act_window_id" ref="act_dtdream_department_form_expense"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_expense_quanqian_form_view"/>
+        </record>
+
+        <menuitem name="权签人" id="dtdream_expense_quanqianren" parent="dtdream_expense_configration"
+                  action="action_dtdream_expense_quanqian" sequence="400" groups="group_dtdream_expense_admin"/>
+
+    </data>
+    </openerp>

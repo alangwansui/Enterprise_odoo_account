@@ -1,0 +1,37 @@
+.dtdream_import{
+    position : absolute;
+    left : 68px;
+    padding : 5px 10px;
+    font-size : 12px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : 4px;
+}
+
+.dtdream_import:hover{
+    color: #fff;
+    background-color: #5eb470;
+    border-color: #57b06a;
+}
+
+ .dtdream_download{
+    position : absolute;
+    left : 168px;
+    padding : 5px 10px;
+    font-size : 12px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : 4px;
+}
+
+.dtdream_download:hover{
+    color: #fff;
+    background-color: #5eb470;
+    border-color: #57b06a;
+}

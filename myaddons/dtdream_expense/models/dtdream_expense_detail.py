@@ -27,6 +27,13 @@ class dtdream_expense_detail(models.Model):
             result.append((detail.id, name))
         return result
 
+    # 可以根据费用类别和费用明细查询
+    def name_search(self, cr, user, name='', args=None, operator='ilike', context=None, limit=100):
+        ids = self.search(cr, user, ['|',('name', 'ilike', name),('parentid', 'ilike', name),] + args, limit=limit)
+        return super(dtdream_expense_detail, self).name_search(
+            cr, user, '', args=[('id', 'in', list(ids))],
+            operator='ilike', context=context, limit=limit)
+
     _sql_constraints = [
 
         ('name_unique',

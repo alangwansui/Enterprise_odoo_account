@@ -3,6 +3,7 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 import openerp
 from openerp.osv import expression
+from datetime import datetime
 
 #版本
 class dtdream_rd_version(models.Model):
@@ -21,7 +22,7 @@ class dtdream_rd_version(models.Model):
 
     pro_flag = fields.Selection([('flag_06','正式版本'),('flag_01','内部测试版本'),('flag_02','外部测试版本'),('flag_03','公测版本'),
                                 ('flag_04','演示版本'),('flag_05','补丁版本')],
-                             '版本标识',track_visibility='onchange')
+                             '版本标识',track_visibility='onchange',required=True)
     version_state = fields.Selection([
         ('draft','草稿'),
         ('initialization','计划中'),
@@ -43,7 +44,7 @@ class dtdream_rd_version(models.Model):
         )
     plan_dev_time = fields.Date("计划开发开始时间",help="版本开始时间指迭代开发开始时间",track_visibility='onchange')
     plan_check_pub_time = fields.Date("计划开发完成时间",track_visibility='onchange')
-    plan_pub_time = fields.Date("计划发布完成时间",track_visibility='onchange')
+    plan_pub_time = fields.Date("计划发布完成时间",track_visibility='onchange',required=True)
     plan_mater=fields.Text("版本计划材料",track_visibility='onchange')
 
     actual_dev_time = fields.Date("实际开发开始时间",help="版本开始时间指迭代开发开始时间",track_visibility='onchange')
@@ -72,6 +73,17 @@ class dtdream_rd_version(models.Model):
     yl_ts = fields.Char(string="遗留提示问题数")
 
     replanning_ids= fields.One2many('dtdream.rd.replanning','version',string="重计划",domain=[('state','=','state_03')])
+
+    cg_finsh_time = fields.Datetime(string="草稿阶段完成时间")
+    jhz_finsh_time = fields.Datetime(string="计划中阶段完成时间")
+    kfz_finsh_time = fields.Datetime(string="开发中阶段完成时间")
+    dfb_finsh_time = fields.Datetime(string="待发布阶段完成时间")
+
+    @api.multi
+    def _compute_proName(self):
+        for rec in self:
+            rec.PDT = rec.proName.PDT.id
+    PDT = fields.Many2one("hr.employee",string="PDT经理",compute=_compute_proName)
 
     @api.constrains('department')
     def _onchang_dep(self):
@@ -122,7 +134,7 @@ class dtdream_rd_version(models.Model):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,store=True,default=True)
 
     @api.one
     def _compute_is_Qa(self):
@@ -149,7 +161,7 @@ class dtdream_rd_version(models.Model):
         cr = self.env["dtdream_execption"].search([("name.id", "=", self.proName.id),('version.id','=',self.id)])
         self.liwai_nums = len(cr)
 
-    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",stroe=True)
+    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",store=True)
 
     #返回上一部
     @api.multi
@@ -200,6 +212,7 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 中止->计划中')
         elif self.version_state=='draft':
             self._wkf_message_post(statechange=u'版本状态: 草稿->计划中')
+            self.write({'cg_finsh_time':datetime.now()})
         self.write({'version_state': 'initialization'})
 
     @api.model
@@ -217,6 +230,7 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 中止->开发中')
         elif self.version_state=='initialization':
             self._wkf_message_post(statechange=u'版本状态: 计划中->开发中')
+            self.write({'jhz_finsh_time':datetime.now()})
         self.write({'version_state': 'Development'})
 
     @api.model
@@ -232,6 +246,7 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 中止->待发布')
         elif self.version_state=='Development':
             self._wkf_message_post(statechange=u'版本状态: 开发中->待发布')
+            self.write({'kfz_finsh_time':datetime.now()})
         self.write({'version_state': 'pending'})
 
     @api.model
@@ -242,6 +257,7 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 中止->已发布')
         elif self.version_state=='pending':
             self._wkf_message_post(statechange=u'版本状态: 待发布->已发布')
+            self.write({'dfb_finsh_time':datetime.now()})
         self.write({'version_state': 'released'})
         self.current_approver_user = [(5,)]
 
@@ -797,9 +813,14 @@ class dtdream_rd_version(models.Model):
 
     @api.model
     def read_group(self,domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
-        uid = self._context.get('uid', '')
-        em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-        domain = ['|','|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)]
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu == u"我相关的":
+                uid = self._context.get('uid', '')
+                em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+                domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
         res = super(dtdream_rd_version, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
         return res
 
@@ -809,10 +830,10 @@ class dtdream_rd_version(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-        if menu == u"我相关的":
-            uid = self._context.get('uid', '')
-            em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-            domain = expression.AND([['|','|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
+            if menu == u"我相关的":
+                uid = self._context.get('uid', '')
+                em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+                domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
         return super(dtdream_rd_version, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                limit=limit, order=order)
 
@@ -908,6 +929,7 @@ class dtdream_rd_approver_ver(models.Model):
     ver_state = fields.Selection([('initialization','计划中'),('Development','开发中'),('pending','待发布')],string='阶段')
     level = fields.Selection([('level_01','一级'),('level_02','二级')],string='级别')
     department = fields.Many2one('hr.department','部门')
+    is_formal = fields.Boolean(string="是否为正式版本")
 
     @api.onchange('ver_state')
     def get_is_pending(self):

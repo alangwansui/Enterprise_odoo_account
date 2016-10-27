@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.module.category" id="module_dtdream_information_security_group">
+            <field name="name">信息安全</field>
+            <field name="description">关于信息安全的组</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="group_dtdream_information_manager" model="res.groups">
+            <field name="name">信息安全管理组</field>
+            <field name="category_id" ref="module_dtdream_information_security_group"/>
+        </record>
+
+
+        <record id="dtdream_information_purview_rule_01" model="ir.rule">
+             <field name="name">权限申请单删除</field>
+             <field name="model_id" ref="model_dtdream_information_purview"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">[('is_create','=',True),('state','=','state_01')]</field>
+         </record>
+
+        </data>
+    </openerp>

@@ -32,56 +32,81 @@ class dtdream_expense_report_count(models.Model):
     @api.model
     def retrieve_sales_dashboard(self):
         res={
-            "no_expense_report":0,
-            "draft_report":0,
-            "wait_confirm_report":0,
-            "have_check_report":0,
-            "override_report":0,
-            "override_report_amount":0,
-            "have_pay_report":0,
             # add by g0335
-            "receipts_money_create_by_me":0,
-            "endTime":"",
-            "receipts_approval_by_me":0,
-            "receipts_create_by_me":0,
-            "finished_receipts_money_create_by_me":0
+            "endTime": "",
+
+            "details_not_belong_to_details":0,
+
+            "receipts_is_draft":0,
+
+            "receipts_is_outtime": 0,
+            "receipts_amount_is_outtime": 0,
+
+            "receipts_is_approvaling": 0,
+            "receipts_amount_is_approvaling": 0,
+
+            "receipts_is_submited": 0,
+            "receipts_amount_is_submited": 0,
+
+            "receipts_is_finished": 0,
+            "receipts_amount_is_finished": 0,
+
+            "receipts_approvaled_by_me": 0,
+            "receipts_approvaling_by_me": 0
         }
-
-        res['no_expense_report']=self.env['dtdream.expense.record'].search_count([('report_ids','=',False),('create_uid','=',self.env.user.id)])
-        res['draft_report']=self.env['dtdream.expense.report'].search_count([('state','=','draft'),('create_uid','=',self.env.user.id)])
-        res['wait_confirm_report'] = self.env['dtdream.expense.report'].search_count([('currentauditperson_userid','=',self.env.user.id)])
-        res['have_check_report'] = self.env['dtdream.expense.report'].search_count(
-            [('hasauditor.user_id', '=', self.env.user.id)])
-        res['have_pay_report'] = self.env['dtdream.expense.report'].search_count(
-            [('create_uid', '=', self.env.user.id),('state','=','yifukuan')])
-
-        report_ids=self.env['dtdream.expense.report'].search([('is_outtime','=',True),('create_uid','=',self.env.user.id)])
-
-        if report_ids:
-            res['override_report']=len(report_ids)
-            for report in report_ids:
-                res['override_report_amount']+=report.outtime_amount
 
         # add by g0335
         res['endTime'] = datetime.today().strftime(DEFAULT_SERVER_DATE_FORMAT)
-        waite_approval_receipts = self.env['dtdream.expense.report'].search([('state','!=','yifukuan'),('create_uid','=',self.env.user.id)])
-        if waite_approval_receipts:
-            res['receipts_create_by_me'] = len(waite_approval_receipts)
-            for receipt in waite_approval_receipts:
-                res['receipts_money_create_by_me'] += receipt.total_shibaoamount
 
-        print "======= %f" % res['receipts_money_create_by_me']
+        # details do not belong to any details
+        res['details_not_belong_to_details'] = self.env['dtdream.expense.record'].search_count([('report_ids','=',False),('create_uid','=',self.env.user.id)])
 
-        res['receipts_money_create_by_me'] = float('%0.2f' % res['receipts_money_create_by_me'])
+        # draft receipts
+        res['receipts_is_draft'] = self.env['dtdream.expense.report'].search_count([('state','=','draft'),('create_uid','=',self.env.user.id)])
 
-        print "======= %f" % res['receipts_money_create_by_me']
+        # outtime receipts
+        receipts_is_outtime = self.env['dtdream.expense.report'].search([('is_outtime', '=', True), ('create_uid', '=', self.env.user.id)])
+        if receipts_is_outtime:
+            res['receipts_is_outtime'] = len(receipts_is_outtime)
+            for receipt in receipts_is_outtime:
+                res['receipts_amount_is_outtime'] += receipt.outtime_amount
+        res['receipts_amount_is_outtime'] = float('%0.2f' % res['receipts_amount_is_outtime'])
 
-        res['receipts_approval_by_me'] = self.env['dtdream.expense.report'].search_count([('currentauditperson_userid','=',self.env.user.id)])
-        finish_receipts = self.env['dtdream.expense.report'].search([('state','=','yifukuan'),('create_uid','=',self.env.user.id)])
-        if finish_receipts:
-            for receipt in finish_receipts:
-                res['finished_receipts_money_create_by_me'] += receipt.total_shibaoamount
+        # unfinished receipts
+        receipts_is_approvaling = self.env['dtdream.expense.report'].search([('state', '!=', 'yifukuan'), ('create_uid', '=', self.env.user.id)])
+        if receipts_is_approvaling:
+            res['receipts_is_approvaling'] = len(receipts_is_approvaling)
+            for receipt in receipts_is_approvaling:
+                res['receipts_amount_is_approvaling'] += receipt.total_shibaoamount
+        res['receipts_amount_is_approvaling'] = float('%0.2f' % res['receipts_amount_is_approvaling'])
 
-        res['finished_receipts_money_create_by_me'] = float('%0.2f' % res['finished_receipts_money_create_by_me'])
+        # submit receipts
+        receipts_is_submited = self.env['dtdream.expense.report'].search(
+            [('state','!=','draft'), ('state', '!=', 'yifukuan'), ('create_uid', '=', self.env.user.id)])
+        if receipts_is_submited:
+            res['receipts_is_submited'] = len(receipts_is_submited)
+            for receipt in receipts_is_submited:
+                res['receipts_amount_is_submited'] += receipt.total_shibaoamount
+        res['receipts_amount_is_submited'] = float('%0.2f' % res['receipts_amount_is_submited'])
+
+        # finished receipts
+        receipts_is_finished = self.env['dtdream.expense.report'].search([('state','=','yifukuan'),('create_uid','=',self.env.user.id)])
+        if receipts_is_finished:
+            res['receipts_is_finished'] = len(receipts_is_finished)
+            for receipt in receipts_is_finished:
+                res['receipts_amount_is_finished'] += receipt.total_shibaoamount
+        res['receipts_amount_is_finished'] = float('%0.2f' % res['receipts_amount_is_finished'])
+
+        # receipts approvaling by me
+        res['receipts_approvaling_by_me'] = self.env['dtdream.expense.report'].search_count([('currentauditperson_userid','=',self.env.user.id)])
+
+        # receipts approvaled by me
+        res['receipts_approvaled_by_me'] = self.env['dtdream.expense.report'].search_count([('hasauditor.user_id', '=', self.env.user.id)])
+
+        # receipts approvaled by not caiwu
+        res['receipts_approvaling_by_not_caiwu'] = self.env['dtdream.expense.report'].search_count(
+            [('currentauditperson_userid', '=', self.env.user.id),
+             ('state', '!=', 'jiekoukuaiji'),
+             ('state', '!=', 'daifukuan')])
 
         return res

@@ -37,6 +37,8 @@ class ReportApproveWizard(models.TransientModel):
             current_report.write({'shenpiren':[(3,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         elif current_report.state=="2":
             current_report.pro_zongbu_finish = "1"
+        elif current_report.state=="6":
+            current_report.pro_office_finish = "1"
         current_report.write({'approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         if current_report.state != '2':
             current_report.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})

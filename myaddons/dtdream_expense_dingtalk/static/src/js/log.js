@@ -25,3 +25,5 @@ var Util = {
         sessionStorage.logBuf.length = 0;
     }
 };
+var cui_buf = [];
+var view_image = false;

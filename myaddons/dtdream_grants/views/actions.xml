@@ -18,7 +18,7 @@
               'view_type': 'form',
               'view_mode': 'form',
               'res_model': 'dtdream.grants.allocation',
-              'res_id': self.search(cr,uid,[('create_uid','=',uid)],context=None)[0] if self.search(cr,uid,[('create_uid','=',uid)],context=None) else "",
+              'res_id': self.search(cr,uid,[('create_uid','=',uid)],context=None)[0] if self.search(cr,uid,[('create_uid','=',uid)],context=None) else self.create(cr,uid,{'you':0},context=None),
               'context':context
               }
           </field>
@@ -50,7 +50,7 @@
               'view_type': 'form',
               'view_mode': 'form',
               'res_model': 'dtdream.grants.config',
-              'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+              'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else self.create(cr,uid,{'total':0},context=None),
               'context':context
               }
           </field>

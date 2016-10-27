@@ -6,12 +6,14 @@
             <field name="view_type">tree</field>
             <field name="view_mode">tree,list,form</field>
             <field name="domain">[('parent_id','=',False)]</field>
+            <field name='context'>{
+                'default_tree_but_open':'模型'}</field>
         </record>
 
         <record id="dtdream_view_department_form" model="ir.ui.view">
             <field name="name">dtdream.hr.department.form</field>
             <field name="model">hr.department</field>
-            <field name="priority">15</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form string="department">
                     <sheet>
@@ -36,6 +38,7 @@
             <field name="name">dtdream.hr.department.tree</field>
             <field name="model">hr.department</field>
             <field name="field_parent">child_ids</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="complete_name"/>
