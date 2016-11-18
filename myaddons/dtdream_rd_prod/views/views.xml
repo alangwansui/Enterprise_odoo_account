@@ -39,19 +39,6 @@
             </field>
         </record>
 
-        <!--例外-->
-        <!--例外修改-->
-        <record id="act_dtdream_exceptionedit" model="ir.actions.act_window">
-            <field name="name">例外</field>
-            <field name="res_model">dtdream_execption</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="context">{'default_flag':False}</field>
-            <field name="target">new</field>
-        </record>
-
-
 <!--研发产品-->
 
         <record id="view_dtdream_prod_appr_filter" model="ir.ui.view">
@@ -84,7 +71,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
             <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
         </record>
 
@@ -95,7 +82,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
-            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
             <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
         </record>
 
@@ -106,7 +93,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"></field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
             <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
         </record>
 
@@ -126,42 +113,42 @@
         </record>
 
 
-        <record id="act_dtdream_exception_quickly" model="ir.actions.act_window">
-            <field name="name">例外</field>
-            <field name="res_model">dtdream_execption</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'default_flag':True}</field>
-            <field name="domain">[('name.id','=',active_id)]</field>
-        </record>
-
         <record id="view_dtdream_prod_appr_form" model="ir.ui.view">
             <field name="name">view.dtdream.prod.appr.form</field>
             <field name="model">dtdream_prod_appr</field>
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="do_cgtj" string="进入下一阶段" type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_00')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="%(dtdream_rd_prod.act_lixiang_wizardappr)d"  string="进入下一阶段"  type="action" attrs="{'invisible':['|','|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('is_lixiangappred','=',True),('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_ztsjtj"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('is_appred','=',True),('state','not in',('state_02')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','in',('state_00','state_06','state_07')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
-                        <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_cgtj" string="进入下一阶段" type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|',('state','not in',('state_00')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_lixiang_wizardappr)d"  string="进入下一阶段"  type="action" attrs="{'invisible':['|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_lixiangappred','=',True),('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_ztsjtj"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_appred','=',True),('state','not in',('state_02')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('state','in',('state_00','state_06','state_07')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
 
-                        <button name="do_zanting"  string="申请暂停"  type="object" confirm="确认申请暂停？" attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zhongzhi','=',True),('state','in',('state_00','state_05','state_07','state_06')),('is_zanting','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zantingtj"  string="提交暂停"  type="object" confirm="确认提交暂停？" attrs="{'invisible':['|','|','|',('state','in',('state_00','state_05','state_07','state_06')),('is_zantingtj','=',True),('is_zanting','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zhongzhi"  string="申请中止"  type="object" confirm="确认申请中止？" attrs="{'invisible':['|','|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zanting_back','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zhongzhitj"  string="提交中止"  type="object" confirm="确认提交中止？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitj','=',True),('is_zanting','=',True),('state','in',('state_00','state_05','state_07')),('is_zhongzhi','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zanting_back"  string="申请恢复暂停"  type="object" confirm="确认申请恢复暂停？" attrs="{'invisible':['|','|',('state','!=','state_06'),('is_zanting_back','=',True),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_zanting_backtj"  string="提交恢复暂停"  type="object" confirm="确认提交恢复暂停？" attrs="{'invisible':['|','|','|',('state','!=','state_06'),('is_zanting_backtj','=',True),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
+
+
+                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True,'default_approver_fir':QA,'default_approver_sec':PL_CCB}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>
 
-                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhi','=',True),('is_zanting','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
+
+                        <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension)d" string="申请暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
+                        attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension_restoration)d" string="申请恢复暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
+                        attrs="{'invisible':['|','|',('is_zanting_backtjN','=',True),('state','not in',('state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
+                        <button name="%(dtdream_rd_prod.act_dtdream_prod_termination)d" string="申请中止" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
+                        attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_06,state_07,state_05" />
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="action" name="%(act_dtdream_prod_suspension_quickly)d"
+                                icon="fa-strikethrough">
+                                <field string="暂停" name="zanting_nums" widget="statinfo"/>
+                            </button>
                             <button class="oe_stat_button" type="action" name="%(act_dtdream_exception_quickly)d"
                                 icon="fa-strikethrough">
                                 <field string="例外" name="liwai_nums" widget="statinfo"/>
@@ -174,17 +161,19 @@
                                 <field name="execption_flag" invisible="1"/>
                                 <field name="execption_id" invisible="1"/>
                                 <field name="is_lixiangappred" invisible="1"/>
+                                <field name="QA" invisible="1"/>
+                                <field name="PL_CCB" invisible="1"/>
                             </h1>
                         </div>
                          <group>
                              <group>
-                                 <field name="department" domain="[('parent_id','=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                 <field name="department" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                  <field name="is_create" invisible="1"/>
                                  <field name="is_appred" invisible="1"/>
                                  <field name="sameDept" invisible="1"/>
                              </group>
                              <group>
-                                 <field name="department_2" domain="[('parent_id.parent_id','=',False)]" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                 <field name="department_2" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                  <field name="is_Qa" invisible="1"/>
                                  <field name="is_shenpiren" invisible="1"/>
                              </group>
@@ -213,7 +202,7 @@
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
                                                     <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                         </page>
@@ -243,7 +232,7 @@
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
                                                     <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                         </page>
@@ -282,34 +271,9 @@
                                         <field name="actual_pub_time"/>
                                     </tree>
                                 </field>
-                            </page>
-                            <page string="暂停或中止" attrs="{'invisible':[('is_ztpage','=',False)]}">
-                                <div>
-                                  <p><font color="red">注：此页面为申请暂停、恢复暂停、中止填写与审批页面</font></p>
-                                </div>
-                                    <group>
-                                        <field name="reason_request" attrs="{'readonly':['|','|','|',('is_zhongzhitj','=',True),('is_zantingtj','=',True),('is_zanting_backtj','=',True),'|','&amp;','&amp;',('is_zanting','=',False),('is_zhongzhi','=',False),('is_zanting_back','=',False),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                                        <field name="is_ztpage" invisible="1"/>
-                                        <field name="comments" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhitj','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
-                                    </group>
-                                    <group>
-                                        <group>
-                                            <group>
-                                               <field name="agree" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhitj','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
-                                           </group>
-                                           <group>
-                                               <field name="disagree" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_shenpiren','=',False),'&amp;','&amp;',('is_zhongzhitj','=',False),('is_zantingtj','=',False),('is_zanting_backtj','=',False)]}"/>
-                                           </group>
-                                        </group>
-                                        <group>
-                                            <field name="is_zanting" invisible="1"/>
-                                            <field name="is_zanting_back" invisible="1"/>
-                                            <field name="is_zhongzhi" invisible="1"/>
-                                            <field name="is_zantingtj" invisible="1"/>
-                                            <field name="is_zanting_backtj" invisible="1"/>
-                                            <field name="is_zhongzhitj" invisible="1"/>
-                                        </group>
-                                    </group>
+                                <field name="is_zantingtjN" invisible="1"/>
+                                <field name="is_zanting_backtjN" invisible="1"/>
+                                <field name="is_zhongzhitjN" invisible="1"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -321,246 +285,16 @@
           </field>
         </record>
 
-    <!--审批意见-->
-        <record id="view_dtdream_rd_process_from" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.process.from</field>
-            <field name="model">dtdream_rd_process</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name='pro_state'/>
-                                <field name='role'/>
-                                <field name='approver' attrs="{'readonly':[('editable','=',False)]}"/>
-                                <field name="level"/>
-                            </group>
-                            <group>
-                                <field name='is_pass' attrs="{'readonly':[('editable','=',False)]}"/>
-                                <field name='is_refuse' attrs="{'readonly':[('editable','=',False)]}"/>
-                                <field name='is_risk' attrs="{'readonly':[('editable','=',False)]}"/>
-                                <field name="process_id" invisible="1"/>
-                                <field name="is_new" invisible="1"/>
-                                <field name="editable" invisible="1"/>
-                                <field name="approver_old" invisible="1"/>
-                            </group>
-                            <field name="reason" attrs="{'readonly':[('editable','=',False)]}"/>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-        
-<!--角色配置-->
-        <record id="act_dtdream_rd_Rconfig" model="ir.actions.act_window">
-            <field name="name">角色配置</field>
-            <field name="res_model">dtdream_rd_config</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
-        </record>
-
-        <record id="view_dtdream_rd_config_from" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.config.from</field>
-            <field name="model">dtdream_rd_config</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name" />
-                                <field name="person"/>
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="view_dtdream_rd_config_tree" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.config.tree</field>
-            <field name="model">dtdream_rd_config</field>
-            <field name="arch" type="xml">
-                <tree editable="bottom">
-                    <field name='name'/>
-                    <field name="person"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="view_dtdream_rd_role_from" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.role.from</field>
-            <field name="model">dtdream_rd_role</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="cof_id" />
-                                <field name="role_id" invisible="1"/>
-                            </group>
-                            <group>
-                                <field name="person" />
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-      <!--审批人配置-->
-        <record id="act_dtdream_rd_approver" model="ir.actions.act_window">
-            <field name="name">产品审批人配置</field>
-            <field name="res_model">dtdream_rd_approver</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
-        </record>
-
-        <record id="view_dtdream_rd_approver_from" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.approver.from</field>
-            <field name="model">dtdream_rd_approver</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name"/>
-                                <field name='pro_state'/>
-                                <field name='level'/>
-                                <field name="is_level" invisible="1"/>
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="view_dtdream_rd_approver_tree" model="ir.ui.view">
-            <field name="name">view.dtdream.rd.approver.tree</field>
-            <field name="model">dtdream_rd_approver</field>
-            <field name="arch" type="xml">
-                <tree editable="bottom">
-                    <field name='name'/>
-                    <field name='pro_state'/>
-                    <field name='level'/>
-                    <field name="is_level" invisible="1"/>
-                </tree>
-            </field>
-        </record>
-
-        <!--例外菜单栏-->
-
-          <record id="view_dtdream_execption_filter" model="ir.ui.view">
-            <field name="name">dtdream.execption.filter</field>
-            <field name="model">dtdream_execption</field>
-            <field name="arch" type="xml">
-                <search string="Search">
-                    <field name="name"/>
-                    <group expand="0" string="Group By">
-                        <filter string="产品名称" context="{'group_by':'name'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="act_dtdream_exception_meun" model="ir.actions.act_window">
-            <field name="name">所有例外</field>
-            <field name="res_model">dtdream_execption</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'default_flag':True}</field>
-            <field name="search_view_id" ref="view_dtdream_execption_filter"/>
-        </record>
-
-        <record id="act_dtdream_exception_meun_self" model="ir.actions.act_window">
-            <field name="name">我相关的</field>
-            <field name="res_model">dtdream_execption</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'default_flag':True}</field>
-            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)]</field>
-            <field name="search_view_id" ref="view_dtdream_execption_filter"/>
-        </record>
-
-        <record id="act_dtdream_exception_meun_wait" model="ir.actions.act_window">
-            <field name="name">待我审批的</field>
-            <field name="res_model">dtdream_execption</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'default_flag':True}</field>
-            <field name="domain">[('current_approver_user','=',uid)]</field>
-            <field name="search_view_id" ref="view_dtdream_execption_filter"/>
-        </record>
 
 
-        <record id="view_dtdream_exception_from" model="ir.ui.view">
-            <field name="name">view.dtdream.exception.from</field>
-            <field name="model">dtdream_execption</field>
-            <field name="arch" type="xml">
-                <form>
-                    <header>
-                        <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object" attrs="{'invisible':['|','|',('flag','=',False),('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}" />
-                        <button name="%(dtdream_rd_prod.act_liwaiwizardagree)d"  string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp','Nyjsp','Nejsp')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
-                        <button name="%(dtdream_rd_prod.act_liwaiwizard)d"  string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp','Nyjsp','Nejsp')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
-                        <field name="state" widget="statusbar" statusbar_visible="dsp,yjsp,Nyjsp,ejsp,Nejsp,ysp" />
-                    </header>
-                    <sheet>
-                        <group>
-                        <div><p><font color="red">注：第一审批人QA，第二审批人PL-CCB</font></p></div>
-                        </group>
-                        <group>
-                            <group>
-                                <field name="name" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
-                                <field name="flag" invisible="1"/>
-                                <field name="is_create" invisible="1"/>
-                                <field name="is_shenpiren" invisible="1"/>
-                                <field name="is_Qa" invisible="1"/>
 
-                                <field name='version' domain="[('proName','=',name)]" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
-                            </group>
-                            <group>
-                                <field name="approver_fir" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
-                                <field name="approver_sec" attrs="{'readonly':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="is_apped" invisible="1"/>
-                            <field name="reason" attrs="{'readonly':['|',('is_apped','=',True),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
-                        </group>
-                        <footer attrs="{'invisible':[('flag','=',True)]}">
-                            <button name="btn_execption_submit" type="object"
-                                    string="提交" class="oe_highlight"/>
-                            或
-                            <button special="cancel" string="取消"/>
-                        </footer>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
-                </form>
-            </field>
-        </record>
 
-        <record id="view_dtdream_execption_tree" model="ir.ui.view">
-            <field name="name">view.dtdream.execption.tree</field>
-            <field name="model">dtdream_execption</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name='name'/>
-                    <field name="version"/>
-                    <field name="state"/>
-                </tree>
-            </field>
-        </record>
 
 <!--菜单-->
 
         <menuitem id="menu_finance_rd" name="研发"  icon="fa-user" web_icon="dtdream_rd_prod,static/description/rd.png" groups="group_dtdream_rd_qa,group_dtdream_rd_user,group_dtdream_rd_user_all"/>
+
+        <!--<menuitem id="menu_rd_dashboard" name="仪表盘" parent="menu_finance_rd" sequence="50" action="act_open_dtdream_rd_dashboard_view"/>-->
 
         <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"/>
         <menuitem id="menu_finance_prod_appr_my" name="我相关的" parent="menu_finance_prod_appr" sequence="100"  action="act_dtdream_prod_appr"/>
@@ -586,7 +320,21 @@
         <menuitem id="menu_finance_prod_appr_all" name="所有产品" parent="menu_finance_prod_all" sequence="100" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_prod_version_all" name="所有版本" parent="menu_finance_prod_all" sequence="200" action="act_dtdream_prod_version_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_liwai_all" name="所有例外" parent="menu_finance_prod_all" sequence="300" action="act_dtdream_exception_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_suspension_all" name="所有暂停" parent="menu_finance_prod_all" sequence="400" action="act_dtdream_suspension_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_suspension_rest_all" name="所有恢复暂停" parent="menu_finance_prod_all" sequence="500" action="act_dtdream_suspension_rest_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_termination_all" name="所有中止" parent="menu_finance_prod_all" sequence="600" action="act_dtdream_termination_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
 
+        <menuitem id="menu_finance_suspension" name="暂停" parent="menu_finance_rd" sequence="350"/>
+        <menuitem id="menu_finance_suspension_self" name="我相关的" parent="menu_finance_suspension" sequence="100" action="act_dtdream_prod_suspension_meun_self"/>
+        <menuitem id="menu_finance_suspension_wait" name="待我审批的" parent="menu_finance_suspension" sequence="200" action="act_dtdream_prod_suspension_meun_wait"/>
+
+        <menuitem id="menu_finance_suspension_rest" name="恢复暂停" parent="menu_finance_rd" sequence="375"/>
+        <menuitem id="menu_finance_suspension_rest_self" name="我相关的" parent="menu_finance_suspension_rest" sequence="100" action="act_dtdream_prod_suspension_restoration_meun_self"/>
+        <menuitem id="menu_finance_suspension_rest_wait" name="待我审批的" parent="menu_finance_suspension_rest" sequence="200" action="act_dtdream_prod_suspension_meun_rest_wait"/>
+
+        <menuitem id="menu_finance_termination" name="中止" parent="menu_finance_rd" sequence="380"/>
+        <menuitem id="menu_finance_termination_rest_self" name="我相关的" parent="menu_finance_termination" sequence="100" action="act_dtdream_prod_termination_meun_self"/>
+        <menuitem id="menu_finance_termination_rest_wait" name="待我审批的" parent="menu_finance_termination" sequence="100" action="act_dtdream_prod_termination_meun_wait"/>
 
     </data>
 </openerp>

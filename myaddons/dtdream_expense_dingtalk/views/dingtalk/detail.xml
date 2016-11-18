@@ -67,7 +67,7 @@
                     <script type="text/javascript"
                             src="/dtdream_expense_dingtalk/static/lib/jquery-cascading-dropdown/jquery.cascadingdropdown.js"></script>
 
-                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/src/css/bx.css?version=77"/>
+                    <link rel="stylesheet" href="/dtdream_expense_dingtalk/static/src/css/bx.css?version=83"/>
                     <script>
                         <t t-js="ctx">
                             _config ={
@@ -79,6 +79,7 @@
                             'agentId': '<t t-esc="agentId"/>',
                             'token': '<t t-esc="token"/>'
                             }
+
                         </t>
                     </script>
 
@@ -90,9 +91,9 @@
 
                     <script src="https://g.alicdn.com/ilw/ding/0.9.2/scripts/dingtalk.js"></script>
                     <script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>
-                    <script src="/dtdream_expense_dingtalk/static/src/js/log.js?version=77"></script>
-                    <script src="/dtdream_expense_dingtalk/static/src/js/dingtalk/detail.js?version=77"></script>
-                    <script src="/dtdream_expense_dingtalk/static/src/js/app.js?version=77"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/log.js?version=83"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/dingtalk/detail.js?version=83"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/app.js?version=83"></script>
 
                     <main>
                         <div class="page page-current nav-bx">

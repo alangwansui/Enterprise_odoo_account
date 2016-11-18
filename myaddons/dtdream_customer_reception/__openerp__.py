@@ -32,6 +32,7 @@
         'views/views.xml',
         'workflow/workflow.xml',
         'security/ir.model.access.csv',
+        'security/dtdream_customer_reception_security.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

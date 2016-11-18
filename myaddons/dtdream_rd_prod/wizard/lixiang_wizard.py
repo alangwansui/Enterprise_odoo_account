@@ -32,7 +32,7 @@ class lxWizardappr(models.TransientModel):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
-#立项、总体设计阶段内部的提交
+#立项阶段内部的提交
     @api.one
     def btn_confirm(self):
         current_lixiang = self.env['dtdream_prod_appr'].browse(self._context['active_id'])
@@ -132,7 +132,7 @@ class versionWizard(models.TransientModel):
         current_version.current_approver_user = [(5,)]
         if state=='draft':
             current_version.signal_workflow('btn_to_jihuazhong')
-        if state=='initialization':
+        elif state=='initialization':
             current_version.write({'is_click_01':True})
             process_01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',current_version.id),('ver_state','=',state),('is_new','=',True)])
             if len(process_01)==0:

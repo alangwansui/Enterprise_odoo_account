@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_rd_prod.RdDashboardView">
+        <style>.container {width:100%;}</style>
+        <div class="container">
+            <div class="row" style="padding-top: 30px;">
+                <div class="col-lg-12 col-md-12"> 我相关的产品和版本</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-blue" name="">
+                        <a href="#">
+                            <div class="panel-footer">
+                                <h4>
+                                    我提交的产品
+                                </h4>
+                                <div class="fy-t"><t t-esc="submit_product"/></div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-yellow-02"  name="">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                我提交的版本
+                            </h4>
+                            <div class="fy-t"><t t-esc="submit_version"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-gray" name="">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                我提交的例外
+                            </h4>
+                            <div class="fy-t"><t t-esc="submit_exception"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-gray" name="">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                我提交的重计划
+                            </h4>
+                            <div class="fy-t"><t t-esc="submit_replanning"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 col-md-12"> 我提交的未完成的流程</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-red" name="dtdream_rd_prod.act_dtdream_prod_appr_wait">
+                        <a href="#"  >
+                            <div class="panel-footer">
+                                <h4>
+                                    待我审批的产品
+                                </h4>
+                                <div class="fy-t"><t t-esc="wait_product"/></div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-yellow" name="dtdream_rd_prod.act_dtdream_prod_version_wait">
+                    <a href="#"  >
+                        <div class="panel-footer">
+                            <h4>
+                                待我审批的版本
+                            </h4>
+                            <div class="fy-t"><t t-esc="wait_version"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-gray" name="dtdream_rd_prod.act_dtdream_exception_meun_wait">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                待我审批的例外
+                            </h4>
+                            <div class="fy-t"><t t-esc="wait_exception"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-gray" name="">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                待我审批的重计划
+                            </h4>
+                            <div class="fy-t"><t t-esc="wait_replanning"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 col-md-12"> 待我审批的流程</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-red-02" name="dtdream_rd_prod.act_dtdream_prod_appr">
+                    <a href="#"  >
+                        <div class="panel-footer">
+                            <h4>
+                                与我相关的产品
+                            </h4>
+                            <div class="fy-t"><t t-esc="my_product"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-green" name="dtdream_rd_prod.act_dtdream_rd_version">
+                    <a href="#" >
+                        <div class="panel-footer" >
+                            <h4>
+                                与我相关的版本
+                            </h4>
+                            <div class="fy-t"><t t-esc="my_version"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                        </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-gray" name="dtdream_rd_prod.act_dtdream_prod_version_wait">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                与我相关的例外
+                            </h4>
+                            <div class="fy-t"><t t-esc="my_exception"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-gray" name="">
+                    <a href="#">
+                        <div class="panel-footer">
+                            <h4>
+                                与我相关的重计划
+                            </h4>
+                            <div class="fy-t"><t t-esc="my_replanning"/></div>
+                            <div class="fy-more">
+                                <span>显示明细</span>
+                                <!--<img src="/dtdream_expense_dingtalk/static/src/img/fy-more.png" />-->
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

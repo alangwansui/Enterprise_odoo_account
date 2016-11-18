@@ -44,3 +44,13 @@ class ReportApproveWizard(models.TransientModel):
             current_report.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         current_report.write({'warn_text':""})
         current_report.signal_workflow('btn_approve')
+
+class ReportSubmitWizard(models.TransientModel):
+    _name = 'dtdream.report.submit.wizard'
+
+    display_text = fields.Char(default="提交后单据将无法编辑，且进入审批流程。是否确认提交？")
+
+    @api.one
+    def btn_confirm(self):
+        current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
+        current_report.signal_workflow('btn_submit')

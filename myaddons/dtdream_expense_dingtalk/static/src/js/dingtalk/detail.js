@@ -302,7 +302,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          */
         load_template: function () {
             var xml = $.ajax({
-                url: "static/src/xml/dingtalk/detail.xml?version=77",
+                url: "static/src/xml/dingtalk/detail.xml?version=83",
                 async: false // necessary as without the template there isn't much to do.
             }).responseText;
             QWeb.add_template(xml);
@@ -1177,7 +1177,27 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         source: function (request, response) {
                             $.when(new Model('dtdream.expense.catelog').query().all({'timeout': 3000, 'shadow': true}), parent.options.detail)
                                 .fail(function (err) {
-                                    $.alert(err.data.message.replace('None', ""));
+                                    var message = "加载数据失败，请检查网络是否正常";
+                                    if (err.data && err.data.message) {
+                                        message = err.data.message.replace('None', "")
+                                    } else if (err.message){
+                                        message = err.message;
+                                    }
+                                    if (isAlert == false) {
+                                        isAlert = true;
+                                        dd.device.notification.alert({
+                                            message: message,
+                                            title: "警告",//可传空
+                                            buttonName: "确定",
+                                            onSuccess: function () {
+                                                isAlert = false;
+                                                core.bus.trigger('go_back', {});
+                                            },
+                                            onFail: function (err) {
+                                            }
+                                        });
+                                    }
+
                                 })
                                 .then(function (catelog, expense) {
                                     var item_index = 0;
@@ -1211,7 +1231,26 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                     .filter([['parentid', '=', parseInt($('.o_expensecatelog').val())]])
                                     .all({'timeout': 3000, 'shadow': true}), parent.options.detail)
                                 .fail(function (err) {
-                                    $.alert(err.data.message.replace('None', ""));
+                                    var message = "加载数据失败，请检查网络是否正常";
+                                    if (err.data && err.data.message) {
+                                        message = err.data.message.replace('None', "")
+                                    } else if (err.message){
+                                        message = err.message;
+                                    }
+                                    if (isAlert == false) {
+                                        isAlert = true;
+                                        dd.device.notification.alert({
+                                            message: message,
+                                            title: "警告",//可传空
+                                            buttonName: "确定",
+                                            onSuccess: function () {
+                                                isAlert = false;
+                                                core.bus.trigger('go_back', {});
+                                            },
+                                            onFail: function (err) {
+                                            }
+                                        });
+                                    }
                                 })
                                 .then(function (detail, expense) {
                                     var item_index = 0;
@@ -1229,7 +1268,6 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                     }));
                                 });
                         },
-
                     }],
                 onReady: function (event, dropdownData) {
                     console.log(event);
@@ -1261,7 +1299,26 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                     .filter([['country_id.code', '=', 'CN']])
                                     .all({'timeout': 3000, 'shadow': true}), parent.options.detail)
                                 .fail(function (err) {
-                                    $.alert(err.data.message.replace('None', ""));
+                                    var message = "加载数据失败，请检查网络是否正常";
+                                    if (err.data && err.data.message) {
+                                        message = err.data.message.replace('None', "")
+                                    } else if (err.message){
+                                        message = err.message;
+                                    }
+                                    if (isAlert == false) {
+                                        isAlert = true;
+                                        dd.device.notification.alert({
+                                            message: message,
+                                            title: "警告",//可传空
+                                            buttonName: "确定",
+                                            onSuccess: function () {
+                                                isAlert = false;
+                                                core.bus.trigger('go_back', {});
+                                            },
+                                            onFail: function (err) {
+                                            }
+                                        });
+                                    }
                                 })
                                 .then(function (province, expense) {
                                     var item_index = 0;
@@ -1291,7 +1348,26 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                     .filter([['provinceid', '=', parseInt($('.o_province').val())]])
                                     .all({'timeout': 3000, 'shadow': true}), parent.options.detail)
                                 .fail(function (err) {
-                                    $.alert(err.data.message.replace('None', ""));
+                                    var message = "加载数据失败，请检查网络是否正常";
+                                    if (err.data && err.data.message) {
+                                        message = err.data.message.replace('None', "")
+                                    } else if (err.message){
+                                        message = err.message;
+                                    }
+                                    if (isAlert == false) {
+                                        isAlert = true;
+                                        dd.device.notification.alert({
+                                            message: message,
+                                            title: "警告",//可传空
+                                            buttonName: "确定",
+                                            onSuccess: function () {
+                                                isAlert = false;
+                                                core.bus.trigger('go_back', {});
+                                            },
+                                            onFail: function (err) {
+                                            }
+                                        });
+                                    }
                                 })
                                 .then(function (city, expense) {
                                     var item_index = 0;
@@ -1358,12 +1434,6 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 });
                 photos.open();
                 view_image=true;
-
-//                historyScreens[historyScreens.length] = {
-//                    "model": "image",
-//                    "action": null,
-//                    "id": null
-//                 }
             }
         },
         /**
@@ -1408,13 +1478,31 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     .filter([['id', '=', parseInt(options.detail_id)]])
                     .all({'timeout': 3000, 'shadow': true}), this)
                 .fail(function (err) {
-                    $.alert(err.data.message.replace('None', ""));
+                    var message = "加载数据失败，请检查网络是否正常";
+                    if (err.data && err.data.message) {
+                        message = err.data.message.replace('None', "")
+                    } else if (err.message){
+                        message = err.message;
+                    }
+                    if (isAlert == false) {
+                        isAlert = true;
+                        dd.device.notification.alert({
+                            message: message,
+                            title: "警告",//可传空
+                            buttonName: "确定",
+                            onSuccess: function () {
+                                isAlert = false;
+                                core.bus.trigger('go_back', {});
+                            },
+                            onFail: function (err) {
+                            }
+                        });
+                    }
                 })
                 .then(
                     function (data, parent) {
                         options['detail'] = data;
                         parent.options = options;
-//                        parent.$('#currentdate').calendar();
                         parent.load_detail(parent);
                         parent.load_city(parent);
                         parent.init_data(parent);
@@ -1516,7 +1604,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         var total = parseFloat($("input[data-id=invoicevalue]").val());
                         var a = parseInt($("input[data-id=kehurenshu]").val());
                         var b = parseInt($("input[data-id=peitongrenshu]").val());
-                        if ( (a + b) >= 1){
+                        if ( !isNaN(total) && (a + b) >= 1){
                             $("input[data-id=renjunxiaofei]").val(total/(a+b));
                         }
                     });
@@ -1525,7 +1613,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         var total = parseFloat($("input[data-id=invoicevalue]").val());
                         var a = parseInt($("input[data-id=kehurenshu]").val());
                         var b = parseInt($("input[data-id=peitongrenshu]").val());
-                        if ( (a + b) >= 1){
+                        if ( !isNaN(total) && (a + b) >= 1){
                             $("input[data-id=renjunxiaofei]").val(total/(a+b));
                         }
                     });
@@ -1534,7 +1622,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         var total = parseFloat($("input[data-id=invoicevalue]").val());
                         var a = parseInt($("input[data-id=kehurenshu]").val());
                         var b = parseInt($("input[data-id=peitongrenshu]").val());
-                        if ( (a + b) >= 1){
+                        if ( !isNaN(total) && (a + b) >= 1){
                             $("input[data-id=renjunxiaofei]").val(total/(a+b));
                         }
                     });
@@ -1571,7 +1659,13 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             if ($(ev.currentTarget).data('item-id') == 'cancel') {
 
                 //history.go(-1);
-                core.bus.trigger('go_back', {});
+                $.confirm('您确定返回吗?',
+                    function () {
+                        core.bus.trigger('go_back', {});
+                    },
+                    function () {
+                    }
+                );
 
                 return;
             }
@@ -1662,11 +1756,11 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                         img_count++;
                                     }
                                 });
-
-                                if ($('.o_expensedetail').find("option:selected").text() != "出差补助" && img_count == 0) {
-                                    $.toast('请上传发票附件');
-                                    return;
-                                }
+// update by g0335 for resolve ODOO-763
+//                                if ($('.o_expensedetail').find("option:selected").text() != "出差补助" && img_count == 0) {
+//                                    $.toast('请上传发票附件');
+//                                    return;
+//                                }
 
                                 if (attachment_ids.length > 0) {
                                     expense_detail.attachment_ids = attachment_ids;
@@ -1729,11 +1823,11 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                             img_count++;
                         }
                     });
-
-                    if ($('.o_expensedetail').find("option:selected").text() != "出差补助" && img_count == 0) {
-                        $.toast('请上传发票附件');
-                        return;
-                    }
+// update by g0335 for resolve ODOO-763
+//                    if ($('.o_expensedetail').find("option:selected").text() != "出差补助" && img_count == 0) {
+//                        $.toast('请上传发票附件');
+//                        return;
+//                    }
 
                     if (attachment_ids.length > 0) {
                         expense_detail.attachment_ids = attachment_ids;
@@ -2960,7 +3054,17 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             } else if (itemID == "cancel_add_detail") {
                 this.action_cancel_detail(parent);
             } else if (itemID == "cancel") {
-                core.bus.trigger('go_back', {});
+                if (this.options.edit_type != "view"){
+                    $.confirm('您确定返回吗?',
+                        function () {
+                            core.bus.trigger('go_back', {});
+                        },
+                        function () {
+                        }
+                    );
+                } else {
+                    core.bus.trigger('go_back', {});
+                }
             } else if (itemID == "delete") {
                 this.action_delete(parent);
             } else if (itemID == "save") {

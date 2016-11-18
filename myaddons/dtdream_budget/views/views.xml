@@ -222,7 +222,8 @@
         <tree>
           <field name="name"></field>
           <field name="code"></field>
-          <field name="parent_id"></field>
+          <field name="manager_id"></field>
+          <field name="parent_id" invisible="1"></field>
           <field name="budget_sign_one"></field>
           <field name="budget_sign_two"></field>
           <field name="is_budget_department"></field>

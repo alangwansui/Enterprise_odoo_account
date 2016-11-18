@@ -65,5 +65,13 @@
             </field>
         </record>
 
+        <record id="act_deliver_object_config" model="ir.actions.act_window">
+            <field name="name">商务报备/报单服务交付主体配置</field>
+            <field name="res_model">deliver.object</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
     </data>
 </openerp>

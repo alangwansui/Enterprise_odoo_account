@@ -109,7 +109,9 @@ class ExpenseWizard(models.TransientModel):
 
     def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
-        link = '/web#id=%s&view_type=form&model=dtdream.expense.report' % self.env['dtdream.expense.report'].browse(self._context['active_id']).id
+        action = self.env['ir.model.data'].search([('name','=','action_dtdream_expense_pending_jiekoukuaiji')]).res_id
+        menu_id = self.env['ir.ui.menu'].search([('name','=','费用报销')]).id
+        link = '/web#id=%s&view_type=form&model=dtdream.expense.report&action=%s&menu_id=%s' % (self.env['dtdream.expense.report'].browse(self._context['active_id']).id,action,menu_id)
         url = base_url + link
         email_to = email_to
         email_cc = "" if email_cc == email_to else email_cc
@@ -264,10 +266,10 @@ class ExpenseWizard(models.TransientModel):
             current_expense_model.message_post(body=message + u"，审批意见:" + self.liyou)
 
             shenqinren = self.get_employee_id(current_expense_model.create_uid.id)
-            emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
-            self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被行政助理驳回!".format(current_expense_model.create_uid.name, current_expense_model.create_date[:10]),
-                           u"%s提交的费用报销单被行政助理驳回。" % current_expense_model.create_uid.name,
-                           email_to=emailto)
+            # emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
+            # self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被行政助理驳回!".format(current_expense_model.create_uid.name, current_expense_model.create_date[:10]),
+            #                u"%s提交的费用报销单被行政助理驳回。" % current_expense_model.create_uid.name,
+            #                email_to=emailto)
 
             suggest = ""
             if self.liyou:
@@ -286,11 +288,11 @@ class ExpenseWizard(models.TransientModel):
             current_expense_model.message_post(body=message + u"，审批意见:" + self.liyou)
 
             shenqinren = self.get_employee_id(current_expense_model.create_uid.id)
-            emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
-            self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被主管驳回!".format(current_expense_model.create_uid.name,
-                                                                 current_expense_model.create_date[:10]),
-                           u"%s提交的费用报销单被主管驳回。" % current_expense_model.create_uid.name,
-                           email_to=emailto)
+            # emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
+            # self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被主管驳回!".format(current_expense_model.create_uid.name,
+            #                                                      current_expense_model.create_date[:10]),
+            #                u"%s提交的费用报销单被主管驳回。" % current_expense_model.create_uid.name,
+            #                email_to=emailto)
 
             suggest = ""
             if self.liyou:
@@ -326,11 +328,11 @@ class ExpenseWizard(models.TransientModel):
             current_expense_model.message_post(body=message + u"，审批意见:" + self.liyou)
 
             shenqinren = self.get_employee_id(current_expense_model.create_uid.id)
-            emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
-            self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被权签人驳回!".format(current_expense_model.create_uid.name,
-                                                               current_expense_model.create_date[:10]),
-                           u"%s提交的费用报销单被权签人驳回。" % current_expense_model.create_uid.name,
-                           email_to=emailto)
+            # emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
+            # self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被权签人驳回!".format(current_expense_model.create_uid.name,
+            #                                                    current_expense_model.create_date[:10]),
+            #                u"%s提交的费用报销单被权签人驳回。" % current_expense_model.create_uid.name,
+            #                email_to=emailto)
 
             suggest = ""
             if self.liyou:
@@ -400,11 +402,11 @@ class ExpenseWizard(models.TransientModel):
             current_expense_model.message_post(body=message + u"，审批意见:" + self.liyou)
 
             shenqinren = self.get_employee_id(current_expense_model.create_uid.id)
-            emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
-            self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被接口会计驳回!".format(current_expense_model.create_uid.name,
-                                                                current_expense_model.create_date[:10]),
-                           u"%s提交的费用报销单被接口会计驳回。" % current_expense_model.create_uid.name,
-                           email_to=emailto)
+            # emailto = self.env['hr.employee'].search([('id', '=', shenqinren)]).work_email
+            # self.send_mail(u"【提醒】{0}于{1}提交的费用报销单被接口会计驳回!".format(current_expense_model.create_uid.name,
+            #                                                     current_expense_model.create_date[:10]),
+            #                u"%s提交的费用报销单被接口会计驳回。" % current_expense_model.create_uid.name,
+            #                email_to=emailto)
 
             suggest = ""
             if self.liyou:

@@ -1,0 +1,50 @@
+<openerp>
+    <data>
+        <!--版本审批人配置-->
+        <record id="act_dtdream_rd_approver_ver" model="ir.actions.act_window">
+            <field name="name">版本审批人配置</field>
+            <field name="res_model">dtdream_rd_approver_ver</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_approver_ver_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.approver.ver.from</field>
+            <field name="model">dtdream_rd_approver_ver</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name='ver_state'/>
+                                <field name="is_pending" invisible="1"/>
+                                <field name='level'/>
+                                <field name="is_level" invisible="1"/>
+                                <field name="is_formal"/>
+                                <!--<field name="department" attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>-->
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_approver_ver_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.approver.ver.tree</field>
+            <field name="model">dtdream_rd_approver_ver</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name='name'/>
+                    <field name='ver_state'/>
+                    <field name="is_pending" invisible="1"/>
+                    <field name='level'/>
+                    <field name="is_level" invisible="1"/>
+                    <field name="is_formal"/>
+                    <!--<field name="department" attrs="{'readonly':[('is_level','=',True)]}" domain="[('parent_id','=',False),('child_ids','!=',False)]"/>-->
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>

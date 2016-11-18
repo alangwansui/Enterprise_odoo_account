@@ -11,5 +11,7 @@
 
     <menuitem name='商务报备/报单审批配置' id='menu_shenpi_config' parent='base.menu_sale_config' sequence="66" action="act_shenpi_config" />
 
+    <menuitem name='商务报备/报单服务交付主体配置' id='menu_deliver_object_config' parent='base.menu_sale_config' sequence="65" action="act_deliver_object_config" />
+
     </data>
 </openerp>

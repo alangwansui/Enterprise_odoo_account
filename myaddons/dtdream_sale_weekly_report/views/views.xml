@@ -1,6 +1,47 @@
 <openerp>
   <data>
 
+      <record id="view_dtdream_reply_form" model="ir.ui.view">
+        <field name="name">view.dtdream.reply.form</field>
+        <field name="model">reply.list</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="reply_report_type" invisible="1"/>
+                    <field name="reply_report_week" invisible="1"/>
+                    <field name="report_creator" invisible="1"/>
+                    <field name="mail_persons" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                    <field name="reply_text" placeholder="批复内容将以邮件方式发送至您选择的批复发送对象。"/>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="act_reply" model="ir.actions.act_window">
+        <field name="name">批复</field>
+        <field name="res_model">reply.list</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+         <field name="context">{'default_reply_list_to_own_report_id': active_id}</field>
+    </record>
+
+      <record id="act_manager_report_reply" model="ir.actions.act_window">
+        <field name="name">批复</field>
+        <field name="res_model">reply.list</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+         <field name="context">{'default_reply_list_to_manager_report_id': active_id}</field>
+    </record>
+
       <!--个人周报FORM视图-->
       <record model="ir.ui.view" id="dtdream_sale_own_report_form">
           <field name="name">dtdream.sale.own.report.form</field>
@@ -10,6 +51,7 @@
                 <header>
                     <button name="btn_submit" string="提交" type="object" class="oe_highlight"
                             attrs="{'invisible':[('state','!=','0')]}"/>
+                    <button name="%(act_reply)d" string="批复" type="action" class="oe_highlight" attrs="{'invisible':[('state','=',('0'))]}"/>
                     <field name="state"  widget="statusbar"
                            statusbar_visible="draft,submit"/>
                 </header>
@@ -381,6 +423,30 @@
                         </field>
                     </page>
                 </notebook>
+                  <footer>
+                      <field name="reply_list" readonly="1" mode="tree">
+                          <tree editable="bottom">
+                              <field name="reply_person" string="批复人"/>
+                              <field name="create_date" string="批复时间"/>
+                              <field name="mail_persons" widget="many2many_tags"/>
+                              <field name="reply_text"/>
+                          </tree>
+                          <form>
+                              <sheet>
+                                  <group>
+                                      <group>
+                                          <field name="reply_person" string="批复人"  options='{"no_open": True, "no_create": True}'/>
+                                          <field name="mail_persons" widget="many2many_tags"  options='{"no_open": True, "no_create": True}'/>
+                                      </group>
+                                      <group>
+                                          <field name="create_date" string="批复时间"/>
+                                          <field name="reply_text"/>
+                                      </group>
+                                  </group>
+                              </sheet>
+                          </form>
+                      </field>
+                  </footer>
               </sheet>
             </form>
           </field>
@@ -419,6 +485,7 @@
                   <field name="report_start_time"></field>
                   <field name="report_end_time"></field>
                   <field name="state"></field>
+                  <field name="submit_date"></field>
               </tree>
           </field>
       </record>
@@ -453,6 +520,7 @@
                 <header>
                     <button name="btn_submit" string="提交" type="object" class="oe_highlight"
                             attrs="{'invisible':['|',('status','!=',('0')),('state','=','0')]}"/>
+                    <button name="%(act_manager_report_reply)d" string="批复" type="action" class="oe_highlight" attrs="{'invisible':[('status','=',('0'))]}"/>
                     <field name="status"  widget="statusbar"/>
                     <field name="create_office_ids" invisible="True"/>
                     <field name="create_system_ids" invisible="True"/>
@@ -885,6 +953,30 @@
                         </field>
                     </page>
                 </notebook>
+                  <footer>
+                      <field name="manager_reply_list" readonly="1" mode="tree">
+                          <tree editable="bottom">
+                              <field name="reply_person" string="批复人"/>
+                              <field name="create_date" string="批复时间"/>
+                              <field name="mail_persons" widget="many2many_tags"/>
+                              <field name="reply_text"/>
+                          </tree>
+                          <form>
+                              <sheet>
+                                  <group>
+                                      <group>
+                                          <field name="reply_person" string="批复人"  options='{"no_open": True, "no_create": True}'/>
+                                          <field name="mail_persons" widget="many2many_tags"  options='{"no_open": True, "no_create": True}'/>
+                                      </group>
+                                      <group>
+                                          <field name="create_date" string="批复时间"/>
+                                          <field name="reply_text"/>
+                                      </group>
+                                  </group>
+                              </sheet>
+                          </form>
+                      </field>
+                  </footer>
               </sheet>
             </form>
           </field>
@@ -903,6 +995,7 @@
                   <field name="report_start_time"></field>
                   <field name="report_end_time"></field>
                   <field name="status"></field>
+                  <field name="submit_date"></field>
               </tree>
           </field>
       </record>

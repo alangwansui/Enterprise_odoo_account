@@ -8,11 +8,11 @@
       <field name="arch" type="xml">
         <form string="商务报备申请">
             <header>
-                <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
+                <button name="%(btn_submit)d" string="提交" type="action" class="oe_highlight"
                         attrs="{'invisible':['|',('state','!=','0'),('is_current','=',False)]}"/>
                 <field name="import_button" readonly="1" class="dtdream_import" attrs="{'invisible':['|','|',('is_current','=',False),('state','!=','0'),('has_import_button','=',False)]}"/>
                 <field name="download_button" readonly="1" class="dtdream_download" attrs="{'invisible':['|','|',('is_current','=',False),('state','!=','0'),('has_import_button','=',False)]}"/>
-                <button name="%(act_report_approve_wizard)d" string="通过" type="action" class="oe_highlight"
+                <button name="%(act_report_approve_wizard)d" string="同意" type="action" class="oe_highlight"
                 attrs="{'invisible':['|','|','|',('is_newest_record','=',False),('is_current','=',False),('state','not in',('1','2','3','4','5','6','7','8','9')),('rejust_state','=',1)]}"/>
                 <button name="%(act_report_wizard)d" string="驳回" type="action" class="oe_highlight"
                 attrs="{'invisible':['|','|',('is_newest_record','=',False),('is_current','=',False),('state','not in',('2','3','5','6','7','8','9'))]}"/>
@@ -54,6 +54,9 @@
                 <field name="industry_id"  domain="[('parent_id.parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="partner_budget" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="have_hardware" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="total_chengben" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
+                <field name="total_zhuren_price" readonly="1" attrs="{'invisible':['|',('state','not in',('6','7','8','9')),('is_current','=',False)]}"/>
+                <field name="total_market_price" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
               </group>
               <group>
                 <field name="partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
@@ -63,25 +66,32 @@
                 <field name="pre_implementation_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="supply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="apply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="total_chuhuo_price" readonly="1" attrs="{'invisible':['|',('state','not in',('6','7','8','9')),('is_current','=',False)]}"/>
+                <field name="total_sale_price" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
+                <field name="gross_profit" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
               </group>
             </group>
-            <span style="color:red">
-                <field name="warn_text" attrs="{'invisible':[('is_current','=',False)]}"></field>
-            </span>
+            <!--<span style="color:red">-->
+                <!--<field name="warn_text" attrs="{'invisible':[('is_current','=',False)]}"></field>-->
+            <!--</span>-->
             <notebook colspan="4">
                 <page string="项目概况">
                     <group>
                       <group>
                         <field name="pro_background" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                         <field name="apply_discription" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
-                        <field name="service_detail" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="service_detail_selection" string="原厂维保或服务年限" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="service_detail" string="请输入服务年限" attrs="{'invisible':['|',('service_detail_selection','!=','other'),('service_detail','in',('1','2','3','4','5'))],'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                         <field name="channel_discription" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                       </group>
                       <group>
                         <field name="other_discription" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
-                        <field name="estimate_payment_condition" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
-                        <field name="service_deliver_object" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="estimate_payment_condition"  attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="service_deliver_object" widget="many2many_tags" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                       </group>
+                    </group>
+                    <group>
+                        <field name="remark" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                     </group>
                     <group>
                       <group>
@@ -94,7 +104,7 @@
                 </page>
                 <page string="产品配置">
                     <field name="product_line" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','!=','0'),('is_current','=',False)]}" class="pro_line">
-                      <tree string="产品配置" class="apply_dis_sale_report" create="0">
+                      <tree string="产品配置" class="apply_dis_sale_report">
                           <field name="report_state" invisible="True"/>
                           <field name="report_is_current" invisible="True"/>
                           <field name="is_bus_shenpiren" invisible="True"/>
@@ -109,7 +119,7 @@
                           <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
                           <field name="pro_num" string="数量" />
                           <field name="config_set" string="发货地"/>
-                          <field name="remark" string="备注"/>
+                          <field name="send_type" string="发货模式"/>
                       </tree>
                       <form>
                           <sheet>
@@ -132,7 +142,7 @@
                                       <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
                                       <field name="pro_num" string="数量"/>
                                       <field name="config_set" string="发货地"/>
-                                      <field name="remark" string="备注"/>
+                                      <field name="send_type" string="发货模式"/>
                                   </group>
                               </group>
                           </sheet>
@@ -377,6 +387,32 @@
        </form>
      </field>
   </record>
+
+   <record model="ir.ui.view" id="dtdream_deliver_object_form">
+      <field name="name">dtdream.deliver.object.form</field>
+      <field name="model">deliver.object</field>
+      <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <group>
+                        <field name="name" string="服务交付主体"/>
+                    </group>
+                </group>
+            </sheet>
+        </form>
+      </field>
+   </record>
+
+   <record model="ir.ui.view" id="dtdream_deliver_object_tree">
+      <field name="name">dtdream.deliver.object.tree</field>
+      <field name="model">deliver.object</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name" string="服务交付主体"/>
+        </tree>
+      </field>
+   </record>
 
   </data>
 </openerp>

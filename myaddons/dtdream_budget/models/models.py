@@ -111,12 +111,14 @@ class dtdream_budget(models.Model):
             raise ValidationError("您的部门预算权签人没有配置，请联系预算业务管理员进行配置。")
         if self.applicant.department_id.budget_sign_two.id:
             self.signer_two=self.env['hr.employee'].search([('id','=',self.applicant.department_id.budget_sign_two.id)])
+        if not self.env['hr.employee'].search([('id','=',self.applicant.department_id.manager_id.id)]):
+            raise ValidationError("您的部门主管没有配置，请联系hr进行配置。")
 
     is_applicant = fields.Boolean(string='是否申请人',default=True,compute=compute_is_applicant)
     his_handler=fields.Many2many('hr.employee',string="历史审批人")
 
     applicant = fields.Many2one('hr.employee',string="申请人",default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]))
-    manager = fields.Many2one('hr.employee',string="直接主管",default=lambda self:self.env['hr.employee'].search([('id','=',self.applicant.department_id.manager_id.id)]))
+    manager = fields.Many2one('hr.employee',string="主管",default=lambda self:self.env['hr.employee'].search([('id','=',self.applicant.department_id.manager_id.id)]))
     signer_one = fields.Many2one('hr.employee',string="第一权签人")
     signer_two = fields.Many2one('hr.employee',string="第二权签人")
 

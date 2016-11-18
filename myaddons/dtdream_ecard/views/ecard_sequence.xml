@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+        <record id="sequence_dtdream_ecard" model="ir.sequence">
+            <field name="name">报销单单号</field>
+            <field name="code">dtdream_ecard.dtdream_ecard</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="padding">1</field>
+        </record>
+    </data>
+</openerp>

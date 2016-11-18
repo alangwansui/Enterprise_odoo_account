@@ -1,0 +1,26 @@
+<openerp>
+    <data>
+        <record id="dtdream_demand_manage_read" model="ir.rule">
+            <field name="name">查看应用开发及优化</field>
+            <field name="model_id" ref="model_dtdream_demand_app"/>
+            <field name="domain_force">['|',('current_approve.user_id','=',user.id),'|',('approves.user_id','=',user.id),'|',('name.user_id','=',user.id),'|',('create_uid','=',user.id),'|',('analyst.user_id','=',user.id),'|',('entrusted_analyst.user_id','=',user.id),('practice_man.user_id','=',user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="dtdream_demand_manage_manage_read" model="ir.rule">
+            <field name="name">管理员查看所有应用开发及优化</field>
+            <field name="model_id" ref="model_dtdream_demand_app"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('dtdream_demand_manage'))]"/>
+        </record>
+
+    </data>
+</openerp>

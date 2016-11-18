@@ -27,6 +27,12 @@ except ImportError:
 
 _logger = logging.getLogger(__name__)
 
+
+class dtdream_deliver_object(models.Model):
+    _name = "deliver.object"
+
+    name = fields.Char(stirng="服务交付主体")
+
 # 产品清单产品行类
 class dtdream_product_line(models.Model):
     _inherit = 'dtdream.product.line'
@@ -65,11 +71,11 @@ class dtdream_product_line(models.Model):
     is_pro_approveds = fields.Boolean(string="是否历史产品审批人",default=False,compute=_compute_is_pro_approveds)
     is_pro_shenpiren = fields.Boolean(string="是否产品审批人",compute=_compute_is_pro_shenpiren)
     is_bus_shenpiren = fields.Boolean(string="是否商务审批人",compute=_compute_is_pro_shenpiren)
-    remark = fields.Selection([
+    send_type = fields.Selection([
         ('1','借货核销'),
         ('2','正常发货'),
         ('3','服务订单'),
-    ],string='备注')
+    ],string='发货模式')
 
 # 商务提前报备类
 class dtdream_sale_business_report(models.Model):
@@ -217,6 +223,13 @@ class dtdream_sale_business_report(models.Model):
             else:
                 rec.record_state = "0"
 
+    @api.onchange("service_detail_selection")
+    def _onchange_service_selection(self):
+        if self.service_detail_selection != "other":
+            self.service_detail = int(self.service_detail_selection)
+        else:
+            self.service_detail = ""
+
     import_button = fields.Char(string="导入产品清单",default="导入产品清单")
     download_button = fields.Char(string="下载导入模板",default="下载导入模板")
     has_import_button = fields.Boolean(string="是否可导入产品配置",default=False)
@@ -257,12 +270,20 @@ class dtdream_sale_business_report(models.Model):
     ],string="是否含硬件", required=True,track_visibility='onchange')
     supply_time = fields.Date(string="预计要货时间",required=True,track_visibility='onchange')
     apply_time = fields.Date(string="申请日期",default=lambda self:datetime.now(), required=True,track_visibility='onchange')
-    pro_background = fields.Text(string="项目背景",track_visibility='onchange')
-    apply_discription = fields.Text(string="商务申请说明",track_visibility='onchange')
-    service_detail = fields.Text(string="原厂维保或服务年限",track_visibility='onchange')
-    channel_discription = fields.Text(string="渠道利润说明（产品和服务分开）",track_visibility='onchange')
-    estimate_payment_condition = fields.Text(string="预计付款条件",track_visibility='onchange')
-    service_deliver_object = fields.Text(string="服务交付主体",track_visibility='onchange')
+    pro_background = fields.Text(string="项目背景",track_visibility='onchange', required=True)
+    apply_discription = fields.Text(string="商务申请说明",track_visibility='onchange', required=True)
+    service_detail_selection = fields.Selection(
+        [('1', '1'),
+         ('2', '2'),
+         ('3', '3'),
+         ('4', '4'),
+         ('5', '5'),
+         ('other', '其他')],string="服务年限选择", required=True)
+    service_detail = fields.Char(string="原厂维保或服务年限",track_visibility='onchange', required=True)
+    channel_discription = fields.Text(string="渠道利润说明（产品和服务分开）",track_visibility='onchange', required=True)
+    estimate_payment_condition = fields.Text(string="预计付款条件",track_visibility='onchange', required=True)
+    # service_deliver_object = fields.Text(string="服务交付主体",track_visibility='onchange', required=True)
+    service_deliver_object = fields.Many2many("deliver.object",string="服务交付主体", required=True)
     other_discription = fields.Text(string="其他特殊说明",track_visibility='onchange')
     project_promise = fields.Text(string="项目认定及承诺",readonly=True,default="对本项目的其他情况说明：本人确认此项目情况如前面所述，项目情况真实，代理商情况真实，价格情况真实。本人承诺如果今后此项目的方案产品配置数量、代理商、各级价格情况发生变化，本人将立刻向销售管理部商务更改申请，用新的审批表替换此表，对项目情况予以刷新。")
     if_promise = fields.Boolean(string="确认项目承诺",track_visibility='onchange')
@@ -274,14 +295,15 @@ class dtdream_sale_business_report(models.Model):
     business_approveds = fields.Many2many("hr.employee",'b_a_t_e',string="历史商务审批人")
     is_current = fields.Boolean(string="是否当前审批人", compute=_compute_is_current,default=True)
     a_apply_discount = fields.Float(string="平均折扣")
-    sale_grant_discount = fields.Float(string="营销管理部授权折扣")
+    sale_grant_discount = fields.Float(string="区域授权折扣")
     market_grant_discount = fields.Float(string="市场部授权折扣")
-    total_chuhuo_price = fields.Float(string="总销售额")
-    total_market_price = fields.Float(string="市场部部长授权价")
-    total_sale_price = fields.Float(string="营销管理部授权价")
-    total_zhuren_price = fields.Float(string="主任授权价")
+    total_chuhuo_price = fields.Float(string="总销售额(万元)")
+    total_market_price = fields.Float(string="市场部授权价(万元)")
+    total_sale_price = fields.Float(string="区域授权价(万元)")
+    total_zhuren_price = fields.Float(string="办事处/系统部授权价(万元)")
     zhuren_grant_discount = fields.Float(string="主任授权折扣")
-    total_chengben = fields.Float(string="成本")
+    total_chengben = fields.Float(string="项目成本(万元)")
+    gross_profit = fields.Float(string="毛利(%)")
     if_out_grant = fields.Char(default=0)
     approve_records = fields.One2many("report.handle.approve.record","report_handle_id",string="审批记录")
     rejust_state = fields.Integer(string='驳回到销售',default=0)
@@ -290,13 +312,14 @@ class dtdream_sale_business_report(models.Model):
         [('0', '草稿'),
          ('2', '规范性审核、配置清单审核'),
          ('6', '办事处商务审批'),
-         ('7', '营销管理部商务审批'),
+         ('7', '区域商务审批'),
          ('8', '市场部商务审批'),
          ('9', '公司商务审批'),
          ('-1', '驳回'),
          ('done', '完成')], string="状态", default="0",track_visibility='onchange')
     file = fields.Binary(string="文件")
     file_name = fields.Char(string="文件名")
+    remark = fields.Text(string="备注")
 
     @api.multi
     def wkf_draft(self):
@@ -438,6 +461,7 @@ class dtdream_sale_business_report(models.Model):
         self.sale_grant_discount = round(total_sale_price*100/total_chengben_price,2)
         self.market_grant_discount = round(total_market_price*100/total_chengben_price,2)
         self.zhuren_grant_discount = round(total_zhuren_price*100/total_chengben_price,2)
+        self.gross_profit = round(((total_chuhuo_price - total_chengben)/total_chuhuo_price)*100,2)
         self.pro_zongbu_finish = "0"
         self.write({'state':'6'})
         self.get_shenpiren()
@@ -445,7 +469,7 @@ class dtdream_sale_business_report(models.Model):
 
     @api.multi
     def wkf_approve7(self):
-        # 判断营销管理部是否超权限审批
+        # 判断区域是否超权限审批
         self.pro_office_finish = "0"
         if self.a_apply_discount < self.sale_grant_discount :
             self.if_out_grant = 1
@@ -454,7 +478,7 @@ class dtdream_sale_business_report(models.Model):
         self.write({'state':'7'})
         shenpiren = self.get_shenpiren()
         self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审批!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
+        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
                        appellation = u'{0},您好：'.format(self.shenpiren.name))
 
@@ -468,7 +492,7 @@ class dtdream_sale_business_report(models.Model):
         self.write({'state':'8'})
         shenpiren = self.get_shenpiren()
         self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审批!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
+        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
                        appellation = u'{0},您好：'.format(self.shenpiren.name))
 
@@ -477,7 +501,7 @@ class dtdream_sale_business_report(models.Model):
         self.write({'state':'9'})
         shenpiren = self.get_shenpiren()
         self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您审批!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
+        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
                        appellation = u'{0},您好：'.format(self.shenpiren.name))
 
@@ -512,9 +536,11 @@ class dtdream_sale_business_report(models.Model):
             self.apply_discription = rec.apply_discription
             self.estimate_payment_condition = rec.estimate_payment_condition
             self.service_detail = rec.service_detail
+            self.service_detail_selection = rec.service_detail_selection
             self.service_deliver_object = rec.service_deliver_object
             self.channel_discription = rec.channel_discription
             self.if_promise = rec.if_promise
+            self.remark = rec.remark
             list = []
             for pro_rec in rec.product_line:
                 vals = {'product_id':pro_rec.product_id,'bom':pro_rec.bom,'pro_type':pro_rec.pro_type,'pro_description':pro_rec.pro_description,'pro_name':pro_rec.pro_name,'list_price':pro_rec.list_price,'ref_discount':pro_rec.ref_discount,'apply_discount':pro_rec.apply_discount,'pro_num':pro_rec.pro_num,'config_set':pro_rec.config_set}
@@ -756,25 +782,25 @@ class dtdream_ir_import(orm.TransientModel):
                                      message=u"导入文件中无bom编码，请添加后导入",
                                      moreinfo=""))
                     return messages
-                if import_line.has_key('apply_discount'):
+                if import_line.has_key('apply_discount') and len(import_line['apply_discount'].replace(' ','')) > 0:
                     if float(import_line['apply_discount']) > 100 or float(import_line['apply_discount']) < 0:
                         messages.append(dict(type='error',
                                          message=u"申请折扣应在0%到100%之间",
                                          moreinfo=""))
                         return messages
-                if import_line.has_key('remark'):
-                    if import_line['remark'] and import_line['remark'] not in (u'借货核销',u'正常发货',u'服务订单'):
+                if import_line.has_key('send_type'):
+                    if import_line['send_type'] and import_line['send_type'] not in (u'借货核销',u'正常发货',u'服务订单'):
                         messages.append(dict(type='error',
-                                    message=u"导入备注信息错误，只有'借货核销'、'正常发货'、'服务订单'三种",
+                                    message=u"导入发货模式信息错误，只有'借货核销'、'正常发货'、'服务订单'三种",
                                     moreinfo=""))
                         return messages
-                    elif import_line['remark'] in (u'借货核销',u'正常发货',u'服务订单'):
+                    elif import_line['send_type'] in (u'借货核销',u'正常发货',u'服务订单'):
                         list = {
                             u'借货核销':'1',
                             u'正常发货':'2',
                             u'服务订单':'3',
                         }
-                        import_line['remark'] = list[import_line['remark']]
+                        import_line['send_type'] = list[import_line['send_type']]
                 if len(self.pool["product.template"].search(cr,uid,[('bom','=',import_line['bom'])]))==1:
                     product_rec_id = self.pool["product.template"].search(cr,uid,[('bom','=',import_line['bom'])])[0]
                     product_rec = self.pool.get('product.template').browse(cr,uid,[product_rec_id])

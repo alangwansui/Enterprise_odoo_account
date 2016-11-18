@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="dtdream_expense_account_credit_form">
+            <field name="name">dtdream.expense.account.credit.form</field>
+            <field name="model">dtdream.expense.account.credit</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" invisible="1"></field>
+                                <field name="paytype" required="1"></field>
+                                <field name="paycatelog" required="1"></field>
+                            </group>
+                            <group>
+                                <field name="account" required="1"></field>
+                                <field name="account_name" required="1"></field>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_expense_account_credit_tree">
+            <field name="name">dtdream.expense.account.credit.tree</field>
+            <field name="model">dtdream.expense.account.credit</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="paytype"></field>
+                    <field name="paycatelog"></field>
+                    <field name="account"></field>
+                    <field name="account_name"></field>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_expense_account_credit">
+            <field name="name">贷方会计科目表</field>
+            <field name="res_model">dtdream.expense.account.credit</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <menuitem id="menu_dtdream_expense_account_credit" parent="dtdream_expense_configration"
+                  action="act_dtdream_expense_account_credit" groups="group_dtdream_expense_admin" sequence="500"></menuitem>
+    </data>
+</openerp>

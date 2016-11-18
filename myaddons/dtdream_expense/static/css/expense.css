@@ -5,3 +5,22 @@
 .expense_catelog.o_form_field{
     word-break: break-all;
 }
+
+.o_form_view .o_form_field_image .o_form_image_controls{
+    opacity: 1;
+    background-color: transparent;
+    margin-top: -35px;
+}
+.o_form_view .o_form_field_image:hover .o_form_image_controls{
+    opacity: 1;
+}
+.o_form_image_controls .o_select_file_button{
+    background-color: #81c48f;
+    padding:7px 15px;
+    border-radius: 2px;
+}
+.o_form_image_controls .o_clear_file_button{
+    background-color: #81c48f;
+    padding:7px 15px;
+    border-radius: 2px;
+}

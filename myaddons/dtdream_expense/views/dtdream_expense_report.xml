@@ -398,7 +398,7 @@
                         <notebook>
                             <page string="费用明细">
                                 <field name="create_uid_self" invisible="1"/>
-                                <field name="record_ids" options="{'no_create':True}" attrs="{'readonly':[('state','!=',('jiekoukuaiji'))]}" domain="[('create_uid','=',create_uid_self),('report_ids','=',False)]">
+                                <field name="record_ids" attrs="{'readonly':[('state','!=',('jiekoukuaiji'))]}" domain="[('create_uid','=',create_uid_self),('report_ids','=',False)]">
                                     <tree >
                                         <!--<field name="record_id"/>-->
                                         <!--<field name="expensecatelog"/>-->
@@ -437,6 +437,25 @@
         <record id="dtdream_expense_myreport_tree_jiekoukuaiji_view" model="ir.ui.view">
             <field name="name">dtdream.expense.myreport.jiekoukuaiji.tree</field>
             <field name="model">dtdream.expense.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <!--<field name="title"/>-->
+                    <field name="state"/>
+                    <field name="currentauditperson"/>
+                    <field name="total_shibaoamount"/>
+                    <field name="create_uid_self" string="申请人"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="department_id"/>
+
+
+                </tree>
+            </field>
+        </record>
+        <record id="dtdream_expense_jiekoukuaiji_export_tree_view" model="ir.ui.view">
+            <field name="name">dtdream.expense.jiekoukuaiji.export.tree.view</field>
+            <field name="model">dtdream.expense.report</field>
+            <field name="priority">50</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
@@ -586,17 +605,31 @@
             <field name="view_mode">tree,form,kanban</field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_dtdream_expense_all">
-            <field name="name">所有单据</field>
-            <field name="res_model">dtdream.expense.report</field>
-            <field name="view_mode">tree,form,kanban</field>
-        </record>
+        <!--<record model="ir.actions.act_window" id="act_dtdream_expense_all_user_report">-->
+            <!--<field name="name">所有人的报销单</field>-->
+            <!--<field name="res_model">dtdream.expense.report</field>-->
+            <!--<field name="view_mode">tree,form,kanban</field>-->
+            <!--<field name="groups_id" eval="[(4, ref('base.group_no_one'))]"/>-->
+        <!--</record>-->
+        <!--<record model="ir.actions.act_window" id="act_dtdream_expense_all_user_record">-->
+            <!--<field name="name">所有人的消费明细</field>-->
+            <!--<field name="res_model">dtdream.expense.record</field>-->
+            <!--<field name="view_mode">tree,form,kanban</field>-->
+            <!--<field name="groups_id" eval="[(4, ref('base.group_no_one'))]"/>-->
+        <!--</record>-->
 
         <record model="ir.actions.act_window" id="action_dtdream_expense_all_aboutme">
             <field name="name">所有单据</field>
             <field name="res_model">dtdream.expense.report</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">['|','|','|',('create_uid','=',uid),('hasauditor.user_id','=',uid),('currentauditperson_userid','=',uid),('followers_user','=',uid)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_dtdream_expense_jiekoukuaiji_export">
+            <field name="name">接口会计导出</field>
+            <field name="res_model">dtdream.expense.report</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="view_id" ref="dtdream_expense_jiekoukuaiji_export_tree_view"></field>
+            <field name="domain">[('state','in',['daifukuan','yifukuan']),('batch','=',False)]</field>
         </record>
 
         <!--<menuitem name="报销单" id="dtdream_expense_report" parent="dtdream_expense_menu_root" />-->
@@ -620,6 +653,13 @@
 
          <menuitem name="所有单据" id="dtdream_expense_all_aboutme" parent="dtdream_expense_menu_root"
                   action="action_dtdream_expense_all_aboutme" sequence="206" />
+        <menuitem name="接口会计导出" id="dtdream_expense_jiekoukuaiji_export" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_jiekoukuaiji_export" groups="dtdream_expense.group_dtdream_expense_jiekoukuaiji" sequence="320" />
+        <!--<menuitem name="报告" id="dtdream_expense_all_in_all" parent="dtdream_expense_menu_root" sequence="220" groups="base.group_no_one"></menuitem>-->
+        <!--<menuitem name="所有人的报销单" id="dtdream_expense_all_user_report"-->
+                  <!--action="act_dtdream_expense_all_user_report" parent="dtdream_expense_all_in_all"></menuitem>-->
+        <!--<menuitem name="所有人的消费明细" id="dtdream_expense_all_user_record"-->
+                  <!--action="act_dtdream_expense_all_user_record" parent="dtdream_expense_all_in_all"></menuitem>-->
 
         <record model="ir.actions.act_window" id="action_dtdream_expense_have_payed">
             <field name="name">我的已付款报销单</field>

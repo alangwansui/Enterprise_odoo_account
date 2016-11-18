@@ -105,6 +105,10 @@ class dtdream_customer_reception(models.Model):
         else:
             self.is_create = False
 
+    def compute_customer_setting(self):
+        cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
+        self.write({'car_settings': cr.car.id, 'inter_settings': cr.inter.id})
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         params = self._context.get('params', None)
@@ -397,6 +401,9 @@ class dtdream_customer_reception(models.Model):
     is_officer = fields.Boolean(string='是否客工部主管', compute=_compute_is_officer)
     is_manage = fields.Boolean(string='是否客户接待管理员', compute=_compute_is_customer_manage)
     is_create = fields.Boolean(string='是否创建人', compute=_compute_is_create, default=lambda self: True)
+    compute_car_inter = fields.Boolean(string='计算过渡字段', compute=compute_customer_setting)
+    car_settings = fields.Many2one('hr.employee', string='车辆负责人')
+    inter_settings = fields.Many2one('hr.employee', string='企划部接口人')
     entry_way = fields.Boolean(string='创建客户接待方式')
     state = fields.Selection([('0', '草稿'),
                               ('1', '部门审批'),

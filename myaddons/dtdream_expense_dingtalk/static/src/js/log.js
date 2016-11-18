@@ -27,3 +27,4 @@ var Util = {
 };
 var cui_buf = [];
 var view_image = false;
+var isAlert = false;

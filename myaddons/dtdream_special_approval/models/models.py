@@ -77,7 +77,7 @@ class dtdream_special_approval(models.Model):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,default=True)
 
     @api.one
     def _compute_is_shenpiren(self):
@@ -414,7 +414,7 @@ class dtdream_events_agenda(models.Model):
     accompany_num = fields.Integer(string="内部陪同人数",required=True)
     remark = fields.Char(string="备注")
 
-    approval = fields.Many2one("dtdream_special_approval",ondelete="cascade")
+    approval = fields.Many2one("dtdream.special.approval",ondelete="cascade")
 
 #费用详情
 class dtdream_approval_fee(models.Model):
@@ -423,7 +423,7 @@ class dtdream_approval_fee(models.Model):
     fee_type = fields.Selection([('fee_type1','餐费(含酒水)'),('fee_type2','会务场租'),('fee_type3','住宿费'),('fee_type4','交通费用'),('fee_type5','礼品费用'),('fee_type6','其他')],string="费用类别",required=True)
     money =fields.Integer(string="金额(元)",required=True)
     remark = fields.Char(string="费用事项说明",required=True)
-    fee= fields.Many2one("dtdream_special_approval",ondelete="cascade")
+    fee= fields.Many2one("dtdream.special.approval",ondelete="cascade")
 
 #部门权签人设置
 class dtdream_approval_right_peo(models.Model):

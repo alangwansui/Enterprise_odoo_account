@@ -83,7 +83,11 @@ class dtdream_rd_version(models.Model):
     def _compute_proName(self):
         for rec in self:
             rec.PDT = rec.proName.PDT.id
+            rec.PL_CCB = rec.proName.PL_CCB.id
+            rec.QA = rec.proName.QA.id
     PDT = fields.Many2one("hr.employee",string="PDT经理",compute=_compute_proName)
+    PL_CCB = fields.Many2one("hr.employee", string="PL-CCB", compute=_compute_proName)
+    QA = fields.Many2one("hr.employee", string="质量代表", compute=_compute_proName)
 
     @api.constrains('department')
     def _onchang_dep(self):
@@ -98,26 +102,55 @@ class dtdream_rd_version(models.Model):
     department = fields.Many2one('hr.department',string='部门')
     department_2 = fields.Many2one('hr.department',string='二级部门')
 
-    #部门的联动
+    def _get_department_domain(self, rd_list=None):
+        dm = []
+        t = ('parent_id', '=', False)
+        dm.append(t)
+        for i in range(len(rd_list) - 1):
+            dm.append('|')
+        for i in range(len(rd_list)):
+            dm.append(('name', '=', rd_list[i]))
+        return dm
+
+    def _get_department_2_domain(self, rd_list=None):
+        dm_f = []
+        t_f = ('parent_id.parent_id', '=', False)
+        dm_f.append(t_f)
+        for i in range(len(rd_list) - 1):
+            dm_f.append('|')
+        for i in range(len(rd_list)):
+            dm_f.append(('parent_id.name', '=', rd_list[i]))
+        return dm_f
+
+        # 部门的联动
+
     @api.onchange('department_2')
     def _chang_department(self):
+        domain = {}
         if self.department_2:
             self.department = self.department_2.parent_id
+        else:
+            try:
+                rd_list = openerp.tools.config['rd_list'].split(',')
+            except Exception, e:
+                rd_list = []
+            if len(rd_list) != 0:
+                dm = self._get_department_domain(rd_list=rd_list)
+                domain['department'] = dm
+        return {'domain': domain}
 
     @api.onchange('department')
     def _chang_department_2(self):
         domain = {}
         try:
-            rd_list= openerp.tools.config['rd_list'].split(',')
-        except Exception,e:
-            rd_list=[]
-
+            rd_list = openerp.tools.config['rd_list'].split(',')
+        except Exception, e:
+            rd_list = []
         if self.department:
             domain['department_2'] = [('parent_id', '=', self.department.id)]
         else:
             if len(rd_list) != 0:
-                domain['department_2'] = [('parent_id.parent_id', '=', False),'|','|',('parent_id.name', '=', rd_list[0]),('parent_id.name', '=', rd_list[1]),('parent_id.name', '=', rd_list[2])]
-                domain['department'] = [('parent_id', '=', False),'|','|',('name', '=', rd_list[0]),('name', '=', rd_list[1]),('name', '=', rd_list[2])]
+                domain['department_2'] = self._get_department_2_domain(rd_list=rd_list)
         return {'domain': domain}
 
     @api.one
@@ -134,7 +167,7 @@ class dtdream_rd_version(models.Model):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,store=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,default=True)
 
     @api.one
     def _compute_is_Qa(self):
@@ -156,12 +189,17 @@ class dtdream_rd_version(models.Model):
             self.is_shenpiren = False
     is_shenpiren = fields.Boolean(string="是否审批人",compute=_compute_is_shenpiren,readonly=True)
 
-    @api.one
     def _compute_liwai_log(self):
         cr = self.env["dtdream_execption"].search([("name.id", "=", self.proName.id),('version.id','=',self.id)])
         self.liwai_nums = len(cr)
 
     liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",store=True)
+
+    def _compute_zanting_log(self):
+        cr = self.env["dtdream.prod.suspension"].search([("project.id", "=", self.id)])
+        self.zanting_nums = len(cr)
+
+    zanting_nums = fields.Integer(compute='_compute_zanting_log', string="暂停记录")
 
     #返回上一部
     @api.multi
@@ -468,25 +506,12 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 已发布->中止')
         self.write({'version_state': 'stop'})
 
+
+    #废用字段
     reason_request = fields.Text(string="申请原因")
     agree = fields.Boolean(string="同意")
-
-    @api.onchange("agree")
-    def is_agree_change(self):
-        for rec in self:
-            if rec.agree:
-                rec.disagree = False
-
     disagree = fields.Boolean(string="不同意")
-
-    @api.onchange("disagree")
-    def is_disagree_change(self):
-        for rec in self:
-            if rec.disagree:
-                rec.agree = False
-
     comments = fields.Text(string="审批意见")
-
     is_zanting = fields.Boolean(string="标记是否申请暂停")
     is_zanting_back = fields.Boolean(string="标记是否申请恢复暂停")
     is_zhongzhi = fields.Boolean(string="标记是否申请中止")
@@ -495,199 +520,16 @@ class dtdream_rd_version(models.Model):
     is_zanting_backtj = fields.Boolean(string="标记是否提交恢复暂停")
     is_zhongzhitj = fields.Boolean(string="标记是否提交中止")
     is_ztpage = fields.Boolean(string="标记页面是否显示")
+    #废用字段
+
+
+
     execption_id = fields.Many2one('dtdream_execption',string="待提交例外")
     execption_flag = fields.Boolean(string="标记是否存在未提交例外")
 
-    @api.constrains('agree')
-    def _com_agree(self):
-        if self.is_zhongzhi and self.agree:
-            if self.version_state=='initialization':
-                self.version_state_old='initialization'
-                self.signal_workflow('draft_to_vzhongzhi')
-            if self.version_state=='Development':
-                self.version_state_old='Development'
-                self.signal_workflow('kaifa_to_vzhongzhi')
-            if self.version_state=='pending':
-                self.version_state_old='pending'
-                self.signal_workflow('dfb_to_vzhongzhi')
-            if self.version_state=='released':
-                self.version_state_old='released'
-                self.signal_workflow('yfb_to_vzhongzhi')
-            if self.version_state=='pause':
-                self.version_state_old='pause'
-                self.signal_workflow('vzanting_to_vzhongzhi')
-            self.write({'is_zhongzhi':False,'is_zhongzhitj':False})
-        elif not self.is_zhongzhi and self.is_zanting and self.agree:
-            if self.version_state=='initialization':
-                self.version_state_old='initialization'
-                self.signal_workflow('draft_to_vzanting')
-            if self.version_state=='Development':
-                self.version_state_old='Development'
-                self.signal_workflow('kaifa_to_vzanting')
-            if self.version_state=='pending':
-                self.version_state_old='pending'
-                self.signal_workflow('dfb_to_vzanting')
-            if self.version_state=='released':
-                self.version_state_old='released'
-                self.signal_workflow('yfb_to_vzanting')
-            self.write({'is_zanting':False,'is_zantingtj':False})
-        if self.is_zanting_back and self.agree:
-            if self.version_state_old=='initialization':
-                self.signal_workflow('vzanting_to_draft')
-            if self.version_state_old=='Development':
-                self.signal_workflow('vzanting_to_kaifa')
-            if self.version_state_old=='pending':
-                self.signal_workflow('vzanting_to_dfb')
-            if self.version_state_old=='released':
-                self.signal_workflow('vzanting_to_yfb')
-            self.write({'is_zanting_back':False,'is_zanting_backtj':False})
-        if self.comments and self.agree:
-            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><th style="padding:10px">版本</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.name,self.version_numb,self.department.manager_id.name,u'审批意见:同意,意见：'+self.comments))
-            
-
-    @api.constrains('disagree')
-    def _com_disagree(self):
-        if self.is_zhongzhitj and self.disagree:
-            if not self.comments:
-                raise ValidationError(u'不同意时意见必填')
-            self.write({'is_zhongzhitj':False})
-        elif not self.is_zhongzhitj and self.is_zantingtj and self.disagree:
-            if not self.comments:
-                raise ValidationError(u'不同意时意见必填')
-            self.write({'is_zantingtj':False})
-        if self.is_zanting_backtj and self.disagree:
-            if not self.comments:
-                raise ValidationError(u'不同意时意见必填')
-            self.write({'is_zanting_backtj':False})
-        if self.comments and self.disagree:
-            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><th style="padding:10px">版本</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.proName.name,self.version_numb,self.proName.department.manager_id.name,u'审批意见:不同意,意见：'+self.comments))
-    #申请暂停
-    @api.multi
-    def do_zanting(self):
-        if self.is_click_01 or self.is_click_02 or self.is_click_03:
-            raise ValidationError("已提交审批，不能提交暂停")
-        else:
-            self.write({'reason_request':'','agree':False,'disagree':False,'comments':'','is_zanting':True,'is_ztpage':True})
-
-    #暂停提交
-    @api.multi
-    def do_zantingtj(self):
-        if self.disagree:
-            self.write({'disagree':'','comments':''})
-        if self.reason_request:
-            is_plccb = False
-            plccb=None
-            for role in self.proName.role_ids:
-                if role.cof_id.name=="PL-CCB":
-                    is_plccb=True
-                    plccb=role.person
-                    break
-            if not is_plccb or not plccb:
-                raise ValidationError(u"该产品没有配置PL-CCB")
-            self.write({'is_zantingtj':True})
-            self.current_approver_user = [(5,)]
-            # if not self.proName.department.manager_id:
-            #     raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
-            # self.add_follower(employee_id=self.proName.department.manager_id.id)
-            if self.proName.department_2:
-                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            else:
-                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            appellation = plccb.name+u",您好"
-            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的暂停申请，待您审批"
-            base_url = self.get_base_url()
-            link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
-            url = base_url+link
-            self.env['mail.mail'].create({
-                'body_html': u'''<p>%s</p>
-                             <p>%s</p>
-                             <p> 请点击链接进入:
-                             <a href="%s">%s</a></p>
-                            <p>dodo</p>
-                             <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
-                'subject': '%s' % subject,
-                'email_to': '%s' % plccb.work_email,
-                'auto_delete': False,
-                'email_from':self.get_mail_server_name(),
-            }).send()
-            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><th style="padding:10px">版本号</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.proName.name,self.version_numb,u'提交暂停',self.reason_request))
-        else:
-            raise ValidationError('申请原因未填写')
-
-
-
-    #暂停恢复
-    @api.multi
-    def do_zanting_back(self):
-         self.write({'reason_request':'','agree':False,'disagree':False,'comments':'','is_zanting_back':True})
-
-    #恢复暂停提交
-    @api.multi
-    def do_zanting_backtj(self):
-        if self.disagree:
-            self.write({'disagree':'','comments':''})
-        if self.reason_request:
-            is_plccb = False
-            plccb=None
-            for role in self.proName.role_ids:
-                if role.cof_id.name=="PL-CCB":
-                    is_plccb=True
-                    plccb=role.person
-                    break
-            if not is_plccb or not plccb:
-                raise ValidationError(u"该产品没有配置PL-CCB")
-            self.write({'is_zanting_backtj':True})
-            self.current_approver_user = [(5,)]
-            # if not self.proName.department.manager_id:
-            #     raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            if self.proName.department_2:
-                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            else:
-                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            appellation = plccb.name+u",您好"
-            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的恢复暂停申请，待您审批"
-            base_url = self.get_base_url()
-            link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
-            url = base_url+link
-            self.env['mail.mail'].create({
-                'body_html': u'''<p>%s</p>
-                             <p>%s</p>
-                             <p> 请点击链接进入:
-                             <a href="%s">%s</a></p>
-                            <p>dodo</p>
-                             <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
-                'subject': '%s' % subject,
-                'email_to': '%s' % plccb.work_email,
-                'auto_delete': False,
-                'email_from':self.get_mail_server_name(),
-            }).send()
-            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
-            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><th style="padding:10px">版本号</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.proName.name,self.version_numb,u'恢复暂停',self.reason_request))
-        else:
-            raise ValidationError('申请原因未填写')
+    is_zantingtjN = fields.Boolean(string="标记是否提交暂停")
+    is_zanting_backtjN = fields.Boolean(string="标记是否提交恢复暂停")
+    is_zhongzhitjN = fields.Boolean(string="标记是否提交中止")
 
 
 
@@ -706,118 +548,13 @@ class dtdream_rd_version(models.Model):
             self.signal_workflow('vzhongzhi_to_yfb')
         self.write({'reason_request':'','agree':False,'disagree':False,'comments':''})
 
-
-    #申请中止
-    @api.multi
-    def do_zhongzhi(self):
-        if self.is_click_01 or self.is_click_02 or self.is_click_03:
-            raise ValidationError("已提交审批，不能提交中止")
-        else:
-            self.write({'reason_request':'','agree':False,'disagree':False,'comments':'','is_zhongzhi':True,'is_ztpage':True})
-
-    #中止提交
-    @api.multi
-    def do_zhongzhitj(self):
-        if self.disagree:
-            self.write({'disagree':'','comments':''})
-        if self.reason_request:
-            is_plccb = False
-            plccb=None
-            for role in self.proName.role_ids:
-                if role.cof_id.name=="PL-CCB":
-                    is_plccb=True
-                    plccb=role.person
-                    break
-            if not is_plccb or not plccb:
-                raise ValidationError(u"该产品没有配置PL-CCB")
-            self.write({'is_zhongzhitj':True})
-            self.current_approver_user = [(5,)]
-            # if not self.proName.department.manager_id:
-            #     raise ValidationError(u"请配置%s的部门主管" %(self.proName.department.name))
-            self.write({'current_approver_user': [(4,plccb.user_id.id)]})
-            # self.add_follower(employee_id=self.proName.department.manager_id.id)
-            if self.proName.department_2:
-                subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            else:
-                subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-            appellation = plccb.name+u",您好"
-            content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的中止申请，待您审批"
-            base_url = self.get_base_url()
-            link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
-            url = base_url+link
-            self.env['mail.mail'].create({
-                'body_html': u'''<p>%s</p>
-                             <p>%s</p>
-                             <p> 请点击链接进入:
-                             <a href="%s">%s</a></p>
-                            <p>dodo</p>
-                             <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
-                'subject': '%s' % subject,
-                'email_to': '%s' % plccb.work_email,
-                'auto_delete': False,
-                'email_from':self.get_mail_server_name(),
-            }).send()
-            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><th style="padding:10px">版本号</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.proName.name,self.version_numb,u'提交中止',self.reason_request))
-        else:
-            raise ValidationError('申请原因未填写')
-
-    def action_makeexception(self, cr, uid, ids, context=None):
-        opportunity = self.browse(cr, uid, ids[0], context)
-        res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid, 'dtdream_rd_prod', 'act_dtdream_exceptionedit', context)
-        res['context'] = {
-            'default_name': opportunity.execption_id.name.id,
-            'default_version': opportunity.execption_id.version.id,
-            'default_reason': opportunity.execption_id.reason,
-            'default_approver_fir': opportunity.execption_id.approver_fir.id,
-            'default_approver_sec': opportunity.execption_id.approver_sec.id,
-            'default_mark':False
-        }
-        return res
-
-    #提交例外
-    @api.multi
-    def execptiontj(self):
-        if not self.approver_fir:
-            raise ValidationError(u"第一审批人不能为空")
-        if self.proName.department_2:
-            subject=self.proName.department.name+u"/"+self.proName.department_2.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-        else:
-            subject=self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"待您审批"
-        appellation = self.proName.department.manager_id.name+u",您好"
-        content = self.proName.department.name+u"的"+self.proName.name+u"的"+self.version_numb+u"的例外申请，待您审批"
-        base_url = self.get_base_url()
-        link = '/web#id=%s&view_type=form&model=dtdream_execption' % self.execption_id.id
-        url = base_url+link
-        self.env['mail.mail'].create({
-            'body_html': u'''<p>%s</p>
-                         <p>%s</p>
-                         <p> 请点击链接进入:
-                         <a href="%s">%s</a></p>
-                        <p>dodo</p>
-                         <p>万千业务，简单有do</p>
-                         <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
-            'subject': '%s' % subject,
-            'email_to': '%s' % self.approver_fir.work_email,
-            'auto_delete': False,
-            'email_from':self.get_mail_server_name(),
-        }).send()
-        self.execption_id.current_approver_user = [(5,)]
-        self.execption_id.write({'state':'yjsp','current_approver_user':[(4,self.approver_fir.user_id.id)]})
-        self.write({'execption_id':None,'execption_flag':False})
-
     @api.model
     def read_group(self,domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
         params = self._context.get('params', {})
         action = params.get('action', None)
         if action:
-            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-            if menu == u"我相关的":
+            menu_ver = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu_ver == u"我相关的":
                 uid = self._context.get('uid', '')
                 em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
                 domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
@@ -829,8 +566,8 @@ class dtdream_rd_version(models.Model):
         params = self._context.get('params', {})
         action = params.get('action', None)
         if action:
-            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-            if menu == u"我相关的":
+            menu_ver = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu_ver == u"我相关的":
                 uid = self._context.get('uid', '')
                 em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
                 domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
@@ -921,126 +658,28 @@ class dtdream_rd_version(models.Model):
                 elif version.is_zanting_backtj:
                      self.special_send_email(version=version,state=u"恢复暂停")
 
-
-#版本审批基础数据配置
-class dtdream_rd_approver_ver(models.Model):
-    _name = 'dtdream_rd_approver_ver'
-    name = fields.Many2one('dtdream_rd_config',string="角色")
-    ver_state = fields.Selection([('initialization','计划中'),('Development','开发中'),('pending','待发布')],string='阶段')
-    level = fields.Selection([('level_01','一级'),('level_02','二级')],string='级别')
-    department = fields.Many2one('hr.department','部门')
-    is_formal = fields.Boolean(string="是否为正式版本")
-
-    @api.onchange('ver_state')
-    def get_is_pending(self):
-        if self.ver_state=='pending':
-            self.is_pending=True
-        else:
-            self.is_pending=False
-
-    is_pending = fields.Boolean("是否待发布")
-
-    @api.onchange('level')
-    def _is_level(self):
-        if self.level=='level_01':
-            self.is_level=True
-        else:
-            self.is_level=False
-
-    is_level = fields.Boolean( string="是否一级",readonly=True)
-
-
-
-#版本审批意见
-class dtdream_rd_process_ver(models.Model):
-    _name = 'dtdream_rd_process_ver'
-    ver_state = fields.Selection([('initialization','计划中'),('Development','开发中'),('pending','待发布')],string='阶段', readonly=True)
-    role = fields.Many2one('dtdream_rd_config',string="角色",readonly=True)
-    approver = fields.Many2one('hr.employee',string="审批人",help="可选择进行授权")
-    level = fields.Selection([('level_01','一级'),('level_02','二级')],string='级别',readonly=True)
-    approver_old = fields.Many2one('hr.employee',string="审批人")
-
-
-    @api.onchange("is_pass")
-    def is_pass_change(self):
-        for rec in self:
-            if rec.is_pass and rec.is_refuse or rec.is_pass and rec.is_risk:
-                rec.is_refuse = False
-                rec.is_risk = False
-
-    @api.onchange("is_refuse")
-    def is_refuse_change(self):
-        for rec in self:
-            if rec.is_pass and rec.is_refuse or rec.is_refuse and rec.is_risk:
-                rec.is_risk = False
-                rec.is_pass = False
-
-    @api.onchange("is_risk")
-    def is_risk_change(self):
-        for rec in self:
-            if rec.is_pass and rec.is_risk or rec.is_refuse and rec.is_risk:
-                rec.is_refuse = False
-                rec.is_pass = False
-
-    is_pass = fields.Boolean("通过")
-    is_refuse = fields.Boolean("不通过")
-    is_risk = fields.Boolean("带风险通过")
-    reason = fields.Text("意见")
-
-    process_01_id = fields.Many2one('dtdream_rd_version',string='研发版本')
-    process_02_id = fields.Many2one('dtdream_rd_version',string='研发版本')
-    process_03_id = fields.Many2one('dtdream_rd_version',string='研发版本')
-
-    is_new = fields.Boolean(string="标记是否为新",default=True)
-
     @api.model
-    def _compute_editable(self):
-        for rec in self:
-            if rec.ver_state=='initialization':
-                if rec.level=='level_01':
-                    if rec.process_01_id.version_state==rec.ver_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new and not rec.process_01_id.is_finish_01:
-                        rec.editable=True
-                    else:
-                        rec.editable=False
-                if rec.level=='level_02':
-                    if rec.process_01_id.version_state==rec.ver_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new:
-                        rec.editable=True
-                    else:
-                        rec.editable=False
-            if rec.ver_state=='Development':
-                if rec.level=='level_01':
-                    if rec.process_02_id.version_state==rec.ver_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new and not rec.process_02_id.is_finish_02:
-                        rec.editable=True
-                    else:
-                        rec.editable=False
-                if rec.level=='level_02':
-                    if rec.process_02_id.version_state==rec.ver_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new:
-                        rec.editable=True
-                    else:
-                        rec.editable=False
-            if rec.ver_state=='pending':
-                if rec.level=='level_01':
-                    if rec.process_03_id.version_state==rec.ver_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new and not rec.process_03_id.is_finish_03:
-                        rec.editable=True
-                    else:
-                        rec.editable=False
-                if rec.level=='level_02':
-                    if rec.process_03_id.version_state==rec.ver_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new:
-                        rec.editable=True
-                    else:
-                        rec.editable=False
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(dtdream_rd_version, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar,submenu=False)
+        if res['type'] == "form":
+            rd_list = []
+            try:
+                rd_list = openerp.tools.config['rd_list'].split(',')
+            except Exception, e:
+                rd_list = []
+            if len(rd_list)>0:
+                dm =self._get_department_domain(rd_list=rd_list)
+                dm_f =self._get_department_2_domain(rd_list=rd_list)
+                for field in res['fields']:
+                    if field == 'department':
+                        res['fields'][field]['domain'] = dm
+                    if field == 'department_2':
+                        res['fields'][field]['domain'] = dm_f
+        return res
 
-    editable = fields.Boolean(string="能否修改",compute = _compute_editable,default=True)
 
-    @api.one
-    def _compute_is_Qa(self):
-        users =  self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users
-        ids = []
-        for user in users:
-            ids+=[user.id]
-            for rec in self:
-                if self.env.user.id in ids:
-                    rec.is_Qa = True
-                else:
-                    rec.is_Qa=False
-    is_Qa = fields.Boolean(string="是否在QA组",compute=_compute_is_Qa,readonly=True)
+
+
+
+
+

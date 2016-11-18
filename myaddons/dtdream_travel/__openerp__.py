@@ -23,7 +23,6 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'security/security.xml',
         'wizard/chucha_wizard.xml',
         'views/report_travel.xml',
         'views/print.xml',
@@ -32,6 +31,7 @@
         'views/actions.xml',
         'views/menu.xml',
         'workflow/workflow.xml',
+        'security/security.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

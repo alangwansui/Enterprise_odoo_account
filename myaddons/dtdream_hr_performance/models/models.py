@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, AccessError
 from openerp.osv import expression
 from lxml import etree
 import time
@@ -31,6 +31,7 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def read(self, fields=None, load='_classic_read'):
         result = super(dtdream_hr_performance, self).read(fields=fields, load=load)
+        self.check_access_rights_performance()
         result = self.refresh_when_department_changed(result)
         if len(result[0]) != 2 and result[0].get('pbc', 1) != 1:
             department = result[0]['department']
@@ -42,6 +43,21 @@ class dtdream_hr_performance(models.Model):
             result[0]['pbc'] = target
             self.write({"pbc": [(6, 0, target)]})
         return result
+
+    def check_access_rights_performance(self):
+        """HR绩效接口人查看自己的接口部门的申请，
+        限制通过id遍历所有的申请"""
+        for rec in self:
+            if rec.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in rec.env.user.groups_id and \
+                            rec.env.ref("dtdream_hr_performance.group_hr_inter_performance") in rec.env.user.groups_id:
+                cr = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
+                department_id = []
+                for crr in cr:
+                    department_id.append(crr.department.id)
+                    for department in crr.department.child_ids:
+                        department_id.append(department.id)
+                if rec.department.id not in department_id:
+                    raise AccessError('由于安全限制，请求的操作不能被完成。请联系你的系统管理员。\n\n(单据类型: dtdream.hr.performance, 操作: read)')
 
     def update_dtdream_hr_pbc(self):
         for rec in self:
@@ -373,6 +389,7 @@ class dtdream_hr_performance(models.Model):
     up_officer = fields.Boolean(string='上级部门主管', default=lambda self: True)
     inter = fields.Boolean(string='当前登入者是否接口人', compute=_compute_login_is_inter)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
+    resume_approve = fields.Many2one('hr.employee', string="当前审批人")
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter)', '每个员工每个季度只能有一条员工绩效目标!')
@@ -390,11 +407,11 @@ class dtdream_hr_performance(models.Model):
             subject = u'【通知】您的个人绩效目标已被返回修改'
             content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
             self.send_mail(self.name, subject=subject, content=content)
-        self.write({'state': '1'})
+        self.write({'state': '1', 'resume_approve': self.name.id})
 
     @api.multi
     def wkf_confirm(self):
-        self.write({'state': '2'})
+        self.write({'state': '2', 'resume_approve': self.officer.id})
         subject = u'【通知】%s提交了个人绩效目标' % self.name.name
         content = u'%s的个人季度绩效目标已制定,请确认;如该季度绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % self.name.name
         self.send_mail(self.officer, subject=subject, content=content)
@@ -402,14 +419,14 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def wkf_evaluate(self):
-        self.write({'state': '3'})
+        self.write({'state': '3', 'resume_approve': ''})
         subject = u'【通知】%s确认了您的个人绩效目标' % self.officer.name
         content = u"%s已针对您的个人季度绩效目标完成确认,请查阅。" % self.officer.name
         self.send_mail(self.name, subject=subject, content=content)
 
     @api.multi
     def wkf_conclud(self):
-        self.write({'state': '4'})
+        self.write({'state': '4', 'resume_approve': self.name.id})
         subject = u'【通知】%s个人绩效考核已启动' % self.quarter
         content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写%s关键事项达成情况与主要工作成果。" % self.quarter
         self.send_mail(self.name, subject=subject, content=content)
@@ -417,7 +434,7 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def wkf_rate(self):
-        self.write({'state': '5'})
+        self.write({'state': '5', 'resume_approve': self.officer.id})
         subject = u'【通知】%s提交了个人绩效目标总结' % self.name.name
         content = u'%s已完成个人工作总结，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % self.name.name
         self.send_mail(self.officer, subject=subject, content=content)
@@ -426,10 +443,10 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def wkf_final(self):
         if self.result:
-            self.write({'state': '99'})
+            self.write({'state': '99', 'resume_approve': ''})
 
         else:
-            self.write({'state': '6'})
+            self.write({'state': '6', 'resume_approve': ''})
         subject = u'【通知】%s对您的个人绩效目标做了评价' % self.officer.name
         content = u'%s已针对您的工作总结完成了评价,请查阅!' % self.officer.name
         self.send_mail(self.name, subject=subject, content=content)
@@ -437,7 +454,7 @@ class dtdream_hr_performance(models.Model):
 
     @api.multi
     def wkf_done(self):
-        self.write({'state': '99'})
+        self.write({'state': '99',  'resume_approve': ''})
         subject = u'【通知】您的绩效考核结果已导入'
         content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
         self.send_mail(self.name, subject=subject, content=content)

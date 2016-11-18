@@ -205,7 +205,7 @@ var FormView = View.extend(common.FieldManagerMixin, {
             }
             this.sidebar.add_items('other', _.compact([
                 this.is_action_enabled('delete') && { label: _t('Delete'), callback: this.on_button_delete },
-                this.is_action_enabled('create') && { label: _t('Duplicate'), callback: this.on_button_duplicate }
+                //this.is_action_enabled('create') && { label: _t('Duplicate'), callback: this.on_button_duplicate }
             ]));
 
             this.sidebar.appendTo($node);

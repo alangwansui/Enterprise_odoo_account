@@ -90,24 +90,19 @@ class dtdream_expense_record(models.Model):
 
                 record.everyonecost = record.invoicevalue/(int(record.customernumber)+int(record.peitongnumber))
 
-
     everyonecost = fields.Float(digits=(11, 2),string="人均消费(元)",compute=_compute_everyonecost, store=True)
     visible_all = fields.Boolean(default=False,string="是否隐藏客户人数、陪同人数，人均消费")
 
     attachment_ids = fields.One2many('dtdream.expense.record.attachment', 'record_id', u'附件明细')
-
+    @api.constrains("attachment_ids")
+    def attachment_ids_che(self):
+        for attachment in self.attachment_ids:
+            if not attachment.image:
+                self.attachment_ids = [(2,attachment.id)]
     report_ids = fields.Many2many("dtdream.expense.report", "dtdream_exprense_record_report_ref", "report_id",
                                   "record_id", string="报销单ID")
 
     report_ids_count = fields.Integer(compute=_compute_report_ids_count, store=True)
-
-
-    @api.constrains('attachment_ids')
-    def check_attachment_ids(self):
-        if self.expensedetail.name != u"出差补助" and \
-                (not self.attachment_ids or len(self.attachment_ids) == 0):
-            raise exceptions.ValidationError(u'请上传费用发票')
-
 
     @api.multi
     @api.onchange('report_ids', 'koujianamount', 'invoicevalue', 'currentdate')

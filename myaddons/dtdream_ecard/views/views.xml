@@ -1,0 +1,76 @@
+<openerp>
+  <data>
+    <record id="dtdream_ecard.view_dtdream_ecard_filter" model="ir.ui.view">
+        <field name="name">dtdream_ecard filter</field>
+        <field name="model">dtdream_ecard.dtdream_ecard</field>
+        <field name="arch" type="xml">
+            <search string="名片">
+                <!--<field name="name" string="我创建的" filter_domain="[('ecard_name', '=', uid)]"/>-->
+                <filter string="我创建的" domain="[('name.user_id', '=', uid)]"/>
+            </search>
+         </field>
+     </record>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="dtdream_ecard_tree_view">
+      <field name="name">dtdream_ecard tree view</field>
+      <field name="model">dtdream_ecard.dtdream_ecard</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="ecard_name"/>
+          <field name="ecard_index"/>
+          <field name="emp_duty"/>
+          <field name="ecard_url"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="dtdream_ecard_form_view">
+      <field name="name">dtdream_ecard form view</field>
+      <field name="model">dtdream_ecard.dtdream_ecard</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group string="电子名片信息">
+              <field name="ecard_index" readonly="1"/>
+              <field name="ecard_url" readonly="1"/>
+              <field name="name" readonly="1"/>
+              <field name="ecard_name"/>
+              <field name="emp_email"/>
+              <field name="emp_phone"/>
+              <field name="emp_duty"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="dtdream_ecard.action_window">
+      <field name="name">所有名片</field>
+      <field name="res_model">dtdream_ecard.dtdream_ecard</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="action_dtdream_ecard_form_view">
+        <field name="act_window_id" ref="dtdream_ecard.action_window"/>
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="dtdream_ecard_form_view"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="action_dtdream_ecard_tree_view">
+        <field name="act_window_id" ref="dtdream_ecard.action_window"/>
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="dtdream_ecard_tree_view"/>
+    </record>
+
+    <!-- Top menu item -->
+    <menuitem name="电子名片" groups="dtdream_ecard.group_dtdream_ecard_admin" id="dtdream_ecard.menu_root"/>
+
+    <!-- menu categories -->
+    <menuitem name="所有名片" id="dtdream_ecard.view_all_ecard" parent="dtdream_ecard.menu_root" action="dtdream_ecard.action_window"/>
+
+  </data>
+</openerp>

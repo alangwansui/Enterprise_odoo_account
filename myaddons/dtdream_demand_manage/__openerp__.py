@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'workflow/dtdream_demand_app_workflow.xml',
         'views/dtdream_demand_app_js.xml',
+        'security/dtdream_demand_manage_security.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

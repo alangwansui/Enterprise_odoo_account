@@ -328,7 +328,7 @@ class ver_process_wizard(models.TransientModel):
                 appro = self.env['dtdream_rd_role'].search([('role_id','=',current_version.proName.id),('cof_id','in',rold_ids),('person','!=',False)]) #产品中角色配置
                 current_version.current_approver_user = [(5,)]
                 if len(appro)==0:
-                    current_version.signal_workflow('btn_to_dfb')
+                    current_version.signal_workflow('btn_to_yfb')
                     current_version.write({'is_click_03':False})
                 else:
                     for record in appro:

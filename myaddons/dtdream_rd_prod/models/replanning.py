@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import openerp
-from openerp import SUPERUSER_ID
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from openerp.osv import expression
 from lxml import etree
@@ -13,10 +10,11 @@ class dtdream_rd_replanning(models.Model):
     _inherit = ['mail.thread']
     _description = u"版本重计划"
 
-    @api.model
     def _compute_name(self):
-        for rec in self:
-            rec.name=rec.proname.name+u'/'+rec.version.version_numb
+        version=''
+        if self.version:
+            version=u'/'+self.version.version_numb+u'/'
+        self.name=self.proname.name+version+u'的例外'
 
     name = fields.Char(compute=_compute_name,stroe=True,)
     proname = fields.Many2one('dtdream_prod_appr',string="产品", readonly=True)
@@ -28,9 +26,20 @@ class dtdream_rd_replanning(models.Model):
     reason = fields.Text(string="重计划原因")
 
     role_person = fields.Many2many("res.users" ,"dtdream_replanning_role_user",string="对应产品角色中的人员用户")
+    appr_PL_CCB = fields.Many2one("hr.employee", string="审批人PL-CCB")
 
     department = fields.Many2one('hr.department','部门')
     department_2 = fields.Many2one('hr.department','二级部门')
+
+    @api.onchange('message_follower_ids')
+    def _compute_follower(self):
+        self.followers_user = False
+        for foll in self.message_follower_ids:
+            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
+            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+                self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4,foll.partner_id.user_ids.id)]})
+
+    followers_user = fields.Many2many("res.users" ,"replanning_f_u_u",string="关注者")
 
     @api.constrains('proname')
     def con_name_role(self):
@@ -49,7 +58,7 @@ class dtdream_rd_replanning(models.Model):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,default=True)
 
     @api.model
     def _compute_is_Qa(self):
@@ -63,7 +72,17 @@ class dtdream_rd_replanning(models.Model):
             self.is_Qa=False
     is_Qa = fields.Boolean(string="是否在QA组",compute=_compute_is_Qa,readonly=True)
 
-    current_approver_user = fields.Many2one("res.users",string="当前审批人用户")
+    current_approver_user = fields.Many2many("res.users",string="当前经办人用户")
+
+    @api.depends("current_approver_user")
+    def _depends_user(self):
+        for rec in self:
+            if rec.current_approver_user:
+                em = self.env['hr.employee'].search([('user_id','=',rec.current_approver_user.id)])
+                rec.current_approver=em.id
+            else:
+                rec.current_approver=False
+    current_approver = fields.Many2one("hr.employee",compute="_depends_user",string="当前经办人")
 
     his_app_user = fields.Many2many("res.users" ,"dtdream_replanning_his_user",string="历史审批人用户")
 
@@ -127,10 +146,6 @@ class dtdream_rd_replanning(models.Model):
                                                                limit=limit, order=order)
 
 
-
-
-
-
     #下方备注
     def _message_post(self,replanning,current_product,current_version,state):
         current_version.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
@@ -144,13 +159,21 @@ class dtdream_rd_replanning(models.Model):
     def btn_replanning_tj(self):
         if not self.reason:
             raise ValidationError(u"原因未填写")
-        if not self.proname.department.manager_id.id:
-            raise ValidationError(u"部门主管未配置")
+        is_plccb = False
+        plccb = None
+        for role in self.proname.role_ids:
+            if role.cof_id.name == "PL-CCB":
+                is_plccb = True
+                plccb = role.person
+                break
+        if not is_plccb or not plccb:
+            raise ValidationError(u"该产品没有配置PL-CCB")
+
         else:
-            self.write({'current_approver_user': self.proname.department.manager_id.user_id.id})
+            self.write({'current_approver_user': plccb.user_id.id})
             self.signal_workflow("cg_to_spz")
 
-            next_shenpi = self.proname.department.manager_id
+            next_shenpi = plccb
             current_product =self.proname
             current_version = self.version
             base_url = self.get_base_url()
@@ -204,7 +227,7 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
         for rec in self:
             rec.name=rec.proname.name+u'/'+rec.version.version_numb
 
-    name = fields.Char(compute=_compute_name,stroe=True,)
+    name = fields.Char(compute=_compute_name)
     proname = fields.Many2one('dtdream_prod_appr',string="产品", readonly=True)
     version = fields.Many2one('dtdream_rd_version',string="版本", readonly=True)
     old_plan_time = fields.Date(string="原计划发布时间",readonly=True)
@@ -212,6 +235,7 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
     shenpi_date = fields.Date(string="审批通过时间")
     state = fields.Selection([('state_01','草稿'),('state_02','审批中'),('state_03','已审批')],string="状态",default='state_01')
     reason = fields.Text(string="重计划原因")
+    appr_PL_CCB = fields.Many2one("hr.employee", string="审批人PL-CCB")
 
     @api.one
     def _compute_create(self):
@@ -219,7 +243,7 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
             self.is_create=True
         else:
             self.is_create=False
-    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,stroe=True,default=True)
+    is_create = fields.Boolean(string="是否创建者",compute=_compute_create,default=True)
 
     @api.one
     def _compute_is_Qa(self):
@@ -297,8 +321,6 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
             'email_from':self.get_mail_server_name(),
         }).send()
         self._message_post(replanning=res,current_product=current_product,current_version=current_version)
-
-
 
 
 

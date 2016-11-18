@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record model="ir.module.category" id="module_dtdream_notice_group">
+            <field name="name">公告</field>
+            <field name="description">包括了公告模块的所有权限组</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="group_dtdream_notice_admin" model="res.groups">
+            <field name="name">公告管理员</field>
+            <field name="category_id" ref="module_dtdream_notice_group"/>
+        </record>
+
+    </data>
+</openerp>

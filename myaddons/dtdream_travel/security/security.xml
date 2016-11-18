@@ -8,5 +8,27 @@
             <field name="sequence">2</field>
         </record>
 
+        <record id="dtdream_travel_read" model="ir.rule">
+            <field name="name">查看出差申请</field>
+            <field name="model_id" ref="model_dtdream_travel_chucha"/>
+            <field name="domain_force">['|',('shenpiren.user_id','=',user.id),'|',('approve.user_id','=',user.id),'|',('name.user_id','=',user.id),'|',('create_uid','=',user.id),'|',('shenpi_first.user_id','=',user.id),'|',('shenpi_second.user_id','=',user.id),'|',('shenpi_third.user_id','=',user.id),'|',('shenpi_fourth.user_id','=',user.id),('shenpi_fifth.user_id','=',user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="dtdream_travel_manage_read" model="ir.rule">
+            <field name="name">主管经理查看出差申请</field>
+            <field name="model_id" ref="model_dtdream_travel_chucha"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="groups" eval="[(4, ref('base.group_hr_user')),(4, ref('base.group_hr_manager'))]"/>
+        </record>
+
     </data>
 </openerp>

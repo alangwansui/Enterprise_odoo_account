@@ -16,6 +16,7 @@ var Menu = Widget.extend({
         'click .o_menu_toggle': function (ev) {
             ev.preventDefault();
             this.trigger_up((this.appswitcher_displayed)? 'hide_app_switcher' : 'show_app_switcher');
+//            $('.o_menu_toggle').attr('href','/index#');
         },
         'mouseover .o_menu_sections > li:not(.open)': function(e) {
             var $opened = this.$('.o_menu_sections > li.open');

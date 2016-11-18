@@ -36,7 +36,7 @@
         'views/dtdream_expense_quanqian.xml',
         'views/dtdream_expense_city.xml',
         'views/dtdream_expense_province.xml',
-
+        'views/dtdream_expense_account_credit.xml',
         'workflow/expenseworkflow.xml',
         'views/expense_data.xml',
         'print/dtdream_expense_report.xml',

@@ -4,11 +4,37 @@ from openerp import models, fields, api
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp.exceptions import ValidationError
-
+from openerp.osv import expression
+from openerp.exceptions import AccessError
 
 class dtdream_sale_own_report(models.Model):
     _name = 'dtdream.sale.own.report'
     _description = u"个人周报"
+
+    @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        """ Override to explicitely call check_access_rule, that is not called
+            by the ORM. It instead directly fetches ir.rules and apply them. """
+        domain = self.get_access_domain(domain=[])
+        access_records = [rec.id for rec in self.sudo().search(domain)]
+        for record in self:
+            if record.id not in access_records:
+                raise AccessError(u"您无权限访问该记录。")
+        return super(dtdream_sale_own_report, self).read(fields=fields, load=load)
+
+    def get_access_domain(self,domain):
+        ex_domain = [("create_uid",'=',self._uid)]
+        if self.user_has_groups('dtdream_sale.group_dtdream_sale_office_manager'):
+            ex_domain = expression.OR([['&',("department",'in',[x.name for x in self.env.user.user_access_department]),('state','=','submit')],ex_domain])
+        if self.user_has_groups('dtdream_sale.group_dtdream_sale_high_manager') or self.user_has_groups('dtdream_sale.group_dtdream_weekly_report_manager'):
+            ex_domain = []
+        return expression.AND([ex_domain,domain])
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        domain = self.get_access_domain(domain)
+        return super(dtdream_sale_own_report, self).search_read(domain=domain, fields=fields, offset=offset,
+                                                           limit=limit, order=order)
 
     state = fields.Selection(
         [('0', '草稿'),
@@ -216,7 +242,20 @@ class dtdream_sale_own_report(models.Model):
 
     @api.multi
     def btn_submit(self):
-        self.write({'state':'submit'})
+        self.write({'state':'submit','submit_date':datetime.now()})
+        if self.env['hr.employee'].search([('login','=',self.create_uid.login)]).department_id.parent_id.id:
+            department_name = self.env['hr.employee'].search([('login','=',self.create_uid.login)]).department_id.name
+            real_department = self.env['hr.department'].search([('name','=',department_name),('parent_id.name','=',u'市场部')])
+            manager_id = real_department.manager_id
+            assitant_id = real_department.assitant_id
+            if len(manager_id) > 0:
+                self.dtdream_send_submit_mail(u"{0}于{1}提交了第{2}周个人周报,请您查阅!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10],self.week.name),
+                               u"%s提交了第%s周个人周报,等待您查阅批复" %(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name,self.week.name), email_to=manager_id.work_email,
+                               appellation = u'{0},您好：'.format(manager_id.name))
+            if len(assitant_id) > 0:
+                self.dtdream_send_submit_mail(u"{0}于{1}提交了第{2}周个人周报,请您查阅!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10],self.week.name),
+                               u"%s提交了第%s周个人周报,等待您查阅批复" %(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name,self.week.name), email_to=assitant_id.work_email,
+                               appellation = u'{0},您好：'.format(assitant_id.name))
         if len(self.visit_customer) > 0:
             person_list = []
             arr = {}
@@ -295,6 +334,7 @@ class dtdream_sale_own_report(models.Model):
     contract_signing_amount = fields.Integer(string="合同签订额(万元)")
     received = fields.Integer(string="已收款(万元)")
     accounts_payable = fields.Integer(string="应付款(万元)")
+    submit_date = fields.Date(string="提交时间")
 
     report_person = fields.Many2one('hr.employee','报告人',default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]))
     report_person_name = fields.Char(string="报告人",compute=_compute_reportor_info,store=True)
@@ -326,6 +366,8 @@ class dtdream_sale_own_report(models.Model):
 
     next_sale_other = fields.One2many("sale.other","next_sale_other_id")
     sys_compute_lists = fields.One2many("sys.list","rec_id",string="系统部列表")
+
+    reply_list = fields.One2many("reply.list","reply_list_to_own_report_id",string="周报批复区")
 
     @api.constrains("sys_compute_lists")
     def _cons_sys_compute_lists(self):
@@ -507,10 +549,6 @@ class dtdream_sale_own_report(models.Model):
                                     str = str + recc.name + u";"
                         if str != rec.project_process:
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
-                if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
-                    self.other_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
-                print 11
 
     @api.constrains('next_zhengwu_project')
     def _cons_next_zhengwu_project(self):
@@ -552,9 +590,6 @@ class dtdream_sale_own_report(models.Model):
                                     str = str + recc.name + u";"
                         if str != rec.project_process:
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
-                if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
-                    self.next_zhengwu_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
@@ -576,6 +611,139 @@ class dtdream_sale_own_report(models.Model):
                 'email_to': '%s' % email_to,
                 'auto_delete': False,
             }).send()
+
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def dtdream_send_submit_mail(self, subject, content, email_to,appellation):
+        base_url = self.get_base_url()
+        url = base_url + '/web#id=%s&view_type=form&model=dtdream.sale.own.report' % self.id
+        email_to = email_to
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <a href="%s">点击进入查看</a></p>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+class reply_list(models.Model):
+    _name = "reply.list"
+
+    def _get_default_person(self):
+        if self._context.get('default_reply_list_to_own_report_id'):
+            reporot_rec_id = self._context.get('default_reply_list_to_own_report_id')
+            return self.env['dtdream.sale.own.report'].search([('id','=',reporot_rec_id)]).report_person
+        else:
+            reporot_rec_id = self._context.get('default_reply_list_to_manager_report_id')
+            return self.env['dtdream.sale.manager.report'].search([('id','=',reporot_rec_id)]).report_person
+
+    def _get_default_week(self):
+        if self._context.get('default_reply_list_to_own_report_id'):
+            reporot_rec_id = self._context.get('default_reply_list_to_own_report_id')
+            return self.env['dtdream.sale.own.report'].search([('id','=',reporot_rec_id)]).week.name
+        else:
+            reporot_rec_id = self._context.get('default_reply_list_to_manager_report_id')
+            return self.env['dtdream.sale.manager.report'].search([('id','=',reporot_rec_id)]).week.name
+
+    # 返回批复类型，0为个人周报批复，1为主管周报批复
+    def _get_default_type(self):
+        if self._context.get('default_reply_list_to_own_report_id'):
+            return 0
+        else:
+            return 1
+
+    reply_report_type = fields.Integer(string="批复周报类型",default=_get_default_type)
+    reply_report_week = fields.Char(string="批复周报周别",default=_get_default_week)
+    report_creator = fields.Many2one("hr.employee",string="周报创建人",default=_get_default_person)
+    reply_list_to_own_report_id = fields.Many2one("dtdream.sale.own.report",string="关联个人周报")
+    reply_list_to_manager_report_id = fields.Many2one("dtdream.sale.manager.report",string="关联主管周报")
+    reply_text = fields.Text(string="批复内容",required=True)
+    mail_persons = fields.Many2many("hr.employee",string="批复发送对象",default=_get_default_person,required=True)
+    reply_person = fields.Many2one("hr.employee",string="批复人", default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]), readonly=1)
+
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def dtdream_reply_mail_to_creator(self, subject, content, email_to,appellation,link):
+        base_url = self.get_base_url()
+        url = base_url+link
+        email_to = email_to
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <a href="%s">点击进入查看</a></p>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+    def dtdream_reply_mail_to_mail_persons(self, subject, content, email_to,appellation):
+        email_to = email_to
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': '%s' % email_to,
+                'auto_delete': False,
+            }).send()
+
+    @api.one
+    def btn_confirm(self):
+        email_to = ""
+        for person in self.mail_persons:
+            if person != self.report_creator:
+                email_to = email_to + person.work_email+";"
+        if self.reply_report_type == 0:
+            if self.env['hr.employee'].search([('login','=',self.create_uid.login)]) != self.report_creator:
+                self.dtdream_reply_mail_to_creator(u"{0}，{1}对您第{2}周的个人周报进行了批复!".format(self.create_date,self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.reply_report_week),
+                        content=self.reply_text,email_to=self.report_creator.work_email,appellation = u'您好,批复内容如下:',link = '/web#id=%s&view_type=form&model=dtdream.sale.own.report' % self.reply_list_to_own_report_id.id)
+            self.dtdream_reply_mail_to_mail_persons(u"{0}，{1}对{2}第{3}周的个人周报进行了批复!".format(self.create_date,self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.report_creator.name,self.reply_report_week),
+                       content=self.reply_text, email_to=email_to,
+                       appellation = u'您好,批复内容如下:')
+        else:
+            if self.env['hr.employee'].search([('login','=',self.create_uid.login)]) != self.report_creator:
+                self.dtdream_reply_mail_to_creator(u"{0}，{1}对您第{2}周的主管周报进行了批复!".format(self.create_date,self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.reply_report_week),
+                        content=self.reply_text,email_to=self.report_creator.work_email,appellation = u'您好,批复内容如下:',link = '/web#id=%s&view_type=form&model=dtdream.sale.own.report' % self.reply_list_to_own_report_id.id)
+            self.dtdream_reply_mail_to_mail_persons(u"{0}，{1}对{2}第{3}周的主管周报进行了批复!".format(self.create_date,self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.report_creator.name,self.reply_report_week),
+                       content=self.reply_text, email_to=email_to,
+                       appellation = u'您好,批复内容如下:')
 
 class report_week(models.Model):
     _name = "report.week"
@@ -1150,7 +1318,7 @@ class dtdream_sale_manager_report(models.Model):
 
     @api.multi
     def btn_submit(self):
-        self.write({'status':'1'})
+        self.write({'status':'1','submit_date':datetime.now()})
         if len(self.visit_customer) > 0:
             person_list = []
             arr = {}
@@ -1303,6 +1471,8 @@ class dtdream_sale_manager_report(models.Model):
     sys_compute_lists = fields.One2many("manager.sys.list","manager_rec_id",string="系统部列表")
 
     complete_name = fields.Char(string="部门")
+    manager_reply_list = fields.One2many("reply.list","reply_list_to_manager_report_id",string="周报批复区")
+    submit_date = fields.Date(string="提交时间")
 
     # if_see_manager_report = fields.Char(string="是否可查看主管周报",default="0",compute=_compute_if_see_manager_report,store=True)
 
@@ -1493,9 +1663,6 @@ class dtdream_sale_manager_report(models.Model):
                                     str = str + recc.name + u";"
                         if str != rec.project_process:
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
-                if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
-                    self.other_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
 
     @api.constrains('next_zhengwu_project')
     def _cons_next_zhengwu_project(self):
@@ -1537,9 +1704,6 @@ class dtdream_sale_manager_report(models.Model):
                                     str = str + recc.name + u";"
                         if str != rec.project_process:
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
-                if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
-                    self.next_zhengwu_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
 
     @api.one
     def new_report(self):

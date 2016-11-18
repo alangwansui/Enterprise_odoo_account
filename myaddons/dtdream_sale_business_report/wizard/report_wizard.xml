@@ -50,8 +50,36 @@
     </record>
 
      <record id="act_report_approve_wizard" model="ir.actions.act_window">
-        <field name="name">通过</field>
+        <field name="name">同意</field>
         <field name="res_model">dtdream.report.approve.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+      <record id="view_dtdream_report_submit_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.report.submit.wizard.form</field>
+        <field name="model">dtdream.report.submit.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group style="text-align:center">
+                    <span>
+                        <field name="display_text" readonly="1"></field>
+                    </span>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="btn_submit" model="ir.actions.act_window">
+        <field name="name">提交</field>
+        <field name="res_model">dtdream.report.submit.wizard</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
         <field name="view_mode">form</field>

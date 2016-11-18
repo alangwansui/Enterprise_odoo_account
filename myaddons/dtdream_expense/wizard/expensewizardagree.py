@@ -77,8 +77,10 @@ class ExpenseWizard(models.TransientModel):
 
     def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
-        link = '/web#id=%s&view_type=form&model=dtdream.expense.report' % self.env['dtdream.expense.report'].browse(
-            self._context['active_id']).id
+        action = self.env['ir.model.data'].search([('name','=','action_dtdream_expense_pending_jiekoukuaiji')]).res_id
+        menu_id = self.env['ir.ui.menu'].search([('name','=','费用报销')]).id
+        link = '/web#id=%s&view_type=form&model=dtdream.expense.report&action=%s&menu_id=%s' % (self.env['dtdream.expense.report'].browse(
+            self._context['active_id']).id,action,menu_id)
         url = base_url + link
         email_to = email_to
         email_cc = "" if email_cc == email_to else email_cc
@@ -454,7 +456,7 @@ class ExpenseWizard(models.TransientModel):
             content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批!".format(current_expense_model.create_uid.name,
                                                                            current_expense_model.create_date[:10])
             if current_expense_model.total_koujianamount > 0:
-                if self.advice.strip() != "":
+                if self.advice and self.advice.strip() != "":
                     content = u"【提醒】{0}于{1}提交的费用报销单已通过接口会计审批，发生{2}元的扣款!审批意见:{3}".format(
                               current_expense_model.create_uid.name,
                               current_expense_model.create_date[:10],

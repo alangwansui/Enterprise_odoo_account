@@ -1,0 +1,466 @@
+/*rem设置*/
+html {
+  font-size: 20px;
+}
+@media only screen and (min-width: 400px) {
+  html {
+    font-size: 21.33333333px !important;
+  }
+}
+@media only screen and (min-width: 414px) {
+  html {
+    font-size: 22.08px !important;
+  }
+}
+@media only screen and (min-width: 480px) {
+  html {
+    font-size: 25.6px !important;
+  }
+}
+/*font-family*/
+@font-face {
+  font-family: "dodo";
+  src: url('iconfont.eot?t=1478072311389');
+  src: url('iconfont.eot?t=1478072311389#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('iconfont.woff?t=1478072311389') format('woff'), /* chrome, firefox */ url('iconfont.ttf?t=1478072311389') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/ url('iconfont.svg?t=1478072311389#dodo') format('svg');
+  
+  /* IE9*/
+  /* iOS 4.1- */
+}
+.dodo {
+  font-family: "dodo" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+.doicon-5:before {
+  content: "\e604";
+}
+.doicon-9:before {
+  content: "\e606";
+}
+.doicon-2:before {
+  content: "\e609";
+}
+.doicon-4:before {
+  content: "\e60a";
+}
+.doicon-3:before {
+  content: "\e60b";
+}
+.doicon-6:before {
+  content: "\e60c";
+}
+.doicon-1:before {
+  content: "\e60d";
+}
+.doicon-11:before {
+  content: "\e60e";
+}
+.doicon-8:before {
+  content: "\e60f";
+}
+.doicon-13:before {
+  content: "\e610";
+}
+.doicon-12:before {
+  content: "\e611";
+}
+.doicon-7:before {
+  content: "\e612";
+}
+.doicon-sousuo:before {
+  content: "\e613";
+}
+/*font-family*/
+html,
+body {
+  color: #4a4a4a;
+  font-family: "Microsoft YaHei", Helvetica, Arial, sans-serif;
+}
+ul,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+/*header*/
+.dodo-header {
+  width: 100%;
+  min-width: 1400px;
+  clear: both;
+  height: 2.325rem;
+  padding: 0.581rem 1.162rem;
+  background-color: #fff;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.39);
+  z-index: 999;
+}
+.dodo-header .logo {
+  float: left;
+}
+.dodo-header .logo img {
+  width: 3.875rem;
+  height: 1.162rem;
+}
+.dodo-header .item-bar {
+  float: right;
+}
+.dodo-header .item-bar ul li {
+  float: left;
+  list-style-type: none;
+  line-height: 1.162rem;
+}
+.dodo-header .item-bar .mail {
+  margin-right: 1.162rem;
+}
+.dodo-header .item-bar .mail i img {
+  width: 0.736rem;
+}
+.dodo-header .item-bar .site-info {
+  margin-right: 2.325rem;
+}
+.dodo-header .item-bar .site-info i {
+  position: relative;
+}
+.dodo-header .item-bar .site-info i .circle {
+  position: absolute;
+  top: -0.387rem;
+  right: -0.387rem;
+  width: 0.775rem;
+  height: 0.775rem;
+  background-color: #ea7a7a;
+  border-radius: 3rem;
+  color: #fff;
+  text-align: center;
+  line-height: 0.775rem;
+  font-style: normal;
+  font-size: 0.465rem;
+  border: 1px solid #fff;
+}
+.dodo-header .item-bar .site-info i img {
+  width: 0.775rem;
+}
+.dodo-header .item-bar .user-menu {
+  font-size: .542rem;
+}
+.dodo-header .item-bar .user-menu a {
+  color: #4a4a4a;
+  text-decoration: none;
+}
+.dodo-header .item-bar .user-menu .avatar {
+  margin-right: .387rem;
+}
+.dodo-header .item-bar .user-menu .avatar img {
+  border-radius: 3rem;
+  width: 1.162rem;
+}
+.dodo-header .item-bar .user-menu .triangle {
+  border-color: #4a4a4a #fff #fff #fff;
+  border-style: solid;
+  border-width: .232rem .155rem 0 .155rem;
+  height: 0;
+  width: 0;
+  float: right;
+  margin-top: .465rem;
+  margin-left: .387rem;
+}
+/*dodo-content*/
+.dodo-container {
+  overflow: hidden;
+  min-width: 1400px;
+  height: 100%;
+}
+.dodo-container .line {
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.dodo-container .blank30 {
+  height: .93rem;
+  line-height: 1px;
+  font-size: 1px;
+  clear: both;
+  overflow: hidden;
+}
+.dodo-container .blank10 {
+  height: .387rem;
+  line-height: 1px;
+  font-size: 1px;
+  clear: both;
+  overflow: hidden;
+}
+.dodo-container .p30 {
+  padding: 1.162rem .93rem .93rem 1.162rem;
+}
+.dodo-container .p10 {
+  padding: 0.387rem;
+}
+.dodo-container h4 {
+  font-size: .62rem;
+  margin-bottom: .775rem;
+}
+.dodo-container .sidebar {
+  width: 8.72rem;
+  background-color: #333645;
+  float: left;
+  font-size: .542rem;
+  margin-bottom: -10000px;
+  padding-bottom: 10000px;
+  color: #cdcdcd;
+}
+.dodo-container .sidebar a {
+  text-decoration: none;
+}
+.dodo-container .sidebar a li:hover {
+  background-color: #414758;
+  border-left: 3px solid #39b4e1;
+  cursor: pointer;
+  color: #ffffff;
+}
+.dodo-container .sidebar a:link,
+.dodo-container .sidebar a:visited {
+  color: #cdcdcd;
+}
+.dodo-container .sidebar a:hover {
+  color: #ffffff;
+}
+.dodo-container .sidebar ul li {
+  list-style-type: none;
+  height: 1.937rem;
+  line-height: 1.937rem;
+  padding-left: 1.162rem;
+}
+.dodo-container .sidebar ul li i {
+  margin-right: 0.387rem;
+}
+.dodo-container .sidebar ul li .defer,
+.dodo-container .sidebar ul li .normal {
+  width: 1.472rem;
+  height: .775rem;
+  color: #ffffff;
+  line-height: .775rem;
+  float: right;
+  border-radius: 3rem;
+  margin-top: .581rem;
+  text-align: center;
+  margin-right: .775rem;
+}
+.dodo-container .sidebar ul li .defer {
+  background-color: #ea7a7a;
+}
+.dodo-container .sidebar ul li .normal {
+  background-color: #81bc77;
+}
+.dodo-container .sidebar .active {
+  color: #ffffff;
+  background-color: #39b4e1;
+}
+.dodo-container .content {
+  margin-left: 8.72rem;
+  margin-bottom: -10000px;
+  padding-bottom: 10000px;
+}
+.dodo-container .content .main {
+  margin-right: 9.689rem;
+}
+.dodo-container .content .main .title h2 {
+  font-size: 1.085rem;
+  font-weight: normal;
+}
+.dodo-container .content .main .title p {
+  color: #9b9b9b;
+  margin-bottom: .32rem;
+}
+.dodo-container .content .main .dashboard {
+  min-height: 11.24rem;
+  overflow: hidden;
+  margin-bottom: .93rem;
+}
+.dodo-container .content .main .dashboard .count-a {
+  float: left;
+  width: 65%;
+  overflow: hidden;
+  padding-top: .775rem;
+  padding-left: .775rem;
+}
+.dodo-container .content .main .dashboard .count-a .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+.dodo-container .content .main .dashboard .count-a #firstchart {
+  width: 100%;
+  height: 7.364rem;
+  overflow: hidden;
+}
+.dodo-container .content .main .dashboard .count-a .pic,
+.dodo-container .content .main .dashboard .count-b .pic {
+  float: left;
+  margin-right: 0.465rem;
+}
+.dodo-container .content .main .dashboard .count-a .col-sm-4,
+.dodo-container .content .main .dashboard .count-b .col-sm-4 {
+  padding: 0;
+}
+.dodo-container .content .main .dashboard .count-a .f-c-1 .nb-c,
+.dodo-container .content .main .dashboard .count-b .f-c-1 .nb-c {
+  color: #eb88b7;
+}
+.dodo-container .content .main .dashboard .count-a .f-c-2 .nb-c,
+.dodo-container .content .main .dashboard .count-b .f-c-2 .nb-c {
+  color: #06B3F7;
+}
+.dodo-container .content .main .dashboard .count-a .f-c-3 .nb-c,
+.dodo-container .content .main .dashboard .count-b .f-c-3 .nb-c {
+  color: #44BC62;
+}
+.dodo-container .content .main .dashboard .count-a .data .title,
+.dodo-container .content .main .dashboard .count-b .data .title {
+  margin-bottom: .62rem;
+}
+.dodo-container .content .main .dashboard .count-a .data .nb,
+.dodo-container .content .main .dashboard .count-b .data .nb {
+  text-align: left;
+}
+.dodo-container .content .main .dashboard .count-a .data .nb .nb-c,
+.dodo-container .content .main .dashboard .count-b .data .nb .nb-c {
+  font-size: 1.395rem;
+  line-height: 1.395rem;
+}
+.dodo-container .content .main .dashboard .count-b {
+  float: right;
+  width: 35%;
+  overflow: hidden;
+  padding-top: .775rem;
+}
+.dodo-container .content .main .dashboard .count-b .f-c-4 .nb-c {
+  color: #F28F6F;
+}
+.dodo-container .content .main .dashboard .count-b #relatechats {
+  width: 100%;
+  height: 7.364rem;
+  overflow: hidden;
+}
+.dodo-container .content .main .notice {
+  height: 1.937rem;
+  overflow: hidden;
+  padding-left: .775rem;
+  padding-right: .775rem;
+  margin-bottom: .93rem;
+}
+.dodo-container .content .main .notice .title {
+  font-size: .62rem;
+  float: left;
+  line-height: 1.937rem;
+  margin-right: 1.162rem ;
+}
+.dodo-container .content .main .notice .newsticker {
+  cursor: default;
+  height: 1.937rem;
+  position: relative;
+  overflow: hidden;
+}
+.dodo-container .content .main .notice .newsticker .newsticker-list {
+  position: absolute;
+}
+.dodo-container .content .main .notice .newsticker .newsticker-list .newsticker-item {
+  height: 1.937rem;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1.937rem;
+  cursor: pointer;
+}
+.dodo-container .content .main .notice .newsticker .newsticker-list .newsticker-item a {
+  text-decoration: none;
+}
+.dodo-container .content .main .event-table .tb-box-l {
+  float: left;
+  width: 48.8%;
+}
+.dodo-container .content .main .event-table .tb-box-r {
+  float: right;
+  width: 48.8%;
+}
+.dodo-container .content .main .event-table h4 {
+  font-size: .62rem;
+  color: #4a4a4a;
+  margin: .387rem auto .581rem .775rem;
+}
+.dodo-container .content .main .event-table .tb-p-10 {
+  padding: 0 .387rem;
+}
+.dodo-container .content .main .event-table table thead {
+  font-size: .542rem;
+  background-color: #F2F3F8;
+}
+.dodo-container .content .main .event-table table thead th {
+  font-weight: 100;
+  border-bottom: 1px solid #ddd;
+}
+.dodo-container .content .main .event-table table tbody {
+  font-size: .465rem;
+}
+.dodo-container .content .main .event-table table tbody td a {
+  text-decoration: none;
+}
+.dodo-container .content .main .event-table .defer,
+.dodo-container .content .main .event-table .normal {
+  width: 2.015rem;
+  color: #ffffff;
+  line-height: .775rem;
+  float: left;
+  border-radius: 0.1rem;
+  text-align: center;
+}
+.dodo-container .content .main .event-table .normal {
+  background-color: #81bc77;
+}
+.dodo-container .content .main .event-table .defer {
+  background-color: #ea7a7a;
+}
+.dodo-container .content .related {
+  float: right;
+  width: 9.689rem;
+  padding-top: 1.162rem;
+  padding-right: 1.162rem;
+}
+.dodo-container .content .related .btn {
+  height: 1.317rem;
+  display: block;
+  background-color: #39b4e1;
+  width: 100%;
+  color: #ffffff;
+}
+.dodo-container .content .related .notes {
+  font-size: .465rem;
+  color: #7f7f7f;
+}
+.dodo-container .content .related .alendar {
+  min-height: 11.24rem;
+  overflow: hidden;
+}
+.dodo-container .content .footer {
+  width: 100%;
+  background-color: #e1e2e6;
+  height: 2.325rem;
+  font-size: .62rem ;
+  line-height: 2.325rem;
+  float: left;
+  display: inline;
+  margin-top: .93rem;
+  padding-left: .775rem;
+}

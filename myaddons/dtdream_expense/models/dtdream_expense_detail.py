@@ -17,6 +17,8 @@ class dtdream_expense_detail(models.Model):
 
     name = fields.Char(string="名称",required=True)
     parentid = fields.Many2one("dtdream.expense.catelog",string="费用类别",required=True)
+    account = fields.Char(string="会计科目")
+    account_name = fields.Char(string="会计科目名称")
 
     @api.multi
     @api.depends('parentid','name')

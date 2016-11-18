@@ -30,6 +30,7 @@
                           <field name="is_receptionist" invisible="True"/>
                           <field name="is_officer" invisible="True"/>
                           <field name="is_create" invisible="True"/>
+                          <field name="compute_car_inter" invisible="False"/>
                       </group>
                       <group>
                           <field name="duty_tel"/>

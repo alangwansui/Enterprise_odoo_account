@@ -71,7 +71,7 @@
             </div>
 
             <div class="f-r m-t-17">
-                <a class="btn-sc delete_details" style="margin-right: 5px;" href="#">删除消费明细</a>
+                <a class="btn-sc delete_details" style="margin-right: 5px;" href="#">删除</a>
             </div>
 
         </div>
@@ -530,7 +530,7 @@
 
                         </ul>
                         <div class="o_uploader_input_wrp">
-                            <input class="o_uploader_input" type="file" accept="image/*" multiple="">
+                            <input class="o_uploader_input" type="file" accept="image/*" multiple="multiple">
                                 <i class="icon iconfont o_image_select">&#xe73e;</i>
                             </input>
                         </div>

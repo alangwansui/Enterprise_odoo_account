@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-
+<!--无用-->
     <record id="view_dtdream_prod_appr_dtdream_prod_appr_wizard_form" model="ir.ui.view">
         <field name="name">view.dtdream_rd_prod.dtdream_prod_appr.wizard.form</field>
         <field name="model">dtdream_prod_appr.wizard</field>
@@ -22,8 +22,6 @@
             </form>
         </field>
     </record>
-
-
     <record id="act_lixiang_wizard" model="ir.actions.act_window">
         <field name="name">项目立项</field>
         <field name="res_model">dtdream_prod_appr.wizard</field>
@@ -32,7 +30,7 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
-
+<!--无用-->
 
 
     <record id="view_dtdream_prod_appr_dtdream_prod_appr_wizardappr_form" model="ir.ui.view">

@@ -68,6 +68,7 @@ class dtdream_expense_report(models.Model):
     hasauditor = fields.Many2many("hr.employee",string=u"已审批过的人")
     showcuiqian= fields.Char(string=u'是否已签收', default="0")
     followers_user = fields.Many2many("res.users", "dtdream_expense_followers", string="关注者")
+    batch = fields.Char(string='批次')
 
     @api.onchange('create_uid_self')
     def _xingzhengzhuli_domain(self):
@@ -173,7 +174,7 @@ class dtdream_expense_report(models.Model):
     def _compute_total_koujianamount(self):
       #  _logger.info("comput........")
         for report in self:
-            if report.state == "draft":
+            if report.state == "draft" or report.state == "jiekoukuaiji":
                 koujian = 0.0
                 invoice = 0.0
                 #计算消费明细扣罚金额
@@ -215,16 +216,16 @@ class dtdream_expense_report(models.Model):
                 report.total_koujianamount = koujian
                 report.total_invoicevalue = invoice
                 report.total_shibaoamount = report.total_invoicevalue - report.total_koujianamount
-            if report.state == "jiekoukuaiji":
-                koujian = 0.0
-                invoice = 0.0
-                if report.record_ids:
-                    for rd in report.record_ids:
-                        koujian += rd.koujianamount
-                        invoice += rd.invoicevalue
-                report.total_koujianamount = koujian
-                report.total_invoicevalue = invoice
-                report.total_shibaoamount = report.total_invoicevalue - report.total_koujianamount
+            # if report.state == "jiekoukuaiji":
+            #     koujian = 0.0
+            #     invoice = 0.0
+            #     if report.record_ids:
+            #         for rd in report.record_ids:
+            #             koujian += rd.koujianamount
+            #             invoice += rd.invoicevalue
+            #     report.total_koujianamount = koujian
+            #     report.total_invoicevalue = invoice
+            #     report.total_shibaoamount = report.total_invoicevalue - report.total_koujianamount
 
     total_invoicevalue = fields.Float(digits=(11, 2), string=u"票据总金额(元)",store=True,compute=_compute_total_koujianamount)
     total_koujianamount = fields.Float(digits=(11, 2), string=u"扣减总金额(元)",store=True,compute=_compute_total_koujianamount)
@@ -291,7 +292,9 @@ class dtdream_expense_report(models.Model):
 
     def send_mail(self, subject, content, email_to, email_cc="", wait=False):
         base_url = self.get_base_url()
-        link = '/web#id=%s&view_type=form&model=dtdream.expense.report' % self.id
+        action = self.env['ir.model.data'].search([('name','=','action_dtdream_expense_pending_jiekoukuaiji')]).res_id
+        menu_id = self.env['ir.ui.menu'].search([('name','=','费用报销')]).id
+        link = '/web#id=%s&view_type=form&model=dtdream.expense.report&action=%s&menu_id=%s' % (self.id,action,menu_id)
         url = base_url + link
         email_to = email_to
         email_cc = "" if email_cc == email_to else email_cc
@@ -875,7 +878,7 @@ class dtdream_expense_report(models.Model):
 
             shenqinren = self.env['hr.employee'].search([('login', '=', hr_employee_login)])
 
-            self.send_mail(u"【提醒】您于{0}提交的费用报销单已完成审批!".format(report.create_date[:10]),u"您提交的费用报销单已完成审批，请等待付款。" , email_to=shenqinren.work_email)
+            # self.send_mail(u"【提醒】您于{0}提交的费用报销单已完成审批!".format(report.create_date[:10]),u"您提交的费用报销单已完成审批，请等待付款。" , email_to=shenqinren.work_email)
 
             # send dingding msg
             content = u"您于{0}提交的费用报销单已完成审批!".format(report.create_date[:10])
@@ -953,3 +956,8 @@ class dtdream_expense_report(models.Model):
                 doc.xpath("//kanban")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
+
+    @api.model
+    def if_in_jiekoukuaiji(self):
+        print self.env.user.has_group("dtdream_expense.group_dtdream_expense_jiekoukuaiji")
+        return self.env.user.has_group("dtdream_expense.group_dtdream_expense_jiekoukuaiji")

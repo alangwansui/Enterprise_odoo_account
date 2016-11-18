@@ -27,7 +27,7 @@ function showMailError(mail){
         document.getElementById("textde4").className = "input-no error";
         return true;
     } else{
-        document.getElementById("textde4").className = "input-no error";
+        document.getElementById("textde4").className = "input-no";
         return false;
     }
 

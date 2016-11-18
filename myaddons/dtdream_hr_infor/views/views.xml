@@ -183,7 +183,7 @@
         <field name="inherit_id" ref="hr.view_employee_filter"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='department_id']" position="after">
-                <filter string="我" domain="[('user_id', '=', uid)]"/>
+                <filter string="我" name='myself' domain="[('user_id', '=', uid)]"/>
             </xpath>
         </field>
     </record>

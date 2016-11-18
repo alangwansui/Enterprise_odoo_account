@@ -514,6 +514,13 @@ class Home(http.Controller):
             values['databases'] = None
 
         if request.httprequest.method == 'POST':
+
+            # modify by g0335, resolve ODOO-644
+            import re
+            if re.match(r"^[\w\-]+$", request.params['login']) is None:
+                values['error'] = "Wrong login/password"
+                return request.render('web.login', values)
+
             old_uid = request.uid
             uid = request.session.authenticate(request.session.db, request.params['login'], request.params['password'])
             if uid is not False:

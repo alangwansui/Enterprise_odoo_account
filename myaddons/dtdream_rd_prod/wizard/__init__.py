@@ -1,2 +1,5 @@
 import lixiang_wizard
 import process_wizard
+import dtdream_suspension_wizard
+import dtdream_suspension_restoration_wizard
+import dtdream_termination_wizard

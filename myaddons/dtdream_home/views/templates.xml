@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <template id="home" name="home ui">
+            &lt;!DOCTYPE html&gt;
+            <html>
+                <head lang="en">
+                    <meta charset="UTF-8"/>
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    <title>欢迎访问dodo</title>
+
+                    <t t-call-assets="web.assets_common" t-css="false" />
+                    <t t-call-assets="web.assets_backend" t-css="false" />
+
+                    <link href="/dtdream_home/static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+                    <link href="/dtdream_home/static/css/style.css" rel="stylesheet" type="text/css"/>
+                </head>
+                <script type="text/javascript">
+                    odoo.define('web.csrf', function (require) {
+                        var token = "<t t-esc="request.csrf_token(None)"/>";
+                        require('web.core').csrf_token = token;
+                        require('qweb').default_dict.csrf_token = token;
+                    });
+                </script>
+                <body>
+                    <div>
+                        <t t-raw="0"/>
+                        <div class=" o_main"></div>
+                    </div>
+
+                    <script src="/dtdream_home/static/js/jquery-2.2.2.min.js"></script>
+                    <script src="/dtdream_home/static/js/jquery.newsticker.js"></script>
+
+                    <script src="/dtdream_home/static/js/echarts.common.min.js"></script>
+                    <!--<script src="/dtdream_home/static/js/chat.js"></script>-->
+                    <!--<script src="/dtdream_home/static/js/user.js"></script>-->
+                    <script src="/dtdream_home/static/js/header.js"></script>
+                    <script src="/dtdream_home/static/js/sidebar.js"></script>
+                    <script src="/dtdream_home/static/js/content.js"></script>
+                    <script src="/dtdream_home/static/js/home.js"></script>
+                    <script type="text/javascript">
+                        $(function () {
+                            odoo.define('dtdream_home.home', function (require) {
+                                var HomeUI = require('dtdream_home.ui');
+                                var ui = new HomeUI();
+                                ui.appendTo($('.o_main'));
+                                $.init();
+                            });
+                        });
+                    </script>
+                </body>
+            </html>
+        </template>
+    </data>
+</openerp>

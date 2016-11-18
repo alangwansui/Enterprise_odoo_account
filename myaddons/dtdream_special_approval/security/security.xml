@@ -20,14 +20,47 @@
 
 
         <record id="dtdream_special_approval_rule_01" model="ir.rule">
-             <field name="name">专项业务删除</field>
+             <field name="name">普通员工专项业务删除</field>
              <field name="model_id" ref="model_dtdream_special_approval"/>
              <field name="perm_read" eval="0"/>
              <field name="perm_create" eval="0"/>
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="1"/>
              <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-             <field name="domain_force">[('is_create','=',True),('state','=','state_01')]</field>
+             <field name="domain_force">[('create_uid','=',user.id),('state','=','state_01')]</field>
+         </record>
+
+        <record id="dtdream_special_approval_rule_add_01" model="ir.rule">
+             <field name="name">普通员工专项业务查看</field>
+             <field name="model_id" ref="model_dtdream_special_approval"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">['|','|',('his_approver_user','=',user.id),('current_approver_user','=',user.id),('create_uid','=',user.id)]</field>
+         </record>
+
+        <record id="dtdream_special_approval_rule_add_02" model="ir.rule">
+             <field name="name">专项审批业务组专项业务查看</field>
+             <field name="model_id" ref="model_dtdream_special_approval"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('dtdream_special_approval.group_dtdream_special_approval_business'))]"/>
+             <field name="domain_force">[]</field>
+         </record>
+
+        <record id="dtdream_special_approval_rule_add_03" model="ir.rule">
+             <field name="name">专项审批管理员专项业务管理</field>
+             <field name="model_id" ref="model_dtdream_special_approval"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="1"/>
+             <field name="perm_write" eval="1"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('dtdream_special_approval.group_dtdream_special_approval_manager'))]"/>
+             <field name="domain_force">[]</field>
          </record>
 
         </data>

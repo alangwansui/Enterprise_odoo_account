@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="dtdream_home_page_optimize.home_page">
+            &lt;!DOCTYPE html&gt;
+            <html>
+                <head lang="en">
+                    <meta charset="UTF-8"/>
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    <script type="text/javascript" src="/dtdream_home_page_optimize/static/src/js/jquery-2.2.2.min.js"/>
+                    <script type="text/javascript" src="/dtdream_home_page_optimize/static/src/js/jquery.newsticker.js"/>
+                    <link href="/dtdream_home_page_optimize/static/src/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+                    <link href="/dtdream_home_page_optimize/static/src/css/style.css" rel="stylesheet" type="text/css"/>
+
+
+                    <script type="text/javascript" src="/web/static/lib/es5-shim/es5-shim.min.js"/>
+                    <script type="text/javascript" src="/web/static/lib/underscore/underscore.js"/>
+                    <script type="text/javascript"
+                            src="/web/static/lib/underscore.string/lib/underscore.string.js"/>
+                    <script type="text/javascript" src="/web/static/lib/spinjs/spin.js"/>
+                    <script type="text/javascript" src="/web/static/lib/moment/moment.js"/>
+                    <script type="text/javascript" src="/web/static/lib/autosize/autosize.js"/>
+
+                    <script type="text/javascript" src="/web/static/lib/jquery/jquery.js"/>
+                    <script type="text/javascript" src="/web/static/lib/jquery/jquery.browser.js"/>
+                    <script type="text/javascript" src="/web/static/lib/jquery.ba-bbq/jquery.ba-bbq.js"/>
+                    <script type="text/javascript" src="/web/static/lib/qweb/qweb2.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/boot.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/class.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/translation.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/ajax.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/time.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/mixins.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/widget.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/registry.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/session.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/model.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/utils.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/core.js"/>
+                    <script type="text/javascript" src="/web/static/lib/py.js/lib/py.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/data_model.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/pyeval.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/data.js"/>
+                    <script type="text/javascript" src="/web/static/src/js/framework/session_instance.js"/>
+                    <script src="/dtdream_home_page_optimize/static/src/js/echarts.common.min.js"/>
+
+                    <script type="text/javascript" src="/web/static/src/js/app_switcher.js"/>
+                    <script src="/dtdream_home_page_optimize/static/src/js/page_optimize.js"/>
+
+                    <title>欢迎访问dodo</title>
+                </head>
+                <body>
+                    <!--header begin -->
+                    <div class="dodo-header clearfix ">
+                        <div class="logo"><img src="/dtdream_home_page_optimize/static/src/img/logo@2x.png"/></div>
+                        <div class="item-bar clearfix">
+                            <ul>
+                                <li class="mail"><a href="#"><i><img src="/dtdream_home_page_optimize/static/src/img/email@2x.png"/></i></a></li>
+                                <li class="site-info"><a href="#"><i><img src="/dtdream_home_page_optimize/static/src/img/siteinfo@2x.png"/> <span class="circle">4</span> </i></a>
+                                </li>
+                                <li class="user-menu"><a href="#"><i class="avatar"><img src="/dtdream_home_page_optimize/static/src/img/avatar@2x.png"/> </i><span>阿飞 0032</span>
+                                    <span class="triangle"/></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!--header end-->
+
+                    <!--dodo-content begin -->
+                    <div class="dodo-container clearfix">
+                        <t t-name= "home_page">
+                            <div class="sidebar" >
+                                <ul>
+                                    <li class="active"><i class="dodo doicon-1"/>Dashboard</li>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-2"/>产品</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-3"/>研发</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-4"/>外出公干 <span class="defer">12</span></li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-5"/>出差</li>
+                                    </a>
+                                    <a class="o_app o_action_app" data-action-id="468" data-action-model="ir.actions.act_window" data-menu="344">
+                                        <li><i class="dodo doicon-6"/>绩效<span class="normal">8</span></li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-7"/>合同评审</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-8"/>专项评审</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-9"/>客户接待</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-sousuo"/>预算管理</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-11"/>费用报销</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-12"/>人力资源</li>
+                                    </a>
+                                    <a href="#">
+                                        <li><i class="dodo doicon-13"/>休假</li>
+                                    </a>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <div class="content clearfix">
+                            <div class="related">
+                                <!--搜索 -->
+                                <div class="input-group search-bar">
+                                    <span class="input-group-addon"><i class="dodo doicon-sousuo"/> </span>
+                                    <input type="text" class="form-control" placeholder="请输入关键字"/>
+                                </div>
+                                <!--搜索 -->
+                                <div class="blank30"/>
+                                <!--日历 -->
+                                <div class="alendar line">
+                                    插入dodo日历
+                                </div>
+                                <!--日历 -->
+                                <div class="blank30"/>
+                                <!--通讯录 -->
+                                <div class="address line">
+                                    <div class="p10">
+                                        <h4>员工通讯录</h4>
+                                        <label>姓名</label>
+                                        <input class="form-control" placeholder="请输入姓名全称"/>
+
+                                        <div class="blank10"/>
+                                        <label>工号</label>
+                                        <input class="form-control" placeholder="请输入工号"/>
+
+                                        <div class="blank10"/>
+                                        <a class="btn submit">提交</a>
+
+                                        <div class="blank10"/>
+                                        <p class="notes">*输入任一条件即可查询</p>
+                                    </div>
+                                </div>
+                                <!--通讯录 -->
+
+                            </div>
+                            <div class="main">
+                                <div class="p30">
+                                    <div class="title">
+                                        <h2>Dashboard</h2>
+
+                                        <p><span>阿飞</span>，欢迎访问dodo，希望今天有个好心情~</p>
+                                    </div>
+                                    <!-- dashboard -->
+                                    <div class="line dashboard">
+                                        <div class="count-a container ">
+                                            <!-- 最常用功能统计-->
+                                            <div class="row">
+                                                <div class="col-sm-4 clearfix f-c-1">
+                                                    <div class="pic">
+                                                        <img src="/dtdream_home_page_optimize/static/src/img/db-icon-wcgg.png"/>
+                                                    </div>
+                                                    <div class="data">
+                                                        <div class="title">外出公干</div>
+                                                        <div class="nb"><span class="nb-c">11</span>个</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 f-c-2">
+                                                    <div class="pic">
+                                                        <img src="/dtdream_home_page_optimize/static/src/img/db-icon-fybx.png"/>
+                                                    </div>
+                                                    <div class="data">
+                                                        <div class="title">费用报销</div>
+                                                        <div class="nb"><span class="nb-c">34</span>个</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 f-c-3">
+                                                    <div class="pic">
+                                                        <img src="/dtdream_home_page_optimize/static/src/img/db-icon-zxsq.png"/>
+                                                    </div>
+                                                    <div class="data">
+                                                        <div class="title">专项申请</div>
+                                                        <div class="nb"><span class="nb-c">89</span>个</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- 最常用功能统计-->
+                                            <!--年统计 -->
+                                            <div id="firstchart"/>
+                                            <!--年统计 -->
+                                        </div>
+
+                                        <div class="count-b container">
+                                            <div class="row">
+                                                <div class="col-sm-12 f-c-4">
+                                                    <div class="pic">
+                                                        <img src="/dtdream_home_page_optimize/static/src/img/db-icon-ywxg.png"/>
+                                                    </div>
+                                                    <div class="data">
+                                                        <div class="title">与我相关</div>
+                                                        <div class="nb"><span class="nb-c">7</span>个</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <div class="row">
+                                            <div id="relatechats"/>
+                                        </div>
+
+                                        </div>
+                                    </div>
+                                    <!-- dashboard -->
+
+                                    <!--IT公告 -->
+                                    <div class="notice line">
+                                        <div class="title">
+                                            IT公告
+                                        </div>
+                                        <!-- 新闻列表-->
+                                        <div class="newsticker">
+                                            <ul class="newsticker-list" >
+                                                <li class="newsticker-item">
+                                                    <a  href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45751229" target="_blank">你的域帐号密码容易被破解吗？【2016-08-11】</a>
+                                                </li>
+                                                <li class="newsticker-item">
+                                                    <a   href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45748653" target="_blank">dodo 手机客户端安装【2016-08-05】</a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                        <!--新闻列表 -->
+                                    </div>
+                                    <!--IT公告 -->
+                                    <!-- 事项表格-->
+                                    <div class="event-table">
+                                        <div class="tb-row  ">
+                                            <div class=" line tb-box-l ">
+                                                <h4>待我处理事项</h4>
+                                                <div class="tb-p-10">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>申请事项</th>
+                                                                <th>状态</th>
+                                                                <th>申请人</th>
+                                                                <th>申请时间</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span CLASS="defer">延期</span></td>
+                                                            <td>阿飞</td>
+                                                            <td>2016-09-23</td>
+                                                            <td>  <a href="#">审核</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="normal">正常</span></td>
+                                                            <td>阿飞</td>
+                                                            <td>2016-09-23</td>
+                                                            <td> <a href="#">审核</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="defer">延期</span></td>
+                                                            <td>阿飞</td>
+                                                            <td>2016-09-23</td>
+                                                            <td>  <a href="#">审核</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="defer">延期</span></td>
+                                                            <td>阿飞</td>
+                                                            <td>2016-09-23</td>
+                                                            <td><a href="#">审核</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="defer">延期</span></td>
+                                                            <td>阿飞</td>
+                                                            <td>2016-09-23</td>
+                                                            <td><a href="#">审核</a></td>
+                                                        </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class=" line tb-box-r ">
+                                                <h4>我申请的事项</h4>
+                                                <div class="tb-p-10">
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>申请事项</th>
+                                                            <th>状态</th>
+                                                            <th>当前责任人</th>
+                                                            <th>申请时间</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span CLASS="defer">延期</span></td>
+                                                            <td>阿飞0032</td>
+                                                            <td>2016-09-23</td>
+                                                            <td> <a href="#">催签</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="normal">正常</span></td>
+                                                            <td>阿飞0032</td>
+                                                            <td>2016-09-23</td>
+                                                            <td><a href="#">查看</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="defer">延期</span></td>
+                                                            <td>阿飞0032</td>
+                                                            <td>2016-09-23</td>
+                                                            <td><a href="#">催签</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="defer">延期</span></td>
+                                                            <td>阿飞0032</td>
+                                                            <td>2016-09-23</td>
+                                                            <td> <a href="#">催签</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>出差申请</td>
+                                                            <td><span class="defer">延期</span></td>
+                                                            <td>阿飞0032</td>
+                                                            <td>2016-09-23</td>
+                                                            <td> <a href="#">催签</a></td>
+                                                        </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 事项表格-->
+                                </div>
+
+                            </div>
+
+
+                        <div class="footer">
+                            版权所有 © 杭州数梦工场科技有限公司 2015-2016。 保留一切权利。
+                        </div>
+
+                        </div>
+                    </div>
+
+                    <!--dodo-content end -->
+                    <script src="/dtdream_home_page_optimize/static/src/js/chat.js"/>
+                </body>
+            </html>
+        </template>
+    </data>
+</openerp>

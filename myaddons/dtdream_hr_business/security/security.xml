@@ -23,6 +23,17 @@
             <field name="domain_force">[('is_shenpiren','=',True)]</field>
         </record>
 
+         <record id="business_rule_add_1" model="ir.rule">
+             <field name="name">外出公干查看</field>
+             <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">['|','|','|',('his_app','=',user.id),('current_approver.user_id','=',user.id),('name.user_id', '=',user.id),('create_uid','=',user.id)]</field>
+         </record>
+
         <record id="business_rule_04" model="ir.rule">
             <field name="name">管理</field>
             <field name="model_id" ref="model_dtdream_hr_business_dtdream_hr_business"/>

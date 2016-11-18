@@ -1,0 +1,32 @@
+<openerp>
+    <data>
+        <!--版本审批意见-->
+        <record id="view_dtdream_rd_process_ver_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.process.ver.from</field>
+            <field name="model">dtdream_rd_process_ver</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name='ver_state'/>
+                                <field name='role'/>
+                                <field name='approver' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name="level"/>
+                            </group>
+                            <group>
+                                <field name='is_pass' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name='is_refuse' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name='is_risk' attrs="{'readonly':[('editable','=',False)]}"/>
+                                <field name="is_new" invisible="1"/>
+                                <field name="editable" invisible="1"/>
+                                <field name="approver_old" invisible="1"/>
+                            </group>
+                            <field name="reason" attrs="{'readonly':[('editable','=',False)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

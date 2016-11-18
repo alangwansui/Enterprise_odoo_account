@@ -9,6 +9,8 @@
                 <tree class="expense_catelog_tree">
                     <field name="name"/>
                     <field name="parentid"/>
+                    <field name="account"></field>
+                    <field name="account_name"></field>
                 </tree>
             </field>
         </record>
@@ -25,6 +27,8 @@
 
                                 <field name="name"/>
                                 <field name="parentid" class="expense_catelog"/>
+                                <field name="account"></field>
+                                <field name="account_name"></field>
                             </group>
 
                         </group>

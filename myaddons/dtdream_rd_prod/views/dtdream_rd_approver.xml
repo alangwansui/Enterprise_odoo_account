@@ -1,0 +1,44 @@
+<openerp>
+    <data>
+        <!--审批人配置-->
+        <record id="act_dtdream_rd_approver" model="ir.actions.act_window">
+            <field name="name">产品审批人配置</field>
+            <field name="res_model">dtdream_rd_approver</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_approver_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.approver.from</field>
+            <field name="model">dtdream_rd_approver</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name='pro_state'/>
+                                <field name='level'/>
+                                <field name="is_level" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_approver_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.approver.tree</field>
+            <field name="model">dtdream_rd_approver</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name='name'/>
+                    <field name='pro_state'/>
+                    <field name='level'/>
+                    <field name="is_level" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>

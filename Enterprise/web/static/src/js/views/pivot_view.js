@@ -319,6 +319,9 @@ var PivotView = View.extend({
         var field = $(event.target).parent().data('field'),
             interval = $(event.target).data('interval'),
             header = this.headers[this.last_header_selected];
+        if (_.isUndefined(field)){
+            return;
+        }
         if (interval) field = field + ':' + interval;
         this.expand_header(header, field)
             .then(function () {

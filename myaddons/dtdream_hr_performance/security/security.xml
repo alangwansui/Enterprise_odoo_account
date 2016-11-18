@@ -20,6 +20,39 @@
         <field name="category_id" ref="module_hr_performance_group"/>
     </record>
 
+    <record id="dtdream_hr_performance_read" model="ir.rule">
+        <field name="name">员工查看绩效申请</field>
+        <field name="model_id" ref="model_dtdream_hr_performance"/>
+        <field name="domain_force">['|',('name.user_id','=',user.id),'|',('officer.user_id','=',user.id),('officer_sec.user_id','=',user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="dtdream_hr_performance_inter_read" model="ir.rule">
+        <field name="name">接口人查看接口部门绩效申请</field>
+        <field name="model_id" ref="model_dtdream_hr_performance"/>
+        <field name="domain_force">[]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('group_hr_inter_performance'))]"/>
+    </record>
+
+    <record id="dtdream_hr_performance_manage_read" model="ir.rule">
+        <field name="name">管理员查看所有绩效申请</field>
+        <field name="model_id" ref="model_dtdream_hr_performance"/>
+        <field name="domain_force">[]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('group_hr_manage_performance'))]"/>
+    </record>
+
 
     </data>
 </openerp>

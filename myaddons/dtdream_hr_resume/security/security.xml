@@ -20,7 +20,71 @@
         <field name="category_id" ref="module_resume_group"/>
     </record>
 
+    <record id="dtdream_hr_resume_read" model="ir.rule">
+        <field name="name">员工查看履历申请</field>
+        <field name="model_id" ref="model_dtdream_hr_resume"/>
+        <field name="domain_force">['|',('name.user_id','=',user.id),'|',('resume_approve.user_id','=',user.id),('approved.user_id','=',user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
 
+    <record id="dtdream_hr_resume_manage_read" model="ir.rule">
+        <field name="name">主管经理查看所有履历申请</field>
+        <field name="model_id" ref="model_dtdream_hr_resume"/>
+        <field name="domain_force">[('state', '!=', '0')]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('group_hr_resume_view')),(4, ref('group_hr_resume_edit')),(4, ref('base.group_hr_user')),(4, ref('base.group_hr_manager'))]"/>
+    </record>
+
+    <record id="dtdream_hr_resume_modify_read" model="ir.rule">
+        <field name="name">员工查看履历修改申请</field>
+        <field name="model_id" ref="model_dtdream_hr_resume_modify"/>
+        <field name="domain_force">['|',('name.user_id','=',user.id),'|',('resume_approve.user_id','=',user.id),('approved.user_id','=',user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="dtdream_hr_resume_modify_manage_read" model="ir.rule">
+        <field name="name">主管经理查看履历修改申请</field>
+        <field name="model_id" ref="model_dtdream_hr_resume_modify"/>
+        <field name="domain_force">[('state', '!=', '0')]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('group_hr_resume_view')),(4, ref('group_hr_resume_edit')),(4, ref('base.group_hr_user')),(4, ref('base.group_hr_manager'))]"/>
+    </record>
+
+    <record id="dtdream_hr_contract_read" model="ir.rule">
+        <field name="name">员工查看合同</field>
+        <field name="model_id" ref="model_dtdream_hr_contract"/>
+        <field name="domain_force">[('name.user_id','=',user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="dtdream_hr_contract_manage_read" model="ir.rule">
+        <field name="name">主管经理查看合同</field>
+        <field name="model_id" ref="model_dtdream_hr_contract"/>
+        <field name="domain_force">[]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('group_hr_resume_view')),(4, ref('group_hr_resume_edit')),(4, ref('base.group_hr_user')),(4, ref('base.group_hr_manager'))]"/>
+    </record>
 
     </data>
 </openerp>

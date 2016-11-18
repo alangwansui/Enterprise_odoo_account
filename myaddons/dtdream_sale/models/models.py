@@ -103,6 +103,7 @@ class res_users_read_access(models.Model):
     user_access_industry = fields.Many2many("dtdream.industry", string="行业")
     user_access_office = fields.Many2many("dtdream.office", string="办事处")
     user_access_product_type = fields.Many2many("product.category", string="产品分类")
+    user_access_department = fields.Many2many("hr.department",string="部门")
 
     sale_res_team_id = fields.Many2many('crm.team',string='Sales Team')
 
@@ -475,7 +476,7 @@ class dtdream_sale(models.Model):
     dt_mobile = fields.Char(compute=_compute_partner_fields,store=True,string="手机")
     des_records = fields.One2many("dtdream.des.records","des_id",string="进展记录")
 
-    stage_id = fields.Many2one('crm.stage', string='Stage', track_visibility='onchange', select=True,domain="['|', ('type', '=', type), ('type', '=', 'both')]")
+    stage_id = fields.Many2one('crm.stage', string='Stage', track_visibility='onchange', select=True)
 
     is_red = fields.Boolean(string="判断招标时间是否早于当天")
 
@@ -608,6 +609,11 @@ class dtdream_sale(models.Model):
                 self.project_number = self.project_number[:-1]+"N"
         if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid and not self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
             raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
+        if vals.has_key('stage_id'):
+            if self.env['crm.stage'].search([('id','=',vals.get('stage_id'))]).name == u"机会点":
+                self.type = "lead"
+            else :
+                self.type = "opportunity"
         if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
             raise ValidationError("请录入项目进展")
         if vals.has_key('project_space') and vals.get('project_space')[0][0]==2 :
