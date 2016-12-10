@@ -190,8 +190,8 @@ class res_crm_team(models.Model):
         kanb_view_id = IrModelData.xmlid_to_res_id(cr, uid, 'crm.crm_case_kanban_view_leads')
         action.update({
             'views': [
-                [kanb_view_id, 'kanban'],
                 [tree_view_id, 'tree'],
+                # [kanb_view_id, 'kanban'],
                 [form_view_id, 'form'],
                 [False, 'graph'],
                 [False, 'calendar'],
@@ -303,6 +303,24 @@ class dtdream_product_line(models.Model):
 class dtdream_sale(models.Model):
     _inherit = 'crm.lead'
 
+    @api.model
+    def crm_lead_won_action(self,record_id):
+        if type(record_id) == list:
+            record_id = record_id[0]
+        view_id = self.env.ref('dtdream_sale.crm_lead_won_view_form').id,
+        action = {
+                'name': '项目中标',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'view_id': view_id,
+                'res_model': 'crm.lead',
+                'target':'new',
+                'res_id': record_id,
+                'context': self._context,
+                }
+        return action
+
     @api.depends('partner_id')
     def _compute_partner_fields(self):
         i = 1
@@ -353,9 +371,12 @@ class dtdream_sale(models.Model):
     def _onchange_project_space(self):
         for recc in self:
             space_total = 0
+            bidding_space_total = 0
             for rec in recc.project_space:
                 space_total = space_total + rec.project_space
+                bidding_space_total = bidding_space_total + rec.bidding_space
             recc.space_total = space_total
+            recc.bidding_space_total = bidding_space_total
 
     @api.onchange('sale_apply_id')
     def _onchange_sale_apply_uid(self):
@@ -376,7 +397,7 @@ class dtdream_sale(models.Model):
 
     description = fields.Text('项目进展')
 
-    name = fields.Char('项目名称',required=True,select=1,track_visibility='onchange')
+    name = fields.Char('项目名称',required=True,select=1,track_visibility='onchange',size=64)
     user_id = fields.Many2one(string="Salesperson")
     project_number = fields.Char(string="项目编号", default="New",store=True,readonly=True)
     project_leave = fields.Selection([
@@ -453,7 +474,6 @@ class dtdream_sale(models.Model):
             self.project_place_new = self.project_country.parent_id
             self.project_province_new = self.project_country.parent_id.parent_id
 
-
     project_province_new = fields.Many2one("dtdream.area", '省份',required=True,domain=[('parent_id','=',False)],track_visibility='onchange')
 
     product_category_type_id = fields.Many2many("product.category", string="产品分类")
@@ -470,6 +490,7 @@ class dtdream_sale(models.Model):
     total_ref_price = fields.Float('参考折扣价总计',store=True,compute=_onchange_product_line)
     total_apply_price = fields.Float('申请折扣价总计',store=True,compute=_onchange_product_line)
     space_total = fields.Float('合计(万元)',store=True,compute=_onchange_project_space,digits=(16,0))
+    bidding_space_total = fields.Float('中标金额合计(万元)',store=True,compute=_onchange_project_space,digits=(16,0))
 
     dt_partner_name = fields.Char(compute=_compute_partner_fields,store=True,string="公司名称")
     dt_contact_name = fields.Char(compute=_compute_partner_fields,store=True,string="联系人名称")
@@ -481,6 +502,17 @@ class dtdream_sale(models.Model):
     is_red = fields.Boolean(string="判断招标时间是否早于当天")
 
     pro_background = fields.Text("投资类项目背景")
+
+    categ_id_parent = fields.Many2one('product.category',string="产品一级分类",related='project_space.categ_id_parent',store=True)
+
+    categ_id = fields.Many2one('product.category',string="产品二级分类",related='project_space.categ_id',store=True)
+
+    is_lost = fields.Boolean(string="已丢单",default=False)
+    is_won = fields.Boolean(string="已中标",default=False)
+    is_important = fields.Boolean(string="重点项目",default=False)
+
+    bidding_channel = fields.Char(string="中标渠道")
+    if_zhitou = fields.Boolean(string="是否直投")
 
     @api.multi
     def _message_track(self, tracked_fields, initial):
@@ -494,9 +526,9 @@ class dtdream_sale(models.Model):
             new_value = getattr(self, col_name)
 
             if new_value != initial_value and (new_value or initial_value):  # because browse null != False
-                if col_name != "user_id":
-                    tracking = self.env['mail.tracking.value'].create_tracking_values(initial_value, new_value, col_name, col_info)
-                if tracking:
+                # if col_name != "user_id":
+                tracking = self.env['mail.tracking.value'].create_tracking_values(initial_value, new_value, col_name, col_info)
+                if tracking and col_name != "user_id":
                     tracking_value_ids.append([0, 0, tracking])
                 if col_name in tracked_fields and col_name != "user_id":
                     changes.add(col_name)
@@ -550,50 +582,22 @@ class dtdream_sale(models.Model):
                 result.write({"product_category_type_id": [(4,[project_space[2]['categ_id']])]})
         return result
 
-    # def stage_find(self, cr, uid, cases, team_id, domain=None, order='sequence', context=None):
-    #     """ Override of the base.stage method
-    #         Parameter of the stage search taken from the lead:
-    #         - type: stage type must be the same or 'both'
-    #         - team_id: if set, stages must belong to this team or
-    #           be a default stage; if not set, stages must be default
-    #           stages
-    #     """
-    #     if isinstance(cases, (int, long)):
-    #         cases = self.browse(cr, uid, cases, context=context)
-    #     if context is None:
-    #         context = {}
-    #     # check whether we should try to add a condition on type
-    #     avoid_add_type_term = any([term for term in domain if len(term) == 3 if term[0] == 'type'])
-    #     # collect all team_ids
-    #     team_ids = set()
-    #     types = ['both']
-    #     if not cases and context.get('default_type'):
-    #         ctx_type = context.get('default_type')
-    #         types += [ctx_type]
-    #     if team_id:
-    #         team_ids.add(team_id)
-    #     for lead in cases:
-    #         if lead.team_id:
-    #             team_ids.add(lead.team_id.id)
-    #         if lead.type not in types:
-    #             types.append(lead.type)
-    #     # OR all team_ids
-    #     search_domain = []
-    #     # if team_ids:
-    #     #     search_domain += [('|')] * (len(team_ids) - 1)
-    #     #     for team_id in team_ids:
-    #     #         search_domain.append(('team_ids', '=', team_id))
-    #     # # AND with cases types
-    #     # if not avoid_add_type_term:
-    #     #     search_domain.append(('type', 'in', types))
-    #     # # AND with the domain in parameter
-    #     # search_domain += list(domain)
-    #     # perform search, return the first found
-    #     search_domain.append(('type', 'in', types))
-    #     stage_ids = self.pool.get('crm.stage').search(cr, uid, search_domain, order=order, limit=1, context=context)
-    #     if stage_ids:
-    #         return stage_ids[0]
-    #     return False
+    def stage_find(self, cr, uid, cases, team_id, domain=None, order='sequence', context=None):
+        if context is None:
+            context = {}
+        search_domain = []
+        stage_ids = self.pool.get('crm.stage').search(cr, uid, search_domain, order=order, limit=1, context=context)
+        if stage_ids:
+            return stage_ids[0]
+        return False
+
+    def onchange_stage_id(self, cr, uid, ids, stage_id, context=None):
+        if not stage_id:
+            return {'value': {}}
+        stage = self.pool['crm.stage'].browse(cr, uid, stage_id, context=context)
+        if not stage.on_change:
+            return {'value': {}}
+        return {'value': {'probability': stage.probability}}
 
     @api.multi
     def write(self, vals):
@@ -614,6 +618,24 @@ class dtdream_sale(models.Model):
                 self.type = "lead"
             else :
                 self.type = "opportunity"
+            if self.env['crm.stage'].search([('id','=',vals.get('stage_id'))]).name == u"丢单":
+                self.is_lost = True
+            else:
+                if self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
+                    self.is_lost = False
+                else:
+                    raise ValidationError('只有项目管理员可拖动项目改变"丢单"单据状态。')
+            if self.env['crm.stage'].search([('id','=',vals.get('stage_id'))]).name == u"中标":
+                self.is_won = True
+                for rec in self.project_space:
+                    rec.view_bidding_space = True
+            else:
+                if self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
+                    self.is_won = False
+                    for rec in self.project_space:
+                        rec.view_bidding_space = False
+                else:
+                    raise ValidationError('只有项目管理员可拖动项目改变"中标"单据状态。')
         if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
             raise ValidationError("请录入项目进展")
         if vals.has_key('project_space') and vals.get('project_space')[0][0]==2 :
@@ -696,6 +718,47 @@ class dtdream_sale(models.Model):
         #         rec.is_red = False
         result = super(dtdream_sale, self).fields_view_get(view_id, view_type, toolbar=toolbar, submenu=submenu)
         return result
+
+    @api.model
+    def if_hide(self):
+        if self.env.user.has_group('dtdream_sale.group_dtdream_sale_high_manager'):
+            return False
+        return True
+
+    def action_set_lost(self, cr, uid, ids, context=None):
+        if len(self.pool.get('crm.stage').search(cr,uid,[('name','=',u'丢单')])) > 0:
+            stage_lost_id = self.pool.get('crm.stage').search(cr,uid,[('name','=',u'丢单')])[0]
+        else:
+             raise ValidationError('尚未添加"丢单"阶段，请联系项目管理员添加。')
+        return self.write(cr, uid, ids, {'stage_id': stage_lost_id,'is_lost':True}, context=context)
+
+    @api.multi
+    def action_won_apply(self):
+        if not self.bidding_channel:
+            raise ValidationError('请填写中标渠道。')
+        for rec in self.project_space:
+            if not rec.bidding_space or rec.bidding_space == 0:
+                raise ValidationError('请填写中标金额。')
+        if len(self.env['crm.stage'].search([('name','=',u'中标')])) > 0:
+            stage_won_id = self.env['crm.stage'].search([('name','=',u'中标')])[0].id
+        else:
+            raise ValidationError('尚未添加"中标"阶段，请联系项目管理员添加。')
+        return self.write({'stage_id': stage_won_id})
+
+    @api.model
+    def action_set_other_stage(self,stage_name,rec_id):
+        record = self.env['crm.stage'].search([('name','=',stage_name)])
+        if len(record) > 0 :
+            stage_id = record[0].id
+            rec = self.search([('id','=',int(rec_id))])
+            rec.write({'stage_id': stage_id})
+
+    def action_set_important(self, cr, uid, ids, context=None):
+        self.write(cr, uid,ids, {'is_important': True}, context=context)
+
+    def action_cancel_important(self, cr, uid, ids, context=None):
+        self.write(cr, uid,ids, {'is_important': False}, context=context)
+
 # 定义行业模型
 class dtdream_industry(models.Model):
     _name = 'dtdream.industry'
@@ -703,6 +766,7 @@ class dtdream_industry(models.Model):
     name = fields.Char(string='系统部/行业名称',required=True)
     code = fields.Char(string='系统部/行业编码',required=True)
     parent_id = fields.Many2one('dtdream.industry', string='上级系统部/行业')
+
     children_ids = fields.One2many('dtdream.industry','parent_id',string='下级系统部/行业')
 
 class dtdream_crm_partner_binding(models.Model):
@@ -915,9 +979,11 @@ class dtdream_project_space_line(models.Model):
                 "title": u"提示",
                 "message": u"软件空间必须小于项目空间"
             }}
-			
+
     software_space = fields.Float('软件空间(万元)',digits=(16,0))
     project_space = fields.Float('项目空间(万元)',digits=(16,0))
+    bidding_space = fields.Float('中标金额(万元)',digits=(16,0))
+    view_bidding_space = fields.Boolean(string="是否显示中标金额")
 
 class dtdream_product_category(models.Model):
     _inherit = "product.category"

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_dtdream_assets_check">
+            <field name="name">资产盘点流程</field>
+            <field name="osv">dtdream.assets.check</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_undone" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_assets_check"/>
+            <field name="flow_start">True</field>
+            <field name="name">自盘</field>
+        </record>
+
+        <record id="act_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_assets_check"/>
+            <field name="name">完成</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_done()</field>
+        </record>
+
+
+        <record id="trans_undone_done" model="workflow.transition">
+            <field name="act_from" ref="act_undone"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="signal">assets_submit</field>
+        </record>
+
+    </data>
+</openerp>

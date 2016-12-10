@@ -1,0 +1,7 @@
+.o_form_view .o_form_statusbar>.o_statusbar_status.opp_stage>.o_arrow_button.disabled{
+    cursor: pointer;
+}
+
+.o_form_view .o_form_statusbar>.o_statusbar_status.opp_stage .o-status-more>li>button{
+    cursor: pointer;
+}

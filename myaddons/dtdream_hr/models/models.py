@@ -2,6 +2,8 @@
 
 from openerp import models, fields, api
 from openerp.osv import expression
+from ..utils.xpinyin import Pinyin
+p = Pinyin()
 
 class dtdream_hr(models.Model):
     _inherit = 'hr.department'
@@ -49,6 +51,23 @@ class dtdream_hr_employee(models.Model):
     def _compute_nick_name(self):
         for rec in self:
             rec.nick_name= rec.name
+
+    @api.onchange('full_name', 'job_number')
+    def compute_work_email(self):
+        if not self.full_name:
+            return
+        pinyin = [p.get_pinyin(item) for item in u'%s' % self.full_name.replace(' ', '')]
+        work_email = ''
+        for index, item in enumerate(pinyin):
+            if index == 0:
+                work_email = item
+            else:
+                work_email += item[0]
+        if self.env['hr.employee'].search([('work_email', '=', work_email + '@dtdream.com')]):
+            work_email += self.job_number + '@dtdream.com' if self.job_number else '@dtdream.com'
+        else:
+            work_email += '@dtdream.com'
+        self.work_email = work_email
 
     nick_name = fields.Char("花名",compute=_compute_nick_name,store=True)
     full_name = fields.Char(string="姓名", required=True)

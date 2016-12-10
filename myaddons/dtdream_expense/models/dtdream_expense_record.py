@@ -30,11 +30,6 @@ class dtdream_expense_record(models.Model):
             record.shibaoamount = record.invoicevalue - record.koujianamount
             record.notaxamount = record.shibaoamount-record.taxamount
 
-
-    # @api.onchange('shibaoamount')
-    # def _compute_notaxamount(self):
-    #     self.notaxamount = self.shibaoamount
-
     @api.multi
     @api.depends('report_ids')
     def _compute_report_ids_count(self):
@@ -45,33 +40,24 @@ class dtdream_expense_record(models.Model):
             else:
                 record.report_ids_count = 0
 
-
     name = fields.Char(string="记录标题")  # 没用，仅为了链接不显示模型名称
     state = fields.Selection([('draft', '草稿'), ('xingzheng', '行政助理审批'), ('zhuguan', '主管审批'), ('quanqianren', '权签人审批'),
                               ('jiekoukuaiji', '接口会计审批'), ('daifukuan', '待付款'), ('yifukuan', '已付款')], string="状态",
                              default="draft")
     expensecatelog = fields.Many2one("dtdream.expense.catelog", string="费用类别", required=True,
                                      track_visibility='onchange')
-    expensedetail = fields.Many2one("dtdream.expense.detail", string="消费类别", required=True, track_visibility='onchange')
+    expensedetail = fields.Many2one("dtdream.expense.detail", string="消费明细", required=True, track_visibility='onchange',domain=lambda self:[('parentid','=',self.expensecatelog.id)])
     invoicevalue = fields.Float(digits=(11, 2), required=True, string='票据金额(元)', track_visibility='onchange')
     outtimenumber = fields.Float(digits=(11, 2), string="超期时长(月)")
 
     taxamount = fields.Float(digits=(11, 2), string="税金",default = 0)
     notaxamount = fields.Float(digits=(11, 2), string="不含税金额",compute = _compute_notaxamount)
     taxpercent = fields.Selection([('0.03', '3%'), ('0.05', '5%'), ('0.06', '6%'), ('0.11', '11%'),('0.17', '17%')],string='税率')
-
-
-
-    # koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)", track_visibility='onchange')
     koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)")
     shibaoamount = fields.Float(digits=(11, 2), string="实报金额(元)", compute=_compute_shibaoamount, store=True)
     currentdate = fields.Date(string="发生日期", default=lambda self: datetime.now(), track_visibility='onchange')
-    # expenseenddate = fields.Date(string="费用发生结束日期" ,default=lambda self:datetime.now())
-    city = fields.Many2one("dtdream.expense.city",required=True, string="发生城市", track_visibility='onchange')
-    province = fields.Many2one("res.country.state",required=True, string="发生省份", track_visibility='onchange')
-    # attachment = fields.Binary(store=True,string="附件",track_visibility='onchange')
-
-
+    city = fields.Many2one("dtdream.expense.city",required=True, string="发生城市", track_visibility='onchange',default= lambda self:self.search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).city)
+    province = fields.Many2one("res.country.state",required=True, string="发生省份", track_visibility='onchange',default= lambda self:self.search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).city.provinceid)
     actiondesc = fields.Text(string="活动描述")
     customernumber=fields.Integer(string="客户人数")
     peitongnumber = fields.Integer(string="陪同人数")
@@ -87,12 +73,10 @@ class dtdream_expense_record(models.Model):
     def _compute_everyonecost(self):
         for record in self:
             if (int(record.customernumber)+int(record.peitongnumber)) >0:
-
                 record.everyonecost = record.invoicevalue/(int(record.customernumber)+int(record.peitongnumber))
 
     everyonecost = fields.Float(digits=(11, 2),string="人均消费(元)",compute=_compute_everyonecost, store=True)
     visible_all = fields.Boolean(default=False,string="是否隐藏客户人数、陪同人数，人均消费")
-
     attachment_ids = fields.One2many('dtdream.expense.record.attachment', 'record_id', u'附件明细')
     @api.constrains("attachment_ids")
     def attachment_ids_che(self):
@@ -101,7 +85,6 @@ class dtdream_expense_record(models.Model):
                 self.attachment_ids = [(2,attachment.id)]
     report_ids = fields.Many2many("dtdream.expense.report", "dtdream_exprense_record_report_ref", "report_id",
                                   "record_id", string="报销单ID")
-
     report_ids_count = fields.Integer(compute=_compute_report_ids_count, store=True)
 
     @api.multi
@@ -109,7 +92,6 @@ class dtdream_expense_record(models.Model):
     def _calaulte_record_ids(self):
         for record in self:
             if record.report_ids:
-
                 for report in record.report_ids:
                     report._compute_total_koujianamount()
 
@@ -158,7 +140,6 @@ class dtdream_expense_record(models.Model):
 
     @api.constrains('invoicevalue')
     def _check_invoicevalue_record(self):
-
         for rec in self:
             if float(rec.invoicevalue) <= float(0):
                 raise exceptions.ValidationError('票据金额不能小于等于0！')
@@ -168,8 +149,6 @@ class dtdream_expense_record(models.Model):
         # print type(str(vals['currentdate']))
         if self.env['dtdream.expense.catelog'].search([('id', '=', vals.get('expensecatelog'))]).name == u'日常业务费' and float(vals.get('invoicevalue'))>5000:
             raise Warning(u'大于5000元的日常业务费,请走专项申请!')
-        # print '--------->',vals.get('expensecatelog')
-
         if vals.has_key('expensedetail'):
             full_name = self.env['hr.employee'].search([('login', '=', self.env.user.login)]).full_name
             if not full_name:
@@ -183,16 +162,17 @@ class dtdream_expense_record(models.Model):
         return result
 
     # 费用类别与费用明细联动
-    # @api.onchange("expensecatelog")
-    # def onchange_expensecatelog(self):
-    #     if self.expensecatelog:
-    #         if self.expensedetail.parentid != self.expensecatelog:
-    #             self.expensedetail = ""
-    #         return {
-    #             'domain': {
-    #                 "expensedetail":[('parentid','=',self.expensecatelog.id)]
-    #             }
-    #         }
+    @api.onchange("expensecatelog")
+    def onchange_expensecatelog(self):
+        print "---------------------------------------------"
+        if self.expensecatelog:
+            if self.expensedetail.parentid != self.expensecatelog:
+                self.expensedetail = ""
+            return {
+                'domain': {
+                    "expensedetail":[('parentid','=',self.expensecatelog.id)]
+                }
+            }
 
     @api.onchange("expensedetail")
     def onchange_expensedetail(self):
@@ -204,27 +184,27 @@ class dtdream_expense_record(models.Model):
             else:
                 self.visible_all = True
 
-
-
-
-            # if self.expensecatelog != self.expensedetail.parentid:
-            #     self.expensecatelog = ""
-            # return {
-            #     'domain': {
-            #         "expensecatelog": [('id', '=', self.expensedetail.parentid)]
-            #     }
-            # }
-
     @api.onchange("province")
     def onchange_province(self):
         if self.province:
-            if self.city.provinceid != self.city:
+            if self.city.provinceid != self.province:
                 self.city = ""
             return {
                 'domain': {
                     "city": [('provinceid', '=', self.province.id)]
                 }
             }
+        else:
+            return {
+                'domain': {
+                    "city": [('provinceid', '!=', False)]
+                }
+            }
+
+    @api.onchange("city")
+    def onchange_city(self):
+        if self.city:
+            self.province = self.city.provinceid
 
     @api.multi
     def unlink(self):
@@ -235,3 +215,14 @@ class dtdream_expense_record(models.Model):
                 raise Warning(u'只能删除自己的消费记录!')
             res = super(dtdream_expense_record, self).unlink()
             return res
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_expense_record, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        self.onchange_expensecatelog()
+        print res['fields']
+        return res

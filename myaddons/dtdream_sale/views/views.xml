@@ -344,14 +344,45 @@
             <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <field name="stage_id" position="replace">
-                    <field name="stage_id" widget="statusbar" clickable="True"
+                    <field name="stage_id" widget="statusbar" class="opp_stage"
                             options="{'fold_field': 'fold'}"
                             domain="[]"
                             attrs="{'invisible': [('active', '=', False)]}"/>
                 </field>
+                <xpath expr="//header/child::button[1]" position="replace">
+                    <button name="crm_lead_won_action" string="中标"
+                                type="object" class="oe_highlight"
+                                attrs="{'invisible': ['|', ('is_lost','=',True), ('is_won', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//header/child::button[2]" position="replace">
+                    <button name="%(crm.crm_lead_lost_action)d" string="丢单"
+                                type="action" class="oe_highlight"
+                                context="{'default_lead_id': active_id}"
+                                attrs="{'invisible': ['|', ('is_lost','=',True), ('is_won', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//header/child::button[3]" position="replace">
+                    <button name="action_set_important" string="标记为重点"
+                                type="object" class="oe_highlight" groups="dtdream_sale.group_dtdream_marketing_department_project_interface_person" attrs="{'invisible': [ ('is_important','=',True)]}"/>
+                </xpath>
+                <xpath expr="//header/child::button[4]" position="replace">
+                    <button name="action_cancel_important" string="取消重点"
+                                type="object" class="oe_highlight" groups="dtdream_sale.group_dtdream_marketing_department_project_interface_person" attrs="{'invisible': [ ('is_important','=',False)]}"/>
+                </xpath>
+                <div class="label label-danger pull-right" position="replace">
+                    <div class="label label-danger pull-right" attrs="{'invisible': [('is_lost', '=', False)]}">丢单</div>
+                </div>
+                <div class="label label-success pull-right" position="replace">
+                    <div class="label label-success pull-right" attrs="{'invisible': [('is_won', '=', False)]}">中标</div>
+                </div>
+                <div class="label label-success pull-right" position="after">
+                    <div class="label label-info pull-right" attrs="{'invisible': [('is_important', '=', False)]}">重点</div>
+                </div>
                 <field name="partner_id" position="before">
                     <field name="software_space" invisible="True"/>
                     <field name="is_red" invisible="1"/>
+                    <field name="is_won" invisible="1"/>
+                    <field name="is_lost" invisible="1"/>
+                    <field name="is_important" invisible="1"/>
                     <field name="project_number"/>
                     <field name="sale_apply_id_uid" invisible="True"/>
                     <field name="project_leave" string="项目级别"/>
@@ -377,19 +408,6 @@
                         <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                     </button>
                 </button>
-                <!--<xpath expr="//header/child::button[2]" position="replace">-->
-                    <!--<button name="%(crm.crm_lead_lost_action)d" string="标记为失去"-->
-                            <!--type="action" class="oe_highlight"-->
-                            <!--context="{'default_lead_id': active_id}"-->
-                            <!--groups="dtdream_sale.group_dtdream_sale_manager"-->
-                    <!--/>-->
-                <!--</xpath>-->
-                <xpath expr="//header/child::button[3]" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//header/child::button[4]" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
                 <field name="partner_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -518,6 +536,13 @@
                 <field name="tag_ids" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="lost_reason" position="replace">
+                    <field name="lost_reason" string="丢单原因" attrs="{'invisible':[('is_lost','=',False)]}" options="{'no_open': True}"/>
+                </field>
+                <field name="lost_reason" position="after">
+                    <field name="bidding_channel" attrs="{'invisible':[('is_won','=',False)]}"/>
+                    <field name="if_zhitou" attrs="{'invisible':[('is_won','=',False)]}"/>
+                </field>
                 <xpath expr="//field[@name='description']/parent::page" position="after">
                     <page string="投资类项目背景" attrs="{'invisible':[('is_invest_project','!=','1')]}">
                         <field name="pro_background" placeholder="请输入投资类项目背景"/>
@@ -526,11 +551,13 @@
                 <xpath expr="//field[@name='description']/parent::page" position="before">
                     <page string="项目空间">
                             <field name="project_space" mode="tree">
-                                <tree string="项目空间" editable="bottom">
+                                <tree string="项目空间" editable="bottom" class="dtdream_project_space_tree">
+                                    <field name="view_bidding_space" invisible="1"/>
                                     <field name="categ_id_parent" options="{'no_create': True}"/>
                                     <field name="categ_id" options="{'no_create': True}"/>
                                     <field name="project_space"/>
                                     <field name="software_space"/>
+                                    <field name="bidding_space" attrs="{'invisible':[('view_bidding_space','=',False)]}"/>
                                 </tree>
                                 <form>
                                     <sheet>
@@ -548,6 +575,7 @@
                             </field>
                             <group class="oe_subtotal_footer oe_right" name="project_space_total">
                                 <field name="space_total"  class="oe_subtotal_footer_separator"/>
+                                <field name="bidding_space_total"  class="oe_subtotal_footer_separator" attrs="{'invisible':[('is_won','=',False)]}"/>
                             </group>
                     </page>
                     <page string="产品配置">
@@ -591,9 +619,9 @@
                             </group>
                     </page>
                 </xpath>
-                <xpath expr="//header/child::button[3]" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+                <!--<xpath expr="//header/child::button[3]" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
                 <xpath expr="//page[@name='lead']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -626,6 +654,7 @@
             <field name="arch" type="xml">
                 <tree colors="red:is_red==True" string="Opportunities" decoration-bf="message_needaction==True" decoration-muted="probability == 100" decoration-danger="date_action and (date_action &lt; current_date)">
                     <field name="is_red" invisible="1"/>
+                    <field name="is_important" invisible="1"/>
                     <field name="date_deadline" invisible="1"/>
                     <field name="create_date" invisible="1"/>
                     <field name="partner_id" string="Customer" invisible="1"/>
@@ -1201,38 +1230,27 @@
                             domain="[('sale_apply_id_uid','=',uid)]"
                             help="营销责任人为我的项目"/>
                   <separator/>
-                  <filter string="Won" name="won"
-                          domain="['&amp;', ('stage_id.probability', '=', 100), ('stage_id.fold', '=', True)]"/>
-                  <filter string="Lost" name="lost"
-                          domain="['&amp;', ('probability', '=', 0), ('active', '=', False)]"/>
+                  <filter string="重点项目" name="important"
+                          domain="[('is_important', '=', True)]"/>
+                  <filter string="中标项目" name="won"
+                          domain="[('is_won', '=', True)]"/>
+                  <filter string="丢单项目" name="lost"
+                          domain="[('is_lost', '=', True)]"/>
                   <separator/>
-                  <filter string="Archived" domain="[('active', '=', False)]"/>
-                  <group expand="0" string="Group By" colspan="16">
-                        <!--<filter string="Salesperson" name="groupby_salesperson" domain="[]" context="{'group_by':'user_id'}"/>-->
-                        <filter string="Sales Team" name="groupby_team" domain="[]" context="{'group_by':'team_id'}"/>
-                        <filter string="Stage" name="groupby_stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                  <filter string="Archived" domain="[('active', '=', False)]" groups="dtdream_sale.group_dtdream_sale_manager"/>
+                  <group string="Group By">
                         <filter string="办事处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
                         <filter string="系统部" name="groupby_stage" domain="[]" context="{'group_by':'system_department_id'}"/>
+                        <filter string="阶段" name="groupby_stage_id" domain="[]" context="{'group_by':'stage_id'}"/>
+                        <filter string="招标时间" name="groupby_time" domain="[]" context="{'group_by':'bidding_time'}"/>
                         <filter string="项目把握度" name="groupby_stage" domain="[]" context="{'group_by':'project_master_degree'}"/>
-                        <filter string="项目级别" name="groupby_stage" domain="[]" context="{'group_by':'project_leave'}"/>
-
-                        <!--<filter name="customer" string="Customer" help="Partner" domain="[]" context="{'group_by':'partner_id'}"/>-->
-                        <!--<filter string="Campaign" name="groupby_campaign"  domain="[]" context="{'group_by':'campaign_id'}"/>-->
-                        <!--<filter string="Source" name="groupby_source" domain="[]" context="{'group_by':'source_id'}"/>-->
-                        <!--<filter string="Medium" name="groupby_channel" domain="[]" context="{'group_by':'medium_id'}"/>-->
-                        <!--<filter string="Creation Month" name="groupby_createmonth" domain="[]" context="{'group_by':'create_date'}"/>-->
+                        <filter string="省份" name="groupby_province" domain="[]" context="{'group_by':'project_province_new'}"/>
+                        <filter string="城市" name="groupby_city" domain="[]" context="{'group_by':'project_place_new'}"/>
+                        <filter string="渠道" name="groupby_channel" domain="[]" context="{'group_by':'sale_channel'}"/>
+                        <filter string="产品一级分类" name="groupby_pro_type" domain="[]" context="{'group_by':'categ_id_parent'}"/>
+                        <filter string="产品二级分类" name="groupby_pro_type_deep" domain="[]" context="{'group_by':'categ_id'}"/>
+                        <filter string="营销责任人" name="groupby_sale_apply_id" domain="[]" context="{'group_by':'sale_apply_id'}"/>
                     </group>
-                  <!--<group expand="0" string="Group By" colspan="16">-->
-                      <!--<filter string="营销责任人" context="{'group_by':'sale_apply_id'}"/>-->
-                      <!--<filter string="Sales Team" context="{'group_by':'team_id'}"/>-->
-                      <!--<filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>-->
-                      <!--<filter name="stage" string="Stage" context="{'group_by':'stage_id'}"/>-->
-                      <!--<filter string="Campaign" domain="[]" context="{'group_by':'campaign_id'}"/>-->
-                      <!--<separator orientation="vertical" />-->
-                      <!--<filter string="Creation Month" context="{'group_by':'create_date:month'}" name="month"/>-->
-                      <!--<filter string="Expected Closing" context="{'group_by':'date_deadline'}"/>-->
-                      <!--<filter string="Lost Reason" context="{'group_by':'lost_reason'}"/>-->
-                  <!--</group>-->
               </search>
           </field>
       </record>
@@ -1240,7 +1258,7 @@
       <record model="ir.actions.act_window" id="crm.crm_lead_opportunities_tree_view">
         <field name="name">Your Pipeline</field>
         <field name="res_model">crm.lead</field>
-        <field name="view_mode">kanban,tree,graph,pivot,form,calendar</field>
+        <field name="view_mode">tree,kanban,graph,pivot,form,calendar</field>
         <field name="domain">[]</field>
         <field name="context">{
                         'default_type': 'lead',
@@ -1372,5 +1390,6 @@
       <!--定义行政区域菜单-->
       <menuitem name='行政区域配置' id='menu_setting_dtdream_area' parent='base.menu_sale_config' sequence="65" action="act_dtdream_area"/>
 
+      <delete id="crm.ir_mark_as_lost" model="ir.values"/>
   </data>
 </openerp>

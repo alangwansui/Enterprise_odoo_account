@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
 from datetime import datetime
-from datetime import date
-from openerp.exceptions import ValidationError
-from lxml import etree
 from dateutil.relativedelta import relativedelta
+from openerp import models, fields, api
+from openerp.exceptions import ValidationError
+from openerp.dtdream.confluence import confluence as confluenceSer
 
 class dtdream_information_purview(models.Model):
     _name = 'dtdream.information.purview'
@@ -40,7 +39,47 @@ class dtdream_information_purview(models.Model):
             level=u'绝密'
         self.write({'name':dep_01+dep_02+level+u'文档'})
 
-    list= fields.Text(string="清单",required=True)
+    @api.onchange('style')
+    def on_change_style(self):
+        for rec in self:
+            if rec.style=='conf':
+                self.conf_flag=True
+                self.git_flag=False
+                self.other_flag=False
+                self.git_list=[(5,)]
+                self.other_list = [(5,)]
+            if rec.style=='git':
+                self.conf_flag=False
+                self.git_flag=True
+                self.other_flag=False
+                self.confluence_list = [(5,)]
+                self.other_list = [(5,)]
+            if rec.style=='other':
+                self.conf_flag=False
+                self.git_flag=False
+                self.other_flag=True
+                self.confluence_list = [(5,)]
+                self.git_list = [(5,)]
+
+    conf_flag = fields.Boolean(string="标记conf显示",default=True)
+    git_flag = fields.Boolean(string="标记git显示",default=False)
+    other_flag = fields.Boolean(string="标记other显示",default=False)
+
+    style=fields.Selection([('conf','confluence'),('git','git'),('other','其他')],string="类别",default='conf')
+    confluence_list= fields.One2many("dtdream.security.list.confluence","security_conf",string="confluence清单")
+    git_list= fields.One2many("dtdream.security.list.git","security_git",string="git清单")
+    other_list= fields.One2many("dtdream.security.list.other","security_other",string="other清单")
+
+    @api.constrains("confluence_list")
+    def _constraint_conf(self):
+        list = self.confluence_list
+        spaceset = set([x.space for x in list])
+        if len(list)!= len(spaceset):
+            raise ValidationError(u"所选空间有重复")
+        for lit in list:
+            if not lit.read_right and not lit.write_right:
+                raise ValidationError(u"请填写"+lit.space.name+u"的权限")
+
     applicant = fields.Many2one("hr.employee",string="申请人",required=True,store=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]),readonly=True,stroe=True)
     department_01 = fields.Many2one("hr.department",compute=_compute_employee,string="申请一级部门" ,store=True)
     department_02 = fields.Many2one("hr.department",compute=_compute_employee,string="申请二级部门" ,store=True)
@@ -284,5 +323,60 @@ class dtdream_information_purview(models.Model):
                 'auto_delete': False,
                 'email_from':self.get_mail_server_name(),
             }).send()
+
+
+    def check_PermissionSets(self,ConfluenceServer,confluence_list):
+        for confluence in confluence_list:
+            PermissionSets = ConfluenceServer.GetSpacePermissionSets(spacekey=confluence.space.key)
+            if confluence.read_right and not confluence.write_right:                                                    #只读权限
+                confluence_space_read=''
+                viewPermission = [x for x in PermissionSets if x['type'] == "VIEWSPACE"]
+                groupnames = [x['groupName'] for x in viewPermission[0]['spacePermissions'] if x.get('groupName')]
+                if confluence_space_read in groupnames:                                                                 #权限组存在
+                    print 111111111
+                else:
+                    print 222222222
+            if confluence.write_right:
+                editPermission = [x for x in PermissionSets if x['type']=="EDITSPACE"]
+                groupnames = [x['groupName'] for x in editPermission[0]['spacePermissions'] if x.get('groupName')]
+
+    @api.multi
+    def permission_settings(self):
+        if self.style=="conf":
+            confs = set([x.conf for x in self.confluence_list])     #检查有几个confluence环境
+            for conf in confs:
+                try:
+                    ConfluenceServer = confluenceSer.ConfluenceServer(ConfluenceURL=conf.url,login=conf.user,password=conf.passw)
+                    confluence_list = [x for x in self.confluence_list if x.conf == conf]
+                    self.check_PermissionSets(ConfluenceServer, confluence_list)
+                except Exception, e:
+                    raise ValidationError(conf.name+u"配置错误")
+
+
+        elif self.style=="git":
+            print 2222222222222
+        else:
+            print 33333333333333
+
+
+
+    # @api.multi
+    # def test(self):
+        # import requests
+        # url='http://confluence.dtdream.com'
+        # values ={'os_username':'g0335','os_password':'DT_GQ0335'}
+        # # jdata = json.dumps(values)
+        # send_headers = {
+        #                  'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+        #                  'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        #                 'Content-type': 'application/json',
+        #                  'Connection':'keep-alive',
+        #                 }
+        # req = requests.post(url, values, headers=send_headers)
+        # get_url='http://confluence.dtdream.com/rest/api/content'
+        # response = requests.get(get_url,cookies=req.cookies,headers=send_headers)
+
+        # confluenceSpace = confluence.GetSpacePermissionsForUser(spacekey='CON',user='wx-0003')
+
 
 

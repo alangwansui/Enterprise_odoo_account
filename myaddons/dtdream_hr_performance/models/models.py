@@ -33,7 +33,7 @@ class dtdream_hr_performance(models.Model):
         result = super(dtdream_hr_performance, self).read(fields=fields, load=load)
         self.check_access_rights_performance()
         result = self.refresh_when_department_changed(result)
-        if len(result[0]) != 2 and result[0].get('pbc', 1) != 1:
+        if result and len(result[0]) != 2 and result[0].get('pbc', 1) != 1:
             department = result[0]['department']
             self.department = department[0]
             cr = self.env['dtdream.hr.pbc'].search([('state', '=', '99'), ('quarter', '=', self.quarter), '|', ('name', '=', self.department.parent_id.id), ('name', '=', self.department.id)])
@@ -56,7 +56,7 @@ class dtdream_hr_performance(models.Model):
                     department_id.append(crr.department.id)
                     for department in crr.department.child_ids:
                         department_id.append(department.id)
-                if rec.department.id not in department_id:
+                if rec.name.user_id != self.env.user and rec.department.id not in department_id:
                     raise AccessError('由于安全限制，请求的操作不能被完成。请联系你的系统管理员。\n\n(单据类型: dtdream.hr.performance, 操作: read)')
 
     def update_dtdream_hr_pbc(self):

@@ -51,6 +51,10 @@ class dtdream_grants_allocation(models.Model):
             raise ValidationError('充值金额不能小于0')
     cash = fields.Integer(string='补助金转工资金额(元)',compute=_compute_cash,store=True)
 
+    _sql_constraints = [
+          ('one_allocation_only','unique(create_uid)','每个人只能有一条分配设置！')
+     ]
+
 
 class dtdream_grants(models.Model):
     _name = 'dtdream.grants'
@@ -129,21 +133,23 @@ class dtdream_grants(models.Model):
             last_month_fir = last_month+'-01'
             this_month_fir = (datetime.now()+relativedelta(hours=8)).strftime('%Y-%m')+'-01'
             last_month_like = last_month+'%'
-            # 上月1号入职之前在职员工
+            # 上月1号入职之前的在职员工
             zaizhi_employee = self.env['hr.employee'].search([('Inaugural_state','=','Inaugural_state_01'),('entry_day','<',last_month_fir)])
             for rec in zaizhi_employee:
+                current_allocation = self.env['dtdream.grants.allocation'].search([('create_uid','=',rec.user_id.id)])
                 self.create({'name':rec.id,
-                             'you_fill':self.env['dtdream.grants.allocation'].search([('create_uid','=',rec.user_id.id)]).you,
-                             'fan_fill':self.env['dtdream.grants.allocation'].search([('create_uid','=',rec.user_id.id)]).fan,
-                             'cash':self.env['dtdream.grants.allocation'].search([('create_uid','=',rec.user_id.id)]).cash or self.env['dtdream.grants.config'].search([]).total})
+                             'you_fill':current_allocation.you,
+                             'fan_fill':current_allocation.fan,
+                             'cash':current_allocation.cash if current_allocation else self.env['dtdream.grants.config'].search([]).total})
 
             last_month_lizhi = self.env['leaving.handle'].search(['|',('actual_leavig_date','like',last_month_like),('actual_leavig_date','=',this_month_fir)])
             for recd in last_month_lizhi:
                 if self.env['hr.employee'].search([('id','=',recd.name.id)]).Inaugural_state == 'Inaugural_state_02'and self.env['hr.employee'].search([('id','=',recd.name.id)]).entry_day<last_month_fir:
+                    current_allocation = self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.user_id.id)])
                     self.create({'name':recd.name.id,
-                                 'you_fill':self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.name.user_id.id)]).you,
-                                 'fan_fill':self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.name.user_id.id)]).fan,
-                                 'cash':self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.name.user_id.id)]).cash or self.env['dtdream.grants.config'].search([]).total})
+                                 'you_fill':current_allocation.you,
+                                 'fan_fill':current_allocation.fan,
+                                 'cash':current_allocation.cash if current_allocation else self.env['dtdream.grants.config'].search([]).total})
 
     # @api.constrains('month')
     # def check_if_last_month(self):

@@ -28,10 +28,14 @@
         'security/ir.model.access.csv',
         'wizard/dtdream_information_purview_wizard.xml',
         'wizard/dtdream_information_shouquan_wizard.xml',
-        'views/views.xml',
         'views/dtdream_information_people.xml',
+        'views/dtdream_information_type.xml',
+        'views/views.xml',
         'workflow/dtdream_information_purview_wkf.xml',
         'views/templates.xml',
+        'views/dtdream_foreign.xml',
+        'workflow/dtdream_foreign_workflow.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [

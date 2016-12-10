@@ -117,10 +117,11 @@ class dtdream_ecard(models.Model):
                 "sn": sss
             }
             ecard_server = openerp.tools.config['ecard_url']
+            ecard_domain = openerp.tools.config['ecard_domain_url']
             url = ecard_server + "/key"
             r = requests.post(url, data=json.dumps(data), headers=headers)
             if r.status_code == 200:
                 info = json.JSONDecoder().decode(r.text)
-                vals['ecard_url'] = ecard_server + "/%s.html" % (info['data']['key'])
+                vals['ecard_url'] = ecard_domain + "/%s.html" % (info['data']['key'])
         except Exception, e:
             pass

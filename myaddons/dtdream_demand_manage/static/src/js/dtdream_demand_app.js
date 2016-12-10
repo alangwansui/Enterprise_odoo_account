@@ -34,12 +34,7 @@ FormView.include({
         if (num != 0) {
             var timer = window.setInterval(function(){
                 if ($('.dtdream_demand_notebook').length != 0) {
-                    $('.manage_page:eq(0)').removeClass('active');
-                    $('.manage_page:eq(5)').removeClass('active');
-                    if(num > 1 && $('.manage_page:eq('+ (num-2) + ')').hasClass('active')){
-                         $('.manage_page:eq('+ (num-2) + ')').removeClass('active');
-                         $('.manage_page:eq('+ (num+3) + ')').removeClass('active');
-                    }
+                    $('.manage_page.active').removeClass('active');
                     $('.manage_page:eq(' + (num-1) + ')').addClass('active');
                     $('.manage_page:eq(' + (num+4) + ')').addClass('active');
                     clearInterval(timer);

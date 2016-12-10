@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="panel panelbox-green" name="dtdream_expense.action_dtdream_expense_pending_jiekoukuaiji">
+                <div class="panel panelbox-green" name="dtdream_expense.action_dtdream_expense_pending">
                 <a href="#" >
                     <div class="panel-footer" >
                         <h4>

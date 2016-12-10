@@ -23,6 +23,28 @@
             <field name="args">()</field>
         </record>
 
+        <record model="ir.cron" id="ir_cron_inf_purview_get_confluence">
+            <field name='name'>定时获取confluence 空间</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">dtdream.confluence.space</field>
+            <field name="function">timing_get_confluence_space</field>
+            <field name="args">()</field>
+        </record>
+
+        <record model="ir.cron" id="ir_cron_inf_purview_get_gitlab">
+            <field name='name'>定时获取gitlab的项目</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">dtdream.git.space</field>
+            <field name="function">timing_get_git_space</field>
+            <field name="args">()</field>
+        </record>
+
 
     </data>
 </openerp>

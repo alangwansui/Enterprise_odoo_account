@@ -75,6 +75,16 @@
             <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
         </record>
 
+        <record id="act_dtdream_prod_appr_from_dash" model="ir.actions.act_window">
+            <field name="name">我相关的</field>
+            <field name="res_model">dtdream_prod_appr</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
+        </record>
+
         <record id="act_dtdream_prod_appr_wait" model="ir.actions.act_window">
             <field name="name">待我审批的</field>
             <field name="res_model">dtdream_prod_appr</field>
@@ -128,17 +138,17 @@
 
 
 
-                        <button name="%(dtdream_rd_prod.act_dtdream_exception)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True,'default_approver_fir':QA,'default_approver_sec':PL_CCB}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="%(dtdream_rd_prod.act_dtdream_exception_w)d" string="申请例外" type="action" context="{'default_name': id,'default_mark':True,'default_approver_fir':QA,'default_approver_sec':PL_CCB}" attrs="{'invisible':[('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('state','not in',('state_07')),('is_Qa','=',False)]}"/>
 
 
 
-                        <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension)d" string="申请暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
+                        <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension_w)d" string="申请暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
                         attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension_restoration)d" string="申请恢复暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
+                        <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension_restoration_w)d" string="申请恢复暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
                         attrs="{'invisible':['|','|',('is_zanting_backtjN','=',True),('state','not in',('state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
-                        <button name="%(dtdream_rd_prod.act_dtdream_prod_termination)d" string="申请中止" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
+                        <button name="%(dtdream_rd_prod.act_dtdream_prod_termination_w)d" string="申请中止" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
                         attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_06,state_07,state_05" />
@@ -294,7 +304,7 @@
 
         <menuitem id="menu_finance_rd" name="研发"  icon="fa-user" web_icon="dtdream_rd_prod,static/description/rd.png" groups="group_dtdream_rd_qa,group_dtdream_rd_user,group_dtdream_rd_user_all"/>
 
-        <!--<menuitem id="menu_rd_dashboard" name="仪表盘" parent="menu_finance_rd" sequence="50" action="act_open_dtdream_rd_dashboard_view"/>-->
+        <menuitem id="menu_rd_dashboard" name="仪表盘" parent="menu_finance_rd" sequence="50" action="act_open_dtdream_rd_dashboard_view"/>
 
         <menuitem id="menu_finance_prod_appr" name="研发产品" parent="menu_finance_rd" sequence="100"/>
         <menuitem id="menu_finance_prod_appr_my" name="我相关的" parent="menu_finance_prod_appr" sequence="100"  action="act_dtdream_prod_appr"/>

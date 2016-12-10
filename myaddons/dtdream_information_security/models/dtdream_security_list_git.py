@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+
+from openerp import models, fields, api
+class dtdream_security_list_git(models.Model):
+    _name = "dtdream.security.list.git"
+    _description = "权限申请列表"
+
+    security_git= fields.Many2one("dtdream.information.purview")
+
+    git = fields.Many2one("dtdream.information.type", string="所属", domain=[('type', '=', 'git')])
+    space = fields.Many2one("dtdream.git.space",string="空间")
+    description = fields.Char(string="描述")
+    read_right = fields.Boolean(string="读权限")
+    write_right = fields.Boolean(string="写权限")
+
+    @api.onchange('git')
+    def _chang_conf(self):
+        domain = {}
+        domain['space'] = [('type', '=', self.git.id)]
+        return {'domain': domain}

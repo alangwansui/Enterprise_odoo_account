@@ -4,6 +4,7 @@
         <template id="assets_backend" name="document assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/dtdream_sale_business_report/static/src/js/report.js"></script>
+                <script type="text/javascript" src="/dtdream_sale_business_report/static/src/js/group_search.js"></script>
             </xpath>
         </template>
 

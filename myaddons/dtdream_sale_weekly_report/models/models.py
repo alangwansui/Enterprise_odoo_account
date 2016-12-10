@@ -10,11 +10,10 @@ from openerp.exceptions import AccessError
 class dtdream_sale_own_report(models.Model):
     _name = 'dtdream.sale.own.report'
     _description = u"个人周报"
+    _order = "report_start_time"
 
     @api.multi
     def read(self, fields=None, load='_classic_read'):
-        """ Override to explicitely call check_access_rule, that is not called
-            by the ORM. It instead directly fetches ir.rules and apply them. """
         domain = self.get_access_domain(domain=[])
         access_records = [rec.id for rec in self.sudo().search(domain)]
         for record in self:
@@ -430,7 +429,10 @@ class dtdream_sale_own_report(models.Model):
             if len(rec.project_id) == 0:
                 self.zhengwu_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 if crm_rec.project_master_degree != rec.project_master_degree:
                     crm_rec.write({"project_master_degree":rec.project_master_degree})
                 if crm_rec.bidding_time != rec.bidding_time:
@@ -451,7 +453,7 @@ class dtdream_sale_own_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.zhengwu_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
+                    self._onchange_zhengwu_project()
 
     @api.constrains('lead_project')
     def _cons_lead_project(self):
@@ -474,7 +476,10 @@ class dtdream_sale_own_report(models.Model):
             if len(rec.project_id) == 0:
                     self.lead_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 if crm_rec.project_master_degree != rec.project_master_degree:
                     crm_rec.write({"project_master_degree":rec.project_master_degree})
                 if crm_rec.bidding_time != rec.bidding_time:
@@ -495,7 +500,7 @@ class dtdream_sale_own_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.lead_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
+                    self._onchange_zhengwu_project()
 
     @api.constrains('other_project')
     def _cons_other_project(self):
@@ -520,7 +525,10 @@ class dtdream_sale_own_report(models.Model):
             if len(rec.project_id) == 0:
                     self.other_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 for a_rec in rec.other_project_id.zhengwu_project:
                     if a_rec.project_id.project_number == rec.project_id.project_number:
                         a_rec.project_master_degree = rec.project_master_degree
@@ -571,7 +579,10 @@ class dtdream_sale_own_report(models.Model):
             if len(rec.project_id) == 0:
                     self.next_zhengwu_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 if crm_rec.project_master_degree != rec.project_master_degree:
                     crm_rec.write({"project_master_degree":rec.project_master_degree})
                 if crm_rec.bidding_time != rec.bidding_time:
@@ -859,9 +870,9 @@ class zhengwu_system_project(models.Model):
             str = ""
             for recc in rec.project_id.des_records:
                 if recc.create_date[:10] <= report_end_time.strftime('%Y-%m-%d') and recc.create_date[:10] > (report_end_time - relativedelta(days=7)).strftime('%Y-%m-%d'):
-                    if self.zhengwu_project_id and recc.name != False and recc.week != self.zhengwu_project_id.week.id:
+                    if rec.zhengwu_project_id and recc.name != False and recc.week != rec.zhengwu_project_id.week.id:
                         str = str + recc.name + u";"
-                    if self.next_zhengwu_project_id and recc.name != False and recc.week != self.next_zhengwu_project_id.week.id:
+                    if rec.next_zhengwu_project_id and recc.name != False and recc.week != rec.next_zhengwu_project_id.week.id:
                         str = str + recc.name + u";"
             rec.project_process = str
 
@@ -916,7 +927,7 @@ class lead_project(models.Model):
             str = ""
             for recc in rec.project_id.des_records:
                 if recc.create_date[:10] <= report_end_time.strftime('%Y-%m-%d') and recc.create_date[:10] > (report_end_time - relativedelta(days=7)).strftime('%Y-%m-%d'):
-                    if recc.name != False and recc.week != self.lead_project_id.week.id:
+                    if recc.name != False and recc.week != rec.lead_project_id.week.id:
                         str = str + recc.name + u";"
             rec.project_process = str
 
@@ -963,7 +974,7 @@ class other_project(models.Model):
             str = ""
             for recc in rec.project_id.des_records:
                 if recc.create_date[:10] <= report_end_time.strftime('%Y-%m-%d') and recc.create_date[:10] > (report_end_time - relativedelta(days=7)).strftime('%Y-%m-%d'):
-                    if recc.name != False and recc.week != self.other_project_id.week.id:
+                    if recc.name != False and recc.week != rec.other_project_id.week.id:
                         str = str + recc.name + u";"
             rec.project_process = str
 
@@ -1546,7 +1557,10 @@ class dtdream_sale_manager_report(models.Model):
             if len(rec.project_id) == 0:
                     self.zhengwu_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number', '=', rec.project_id.project_number),('stage_id.name','in',(u'项目启动',u'技术和商务交流',u'项目招投标'))])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 if crm_rec.project_master_degree != rec.project_master_degree:
                     crm_rec.write({"project_master_degree":rec.project_master_degree})
                 if crm_rec.bidding_time != rec.bidding_time:
@@ -1567,7 +1581,7 @@ class dtdream_sale_manager_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.zhengwu_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
+                    self._onchange_zhengwu_project()
 
     @api.constrains('lead_project')
     def _cons_lead_project(self):
@@ -1590,7 +1604,10 @@ class dtdream_sale_manager_report(models.Model):
             if len(rec.project_id) == 0:
                     self.lead_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number),('stage_id.name','=',u'机会点')])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 if crm_rec.project_master_degree != rec.project_master_degree:
                     crm_rec.write({"project_master_degree":rec.project_master_degree})
                 if crm_rec.bidding_time != rec.bidding_time:
@@ -1611,7 +1628,7 @@ class dtdream_sale_manager_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.lead_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project
+                    self._onchange_zhengwu_project()
 
     @api.constrains('other_project')
     def _cons_other_project(self):
@@ -1634,13 +1651,16 @@ class dtdream_sale_manager_report(models.Model):
             if len(rec.project_id) == 0:
                     self.other_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
-                for a_rec in rec.other_project_id.zhengwu_project:
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
+                for a_rec in rec.manager_other_project_id.zhengwu_project:
                     if a_rec.project_id.project_number == rec.project_id.project_number:
                         a_rec.project_master_degree = rec.project_master_degree
                         a_rec.bidding_time = rec.bidding_time
                         a_rec.project_process = rec.project_process
-                for b_rec in rec.other_project_id.lead_project:
+                for b_rec in rec.manager_other_project_id.lead_project:
                     if b_rec.project_id.project_number == rec.project_id.project_number:
                         b_rec.project_master_degree = rec.project_master_degree
                         b_rec.bidding_time = rec.bidding_time
@@ -1685,7 +1705,10 @@ class dtdream_sale_manager_report(models.Model):
             if len(rec.project_id) == 0:
                     self.next_zhengwu_project = [(2,rec.id)]
             if rec.project_id.project_number:
-                crm_rec = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])[0]
+                crm_recs = self.env['crm.lead'].search([('project_number','=',rec.project_id.project_number)])
+                if crm_recs is None or len(crm_recs) <= 0:
+                    return
+                crm_rec = crm_recs[0]
                 if crm_rec.project_master_degree != rec.project_master_degree:
                     crm_rec.write({"project_master_degree":rec.project_master_degree})
                 if crm_rec.bidding_time != rec.bidding_time:
@@ -1728,9 +1751,10 @@ class dtdream_sale_manager_report(models.Model):
         list = []
         if len(zhengwu_project) > 0:
             for rec in zhengwu_project:
-                list.append((0,0,{"project_id":rec.project_id,"office_id":rec.office_id,"sale_apply_id":rec.sale_apply_id,"space_total":rec.space_total,
-                              "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
-                              "project_process":rec.project_process,'project_leave':rec.project_leave,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
+                if rec.project_id.stage_id.name in (u'项目启动',u'技术和商务交流',u'项目招投标') and rec.project_id.active != False:
+                    list.append((0,0,{"project_id":rec.project_id,"office_id":rec.office_id,"sale_apply_id":rec.sale_apply_id,"space_total":rec.space_total,
+                                  "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
+                                  "project_process":rec.project_process,'project_leave':rec.project_leave,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
         self.zhengwu_project = list or False
         # 近三个月招投标机会点
         sql = "select z.id from lead_project z left join dtdream_sale_own_report d on z.lead_project_id = d.id where d.state = 'submit' and d.week = " + week
@@ -1741,9 +1765,10 @@ class dtdream_sale_manager_report(models.Model):
         list = []
         if len(lead_project) > 0:
             for rec in lead_project:
-                list.append((0,0,{"project_id":rec.project_id,"office_id":rec.office_id,"sale_apply_id":rec.sale_apply_id,"space_total":rec.space_total,
-                              "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
-                              "project_process":rec.project_process,'project_leave':rec.project_leave,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
+                if rec.project_id.stage_id.name == u'机会点' and rec.project_id.active != False:
+                    list.append((0,0,{"project_id":rec.project_id,"office_id":rec.office_id,"sale_apply_id":rec.sale_apply_id,"space_total":rec.space_total,
+                                  "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
+                                  "project_process":rec.project_process,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
         self.lead_project = list or False
         # 含投资项目及其他重要项目进展
         sql = "select z.id from other_project z left join dtdream_sale_own_report d on z.other_project_id = d.id where d.state = 'submit' and d.week = " + week
@@ -1949,7 +1974,7 @@ class manager_lead_project(models.Model):
             str = ""
             for recc in rec.project_id.des_records:
                 if recc.create_date[:10] <= report_end_time.strftime('%Y-%m-%d') and recc.create_date[:10] > (report_end_time - relativedelta(days=7)).strftime('%Y-%m-%d'):
-                    if recc.name != False and recc.week != self.manager_lead_project_id.week.id:
+                    if recc.name != False and recc.week != rec.manager_lead_project_id.week.id:
                         str = str + recc.name + u";"
             rec.project_process = str
 
@@ -1968,6 +1993,7 @@ class manager_lead_project(models.Model):
     project_number = fields.Char(string="项目编号")
     system_department_id = fields.Many2one("dtdream.industry", string="系统部")
     industry_id = fields.Many2one("dtdream.industry",string="行业")
+    project_leave = fields.Char(string="项目级别")
 
 # 政务系统部项目
 class manager_zhengwu_system_project(models.Model):
@@ -2004,9 +2030,9 @@ class manager_zhengwu_system_project(models.Model):
             str = ""
             for recc in rec.project_id.des_records:
                 if recc.create_date[:10] <= report_end_time.strftime('%Y-%m-%d') and recc.create_date[:10] > (report_end_time - relativedelta(days=7)).strftime('%Y-%m-%d'):
-                    if self.manager_zhengwu_project_id and recc.name != False and recc.week != self.manager_zhengwu_project_id.week.id:
+                    if rec.manager_zhengwu_project_id and recc.name != False and recc.week != rec.manager_zhengwu_project_id.week.id:
                         str = str + recc.name + u";"
-                    if self.manager_next_zhengwu_project_id and recc.name != False and recc.week != self.manager_next_zhengwu_project_id.week.id:
+                    if rec.manager_next_zhengwu_project_id and recc.name != False and recc.week != rec.manager_next_zhengwu_project_id.week.id:
                         str = str + recc.name + u";"
             rec.project_process = str
 
@@ -2054,7 +2080,7 @@ class manager_other_project(models.Model):
             str = ""
             for recc in rec.project_id.des_records:
                 if recc.create_date[:10] <= report_end_time.strftime('%Y-%m-%d') and recc.create_date[:10] > (report_end_time - relativedelta(days=7)).strftime('%Y-%m-%d'):
-                    if recc.name != False and recc.week != self.manager_other_project_id.week.id:
+                    if recc.name != False and recc.week != rec.manager_other_project_id.week.id:
                         str = str + recc.name + u";"
             rec.project_process = str
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="assets_01" model="dtdream.assets.store.place">
+            <field name="name">北京办公区</field>
+        </record>
+
+        <record id="assets_02" model="dtdream.assets.store.place">
+            <field name="name">杭州办公区</field>
+        </record>
+
+        <record id="assets_03" model="dtdream.assets.store.place">
+            <field name="name">杭州师大</field>
+        </record>
+
+        <record id="assets_04" model="dtdream.assets.store.place">
+            <field name="name">南京办事处</field>
+        </record>
+
+        <record id="assets_05" model="dtdream.assets.store.place">
+            <field name="name">广州办事处</field>
+        </record>
+
+        <record id="assets_06" model="dtdream.assets.store.place">
+            <field name="name">成都办事处</field>
+        </record>
+
+        <record id="assets_07" model="dtdream.assets.store.place">
+            <field name="name">宁波办事处</field>
+        </record>
+
+        <record id="assets_08" model="dtdream.assets.store.place">
+            <field name="name">长沙办事处</field>
+        </record>
+
+        <record id="assets_09" model="dtdream.assets.store.place">
+            <field name="name">天津办事处</field>
+        </record>
+
+    </data>
+</openerp>

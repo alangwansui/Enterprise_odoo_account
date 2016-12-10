@@ -25,7 +25,7 @@ class dtdream_termination_wizard(models.TransientModel):
     def btn_agree(self):
         active_id = self._context['active_id']
         current_termination = self.env['dtdream.prod.termination'].browse(active_id)
-        current_termination.write({'current_approver_user': [(5,)],'state':'ysp'})
+        current_termination.write({'current_approver_user': False,'state':'ysp'})
         self._message_poss(suspension=current_termination,statechange=u'审批中->已审批',current_approver=current_termination.current_approver,reason=self.reason,
                            result=u'同意')
         project = current_termination.project
@@ -59,6 +59,10 @@ class dtdream_termination_wizard(models.TransientModel):
             if version.version_state=='pause':
                 version.version_state_old='pause'
                 version.signal_workflow('vzanting_to_vzhongzhi')
+        if not current_termination.version:
+            current_termination.project.write({'is_zhongzhitjN':False})
+        else:
+            current_termination.version.write({'is_zhongzhitjN':False})
 
     @api.multi
     def btn_disagree(self):
@@ -66,7 +70,7 @@ class dtdream_termination_wizard(models.TransientModel):
             raise ValidationError(u'原因不能为空')
         active_id = self._context['active_id']
         current_termination = self.env['dtdream.prod.termination'].browse(active_id)
-        current_termination.write({'current_approver_user': [(5,)],'state':'ysp'})
+        current_termination.write({'current_approver_user': False,'state':'ysp'})
         self._message_poss(suspension=current_termination,statechange=u'审批中->已审批',current_approver=current_termination.current_approver,reason=self.reason,
                            result=u'不同意')
         if not current_termination.version:

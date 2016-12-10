@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import openerp
 from openerp import models, fields, api
 from datetime import datetime
 from openerp.exceptions import ValidationError
@@ -33,7 +34,7 @@ class dtdream_special_approval(models.Model):
     business_type = fields.Selection([('type1','公司/样板点考察类'),('type2','品牌/解决方案类'),('type3','渠道扩展类'),('type4','行政事务类')],string='业务类型',required=True)
     business_item = fields.Char(string="业务事项",required=True)
     event_location = fields.Char(string="活动地点",required=True)
-    customer_unit = fields.Many2one('res.partner',string="客户单位",required=True)
+    customer_unit = fields.Many2one('res.partner',string="客户单位")
     activities_desc = fields.Text(string="专项活动必要性描述",required=True)
     state = fields.Selection([('state_01','草稿'),('state_02','主管审批'),('state_03','权签人审批'),('state_04','财务审批'),('state_05','完成')],string="状态",default='state_01')
     product = fields.Many2one('crm.lead',string="项目")
@@ -206,8 +207,20 @@ class dtdream_special_approval(models.Model):
                                                <tr><td style="padding:10px">下阶段审批人</td><td style="padding:10px">%s</td></tr>
                                                </table>""" %(self.name,statechange,action,next_shenpiren))
 
+    def _check_department(self):
+        special_list=[]
+        try:
+            special_list = openerp.tools.config['special_list'].decode('utf-8').split(',')
+        except Exception, e:
+            special_list = []
+        if len(special_list) != 0:
+            em = self.env['hr.employee'].search([('user_id','=',self.env.user.id)])
+            if (em.department_id.name in special_list or em.department_id.parent_id.name in special_list) and not self.customer_unit:
+                raise ValidationError(u'营销体系员工（市场、产品、服务、战略）客户单位作为必选项')
+
     @api.multi
     def do_cgtj(self):
+        self._check_department()
         list=['type1']
         if self.business_type in list and not self.product:
             raise ValidationError(u'当业务类型为"公司/样板点考察类",项目必填')
@@ -544,8 +557,8 @@ class dtdream_special_partner(models.Model):
         args = args or []
         domain = []
         if name:
-            domain = ["|", ("name", operator, name), ("abbre", operator, name)]
-        if args and args[0][0] == 'is_special' and args[0][2]:
+            domain = [("name", operator, name)]
+        if len(args) > 0 and args[0][0] == 'is_special' and args[0][2]:
             pos = self.sudo().search(domain + args, limit=limit)
         else:
             pos = self.search(domain + args, limit=limit)

@@ -169,8 +169,8 @@ class dtdream_demand_app(models.Model):
                            default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
     department = fields.Many2one('hr.department', string='所属部门', compute=_compute_department_belong)
     expect_complete_time = fields.Date(string='期望完成时间')
-    operate_type = fields.Selection([('create', '新增项目'), ('update', '优化项目')], string='项目类别')
-    app_name = fields.Char(string='项目名称')
+    operate_type = fields.Selection([('create', '新增需求'), ('update', '优化需求')], string='需求类别')
+    app_name = fields.Char(string='需求名称')
     description = fields.Text(string='需求描述')
     attachment = fields.Binary(string="附件(限制25M以下)", store=True)
     attachment_name = fields.Char(string="附件名")
@@ -197,6 +197,7 @@ class dtdream_demand_app(models.Model):
     is_IT_manage = fields.Boolean(string='是否IT部门主管', compute=_compute_is_it_manage)
     is_current = fields.Boolean(string='是否当前处理人', compute=_compute_is_current)
     is_manage = fields.Boolean(string='是否管理员', compute=_compute_login_is_manage)
+    flow = fields.Selection([('0', '不需要分析'), ('1', '需要分析')], default='1')
     state = fields.Selection([('0', '草稿'),
                               ('1', '部门主管审批'),
                               ('2', 'IT需求审批'),
@@ -257,7 +258,6 @@ class dtdream_demand_app(models.Model):
             current_approve = self.entrusted_analyst if self.entrusted_analyst else self.analyst
             self.write({"state": '3', 'current_approve': current_approve.id})
 
-
     @api.multi
     def wkf_plan_approve(self):
         current_approve = self.env['hr.department'].search(
@@ -275,16 +275,19 @@ class dtdream_demand_app(models.Model):
 
     @api.multi
     def wkf_plan_doing(self):
-        if not self.plan_comments or not self.plan_comments.strip():
+        state = self.state
+        if state != '2' and (not self.plan_comments or not self.plan_comments.strip()):
             raise ValidationError('方案评审意见不能为空，请填写方案评审意见!')
         if not self.practice_man:
             raise ValidationError('实施人员不能为空，请指定实施人员!')
-
         current_approve = self.practice_man
         self.write({"state": '5', 'current_approve': current_approve.id})
-        subject = u'【通知】%s提交了应用开发类需求,请您按照方案实施' % self.name.name
-        content = u'%s提交了应用开发类需求,请您按照方案实施!' % self.name.name
+        subject = u'【通知】%s提交了应用开发类需求,请您实施' % self.name.name
+        content = u'%s提交了应用开发类需求,请您实施!' % self.name.name
         self.send_mail(current_approve, subject=subject, content=content)
+        if state == '2':
+            self._message_poss(state=u'IT需求审批-->IT实施', action=u'同意', approve=current_approve.name)
+            return
         self._message_poss(state=u'IT方案审批-->IT实施', action=u'同意', approve=current_approve.name)
 
     @api.multi

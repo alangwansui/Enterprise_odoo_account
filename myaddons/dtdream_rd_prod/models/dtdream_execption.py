@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from lxml import etree
+from datetime import datetime
 
 #例外
 class dtdream_execption(models.Model):
@@ -93,9 +95,10 @@ class dtdream_execption(models.Model):
             self.write({'state':'yjsp','current_approver_user':[(4,self.approver_fir.user_id.id)]})
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">动作</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.name.name,u'例外提交',u'状态变化：草稿->一级审批；申请原因：'+self.reason))
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name.name,u'例外提交',u'草稿->一级审批',self.reason))
         else:
             if self.name.department_2:
                 subject=self.name.department.name+u"/"+self.name.department_2.name+u"的"+self.name.name+u"的"+self.version.version_numb+u"待您审批"
@@ -123,9 +126,10 @@ class dtdream_execption(models.Model):
             self.write({'state':'yjsp','current_approver_user':[(4,self.approver_fir.user_id.id)]})
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">动作</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.name.name,u'例外提交',u'状态变化：草稿->一级审批；申请原因：'+self.reason))
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(self.name.name,u'例外提交',u'草稿->一级审批',self.reason))
         # return res
 
     @api.multi
@@ -176,7 +180,7 @@ class dtdream_execption(models.Model):
     current_approver = fields.Many2one("hr.employee",compute="_depends_user",string="当前经办人")
 
 
-    current_approver_user = fields.Many2many("res.users",string="当前审批人用户")
+    current_approver_user = fields.Many2many("res.users","dtdream_execption_current_user",string="当前审批人用户")
     @api.one
     def _compute_is_shenpiren(self):
         if self.env.user in self.current_approver_user:
@@ -208,6 +212,7 @@ class dtdream_execption(models.Model):
     his_app_user = fields.Many2many("res.users" ,"dtdream_execption_his_user",string="历史审批人用户")
 
     @api.onchange('message_follower_ids')
+    @api.constrains('message_follower_ids')
     def _compute_follower(self):
         self.followers_user = False
         for foll in self.message_follower_ids:
@@ -225,3 +230,210 @@ class dtdream_execption(models.Model):
                 self.write({'role_person': [(4,role.person.user_id.id)]})
                 if role.person.user_id:
                     self.message_subscribe_users(user_ids=[role.person.user_id.id])
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        params = self._context.get('params', None)
+        action = params.get("action", 0) if params else 0
+        my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
+        res = super(dtdream_execption, self).fields_view_get(view_id=view_id, view_type=view_type,
+                                                                    toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if res['type'] == "form":
+            doc.xpath("//form")[0].set("create", "false")
+        if res['type'] == "tree":
+            doc.xpath("//tree")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
+
+    def _get_parent_id(self,menu=None):
+        if len(menu.parent_id)>0:
+            return self._get_parent_id(menu.parent_id)
+        else:
+            return menu.id
+
+    @api.model
+    def get_apply(self):
+        applies=[]
+        appr = self.env['dtdream_execption'].search([('create_uid','=',self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.name.department_2:
+                department = app.name.department.name + '/' + app.name.department_2.name
+            else:
+                department = app.name.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply={
+                'department':department,
+                'appr': app.name.name,
+                'version':app.version.version_numb or '',
+                'PDT': app.name.PDT.name or '',
+                'style':u'例外',
+                'defer':defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            applies.append(apply)
+        return applies
+
+    def _get_menu_id(self):
+        act_windows = self.env['ir.actions.act_window'].sudo().search([('res_model', '=', 'dtdream_execption')])
+        menu = None
+        for act_window in act_windows:
+            action_id = 'ir.actions.act_window,' + str(act_window.id)
+            menu = self.env['ir.ui.menu'].sudo().search([('action', '=', action_id)])
+            if len(menu)>0:
+                break
+        menu_id = self._get_parent_id(menu)
+        return menu_id
+
+    @api.model
+    def get_affair(self):
+        affairs = []
+        appr = self.env['dtdream_execption'].search([('current_approver_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.name.department_2:
+                department = app.name.department.name + '/' + app.name.department_2.name
+            else:
+                department = app.name.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department': department,
+                'appr': app.name.name,
+                'version': app.version.version_numb or '',
+                'PDT': app.name.PDT.name or '',
+                'style': u'例外',
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(apply)
+        return affairs
+
+    @api.model
+    def get_done(self):
+        affairs = []
+        appr = self.env['dtdream_execption'].search([('his_app_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.name.department_2:
+                department = app.name.department.name + '/' + app.name.department_2.name
+            else:
+                department = app.name.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department':department,
+                'appr': app.name.name,
+                'version': app.version.version_numb or '',
+                'PDT': app.name.PDT.name or '',
+                'style': u'例外',
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(apply)
+        return affairs
+
+
+class dtdream_execption_w(models.TransientModel):
+    _name = "dtdream_execption_w"
+    _inherit =['mail.thread']
+    _description = u"例外"
+    name=fields.Many2one("dtdream_prod_appr" ,required=True,string="产品名称")
+    version = fields.Many2one("dtdream_rd_version",string="版本")
+    reason = fields.Text(string="例外原因",track_visibility='onchange')
+    state= fields.Selection([('dsp','待审批'),('yjsp','一级审批'),('Nyjsp','一级审批不通过'),('ejsp','二级审批'),('Nejsp','二级审批不通过'),('ysp','已审批')],string="状态",default='dsp')
+    flag = fields.Boolean(string="标记保存取消按钮是否可见")
+    mark = fields.Boolean(string="用于区分是从产品还是版本")
+    is_apped = fields.Boolean(string="标记是否提交")
+
+    approver_fir = fields.Many2one("hr.employee" ,string="第一审批人质量代表")
+    approver_sec = fields.Many2one("hr.employee",string="第二审批人PL-CCB")
+
+
+    @api.multi
+    def execptiontj(self):
+        execption= self.env['dtdream_execption'].create({'name':self.name.id,'version':self.version.id,'reason':self.reason,'state':'dsp','is_apped':True})
+        if not execption.reason:
+            raise ValidationError(u'例外原因不能为空')
+        if not execption.approver_fir:
+            raise ValidationError(u"第一审批人不能为空")
+        if not execption.version:
+            if execption.name.department_2:
+                subject=execption.name.department.name+u"/"+execption.name.department_2.name+u"的"+execption.name.name+u"的例外申请，待您审批"
+            else:
+                subject=execption.name.department.name+u"的"+execption.name.name+u"的例外申请，待您审批"
+            appellation = execption.approver_fir.name+u",您好"
+            content = execption.name.department.name+u"的"+execption.name.name+u"的例外申请，待您审批"
+            base_url = execption.get_base_url()
+            link = '/web#id=%s&view_type=form&model=dtdream_execption' % execption.id
+            url = base_url+link
+            execption.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                             <p>%s</p>
+                             <p> 请点击链接进入:
+                             <a href="%s">%s</a></p>
+                            <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (appellation,content, url,url,execption.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_to': '%s' % execption.approver_fir.work_email,
+                'auto_delete': False,
+                'email_from':execption.get_mail_server_name(),
+            }).send()
+            execption.current_approver_user = [(5,)]
+            execption.write({'state':'yjsp','current_approver_user':[(4,execption.approver_fir.user_id.id)]})
+            execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(execption.name.name,u'例外提交',u'草稿->一级审批',execption.reason))
+        else:
+            if execption.name.department_2:
+                subject=execption.name.department.name+u"/"+execption.name.department_2.name+u"的"+execption.name.name+u"的"+execption.version.version_numb+u"待您审批"
+            else:
+                subject=execption.name.department.name+u"的"+execption.name.name+u"的"+execption.version.version_numb+u"待您审批"
+            appellation = execption.approver_fir.name+u",您好"
+            content = execption.name.department.name+u"的"+execption.name.name+u"的"+execption.version.version_numb+u"的例外申请，待您审批"
+            base_url = execption.get_base_url()
+            link = '/web#id=%s&view_type=form&model=dtdream_execption' % execption.id
+            url = base_url+link
+            execption.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                             <p>%s</p>
+                             <p> 请点击链接进入:
+                             <a href="%s">%s</a></p>
+                            <p>dodo</p>
+                             <p>万千业务，简单有do</p>
+                             <p>%s</p>''' % (appellation,content, url,url,execption.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_to': '%s' % execption.approver_fir.work_email,
+                'auto_delete': False,
+                'email_from':execption.get_mail_server_name(),
+            }).send()
+            execption.current_approver_user = [(5,)]
+            execption.write({'state':'yjsp','current_approver_user':[(4,execption.approver_fir.user_id.id)]})
+            execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
+                                       <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">申请原因</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(execption.name.name,u'例外提交',u'草稿->一级审批',execption.reason))

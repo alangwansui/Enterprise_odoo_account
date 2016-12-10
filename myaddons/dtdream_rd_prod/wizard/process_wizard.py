@@ -210,7 +210,7 @@ class ver_process_wizard(models.TransientModel):
         appellation = next_shenpi.name+u",您好"
         content = current_product.department.name+u"的"+current_product.name+u"的"+current_version.version_numb+u"版本已进入待"+state_display+u"阶段，等待您的审批"
         base_url = self.get_base_url()
-        link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % current_product.id
+        link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % current_version.id
         url = base_url+link
         self.env['mail.mail'].create({
             'body_html': u'''<p>%s</p>
@@ -219,7 +219,7 @@ class ver_process_wizard(models.TransientModel):
                          <a href="%s">%s</a></p>
                         <p>dodo</p>
                          <p>万千业务，简单有do</p>
-                         <p>%s</p>''' % (appellation,content, url,url,current_product.write_date[:10]),
+                         <p>%s</p>''' % (appellation,content, url,url,current_version.write_date[:10]),
             'subject': '%s' % subject,
             'email_to': '%s' % next_shenpi.work_email,
             'auto_delete': False,

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="view_dtdream_assets_management_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.assets.management.wizard.form</field>
+        <field name="model">dtdream.assets.management.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="has_label" widget="radio" options="{'horizontal': true}"/>
+                        <field name="unused" widget="radio" options="{'horizontal': true}"/>
+                    </group>
+                    <group>
+                        <field name="useable" widget="radio" options="{'horizontal': true}"/>
+                    </group>
+                </group>
+                <group colspan="12">
+                    <field name="mark"/>
+                </group>
+
+                <footer>
+                    <button name="assets_submit" type="object"
+                            string="提交" class="oe_highlight"/>
+
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_dtdream_demand_app_reject_wizard" model="ir.actions.act_window">
+        <field name="name">资产自盘</field>
+        <field name="res_model">dtdream.assets.management.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    </data>
+</openerp>

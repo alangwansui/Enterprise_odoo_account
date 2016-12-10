@@ -97,6 +97,10 @@ class dtdream_prod_appr(models.Model):
         employee = self.pool.get('hr.employee').browse(cr, uid, employee_id, context=context)
         if employee and employee.user_id:
             self.message_subscribe_users(cr, uid, ids, user_ids=[employee.user_id.id], context=context)
+            versions = self.pool.get("dtdream_rd_version").search(cr, uid, [('proName', '=', ids[0])],context=context)
+            for version in versions:
+                version = self.pool.get('dtdream_rd_version').browse(cr, uid, version, context=context)
+                version.write({'followers_user': [(4, employee.user_id.id)]})
 
     def create(self, cr, uid, values, context=None):
         if context is None:
@@ -196,7 +200,7 @@ class dtdream_prod_appr(models.Model):
     @api.onchange('message_follower_ids')
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
-        self.followers_user = False
+        # self.followers_user = False
         for foll in self.message_follower_ids:
             self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
             if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users and foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users:
@@ -205,6 +209,12 @@ class dtdream_prod_appr(models.Model):
     followers_user = fields.Many2many("res.users" ,"f_u_u",string="关注者")
     is_appred = fields.Boolean(string="标识总体设计阶段提交按钮",default=False)
     is_lixiangappred = fields.Boolean(string="标识立项阶段提交按钮",default=False)
+
+    # #关注者添加方法重写
+    # @api.multi
+    # def message_subscribe(self, partner_ids=None, channel_ids=None, subtype_ids=None, force=True):
+    #     gen ,part = self.env['mail.followers']._add_follower_command(self._name, self.ids, {partner_ids[0]:None},{},True)
+    #     self.sudo().write({'message_follower_ids': gen})
 
 
     #关注者删除方法重写
@@ -344,15 +354,14 @@ class dtdream_prod_appr(models.Model):
 
     @api.multi
     def wkf_lixiang(self):
-        self.message_follower_ids
+        self.write({'is_lixiangappred': False})
+        self.write({'is_appred': False})
+        self.write({'is_finsished_01': False, 'is_finsished_02': False})
+        processes = self.env['dtdream_rd_process'].search([('process_id', '=', self.id)])
+        processes.unlink()
+        ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id', '=', self.id)])
+        ztsj_processes.unlink()
         if self.state=="state_02":
-            self.write({'is_lixiangappred':False})
-            self.write({'is_appred':False})
-            self.write({'is_finsished_01':False,'is_finsished_02':False})
-            processes = self.env['dtdream_rd_process'].search([('process_id','=',self.id)])
-            processes.unlink()
-            ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id)])
-            ztsj_processes.unlink()
             self._wkf_message_post(statechange=u'产品状态: 总体设计->立项')
         elif self.state=='state_06':
             self._wkf_message_post(statechange=u'产品状态: 暂停->立项')
@@ -362,14 +371,15 @@ class dtdream_prod_appr(models.Model):
             self._wkf_message_post(statechange=u'产品状态: 草稿->立项')
             self.write({'cg_finsh_time':datetime.now()})
         self.write({'state': 'state_01'})
+        self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_ztsj(self):
+        self.write({'is_appred': False})
+        self.write({'is_finsished_02': False})
+        ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id', '=', self.id)])
+        ztsj_processes.unlink()
         if self.state=="state_03":
-            self.write({'is_appred':False})
-            self.write({'is_finsished_02':False})
-            ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',self.id)])
-            ztsj_processes.unlink()
             self._wkf_message_post(statechange=u'产品状态: 迭代开发->总体设计')
         elif self.state=='state_06':
             self._wkf_message_post(statechange=u'产品状态: 暂停->总体设计')
@@ -379,6 +389,7 @@ class dtdream_prod_appr(models.Model):
             self._wkf_message_post(statechange=u'产品状态: 立项->总体设计')
             self.write({'lx_finsh_time':datetime.now()})
         self.write({'state': 'state_02'})
+        self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_ddkf(self):
@@ -392,6 +403,7 @@ class dtdream_prod_appr(models.Model):
         if self.state=="state_04":
             self._wkf_message_post(statechange=u'产品状态: 验证发布->迭代开发')
         self.write({'state': 'state_03'})
+        self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_yzfb(self):
@@ -405,6 +417,7 @@ class dtdream_prod_appr(models.Model):
         if self.state=="state_05":
             self._wkf_message_post(statechange=u'产品状态: 完成->验证发布')
         self.write({'state': 'state_04'})
+        self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_jieshu(self):
@@ -416,6 +429,7 @@ class dtdream_prod_appr(models.Model):
         elif self.state=='state_07':
             self._wkf_message_post(statechange=u'产品状态: 中止->完成')
         self.write({'state': 'state_05'})
+        self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_zanting(self):
@@ -434,6 +448,7 @@ class dtdream_prod_appr(models.Model):
         elif self.state=='state_07':
             self._wkf_message_post(statechange=u'产品状态: 中止->暂停')
         self.write({'state':'state_06'})
+        self.current_approver_user = [(5,)]
 
 
     @api.multi
@@ -453,6 +468,7 @@ class dtdream_prod_appr(models.Model):
         elif self.state=='state_06':
             self._wkf_message_post(statechange=u'产品状态: 暂停->中止')
         self.write({'state':'state_07'})
+        self.current_approver_user = [(5,)]
 
     #返回上一部
     @api.multi
@@ -521,12 +537,40 @@ class dtdream_prod_appr(models.Model):
         for i in range(len(tt)):
             tt[i].join()
 
+        versions = self.env["dtdream_rd_version"].search([('proName', '=', self.id)])
+        for version in versions:
+            for role in person:
+                version.write({'followers_user': [(4, role)]})
+
         exceptions = self.env["dtdream_execption"].search([('name', '=',self.id)])
         for exception in exceptions:
             exception.role_person = [(5,)]
-            for role in self.role_ids:
-                if role.person:
-                    exception.write({'role_person': [(4,role.person.user_id.id)]})
+            for role in person:
+                exception.write({'role_person': [(4,role)]})
+
+        replannings = self.env["dtdream.rd.replanning"].search([('proname', '=', self.id)])
+        for replanning in replannings:
+            replanning.role_person = [(5,)]
+            for role in person:
+                replanning.write({'role_person': [(4, role)]})
+
+        suspensions = self.env["dtdream.prod.suspension"].search([('project', '=', self.id)])
+        for suspension in suspensions:
+            suspension.role_person = [(5,)]
+            for role in person:
+                suspension.write({'role_person': [(4, role)]})
+
+        suspensions = self.env["dtdream.prod.suspension.restoration"].search([('project', '=', self.id)])
+        for suspension in suspensions:
+            suspension.role_person = [(5,)]
+            for role in person:
+                suspension.write({'role_person': [(4, role)]})
+
+        suspensions = self.env["dtdream.prod.termination"].search([('project', '=', self.id)])
+        for suspension in suspensions:
+            suspension.role_person = [(5,)]
+            for role in person:
+                suspension.write({'role_person': [(4, role)]})
 
     @api.multi
     def do_cgtj(self):
@@ -779,6 +823,121 @@ class dtdream_prod_appr(models.Model):
                     if field == 'department_2':
                         res['fields'][field]['domain'] = dm_f
         return res
+
+    def _get_parent_id(self,menu=None):
+        if len(menu.parent_id)>0:
+            return self._get_parent_id(menu.parent_id)
+        else:
+            return menu.id
+
+    @api.model
+    def get_apply(self):
+        applies=[]
+        state_list = [('state_00', '草稿'), ('state_01', '立项'), ('state_02', '总体设计'), ('state_03', '迭代开发'),
+                              ('state_04', '验证发布'), ('state_06', '暂停'), ('state_07', '中止'), ('state_05', '完成')]
+        state_dict = dict(state_list)
+        em = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+        appr = self.env['dtdream_prod_appr'].search([('PDT','=',em.id)])
+        appr = [x for x in appr if len(x.current_approver_user) > 0 and x.PDT.id ==em.id]
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.department_2:
+                department = app.department.name + '/' + app.department_2.name
+            else:
+                department = app.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply={
+                'department': department,
+                'appr': app.name,
+                'version':'',
+                'PDT': app.PDT.name or '',
+                'style':state_dict[app.state],
+                'defer':defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            applies.append(apply)
+        return applies
+
+    def _get_menu_id(self):
+        act_windows = self.env['ir.actions.act_window'].sudo().search([('res_model', '=', 'dtdream_prod_appr')])
+        menu = None
+        for act_window in act_windows:
+            action_id = 'ir.actions.act_window,' + str(act_window.id)
+            menu = self.env['ir.ui.menu'].sudo().search([('action', '=', action_id)])
+            if len(menu)>0:
+                break
+        menu_id = self._get_parent_id(menu)
+        return menu_id
+
+    @api.model
+    def get_affair(self):
+        affairs = []
+        state_list = [('state_00', '草稿'), ('state_01', '立项'), ('state_02', '总体设计'), ('state_03', '迭代开发'),
+                      ('state_04', '验证发布'), ('state_06', '暂停'), ('state_07', '中止'), ('state_05', '完成')]
+        state_dict = dict(state_list)
+        appr = self.env['dtdream_prod_appr'].search([('current_approver_user', '=', self.env.user.id),('state','not in',('state_06','state_07','state_05'))])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.department_2:
+                department = app.department.name + '/' + app.department_2.name
+            else:
+                department = app.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            affair = {
+                'department':department,
+                'appr': app.name,
+                'version': '',
+                'PDT': app.PDT.name or '',
+                'style': state_dict[app.state],
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(affair)
+        return affairs
+
+    @api.model
+    def get_done(self):
+        applies = []
+        state_list = [('state_00', '草稿'), ('state_01', '立项'), ('state_02', '总体设计'), ('state_03', '迭代开发'),
+                      ('state_04', '验证发布'), ('state_06', '暂停'), ('state_07', '中止'), ('state_05', '完成')]
+        state_dict = dict(state_list)
+        appr = self.env['dtdream_prod_appr'].search([('his_app_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department=''
+            if app.department_2:
+                department = app.department.name+'/'+app.department_2.name
+            else:
+                department = app.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department': department,
+                'appr': app.name,
+                'version': '',
+                'PDT': app.PDT.name or '',
+                'style': state_dict[app.state],
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            applies.append(apply)
+        return applies
 
 
 

@@ -14,7 +14,7 @@ class dtdream_rd_replanning(models.Model):
         version=''
         if self.version:
             version=u'/'+self.version.version_numb+u'/'
-        self.name=self.proname.name+version+u'的例外'
+        self.name=self.proname.name+version+u'的重计划'
 
     name = fields.Char(compute=_compute_name,stroe=True,)
     proname = fields.Many2one('dtdream_prod_appr',string="产品", readonly=True)
@@ -32,6 +32,7 @@ class dtdream_rd_replanning(models.Model):
     department_2 = fields.Many2one('hr.department','二级部门')
 
     @api.onchange('message_follower_ids')
+    @api.constrains('message_follower_ids')
     def _compute_follower(self):
         self.followers_user = False
         for foll in self.message_follower_ids:
@@ -72,7 +73,7 @@ class dtdream_rd_replanning(models.Model):
             self.is_Qa=False
     is_Qa = fields.Boolean(string="是否在QA组",compute=_compute_is_Qa,readonly=True)
 
-    current_approver_user = fields.Many2many("res.users",string="当前经办人用户")
+    current_approver_user = fields.Many2one("res.users",string="当前经办人用户")
 
     @api.depends("current_approver_user")
     def _depends_user(self):
@@ -125,10 +126,10 @@ class dtdream_rd_replanning(models.Model):
         if self.env.user in users:
             uid = self._context.get('uid', '')
             em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-            domain = expression.AND([['|','|','|','|','|',('proname.department','=',em.department_id.id),('proname.department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
-        elif self.env.user in users_a or self.env.user in users_b :
-            domain = expression.AND([[], domain])
-        res = super(dtdream_rd_replanning, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+            domains = expression.AND([['|','|','|','|','|','|',('followers_user','=',uid),('proname.department','=',em.department_id.id),('proname.department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
+        if self.env.user in users_a or self.env.user in users_b :
+            domains = expression.AND([[], domain])
+        res = super(dtdream_rd_replanning, self).read_group(domains, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
         return res
 
     @api.model
@@ -139,10 +140,10 @@ class dtdream_rd_replanning(models.Model):
         if self.env.user in users:
             uid = self._context.get('uid', '')
             em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-            domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
-        elif self.env.user in users_a or self.env.user in users_b :
-            domain = expression.AND([[], domain])
-        return super(dtdream_rd_replanning, self).search_read(domain=domain, fields=fields, offset=offset,
+            domains = expression.AND([['|','|','|','|','|','|',('followers_user','=',uid),('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
+        if self.env.user in users_a or self.env.user in users_b :
+            domains = expression.AND([[], domain])
+        return super(dtdream_rd_replanning, self).search_read(domain=domains, fields=fields, offset=offset,
                                                                limit=limit, order=order)
 
 
@@ -219,6 +220,114 @@ class dtdream_rd_replanning(models.Model):
 
 
 
+    def _get_parent_id(self,menu=None):
+        if len(menu.parent_id)>0:
+            return self._get_parent_id(menu.parent_id)
+        else:
+            return menu.id
+
+    @api.model
+    def get_apply(self):
+        applies=[]
+        appr = self.env['dtdream.rd.replanning'].search([('create_uid','=',self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.proname.department_2:
+                department = app.proname.department.name + '/' + app.proname.department_2.name
+            else:
+                department = app.proname.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply={
+                'department':department,
+                'appr': app.proname.name,
+                'version':app.version.version_numb or '',
+                'PDT': app.proname.PDT.name or '',
+                'style':u'版本重计划',
+                'defer':defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            applies.append(apply)
+        return applies
+
+    def _get_menu_id(self):
+        act_windows = self.env['ir.actions.act_window'].sudo().search([('res_model', '=', 'dtdream.rd.replanning')])
+        menu = None
+        for act_window in act_windows:
+            action_id = 'ir.actions.act_window,' + str(act_window.id)
+            menu = self.env['ir.ui.menu'].sudo().search([('action', '=', action_id)])
+            if len(menu)>0:
+                break
+        menu_id = self._get_parent_id(menu)
+        return menu_id
+
+    @api.model
+    def get_affair(self):
+        affairs = []
+        appr = self.env['dtdream.rd.replanning'].search([('current_approver_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.proname.department_2:
+                department = app.proname.department.name + '/' + app.proname.department_2.name
+            else:
+                department = app.proname.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department': department,
+                'appr': app.proname.name or '',
+                'version': app.version.version_numb or '',
+                'PDT': app.proname.PDT.name,
+                'style': u'版本重计划',
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(apply)
+        return affairs
+
+    @api.model
+    def get_done(self):
+        affairs = []
+        appr = self.env['dtdream.rd.replanning'].search([('his_app_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.proname.department_2:
+                department = app.proname.department.name + '/' + app.proname.department_2.name
+            else:
+                department = app.proname.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department':department,
+                'appr': app.proname.name,
+                'version': app.version.version_numb or '',
+                'PDT': app.proname.PDT.name or '',
+                'style': u'版本重计划',
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(apply)
+        return affairs
+
+
+
+
+
 class dtdream_rd_replanning_wizard(models.TransientModel):
     _name = 'dtdream.rd.replanning.wizard'
 
@@ -288,14 +397,21 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
     def btn_replanning_tj(self):
         if not self.reason:
             raise ValidationError(u"原因未填写")
-        if not self.proname.department.manager_id.id:
-            raise ValidationError(u"部门主管未配置")
+        is_plccb = False
+        plccb = None
+        for role in self.proname.role_ids:
+            if role.cof_id.name == "PL-CCB":
+                is_plccb = True
+                plccb = role.person
+                break
+        if not is_plccb or not plccb:
+            raise ValidationError(u"该产品没有配置PL-CCB")
         else:
             res = self.env['dtdream.rd.replanning'].create({'proname':self.proname.id,'version':self.version.id,'old_plan_time':self.old_plan_time,'new_plan_time':self.new_plan_time,'reason':self.reason,'state':self.state})
-            res.write({'current_approver_user': self.proname.department.manager_id.user_id.id})
+            res.write({'current_approver_user': plccb.user_id.id})
             res.signal_workflow("cg_to_spz")
 
-            next_shenpi = self.proname.department.manager_id
+            next_shenpi = plccb
             current_product =self.proname
             current_version = self.version
             base_url = self.get_base_url()

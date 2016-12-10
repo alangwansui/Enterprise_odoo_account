@@ -46,11 +46,12 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="do_cgtj" string="提交" type="object" confirm="是否确认提交草稿？" attrs="{'invisible':['|',('state','not in',('state_01')),('is_create','=',False)]}"></button>
-                        <button name="%(dtdream_information_security.act_overrule)d"  type="action" string="驳回" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
-                        <button name="%(dtdream_information_security.act_agree)d"  type="action" string="同意" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
-                        <button name="%(dtdream_information_security.act_disagree)d" string="不同意" type="action" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
-                        <button name="%(dtdream_information_security.act_shouquan)d"  type="action" string="授权" attrs="{'invisible':['|',('state','not in',('state_03')),('is_shenpiren','=',False)]}"></button>
+                        <button name="permission_settings" string="test" type="object" />
+                        <button name="do_cgtj" string="提交" type="object" confirm="是否确认提交草稿？" attrs="{'invisible':['|',('state','not in',('state_01')),('is_create','=',False)]}"/>
+                        <button name="%(dtdream_information_security.act_overrule)d"  type="action" string="驳回" attrs="{'invisible':[('is_shenpiren','=',False)]}"/>
+                        <button name="%(dtdream_information_security.act_agree)d"  type="action" string="同意" attrs="{'invisible':[('is_shenpiren','=',False)]}"/>
+                        <button name="%(dtdream_information_security.act_disagree)d" string="不同意" type="action" attrs="{'invisible':[('is_shenpiren','=',False)]}"/>
+                        <button name="%(dtdream_information_security.act_shouquan)d"  type="action" string="授权" attrs="{'invisible':['|',('state','not in',('state_03')),('is_shenpiren','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="state_01,state_02,state_03,state_04,state_05" />
                     </header>
                     <sheet>
@@ -71,11 +72,50 @@
                                 <field name="origin_department_02" domain="[('parent_id.parent_id','=',False)]" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
                                 <field name="yuan_department_code"/>
                                 <field name="secret_level" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
+                                <field name="style"/>
+                                <field name="conf_flag" invisible="1"/>
+                                <field name="git_flag" invisible="1"/>
+                                <field name="other_flag" invisible="1"/>
                             </group>
                         </group>
-                        <group>
-                            <field name="list" attrs="{'readonly':['|',('is_create','=',False),('state','not in',('state_01'))]}"/>
-                        </group>
+                        <notebook attrs="{'invisible':[('conf_flag','=',False)]}">
+                            <page string="confluence清单">
+                                <field name="confluence_list">
+                                    <tree editable="bottom">
+                                        <field name="conf"/>
+                                        <field name="space"/>
+                                        <field name="description"/>
+                                        <field name="read_right"/>
+                                        <field name="write_right"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <notebook attrs="{'invisible':[('git_flag','=',False)]}">
+                            <page string="git清单">
+                                <field name="git_list">
+                                    <tree editable="bottom">
+                                        <field name="git"/>
+                                        <field name="space"/>
+                                        <field name="description"/>
+                                        <field name="read_right"/>
+                                        <field name="write_right"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <notebook>
+                            <page string="其他清单" attrs="{'invisible':[('other_flag','=',False)]}">
+                                <field name="other_list">
+                                    <tree editable="bottom">
+                                        <field name="space"/>
+                                        <field name="description"/>
+                                        <field name="read_right"/>
+                                        <field name="write_right"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                       </sheet>
                       <div class="oe_chatter">
                           <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
@@ -85,15 +125,18 @@
             </field>
         </record>
 
-        <menuitem name="信息安全" id="dtdream_information_security_root" icon="fa-user" web_icon="dtdream_information_security,static/description/safe.png"></menuitem>
+        <menuitem name="信息安全" id="dtdream_information_security_root" icon="fa-user" web_icon="dtdream_information_security,static/description/safe.png"/>
 
-        <menuitem name="权限申请" sequence="100" id="dtdream_information_purview_menu" parent="dtdream_information_security_root"></menuitem>
-        <menuitem name="我相关的" sequence="100" id="dtdream_information_purview_menu_self" parent="dtdream_information_purview_menu" action="act_dtdream_information_purview_self"></menuitem>
-        <menuitem name="待我审批" sequence="200" id="dtdream_information_purview_menu_wait" parent="dtdream_information_purview_menu" action="act_dtdream_information_purview_wait"></menuitem>
+        <menuitem name="权限申请" sequence="100" id="dtdream_information_purview_menu" parent="dtdream_information_security_root"/>
+        <menuitem name="我相关的" sequence="100" id="dtdream_information_purview_menu_self" parent="dtdream_information_purview_menu" action="act_dtdream_information_purview_self"/>
+        <menuitem name="待我审批" sequence="200" id="dtdream_information_purview_menu_wait" parent="dtdream_information_purview_menu" action="act_dtdream_information_purview_wait"/>
 
 
-        <menuitem name="所有" sequence="150" id="dtdream_informati_security_menu" parent="dtdream_information_security_root" groups="group_dtdream_information_manager"></menuitem>
-        <menuitem name="所有权限申请" sequence="100" id="dtdream_information_purview_menu_all" parent="dtdream_informati_security_menu" action="act_dtdream_information_purview_all" groups="group_dtdream_information_manager"></menuitem>
+        <menuitem name="所有" sequence="150" id="dtdream_informati_security_menu" parent="dtdream_information_security_root" groups="group_dtdream_information_manager"/>
+        <menuitem name="所有权限申请" sequence="100" id="dtdream_information_purview_menu_all" parent="dtdream_informati_security_menu" action="act_dtdream_information_purview_all" groups="group_dtdream_information_manager"/>
 
+        <menuitem name="配置" sequence="200" id="dtdream_information_config_menu" parent="dtdream_information_security_root" groups="group_dtdream_information_manager"/>
+        <menuitem name="特殊权签配置" sequence="100" id="dtdream_information_people_menu" parent="dtdream_information_config_menu" action="act_dtdream_informatio_people" groups="group_dtdream_information_manager"/>
+        <menuitem name="类型配置" sequence="200" id="dtdream_information_type_menu" parent="dtdream_information_config_menu" action="act_dtdream_information_type" />
     </data>
 </openerp>

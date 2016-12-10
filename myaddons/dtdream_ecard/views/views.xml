@@ -67,7 +67,7 @@
     </record>
 
     <!-- Top menu item -->
-    <menuitem name="电子名片" groups="dtdream_ecard.group_dtdream_ecard_admin" id="dtdream_ecard.menu_root"/>
+    <menuitem name="电子名片" groups="dtdream_ecard.group_dtdream_ecard_admin" id="dtdream_ecard.menu_root" web_icon="dtdream_ecard,static/src/img/dtdream_ecard.png"/>
 
     <!-- menu categories -->
     <menuitem name="所有名片" id="dtdream_ecard.view_all_ecard" parent="dtdream_ecard.menu_root" action="dtdream_ecard.action_window"/>

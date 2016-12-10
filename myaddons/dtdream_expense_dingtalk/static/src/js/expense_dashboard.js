@@ -101,13 +101,13 @@ odoo.define('dtdream_expense_dingtalk.ui.dashboard', function (require) {
             var $action = $(ev.currentTarget);
             var action_name = $action.attr('name');
             var action_extra = $action.data('extra');
-            var additional_context = {}
+            var additional_context = {'dashboard': true};
 
             new Model("ir.model.data")
                 .call("xmlid_to_res_id", [action_name])
                 .then(function (data) {
                     if (data) {
-                        self.do_action(data);
+                        self.do_action(data, additional_context);
                     }
                 });
         },

@@ -302,7 +302,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          */
         load_template: function () {
             var xml = $.ajax({
-                url: "static/src/xml/dingtalk/detail.xml?version=83",
+                url: "static/src/xml/dingtalk/detail.xml?version=86",
                 async: false // necessary as without the template there isn't much to do.
             }).responseText;
             QWeb.add_template(xml);
@@ -1322,11 +1322,25 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                 })
                                 .then(function (province, expense) {
                                     var item_index = 0;
+                                    var common_province = ["北京市", "浙江省", "江苏省", "广东省"];
+                                    var province_1 = [];
+                                    var province_2 = [];
+                                    $.map(province, function (item, index) {
+                                        var i = common_province.indexOf(item.name);
+                                        if (i >= 0){
+                                            province_1.push(item);
+                                        } else {
+                                            province_2.push(item);
+                                        }
+                                    });
+
+                                    province = province_1.concat(province_2);
                                     $.map(province, function (item, index) {
                                         if (expense && expense[0].province && item.id == expense[0].province[0]) {
                                             item_index = index;
                                         }
                                     });
+
                                     response($.map(province, function (item, index) {
 
                                         return {
@@ -2241,13 +2255,14 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             if (value) {
                 condition.push('|', '|', ['startaddress', 'ilike', value], ['endaddress', 'ilike', value], ['reason', 'ilike', value]);
             }
-            condition.push(['create_uid', '=', self.uid], ['id', 'not in', old_chuchai_ids]);
+            condition.push(['create_uid', '=', self.uid], ['id', 'not in', old_chuchai_ids], ['travel_id.state', '=', '99']);
             //if(old_chuchai_ids.length>0) condition.push(['id', 'not in ', old_chuchai_ids]);
 
             var def = new $.Deferred();
             new Model('dtdream.travel.journey')
                 .query(['id', 'starttime', 'endtime', 'startaddress', 'endaddress', 'reason'])
                 .filter(condition)
+                .order_by('-starttime')
                 .all({'timeout': 3000, 'shadow': true})
                 .then(function (chuchai_ids) {
                         self.search_chuchai_ids = chuchai_ids;
@@ -2897,6 +2912,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         id: null
                     });
                 }
+            },function (err) {
+                    $.alert(err.data.message.replace('None', ""));
             });
             def.resolve();
         },

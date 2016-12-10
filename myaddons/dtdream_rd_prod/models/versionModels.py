@@ -59,7 +59,8 @@ class dtdream_rd_version(models.Model):
         ('A','A'),
         ('B','B'),
         ('C','C'),
-        ('D','D')],
+        ('D','D'),
+        ('NA','NA')],
         string="验收结果"
     )
 
@@ -196,7 +197,7 @@ class dtdream_rd_version(models.Model):
     liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",store=True)
 
     def _compute_zanting_log(self):
-        cr = self.env["dtdream.prod.suspension"].search([("project.id", "=", self.id)])
+        cr = self.env["dtdream.prod.suspension"].search([("version.id", "=", self.id)])
         self.zanting_nums = len(cr)
 
     zanting_nums = fields.Integer(compute='_compute_zanting_log', string="暂停记录")
@@ -212,6 +213,7 @@ class dtdream_rd_version(models.Model):
             self.signal_workflow('dfb_to_kaifa')
         if self.version_state=='released':
             self.signal_workflow('yfb_to_dfb')
+        self.current_approver_user = [(5,)]
 
     @api.multi
     def _wkf_message_post(self,statechange):
@@ -223,26 +225,27 @@ class dtdream_rd_version(models.Model):
 
     @api.model
     def wkf_draft(self):
+        self.write({'is_click_01': False, 'is_finish_01': False})
+        processes01 = self.env['dtdream_rd_process_ver'].search([('process_01_id', '=', self.id)])
+        processes01.unlink()
         if self.version_state=='initialization':
-            self.write({'is_click_01':False,'is_finish_01':False})
-            processes01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id)])
-            processes01.unlink()
             self._wkf_message_post(statechange=u'版本状态: 计划中->草稿')
         elif self.version_state=='pause':
             self._wkf_message_post(statechange=u'版本状态: 暂停->草稿')
         elif self.version_state=='stop':
             self._wkf_message_post(statechange=u'版本状态: 中止->草稿')
         self.write({'version_state': 'draft'})
+        self.current_approver_user = [(5,)]
 
 
     @api.model
     def wkf_jihuazhong(self):
+        self.write({'is_click_01': False, 'is_click_02': False, 'is_finish_01': False, 'is_finish_02': False})
+        processes01 = self.env['dtdream_rd_process_ver'].search([('process_01_id', '=', self.id)])
+        processes01.unlink()
+        processes02 = self.env['dtdream_rd_process_ver'].search([('process_02_id', '=', self.id)])
+        processes02.unlink()
         if self.version_state=='Development':
-            self.write({'is_click_01':False,'is_click_02':False,'is_finish_01':False,'is_finish_02':False})
-            processes01 = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',self.id)])
-            processes01.unlink()
-            processes02 = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',self.id)])
-            processes02.unlink()
             self._wkf_message_post(statechange=u'版本状态: 开发中->计划中')
         elif self.version_state=='pause':
             self._wkf_message_post(statechange=u'版本状态: 暂停->计划中')
@@ -252,15 +255,16 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 草稿->计划中')
             self.write({'cg_finsh_time':datetime.now()})
         self.write({'version_state': 'initialization'})
+        self.current_approver_user = [(5,)]
 
     @api.model
     def wkf_kaifa(self):
+        self.write({'is_click_02': False, 'is_click_03': False, 'is_finish_02': False, 'is_finish_03': False})
+        processes02 = self.env['dtdream_rd_process_ver'].search([('process_02_id', '=', self.id)])
+        processes02.unlink()
+        processes03 = self.env['dtdream_rd_process_ver'].search([('process_03_id', '=', self.id)])
+        processes03.unlink()
         if self.version_state=='pending':
-            self.write({'is_click_02':False,'is_click_03':False,'is_finish_02':False,'is_finish_03':False})
-            processes02 = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',self.id)])
-            processes02.unlink()
-            processes03 = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',self.id)])
-            processes03.unlink()
             self._wkf_message_post(statechange=u'版本状态: 待发布->开发中')
         elif self.version_state=='pause':
             self._wkf_message_post(statechange=u'版本状态: 暂停->开发中')
@@ -270,12 +274,16 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 计划中->开发中')
             self.write({'jhz_finsh_time':datetime.now()})
         self.write({'version_state': 'Development'})
+        self.current_approver_user = [(5,)]
 
     @api.model
     def wkf_dfb(self):
+        self.write({'is_click_03': False, 'is_finish_03': False})
+        processes03 = self.env['dtdream_rd_process_ver'].search([('process_03_id', '=', self.id)])
+        processes03.unlink()
         if self.version_state=='released':
-            self.write({'is_click_03':False,'is_finish_03':False})
-            processes03 = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',self.id)])
+            self.write({'is_click_03': False, 'is_finish_03': False})
+            processes03 = self.env['dtdream_rd_process_ver'].search([('process_03_id', '=', self.id)])
             processes03.unlink()
             self._wkf_message_post(statechange=u'版本状态: 已发布->待发布')
         elif self.version_state=='pause':
@@ -286,6 +294,7 @@ class dtdream_rd_version(models.Model):
             self._wkf_message_post(statechange=u'版本状态: 开发中->待发布')
             self.write({'kfz_finsh_time':datetime.now()})
         self.write({'version_state': 'pending'})
+        self.current_approver_user = [(5,)]
 
     @api.model
     def wkf_yfb(self):
@@ -316,8 +325,8 @@ class dtdream_rd_version(models.Model):
     his_app_user = fields.Many2many("res.users" ,"ver_h_a_u_u",string="历史审批人用户")
 
     @api.onchange('message_follower_ids')
+    @api.constrains('message_follower_ids')
     def _compute_follower(self):
-        self.followers_user = False
         for foll in self.message_follower_ids:
             self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
             if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
@@ -397,6 +406,7 @@ class dtdream_rd_version(models.Model):
                                        </table>""" %(self.proName.name,self.version_numb,process.approver_old.name,u'将审批权限授给'+process.approver.name))
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.add_follower(employee_id=process.approver.id)
+                self.proName.add_follower(employee_id=process.approver.id)
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
 
     @api.constrains('process_02_ids')
@@ -434,6 +444,7 @@ class dtdream_rd_version(models.Model):
                                        </table>""" %(self.proName.name,self.version_numb,process.approver_old.name,u'将审批权限授给'+process.approver.name))
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.add_follower(employee_id=process.approver.id)
+                self.proName.add_follower(employee_id=process.approver.id)
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
 
     @api.constrains('process_03_ids')
@@ -472,6 +483,7 @@ class dtdream_rd_version(models.Model):
                                        </table>""" %(self.proName.name,self.version_numb,process.approver_old.name,u'将审批权限授给'+process.approver.name))
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.add_follower(employee_id=process.approver.id)
+                self.proName.add_follower(employee_id=process.approver.id)
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
 
     @api.model
@@ -489,6 +501,7 @@ class dtdream_rd_version(models.Model):
         elif self.version_state=='released':
             self._wkf_message_post(statechange=u'版本状态: 已发布->暂停')
         self.write({'version_state': 'pause'})
+        self.current_approver_user = [(5,)]
 
     @api.model
     def wkf_zhongzhi(self):
@@ -505,6 +518,7 @@ class dtdream_rd_version(models.Model):
         elif self.version_state=='released':
             self._wkf_message_post(statechange=u'版本状态: 已发布->中止')
         self.write({'version_state': 'stop'})
+        self.current_approver_user = [(5,)]
 
 
     #废用字段
@@ -571,8 +585,7 @@ class dtdream_rd_version(models.Model):
                 uid = self._context.get('uid', '')
                 em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
                 domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
-        return super(dtdream_rd_version, self).search_read(domain=domain, fields=fields, offset=offset,
-                                                               limit=limit, order=order)
+        return super(dtdream_rd_version, self).search_read(domain=domain, fields=fields, offset=offset,limit=limit, order=order)
 
 
 
@@ -677,7 +690,120 @@ class dtdream_rd_version(models.Model):
                         res['fields'][field]['domain'] = dm_f
         return res
 
+    def _get_parent_id(self,menu=None):
+        if len(menu.parent_id)>0:
+            return self._get_parent_id(menu.parent_id)
+        else:
+            return menu.id
 
+    @api.model
+    def get_apply(self):
+        applies=[]
+        state_list = [('draft','草稿'),('initialization','计划中'),('Development','开发中'),('pending','待发布'),
+                        ('pause','暂停'),('stop','中止'),('released','已发布')]
+        state_dict = dict(state_list)
+        em = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+        appr = self.env['dtdream_rd_version'].search([('PDT', '=', em.id),('version_state','not in',('pause','stop','released'))])
+        appr = [x for x in appr if len(x.current_approver_user)>0 and x.PDT.id ==em.id]
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.department_2:
+                department = app.department.name + '/' + app.department_2.name
+            else:
+                department = app.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply={
+                'department': department,
+                'appr': app.proName.name,
+                'version':app.version_numb,
+                'PDT': app.PDT.name or '',
+                'style':state_dict[app.version_state],
+                'defer':defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            applies.append(apply)
+        return applies
+
+    @api.model
+    def get_affair(self):
+        affairs = []
+        state_list = [('draft', '草稿'), ('initialization', '计划中'), ('Development', '开发中'), ('pending', '待发布'),
+                      ('pause', '暂停'), ('stop', '中止'), ('released', '已发布')]
+        state_dict = dict(state_list)
+        appr = self.env['dtdream_rd_version'].search([('current_approver_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.department_2:
+                department = app.department.name + '/' + app.department_2.name
+            else:
+                department = app.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department': department,
+                'appr': app.proName.name,
+                'version': app.version_numb,
+                'PDT': app.PDT.name or '',
+                'style': state_dict[app.version_state],
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(apply)
+        return affairs
+
+    def _get_menu_id(self):
+        act_windows = self.env['ir.actions.act_window'].sudo().search([('res_model', '=', 'dtdream_rd_version')])
+        menu = None
+        for act_window in act_windows:
+            action_id = 'ir.actions.act_window,' + str(act_window.id)
+            menu = self.env['ir.ui.menu'].sudo().search([('action', '=', action_id)])
+            if len(menu)>0:
+                break
+        menu_id = self._get_parent_id(menu)
+        return menu_id
+
+    @api.model
+    def get_done(self):
+        affairs = []
+        state_list = [('draft', '草稿'), ('initialization', '计划中'), ('Development', '开发中'), ('pending', '待发布'),
+                      ('pause', '暂停'), ('stop', '中止'), ('released', '已发布')]
+        state_dict = dict(state_list)
+        appr = self.env['dtdream_rd_version'].search([('his_app_user', '=', self.env.user.id)])
+        menu_id = self._get_menu_id()
+        for app in appr:
+            department = ''
+            if app.department_2:
+                department = app.department.name + '/' + app.department_2.name
+            else:
+                department = app.department.name
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            if deferdays == 0:
+                defer = False
+            else:
+                defer = True
+            apply = {
+                'department':department,
+                'appr': app.proName.name,
+                'version': app.version_numb,
+                'PDT': app.PDT.name or '',
+                'style': state_dict[app.version_state],
+                'defer': defer,
+                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                'deferdays': deferdays
+            }
+            affairs.append(apply)
+        return affairs
 
 
 

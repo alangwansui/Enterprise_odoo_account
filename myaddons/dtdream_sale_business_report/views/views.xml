@@ -12,7 +12,7 @@
                         attrs="{'invisible':['|',('state','!=','0'),('is_current','=',False)]}"/>
                 <field name="import_button" readonly="1" class="dtdream_import" attrs="{'invisible':['|','|',('is_current','=',False),('state','!=','0'),('has_import_button','=',False)]}"/>
                 <field name="download_button" readonly="1" class="dtdream_download" attrs="{'invisible':['|','|',('is_current','=',False),('state','!=','0'),('has_import_button','=',False)]}"/>
-                <button name="%(act_report_approve_wizard)d" string="同意" type="action" class="oe_highlight"
+                <button name="act_report_approve_crm" string="同意" type="object" class="oe_highlight"
                 attrs="{'invisible':['|','|','|',('is_newest_record','=',False),('is_current','=',False),('state','not in',('1','2','3','4','5','6','7','8','9')),('rejust_state','=',1)]}"/>
                 <button name="%(act_report_wizard)d" string="驳回" type="action" class="oe_highlight"
                 attrs="{'invisible':['|','|',('is_newest_record','=',False),('is_current','=',False),('state','not in',('2','3','5','6','7','8','9'))]}"/>
@@ -24,6 +24,7 @@
             <div class="label label-danger pull-right" attrs="{'invisible': [('is_newest_record', '=', True)]}">无效</div>
             <group>
               <group>
+                <field name="if_gongkan" invisible="True"/>
                 <field name="has_import_button" invisible="True"/>
                 <field name="is_approve_repeat" invisible="True"/>
                 <field name="is_newest_record" invisible="True"/>
@@ -88,6 +89,8 @@
                         <field name="other_discription" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                         <field name="estimate_payment_condition"  attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
                         <field name="service_deliver_object" widget="many2many_tags" options='{"no_open": True, "no_create": True}' attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"/>
+                        <field name="gongkan_content" readonly="1" attrs="{'invisible':[('if_gongkan','!=','1')]}"/>
+                        <field name="not_gongkan_content" readonly="1" attrs="{'invisible':[('if_gongkan','!=','0')]}"/>
                       </group>
                     </group>
                     <group>
@@ -204,10 +207,27 @@
             <field name="model">dtdream.sale.business.report</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="name"/>
+                    <field name="rep_pro_name"/>
+                    <field name="project_number"/>
+                    <field name="office_id"/>
+                    <field name="system_department_id"/>
+                    <field name="industry_id"/>
+                    <field name="bidding_time"/>
+                    <field name="apply_time"/>
+                    <field name="pro_background"/>
+                    <field name="apply_discription"/>
+                    <separator />
                     <filter string="有效"
                             name="effect_record"
                             domain="[('record_state','=','1')]"/>
+                    <separator />
+                    <group expand="0" string="Group By">
+                        <filter string="办事处" name="group_by_office_id" domain="[]" context="{'group_by':'office_id'}"/>
+                        <filter string="系统部" name="group_by_system_department_id" domain="[]" context="{'group_by':'system_department_id'}"/>
+                        <filter string="行业" name="group_by_industry_id" domain="[]" context="{'group_by':'industry_id'}"/>
+                        <filter string="招标时间" name="group_by_bidding_time" domain="[]" context="{'group_by':'bidding_time'}"/>
+                        <filter string="申请时间" name="group_by_apply_time"  domain="[]" context="{'group_by':'apply_time'}"/>
+                    </group>
                 </search>
             </field>
         </record>

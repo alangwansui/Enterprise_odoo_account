@@ -2,8 +2,7 @@
 
 from openerp import models, fields, api
 from openerp.osv import expression
-from openerp.exceptions import ValidationError
-import re
+from openerp.exceptions import ValidationError, AccessError
 from datetime import datetime
 from lxml import etree
 
@@ -77,7 +76,7 @@ class dtdream_customer_reception(models.Model):
         for rec in self:
             if rec.customer:
                 rec.customer_level = rec.customer.partner_important
-                if rec.customer_level in ["SS", "S"]:
+                if rec.customer_level in ["VIP","SS", "S"]:
                     rec.camera = "0"
                 else:
                     rec.camera = '2'
@@ -87,7 +86,7 @@ class dtdream_customer_reception(models.Model):
     @api.onchange('customer_level')
     def compute_camera_value(self):
         for rec in self:
-            if rec.customer_level in ["SS", "S"]:
+            if rec.customer_level in ["VIP","SS", "S"]:
                 rec.camera = "0"
             else:
                 rec.camera = '2'
@@ -139,11 +138,11 @@ class dtdream_customer_reception(models.Model):
             else:
                 uid = self._context.get('uid', '')
                 if domain:
-                    domain = expression.AND([['|', '|', '|', ('approves.user_id', '=', uid), ('name.user_id', '=', uid),
-                                              ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)], domain])
+                    domain = expression.AND([['|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
+                                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)], domain])
                 else:
-                    domain = ['|', '|', '|',('approves.user_id', '=', uid), ('name.user_id', '=', uid),
-                              ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)]
+                    domain = ['|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
+                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)]
         return super(dtdream_customer_reception, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                    limit=limit, order=order)
 
@@ -275,6 +274,9 @@ class dtdream_customer_reception(models.Model):
         rec = super(dtdream_customer_reception, self).default_get(fields)
         if self._context.get('active_id', None):
             rec.update({"entry_way": True})
+        follow = self.env['dtdream.customer.follow'].search([], order='id asc')
+        if follow:
+            rec.update({'showroom_guide': [(6, 0, [follow[0].name.id])]})
         return rec
 
     def get_mail_server_name(self):
@@ -312,6 +314,29 @@ class dtdream_customer_reception(models.Model):
             }).send()
 
     @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        result = super(dtdream_customer_reception, self).read(fields=fields, load=load)
+        perm_read = self.check_access_rights_customer()
+        if load == '_classic_read' and not perm_read:
+            raise AccessError('由于安全限制，请求的操作不能被完成。请联系你的系统管理员。\n\n(单据类型: dtdream.customer.reception, 操作: read.)')
+        return result
+
+    def check_access_rights_customer(self):
+        for rec in self:
+            user = self.env.user
+            follow = [item.name.user_id for item in self.env['dtdream.customer.follow'].search([])] or [user]
+            if self.env.ref("dtdream_customer_reception.customer_reception_manage") in self.env.user.groups_id or \
+                            self.env.ref("dtdream_customer_reception.customer_reception_member") in self.env.user.groups_id:
+                return True
+            if rec.current_approve.user_id != user and user not in [rec.name.user_id, rec.create_uid] and \
+                            user not in [item.user_id for item in rec.approves] and user not in [item.user_id for item in rec.accompany_leads] and \
+                            user not in [item.user_id for item in rec.interpreter]and user not in [item.user_id for item in rec.participants] and \
+                            user not in [item.user_id for item in rec.showroom_guide] and rec.car_settings.user_id != user and\
+                            rec.inter_settings.user_id != user and user not in follow:
+                return False
+            return True
+
+    @api.multi
     def _message_poss(self, state, action, approve=''):
         self.message_post(body=u"""<table border="1" style="border-collapse: collapse;">
                                                <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
@@ -333,8 +358,9 @@ class dtdream_customer_reception(models.Model):
     code = fields.Char(string='部门编码', compute=compute_employee_info)
     customer = fields.Many2one('res.partner', string='客户名称')
     customer_char = fields.Char(string='客户名称')
-    customer_level = fields.Selection([('SS', 'SS'), ('S', 'S'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
-                                      string='客户重要级')
+
+    customer_level = fields.Selection([('VIP', 'VIP'),('SS', 'SS'), ('S', 'S'), ('A+', 'A+'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],help=u"查看级别描述",
+                                      string='客户重要级',required=True)
     customer_source = fields.Selection([('0', '营销体系邀请'), ('1', '政府邀请'), ('2', '合作伙伴邀请')], string='客户来源', default='0')
     customer_v = fields.Selection([('0', '是'), ('1', '否')], string='是否价值客户', default='0')
     project = fields.Many2one('crm.lead', string='项目名称')
@@ -347,6 +373,7 @@ class dtdream_customer_reception(models.Model):
     accompany_leads = fields.Many2many('hr.employee', 'dtdream_customer_accompany_leads', string='公司出席陪同领导')
     interpreter = fields.Many2many('hr.employee', 'dtdream_customer_interpreter', string='汇报讲解人员')
     participants = fields.Many2many('hr.employee', 'dtdream_customer_participants', string='公司参会人员名单')
+    showroom_guide = fields.Many2many('hr.employee', 'dtdream_customer_showroom_guide', string='展厅讲解')
     room_capacity = fields.Integer(string='会议室大小')
     busy_time_room = fields.Datetime(string='会议室使用时间')
     ppt = fields.Boolean(string='PPT')
@@ -481,6 +508,12 @@ class dtdream_customer_reception(models.Model):
             subject = u'【通知】请您安排客户接待摄影相关事宜'
             content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看,及安排摄影相关事宜!' % self.name.name
             self.send_mail(inter, subject=subject, content=content)
+        # 通知配置里的关注人
+        follow = self.env['dtdream.customer.follow'].search([])
+        for item in follow:
+            subject = u'【通知】%s提交了客户接待申请，请您查看' % self.name.name
+            content = u'%s提交的客户接待申请，客工部审批已经通过，请您查看!'% self.name.name
+            self.send_mail(item.name, subject=subject, content=content)
         self._message_poss(state=u'客工部审批-->接待安排与执行', action=u'审批同意', approve=current_approve.name)
 
     @api.multi
@@ -536,6 +569,13 @@ class dtdream_meeting_room(models.Model):
     config = fields.Many2one('dtdream.customer.reception.config')
 
 
+class dtdream_customer_follow(models.Model):
+    _name = 'dtdream.customer.follow'
+
+    name = fields.Many2one('hr.employee', '关注人')
+    config = fields.Many2one('dtdream.customer.reception.config')
+
+
 class dtdream_visit_path(models.Model):
     _name = 'dtdream.visit.path'
 
@@ -580,6 +620,7 @@ class dtdream_customer_reception_config(models.Model):
     purpose = fields.One2many('dtdream.visit.purpose', 'config')
     memory = fields.One2many('dtdream.customer.memories', 'config')
     metting_room = fields.One2many('dtdream.meeting.room', 'config')
+    follow = fields.One2many('dtdream.customer.follow', 'config')
     name = fields.Char(default=lambda self: u'客户接待配置')
 
 
@@ -648,5 +689,6 @@ class dtdream_customer_special(models.Model):
             result.append((cr.id, name))
         return result
 
-
+class dtdream_customer_receptiontool_wizard(models.TransientModel):
+    _name = "dtdream.customer.receptiontool.wizard"
 

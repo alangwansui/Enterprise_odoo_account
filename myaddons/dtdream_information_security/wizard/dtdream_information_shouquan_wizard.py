@@ -6,7 +6,7 @@ from openerp.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
 class dtdream_information_shouquan_wizard(models.TransientModel):
     _name = "dtdream.information.shouquan.wizard"
-    name= fields.Many2one("hr.employee",string="被授权人")
+    name= fields.Many2one("hr.employee",string="被授权人",required=True)
 
     @api.multi
     def _message_poss(self,approval,current_approver,next_shenpiren=None):
@@ -53,4 +53,4 @@ class dtdream_information_shouquan_wizard(models.TransientModel):
         approval = self.env['dtdream.information.purview'].browse(self._context['active_id'])
         self._message_poss(approval=approval,current_approver=approval.current_approver,next_shenpiren=self.name.name)
         self._send_email(approval=approval,current_approver=approval.current_approver,next_shenpiren=self.name)
-        approval.current_approver_user=self.name
+        approval.current_approver_user=self.name.user_id.id

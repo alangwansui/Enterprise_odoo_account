@@ -1,0 +1,99 @@
+<openerp>
+    <data>
+
+         <record model="ir.ui.view" id="dtdream_foreign_form">
+            <field name="name">dtdream.foreign_form</field>
+            <field name="model">dtdream.foreign</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?" attrs="{'invisible':[('state','not in',('0'))]}"></button>
+                        <button name="btn_agree" string="同意" type="workflow" class="oe_highlight" confirm="请确认是否同意?" attrs="{'invisible':['|',('state','not in',('1','2')),('is_shenpiren','=',False)]}"> </button>
+                        <button name="btn_reject" string="驳回" type="action" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('1','2')),('is_shenpiren','=',False)]}"></button>
+                    <field name="state"  widget="statusbar" statusbar_visible="0,1,2,99"/>
+                    </header>
+                    <sheet>
+                        <group string="基本信息">
+                            <group>
+                                <field name="applicant" attrs="{'readonly':['|',('state','not in',('0')),('is_shenpiren','=',False)]}"/>
+                                <field name="manager"/>
+                                <field name="sq_department_code"/>
+                                <field name="is_shenpiren" invisible="1"></field>
+                            </group>
+                            <group>
+                                <field name="department_01"/>
+                                <field name="department_02"/>
+                            </group>
+                        </group>
+                        <group string="披露信息">
+                            <group>
+                                <field name="target" attrs="{'readonly':['|',('state','not in',('0'))]}"/>
+                                <field name="reason" attrs="{'readonly':['|',('state','not in',('0'))]}"></field>
+                                <field name="secret_level" attrs="{'readonly':['|',('state','not in',('0'))]}"/>
+                            </group>
+                            <group>
+                                <field name="origin_department_01" domain="[('parent_id','=',False)]" attrs="{'readonly':['|',('state','not in',('0'))]}"/>
+                                <field name="origin_department_02" domain="[('parent_id.parent_id','=',False)]" attrs="{'readonly':['|',('state','not in',('0 '))]}"/>
+                                <field name="sfxqbmxy" attrs="{'readonly':['|',('state','not in',('0'))]}"></field>
+                                <field name="sfxytm" attrs="{'readonly':['|',('state','not in',('0'))]}"></field>
+                                <field name="tminstructions" attrs="{'invisible':[('sfxytm','=',False)]}"></field>
+                            </group>
+                        </group>
+                         <group colspan="12">
+                                  <field name="attachment_name" invisible="True"/>
+                                  <field name="attachment" widget="binary" filename="attachment_name" attrs="{'readonly':['|',('state','not in',('0'))]}"/>
+                         </group>
+                      </sheet>
+                      <div class="oe_chatter">
+                          <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                          <field name="message_ids" widget="mail_thread"/>
+                      </div>
+                </form>
+            </field>
+        </record>
+         <record id="dtdream_foreign_tree" model="ir.ui.view">
+            <field name="name">dtdream_foreign_tree</field>
+            <field name="model">dtdream.foreign</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="applicant"/>
+                    <field name="department"/>
+                    <field name="state"/>
+                     <field name="target"/>
+                    <field name="current_approve"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="act_dtdream_foreign_self" model="ir.actions.act_window">
+            <field name="name">与我相关</field>
+            <field name="res_model">dtdream.foreign</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!--<field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('his_approver_user','=',uid),('Co_applicant_user','=',uid)]</field>-->
+        </record>
+
+        <record id="act_dtdream_foreign_wait" model="ir.actions.act_window">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.foreign</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_approve.user_id','=',uid)]</field>
+        </record>
+
+        <record id="act_dtdream_foreign_all" model="ir.actions.act_window">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.foreign</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="dtdream_foreign_root"  parent="dtdream_information_security_root" sequence="250" name="对外披露"></menuitem>
+        <menuitem name="与我相关" sequence="100" id="dtdream_foreign_menu_self"  parent="dtdream_foreign_root" action="act_dtdream_foreign_self"></menuitem>
+        <menuitem name="待我审批" sequence="200" id="dtdream_foreign_menu_wait"  parent="dtdream_foreign_root" action="act_dtdream_foreign_wait"></menuitem>
+        <menuitem name="所有单据" sequence="300" id="dtdream_foreign_menu_all"   parent="dtdream_foreign_root" action="act_dtdream_foreign_all"></menuitem>
+    </data>
+</openerp>

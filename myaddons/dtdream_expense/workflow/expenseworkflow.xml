@@ -87,6 +87,19 @@
             <field name="act_from" ref="xingzheng"/>
             <field name="act_to" ref="zhuguan"/>
             <field name="signal">btn_agree</field>
+            <field name="condition">xingzheng2who=="1"</field>
+        </record>
+        <record model="workflow.transition" id="dtdream_expense_xingzheng_to_quanqianren">
+            <field name="act_from" ref="xingzheng"/>
+            <field name="act_to" ref="quanqianren"/>
+            <field name="signal">btn_agree</field>
+            <field name="condition">xingzheng2who=="2"</field>
+        </record>
+        <record model="workflow.transition" id="dtdream_expense_xingzheng_to_jiekoukuaiji">
+            <field name="act_from" ref="xingzheng"/>
+            <field name="act_to" ref="jiekoukuaiji"/>
+            <field name="signal">btn_agree</field>
+            <field name="condition">xingzheng2who=="3"</field>
         </record>
 
         <record model="workflow.transition" id="dtdream_expense_zhuguan_to_xingzheng">
@@ -101,17 +114,6 @@
             <field name="signal">btn_refuse_zhuguan_to_draft</field>
         </record>
 
-
-
-
-
-
-
-
-
-
-
-
         <record model="workflow.transition" id="dtdream_expense_zhuguan_to_quanqianren">
             <field name="act_from" ref="zhuguan"/>
             <field name="act_to" ref="quanqianren"/>
@@ -119,22 +121,12 @@
             <field name="condition">zhuguan_quanqian_jiekoukuaiji=="1"</field>
         </record>
 
-
         <record model="workflow.transition" id="dtdream_expense_zhuguan_to_jiekoukuaiji">
             <field name="act_from" ref="zhuguan"/>
             <field name="act_to" ref="jiekoukuaiji"/>
             <field name="condition">zhuguan_quanqian_jiekoukuaiji=="2"</field>
             <field name="signal">btn_agree</field>
         </record>
-
-
-
-
-
-
-
-
-
 
         <record model="workflow.transition" id="dtdream_expense_quanqianren_to_zhuguan">
             <field name="act_from" ref="quanqianren"/>
@@ -162,7 +154,7 @@
             <field name="condition">can_pass_jiekoukuaiji=="1"</field>
         </record>
 
-           <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_quanqianren">
+        <record model="workflow.transition" id="dtdream_expense_jiekoukuaiji_to_quanqianren">
             <field name="act_from" ref="jiekoukuaiji"/>
             <field name="act_to" ref="quanqianren"/>
             <field name="signal">btn_refuse_jiekoukuaiji_to_quanqianren</field>
@@ -195,6 +187,37 @@
             <field name="act_to" ref="yifukuan"/>
             <field name="signal">btn_confirmmoney</field>
         </record>
+
+        <record model="workflow.transition" id="dtdream_expense_daifukuan_to_jiekoukuaiji">
+            <field name="act_from" ref="daifukuan"/>
+            <field name="act_to" ref="jiekoukuaiji"/>
+            <field name="signal">btn_refuse_daifukuan_to_jiekoukuaiji</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_daifukuan_to_quanqianren">
+            <field name="act_from" ref="daifukuan"/>
+            <field name="act_to" ref="quanqianren"/>
+            <field name="signal">btn_refuse_daifukuan_to_quanqianren</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_daifukuan_to_zhuguan">
+            <field name="act_from" ref="daifukuan"/>
+            <field name="act_to" ref="zhuguan"/>
+            <field name="signal">btn_refuse_daifukuan_to_zhuguan</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_daifukuan_to_xingzheng">
+            <field name="act_from" ref="daifukuan"/>
+            <field name="act_to" ref="xingzheng"/>
+            <field name="signal">btn_refuse_daifukuan_to_xingzheng</field>
+        </record>
+
+        <record model="workflow.transition" id="dtdream_expense_daifukuan_to_draft">
+            <field name="act_from" ref="daifukuan"/>
+            <field name="act_to" ref="draft"/>
+            <field name="signal">btn_refuse_daifukuan_to_draft</field>
+        </record>
+
 
     </data>
 </openerp>

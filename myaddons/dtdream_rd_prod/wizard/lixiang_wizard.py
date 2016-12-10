@@ -386,15 +386,17 @@ class dtdream_liwai(models.TransientModel):
                     current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'一级审批意见:同意,意见：'+self.liyou))
+                                       <tr><td style="padding:10px">一级审批结果</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">意见</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'同意',self.liyou))
                 else:
                     # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意')
                     current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'一级审批意见:同意'))
+                                       <tr><td style="padding:10px">一级审批结果</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">意见</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'同意',u'无'))
                 if current_execption.approver_sec:
                     current_execption.write({'state':'ejsp'})
                     current_execption.write({'is_apped':True})
@@ -433,15 +435,17 @@ class dtdream_liwai(models.TransientModel):
                     current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'二级审批意见:同意,意见：'+self.liyou))
+                                       <tr><td style="padding:10px">二级审批结果</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">意见</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'同意',self.liyou))
                 else:
                     # current_execption.message_post(body=current_execption.approver_fir.name+u'的审批意见:同意')
                     current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'二级审批意见:同意'))
+                                       <tr><td style="padding:10px">二级审批结果</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">意见</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'同意',u'无'))
                 current_execption.write({'state':'ysp'})
                 current_execption.write({'his_app_user': [(4, current_execption.approver_sec.user_id.id)]})
                 current_execption.current_approver_user = [(5,)]
@@ -456,8 +460,9 @@ class dtdream_liwai(models.TransientModel):
                 current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'一级审批意见:不同意,意见：'+self.liyou))
+                                       <tr><td style="padding:10px">一级审批结果</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">意见</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_fir.name,u'不同意',self.liyou))
             if current_execption.state=='ejsp'or current_execption.state=='Nejsp':
                 current_execption.write({'is_apped':False})
                 current_execption.write({'state':'Nejsp'})
@@ -465,5 +470,6 @@ class dtdream_liwai(models.TransientModel):
                 current_execption.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'二级审批意见:不同意,意见：'+self.liyou))
+                                       <tr><td style="padding:10px">二级审批结果</td><td style="padding:10px">%s</td></tr>
+                                       <tr><td style="padding:10px">意见</td><td style="padding:10px">%s</td></tr>
+                                       </table>""" %(current_execption.name.name,current_execption.approver_sec.name,u'不同意',self.liyou))

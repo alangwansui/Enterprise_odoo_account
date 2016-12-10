@@ -95,7 +95,7 @@ class DtdreamExpense(ExcelExport):
 
             if tax_total > 0:
                 duplicate_removal[9999] = {
-                    "cstcenter":cstcenter,
+                    "cstcenter":"000000",
                     "account": "2210101",
                     "account_name": u"应交税金-应交增值税-进项(境内)",
                     "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
@@ -121,9 +121,9 @@ class DtdreamExpense(ExcelExport):
                        duplicate_removal[rec[0]]["cstcenter"],
                        duplicate_removal[rec[0]]["account"], duplicate_removal[rec[0]]["account_name"], duplicate_removal[rec[0]]["type"],
                        duplicate_removal[rec[0]]["description"], product, region, bm, sm, ic, spare,currency,
-                       duplicate_removal[rec[0]]["accounted_dr"],
-                       duplicate_removal[rec[0]]["accounted_cr"],
-                       duplicate_removal[rec[0]]["accounted_dr"]-duplicate_removal[rec[0]]["accounted_cr"]]
+                       round(duplicate_removal[rec[0]]["accounted_dr"],2),
+                       round(duplicate_removal[rec[0]]["accounted_cr"],2),
+                       round(duplicate_removal[rec[0]]["accounted_dr"],2)-round(duplicate_removal[rec[0]]["accounted_cr"],2)]
                 excel_values.append(row)
         return request.make_response(
             self.from_data(excel_header, excel_values),

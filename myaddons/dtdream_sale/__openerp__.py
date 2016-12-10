@@ -23,10 +23,12 @@
 
     # always loaded
     'data': [
+        'import.xml',
         'security/dtdream_sale_security.xml',
         'security/dtdream_sale_permission_groups.xml',
         'security/ir.model.access.csv',
         'sale_sequence.xml',
+        'views/crm_lead_won_view.xml',
         'views/views.xml',
         'views/industry_office.xml',
         'views/templates.xml',

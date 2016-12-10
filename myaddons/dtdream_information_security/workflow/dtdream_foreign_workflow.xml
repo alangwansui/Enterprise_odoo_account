@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_dtdream_foreign">
+            <field name="name">信息对外披露流程</field>
+            <field name="osv">dtdream.foreign</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="foreign_act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_foreign"/>
+            <field name="flow_start">True</field>
+            <field name="name">草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="foreign_act_draft1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_foreign"/>
+            <field name="name">直接主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_department_approve()</field>
+        </record>
+
+        <record id="foreign_act_draft2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_foreign"/>
+            <field name="name">权签人审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_demand_approve()</field>
+        </record>
+        <record id="foreign_act_done1" model="workflow.activity" >
+            <field name="wkf_id" ref="wkf_dtdream_foreign" />
+            <field name="name">完成</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_done()</field>
+        </record>
+        <record id="trans_foreign_approve1" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_draft"/>
+            <field name="act_to" ref="foreign_act_draft1"/>
+            <field name="signal">btn_submit</field>
+         </record>
+
+        <record id="trans_foreign_approve2" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_draft1"/>
+            <field name="act_to" ref="foreign_act_draft2"/>
+            <field name="signal">btn_agree</field>
+        </record>
+
+        <record id="trans_foreign_approve3" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_draft2"/>
+            <field name="act_to" ref="foreign_act_done1"/>
+            <field name="signal">btn_agree</field>
+        </record>
+
+        <record id="trans_foreign_approve4" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_draft1"/>
+            <field name="act_to" ref="foreign_act_done1"/>
+            <field name="signal">btn_agree1</field>
+        </record>
+
+
+        <record id="trans_foreign1_draft_reject" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_draft1"/>
+            <field name="act_to" ref="foreign_act_draft"/>
+            <field name="signal">btn_reject</field>
+        </record>
+
+        <record id="trans_foreign2_draft_reject" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_draft2"/>
+            <field name="act_to" ref="foreign_act_draft"/>
+            <field name="signal">btn_reject</field>
+        </record>
+    </data>
+</openerp>

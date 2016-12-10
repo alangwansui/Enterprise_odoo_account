@@ -90,7 +90,7 @@ class dtdream_sale_business_report(models.Model):
     @api.one
     def _compute_is_current(self):
         self.is_current = False
-        if self.apply_person == self.env['hr.employee'].search([('login','=',self.env.user.login)]).name and self.state == "0":
+        if self.apply_person == self.env['hr.employee'].search([('login','=',self.env.user.login)]) and self.state == "0":
             self.is_current = True
         for shenpiren in self.shenpiren:
             if self.env.user == shenpiren.user_id:
@@ -248,7 +248,7 @@ class dtdream_sale_business_report(models.Model):
     name = fields.Char(default="商务提前报备")
     project_number = fields.Char(string="项目编号")
     rep_pro_name = fields.Many2one('crm.lead', string="项目名称", required=True,track_visibility='onchange')
-    apply_person = fields.Char(string="申请人", default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).name, readonly=1)
+    apply_person = fields.Many2one("hr.employee",string="申请人", default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).id, readonly=1)
     system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True,track_visibility='onchange')
     industry_id = fields.Many2one("dtdream.industry", string="行业",required=True,track_visibility='onchange')
     office_id = fields.Many2one("dtdream.office", string="办事处",required=True,track_visibility='onchange')
@@ -320,6 +320,35 @@ class dtdream_sale_business_report(models.Model):
     file = fields.Binary(string="文件")
     file_name = fields.Char(string="文件名")
     remark = fields.Text(string="备注")
+    if_gongkan = fields.Selection([
+        ('1','已工勘'),
+        ('0','未工勘'),
+    ],string="是否已工勘")
+    gongkan_content = fields.Text(string="工勘内容")
+    not_gongkan_content  = fields.Text(string="工勘内容",default="未工勘")
+
+    @api.multi
+    def act_report_approve_crm(self):
+        if_view_gongkan = False
+        if self.state == '2':
+            if self.office_id.name == u"总部":
+                service_shenpiren = self.env['dtdream.business.shenpi.system.line'].search([('system_department_id','=',self.system_department_id.id)])[0].service_shenpiren
+            else:
+                service_shenpiren = self.env['dtdream.business.shenpi.line'].search([('office_id','=',self.office_id.id)])[0].service_shenpiren
+            if service_shenpiren.id == self.env['hr.employee'].search([('login','=',self.env.user.login)]).id:
+                if_view_gongkan = True
+        view_id = self.env.ref('dtdream_sale_business_report.view_dtdream_report_approve_wizard_form').id
+        action = {
+                'name': '同意',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'view_id': view_id,
+                'res_model': 'dtdream.report.approve.wizard',
+                'target':'new',
+                'context': {'default_if_view_gongkan':if_view_gongkan,'default_gongkan_content':self.gongkan_content,'default_if_gongkan':self.if_gongkan},
+                }
+        return action
 
     @api.multi
     def wkf_draft(self):
@@ -429,6 +458,8 @@ class dtdream_sale_business_report(models.Model):
                 raise ValidationError("产品目录价不能为0")
             if not product.pro_num:
                 raise ValidationError("产品数量不能为0")
+            if product.apply_discount <= 0 or product.apply_discount > 100:
+                raise ValidationError("申请折扣应在0%到100%之间")
         self.rep_pro_name.sudo().write({'has_draft_business_report':False})
         self.write({'state':'2'})
         self.get_shenpiren()
@@ -566,6 +597,13 @@ class dtdream_sale_business_report(models.Model):
     @api.constrains('system_department_id','industry_id','office_id','bidding_time','pre_implementation_time','partner_id','supply_time')
     def update_crm_data(self):
         self.env['crm.lead'].search([('id','=',self.rep_pro_name.id)]).write({'system_department_id':self.system_department_id.id,'industry_id':self.industry_id.id,'office_id':self.office_id.id,'bidding_time':self.bidding_time,'pre_implementation_time':self.pre_implementation_time,'partner_id':self.partner_id.id,'supply_time':self.supply_time})
+
+    # 判断是否隐藏自定义分组
+    @api.model
+    def if_hide(self):
+        if self.env.user.has_group('dtdream_sale.group_dtdream_sale_high_manager'):
+            return False
+        return True
 
     # 新建时刷新豆腐块数字
     @api.model
@@ -783,7 +821,7 @@ class dtdream_ir_import(orm.TransientModel):
                                      moreinfo=""))
                     return messages
                 if import_line.has_key('apply_discount') and len(import_line['apply_discount'].replace(' ','')) > 0:
-                    if float(import_line['apply_discount']) > 100 or float(import_line['apply_discount']) < 0:
+                    if float(import_line['apply_discount']) > 100 or float(import_line['apply_discount']) <= 0:
                         messages.append(dict(type='error',
                                          message=u"申请折扣应在0%到100%之间",
                                          moreinfo=""))

@@ -37,7 +37,7 @@ class dtdream_information_purview_wizard(models.TransientModel):
         url = base_url+link
         appellation = next_approver.name+u",您好"
         subject=approval.applicant.name+u"提交的权限申请，等待您的审批"
-        content = approval.applicant.name+u"提交的清单为‘"+approval.name+u"’的权限申请，等待您的审批"
+        content = approval.applicant.name+u"提交的‘"+approval.name+u"’的权限申请进入‘所有人审批’阶段，等待您的审批"
         self.env['mail.mail'].create({
             'body_html': u'''<p>%s</p>
                          <p>%s</p>
@@ -71,6 +71,7 @@ class dtdream_information_purview_wizard(models.TransientModel):
             approval.signal_workflow('syrsp_to_wc')
             self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'所有人审批->完成',result=u'同意',reason=self.reason)
             approval.current_approver_user=False
+            approval.permission_settings()
 
     #驳回
     @api.multi

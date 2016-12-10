@@ -8,7 +8,7 @@
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
                             attrs="{'invisible':['|',('state','not in',('0','3','5')),'|','&amp;',('is_creator','=',False),'&amp;',('is_applicant','=',False),('state','=','0'),'|','&amp;',('is_analyst','=',False),'&amp;',('is_entrusted_analyst','=',False),('state','=','3'),'|','&amp;',('is_analyst','=',True),'&amp;',('entrusted_analyst','!=',False),('state','=','3'),'&amp;',('is_practice_man','=',False),('state','=','5')]}"/>
-                    <button name="btn_approve" string="同意" type="workflow" class="oe_highlight" confirm="请确认是否同意?"
+                    <button name="%(act_dtdream_demand_app_agree_wizard)d" string="同意" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1','2','4')),'|','&amp;',('is_direct_manage','=',False),('state','=','1'),'&amp;',('is_IT_manage','=', False),('state','in',('2','4'))]}"/>
                     <button name="%(act_dtdream_demand_app_reject_wizard)d" string="驳回" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1','2','4')),'|','&amp;',('is_direct_manage','=',False),('state','=','1'),'&amp;',('is_IT_manage','=', False),('state','in',('2','4'))]}"/>
@@ -18,7 +18,7 @@
                            statusbar_visible="0,1,2,3,4,5,99"/>
                </header>
               <sheet>
-                <group string="项目信息">
+                <group string="需求信息">
                   <group>
                       <field name="name" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
                       <field name="expect_complete_time" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
@@ -31,6 +31,7 @@
                       <field name="is_IT_manage" invisible="True"/>
                       <field name="is_current" invisible="True"/>
                       <field name="is_manage" invisible="True"/>
+                      <field name="flow" invisible="True"/>
                   </group>
                   <group>
                       <field name="department" required="True" options="{'no_open': True,'no_create': True}"/>
@@ -51,45 +52,45 @@
                 <notebook attrs="{'invisible':[('state','=','0')]}" class="dtdream_demand_notebook">
                     <page string="部门主管审批" attrs="{'invisible':[('state','=','0')]}" class="manage_page">
                         <group colspan="12">
-                            <field name="comments" attrs="{'readonly':['|','&amp;',('state','!=','1'),('is_manage','=',False),'&amp;',('state','=','1'),'&amp;',('is_direct_manage','=',False),('is_manage','=',False)]}"/>
+                            <field name="comments" attrs="{'readonly':[('is_manage','=',False)]}"/>
                         </group>
                     </page>
 
                     <page string="IT需求审批" attrs="{'invisible':[('state','in',('0','1'))]}" class="manage_page">
                         <group colspan="12">
                             <group colspan="12">
-                                <field name="require_comments" attrs="{'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                                <field name="require_comments" attrs="{'readonly':[('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="analyst" attrs="{'readonly':['|','&amp;',('state','!=','2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
+                                <field name="analyst" attrs="{'readonly':[('is_manage','=',False)],'invisible':[('flow','=','0')]}" domain="[('department_id.name','=',u'信息开发部')]"/>
                             </group>
                         </group>
                     </page>
 
-                    <page string="IT方案分析" attrs="{'invisible':[('state','in',('0','1','2'))]}" class="manage_page">
+                    <page string="IT方案分析" attrs="{'invisible':['|',('state','in',('0','1','2')),('flow','=', '0')]}" class="manage_page">
                         <group>
                             <group attrs="{'invisible':[('state','in',('4','5','6')),('entrusted_analyst','=',False)]}">
                                 <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
                             </group>
                             <group colspan="12" attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
-                                <field name="conclude" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                                <field name="conclude" attrs="{'required':['|','&amp;',('is_entrusted_analyst','=',True),('flow','=','1'),'&amp;',('state','not in', ('0','1','2')),'&amp;',('entrusted_analyst','=',False),('flow','=','1')],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
                                 <field name="man_hours" class="demand_app_check" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
-                                <field name="priority" attrs="{'required':['|',('is_entrusted_analyst','=',True),'&amp;',('state','not in', ('0','1','2')),('entrusted_analyst','=',False)],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
+                                <field name="priority" attrs="{'required':['|','&amp;',('is_entrusted_analyst','=',True),('flow','=','1'),'&amp;',('state','not in', ('0','1','2')),'&amp;',('entrusted_analyst','=',False),('flow','=','1')],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
                             </group>
                         </group>
                     </page>
 
-                    <page string="IT方案审批" attrs="{'invisible':[('state','in',('0','1', '2','3'))]}" class="manage_page">
+                    <page string="IT方案审批" attrs="{'invisible':['|',('state','in',('0','1', '2','3')),('flow','=','0')]}" class="manage_page">
                         <group colspan="12">
                             <group colspan="12">
-                                <field name="plan_comments" attrs="{'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}"/>
+                                <field name="plan_comments" attrs="{'readonly':[('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="practice_man" attrs="{'readonly':['|','&amp;',('state','!=','4'),('is_manage','=',False),'&amp;',('state','=','4'),'&amp;',('is_IT_manage','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
+                                <field name="practice_man" attrs="{'readonly':[('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息开发部')]"/>
                             </group>
                         </group>
                     </page>

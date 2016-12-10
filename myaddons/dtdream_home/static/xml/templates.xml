@@ -11,12 +11,8 @@
                 <span class="oe_topbar_name"/> <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-                <!--<li><a href="#" data-menu="documentation">Documentation</a></li>-->
-                <!--<li><a href="#" data-menu="support">Support</a></li>-->
-                <!--<li><a href="#" data-menu="about">About</a></li>-->
-                <!--<li class="divider"/>-->
-                <!--<li><a href="#" data-menu="settings">Preferences</a></li>-->
-                <!--<li><a href="#" data-menu="account">My dodo.com account</a></li>-->
+                <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=48463884">用户手册</a></li>
+                <li><a href="#" data-menu="change_passwd">重置域密码</a></li>
                 <li><a href="#" data-menu="logout">注销</a></li>
             </ul>
         </li>
@@ -41,7 +37,7 @@
     </t>
 
     <t t-name="sidebar_info">
-        <div class="sidebar">
+        <div class="sidebar hidden-xs">
             <ul>
                 <li class="active"><i class="dodo doicon-dashboard"/>Dashboard</li>
                 <t t-foreach="model_sets" t-as="model">
@@ -55,17 +51,40 @@
                 </t>
             </ul>
         </div>
+        <div class="nav-bar">
+            <span class="dodo-logo"><img src="/dtdream_home/static/img/dodo-logo.png" /> </span>
+                <div id="nav" class="navbar-collapse collapse in" role="navigation" aria-expanded="true">
+                    <ul class="nav navbar-nav clearfix">
+                        <t t-foreach="model_sets" t-as="model">
+                            <!--<a t-att-href="model.url"  t-att-model="model.model" t-att-type="model.view_type" t-att-action-id="model.action" t-att-menu-id="model.menu">-->
+                            <a t-att-href="model.url">
+                                <li>
+                                    <i t-att-class="model.class"/>
+                                    <t t-esc="model.name"/>
+                                </li>
+                            </a>
+                        </t>
+                    </ul>
+                </div>
+            </div>
+        <script>
+                var navigation = responsiveNav("#nav", {
+                  animate: true,
+                  transition: 400
+
+                });
+            </script>
     </t>
 
     <t t-name="content">
         <div class="content clearfix">
-            <div class="o_related"/>
+            <div class="o_related hidden-xs"/>
             <div class="o_content"/>
-            <div class="o_footer">
-                <div class="footer">
-                版权所有 © 杭州数梦工场科技有限公司 2015-2016。 保留一切权利。
-                </div>
-            </div>
+            <!--<div class="o_footer">-->
+                <!--<div class="footer">-->
+                <!--版权所有 © 杭州数梦工场科技有限公司 2015-2016。 保留一切权利。-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
     </t>
 
@@ -81,13 +100,17 @@
                 <!--插入dodo日历-->
             <!--</div>-->
             <!--&lt;!&ndash;日历 &ndash;&gt;-->
-            <div class="blank30"/>
+
             <!--通讯录 -->
             <div class="address line">
                 <div class="p10">
                     <h4>员工通讯录</h4>
                     <label>姓名</label>
-                    <input class="form-control o_full_name" placeholder="请输入姓名全称"/>
+                    <input class="form-control o_full_name" placeholder="请输入姓名"/>
+
+                    <div class="blank10"/>
+                    <label>花名</label>
+                    <input class="form-control o_nick_name" placeholder="请输入花名"/>
 
                     <div class="blank10"/>
                     <label>工号</label>
@@ -139,15 +162,62 @@
         <div class="main">
             <div class="p30">
                 <div class="o_content_title"/>
-                <div class="o_content_dashboard"/>
+                <div class="o_content_dashboard hidden-xs"/>
                 <div class="o_content_notice"/>
                 <div class="o_content_event"/>
+                <div class="o_content_relatelinks hidden-xs">
+                    <div class="relatelinks clearfix line">
+                       <div class="container-fluid ">
+                           <div class="row">
+
+                               <div class="col-md-12">
+                                   <h4>相关链接</h4>
+
+                                   <ul>
+                                       <!--1-->
+                                       <li><a target="_blank" href="http://www.dtdream.com/">公司官网</a></li>
+                                       <li><a target="_blank" href="http://jira.dtdream.com">JIRA</a></li>
+                                       <li><a target="_blank" href="http://dashboard-rd.dtdream.com"> 研发质量看板</a></li>
+                                       <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=361134">帮助中心</a></li>
+                                       <li><a target="_blank" href="http://bbs.dtdream.com/">BBS</a></li>
+
+                                       <!--2-->
+                                       <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29204953">公司发文</a></li>
+                                       <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?projectKey=DTEST&amp;rapidView=185">验收电子流</a></li>
+                                       <li><a target="_blank" href="http://dtp.dtdream.com/">DTP测试平台</a></li>
+                                       <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=246&amp;view=null">网上问题</a></li>
+                                       <li><a target="_blank" href="http://mail.dtdream.com/">邮箱</a></li>
+
+                                       <!--3-->
+                                       <li><a target="_blank" href="http://doc.dtdream.com/pages/viewpage.action?pageId=3670198">外部文档中心</a></li>
+
+                                       <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=163&amp;projectKey=REQ">需求接纳电子流</a></li>
+                                       <!--<li><a href="javascript:void(0)" class="ft-tip"> 文件服务器<span class="title">请通过“远程桌面”的方式访问文件服务器，服务器IP：10.130.5.5</span></a></li>-->
+                                       <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904559">版本服务器</a></li>
+                                       <li><a target="_blank" href="http://all.dtdream.com/letter.html"> 给新员工的一封信</a></li>
+                                       <li><a target="_blank" href="http://shumeng.yunxuetang.cn/">云学堂</a></li>
+
+                                       <!--4-->
+                                       <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=25788516">内部文档中心</a></li>
+                                       <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=135&amp;projectKey=MRKT">对外测试电子流</a> </li>
+                                       <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904616">文件服务器</a></li>
+                                       <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45748653"> dodo手机客户端</a></li>
+
+
+                                   </ul>
+                               </div>
+
+                           </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </t>
 
     <t t-name="content_title">
-        <div class="title">
+        <div class="title hidden-xs">
             <h2>Dashboard</h2>
             <p>
                 <span>
@@ -163,15 +233,14 @@
                 <!-- 最常用功能统计-->
                 <div class="row">
                     <div class="col-sm-4 clearfix f-c-1">
-                        <a class="pic" t-att-href="data.out_url">
-                            <img src="/dtdream_home/static/img/db-icon-wcgg.png"/>
+                        <a class="pic" t-att-href="data.budget_url">
+                            <img src="/dtdream_home/static/img/budget.png"/>
                         </a>
                         <div class="data">
-                            <div class="title">外出公干</div>
-                            <div class="nb">
-                                <span class="nb-c"><t t-esc="data.out"/> </span>个
-                            </div>
+                            <div class="title">预算管理</div>
+                            <div class="nb"><span class="nb-c"><t t-esc="data.budget"></t></span>个</div>
                         </div>
+
                     </div>
                     <div class="col-sm-4 f-c-2">
                         <a class="pic" t-att-href="data.expense_url">
@@ -201,7 +270,7 @@
                 <div class="row">
                     <div class="col-sm-6 f-c-4">
                         <a class="pic" t-att-href="data.travel_url">
-                            <img src="/dtdream_home/static/img/db-icon-zxsq.png"/>
+                            <img src="/dtdream_home/static/img/travel.png"/>
                         </a>
                         <div class="data">
                             <div class="title">出差</div>
@@ -210,12 +279,15 @@
                     </div>
 
                     <div class="col-sm-6 f-c-5">
-                        <a class="pic" t-att-href="data.budget_url">
-                            <img src="/dtdream_home/static/img/db-icon-zxsq.png"/>
+
+                        <a class="pic" t-att-href="data.out_url">
+                            <img src="/dtdream_home/static/img/db-icon-wcgg.png"/>
                         </a>
                         <div class="data">
-                            <div class="title">预算管理</div>
-                            <div class="nb"><span class="nb-c"><t t-esc="data.budget"></t></span>个</div>
+                            <div class="title">外出公干</div>
+                            <div class="nb">
+                                <span class="nb-c"><t t-esc="data.out"/> </span>个
+                            </div>
                         </div>
                     </div>
                     <!--<div class="col-sm-12 f-c-4">-->
@@ -237,7 +309,7 @@
     </t>
 
     <t t-name="content_notice">
-        <div class="notice line">
+        <div class="notice line hidden-xs">
             <div class="title">
                 公告
             </div>
@@ -256,12 +328,12 @@
     </t>
 
     <t t-name="content_event">
-        <div class="event-table">
-            <div class="tb-row  ">
-                <div class=" line tb-box-l ">
+        <div class="event-table container-fluid">
+            <div class="tb-row clearfix  row">
+                <div class=" line tb-box-l  col-xs-12">
                     <div class="o_content_event_affairs"/>
                 </div>
-                <div class=" line tb-box-r ">
+                <div class=" line tb-box-r col-xs-12">
                     <div class="o_content_event_applies"/>
                 </div>
             </div>
@@ -270,7 +342,7 @@
 
     <t t-name="content_event_affairs">
         <h4>待我处理事项</h4>
-        <div class="tb-p-10">
+        <div class="tb-p-10"><div class="tb-h">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -287,7 +359,7 @@
                                                     <td><t t-esc="affair.name"/> </td>
                                                     <td>
                                                         <t t-if="affair.defer">
-                                                            <span class="defer">延期<t t-esc="affair.deferdays"/>天 </span>
+                                                            <span class="defer">停留<t t-esc="affair.deferdays"/>天 </span>
                                                         </t>
                                                         <t t-if="!affair.defer">
                                                             <span class="normal">正常</span>
@@ -301,11 +373,12 @@
                                             </t>
                                         </tbody>
                                     </table>
+        </div>
                                     <nav>
                                         <ul class="pager">
-                                            <li class="previous disabled" type="affairs" t-att-value="affpreviousPage"><a >上一页</a></li>
+                                            <li class="previous disabled" type="affairs" t-att-value="affpreviousPage"><a href="javascript:void(0);">上一页</a></li>
                                             <span class="pagination-info">共<t t-esc="afftotalPage"/>页/第<t t-esc="affcurrentPage"/>页</span>
-                                            <li class="next" type="affairs" t-att-value="affnextPage" ><a>下一页</a></li>
+                                            <li class="next" type="affairs" t-att-value="affnextPage" ><a href="javascript:void(0);">下一页</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -313,7 +386,7 @@
 
     <t t-name="content_event_applies">
         <h4>我申请的事项</h4>
-        <div class="tb-p-10">
+        <div class="tb-p-10"><div class="tb-h">
                                     <table class="table">
                                         <thead>
                                         <tr>
@@ -330,7 +403,7 @@
                                                     <td><t t-esc="apply.name"/> </td>
                                                     <td>
                                                         <t t-if="apply.defer">
-                                                            <span class="defer">延期<t t-esc="apply.deferdays"/>天</span>
+                                                            <span class="defer">停留<t t-esc="apply.deferdays"/>天</span>
                                                         </t>
                                                         <t t-if="!apply.defer">
                                                             <span class="normal">正常</span>
@@ -345,12 +418,12 @@
                                         </tbody>
 
                                     </table>
-
+</div>
                                     <nav>
                                         <ul class="pager">
-                                            <li class="previous" type="applies" t-att-value="previousPage"><a href="#">上一页</a></li>
+                                            <li class="previous" type="applies" t-att-value="previousPage"><a href="javascript:void(0);">上一页</a></li>
                                             <span class="pagination-info">共<t t-esc="totalPage"/>页/第<t t-esc="currentPage"/>页</span>
-                                            <li class="next" type="applies" t-att-value="nextPage" ><a>下一页</a></li>
+                                            <li class="next" type="applies" t-att-value="nextPage" ><a href="javascript:void(0);">下一页</a></li>
                                         </ul>
                                     </nav>
 
@@ -359,7 +432,7 @@
 
     <t t-name="home">
         <div>
-            <div class="o_main_header"/>
+            <div class="o_main_header hidden-xs"/>
             <div class="dodo-container clearfix">
                 <div class="o_main_sidebar"/>
                 <div class="o_main_content"/>

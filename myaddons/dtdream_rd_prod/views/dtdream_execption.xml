@@ -50,7 +50,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'default_flag':True}</field>
-            <field name="domain">['|','|','|',('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)]</field>
+            <field name="domain">['|','|','|','|',('followers_user','=',uid),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)]</field>
             <field name="search_view_id" ref="view_dtdream_execption_filter"/>
         </record>
 
@@ -118,5 +118,48 @@
                 </tree>
             </field>
         </record>
+
+    <record id="act_dtdream_exception_w" model="ir.actions.act_window">
+        <field name="name">例外</field>
+        <field name="res_model">dtdream_execption_w</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+        <record id="view_dtdream_exception_w_from" model="ir.ui.view">
+            <field name="name">view.dtdream.exception.from.w</field>
+            <field name="model">dtdream_execption_w</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="dsp,yjsp,Nyjsp,ejsp,Nejsp,ysp" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name='version' domain="[('proName','=',name)]"/>
+                            </group>
+                            <group>
+                                <field name="approver_fir" readonly="1"/>
+                                <field name="approver_sec" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="is_apped" invisible="1"/>
+                            <field name="reason"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
     </data>
 </openerp>

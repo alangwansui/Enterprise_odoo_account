@@ -113,5 +113,11 @@
             <field name="signal">btn_reject</field>
         </record>
 
+        <record id="trans_demand_approve_plan_doing" model="workflow.transition">
+            <field name="act_from" ref="act_demand_approve"/>
+            <field name="act_to" ref="act_plan_doing"/>
+            <field name="signal">btn_skip</field>
+        </record>
+
     </data>
 </openerp>

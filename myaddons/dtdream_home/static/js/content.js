@@ -67,14 +67,20 @@ var Related = Widget.extend({
     search:function(){
         $('.o_user_search').html('');
         var full_name = $('.o_full_name').val().trim();
+        var nick_name = $('.o_nick_name').val().trim();
         var job_number = $('.o_job_number').val().trim();
         var condition = ""
-        if ((full_name == undefined || full_name == "") && (job_number == undefined || job_number == "") ){
+        if ((full_name == undefined || full_name == "")
+            && (nick_name == undefined || nick_name == "")
+            && (job_number == undefined || job_number == "") ){
             return;
         }
         condition = []
         if (full_name){
             condition.push(['full_name', '=', full_name]);
+        }
+        if (nick_name){
+            condition.push(['nick_name', '=', nick_name]);
         }
         if (job_number){
             condition.push(['job_number', '=', job_number]);
@@ -159,7 +165,7 @@ var Content = Widget.extend({
                     trigger:  'axis'
                 },
                 legend:  {
-                    data:['申请项目','完成项目'],
+                    data:['申请事项','完成事项'],
                     top:'10%',
                     right:'1%',
                 },
@@ -190,7 +196,7 @@ var Content = Widget.extend({
 
                 series:  [
                     {
-                        name:'申请项目',
+                        name:'申请事项',
                         type:'line',
                         smooth:true,
                         areaStyle: {normal: {
@@ -204,7 +210,7 @@ var Content = Widget.extend({
                         data: total || [4,  5,  10,  35,  23,  11,  23,  5,  10,  35,  23,2]
                     },
                     {
-                        name:'完成项目',
+                        name:'完成事项',
                         type:'line',
                         smooth:true,
                         areaStyle: {normal: {
@@ -250,12 +256,12 @@ var Content = Widget.extend({
                             icon:'pin',
                         },
                         {
-                            name:'补助金',
+                            name:'工资',
                             icon:'pin',
                         },
                     ],
 
-                    right:'12%',
+                    right:'30%',
                     textStyle:{
                         fontStyle:'normal',
                         fontSize:12,
@@ -295,7 +301,7 @@ var Content = Widget.extend({
                         data:[
                             {value:grants.you,  name:'油卡'},
                             {value:grants.fan,  name:'中大卡'},
-                            {value:grants.cash,  name:'补助金'}
+                            {value:grants.cash,  name:'工资'}
                         ]
                     }
                 ]
@@ -308,16 +314,15 @@ var Content = Widget.extend({
             .filter([['valid','=', true]])
             .all({'timeout': 3000, 'shadow': true})
             .then(function (result) {
-                    if (result.length == 0){
-                        result = [];
-                        result.push({url:"javascript:void(0)", content:"亲,今天没有重大事情发送哦!"});
+                    if (result.length != 0){
+                        $('.o_content_notice').html('');
+                        var $info = $(QWeb.render('content_notice', {
+                            'notices': result
+                        }));
+                        $info.appendTo('.o_content_notice');
+                        $('.newsticker').newsticker();
                     }
-                    $('.o_content_notice').html('');
-                    var $info = $(QWeb.render('content_notice', {
-                        'notices': result
-                    }));
-                    $info.appendTo('.o_content_notice');
-                    $('.newsticker').newsticker();
+
                 }
             );
 
@@ -452,7 +457,7 @@ var Content = Widget.extend({
             else{
                 $("li.previous[type='affairs']").removeClass('disabled')
             }
-            if (parseInt(currentPage)+1>applyData['totalPage']){
+            if (parseInt(currentPage)+1>affairData['totalPage']){
                 $("li.next[type='affairs']").addClass('disabled')
             }else{
                 $("li.next[type='affairs']").removeClass('disabled')

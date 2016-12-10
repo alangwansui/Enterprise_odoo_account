@@ -85,7 +85,7 @@
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="0"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
-             <field name="domain_force">['|','|','|','|','|',('department','=',user.employee_ids.department_id.id),('create_uid','=',user.id),('current_approver_user','=',user.id),
+             <field name="domain_force">['|','|','|','|','|','|',('role_person','=',user.id),('department','=',user.employee_ids.department_id.id),('create_uid','=',user.id),('current_approver_user','=',user.id),
                  ('his_app_user','=',user.id),('followers_user','=',user.id),('department_2','=',user.employee_ids.department_id.id)]</field>
         </record>
 
@@ -108,7 +108,7 @@
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="0"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
-             <field name="domain_force">['|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),
+             <field name="domain_force">['|','|','|','|',('role_person','=',user.id),('create_uid','=',user.id),('current_approver_user','=',user.id),
                  ('his_app_user','=',user.id),('followers_user','=',user.id)]</field>
         </record>
 
@@ -131,7 +131,7 @@
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="0"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
-             <field name="domain_force">['|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),
+             <field name="domain_force">['|','|','|','|',('role_person','=',user.id),('create_uid','=',user.id),('current_approver_user','=',user.id),
                  ('his_app_user','=',user.id),('followers_user','=',user.id)]</field>
         </record>
 
@@ -154,7 +154,7 @@
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="0"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
-             <field name="domain_force">['|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),
+             <field name="domain_force">['|','|','|','|',('role_person','=',user.id),('create_uid','=',user.id),('current_approver_user','=',user.id),
                  ('his_app_user','=',user.id),('followers_user','=',user.id)]</field>
         </record>
 
@@ -177,7 +177,7 @@
              <field name="perm_write" eval="0"/>
              <field name="perm_unlink" eval="0"/>
              <field name="groups" eval="[(4, ref('dtdream_rd_prod.group_dtdream_rd_user_all'))]"/>
-             <field name="domain_force">['|','|','|',('create_uid','=',user.id),('current_approver_user','=',user.id),
+             <field name="domain_force">['|','|','|','|',('role_person','=',user.id),('create_uid','=',user.id),('current_approver_user','=',user.id),
                  ('his_app_user','=',user.id),('followers_user','=',user.id)]</field>
         </record>
 

@@ -2,16 +2,21 @@
 import openerp
 from openerp import http, exceptions
 
+import logging
+_logger = logging.getLogger(__name__)
+
 class DtdreamEcard(http.Controller):
 
     @http.route('/dtdream_ecard/employee', type='json', auth="none", methods=['POST'], csrf=False)
     def index(self, **kw):
 
         if http.request.jsonrequest['key'] != "wAiZidtXG7iZJoOY8":
+            _logger.warning("key is invalid")
             raise exceptions.ValidationError("ERROR AUTH")
 
         ecard_url = openerp.tools.config['ecard_url']
         if http.request.httprequest.remote_addr not in ecard_url:
+            _logger.warning(http.request.httprequest.remote_addr)
             return exceptions.ValidationError("ERROR Client")
 
         http.request.uid = openerp.SUPERUSER_ID

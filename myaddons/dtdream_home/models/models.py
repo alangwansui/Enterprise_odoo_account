@@ -50,20 +50,35 @@ class dtdream_home(models.Model):
                 ["%s-%02d" % (datetime.today().year, m) for m in range(1, datetime.today().month+1)]
         total = [0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0]
         completed = [0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0]
+        apps_list = []
         user_id = user.get('user_id', None)
+        em = self.env['hr.employee'].search([('user_id', '=', user_id)])
+        if len(em) == 0:
+            grants = {'you': 0, 'fan': 0, 'cash': 0}
+            return {'month': month, 'total': total, 'completed': completed, 'grants': grants}
         models = config.get_config_model_list()
         for model in models:
-            for index, date in enumerate(month):
+            try:
                 if self.env['%s' % model['model']][model['shenqingren']]._name == 'hr.employee':
-                    apps = self.env['%s' % model['model']].sudo().search([('%s.user_id.id' % model['shenqingren'], '=', user_id),
-                                                                  ('create_date', 'like', date)])
+                    apps = self.env['%s' % model['model']].sudo().search([('%s.user_id.id' % model['shenqingren'], '=', user_id)])
                 else:
-                    apps = self.env['%s' % model['model']].sudo().search([('%s.id' % model['shenqingren'], '=', user_id),
-                                                                  ('create_date', 'like', date)])
-                for app in apps:
-                    total[index] += 1
-                    if app[model['state_name']] == model['state'] and app.write_date[:7] == date:
-                        completed[index] += 1
+                    apps = self.env['%s' % model['model']].sudo().search([('%s.id' % model['shenqingren'], '=', user_id)])
+
+                if model['shenqingren']=="PDT":
+                    apps=[x for x in apps if x[model['shenqingren']]==em]
+
+                if apps:
+                    apps_list.extend(map(lambda x: [model['state_name'], model['state'], x], list(apps)))
+            except Exception,e:
+                pass
+        for state_name, state, app in apps_list:
+            date = app.create_date[:7]
+            if date in month:
+                total_index = month.index(date)
+                total[total_index] += 1
+            if app[state_name] == state and app.write_date[:7] in month:
+                completed_index = month.index(app.write_date[:7])
+                completed[completed_index] += 1
         cr = self.env['dtdream.grants.allocation'].search([('create_uid', '=', user_id)])
         grants = {'you': cr.you, 'fan': cr.fan, 'cash': cr.cash}
         print "========================get_month_record=====================", time.clock() - t_in

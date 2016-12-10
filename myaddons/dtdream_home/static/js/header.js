@@ -6,8 +6,8 @@ var session = require('web.session');
 var Widget = require('web.Widget');
 var time_module = require('web.time');
 var Model = require('web.Model');
-//var UserMenu = require('dtdream_home.user');
-var UserMenu = require('web.UserMenu');
+var UserMenu = require('dtdream_home.user');
+//var UserMenu = require('web.UserMenu');
 
 var WebClient = require('web.WebClient');
 var QWeb = core.qweb;

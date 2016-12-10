@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<odoo>
+        <record id="crm_lead_won_view_form" model="ir.ui.view">
+            <field name="name">crm.lead.won.form</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <form string="项目中标">
+                    <group class="oe_title">
+                        <field name="bidding_channel"/>
+                        <field name="if_zhitou"/>
+                        <field name="project_space" mode="tree">
+                            <tree string="项目空间" delete="0" create="0" editable="bottom">
+                                <field name="categ_id_parent" options="{'no_open': True}" readonly="1"/>
+                                <field name="bidding_space" />
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="categ_id_parent" options="{'no_open': True}" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="bidding_space" />
+                                    </group>
+                                </group>
+                            </form>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="action_won_apply" string="确定" type="object" class="btn btn-sm btn-primary"/>
+                        <button string="取消" class="btn btn-sm btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--<record id="crm_lead_won_action" model="ir.actions.act_window">-->
+            <!--<field name="name">Lead Won</field>-->
+            <!--<field name="type">ir.actions.act_window</field>-->
+            <!--<field name="res_model">crm.lead</field>-->
+            <!--<field name="view_mode">form</field>-->
+            <!--<field name="view_id" ref="crm_lead_won_view_form"/>-->
+            <!--&lt;!&ndash;<field name="res_id">context.get("active_id")</field>&ndash;&gt;-->
+            <!--<field name="target">new</field>-->
+        <!--</record>-->
+
+        <!--<record model="ir.actions.server" id="crm_lead_won_action">-->
+            <!--<field name="name">项目中标</field>-->
+            <!--<field name="model_id" ref="model_crm_lead"/>-->
+            <!--<field name="code">-->
+                <!--action = {-->
+                <!--'name':'项目中标',-->
+                <!--'type': 'ir.actions.act_window',-->
+                <!--'view_type': 'form',-->
+                <!--'view_mode': 'form',-->
+                <!--'res_model': 'crm.lead',-->
+                <!--'res_id': context.get("active_id"),-->
+                <!--'context':context-->
+                <!--}-->
+            <!--</field>-->
+        <!--</record>-->
+</odoo>

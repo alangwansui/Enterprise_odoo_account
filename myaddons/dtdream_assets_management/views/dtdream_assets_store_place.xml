@@ -1,0 +1,23 @@
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="dtdream_assets_store_place_tree">
+      <field name="name">dtdream.assets.store.place</field>
+      <field name="model">dtdream.assets.store.place</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="act_dtdream_assets_store_placce_config" model="ir.actions.act_window">
+            <field name="name">存放地</field>
+            <field name="res_model">dtdream.assets.store.place</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+    </record>
+
+  </data>
+</openerp>

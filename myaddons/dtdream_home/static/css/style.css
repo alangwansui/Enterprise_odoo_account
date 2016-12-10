@@ -130,6 +130,7 @@ h6 {
   background-color: #fff;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.39);
   z-index: 999;
+      position: fixed;
 }
 .dodo-header .logo {
   float: left;
@@ -211,10 +212,15 @@ h6 {
   margin-top: .465rem;
   margin-left: .387rem;
 }
+.dodo-header .item-bar .img-circle{
+  width: 32px;
+}
+
 /*dodo-content*/
+.o_main_content .content .o_content{padding-top: 2.325rem;}
 .dodo-container {
   overflow: hidden;
-  min-width: 1400px;
+ /* min-width: 1400px; 响应*/
   height: 100%;
   width:100%;
 }
@@ -238,7 +244,8 @@ h6 {
   overflow: hidden;
 }
 .dodo-container .p30 {
-  padding: 1.162rem .93rem .93rem 1.162rem;
+  /*padding: 1.162rem .93rem .93rem 1.162rem;*/
+  padding: 1.162rem .93rem 0rem 1.162rem;
 }
 .dodo-container .p10 {
   padding: 0.387rem;
@@ -252,9 +259,13 @@ h6 {
   background-color: #333645;
   float: left;
   font-size: .542rem;
-  margin-bottom: -10000px;
-  padding-bottom: 10000px;
+  /*margin-bottom: -10000px;*/
+  /*padding-bottom: 10000px;*/
   color: #cdcdcd;
+      height: 100%;
+    position: fixed;
+    padding-top: 2.325rem;
+    overflow:auto;
 }
 .dodo-container .sidebar a {
   text-decoration: none;
@@ -307,6 +318,7 @@ h6 {
   margin-left: 8.72rem;
   margin-bottom: -10000px;
   padding-bottom: 10000px;
+  position: relative;
 }
 .dodo-container .content .main {
   margin-right: 9.689rem;
@@ -326,7 +338,7 @@ h6 {
 }
 .dodo-container .content .main .dashboard .count-a {
   float: left;
-  width: 65%;
+  width: 60%;
   overflow: hidden;
   padding-top: .775rem;
   padding-left: .775rem;
@@ -376,7 +388,7 @@ h6 {
 }
 .dodo-container .content .main .dashboard .count-b {
   float: right;
-  width: 35%;
+  width: 40%;
   overflow: hidden;
   padding-top: .775rem;
 }
@@ -423,18 +435,23 @@ h6 {
 .dodo-container .content .main .event-table .tb-box-l {
   float: left;
   width: 48.8%;
+  /*min-width:11.955rem;*/
 }
 .dodo-container .content .main .event-table .tb-box-r {
   float: right;
   width: 48.8%;
 }
+
+.dodo-container .content .main .event-table .tb-h{min-height: 8.4rem}
+
 .dodo-container .content .main .event-table h4 {
   font-size: .62rem;
   color: #4a4a4a;
-  margin: .387rem auto .581rem .775rem;
+ /* margin: .387rem auto .581rem .775rem;*/
+  margin: .387rem auto .581rem 0;
 }
 .dodo-container .content .main .event-table .tb-p-10 {
-  padding: 0 .387rem;
+  /*padding: 0 .387rem;*/
 }
 .dodo-container .content .main .event-table table {
   margin-bottom: 0;
@@ -469,7 +486,7 @@ h6 {
 }
 .dodo-container .content .main .event-table .defer,
 .dodo-container .content .main .event-table .normal {
-  width: 2.015rem;
+ padding:0 0.193rem;
   color: #ffffff;
   line-height: .775rem;
   float: left;
@@ -485,8 +502,11 @@ h6 {
 .dodo-container .content .related {
   float: right;
   width: 9.689rem;
-  padding-top: 1.162rem;
+  /*padding-top: 1.162rem;*/
   padding-right: 1.162rem;
+   /*margin-top: 1.317rem;*/
+ display: inline;
+margin-top: 5.744rem;
 }
 .dodo-container .content .related .btn {
   height: 1.317rem;
@@ -503,6 +523,12 @@ h6 {
   min-height: 11.24rem;
   overflow: hidden;
 }
+.dodo-container .content .related  .address label{font-weight: normal;}
+.dodo-container .content .o_footer{
+  position: absolute;
+  width: 100%;
+  bottom:-2.325rem;
+}
 .dodo-container .content .footer {
   width: 100%;
   background-color: #e1e2e6;
@@ -511,6 +537,222 @@ h6 {
   line-height: 2.325rem;
   float: left;
   display: inline;
-  margin-top: .93rem;
+  /*margin-top: .93rem;*/
   padding-left: .775rem;
+}
+.nav-bar{display:none;}
+
+/*修改密码弹框*/
+.pw-box-body{
+padding:20px 0 0 0;
+}
+.pw-box-body  label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: right;
+    font-weight:bold;
+    }
+.pw-box-body .form-group{
+display:table;width:100%;}
+.pw-box-body .form-group .col-sm-6{
+padding-left:0px;
+}
+.pw-box-body .error-text{
+font-size:12px;
+line-height:1.4;
+color:red;
+padding-left:0;
+display:none;
+}
+
+
+/*mobile*/
+@media (max-width:768px) {
+ .dodo-container .content .main {
+margin-right: 0;
+}
+.dodo-container .content {
+    margin-left: 0;
+
+    }
+
+    .dodo-container .content .main .event-table .tb-box-l ,.dodo-container .content .main .event-table .tb-box-r{
+    float: normal;
+    width: 100%;
+    /* min-width: 11.955rem; */
+    margin-bottom:20px;
+
+ }
+.dodo-container .p30 {
+    /* padding: 1.162rem .93rem .93rem 1.162rem; */
+   padding: 1.162rem 0 0 0;
+}
+.dodo-container .content .main .notice .newsticker .newsticker-list .newsticker-item a {
+    text-decoration: none;
+    font-size:.62rem;
+}
+.nav-bar{display:block;}
+.o_main_content .content .o_content {
+    padding-top: 0;
+}
+
+.nav-bar{
+width:100%;
+min-height:44px;
+background-color:#51bcec;
+color:white;
+-webkit-box-shadow: 0 0 8px #666;
+    box-shadow: 0 0 8px #666;
+}
+.nav-bar a{
+color:white;
+text-decoration:none;
+}
+.nav>li>a:hover, .nav>li>a:focus{
+background-color:#51bcec;
+}
+.nav-bar .nav-toggle{
+text-decoration:none;
+color:white;
+display:block;
+width:44px;
+height:44px;
+background:url('../img/hamburger.png') no-repeat 50% 43%;
+
+    -webkit-background-size: 80px 80px !important;
+    -moz-background-size: 80px 80px !important;
+    -o-background-size: 80px 80px !important;
+    background-size: 80px 80px !important;
+}
+}
+
+.nav-bar .navbar-collapse {
+    border-color: #31b0e8;
+
+}
+.nav-bar .dodo-logo{
+float:right;
+    margin-top: 10px;
+ margin-right:10px;
+
+}
+.nav-bar .dodo-logo img{
+
+ width: 80px;
+}
+
+.nav-bar .navbar-collapse ul {
+padding:10px 0;
+}
+.nav-bar .navbar-collapse ul li {
+line-height:40px;
+margin-left:20px;
+float:left;
+width:40%;
+}
+.nav-bar .navbar-collapse ul li i{
+margin-right: 0.387rem;
+}
+
+
+.relatelinks {
+  text-align: left;
+  font-size: 12px;
+  padding-bottom: 15px;
+}
+.relatelinks ul li {
+  float: left;
+  width: 20%;
+  padding-left: 15px;
+  line-height: 2;
+  list-style-type: none;
+}
+.relatelinks ul li a:link,
+.relatelinks ul li a:visited {
+  text-decoration: none;
+}
+.relatelinks ul li a:hover {
+  text-decoration: none;
+}
+
+.relatelinks h4 {
+  text-align: left;
+  margin-top: 15px;
+}
+
+
+.relatelinks {
+  text-align: center;
+  font-size: 12px;
+}
+.relatelinks .padding-top-bottom-30 {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.relatelinks h5 {
+  font-size: .62rem;
+  color: #4a4a4a;
+  margin: .387rem auto .581rem auto;
+  font-weight: 100;
+}
+.relatelinks p {
+  line-height: 1.8;
+}
+.relatelinks p a:link,
+.relatelinks p a:visited {
+  text-decoration: none;
+}
+.relatelinks p a:hover {
+  text-decoration: none;
+}
+.relatelinks .icon {
+  height: 40px;
+}
+.relatelinks .ft-tip {
+  position: relative;
+}
+.relatelinks .ft-tip .title {
+  display: none;
+  height: 84px;
+  width: 175px;
+  color: #ffffff;
+  border-radius: 4px;
+  text-align: left;
+  padding: 10px;
+  background: url(../img/bg-ft-title.png) no-repeat top left;
+  font-size: 10px;
+  line-height: 18px;
+}
+.relatelinks .ft-tip:hover .title {
+  display: block;
+  position: absolute;
+  top: -85px;
+  left: -50px;
+  z-index: 999;
+}
+.relatelinks,.event-table{
+margin-bottom:.93rem;
+}
+
+.relatelinks .ft-tip {
+  position: relative;
+}
+.relatelinks .ft-tip .title {
+  display: none;
+  height: 84px;
+  width: 175px;
+  color: #ffffff;
+  border-radius: 4px;
+  text-align: left;
+  padding: 10px;
+  background: url(../img/bg-ft-title.png) no-repeat top left;
+  font-size: 10px;
+  line-height: 18px;
+}
+.relatelinks .ft-tip:hover .title {
+  display: block;
+  position: absolute;
+  top: -85px;
+  left: -50px;
+  z-index: 999;
 }

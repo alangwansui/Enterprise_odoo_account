@@ -104,15 +104,22 @@ class dtdream_budget(models.Model):
             self.is_applicant = True
         else:
             self.is_applicant =False
-        self.manager=self.env['hr.employee'].search([('id','=',self.applicant.department_id.manager_id.id)])
+
+    @api.constrains('applicant')
+    def get_manager_and_signer(self):
+        if self.applicant.department_id.manager_id.id:
+            self.manager=self.env['hr.employee'].search([('id','=',self.applicant.department_id.manager_id.id)])
+        else:
+            raise ValidationError("您的部门主管没有配置，请联系hr进行配置。")
+
         if self.applicant.department_id.budget_sign_one.id:
             self.signer_one=self.env['hr.employee'].search([('id','=',self.applicant.department_id.budget_sign_one.id)])
         else:
             raise ValidationError("您的部门预算权签人没有配置，请联系预算业务管理员进行配置。")
+
         if self.applicant.department_id.budget_sign_two.id:
             self.signer_two=self.env['hr.employee'].search([('id','=',self.applicant.department_id.budget_sign_two.id)])
-        if not self.env['hr.employee'].search([('id','=',self.applicant.department_id.manager_id.id)]):
-            raise ValidationError("您的部门主管没有配置，请联系hr进行配置。")
+
 
     is_applicant = fields.Boolean(string='是否申请人',default=True,compute=compute_is_applicant)
     his_handler=fields.Many2many('hr.employee',string="历史审批人")
@@ -152,7 +159,8 @@ class dtdream_budget(models.Model):
     expensed_xingz=fields.Integer(string='已报销行政平台费(元)')
 
     def _default_fee_travel(self):
-        return [(0, 0, {'travel_travel': 0.00, 'travel_bus': 0.00, 'travel_mobile': 0.00, 'travel_remark': ''})]
+        travel_mobile = self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).standard_mobile_fee
+        return [(0, 0, {'travel_travel': 0.00, 'travel_bus': 0.00, 'travel_mobile': travel_mobile, 'travel_remark': ''})]
     def _default_fee_dzx(self,x,y,z):
         return [(0, 0, {x: '合计', y: 0.00, z: ''})]
     fee_travel = fields.One2many('dtdream.budget.travel','travel_budget_id',string='公务差旅费',default=_default_fee_travel,track_visibility='onchange')

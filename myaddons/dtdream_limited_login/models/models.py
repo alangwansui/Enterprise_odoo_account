@@ -35,9 +35,9 @@ class dtdream_limited_login(models.Model):
 
 class Home_inher(openerp.addons.web.controllers.main.Home):
 
-    # @http.route('/', type='http', auth="none")
-    # def index(self, s_action=None, db=None, **kw):
-    #     return http.local_redirect('/index', query=request.params, keep_hash=True)
+    @http.route('/', type='http', auth="none")
+    def index(self, s_action=None, db=None, **kw):
+        return http.local_redirect('/index', query=request.params, keep_hash=True)
 
     @http.route('/web/login', type='http', auth="none")
     def web_login(self, redirect=None, **kw):
@@ -56,6 +56,13 @@ class Home_inher(openerp.addons.web.controllers.main.Home):
             values['databases'] = None
 
         if request.httprequest.method == 'POST':
+
+            # modify by g0335, resolve ODOO-644
+            import re
+            if re.match(r"^[\w\-]+$", request.params['login']) is None:
+                values['error'] = "Wrong login/password"
+                return request.render('web.login', values)
+
             old_uid = request.uid
             uid = request.session.authenticate(request.session.db, request.params['login'], request.params['password'])
             user = request.env['res.users'].sudo().search([('login','=',request.params['login'])])
@@ -66,8 +73,8 @@ class Home_inher(openerp.addons.web.controllers.main.Home):
                     if user:
                         user.fail_times = 0
                     if not redirect:
-                        # redirect = '/index'
-                        redirect = '/web'
+                        redirect = '/index'
+                        # redirect = '/web'
                     return http.redirect_with_hash(redirect)
                 else:
                     if user and user.id != 1:

@@ -8,9 +8,7 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <group>
-                        <field name="liyou" placeholder="请填写意见"/>
-                    </group>
+                    <field name="liyou" placeholder="请填写意见"/>
                 </group>
                 <footer>
                     <button name="btn_confirm" type="object"
@@ -36,9 +34,10 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <group>
-                        <field name="liyou" placeholder="请填写意见"/>
-                    </group>
+                    <field name="if_view_gongkan" invisible="1"/>
+                    <field name="liyou" placeholder="请填写意见"/>
+                    <field name="if_gongkan" attrs="{'invisible':[('if_view_gongkan','=',False)]}"/>
+                    <field name="gongkan_content"  placeholder="请填写工勘内容" attrs="{'invisible':['|',('if_gongkan','!=','1'),('if_view_gongkan','=',False)]}"/>
                 </group>
                 <footer>
                     <button name="btn_confirm" type="object"
@@ -49,14 +48,14 @@
         </field>
     </record>
 
-     <record id="act_report_approve_wizard" model="ir.actions.act_window">
-        <field name="name">同意</field>
-        <field name="res_model">dtdream.report.approve.wizard</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-    </record>
+     <!--<record id="act_report_approve_wizard" model="ir.actions.act_window">-->
+        <!--<field name="name">同意</field>-->
+        <!--<field name="res_model">dtdream.report.approve.wizard</field>-->
+        <!--<field name="type">ir.actions.act_window</field>-->
+        <!--<field name="view_type">form</field>-->
+        <!--<field name="view_mode">form</field>-->
+        <!--<field name="target">new</field>-->
+    <!--</record>-->
 
       <record id="view_dtdream_report_submit_wizard_form" model="ir.ui.view">
         <field name="name">view.dtdream.report.submit.wizard.form</field>
@@ -78,13 +77,13 @@
     </record>
 
      <record id="btn_submit" model="ir.actions.act_window">
-        <field name="name">提交</field>
-        <field name="res_model">dtdream.report.submit.wizard</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-    </record>
+         <field name="name">提交</field>
+         <field name="res_model">dtdream.report.submit.wizard</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="target">new</field>
+     </record>
 
     </data>
 </openerp>

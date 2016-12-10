@@ -1,0 +1,49 @@
+<openerp>
+    <data>
+        <record id="act_dtdream_information_type" model="ir.actions.act_window">
+            <field name="name">类别配置</field>
+            <field name="res_model">dtdream.information.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="dtdream_information_type_tree" model="ir.ui.view">
+            <field name="name">dtdream_information_type_tree</field>
+            <field name="model">dtdream.information.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="dtdream_information_type_form" model="ir.ui.view">
+            <field name="name">dtdream_information_type_form</field>
+            <field name="model">dtdream.information.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                 <field name="user"/>
+                                 <field name="admin"/>
+                            </group>
+                            <group>
+                                <field name="url"/>
+                                 <field name="passw"/>
+                                 <field name="type"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="desc"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -15,7 +15,8 @@ var Main = Widget.extend({
         "绩效":"performance",  "合同评审":"contract", "预算管理":"budget",  "专项审批":"special",
         "客户接待":"reception", "出差":"trip",        "费用报销":"expense", "IT需求管理":"it",
         "补助金管理":"subsidy", "开票":"account",     "人力资源":"hr",      "休假":"holiday",
-        "应用":"app",          "设置":"settings",    "员工":"hr",          "公告":"notice"},
+        "应用":"app",          "设置":"settings",    "员工":"hr",          "公告":"notice",
+        "电子名片":"ecard", "资产管理":"assets"},
         init: function (parent) {
 //            this._super(parent);
         },
@@ -44,11 +45,14 @@ var Main = Widget.extend({
                                 while (child.children && child.children.length) {
                                     child = child.children[0];
                                     if (child.action) {
-                                        menu.url = menu.url+"&amp;action_id="+child.action.substring(child.action.indexOf(',')+1)
+                                        menu.url = menu.url+"&action_id="+child.action.substring(child.action.indexOf(',')+1)
                                         menus.push(menu);
                                         break;
                                     }
                                 }
+                            } else if(child.action){
+                                menu.url = menu.url+"&action_id="+child.action.substring(child.action.indexOf(',')+1)
+                                menus.push(menu);
                             }
                         }
                     }

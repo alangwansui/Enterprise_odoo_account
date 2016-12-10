@@ -51,7 +51,7 @@
                 <tree editable="bottom" create="false" delete="false" class="zx_left zx_four" options="{'no_open':True}">
                   <field name="travel_travel" class="budget_int_cls" options="{'no_open':True}"></field>
                   <field name="travel_bus" class="budget_int_cls"></field>
-                  <field name="travel_mobile" class="budget_int_cls"></field>
+                  <field name="travel_mobile" class="budget_int_cls" readonly="1"></field>
                   <field name="travel_remark"></field>
                 </tree>
               </field>

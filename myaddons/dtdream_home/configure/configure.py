@@ -57,83 +57,103 @@ class dtdream_notice_config(object):
     __conf_list = [
         {
             "model": DTDREAM_EXPENSE_REPORT,
-            "fields": {'description': u'费用报销', 'shenqingren': 'create_uid_self', 'shenqishijian': 'create_date', 'dangqianzerenren': 'currentauditperson', 'state': 'yifukuan', 'state_name': 'state'}
+            "fields": {'description': u'费用报销', 'shenqingren': 'create_uid_self', 'shenqishijian': 'write_date', 'dangqianzerenren': 'currentauditperson', 'state': 'yifukuan', 'state_name': 'state'
+                       ,'stateList':("yifukuan","draft")}
         },
         {
             "model": DTDREAM_PROD_APPR,
-            "fields": {'description': u'研发产品', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'state_05', 'state_name': 'state'}
+            "fields": {'description': u'研发产品', 'shenqingren': 'PDT', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'state_05', 'state_name': 'state'
+                    , 'stateList': ("state_05","state_00")}
         },
         {
             "model": DTDREAM_RD_VERSION,
-            "fields": {'description': u'研发产品版本', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'released', 'state_name': 'version_state'}
+            "fields": {'description': u'研发版本', 'shenqingren': 'PDT', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'released', 'state_name': 'version_state'
+                , 'stateList': ("released","draft")}
         },
         {
             "model": DTDREAM_RD_REPLANNING,
-            "fields": {'description': u'版本重计划', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'state_03', 'state_name': 'state'}
+            "fields": {'description': u'版本重计划', 'shenqingren': 'create_uid', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'state_03', 'state_name': 'state'
+                , 'stateList': ("state_01","state_03")}
         },
         {
             "model": DTDREAM_EXECPTION,
-            "fields": {'description': u'研发例外申请', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'}
+            "fields": {'description': u'研发例外申请', 'shenqingren': 'create_uid', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'
+                , 'stateList': ("ysp","dsp")}
         },
         {
             "model": DTDREAM_PROD_SUSPENSION,
-            "fields": {'description': u'研发暂停申请', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date', 'dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'}
+            "fields": {'description': u'研发暂停申请', 'shenqingren': 'create_uid', 'shenqishijian': 'write_date', 'dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'
+                       , 'stateList': ("ysp","cg")}
         },
         {
             "model": DTDREAM_PROD_SUSPENSION_RESTORATION,
-            "fields": {'description': u'研发恢复暂停申请', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'}
+            "fields": {'description': u'研发恢复暂停申请', 'shenqingren': 'create_uid', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'
+                        , 'stateList': ("ysp","cg")}
         },
         {
             "model": DTDREAM_PROD_TERMINATION,
-            "fields": {'description': u'研发中止申请', 'shenqingren': 'create_uid', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'}
+            "fields": {'description': u'研发中止申请', 'shenqingren': 'create_uid', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'ysp', 'state_name': 'state'
+                , 'stateList': ("ysp","cg")}
         },
         {
             "model": DTDREAM_TRAVEL_CHUCHA,
-            "fields": {'description': u'出差', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'shenpiren', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'出差', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'shenpiren', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         {
             "model": DTDREAM_HR_BUSINESS,
-            "fields": {'description': u'外出公干', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver', 'state': '5', 'state_name': 'state'}
+            "fields": {'description': u'外出公干', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver', 'state': '5', 'state_name': 'state'
+                , 'stateList': ("5","-8")}
         },
         {
             "model": DTDREAM_SPECIAL_APPROVAL,
-            "fields": {'description': u'专项审批', 'shenqingren': 'applicant', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approver_user', 'state': 'state_05', 'state_name': 'state'}
+            "fields": {'description': u'专项审批', 'shenqingren': 'applicant', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'state_05', 'state_name': 'state'
+                , 'stateList': ("state_05","state_01")}
         },
         {
             "model": HR_HOLIDAYS,
-            "fields": {'description': u'休假', 'shenqingren': 'employee_id', 'shenqishijian': 'create_date','dangqianzerenren': 'current_shenpiren', 'state': 'validate', 'state_name': 'state'}
+            "fields": {'description': u'休假', 'shenqingren': 'employee_id', 'shenqishijian': 'write_date','dangqianzerenren': 'current_shenpiren', 'state': 'validate', 'state_name': 'state'
+                , 'stateList': ("validate","draft")}
         },
         {
             "model": DTDREAM_BUDGET,
-            "fields": {'description': u'预算管理', 'shenqingren': 'applicant', 'shenqishijian': 'create_date','dangqianzerenren': 'current_handler', 'state': '4', 'state_name': 'state'}
+            "fields": {'description': u'预算管理', 'shenqingren': 'applicant', 'shenqishijian': 'write_date','dangqianzerenren': 'current_handler', 'state': '4', 'state_name': 'state'
+                , 'stateList': ("4","0")}
         },
         {
             "model": DTDREAM_CONTRACT,
-            "fields": {'description': u'合同评审', 'shenqingren': 'applicant', 'shenqishijian': 'create_date','dangqianzerenren': 'current_handler_ids', 'state': '9', 'state_name': 'state'}
+            "fields": {'description': u'合同评审', 'shenqingren': 'applicant', 'shenqishijian': 'write_date','dangqianzerenren': 'current_handler_ids', 'state': '9', 'state_name': 'state'
+                , 'stateList': ("9","0")}
         },
         {
             "model": DTDREAM_CUSTOMER_RECEPTION,
-            "fields": {'description': u'客户接待', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approve', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'客户接待', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approve', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         {
             "model": DTDREAM_DEMAND_APP,
-            "fields": {'description': u'应用开发', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'current_approve', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'IT需求', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approve', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         {
             "model": LEAVING_HANDLE,
-            "fields": {'description': u'离职办理', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'cur_approvers', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'离职办理', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'cur_approvers', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         {
             "model": DTDREAM_HR_RESUME,
-            "fields": {'description': u'员工履历', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'resume_approve', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'员工履历', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'resume_approve', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         {
             "model": DTDREAM_HR_RESUME_MODIFY,
-            "fields": {'description': u'履历修改', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'resume_approve', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'履历修改', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'resume_approve', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         {
             "model": DTDREAM_HR_PERFORMANCE,
-            "fields": {'description': u'绩效', 'shenqingren': 'name', 'shenqishijian': 'create_date','dangqianzerenren': 'resume_approve', 'state': '99', 'state_name': 'state'}
+            "fields": {'description': u'绩效', 'shenqingren': 'name', 'shenqishijian': 'write_date','dangqianzerenren': 'resume_approve', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0")}
         },
         # {
         #     "model": DTDREAM_SALE_BUSINESS_REPORT,

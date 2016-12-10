@@ -26,11 +26,28 @@ class ReportApproveWizard(models.TransientModel):
     _name = 'dtdream.report.approve.wizard'
 
     liyou = fields.Text("意见")
+    if_gongkan = fields.Selection([
+        ('1','已工勘'),
+        ('0','未工勘'),
+    ],string="是否已工勘")
+    gongkan_content = fields.Text(string="工勘内容")
+    if_view_gongkan = fields.Boolean(string="是否显示工勘")
+
+    # @api.onchange('if_gongkan')
+    # def _onchange_id_gongkan(self):
+    #     if self.if_gongkan == "1" and self.gongkan_content == u"未工勘":
+    #         self.gongkan_content = ""
 
     @api.one
     def btn_confirm(self):
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
         state_name =dict(self.env['dtdream.sale.business.report']._columns['state'].selection)[current_report.state]
+        if self.if_gongkan == '1':
+            current_report.if_gongkan = '1'
+            current_report.gongkan_content = self.gongkan_content
+        elif current_report.state == '2':
+            current_report.if_gongkan = '0'
+            current_report.gongkan_content = "未工勘"
         shenpiren_name = self.env['hr.employee'].search([('login','=',self.env.user.login)]).name
         self.env['report.handle.approve.record'].create({"shenpiren_version":current_report.shenpiren_version,"name":state_name,"result":"通过","shenpiren":shenpiren_name, "liyou":self.liyou,"report_handle_id":self._context['active_id']})
         if len(current_report.shenpiren)>1:

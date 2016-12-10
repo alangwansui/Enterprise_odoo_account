@@ -1,3 +1,6 @@
+/*.o_form_statusbar{*/
+    /*height : 37px*/
+/*}*/
 .dtdream_import{
     position : absolute;
     left : 68px;
@@ -9,6 +12,20 @@
     border-color: #81c48f;
     cursor: pointer;
     top : 4px;
+}
+.o_touch_device .dtdream_import{
+    position : absolute;
+    left : 78px;
+    padding : 7px 14px;
+    margin : -2px 3px 2px 0;
+    font-size : 13px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : 22px;
+
 }
 
 .dtdream_import:hover{
@@ -29,9 +46,30 @@
     cursor: pointer;
     top : 4px;
 }
+.o_touch_device .dtdream_download{
+    position : absolute;
+    left : 192px;
+    padding : 7px 14px;
+    margin : -2px 3px 2px 0;
+    font-size : 13px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : 22px;
+}
 
 .dtdream_download:hover{
     color: #fff;
     background-color: #5eb470;
     border-color: #57b06a;
+}
+
+.o_form_field {
+    word-break: break-all;
+}
+
+.o_form_field_number {
+    word-break: normal;
 }

@@ -52,7 +52,7 @@
     </record>
 
     <!-- Top menu item -->
-    <menuitem name="公告" groups="dtdream_notice.group_dtdream_notice_admin" id="dtdream_notice.menu_root"/>
+    <menuitem name="公告" groups="dtdream_notice.group_dtdream_notice_admin" id="dtdream_notice.menu_root" web_icon="dtdream_notice,static/src/img/dtdream_notice.png"/>
 
     <!-- menu categories -->
     <menuitem name="所有公告" id="dtdream_notice.view_all_notice" parent="dtdream_notice.menu_root" action="dtdream_notice.action_window"/>

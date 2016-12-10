@@ -33,7 +33,7 @@
             </field>
         </record>
 
-        <menuitem name="配置" sequence="200" id="dtdream_information_people_menu" parent="dtdream_information_security_root" action="act_dtdream_informatio_people" groups="group_dtdream_information_manager"></menuitem>
+
 
     </data>
 </openerp>

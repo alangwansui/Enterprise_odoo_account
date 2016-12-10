@@ -1,0 +1,156 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.yf .container > h6 {
+  font-size: 18px;
+  font-family: "Microsoft YaHei";
+  color: #7f7f7f;
+  text-align: justify;
+  font-weight: bold;
+}
+.yf {
+  margin-top: 20px;
+  font-family: "Microsoft YaHei", Arial, sans-serif;
+  width: 100%;
+}
+.yf a:hover {
+  text-decoration: none;
+}
+.yf .container {
+  width: 100%;
+}
+.yf .panelbox-blue {
+  background: url("../img/dodo_yf1.png") no-repeat 90% 45%;
+  background-color: #7e9fcc;
+  padding: 10px 0 0 0;
+}
+.yf .panelbox-blue .yf-more {
+  background-color: rgba(85, 114, 153, 0.4);
+  padding: 8px 20px 8px 15px;
+  color: #fff;
+}
+.yf .panelbox-red {
+  background: url("../img/dodo_yf2.png") no-repeat 90% 45%;
+  background-color: #cc7e7e;
+  padding: 10px 0 0 0;
+}
+.yf .panelbox-red .yf-more {
+  background-color: rgba(157, 95, 95, 0.4);
+  padding: 8px 20px 8px 15px;
+  color: #fff;
+}
+.yf .panel-footer h4 {
+  color: #fff;
+  font-family: "Microsoft YaHei";
+  font-size: 16px;
+  letter-spacing: 0;
+  text-align: left;
+  padding-left: 15px;
+}
+.yf .panel-footer .yf-t {
+  color: #fff;
+  font-family: "Microsoft YaHei";
+  font-size: 36px;
+  letter-spacing: 0;
+  text-align: left;
+  padding-bottom: 15px;
+  padding-left: 15px;
+}
+.yf .panel-footer span {
+  font-size: 14px;
+}
+.yf .panel-footer img {
+  float: right;
+}
+.yf .table caption {
+  font-size: 18px;
+  color: #444954;
+  letter-spacing: 0;
+  text-align: left;
+  margin-bottom: 25px;
+}
+.yf table thead {
+  letter-spacing: 0.58px;
+}
+.yf table tbody {
+  font-size: 12px;
+  letter-spacing: 0.49px;
+}
+.yf .state_delay {
+  display: inline-block;
+  background: #F06C73;
+  color: #fff;
+  border-radius: 2px;
+  padding: 0 15px;
+  line-height: 18px;
+}
+.yf .state_normal {
+  display: inline-block;
+  background: #76C470;
+  color: #fff;
+  border-radius: 2px;
+  padding: 0 15px;
+  line-height: 18px;
+}
+.yf .state_finish {
+  display: inline-block;
+  background: #9B9B9B;
+  color: #fff;
+  border-radius: 2px;
+  padding: 0 15px;
+  line-height: 18px;
+}
+.yf table tbody td:last-child {
+  /*color: #39b4e1;*/
+}
+.yf .pager {
+  width: 100%;
+  overflow: hidden;
+}
+.yf .pager .btn {
+  border-radius: 0;
+  width: 79px;
+  font-size: 12px;
+  color: #4a4a4a;
+  letter-spacing: 0.49px;
+  border-color: #979797;
+  border:1px solid #ccc;
+}
+.yf .pager .prev-btn {
+  width: 20%;
+  float: left;
+}
+.yf .pager p {
+  float: left;
+  width: 20%;
+  margin-left: 20%;
+}
+.yf .pager .next-btn {
+  width: 20%;
+  float: right;
+}
+.yf .table-div {
+  height: 270px;
+}
+.yf .interval {
+  margin-top: 20px;
+}
+.yf .table-responsive .table .bold {
+  font-weight: bold;
+  color:#7f7f7f;
+}
+.yf .mr{
+ margin-right:20px;
+}
+@media screen and (max-width: 750px) {
+  .yf .table-responsive table caption {
+    font-size: 14px;
+    margin-bottom:10px;
+  }
+  .yf .table-responsive table thead,
+  .yf .table-responsive table tbody {
+    font-size: 10px;
+  }
+}

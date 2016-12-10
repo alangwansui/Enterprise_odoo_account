@@ -1,0 +1,23 @@
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="dtdream_assets_supply_tree">
+      <field name="name">dtdream.assets.supply</field>
+      <field name="model">dtdream.assets.supply</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="act_dtdream_assets_supply_config" model="ir.actions.act_window">
+            <field name="name">供应商</field>
+            <field name="res_model">dtdream.assets.supply</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+    </record>
+
+  </data>
+</openerp>

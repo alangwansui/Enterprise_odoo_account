@@ -25,7 +25,7 @@ class dtdream_suspension_restoration_wizard(models.TransientModel):
     def btn_agree(self):
         active_id = self._context['active_id']
         current_suspension = self.env['dtdream.prod.suspension.restoration'].browse(active_id)
-        current_suspension.write({'current_approver_user': [(5,)],'state':'ysp'})
+        current_suspension.write({'current_approver_user': False,'state':'ysp'})
         self._message_poss(suspension=current_suspension,statechange=u'审批中->已审批',current_approver=current_suspension.current_approver,reason=self.reason,
                            result=u'同意')
         project = current_suspension.project
@@ -46,6 +46,10 @@ class dtdream_suspension_restoration_wizard(models.TransientModel):
                 version.signal_workflow('vzanting_to_kaifa')
             if version.version_state_old=='pending':
                 version.signal_workflow('vzanting_to_dfb')
+        if not current_suspension.version:
+            current_suspension.project.write({'is_zanting_backtjN':False})
+        else:
+            current_suspension.version.write({'is_zanting_backtjN':False})
 
     @api.multi
     def btn_disagree(self):
@@ -53,7 +57,7 @@ class dtdream_suspension_restoration_wizard(models.TransientModel):
             raise ValidationError(u'原因不能为空')
         active_id = self._context['active_id']
         current_suspension = self.env['dtdream.prod.suspension.restoration'].browse(active_id)
-        current_suspension.write({'current_approver_user': [(5,)],'state':'ysp'})
+        current_suspension.write({'current_approver_user': False,'state':'ysp'})
         self._message_poss(suspension=current_suspension,statechange=u'审批中->已审批',current_approver=current_suspension.current_approver,reason=self.reason,
                            result=u'不同意')
         if not current_suspension.version:
