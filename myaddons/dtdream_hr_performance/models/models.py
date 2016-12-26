@@ -369,7 +369,7 @@ class dtdream_hr_performance(models.Model):
                                    ('2', '4月-6月'),
                                    ('3', '7月-9月'),
                                    ('4', '10月-12月'),
-                                   ('5', '1月-12月')], string='考核时间范围')
+                                   ('5', '1月-12月')], string='考核时间范围', required=True)
     officer = fields.Many2one('hr.employee', string='一考主管', required=True)
     officer_sec = fields.Many2one('hr.employee', string='二考主管', required=True)
     result = fields.Char(string='考核结果')

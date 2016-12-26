@@ -118,7 +118,7 @@
                     <field name="name" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                     <field name="workid" invisible="True"/>
                     <field name="quarter" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
-                    <field name="time_range"/>
+                    <field name="time_range" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                     <field name="result" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                   </group>
                   <group>
