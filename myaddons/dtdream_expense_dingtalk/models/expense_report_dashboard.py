@@ -98,14 +98,14 @@ class dtdream_expense_report_count(models.Model):
         res['receipts_amount_is_finished'] = float('%0.2f' % res['receipts_amount_is_finished'])
 
         # receipts approvaling by me
-        res['receipts_approvaling_by_me'] = self.env['dtdream.expense.report'].search_count([('currentauditperson.user_id','=',self.env.user.id)])
+        res['receipts_approvaling_by_me'] = self.env['dtdream.expense.report'].search_count([('currentauditperson_userid','=',self.env.user.id)])
 
         # receipts approvaled by me
         res['receipts_approvaled_by_me'] = self.env['dtdream.expense.report'].search_count([('hasauditor.user_id', '=', self.env.user.id)])
 
         # receipts approvaled by not caiwu
         res['receipts_approvaling_by_not_caiwu'] = self.env['dtdream.expense.report'].search_count(
-            [('currentauditperson.user_id', '=', self.env.user.id),
+            [('currentauditperson_userid', '=', self.env.user.id),
              ('state', '!=', 'jiekoukuaiji'),
              ('state', '!=', 'daifukuan')])
 

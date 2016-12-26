@@ -32,7 +32,8 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
-            <field name="context">{'search_default_group_by_department_ver':'department','search_default_group_by_department_2_ver':'department_2','search_default_group_by_canpname':'name','search_default_group_by_version_numb':'version_numb'}</field>
+            <field name="context">{}</field>
+            <!--<field name="context">{'search_default_group_by_department_ver':'department','search_default_group_by_department_2_ver':'department_2','search_default_group_by_canpname':'name','search_default_group_by_version_numb':'version_numb'}</field>-->
         </record>
 
         <record id="act_dtdream_rd_version_from_dash" model="ir.actions.act_window">
@@ -53,7 +54,8 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
-            <field name="context">{'search_default_group_by_department_ver':'department','search_default_group_by_department_2_ver':'department_2','search_default_group_by_canpname':'name','search_default_group_by_version_numb':'version_numb'}</field>
+            <field name="context">{}</field>
+            <!--<field name="context">{'search_default_group_by_department_ver':'department','search_default_group_by_department_2_ver':'department_2','search_default_group_by_canpname':'name','search_default_group_by_version_numb':'version_numb'}</field>-->
         </record>
 
         <record id="act_dtdream_prod_version_all" model="ir.actions.act_window">
@@ -118,6 +120,10 @@
                             <button class="oe_stat_button" type="action" name="%(act_dtdream_exception_quickly_ver)d"
                                 icon="fa-strikethrough">
                                 <field string="例外" name="liwai_nums" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button" type="action" name="%(act_dtdream_replanning_quickly_ver)d"
+                                icon="fa-strikethrough">
+                                <field string="重计划" name="chongjihua_nums" widget="statinfo"/>
                             </button>
                         </div>
                         <group>

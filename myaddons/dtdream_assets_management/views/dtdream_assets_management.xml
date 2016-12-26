@@ -1,13 +1,84 @@
 <openerp>
   <data>
 
+    <record model="ir.module.category" id="module_dtdream_assets_management_group">
+        <field name="name">资产管理</field>
+        <field name="description">资产管理</field>
+        <field name="sequence">2</field>
+    </record>
+
+    <record id="dtdream_assets_manage" model="res.groups">
+        <field name="name">公司资产管理员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_dtdream_assets_management_group"/>
+    </record>
+
+    <record id="dtdream_assets_officer" model="res.groups">
+        <field name="name">部门资产管理员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_dtdream_assets_management_group"/>
+    </record>
+
+    <record id="view_dtdream_start_assets_check_from" model="ir.ui.view">
+        <field name="name">view.dtdream.start.assets.check.from</field>
+        <field name="model">dtdream.start.assets.check</field>
+        <field name="arch" type="xml">
+            <form string="启动盘点">
+                <p>确定启动盘点?</p>
+                <footer>
+                    <button string="确定" name="btn_start_assets_check" type="object" class="oe_highlight"/>
+                    <button string="取消" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+   <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_start_assets_check"
+          name="启动盘点"
+          src_model="dtdream.assets.management"
+          res_model="dtdream.start.assets.check"
+          view_id="view_dtdream_start_assets_check_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="dtdream_assets_manage"/>
+
+   <record id="view_assets_check_filter" model="ir.ui.view">
+        <field name="name">未盘点</field>
+        <field name="model">dtdream.assets.check</field>
+        <field name="arch" type="xml">
+            <search string="check">
+                <field name="name"/>
+                <field name="check_code"/>
+                <field name="asset_code"/>
+                <field name="asset_name"/>
+                <filter string="盘点中" name='checking' domain="[('state', '=', '1')]"/>
+            </search>
+         </field>
+    </record>
+
+   <record id="act_dtdream_assets_check" model="ir.actions.act_window">
+        <field name="name">资产盘点</field>
+        <field name="res_model">dtdream.assets.check</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="dtdream_assets_management.view_assets_check_filter"/>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_checking': 'state'}</field>
+    </record>
+
     <record id="view_dtdream_assets_management_form" model="ir.ui.view">
         <field name="name">view.dtdream.assets.management.form</field>
         <field name="model">dtdream.assets.management</field>
         <field name="arch" type="xml">
             <form>
               <header>
-                  <button name="%(act_dtdream_assets_check_start)d" string="启动盘点" type="action" class="oe_highlight"/>
+                  <button name="%(act_start_assets_check)d" string="启动盘点" type="action" class="oe_highlight"
+                  attrs="{'invisible':[('is_manage','=',False)]}"/>
               </header>
 
               <sheet>
@@ -20,39 +91,68 @@
 
                   <group string="基础信息">
                       <group>
-                          <field name="bill_num"/>
-                          <field name="name" options="{'no_create': True}"/>
-                          <field name="workid"/>
+                          <field name="name" options="{'no_create': True}" required="True"/>
+                          <field name="workid" invisible="1"/>
+                          <field name="bill_num" required="True"/>
+                          <field name="asset_serial"/>
+                          <field name="asset_type" options="{'no_create': True, 'no_open': True}" required="True"/>
+                          <field name="asset_desc" required="True"/>
+                          <field name="asset_spec" required="True"/>
+                          <field name="is_manage" invisible="1"/>
+                          <field name="is_officer" invisible="1"/>
                       </group>
                       <group>
-                          <field name="asset_name" options="{'no_create': True, 'no_open': True}"/>
-                          <field name="department" options="{'no_create': True, 'no_open': True}"/>
+                          <field name="department" options="{'no_create': True, 'no_open': True}" required="True"/>
+                          <field name="department_code"/>
+                          <field name="asset_name" options="{'no_create': True, 'no_open': True}" required="True"/>
+                          <field name="asset_code" required="True"/>
+                          <field name="in_use" required="True"/>
+                          <field name="enable_date" required="True"/>
                       </group>
                   </group>
 
                   <notebook>
-                      <page string="资产信息">
+                      <page string="资产信息" attrs="{'invisible':[('is_manage','=',False),('is_officer', '=',False)]}">
                           <group>
                               <group>
-                                  <field name="asset_code"/>
+                                  <field name="supplier" options="{'no_create': True, 'no_open': True}" domain="[('customer', '=', True)]"/>
                                   <field name="quality_date"/>
-                                  <field name="price"/>
-                                  <field name="in_use"/>
-                                  <field name="store_place" options="{'no_create': True, 'no_open': True}"/>
-                                  <field name="asset_desc"/>
+                                  <label for="quality_place_province" string="质保地点"/>
+                                  <div class="o_row">
+                                      <field name="quality_place_province" options="{'no_open': True,'no_create': True}" placeholder="请选择省份"/>
+                                      <field name="quality_place_city" options="{'no_open': True, 'no_create': True}" placeholder="请选择市区"/>
+                                  </div>
+                                  <field name="disprice_total"/>
+                                  <field name="discount_month"/>
                               </group>
                               <group>
-                                  <field name="asset_serial"/>
-                                  <field name="supplier" options="{'no_create': True, 'no_open': True}"/>
-                                  <field name="use_state"/>
-                                  <field name="enable_date"/>
-                                  <field name="mac"/>
+                                  <field name="account"/>
+                                  <field name="price" required="True"/>
+                                  <field name="discount"/>
+                                  <field name="disprice" required="True"/>
+                                  <field name="net_price"/>
                               </group>
                           </group>
                       </page>
-                      <page string="说明">
+                      <page string="说明" attrs="{'invisible':[('is_manage','=',False),('is_officer', '=',False)]}">
                           <group>
                               <field name="explain"/>
+                          </group>
+                      </page>
+                      <page string="盘点信息">
+                          <group>
+                              <group>
+                                  <field name="has_label" widget="radio" options="{'horizontal': true}" required="True"/>
+                                  <field name="unused" widget="radio" options="{'horizontal': true}" required="True"/>
+                                  <field name="selfcheck_date" readonly="1"/>
+                              </group>
+                              <group>
+                                  <field name="useable" widget="radio" options="{'horizontal': true}" required="True"/>
+                                  <field name="store_place" options="{'no_create': True, 'no_open': True}" required="True"/>
+                              </group>
+                          </group>
+                          <group colspan="12">
+                              <field name="mark"/>
                           </group>
                       </page>
                   </notebook>
@@ -75,8 +175,11 @@
                 <field name="asset_code"/>
                 <field name="asset_name"/>
                 <field name="name"/>
-                <field name="workid"/>
                 <field name="department"/>
+                <field name="has_label"/>
+                <field name="useable"/>
+                <field name="unused"/>
+                <field name="selfcheck_date"/>
             </tree>
         </field>
     </record>
@@ -102,50 +205,13 @@
         </field>
     </record>
 
-   <record id="view_dtdream_assets_check_start_from" model="ir.ui.view">
-        <field name="name">view.dtdream.assets.check.start.from</field>
-        <field name="model">dtdream.assets.check.start</field>
-        <field name="arch" type="xml">
-            <form string="启动盘点">
-                <p>确定启动盘点?</p>
-                <footer>
-                    <button string="确定" name="start_assets_check" type="object" class="oe_highlight"/>
-                    <button string="取消" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
-   <act_window
-          multi="True"
-          key2="client_action_multi"
-          id="act_dtdream_assets_check_start"
-          name="启动盘点"
-          src_model="dtdream.assets.management"
-          res_model="dtdream.assets.check.start"
-          view_id="view_dtdream_assets_check_start_from"
-          view_mode="form"
-          view_type="form"
-          target="new"/>
-
-    <record model="ir.module.category" id="module_dtdream_assets_management_group">
-        <field name="name">资产管理</field>
-        <field name="description">资产管理</field>
-        <field name="sequence">2</field>
-    </record>
-
-    <record id="dtdream_assets_manage" model="res.groups">
-        <field name="name">资产管理员</field>
-        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
-        <field name="category_id" ref="module_dtdream_assets_management_group"/>
-    </record>
-
     <menuitem name="资产管理" id="menu_dtdream_assets_management_root" icon="fa-user" web_icon="dtdream_assets_management,static/description/icon.jpg"/>
-    <menuitem name="资产管理" id="menu_dtdream_assets_management" parent="menu_dtdream_assets_management_root" action="act_dtdream_assets_management" sequence="12" groups="dtdream_assets_manage"/>
-    <menuitem name="资产盘点" id="menu_dtdream_assets_management_check" parent="menu_dtdream_assets_management_root" action="act_dtdream_assets_check" sequence="16"/>
+    <menuitem name="资产管理" id="menu_dtdream_assets_management" parent="menu_dtdream_assets_management_root" action="act_dtdream_assets_management" sequence="12"/>
+    <menuitem name="盘点" id="menu_dtdream_assets_management_check" parent="menu_dtdream_assets_management_root" action="act_dtdream_assets_check" sequence="16"/>
+    <menuitem name="MAC地址管理" id="menu_dtdream_assets_management_mac" parent="menu_dtdream_assets_management_root" action="act_dtdream_assets_mac_manage" sequence="16"/>
     <menuitem name="配置" id="menu_dtdream_assets_management_config" parent="menu_dtdream_assets_management_root" sequence="20" groups="dtdream_assets_manage"/>
     <menuitem name="存放地" id="menu_dtdream_assets_management_place" parent="menu_dtdream_assets_management_config" action="act_dtdream_assets_store_placce_config" sequence="12"/>
-    <menuitem name="供应商" id="menu_dtdream_assets_management_supply" parent="menu_dtdream_assets_management_config" action="act_dtdream_assets_supply_config" sequence="14"/>
-    <menuitem name="资产名称" id="menu_dtdream_assets_management_name" parent="menu_dtdream_assets_management_config" action="act_dtdream_assets_name_config" sequence="16"/>
+    <menuitem name="资产名称" id="menu_dtdream_assets_management_name" parent="menu_dtdream_assets_management_config" action="act_dtdream_assets_name_config" sequence="14"/>
+    <menuitem name="资产类别" id="menu_dtdream_assets_management_type" parent="menu_dtdream_assets_management_config" action="act_dtdream_assets_type_config" sequence="16"/>
   </data>
 </openerp>

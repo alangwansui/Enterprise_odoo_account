@@ -19,17 +19,18 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr'],
+    'depends': ['base', 'hr', 'dtdream_hr_infor'],
 
     # always loaded
     'data': [
         'wizard/dtdream_assets_management_wizard.xml',
-        'views/dtdream_assets_check.xml',
+        'views/dtdream_assets_mac_manage.xml',
         'workflow/dtdream_assets_check_workflow.xml',
         'views/dtdream_assets_store_place.xml',
-        'views/dtdream_assets_supply.xml',
         'views/dtdream_assets_name.xml',
+        'views/dtdream_assets_type.xml',
         'views/dtdream_assets_management.xml',
+        'views/dtdream_assets_check.xml',
         'views/data.xml',
         'security/ir.model.access.csv',
     ],

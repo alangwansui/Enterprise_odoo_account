@@ -37,15 +37,14 @@ ListView.include({
                 arguments = [arguments];
             }
             this._super.apply(this, arguments);
-            if (self.fields_view.name=="dtdream.expense.jiekoukuaiji.export.tree.view"){
-                var model1 = new Model('dtdream.expense.report').call('if_in_jiekoukuaiji', []).done(function(res){
-                    if (self.options.sidebar && res) {
-                        self.sidebar.add_items('other', _.compact([
-                            { label: '数据导出', callback: self.dtdream_expense_export }
-                        ]));
-                    };
-                });
-            }
+            var model1 = new Model('dtdream.expense.report').call('if_in_jiekoukuaiji', []).done(function(res){
+                if (self.options.sidebar && self.fields_view.model=='dtdream.expense.report' && res && self.fields_view.name=="dtdream.expense.jiekoukuaiji.export.tree.view") {
+                self.sidebar.add_items('other', _.compact([
+                { label: '数据导出', callback: self.dtdream_expense_export }
+                ]));
+            };
+            });
+
 
         },
 

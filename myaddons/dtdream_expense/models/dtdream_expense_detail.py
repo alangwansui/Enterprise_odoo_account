@@ -20,14 +20,18 @@ class dtdream_expense_detail(models.Model):
     account = fields.Char(string="会计科目")
     account_name = fields.Char(string="会计科目名称")
 
+    @api.multi
+    @api.depends('parentid','name')
+    def name_get(self):
+        result = []
+        for detail in self:
+            name = detail.parentid.name+'-'+detail.name
+            result.append((detail.id, name))
+        return result
 
     # 可以根据费用类别和费用明细查询
     def name_search(self, cr, user, name='', args=None, operator='ilike', context=None, limit=100):
-        employee_id = self.pool.get('hr.employee').search(cr,user,[('user_id','=',user)])
-        if self.pool.get('hr.employee').browse(cr, user,employee_id,context=context).travel_grant:
-            ids = self.search(cr, user, [('name', 'ilike', name),('name', '!=', u"市内交通费")] + args, limit=limit)
-        else:
-            ids = self.search(cr, user, [('name', 'ilike', name)] + args, limit=limit)
+        ids = self.search(cr, user, ['|',('name', 'ilike', name),('parentid', 'ilike', name),] + args, limit=limit)
         return super(dtdream_expense_detail, self).name_search(
             cr, user, '', args=[('id', 'in', list(ids))],
             operator='ilike', context=context, limit=limit)

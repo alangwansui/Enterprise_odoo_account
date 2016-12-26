@@ -37,5 +37,214 @@
             <field name="name">天津办事处</field>
         </record>
 
+        <record id="assets_type_01" model="dtdream.assets.type">
+            <field name="name">房屋建筑物类</field>
+            <field name="code">11</field>
+            <field name="discount">30</field>
+            <field name="account">固定资产-房屋建筑物</field>
+            <field name="account_code">1610100</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">指直接用于办公、生产、存储等经营的房屋建筑物</field>
+        </record>
+
+        <record id="assets_type_02" model="dtdream.assets.type">
+            <field name="name">房屋建筑物类</field>
+            <field name="code">12</field>
+            <field name="discount">30</field>
+            <field name="account">固定资产-房屋建筑物</field>
+            <field name="account_code">1610100</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">指非直接用于生产经营的房屋建筑物</field>
+        </record>
+
+        <record id="assets_type_03" model="dtdream.assets.type">
+            <field name="name">机器设备类</field>
+            <field name="code">21</field>
+            <field name="discount">10</field>
+            <field name="account">固定资产-机器设备</field>
+            <field name="account_code">1610200</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">指用于制造、测试、检验、保存等工艺及过程的设备</field>
+        </record>
+
+        <record id="assets_type_04" model="dtdream.assets.type">
+            <field name="name">机器设备类</field>
+            <field name="code">22</field>
+            <field name="discount">10</field>
+            <field name="account">固定资产-机器设备</field>
+            <field name="account_code">1610200</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">指提供动力能源的设备</field>
+        </record>
+
+        <record id="assets_type_23" model="dtdream.assets.type">
+            <field name="name">机器设备类</field>
+            <field name="code">23</field>
+            <field name="discount">10</field>
+            <field name="account">固定资产-机器设备</field>
+            <field name="account_code">1610200</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">指用于生产的各类模具、夹具各类设备</field>
+        </record>
+
+        <record id="assets_type_29" model="dtdream.assets.type">
+            <field name="name">机器设备类</field>
+            <field name="code">29</field>
+            <field name="discount">10</field>
+            <field name="account">固定资产-机器设备</field>
+            <field name="account_code">1610200</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">除以动力能源设备、用于生产的各类模具、夹具类设备外的所有机器设备</field>
+        </record>
+
+        <record id="assets_type_31" model="dtdream.assets.type">
+            <field name="name">电子设备类</field>
+            <field name="code">31</field>
+            <field name="discount">3</field>
+            <field name="account">固定资产-电子设备-计算机类</field>
+            <field name="account_code">1610301</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">计算机类</field>
+        </record>
+
+        <record id="assets_type_32" model="dtdream.assets.type">
+            <field name="name">电子设备类</field>
+            <field name="code">32</field>
+            <field name="discount">3</field>
+            <field name="account">固定资产-电子设备-输入输出设备</field>
+            <field name="account_code">1610302</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">输入、输出设备</field>
+        </record>
+
+        <record id="assets_type_33" model="dtdream.assets.type">
+            <field name="name">电子设备类</field>
+            <field name="code">33</field>
+            <field name="discount">3</field>
+            <field name="account">固定资产-电子设备-通信设备</field>
+            <field name="account_code">1610303</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">通信设备</field>
+        </record>
+
+        <record id="assets_type_34" model="dtdream.assets.type">
+            <field name="name">电子设备类</field>
+            <field name="code">34</field>
+            <field name="discount">3</field>
+            <field name="account">固定资产-电子设备-计量设备</field>
+            <field name="account_code">1610304</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">计量仪器</field>
+        </record>
+
+        <record id="assets_type_39" model="dtdream.assets.type">
+            <field name="name">电子设备类</field>
+            <field name="code">39</field>
+            <field name="discount">3</field>
+            <field name="account">固定资产-电子设备-其他电子设备</field>
+            <field name="account_code">1610305</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">其他电子设备</field>
+        </record>
+
+        <record id="assets_type_41" model="dtdream.assets.type">
+            <field name="name">运输设备类</field>
+            <field name="code">41</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-运输设备</field>
+            <field name="account_code">1610400</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">客车</field>
+        </record>
+
+        <record id="assets_type_42" model="dtdream.assets.type">
+            <field name="name">运输设备类</field>
+            <field name="code">42</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-运输设备</field>
+            <field name="account_code">1610400</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">货车</field>
+        </record>
+
+        <record id="assets_type_43" model="dtdream.assets.type">
+            <field name="name">运输设备类</field>
+            <field name="code">43</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-运输设备</field>
+            <field name="account_code">1610400</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">厂内运输设备，指用于内部运送货物的设备</field>
+        </record>
+
+        <record id="assets_type_51" model="dtdream.assets.type">
+            <field name="name">其他设备类</field>
+            <field name="code">51</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-其他设备-厨房设备</field>
+            <field name="account_code">1610501</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">厨具设备</field>
+        </record>
+
+        <record id="assets_type_52" model="dtdream.assets.type">
+            <field name="name">其他设备类</field>
+            <field name="code">52</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-其他设备-办公家私</field>
+            <field name="account_code">1610502</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">办公家私</field>
+        </record>
+
+        <record id="assets_type_53" model="dtdream.assets.type">
+            <field name="name">其他设备类</field>
+            <field name="code">53</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-其他设备-工具器具</field>
+            <field name="account_code">1610503</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">工具器具</field>
+        </record>
+
+        <record id="assets_type_54" model="dtdream.assets.type">
+            <field name="name">其他设备类</field>
+            <field name="code">54</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-其他设备-生产器械</field>
+            <field name="account_code">1610504</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">生产用器械</field>
+        </record>
+
+        <record id="assets_type_59" model="dtdream.assets.type">
+            <field name="name">其他设备类</field>
+            <field name="code">59</field>
+            <field name="discount">5</field>
+            <field name="account">固定资产-其他设备-本类设备其余</field>
+            <field name="account_code">1610505</field>
+            <field name="account_level">3</field>
+            <field name="disprice">0</field>
+            <field name="des">本类设备其他</field>
+        </record>
+
     </data>
 </openerp>

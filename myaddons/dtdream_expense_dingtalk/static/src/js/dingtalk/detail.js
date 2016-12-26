@@ -302,7 +302,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          */
         load_template: function () {
             var xml = $.ajax({
-                url: "static/src/xml/dingtalk/detail.xml?version=86",
+                url: "static/src/xml/dingtalk/detail.xml?version=87",
                 async: false // necessary as without the template there isn't much to do.
             }).responseText;
             QWeb.add_template(xml);
@@ -3214,7 +3214,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         .query(['id', 'name', 'state', 'paytype', 'total_invoicevalue', 'paycatelog', 'work_place',
                                 'expensereason', 'create_uid', 'create_date', 'write_date', 'showcuiqian',
                                 'currentauditperson', 'currentauditperson_userid', 'hasauditor', 'is_outtime',
-                                'xingzhengzhuli', 'department_id', 'create_uid_self','kaihuhang','shoukuanrenxinming','yinhangkahao'])
+                                'xingzhengzhuli', 'department_id', 'create_uid_self','kaihuhang','shoukuanrenxinming','yinhangkahao', 'compute_currentaudit'])
                         .filter([['id', '=', parseInt(options.receipt_id)]])
                         .all({'timeout': 3000, 'shadow': true}), this)
                 .fail(function (err) {
@@ -3281,7 +3281,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 this.rend_benefitdep(this);
                 this.rend_chuchai(this);
 
-                if ( this.options.edit_type == "approval" && this.expense_report.state != 'draft' ) {
+                if ( this.expense_report.compute_currentaudit == true && this.options.edit_type == "approval" && this.expense_report.state != 'draft' ) {
+
                     if (this.expense_report.state == 'xingzheng') {
                         if (this.expense_report.showcuiqian != 1) {
                             this.$('a[data-item-id=qianshou]').css('display', '');
@@ -3323,7 +3324,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     this.$('input[data-id=kaihuhang]').attr("readonly", "readonly");
                     this.$('input[data-id=yinhangkahao]').attr("readonly", "readonly");
 
-                }  else {
+                }  else if ( this.options.edit_type == "edit") {
                     this.$('a[data-item-id=save]').css('display', '');
                     this.$('a[data-item-id=delete]').css('display', '');
                 }

@@ -121,9 +121,9 @@ class DtdreamExpense(ExcelExport):
                        duplicate_removal[rec[0]]["cstcenter"],
                        duplicate_removal[rec[0]]["account"], duplicate_removal[rec[0]]["account_name"], duplicate_removal[rec[0]]["type"],
                        duplicate_removal[rec[0]]["description"], product, region, bm, sm, ic, spare,currency,
-                       round(duplicate_removal[rec[0]]["accounted_dr"],2),
-                       round(duplicate_removal[rec[0]]["accounted_cr"],2),
-                       round(duplicate_removal[rec[0]]["accounted_dr"],2)-round(duplicate_removal[rec[0]]["accounted_cr"],2)]
+                       duplicate_removal[rec[0]]["accounted_dr"],
+                       duplicate_removal[rec[0]]["accounted_cr"],
+                       duplicate_removal[rec[0]]["accounted_dr"]-duplicate_removal[rec[0]]["accounted_cr"]]
                 excel_values.append(row)
         return request.make_response(
             self.from_data(excel_header, excel_values),

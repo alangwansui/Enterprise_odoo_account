@@ -46,9 +46,7 @@ access_crm_stage_dtdream_manager,crm.stage dtdream manager,crm.model_crm_stage,g
 access_account_invoice_dtdream_salesman,account.invoice dtdream salesman,account.model_account_invoice,group_dtdream_sale_salesman,1,1,1,1
 access_account_invoice_dtdream_manager,account.invoice dtdream manager,account.model_account_invoice,group_dtdream_sale_manager,1,1,1,1
 crm.access_crm_stage_manager,crm.stage,crm.model_crm_stage,base.group_sale_manager,0,0,0,0
-crm.access_crm_lost_reason_manager,crm.lost.reason.manager,crm.model_crm_lost_reason,base.group_sale_manager,0,0,0,0
-crm.access_crm_lost_reason_salesman,crm.lost.reason.salesman,crm.model_crm_lost_reason,base.group_sale_salesman,0,0,0,0
-access_crm_lost_reason_dtdream_manager,crm.lost.reason.dtdream.manager,crm.model_crm_lost_reason,group_dtdream_sale_manager,1,1,1,1
+access_crm_lost_reason_dtdream_manager,crm.lost.reason.dtdream.manager,crm.model_crm_lost_reason,base.group_user,1,1,1,1
 access_product_supplierinfo_product_manager,product.supplierinfo product.manager,product.model_product_supplierinfo,group_product_manage,1,1,1,1
 access_res_partner_modify_product_manager,res.partner.modify.product.manager,base.model_res_partner,group_product_manage,1,0,0,0
 access_dtdream_child_product_line,product.dtdream.child.product.line,model_dtdream_child_product_line,group_product_manage,1,1,1,1
@@ -61,3 +59,4 @@ access_crm_lead2opportunity_partner_mass_manager,crm.lead2opportunity.mass manag
 access_dtdream_project_space_line,dtdream.project.space.line user,model_dtdream_project_space_line,base.group_user,1,1,1,1
 access_dtdream_des_records,dtdream.des.records user,model_dtdream_des_records,base.group_user,1,1,1,1
 access_dtdream_area,dtdream_area,model_dtdream_area,,1,1,1,1
+access_crm_lead_lost,crm.lead.lost.dtdream.user,crm.model_crm_lead_lost,base.group_user,1,1,1,1

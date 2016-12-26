@@ -9,11 +9,13 @@
             <form>
                 <group>
                     <group>
-                        <field name="has_label" widget="radio" options="{'horizontal': true}"/>
-                        <field name="unused" widget="radio" options="{'horizontal': true}"/>
+                        <field name="has_label" widget="radio" options="{'horizontal': true}" required="True"/>
+                        <field name="unused" widget="radio" options="{'horizontal': true}" required="True"/>
+                        <field name="selfcheck_date" required="True"/>
                     </group>
                     <group>
-                        <field name="useable" widget="radio" options="{'horizontal': true}"/>
+                        <field name="useable" widget="radio" options="{'horizontal': true}" required="True"/>
+                        <field name="store_place" options="{'no_create': True, 'no_open': True}" required="True"/>
                     </group>
                 </group>
                 <group colspan="12">

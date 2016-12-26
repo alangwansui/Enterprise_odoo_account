@@ -94,6 +94,12 @@ html {
 .doicon-sousuo:before {
   content: "\e614";
 }
+.doicon-assets:before { 
+  content: "\e61d"; 
+}
+.doicon-security:before { 
+  content: "\e682"; 
+}
 /*font-family*/
 html,
 body {
@@ -123,7 +129,7 @@ h6 {
 /*header*/
 .dodo-header {
   width: 100%;
-  min-width: 1400px;
+  /* min-width: 1400px;*/
   clear: both;
   height: 2.325rem;
   padding: 0.581rem 1.162rem;

@@ -33,29 +33,15 @@
             </field>
         </record>
 
-        <!--<record id="crm_lead_won_action" model="ir.actions.act_window">-->
-            <!--<field name="name">Lead Won</field>-->
-            <!--<field name="type">ir.actions.act_window</field>-->
-            <!--<field name="res_model">crm.lead</field>-->
-            <!--<field name="view_mode">form</field>-->
-            <!--<field name="view_id" ref="crm_lead_won_view_form"/>-->
-            <!--&lt;!&ndash;<field name="res_id">context.get("active_id")</field>&ndash;&gt;-->
-            <!--<field name="target">new</field>-->
-        <!--</record>-->
+        <record id="view_crm_lead_lost_view_form_inherit" model="ir.ui.view">
+            <field name="name">view.crm.lead.lost.view.form.inherit</field>
+            <field name="model">crm.lead.lost</field>
+            <field name="inherit_id" ref="crm.crm_lead_lost_view_form" />
+            <field name="arch" type="xml">
+                <field name="lost_reason_id" position="replace">
+                    <field name="lost_reason_id" options="{'no_create': True}"/>
+                </field>
+            </field>
+        </record>
 
-        <!--<record model="ir.actions.server" id="crm_lead_won_action">-->
-            <!--<field name="name">项目中标</field>-->
-            <!--<field name="model_id" ref="model_crm_lead"/>-->
-            <!--<field name="code">-->
-                <!--action = {-->
-                <!--'name':'项目中标',-->
-                <!--'type': 'ir.actions.act_window',-->
-                <!--'view_type': 'form',-->
-                <!--'view_mode': 'form',-->
-                <!--'res_model': 'crm.lead',-->
-                <!--'res_id': context.get("active_id"),-->
-                <!--'context':context-->
-                <!--}-->
-            <!--</field>-->
-        <!--</record>-->
 </odoo>

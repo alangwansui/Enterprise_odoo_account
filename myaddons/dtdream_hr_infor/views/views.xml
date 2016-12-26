@@ -58,8 +58,6 @@
                       <field name="recruit_place" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
                       <field name="work_place" attrs="{'readonly':[('edit_basic_info','=',False)],'required':[('edit_basic_info','=',True)]}"/>
                       <field name="expatriate" attrs="{'readonly':[('edit_basic_info','=',False)]}"/>
-                      <field name="travel_grant" attrs="{'readonly':[('edit_basic_info','=',False)]}"></field>
-                      <field name="standard_mobile_fee" attrs="{'readonly':[('edit_basic_info','=',False)]}"></field>
                   </group>
                   <div>
                     <p>*<b>填写说明</b>：以上信息由人力资源部录入。如需修改，请与人力资源部联系</p>

@@ -159,8 +159,7 @@ class dtdream_budget(models.Model):
     expensed_xingz=fields.Integer(string='已报销行政平台费(元)')
 
     def _default_fee_travel(self):
-        travel_mobile = self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).standard_mobile_fee
-        return [(0, 0, {'travel_travel': 0.00, 'travel_bus': 0.00, 'travel_mobile': travel_mobile, 'travel_remark': ''})]
+        return [(0, 0, {'travel_travel': 0.00, 'travel_bus': 0.00, 'travel_mobile': 0.00, 'travel_remark': ''})]
     def _default_fee_dzx(self,x,y,z):
         return [(0, 0, {x: '合计', y: 0.00, z: ''})]
     fee_travel = fields.One2many('dtdream.budget.travel','travel_budget_id',string='公务差旅费',default=_default_fee_travel,track_visibility='onchange')

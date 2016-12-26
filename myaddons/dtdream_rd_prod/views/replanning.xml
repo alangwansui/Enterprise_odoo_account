@@ -70,8 +70,36 @@
             <field name="act_window_id" ref="act_disagree"/>
         </record>
 
-        <record id="act_dtdream_replanning_menu" model="ir.actions.act_window">
+        <record id="act_dtdream_replanning_quickly_ver" model="ir.actions.act_window">
             <field name="name">版本重计划</field>
+            <field name="res_model">dtdream.rd.replanning</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('version.id','=',active_id)]</field>
+        </record>
+
+        <record id="act_dtdream_replanning_menu_self" model="ir.actions.act_window">
+            <field name="name">我相关的</field>
+            <field name="res_model">dtdream.rd.replanning</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_replanning_menu_wait" model="ir.actions.act_window">
+            <field name="name">待我审批的</field>
+            <field name="res_model">dtdream.rd.replanning</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_approver_user','=',uid)]</field>
+        </record>
+
+
+        <record id="act_dtdream_replanning_menu_all" model="ir.actions.act_window">
+            <field name="name">所有版本重计划</field>
             <field name="res_model">dtdream.rd.replanning</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>

@@ -72,7 +72,8 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
-            <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
+            <!--<field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>-->
+            <field name="context">{}</field>
         </record>
 
         <record id="act_dtdream_prod_appr_from_dash" model="ir.actions.act_window">
@@ -93,7 +94,8 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
-            <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
+            <!--<field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>-->
+            <field name="context">{}</field>
         </record>
 
 
@@ -222,6 +224,7 @@
                             <page string="立项阶段" >
                                 <group>
                                     <field name="start_pro_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01'))]}"/>
+                                    <field name="Projectmagnitude" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01'))]}"/>
                                 </group>
                                 <group>
                                     <notebook>
@@ -315,7 +318,9 @@
         <menuitem id="menu_finance_rd_version_my" name="我相关的" parent="menu_finance_rd_version" sequence="100" action="act_dtdream_rd_version"/>
         <menuitem id="menu_finance_rd_version_wait" name="待我审批的" parent="menu_finance_rd_version" sequence="200" action="act_dtdream_prod_version_wait"/>
 
-        <menuitem id="menu_finance_replanning" name="版本重计划" parent="menu_finance_rd" sequence="250" action="act_dtdream_replanning_menu"/>
+        <menuitem id="menu_finance_replanning" name="版本重计划" parent="menu_finance_rd" sequence="250"/>
+        <menuitem id="menu_finance_replanning_self" name="我相关的" parent="menu_finance_replanning" sequence="100" action="act_dtdream_replanning_menu_self"/>
+        <menuitem id="menu_finance_replanning_wait" name="待我审批的" parent="menu_finance_replanning" sequence="200" action="act_dtdream_replanning_menu_wait"/>
 
         <menuitem id="menu_finance_exception" name="例外" parent="menu_finance_rd" sequence="300"/>
         <menuitem id="menu_finance_exception_self" name="我相关的" parent="menu_finance_exception" sequence="100" action="act_dtdream_exception_meun_self"/>
@@ -333,6 +338,7 @@
         <menuitem id="menu_finance_suspension_all" name="所有暂停" parent="menu_finance_prod_all" sequence="400" action="act_dtdream_suspension_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_suspension_rest_all" name="所有恢复暂停" parent="menu_finance_prod_all" sequence="500" action="act_dtdream_suspension_rest_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_termination_all" name="所有中止" parent="menu_finance_prod_all" sequence="600" action="act_dtdream_termination_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_replanning_all" name="所有版本重计划" parent="menu_finance_prod_all" sequence="700" action="act_dtdream_replanning_menu_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
 
         <menuitem id="menu_finance_suspension" name="暂停" parent="menu_finance_rd" sequence="350"/>
         <menuitem id="menu_finance_suspension_self" name="我相关的" parent="menu_finance_suspension" sequence="100" action="act_dtdream_prod_suspension_meun_self"/>

@@ -116,8 +116,9 @@
                 <group string="基本信息">
                   <group>
                     <field name="name" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
-                    <field name="workid"/>
+                    <field name="workid" invisible="True"/>
                     <field name="quarter" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                    <field name="time_range"/>
                     <field name="result" attrs="{'readonly':['|','&amp;',('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'|','&amp;',('up_officer','=',True),'&amp;',('manage','=',False),('inter','=',False),'|',('is_officer','=',True),'&amp;',('state', '!=','0'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                   </group>
                   <group>
@@ -197,9 +198,10 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="workid"/>
+                <field name="workid" invisible="True"/>
                 <field name="department"/>
                 <field name="quarter"/>
+                <field name="time_range"/>
                 <field name="state"/>
                 <field name="result"/>
             </tree>

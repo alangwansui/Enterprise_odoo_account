@@ -53,6 +53,15 @@ class dtdream_notice_config(object):
     #绩效
     DTDREAM_HR_PERFORMANCE = 'dtdream.hr.performance'
 
+    #权限申请
+    DTDREAM_INFORMATION_PURVIEW = 'dtdream.information.purview'
+
+    #对外披露
+    DTDREAM_FOREIHN='dtdream.foreign'
+
+    #资产盘点
+    DTDREAM_ASSETS_CHECK = 'dtdream.assets.check'
+
 
     __conf_list = [
         {
@@ -159,6 +168,21 @@ class dtdream_notice_config(object):
         #     "model": DTDREAM_SALE_BUSINESS_REPORT,
         #     "fields": {'description': u'商务提前报备', 'shenqingren': 'apply_person', 'shenqishijian': 'create_date','dangqianzerenren': 'shenpiren', 'state': 'done', 'state_name': 'state'}
         # },
+        {
+
+            "model": DTDREAM_INFORMATION_PURVIEW,
+            "fields": {'description': u'权限申请', 'shenqingren': 'applicant', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approver_user', 'state': 'state_05', 'state_name': 'state'
+                , 'stateList': ("state_05","state_04","state_01")}
+        },
+        {
+            "model": DTDREAM_FOREIHN,
+            "fields": {'description': u'对外披露', 'shenqingren': 'applicant', 'shenqishijian': 'write_date','dangqianzerenren': 'current_approve', 'state': '99', 'state_name': 'state'
+                , 'stateList': ("99","0","-99")},
+
+            "model": DTDREAM_ASSETS_CHECK,
+            "fields": {'description': u'资产盘点', 'shenqingren': 'name', 'shenqishijian': 'write_date', 'dangqianzerenren': 'current_approve', 'state': '99', 'state_name': 'state',
+                       'stateList': ("99", "0")}
+        },
 
     ]
 

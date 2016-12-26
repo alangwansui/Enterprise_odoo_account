@@ -20,10 +20,10 @@ FormView.include({
     },
     opp_stage_click: function(kwargs) {
         var self = this;
-        var stage_name = window.event.target.innerHTML.trim();
+        var stage_name = kwargs.target.innerHTML.trim() || window.event.target.innerHTML.trim();
         if (stage_name == "丢单"){
-            alert('请点击左侧“丢单”按钮进行操作')
-            return;
+            var msg = "请点击左侧“丢单”按钮进行操作。"
+            return new Model('raise.warning').call('raise_warning',[msg])
             return self.rpc("/web/action/load", {action_id: "crm.crm_lead_lost_action"}).then(function(result) {
                 result.views = [[false,"form"]];
                 result.context = self.dataset.context
@@ -38,8 +38,8 @@ FormView.include({
             })
         }
         if (stage_name == "中标"){
-            alert('请点击左侧“中标”按钮进行操作')
-            return;
+            var msg = "请点击左侧“中标”按钮进行操作。"
+            return new Model('raise.warning').call('raise_warning',[msg])
             new Model('crm.lead').call('crm_lead_won_action',[self.datarecord.id]).then(function(result) {
                 result.views = [[result.view_id,"form"]];
                 result.context = self.dataset.context
@@ -50,23 +50,23 @@ FormView.include({
 
 })
 
-return GroupByMenu.include({
-    start: function () {
-        var self = this;
-        self._super.apply(this,arguments);
-        var divider = this.$menu.find('.divider');
-        this.fields_def.then(function () {
-            if (this.data && JSON.parse(this.data).params.model == "crm.lead"){
-                this.dtdream_sale = new Model('crm.lead');
-                this.dtdream_sale.call('if_hide',[]).done(function (rec) {
-                    if (rec){
-                        self.$add_group.hide();
-                        divider.hide();
-                    }
-                })
-            }
-        });
-    },
-});
+//return GroupByMenu.include({
+//    start: function () {
+//        var self = this;
+//        self._super.apply(this,arguments);
+//        var divider = this.$menu.find('.divider');
+//        this.fields_def.then(function () {
+//            if (this.data && JSON.parse(this.data).params.model == "crm.lead"){
+//                this.dtdream_sale = new Model('crm.lead');
+//                //this.dtdream_sale.call('if_hide',[]).done(function (rec) {
+//                //    if (rec){
+//                //        self.$add_group.hide();
+//                //        divider.hide();
+//                //    }
+//                //})
+//            }
+//        });
+//    },
+//});
 
 });

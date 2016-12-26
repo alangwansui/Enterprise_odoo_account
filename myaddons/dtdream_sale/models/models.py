@@ -191,7 +191,7 @@ class res_crm_team(models.Model):
         action.update({
             'views': [
                 [tree_view_id, 'tree'],
-                # [kanb_view_id, 'kanban'],
+                [kanb_view_id, 'kanban'],
                 [form_view_id, 'form'],
                 [False, 'graph'],
                 [False, 'calendar'],
@@ -434,7 +434,10 @@ class dtdream_sale(models.Model):
         ('9','支付宝'),
         ('10','无'),
     ],'阿里对应事业部')
-
+    is_project_budget = fields.Selection([
+        ('1', '是'),
+        ('0', '否'),
+    ],string='项目是否有预算',required=True,track_visibility='onchange')
     ali_saleman = fields.Char('阿里对应销售')
     is_dtdream_integrated = fields.Selection([
         ('1', '是'),
@@ -503,7 +506,7 @@ class dtdream_sale(models.Model):
 
     pro_background = fields.Text("投资类项目背景")
 
-    categ_id_parent = fields.Many2one('product.category',string="产品一级分类",related='project_space.categ_id_parent',store=True)
+    categ_id_parent = fields.Many2one('product.category',string="产品一级分类",related='project_space.categ_id_parent',store=True,dtdream_groupable=True)
 
     categ_id = fields.Many2one('product.category',string="产品二级分类",related='project_space.categ_id',store=True)
 
@@ -621,21 +624,25 @@ class dtdream_sale(models.Model):
             if self.env['crm.stage'].search([('id','=',vals.get('stage_id'))]).name == u"丢单":
                 self.is_lost = True
             else:
+                self.is_lost = False
+            if self.stage_id.name == u"丢单":
                 if self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
                     self.is_lost = False
                 else:
-                    raise ValidationError('只有项目管理员可拖动项目改变"丢单"单据状态。')
+                    raise ValidationError('只有项目管理员可改变状态为"丢单"的项目。')
             if self.env['crm.stage'].search([('id','=',vals.get('stage_id'))]).name == u"中标":
                 self.is_won = True
                 for rec in self.project_space:
                     rec.view_bidding_space = True
             else:
+                self.is_won = False
+                for rec in self.project_space:
+                    rec.view_bidding_space = False
+            if self.stage_id.name == u"中标" :
                 if self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
                     self.is_won = False
-                    for rec in self.project_space:
-                        rec.view_bidding_space = False
                 else:
-                    raise ValidationError('只有项目管理员可拖动项目改变"中标"单据状态。')
+                    raise ValidationError('只有项目管理员可改变状态为"中标"项目。')
         if vals.has_key('des_records') and vals.get('des_records')[0][0]==2 :
             raise ValidationError("请录入项目进展")
         if vals.has_key('project_space') and vals.get('project_space')[0][0]==2 :
@@ -719,18 +726,21 @@ class dtdream_sale(models.Model):
         result = super(dtdream_sale, self).fields_view_get(view_id, view_type, toolbar=toolbar, submenu=submenu)
         return result
 
-    @api.model
-    def if_hide(self):
-        if self.env.user.has_group('dtdream_sale.group_dtdream_sale_high_manager'):
-            return False
-        return True
+    # @api.model
+    # def if_hide(self):
+    #     if self.env.user.has_group('dtdream_sale.group_dtdream_sale_high_manager'):
+    #         return False
+    #     return True
 
     def action_set_lost(self, cr, uid, ids, context=None):
         if len(self.pool.get('crm.stage').search(cr,uid,[('name','=',u'丢单')])) > 0:
             stage_lost_id = self.pool.get('crm.stage').search(cr,uid,[('name','=',u'丢单')])[0]
         else:
              raise ValidationError('尚未添加"丢单"阶段，请联系项目管理员添加。')
-        return self.write(cr, uid, ids, {'stage_id': stage_lost_id,'is_lost':True}, context=context)
+        if self.browse(cr, uid,int(context['active_id']), context=context).lost_reason.name == u"重复录入":
+            return self.write(cr, uid, ids, {'probability': 0,'active': False,'stage_id': stage_lost_id,'is_lost':True}, context=context)
+        else:
+            return self.write(cr, uid, ids, {'stage_id': stage_lost_id,'is_lost':True}, context=context)
 
     @api.multi
     def action_won_apply(self):
@@ -1029,3 +1039,16 @@ class dtdream_area(models.Model):
         if 'child_ids' not in fields:
             domain = [ex for ex in domain if ex != ['parent_id', '=', False]]
         return super(dtdream_area, self).search_read(cr, uid, domain=domain)
+
+# 继承丢单模型，将丢单原因设为必填
+class dtdream_crm_lead_lost(models.Model):
+    _inherit = "crm.lead.lost"
+
+    lost_reason_id = fields.Many2one('crm.lost.reason', string='丢单原因', required=True)
+
+class raise_warning(models.Model):
+    _name = "raise.warning"
+
+    @api.model
+    def raise_warning(self,msg):
+        raise ValidationError(msg)

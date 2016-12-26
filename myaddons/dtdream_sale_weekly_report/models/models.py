@@ -10,7 +10,7 @@ from openerp.exceptions import AccessError
 class dtdream_sale_own_report(models.Model):
     _name = 'dtdream.sale.own.report'
     _description = u"个人周报"
-    _order = "report_start_time"
+    _order = "report_start_time desc"
 
     @api.multi
     def read(self, fields=None, load='_classic_read'):
@@ -1112,6 +1112,7 @@ class dtdream_problem_type(models.Model):
 class dtdream_sale_manager_report(models.Model):
     _name = 'dtdream.sale.manager.report'
     _description = u"主管周报"
+    _order = "report_start_time desc"
 
     @api.model
     def default_get(self,fields):

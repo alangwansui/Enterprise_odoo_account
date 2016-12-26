@@ -84,6 +84,8 @@ class dtdream_prod_appr(models.Model):
 
     zanting_nums = fields.Integer(compute='_compute_zanting_log', string="暂停记录")
 
+    Projectmagnitude = fields.Selection([('magnitude_00', 'NA'), ('magnitude_01', '重量级'), ('magnitude_02', '中量级'), ('magnitude_03', '轻量级')],string="项目量级")
+
     @api.one
     def _compute_dept(self):
         em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])

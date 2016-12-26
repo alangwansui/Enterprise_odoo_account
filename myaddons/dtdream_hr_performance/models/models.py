@@ -112,9 +112,9 @@ class dtdream_hr_performance(models.Model):
                 raise ValidationError("HR接口人只能创建所接口部门员工的绩效考核单!")
 
     def validate_quarter_check(self, quarter):
-        p = re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年$)', quarter)
+        p = re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年年度$)', quarter)
         if not p:
-            raise ValidationError('考核季度的格式必须是XXXX财年Q1~Q4，或XXXX财年；如2016财年Q1，或2016财年')
+            raise ValidationError('考核季度的格式必须是XXXX财年Q1~Q4，或XXXX财年年度；如2016财年Q1，或2016财年年度')
 
     @api.model
     def create(self, vals):
@@ -365,6 +365,11 @@ class dtdream_hr_performance(models.Model):
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)
     workid = fields.Char(string='工号', compute=_compute_employee_info, store=True)
     quarter = fields.Char(string='考核季度', required=True)
+    time_range = fields.Selection([('1', '1月-3月'),
+                                   ('2', '4月-6月'),
+                                   ('3', '7月-9月'),
+                                   ('4', '10月-12月'),
+                                   ('5', '1月-12月')], string='考核时间范围')
     officer = fields.Many2one('hr.employee', string='一考主管', required=True)
     officer_sec = fields.Many2one('hr.employee', string='二考主管', required=True)
     result = fields.Char(string='考核结果')
@@ -672,9 +677,9 @@ class dtdream_hr_pbc(models.Model):
         return message
 
     def validate_quarter_check(self, quarter):
-        p = re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年$)', quarter)
+        p = re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年年度$)', quarter)
         if not p:
-            raise ValidationError('考核季度的格式必须是XXXX财年Q1~Q4，或XXXX财年；如2016财年Q1，或2016财年')
+            raise ValidationError('考核季度的格式必须是XXXX财年Q1~Q4，或XXXX财年年度；如2016财年Q1，或2016财年年度')
 
     @api.multi
     def write(self, vals, flag=True):

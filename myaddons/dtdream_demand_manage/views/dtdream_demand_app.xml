@@ -18,7 +18,7 @@
                            statusbar_visible="0,1,2,3,4,5,99"/>
                </header>
               <sheet>
-                <group string="需求信息">
+                <group string="项目信息">
                   <group>
                       <field name="name" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
                       <field name="expect_complete_time" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>

@@ -1,0 +1,47 @@
+<openerp>
+  <data>
+
+    <record id="view_dtdream_assets_mac_manage_form" model="ir.ui.view">
+        <field name="name">view.dtdream.assets.mac.manage.form</field>
+        <field name="model">dtdream.assets.mac.manage</field>
+        <field name="arch" type="xml">
+            <form>
+              <sheet>
+                  <group string="基本信息">
+                      <group>
+                          <field name="assets_code" options="{'no_create': True}" required="True"/>
+                          <field name="name" options="{'no_create': True}"/>
+                      </group>
+                      <group>
+                          <field name="mac_address" required="True"/>
+                          <field name="department" options="{'no_create': True, 'no_open': True}"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="dtdream_assets_mac_manage_tree">
+      <field name="name">dtdream.assets.mac.manage</field>
+      <field name="model">dtdream.assets.mac.manage</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="assets_code"/>
+            <field name="mac_address"/>
+            <field name="department"/>
+            <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="act_dtdream_assets_mac_manage" model="ir.actions.act_window">
+            <field name="name">MAC地址管理</field>
+            <field name="res_model">dtdream.assets.mac.manage</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+    </record>
+
+  </data>
+</openerp>

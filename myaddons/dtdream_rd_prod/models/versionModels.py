@@ -194,7 +194,13 @@ class dtdream_rd_version(models.Model):
         cr = self.env["dtdream_execption"].search([("name.id", "=", self.proName.id),('version.id','=',self.id)])
         self.liwai_nums = len(cr)
 
-    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录",store=True)
+    liwai_nums = fields.Integer(compute='_compute_liwai_log', string="例外记录")
+
+    def _compute_chongjihua_log(self):
+        cr = self.env["dtdream.rd.replanning"].search([("proname.id", "=", self.proName.id), ('version.id', '=', self.id)])
+        self.chongjihua_nums = len(cr)
+
+    chongjihua_nums = fields.Integer(compute='_compute_chongjihua_log', string="重计划记录")
 
     def _compute_zanting_log(self):
         cr = self.env["dtdream.prod.suspension"].search([("version.id", "=", self.id)])

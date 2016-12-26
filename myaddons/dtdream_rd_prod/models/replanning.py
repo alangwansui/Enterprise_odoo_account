@@ -109,41 +109,38 @@ class dtdream_rd_replanning(models.Model):
         my_action = self.env["ir.actions.act_window"].search([('id', '=', action)])
         res = super(dtdream_rd_replanning, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
-        if my_action.name == u"版本重计划":
-            if res['type'] == "form":
-                doc.xpath("//form")[0].set("create", "false")
-            if res['type'] == "tree":
-                doc.xpath("//tree")[0].set("create", "false")
+        if res['type'] == "form":
+            doc.xpath("//form")[0].set("create", "false")
+        if res['type'] == "tree":
+            doc.xpath("//tree")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
 
 
     @api.model
     def read_group(self,domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
-        users = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users
-        users_a = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user").users
-        users_b = self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users
-        if self.env.user in users:
-            uid = self._context.get('uid', '')
-            em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-            domains = expression.AND([['|','|','|','|','|','|',('followers_user','=',uid),('proname.department','=',em.department_id.id),('proname.department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
-        if self.env.user in users_a or self.env.user in users_b :
-            domains = expression.AND([[], domain])
-        res = super(dtdream_rd_replanning, self).read_group(domains, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu == u"我相关的":
+                uid = self._context.get('uid', '')
+                em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+                domain = expression.AND([['|','|','|','|','|','|',('followers_user','=',uid),('proname.department','=',em.department_id.id),('proname.department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
+        res = super(dtdream_rd_replanning, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
         return res
 
     @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
-        users = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users
-        users_a = self.env.ref("dtdream_rd_prod.group_dtdream_rd_user").users
-        users_b = self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users
-        if self.env.user in users:
-            uid = self._context.get('uid', '')
-            em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-            domains = expression.AND([['|','|','|','|','|','|',('followers_user','=',uid),('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
-        if self.env.user in users_a or self.env.user in users_b :
-            domains = expression.AND([[], domain])
-        return super(dtdream_rd_replanning, self).search_read(domain=domains, fields=fields, offset=offset,
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu == u"我相关的":
+                uid = self._context.get('uid', '')
+                em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
+                domain = expression.AND([['|','|','|','|','|','|',('followers_user','=',uid),('department','=',em.department_id.id),('department_2','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('role_person','=',uid),('his_app_user','=',uid)], domain])
+        return super(dtdream_rd_replanning, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                limit=limit, order=order)
 
 

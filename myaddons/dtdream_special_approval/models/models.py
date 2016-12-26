@@ -359,7 +359,7 @@ class dtdream_special_approval(models.Model):
         if vals.get('name', 'New') == 'New':
             em = self.env["hr.employee"].search([("user_id", "=", self.env.user.id)])
             num = 1
-            approvs= self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%"))], order="id desc")
+            approvs= self.sudo().search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%"))], order="id desc")
             if len(approvs)>0:
                 num = int(approvs[0].name[-3:])+1
             if num < 100:

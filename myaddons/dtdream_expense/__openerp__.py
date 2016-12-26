@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['dtdream_hr','base','dtdream_special_approval'],
+    'depends': ['dtdream_hr','base'],
 
     # always loaded
     'data': [
@@ -37,7 +37,6 @@
         'views/dtdream_expense_city.xml',
         'views/dtdream_expense_province.xml',
         'views/dtdream_expense_account_credit.xml',
-        'views/dtdream_expense_batch_approval.xml',
         'workflow/expenseworkflow.xml',
         'views/expense_data.xml',
         'print/dtdream_expense_report.xml',

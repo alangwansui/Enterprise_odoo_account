@@ -65,7 +65,7 @@ class ReportApproveWizard(models.TransientModel):
 class ReportSubmitWizard(models.TransientModel):
     _name = 'dtdream.report.submit.wizard'
 
-    display_text = fields.Char(default="提交后单据将无法编辑，且进入审批流程。是否确认提交？")
+    display_text = fields.Char(default="提交后项目进入审批流程，且项目信息无法修改。是否确认提交？")
 
     @api.one
     def btn_confirm(self):

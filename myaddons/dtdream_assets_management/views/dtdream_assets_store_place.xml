@@ -6,7 +6,9 @@
       <field name="model">dtdream.assets.store.place</field>
       <field name="arch" type="xml">
         <tree editable="bottom">
-          <field name="name"/>
+          <field name="name" required="True"/>
+          <field name="room_code"/>
+          <field name="room_info"/>
         </tree>
       </field>
     </record>

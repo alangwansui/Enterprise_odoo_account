@@ -6,6 +6,7 @@
         <record model="ir.ui.view" id="dtdream_expense_record_tree_view">
             <field name="name">dtdream.expense.record.tree</field>
             <field name="model">dtdream.expense.record</field>
+
             <field name="arch" type="xml" >
                 <tree>
                     <!--<field name="name"/>-->
@@ -21,6 +22,24 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="dtdream_expense_record_wait_tree_view">
+            <field name="name">dtdream.expense.record.wait.tree</field>
+            <field name="model">dtdream.expense.record</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="name"/>
+                    <field name="expensecatelog"/>
+                    <field name="expensedetail"/>
+                    <field name="currentdate"/>
+                    <field name="invoicevalue"/>
+                    <field name="state"/>
+                    <field name="create_date" string="创建时间"/>
+                    <field name="create_uid" string="创建人"/>
+                </tree>
+            </field>
+        </record>
+
+
         <record model="ir.ui.view" id="dtdream_expense_record_search_view">
             <field name="name">dtdream.expense.record.search</field>
             <field name="model">dtdream.expense.record</field>
@@ -35,6 +54,50 @@
                     <field name="create_uid" string="创建人"/>
                     <filter string="未报销" name="search_draft" domain="[('report_ids','=',False)]" />
                 </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_expense_record_wait_form_view">
+            <field name="name">dtdream.expense.record.wait.form</field>
+            <field name="model">dtdream.expense.record</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false" delete="false">
+                    <sheet>
+                        <group string="基本信息">
+
+
+                            <group>
+
+                                <field name="expensecatelog" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft'))]}"
+                                       context="{'default_parentid':expensecatelog}"/>
+
+                                <field name="currentdate" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="invoicevalue" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="city" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <!--<field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>-->
+                            </group>
+
+
+                            <group>
+                                <field name="state" readonly="1"/>
+
+                                <field name="create_date" string="创建时间" readonly="1"/>
+                                　　
+                                <field name="create_uid" string="创建人" readonly="1"/>
+
+                            </group>
+
+
+                        </group>
+
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
             </field>
         </record>
 
@@ -87,15 +150,25 @@
                 <form>
                     <sheet>
                         <group string="基本信息">
+
+
                             <group>
                                 <field name="report_ids_count" invisible="1"/>
                                 <field name="expensecatelog"
-                                       attrs="{'readonly':[('state','not in',('draft'))]}"/>
-                                <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}" options="{'no_create': True}" domain="[('parentid','=',expensecatelog)]"/>
+                                       attrs="{'readonly':[('state','not in',('draft'))],'invisible':'1'}"/>
+
+
+                                <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"
+                                       context="{'default_parentid':expensecatelog}" options="{'no_create': True}"/>
+
+
                                 <field name="currentdate" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
                                 <field name="invoicevalue" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
                                 <field name="koujianamount" attrs="{'invisible':[('state','!=','jiekoukuaiji')]}" groups="dtdream_expense.group_dtdream_expense_jiekoukuaiji"/>
                                 <field name="report_ids" invisible="1"/>
+
+
+
                                 <label for="province" string="发生城市"/>
                                 <div class="o_address_format">
                                     <field name="province" placeholder="省份" class="o_address_state"
@@ -103,23 +176,42 @@
                                     <field name="city" placeholder="城市" class="o_address_state"
                                            attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}" options="{'no_create': True}"/>
                                 </div>
+
                                 <field name="visible_all" invisible="1"/>
                                 <field name="customernumber" attrs="{'invisible':[('visible_all','=',True)]}" class="expense_int_cls"/>
                                 <field name="peitongnumber" attrs="{'invisible':[('visible_all','=',True)]}" class="expense_int_cls"/>
                                 <field name="everyonecost" attrs="{'invisible':[('visible_all','=',True)]}"/>
                                  <field name="actiondesc"/>
+
+                                <!--<field name="attachment" attrs="{'readonly':[('state','not in',('draft'))]}"/>-->
                             </group>
+
+
                             <group>
+
+
                                  <field name="taxamount"  attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
+                                　　
                                  <field name="notaxamount" attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
+                                　　
                                  <field name="taxpercent" attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
+                                　　
+
                                 <field name="state" readonly="1"/>
+
                                 <field name="create_date" string="创建时间" readonly="1"/>
+                                　　
                                 <field name="create_uid" string="创建人" readonly="1"/>
+
                             </group>
+
+
                         </group>
+
                         <group>
+
                         </group>
+
                         <notebook>
                             <page string="附件明细">
                                 <field name="attachment_ids" attrs="{'readonly':[('state','!=','draft')]}">
@@ -145,6 +237,7 @@
             </field>
         </record>
 
+
         <record model="ir.actions.act_window" id="action_dtdream_expense_record">
             <field name="name">消费明细</field>
             <field name="res_model">dtdream.expense.record</field>
@@ -167,6 +260,28 @@
             <field name="view_id" ref="dtdream_expense_record_tree_view"/>
         </record>
 
+        <record model="ir.actions.act_window" id="action_dtdream_expense_record_wait">
+            <field name="name">等待消费记录</field>
+            <field name="res_model">dtdream.expense.record</field>
+            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_dtdream_expense_record_form_wait">
+            <field name="act_window_id" ref="action_dtdream_expense_record_wait"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_expense_record_wait_form_view"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_dtdream_expense_record_tree_wait">
+            <field name="act_window_id" ref="action_dtdream_expense_record_wait"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_expense_record_wait_tree_view"/>
+        </record>
+
+
         <menuitem name="费用报销" id="dtdream_expense_menu_root" web_icon="dtdream_expense,static/description/expense.png"/>
 
         <menuitem name="配置" id="dtdream_expense_configration" parent="dtdream_expense_menu_root" sequence="400" groups="group_dtdream_expense_admin"/>
@@ -174,6 +289,9 @@
 
         <menuitem name="我的消费明细" id="dtdream_expense_record" parent="dtdream_expense_menu_root"
                   action="action_dtdream_expense_record"/>
+
+        <!-- <menuitem name="等待消费记录" id="dtdream_expense_record_wait" parent="dtdream_expense_menu_root"
+                  action="action_dtdream_expense_record_wait"/>-->
 
         <record id="action_create_expense_report" model="ir.actions.server">
             <field name="name">生成报销单</field>

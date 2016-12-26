@@ -6,7 +6,7 @@
       <field name="model">dtdream.assets.name</field>
       <field name="arch" type="xml">
         <tree editable="bottom">
-          <field name="name"/>
+          <field name="name" required="True"/>
         </tree>
       </field>
     </record>

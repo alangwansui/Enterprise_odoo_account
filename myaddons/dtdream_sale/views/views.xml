@@ -502,6 +502,7 @@
                     <field name="ali_division"/>
                     <field name="ali_saleman"/>
                     <field name="is_dtdream_integrated"/>
+                    <field name="is_project_budget"/>
                     <field name="is_invest_project"/>
                     <field name="partner_id" string="客户"
                            domain="[('customer','=','True')]"/>
@@ -686,6 +687,9 @@
                     <field name="sale_apply_id"/>
                     <field name="write_date" string="更新时间"/>
                     <field name="stage_id" string="阶段"/>
+                    <field name="is_project_budget" invisible="1"/>
+                    <field name="is_dtdream_integrated" invisible="1"/>
+                    <field name="is_invest_project" invisible="1"/>
                 </tree>
             </field>
         </record>
