@@ -414,7 +414,7 @@ var Widget = core.Class.extend(mixins.PropertiesMixin, {
         this.trigger_up('notification', {title: title, message: message, sticky: sticky});
     },
     do_warn: function(title, message, sticky) {
-        this.trigger_up('warning', {title: title, message: message, sticky: sticky});
+        this.trigger_up('dtdream_warning', {title: title, message: message, sticky: sticky});
     },
     rpc: function(url, data, options) {
         return this.alive(session.rpc(url, data, options));

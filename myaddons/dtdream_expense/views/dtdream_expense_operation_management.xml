@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+    <openerp>
+        <data>
+            <record model="ir.ui.view" id="dtdream_expense_operation_management_form">
+                <field name="name">dtdream.expense.operation.management.form</field>
+                <field name="model">dtdream.expense.operation.management</field>
+                <field name="arch" type="xml">
+                    <form>
+                        <sheet>
+                            <group>
+                                <field name="name" invisible="1"></field>
+                                <field name="dep_name"></field>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+            </record>
+            <record model="ir.ui.view" id="dtdream_expense_operation_management_tree">
+                <field name="name">dtdream.expense.operation.management.tree</field>
+                <field name="model">dtdream.expense.operation.management</field>
+                <field name="arch" type="xml">
+                    <tree>
+                        <field name="dep_name"></field>
+                    </tree>
+                </field>
+            </record>
+            <record model="ir.actions.act_window" id="act_dtdream_expense_operation_management">
+                <field name="name">运营管理体系配置</field>
+                <field name="res_model">dtdream.expense.operation.management</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form</field>
+            </record>
+            <menuitem name="运营管理体系配置" id="menu_dtdream_expense_operation_management" action="act_dtdream_expense_operation_management" parent="dtdream_expense_configration" sequence="450" groups="group_dtdream_expense_admin"/>
+        </data>
+    </openerp>

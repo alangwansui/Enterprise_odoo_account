@@ -42,6 +42,11 @@ var WebClient = Widget.extend({
                 this.notification_manager.warn(e.data.title, e.data.message, e.data.sticky);
             }
         },
+        'dtdream_warning': function (e) {
+            if(this.notification_manager) {
+                this.notification_manager.warn(e.data.title, e.data.message, e.data.sticky);
+            }
+        },
     },
     init: function(parent, client_options) {
         this.client_options = {};
@@ -289,6 +294,9 @@ var WebClient = Widget.extend({
      */
     do_action: function(action) {
         var self = this;
+        if(arguments.length >= 2){
+            arguments[1].allow = true;
+        }
         return this.action_manager.do_action.apply(this, arguments).then(function(action) {
             if (self.menu.appswitcher_displayed && action.target !== 'new') {
                 self.toggle_app_switcher(false);

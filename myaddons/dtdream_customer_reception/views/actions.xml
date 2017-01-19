@@ -7,7 +7,7 @@
             <field name="res_model">dtdream.customer.reception</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">['|',('name.user_id','=',uid),('create_uid','=',uid)]</field>
         </record>
 
@@ -16,7 +16,7 @@
             <field name="res_model">dtdream.customer.reception</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('current_approve.user_id','=',uid),('name.user_id','!=',uid)]</field>
         </record>
 
@@ -25,7 +25,7 @@
             <field name="res_model">dtdream.customer.reception</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
         </record>
 
         <record model="ir.actions.server" id="act_dtdream_customer_reception_config">

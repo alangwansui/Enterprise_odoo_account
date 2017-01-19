@@ -97,6 +97,8 @@ class dtdream_demand_app(models.Model):
                 doc.xpath("//form")[0].set("create", "false")
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
+            if res['type'] == "kanban":
+                doc.xpath("//kanban")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
 
@@ -165,13 +167,13 @@ class dtdream_demand_app(models.Model):
         """添加关注者"""
         self.message_subscribe_users(user_ids=[user_id.id])
 
-    name = fields.Many2one('hr.employee', string='申请人',
-                           default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]))
+    name = fields.Many2one('hr.employee', string='申请人', default=lambda self: self.env["hr.employee"].
+                           search([("user_id", "=", self.env.user.id)]), required=True)
     department = fields.Many2one('hr.department', string='所属部门', compute=_compute_department_belong)
-    expect_complete_time = fields.Date(string='期望完成时间')
-    operate_type = fields.Selection([('create', '新增需求'), ('update', '优化需求')], string='需求类别')
-    app_name = fields.Char(string='需求名称')
-    description = fields.Text(string='需求描述')
+    expect_complete_time = fields.Date(string='期望完成时间', required=True)
+    operate_type = fields.Selection([('create', '新增需求'), ('update', '优化需求')], string='需求类别', required=True)
+    app_name = fields.Char(string='需求名称', required=True, size=80)
+    description = fields.Text(string='需求描述', required=True)
     attachment = fields.Binary(string="附件(限制25M以下)", store=True)
     attachment_name = fields.Char(string="附件名")
     comments = fields.Text(string='评审意见')
@@ -297,6 +299,32 @@ class dtdream_demand_app(models.Model):
         self.add_follower(user_id=approve.user_id)
         self._message_poss(state=u'IT实施-->完成', action=u'提交', approve= '')
 
+
+class dtdream_demand_department(models.Model):
+    _inherit = 'hr.department'
+
+    @api.multi
+    def write(self, vals):
+        """部门主管改变刷新处于主管审批的IT需求记录"""
+        manager_id = vals.get('manager_id', None)
+        if manager_id:
+            self.env['dtdream.demand.app'].search([('name.department_id', '=', self.id),
+                                                   ('state', '=', '1')]).write({'current_approve': manager_id})
+        return super(dtdream_demand_department, self).write(vals)
+
+
+class dtdream_demand_employee(models.Model):
+    _inherit = 'hr.employee'
+
+    @api.multi
+    def write(self, vals):
+        """申请人部门信息改变刷新处于主管审批的IT需求记录"""
+        department_id = vals.get('department_id', None)
+        if department_id:
+            manager_id = self.env['hr.department'].search([('id', '=', department_id)]).manager_id.id
+            self.env['dtdream.demand.app'].search([('name.nick_name', '=', self.nick_name),
+                                                   ('state', '=', '1')]).write({'current_approve': manager_id})
+        return super(dtdream_demand_employee, self).write(vals)
 
 
 

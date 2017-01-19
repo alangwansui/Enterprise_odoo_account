@@ -259,7 +259,7 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
             else{
                 $("a.previous[type='affairs']").removeClass('disabled')
             }
-            if (parseInt(currentPage)+1>applyData['totalPage']){
+            if (parseInt(currentPage)+1>affairData['totalPage']){
                 $("a.next[type='affairs']").addClass('disabled')
             }else{
                 $("a.next[type='affairs']").removeClass('disabled')
@@ -317,7 +317,7 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
             else{
                 $("a.previous[type='dones']").removeClass('disabled')
             }
-            if (parseInt(currentPage)+1>applyData['totalPage']){
+            if (parseInt(currentPage)+1>doneData['totalPage']){
                 $("a.next[type='dones']").addClass('disabled')
             }else{
                 $("a.next[type='dones']").removeClass('disabled')

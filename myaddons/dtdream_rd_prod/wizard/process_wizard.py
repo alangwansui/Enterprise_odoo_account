@@ -397,25 +397,25 @@ class ver_process_wizard(models.TransientModel):
         current_product=current_version.proName
         if current_process.ver_state=='initialization' and current_process.ver_state==current_version.version_state:
             if current_process.level=='level_01':
-                self._message_post(current_product=current_product,current_process=current_process,state=u'计划中',level=u'一级',result=u'不通过',reason=self.reason)
+                self._message_post(current_product=current_product,current_version=current_version,current_process=current_process,state=u'计划中',level=u'一级',result=u'不通过',reason=self.reason)
             elif current_process.level=='level_02':
-                self._message_post(current_product=current_product,current_process=current_process,state=u'计划中',level=u'二级',result=u'不通过',reason=self.reason)
+                self._message_post(current_product=current_product,current_version=current_version,current_process=current_process,state=u'计划中',level=u'二级',result=u'不通过',reason=self.reason)
                 proces_01all = self.env['dtdream_rd_process_ver'].search([('process_01_id','=',current_version.id),('ver_state','=',current_version.version_state)])
                 proces_01all.unlink()
                 current_version.write({'is_click_01':False,'is_finish_01':False})
         if current_process.ver_state=='Development' and current_process.ver_state==current_version.version_state:
             if current_process.level=='level_01':
-                self._message_post(current_product=current_product,current_process=current_process,state=u'开发中',level=u'一级',result=u'不通过',reason=self.reason)
+                self._message_post(current_product=current_product,current_version=current_version,current_process=current_process,state=u'开发中',level=u'一级',result=u'不通过',reason=self.reason)
             elif current_process.level=='level_02':
-                self._message_post(current_product=current_product,current_process=current_process,state=u'开发中',level=u'二级',result=u'不通过',reason=self.reason)
+                self._message_post(current_product=current_product,current_version=current_version,current_process=current_process,state=u'开发中',level=u'二级',result=u'不通过',reason=self.reason)
                 proces_02all = self.env['dtdream_rd_process_ver'].search([('process_02_id','=',current_version.id),('ver_state','=',current_version.version_state)])
                 proces_02all.unlink()
                 current_version.write({'is_click_02':False,'is_finish_02':False})
         if current_process.ver_state=='pending' and current_process.ver_state==current_version.version_state:
             if current_process.level=='level_01':
-                self._message_post(current_product=current_product,current_process=current_process,state=u'待发布',level=u'一级',result=u'不通过',reason=self.reason)
+                self._message_post(current_product=current_product,current_version=current_version,current_process=current_process,state=u'待发布',level=u'一级',result=u'不通过',reason=self.reason)
             elif current_process.level=='level_02':
-                self._message_post(current_product=current_product,current_process=current_process,state=u'待发布',level=u'二级',result=u'不通过',reason=self.reason)
+                self._message_post(current_product=current_product,current_version=current_version,current_process=current_process,state=u'待发布',level=u'二级',result=u'不通过',reason=self.reason)
                 proces_03all = self.env['dtdream_rd_process_ver'].search([('process_03_id','=',current_version.id),('ver_state','=',current_version.version_state)])
                 proces_03all.unlink()
                 current_version.write({'is_click_03':False,'is_finish_03':False})

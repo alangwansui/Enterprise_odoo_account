@@ -7,7 +7,7 @@
             <field name="on_create">True</field>
         </record>
 
-        <record id="foreign_act_draft" model="workflow.activity">
+        <record id="foreign_act_cg" model="workflow.activity">
             <field name="wkf_id" ref="wkf_dtdream_foreign"/>
             <field name="flow_start">True</field>
             <field name="name">草稿</field>
@@ -15,61 +15,145 @@
             <field name="action">wkf_draft()</field>
         </record>
 
-        <record id="foreign_act_draft1" model="workflow.activity">
+        <record id="foreign_act_xxyjc" model="workflow.activity">
             <field name="wkf_id" ref="wkf_dtdream_foreign"/>
-            <field name="name">直接主管审批</field>
+            <field name="name">信息安全员检查</field>
             <field name="kind">function</field>
-            <field name="action">wkf_department_approve()</field>
+            <field name="action">wkf_xxyjc()</field>
         </record>
 
-        <record id="foreign_act_draft2" model="workflow.activity">
+        <record id="foreign_act_zgsp" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_foreign"/>
+            <field name="name">申请人主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_zgsp()</field>
+        </record>
+
+        <record id="foreign_act_xxyzgsp" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_dtdream_foreign"/>
+            <field name="name">信息源主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_xxyzgsp()</field>
+        </record>
+
+        <record id="foreign_act_qqrsp" model="workflow.activity">
             <field name="wkf_id" ref="wkf_dtdream_foreign"/>
             <field name="name">权签人审批</field>
             <field name="kind">function</field>
-            <field name="action">wkf_demand_approve()</field>
+            <field name="action">wkf_qqrsp()</field>
         </record>
-        <record id="foreign_act_done1" model="workflow.activity" >
+
+        <record id="foreign_act_wc" model="workflow.activity" >
             <field name="wkf_id" ref="wkf_dtdream_foreign" />
             <field name="name">完成</field>
             <field name="flow_stop">True</field>
             <field name="kind">function</field>
-            <field name="action">wkf_done()</field>
+            <field name="action">wkf_wc()</field>
         </record>
-        <record id="trans_foreign_approve1" model="workflow.transition">
-            <field name="act_from" ref="foreign_act_draft"/>
-            <field name="act_to" ref="foreign_act_draft1"/>
-            <field name="signal">btn_submit</field>
+
+        <record id="foreign_act_zz" model="workflow.activity" >
+            <field name="wkf_id" ref="wkf_dtdream_foreign" />
+            <field name="name">终止</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_zz()</field>
+        </record>
+        <record id="trans_foreign_cg_to_xxyjc" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_cg"/>
+            <field name="act_to" ref="foreign_act_xxyjc"/>
+            <field name="signal">cg_to_xxyjc</field>
          </record>
 
-        <record id="trans_foreign_approve2" model="workflow.transition">
-            <field name="act_from" ref="foreign_act_draft1"/>
-            <field name="act_to" ref="foreign_act_draft2"/>
-            <field name="signal">btn_agree</field>
+        <record id="trans_foreign_cg_to_zgsp" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_cg"/>
+            <field name="act_to" ref="foreign_act_zgsp"/>
+            <field name="signal">cg_to_zgsp</field>
+         </record>
+
+        <record id="trans_foreign_xxyjc_to_zgsp" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_xxyjc"/>
+            <field name="act_to" ref="foreign_act_zgsp"/>
+            <field name="signal">xxyjc_to_zgsp</field>
         </record>
 
-        <record id="trans_foreign_approve3" model="workflow.transition">
-            <field name="act_from" ref="foreign_act_draft2"/>
-            <field name="act_to" ref="foreign_act_done1"/>
-            <field name="signal">btn_agree</field>
+        <record id="trans_foreign_xxyjc_to_cg" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_xxyjc"/>
+            <field name="act_to" ref="foreign_act_cg"/>
+            <field name="signal">xxyjc_to_cg</field>
         </record>
 
-        <record id="trans_foreign_approve4" model="workflow.transition">
-            <field name="act_from" ref="foreign_act_draft1"/>
-            <field name="act_to" ref="foreign_act_done1"/>
-            <field name="signal">btn_agree1</field>
+        <record id="trans_foreign_zgsp_to_xxyzgsp" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_zgsp"/>
+            <field name="act_to" ref="foreign_act_xxyzgsp"/>
+            <field name="signal">zgsp_to_xxyzgsp</field>
+        </record>
+
+        <record id="trans_foreign_zgsp_to_qqrsp" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_zgsp"/>
+            <field name="act_to" ref="foreign_act_qqrsp"/>
+            <field name="signal">zgsp_to_qqrsp</field>
+        </record>
+
+        <record id="trans_foreign_zgsp_to_zz" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_zgsp"/>
+            <field name="act_to" ref="foreign_act_zz"/>
+            <field name="signal">zgsp_to_zz</field>
+        </record>
+
+        <record id="trans_foreign_zgsp_to_wc" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_zgsp"/>
+            <field name="act_to" ref="foreign_act_wc"/>
+            <field name="signal">zgsp_to_wc</field>
+        </record>
+
+        <record id="trans_foreign_zgsp_to_cg" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_zgsp"/>
+            <field name="act_to" ref="foreign_act_cg"/>
+            <field name="signal">zgsp_to_cg</field>
+        </record>
+
+        <record id="trans_foreign_xxyzgsp_to_qqrsp" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_xxyzgsp"/>
+            <field name="act_to" ref="foreign_act_qqrsp"/>
+            <field name="signal">xxyzgsp_to_qqrsp</field>
+        </record>
+
+        <record id="trans_foreign_xxyzgsp_to_zz" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_xxyzgsp"/>
+            <field name="act_to" ref="foreign_act_zz"/>
+            <field name="signal">xxyzgsp_to_zz</field>
+        </record>
+
+        <record id="trans_foreign_xxyzgsp_to_wc" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_xxyzgsp"/>
+            <field name="act_to" ref="foreign_act_wc"/>
+            <field name="signal">xxyzgsp_to_wc</field>
+        </record>
+
+        <record id="trans_foreign_xxyzgsp_to_cg" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_xxyzgsp"/>
+            <field name="act_to" ref="foreign_act_cg"/>
+            <field name="signal">xxyzgsp_to_cg</field>
+        </record>
+
+        <record id="trans_foreign_qqrsp_to_wc" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_qqrsp"/>
+            <field name="act_to" ref="foreign_act_wc"/>
+            <field name="signal">qqrsp_to_wc</field>
+        </record>
+
+        <record id="trans_foreign_qqrsp_to_zz" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_qqrsp"/>
+            <field name="act_to" ref="foreign_act_zz"/>
+            <field name="signal">qqrsp_to_zz</field>
+        </record>
+
+        <record id="trans_foreign_qqrsp_to_cg" model="workflow.transition">
+            <field name="act_from" ref="foreign_act_qqrsp"/>
+            <field name="act_to" ref="foreign_act_cg"/>
+            <field name="signal">qqrsp_to_cg</field>
         </record>
 
 
-        <record id="trans_foreign1_draft_reject" model="workflow.transition">
-            <field name="act_from" ref="foreign_act_draft1"/>
-            <field name="act_to" ref="foreign_act_draft"/>
-            <field name="signal">btn_reject</field>
-        </record>
-
-        <record id="trans_foreign2_draft_reject" model="workflow.transition">
-            <field name="act_from" ref="foreign_act_draft2"/>
-            <field name="act_to" ref="foreign_act_draft"/>
-            <field name="signal">btn_reject</field>
-        </record>
     </data>
 </openerp>

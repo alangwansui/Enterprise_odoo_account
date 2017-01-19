@@ -29,7 +29,7 @@
             <field name="res_model">dtdream_rd_version</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
             <field name="context">{}</field>
@@ -41,7 +41,7 @@
             <field name="res_model">dtdream_rd_version</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
         </record>
@@ -51,7 +51,7 @@
             <field name="res_model">dtdream_rd_version</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
             <field name="context">{}</field>
@@ -63,7 +63,7 @@
             <field name="res_model">dtdream_rd_version</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_rd_version_filter"/>
             <field name="context">{'search_default_group_by_department_ver':'department','search_default_group_by_department_2_ver':'department_2','search_default_group_by_canpname':'name','search_default_group_by_version_numb':'version_numb'}</field>
         </record>
@@ -85,6 +85,53 @@
                 </tree>
             </field>
         </record>
+
+
+
+        <record model="ir.ui.view" id="dtdream_rd_version_kanban_view">
+            <field name="name">dtdream.rd.version.kanban</field>
+            <field name="model">dtdream_rd_version</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="department"/>
+                    <field name="department_2"/>
+                    <field name="PDT"/>
+                    <field name="proName" string="产品名称"/>
+                    <field name="pro_flag" />
+                    <field name="version_numb"/>
+                    <field name="version_state" />
+                    <field name="plan_pub_time"/>
+                    <field name="actual_pub_time"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>项目名称:</strong> <field name="proName" /></li>
+                                        <li ><strong>版本标识:</strong> <field name="pro_flag" /></li>
+                                        <li ><strong>版本号:</strong> <field name="version_numb" /></li>
+                                        <li > <strong>PDT经理:</strong><field name="PDT" /></li>
+                                        <li > <strong>状态:</strong><field name="version_state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
+
+
+
+
 
         <record id="view_dtdream_rd_version_form" model="ir.ui.view">
             <field name="name">view.dtdream.rd.version.form</field>
@@ -193,14 +240,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                     <field name="is_pass" attrs="{'readonly':True}"/>
                                                     <field name="is_risk" attrs="{'readonly':True}"/>
                                                     <field name="is_refuse" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
-                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                         </page>
@@ -224,14 +271,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                     <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                     <field name="is_pass" attrs="{'readonly':True}"/>
                                                     <field name="is_risk" attrs="{'readonly':True}"/>
                                                     <field name="is_refuse" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
-                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                         </page>
@@ -248,13 +295,40 @@
                                 <group>
                                     <notebook>
                                         <page string="重计划">
-                                            <field name="replanning_ids">
+                                            <field name="replanning_ids" mode="tree,kanban">
                                                 <tree create="false" delete="false">
                                                     <field name="old_plan_time"/>
                                                     <field name="new_plan_time"/>
                                                     <field name="shenpi_date"/>
                                                     <field name="state"/>
                                                 </tree>
+
+                                                <kanban class="o_res_partner_kanban" >
+                                                    <field name="old_plan_time"/>
+                                                    <field name="new_plan_time"/>
+                                                    <field name="shenpi_date"/>
+                                                    <field name="state"/>
+                                                    <templates>
+                                                        <t t-name="kanban-box">
+                                                        <div class="oe_kanban_global_click ">
+                                                             <div class="o_kanban_image">
+                                                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                              </div>
+                                                            <div class="oe_kanban_details">
+                                                                <div name="tags"/>
+                                                                    <ul>
+                                                                        <li ><strong>原计划发布时间:</strong> <field name="old_plan_time" /></li>
+                                                                        <li > <strong>重计划发布时间:</strong><field name="new_plan_time" /></li>
+                                                                        <li ><strong>审批通过时间:</strong> <field name="shenpi_date" /></li>
+                                                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                                                    </ul>
+                                                            <div name="tags"/>
+                                                            </div>
+                                                        </div>
+                                                        </t>
+                                                    </templates>
+                                                </kanban>
+
                                             </field>
                                         </page>
                                     </notebook>
@@ -271,14 +345,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                     <field name="is_pass" attrs="{'readonly':True}"/>
                                                     <field name="is_risk" attrs="{'readonly':True}"/>
                                                     <field name="is_refuse" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
-                                                    <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                             <field name="is_shenpiren" invisible="1"/>
@@ -288,6 +362,44 @@
                                         </page>
                                     </notebook>
                                 </group>
+                            </page>
+                            <page name="risk" string="风险与机遇">
+                                <field name="risk_ver_ids" mode="tree,kanban">
+                                    <tree>
+                                        <field name="name" string="风险描述"/>
+                                        <field name="chance_describe" string="机遇描述"/>
+                                        <field name="plan_close_time" string="计划关闭日期"/>
+                                        <field name="PDT" string="责任人"/>
+                                        <field name="risk_state" string="风险状态"/>
+                                    </tree>
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="name" string="风险描述"/>
+                                        <field name="chance_describe" string="机遇描述"/>
+                                        <field name="plan_close_time" string="计划关闭日期"/>
+                                        <field name="PDT" string="责任人"/>
+                                        <field name="risk_state" string="风险状态"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>风险描述:</strong> <field name="name" /></li>
+                                                            <li ><strong>机遇描述:</strong> <field name="chance_describe" /></li>
+                                                            <li > <strong>计划关闭日期:</strong><field name="plan_close_time" /></li>
+                                                            <li > <strong>责任人:</strong><field name="PDT" /></li>
+                                                            <li > <strong>风险状态:</strong><field name="risk_state" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>

@@ -9,6 +9,10 @@ from dateutil.relativedelta import relativedelta
 from openerp.exceptions import ValidationError
 from openerp.exceptions import UserError, AccessError
 from lxml import etree
+import  time
+
+from openerp.osv import expression
+
 
 
 class dtdream_hr_holidays_extend(models.Model):
@@ -63,6 +67,16 @@ class dtdream_hr_holidays_extend(models.Model):
         ('6','2011'),
 
     ],string="年休假年份")
+
+    nxj_fenpei = fields.Float(string="年休假分配")
+
+    nxj_yixiu = fields.Float(string="已休年休假")
+    nxj_tiaozheng = fields.Float(string="年休假调整天数")
+    nxj_tiaozhengbeizhu = fields.Text(string="年休假调整备注")
+    nxj_yue = fields.Float(string="年休假余额")
+
+    nxj_jisuan = fields.Boolean(string="标记计算数据",default=False)
+
     _check_holidays = lambda self, cr, uid, ids, context=None: self.check_holidays(cr, uid, ids, context=context)
 
     def _check_date(self, cr, uid, ids, context=None):
@@ -199,8 +213,6 @@ class dtdream_hr_holidays_extend(models.Model):
     def create(self, cr, uid, values, context=None):
 
         """ Override to avoid automatic logging of creation """
-        # print self.pool.get('hr.holidays').browse(cr, uid,values=values)
-        print "create-----------"
         if context is None:
             context = {}
         employee_id = values.get('employee_id', False)
@@ -214,7 +226,6 @@ class dtdream_hr_holidays_extend(models.Model):
         damn_this= self.pool.get('hr.holidays').browse(cr, uid,hr_holiday_id,context=context)
         for this in damn_this:
             this.message_post(body=u'创建，状态：草稿 ')
-        # print rrrrrrrr
         return hr_holiday_id
 
     def get_base_url(self,cr,uid):
@@ -383,27 +394,6 @@ class dtdream_hr_holidays_extend(models.Model):
         dic={"confirm":"一级审批","confirm2":"二级审批","confirm3":"三级审批","confirm4":"四级审批","confirm5":"五级审批",}
         message = ("驳回，状态：%s --> 拒绝") % (dic[self.state])
         self.message_post(body=message)
-        # 邮件通知
-        # link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-        # url=self.get_base_url()+link
-        # state=dict(self.env['hr.holidays']._columns['state'].selection)[self.state]
-        # state_code=unicode(state,'utf-8')
-        # if self.create_type==False:
-        #     self.env['mail.mail'].create({
-        #             'subject': u'%s您于%s提交请假申请已被驳回，请您查看！' % (self.employee_id.name, self.create_time[:10]),
-        #             'body_html': u'''<p>%s，您好：</p>
-        #                      <p>您提交的请假申请已被驳回，请您查看！</p>
-        #                      <p> 请点击链接进入查看:
-        #                      <a href="%s">%s</a></p>
-        #                       <p>dodo</p>
-        #                      <p>万千业务，简单有do</p>
-        #                      <p>%s</p>''' % (self.employee_id.name, url,url,self.write_date[:10]),
-        #             'email_from':self.get_mail_server_name(),
-        #
-        #             'email_to': self.employee_id.work_email,
-        #         }).send()
-
-
 
 
         self.write({'state':'refuse','current_shenpiren':""})
@@ -418,34 +408,6 @@ class dtdream_hr_holidays_extend(models.Model):
         dic={"confirm":"一级审批","confirm2":"二级审批","confirm3":"三级审批","confirm4":"四级审批","confirm5":"五级审批",}
         message = ("批准，状态：%s --> 完成") % (dic[this_self.state])
         this_self.message_post(body=message)
-        # 邮件通知
-        # link='/web?#id=%s&view_type=form&model=hr.holidays'%this_self.id
-        # url=this_self.get_base_url()+link
-        # state=dict(this_self.env['hr.holidays']._columns['state'].selection)[this_self.state]
-        # state_code=unicode(state,'utf-8')
-        # if this_self.create_type==False:
-        #     this_self.env['mail.mail'].create({
-        #             'subject': u'您于%s提交请假申请已经审批通过，请您查看！' % (this_self.create_time[:10]),
-        #             'body_html': u'''<p>%s，您好：</p>
-        #                      <p>您提交的请假申请已经审批通过，请您查看！</p>
-        #                      <p> 请点击链接进入查看:
-        #                      <a href="%s">%s</a></p>
-        #                       <p>dodo</p>
-        #                      <p>万千业务，简单有do</p>
-        #                      <p>%s</p>''' % (this_self.employee_id.name, url,url,this_self.write_date[:10]),
-        #             'email_from':this_self.get_mail_server_name(),
-        #
-        #             'email_to': this_self.employee_id.work_email,
-        #         }).send()
-        # elif this_self.create_type=='manage':
-        #     this_self.env['mail.mail'].create({
-        #             'subject': u'%s 年休假分配'%this_self.employee_id.name,
-        #             'body_html': u'<p>%s</p><p>您有新的年休假分配,点击<a href="%s">此处</a>查看</p>'%(this_self.employee_id.name,url),
-        #             'email_from':self.get_mail_server_name(),
-        #
-        #             'email_to': this_self.employee_id.work_email,
-        #         }).send()
-
 
         obj_emp = self.pool.get('hr.employee')
         ids2 = obj_emp.search(cr, uid, [('user_id', '=', uid)])
@@ -513,12 +475,6 @@ class dtdream_hr_holidays_extend(models.Model):
         return True
 
 
-
-
-
-
-
-
     def unlink(self, cr, uid, ids, context=None):
 
         for rec in self.browse(cr, uid, ids, context=context):
@@ -562,6 +518,17 @@ class dtdream_hr_holidays_extend(models.Model):
                 doc.xpath("//form")[0].set("create", "false")
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
+            if res['type'] == "kanban":
+                doc.xpath("//kanban")[0].set("create", "false")
+				
+        if my_action.name == u"所有年休假余额" or my_action.name == u"年休假余额":
+            if res['type'] == "form":
+                doc.xpath("//form")[0].set("edit", "false")
+            if res['type'] == "tree":
+                doc.xpath("//tree")[0].set("edit", "false")
+            if res['type'] == "kanban":
+                doc.xpath("//kanban")[0].set("edit", "false")
+				
         res['arch'] = etree.tostring(doc)
         return res
 
@@ -607,6 +574,91 @@ class dtdream_hr_holidays_extend(models.Model):
         # else:
         #     result['value']['number_of_days_temp'] = 0
         return result
+
+    def compute_nianxiujia(self, em, results):
+        nianxiujia_yixiu = 0
+        xiujia_list = self.env["hr.holidays"].search(
+            [('employee_id', '=', em.id), ('holiday_status_id', '=', 5), ('create_type', '=', False),
+             ('type', '=', 'remove'),('state','=','validate')])
+        for xiujia in xiujia_list:
+            nianxiujia_yixiu += xiujia.number_of_days_temp
+        for result in results:
+            nianxiujia_tiaozheng = 0
+            nianxiujia_tiaozheng_yy = ''
+            xiujia_list_tz = self.env["hr.holidays"].search(
+                [('employee_id', '=', em.id), ('holiday_status_id', '=', 5), ('create_type', '=', 'manage'),
+                 ('type', '=', 'remove'), ('year', '=', result['year']),('state','=','validate')])
+            for xiujia_tz in xiujia_list_tz:
+                nianxiujia_tiaozheng += xiujia_tz.number_of_days_temp
+                nianxiujia_tiaozheng_yy += xiujia_tz.name + ';'
+            result['nxj_tiaozheng'] = nianxiujia_tiaozheng
+            result['nxj_tiaozhengbeizhu'] = nianxiujia_tiaozheng_yy
+
+            if nianxiujia_yixiu > result['nxj_fenpei'] - result['nxj_tiaozheng']:
+                result['nxj_yixiu'] = result['nxj_fenpei'] - result['nxj_tiaozheng']
+                nianxiujia_yixiu -= result['nxj_yixiu']
+            else:
+                result['nxj_yixiu'] = nianxiujia_yixiu
+                nianxiujia_yixiu = 0
+            result["nxj_yue"] = result["nxj_fenpei"] - result["nxj_yixiu"] - result["nxj_tiaozheng"]
+            self.env["hr.holidays"].browse(result["id"]).sudo().write(
+                {"nxj_yue": result["nxj_yue"], "nxj_yixiu": result["nxj_yixiu"],
+                 "nxj_tiaozheng": result["nxj_tiaozheng"],
+                 "nxj_tiaozhengbeizhu": result['nxj_tiaozhengbeizhu'],"nxj_fenpei":result["nxj_fenpei"],"nxj_jisuan":True})
+
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu == u"年休假余额":
+                em = self.env['hr.employee'].search([('user_id', '=', self.env.uid)])
+                domains = expression.AND([[('employee_id', '=', em.id),('state','=','validate')], domain])
+                results = super(dtdream_hr_holidays_extend, self).search_read(domain=domains, offset=offset,limit=limit, order="year desc")
+                # self.compute_nianxiujia(em, results)
+                return results
+        res = super(dtdream_hr_holidays_extend, self).read_group(domain, fields, groupby, offset=offset, limit=limit,orderby=orderby, lazy=lazy)
+        return res
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        params = self._context.get('params', {})
+        action = params.get('action', None)
+        if action:
+            menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
+            if menu == u"年休假余额":
+                em = self.env['hr.employee'].search([('user_id', '=', self.env.uid)])
+                domains = expression.AND([[('employee_id','=',em.id),('state','=','validate')], domain])
+                results = super(dtdream_hr_holidays_extend, self).search_read(domain=domains,offset=offset,limit=limit, order="year desc")
+                # self.compute_nianxiujia(em, results)
+                return results
+
+        return super(dtdream_hr_holidays_extend, self).search_read(domain=domain, fields=fields, offset=offset,limit=limit, order=order)
+
+    @api.model
+    def timing_to_compute_nianxiujia(self):
+        ems = self.env['hr.employee'].search([('Inaugural_state', '=', 'Inaugural_state_01')])
+        for em in ems:
+            domains = [('employee_id', '=', em.id),('type','=','add'),('create_type','=','manage'),('state','=','validate')]
+            result_list = super(dtdream_hr_holidays_extend, self).search_read(domain=domains,order="year desc")
+            results=[]
+            years=[]
+            for result in result_list:
+                if result['year'] not in years:
+                    years.append(result['year'])
+            for year in years:
+                tt = [result for result in result_list if result['year'] == year]
+                year_total=0
+                for t in tt:
+                    year_total +=t["number_of_days_temp"]
+                for t in tt:
+                    t["nxj_fenpei"] = year_total
+                results.append(tt[0])
+
+            self.compute_nianxiujia(em, results)
+
+
 
 
 

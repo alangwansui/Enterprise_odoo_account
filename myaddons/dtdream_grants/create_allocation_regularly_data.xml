@@ -12,5 +12,16 @@
             <field name="args">()</field>
         </record>
 
+        <record model="ir.cron" id="ir_cron_timing_create_allocation_manually">
+            <field name='name'>补助金手动生成记录</field>
+            <field name='interval_number'>120</field>
+            <field name='interval_type'>months</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">dtdream.grants</field>
+            <field name="function">create_allocation_manually</field>
+            <field name="args">()</field>
+        </record>
+
     </data>
 </openerp>

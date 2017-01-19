@@ -8,6 +8,7 @@ var form_common = require('web.form_common');
 var Widget = require('web.Widget');
 var quick_create = require('web_kanban.quick_create');
 var KanbanRecord = require('web_kanban.Record');
+var Model = require('web.DataModel');
 
 var _t = core._t;
 var QWeb = core.qweb;
@@ -114,6 +115,16 @@ var KanbanColumn = Widget.extend({
                         self.records.splice(self.records.indexOf(record), 1);
                         self.dataset.remove_ids([record.id]);
                     } else {
+                        if (record.$el[0].parentNode.children[0].children[0].innerHTML == "丢单"){
+                            self.trigger_up('kanban_reload');
+                            var msg = "请进入项目后点击左侧“丢单”按钮进行操作。"
+                            return new Model('raise.warning').call('raise_warning',[msg])
+                        }
+                        if (record.$el[0].parentNode.children[0].children[0].innerHTML == "中标"){
+                            self.trigger_up('kanban_reload');
+                            var msg = "请进入项目后点击左侧“中标”按钮进行操作。"
+                            return new Model('raise.warning').call('raise_warning',[msg])
+                        }
                         // adding record to this column
                         self.records.push(record);
                         record.setParent(self);

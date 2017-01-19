@@ -76,6 +76,8 @@ class dtdream_information_purview_wizard(models.TransientModel):
     #驳回
     @api.multi
     def btn_overrule(self):
+        if not self.reason:
+            raise ValidationError(u'请填写驳回原因')
         approval = self.env['dtdream.information.purview'].browse(self._context['active_id'])
         approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
         if approval.state=="state_02":
@@ -90,6 +92,8 @@ class dtdream_information_purview_wizard(models.TransientModel):
     #不同意
     @api.multi
     def btn_disagree(self):
+        if not self.reason:
+            raise ValidationError(u'请填写不同意原因')
         approval = self.env['dtdream.information.purview'].browse(self._context['active_id'])
         approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
         if approval.state=="state_02":

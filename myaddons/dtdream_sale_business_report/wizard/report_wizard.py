@@ -69,5 +69,6 @@ class ReportSubmitWizard(models.TransientModel):
 
     @api.one
     def btn_confirm(self):
+
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
         current_report.signal_workflow('btn_submit')

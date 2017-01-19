@@ -232,7 +232,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 this.approval_list.uid = this.uid;
                 this.approval_list.appendTo($('.o_main_content'));
                 this.current_screen = this.approval_list;
-                options['condition'] = [['currentauditperson_userid', '=', this.uid], ['state', '!=', 'jiekoukuaiji'],['state', '!=', 'daifukuan']];
+                options['condition'] = [['currentauditperson.user_id.id', '=', this.uid], ['state', '!=', 'jiekoukuaiji'],['state', '!=', 'daifukuan']];
                 options['title'] = "待我审批的报销申请";
             } else if (model == "my") {
                 this.my_list = new My_List();
@@ -302,7 +302,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          */
         load_template: function () {
             var xml = $.ajax({
-                url: "static/src/xml/dingtalk/detail.xml?version=87",
+                url: "static/src/xml/dingtalk/detail.xml?version=88",
                 async: false // necessary as without the template there isn't much to do.
             }).responseText;
             QWeb.add_template(xml);
@@ -790,7 +790,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             new Model('dtdream.expense.report')
                 .query(['id', 'name', 'state', 'paytype', 'total_invoicevalue', 'paycatelog', 'shoukuanrenxinming', 'work_place',
                     'kaihuhang', 'yinhangkahao', 'expensereason', 'create_uid', 'create_date', 'write_date', 'showcuiqian', 'currentauditperson',
-                    'currentauditperson_userid', 'hasauditor', 'is_outtime', 'xingzhengzhuli', 'department_id', 'create_uid_self'])
+                    'hasauditor', 'is_outtime', 'xingzhengzhuli', 'department_id', 'create_uid_self'])
                 .filter(self.options.condition)
                 .order_by(['-name'])
                 .all({'timeout': 3000, 'shadow': true})
@@ -914,7 +914,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
         attach: function (el, options) {
             var self = this;
             if (!options['condition']) {
-                options['condition'] = [['currentauditperson_userid', '=', self.uid]];
+                options['condition'] = [['currentauditperson.user_id.id', '=', self.uid]];
             }
             this._super(el, options);
             $('.o_main_bar').show();
@@ -1996,7 +1996,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         expense_report: parent.options.expense_report[0],
                         source: function (request, response) {
 
-                            $.when(new Model('hr.department').query('id', 'name', 'assitant_id')
+                            $.when(new Model('hr.department').query(['id', 'name', 'assitant_id'])
                                 .filter([['id', '=', parent.options.expense_report[0].department_id[0]]])
                                 .all({'timeout': 3000, 'shadow': true}), parent.options.expense_report[0])
                                 .fail(function (err) {
@@ -2038,6 +2038,91 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                                 $('.o_xingzhengzhuli').prop('disabled', '');
                                             }
                                         });
+                                });
+                        },
+
+                    }]
+            });
+        },
+        load_budget: function (data) {
+            $('.o_select_budget').cascadingDropdown({
+                selectBoxes: [
+                    {
+                        selector: '.o_budget',
+                        source: function (request, response) {
+
+                            $.when(new Model('dtdream.budget').query(['id', 'name'])
+                                .filter([['applicant.user_id.id','=',data[0].create_uid[0]],['state','=','4']])
+                                .all({'timeout': 3000, 'shadow': true}), data[0])
+                                .fail(function (err) {
+                                    $.alert(err.data.message.replace('None', ""));
+                                })
+                                .then(function (budgets, expense_report) {
+
+                                    var item_index = 0;
+                                    var tmp = [{
+                                        id: '',
+                                        name:['','']
+                                    }];
+
+                                    budgets = tmp.concat(budgets);
+                                    $.map(budgets, function (item, index) {
+                                        if (expense_report && expense_report.budget_id && item.id == expense_report.budget_id[0]) {
+                                            item_index = index;
+                                        }
+                                    });
+                                    response($.map(budgets, function (item, index) {
+                                        return {
+                                            label: item.name[1],
+                                            value: item.id,
+                                            selected: index == item_index // Select first available option
+                                        };
+                                    }));
+
+                                    if (expense_report.state != 'draft') {
+                                        $('.o_budget').prop('disabled', 'disabled');
+                                    } else {
+                                        $('.o_budget').prop('disabled', '');
+                                    }
+                                });
+                        },
+
+                    }]
+            });
+        },
+        load_zhuanxiang: function (data) {
+            $('.o_select_zhuanxiang').cascadingDropdown({
+                selectBoxes: [
+                    {
+                        selector: '.o_zhuanxiang',
+                        source: function (request, response) {
+
+                            $.when(new Model('dtdream.special.approval').query(['id', 'name'])
+                                .filter([['applicant.user_id.id','=', data[0].create_uid[0]],['state','=','state_05']])
+                                .all({'timeout': 3000, 'shadow': true}), data[0])
+                                .fail(function (err) {
+                                    $.alert(err.data.message.replace('None', ""));
+                                })
+                                .then(function (zhuanxiangs, expense_report) {
+                                    var item_index = 0;
+                                    $.map(zhuanxiangs, function (item, index) {
+                                        if (expense_report && expense_report.zhuanxiang_id && item.id == expense_report.zhuanxiang_id[0]) {
+                                            item_index = index;
+                                        }
+                                    });
+                                    response($.map(zhuanxiangs, function (item, index) {
+                                        return {
+                                            label: item.name,
+                                            value: item.id,
+                                            selected: index == item_index // Select first available option
+                                        };
+                                    }));
+
+                                    if (expense_report.state != 'draft') {
+                                        $('.o_zhuanxiang').prop('disabled', 'disabled');
+                                    } else {
+                                        $('.o_zhuanxiang').prop('disabled', '');
+                                    }
                                 });
                         },
 
@@ -2864,7 +2949,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 'chuchaishijian_ids': chuchai_ids,
                 'kaihuhang':$.trim(this.$('input[data-id=kaihuhang]').val()),
                 'shoukuanrenxinming': $.trim(this.$('input[data-id=shoukuanren]').val()),
-                'yinhangkahao': $.trim(this.$('input[data-id=yinhangkahao]').val())
+                'yinhangkahao': $.trim(this.$('input[data-id=yinhangkahao]').val()),
+                'budget_id': this.$('.o_budget').val()
                 }
             } else {
                 expense_report_detail = {
@@ -2874,8 +2960,15 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 'expensereason': this.$('textarea[data-id=expensereason]').val(),
                 'benefitdep_ids': benefitdep_ids,
                 'record_ids': expense_ids,
-                'chuchaishijian_ids': chuchai_ids
+                'chuchaishijian_ids': chuchai_ids,
+                'budget_id': this.$('.o_budget').val()
                 }
+            }
+
+            if (!this.$('.o_zhuanxiang').is(":hidden")){
+                expense_report_detail['zhuanxiang_id'] = this.$('.o_zhuanxiang').val();
+            } else {
+                expense_report_detail['zhuanxiang_id'] = null;
             }
 
             var def = new $.Deferred();
@@ -3213,8 +3306,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     new Model('dtdream.expense.report')
                         .query(['id', 'name', 'state', 'paytype', 'total_invoicevalue', 'paycatelog', 'work_place',
                                 'expensereason', 'create_uid', 'create_date', 'write_date', 'showcuiqian',
-                                'currentauditperson', 'currentauditperson_userid', 'hasauditor', 'is_outtime',
-                                'xingzhengzhuli', 'department_id', 'create_uid_self','kaihuhang','shoukuanrenxinming','yinhangkahao', 'compute_currentaudit'])
+                                'currentauditperson', 'hasauditor', 'is_outtime',
+                                'xingzhengzhuli', 'department_id', 'create_uid_self','kaihuhang','shoukuanrenxinming','yinhangkahao', 'compute_currentaudit', 'budget_id', 'zhuanxiang_id'])
                         .filter([['id', '=', parseInt(options.receipt_id)]])
                         .all({'timeout': 3000, 'shadow': true}), this)
                 .fail(function (err) {
@@ -3226,6 +3319,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         parent.options = options;
                         parent.init_data(parent);
                         parent.load_xingzhengzhuli(parent);
+                        parent.load_budget(data);
+                        parent.load_zhuanxiang(data);
                     },
                     function (err, event) {
                         event.preventDefault();
@@ -3260,6 +3355,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     $('.o_kaihuhang').hide();
                     $('.o_yinhangkahao').hide();
                 }
+
+                $('.o_zhuanxiang_xxx').hide();
 
                 this.$('input[data-id=work_place]').val(this.expense_report.work_place);
                 this.$('input[data-id=create_uid_self]').val(this.expense_report.create_uid_self[1]);
@@ -3421,11 +3518,21 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     'state': this.options.expense_report[0].state
                 }));
                 $el.find('.o_report_expense_ids').append($expense_records);
+                var is_zhuangxiang = false;
                 for (var i in expense_records) {
                     if (expense_records[i].expensecatelog[1] != "差旅费"){
                         $('.o_report_chuchai_ids').hide();
                     }
+                    if (!is_zhuangxiang && expense_records[i].expensecatelog[1] == "专项业务费"){
+                        is_zhuangxiang = true;
+                        $('.o_zhuanxiang_xxx').show();
+                    }
                 }
+
+                if (!is_zhuangxiang){
+                    $('.o_zhuanxiang_xxx').hide();
+                }
+
             }
         },
 

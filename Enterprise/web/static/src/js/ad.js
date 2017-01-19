@@ -138,7 +138,7 @@ function waitTimeout(){
         return false;
     }else{
       document.getElementById(id).disabled=true;
-      document.getElementById(id).value = s+'秒后，重新获取';
+      document.getElementById(id).value = s+'秒';
       s--;
     }
 }

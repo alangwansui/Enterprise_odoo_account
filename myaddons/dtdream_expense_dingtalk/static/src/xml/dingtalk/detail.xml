@@ -712,6 +712,28 @@
 
                         </div>
                     </li>
+                    <li class="o_budget_xxx">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">预算月份</div>
+                                <div class="item-input o_select_budget">
+                                    <select class="o_budget"></select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+                    <li class="o_zhuanxiang_xxx">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">专项申请单</div>
+                                <div class="item-input o_select_zhuanxiang">
+                                    <select class="o_zhuanxiang"></select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
 
                 </ul>
                 <div class="o_report_expense_ids">

@@ -330,12 +330,19 @@ THE SOFTWARE.
             }
 
             if ($window.width() < offset.left + picker.widget.outerWidth()) {
-                offset.right = $window.width() - offset.left - picker.width;
+                if(offset.left + picker.width < 250){
+                    picker.widget.addClass('pull-right');
+                    offset.right = $window.width() - 252;
+                    picker.widget.addClass('wpicker');
+                }else{
+                    offset.right = $window.width() - offset.left - picker.width;
+                    picker.widget.addClass('pull-right');
+                }
                 offset.left = 'auto';
-                picker.widget.addClass('pull-right');
             } else {
                 offset.right = 'auto';
                 picker.widget.removeClass('pull-right');
+                picker.widget.removeClass('wpicker');
             }
 
             picker.widget.css({

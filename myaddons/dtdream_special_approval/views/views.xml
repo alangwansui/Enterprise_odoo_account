@@ -5,7 +5,7 @@
             <field name="res_model">dtdream.special.approval</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('create_uid','=',uid)]</field>
         </record>
 
@@ -14,7 +14,7 @@
             <field name="res_model">dtdream.special.approval</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
         </record>
 
@@ -23,7 +23,7 @@
             <field name="res_model">dtdream.special.approval</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('his_approver_user','=',uid)]</field>
         </record>
 
@@ -32,7 +32,7 @@
             <field name="res_model">dtdream.special.approval</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
         </record>
 
         <record id="view_dtdream_special_approval_tree" model="ir.ui.view">
@@ -72,16 +72,61 @@
             </field>
         </record>
 
+
+
+
+        <record model="ir.ui.view" id="dtdream_special_approval_kanban_view">
+            <field name="name">dtdream.special.approval.kanban</field>
+            <field name="model">dtdream.special.approval</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="name"/>
+                    <field name="business_type"/>
+                    <field name="business_item"/>
+                    <field name="customer_unit"/>
+                    <field name="applicant"/>
+                    <field name="department"/>
+                    <field name="create_date" string="申请时间"/>
+                    <field name="total"/>
+                    <field name="state" />
+                    <field name="current_approver"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>编码:</strong> <field name="name" /></li>
+                                        <li ><strong>申请人:</strong> <field name="applicant" /></li>
+                                        <li ><strong>部门:</strong> <field name="department" /></li>
+                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
+
         <record model="ir.ui.view" id="dtdream_special_approval_form">
             <field name="name">dtdream_special_approval_form</field>
             <field name="model">dtdream.special.approval</field>
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="do_cgtj" string="提交" type="object" confirm="是否确认提交草稿？" attrs="{'invisible':['|',('state','not in',('state_01')),('is_create','=',False)]}"></button>
-                        <button name="%(dtdream_special_approval.do_self_back)d" string="撤回" type="action" attrs="{'invisible':['|',('state','in',('state_01','state_05')),('is_create','=',False)]}"></button>
-                        <button name="%(dtdream_special_approval.act_agree)d"  type="action" string="同意" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
-                        <button name="%(dtdream_special_approval.act_overrule)d"  type="action" string="驳回" attrs="{'invisible':[('is_shenpiren','=',False)]}"></button>
+                        <button name="do_cgtj" string="提交" type="object" confirm="是否确认提交草稿？" attrs="{'invisible':['|',('state','not in',('state_01')),('is_create','=',False)]}"/>
+                        <button name="%(dtdream_special_approval.do_self_back)d" string="撤回" type="action" attrs="{'invisible':['|',('state','in',('state_01','state_05')),('is_create','=',False)]}"/>
+                        <button name="%(dtdream_special_approval.act_agree)d"  type="action" string="同意" attrs="{'invisible':[('is_shenpiren','=',False)]}"/>
+                        <button name="%(dtdream_special_approval.act_overrule)d"  type="action" string="驳回" attrs="{'invisible':[('is_shenpiren','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_05" />
                     </header>
                     <sheet>
@@ -117,7 +162,7 @@
 
                         <notebook>
                             <page string="专项活动议程简述">
-                                <field name="detail_ids" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}">
+                                <field name="detail_ids" mode="tree,kanban" attrs="{'readonly':['&amp;',('is_manager','=',False),'|',('is_create','=',False),('state','not in',('state_01'))]}">
                                     <tree editable="bottom">
                                         <field name="date"/>
                                         <field name="period"/>
@@ -127,6 +172,35 @@
                                         <field name="accompany_num"/>
                                         <field name="remark"/>
                                     </tree>
+
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="date"/>
+                                        <field name="period"/>
+                                        <field name="place"/>
+                                        <field name="issues"/>
+                                        <field name="clients"/>
+                                        <field name="accompany_num"/>
+                                        <field name="remark"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>时间:</strong> <field name="date" /></li>
+                                                            <li > <strong>地点:</strong><field name="place" /></li>
+                                                            <li ><strong>议程:</strong> <field name="issues" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
                                 </field>
                             </page>
                         </notebook>
@@ -139,6 +213,30 @@
                                         <field name="money"/>
                                         <field name="remark"/>
                                     </tree>
+
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="fee_type"/>
+                                        <field name="money"/>
+                                        <field name="remark"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>费用类别:</strong> <field name="fee_type" /></li>
+                                                            <li > <strong>金额(元):</strong><field name="money" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
                                 </field>
                                 <group class="oe_subtotal_footer oe_right" name="approval_total">
                                     <field name="total"  class="oe_subtotal_footer_separator"/>
@@ -277,14 +375,14 @@
             <field name="act_window_id" ref="act_dtdream_special_approval_self"/>
         </record>
 
-        <menuitem name="专项审批" id="dtdream_special_approval_root" icon="fa-user" web_icon="dtdream_special_approval,static/description/dtdream_special_approval.png"></menuitem>
-        <menuitem name="我的申请" sequence="100" id="dtdream_special_approval_self_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_self" ></menuitem>
-        <menuitem name="待我审批" sequence="200" id="dtdream_special_approval_wait_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_wait" ></menuitem>
-        <menuitem name="我已审批" sequence="250" id="dtdream_special_approval_done_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_done" ></menuitem>
-        <menuitem name="所有单据" sequence="300" id="dtdream_special_approval_all_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_all" groups="group_dtdream_special_approval_business,group_dtdream_special_approval_manager"></menuitem>
-        <menuitem name="配置" sequence="400" id="dtdream_special_approval_conf_menu" parent="dtdream_special_approval_root" groups="group_dtdream_special_approval_manager"></menuitem>
-        <menuitem name="部门权签设置" sequence="100" id="dtdream_special_approval_departmentconf_menu" parent="dtdream_special_approval_conf_menu" action="act_dtdream_approval_right_peo" groups=""></menuitem>
-        <menuitem name="特定权签设置" sequence="200" id="dtdream_special_approval_speconf_menu" parent="dtdream_special_approval_conf_menu" action="act_dtdream_specific_people" groups=""></menuitem>
+        <menuitem name="专项审批" id="dtdream_special_approval_root" icon="fa-user" web_icon="dtdream_special_approval,static/description/dtdream_special_approval.png"/>
+        <menuitem name="我的申请" sequence="100" id="dtdream_special_approval_self_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_self" />
+        <menuitem name="待我审批" sequence="200" id="dtdream_special_approval_wait_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_wait" />
+        <menuitem name="我已审批" sequence="250" id="dtdream_special_approval_done_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_done" />
+        <menuitem name="所有单据" sequence="300" id="dtdream_special_approval_all_menu" parent="dtdream_special_approval_root" action="act_dtdream_special_approval_all" groups="group_dtdream_special_approval_business,group_dtdream_special_approval_manager"/>
+        <menuitem name="配置" sequence="400" id="dtdream_special_approval_conf_menu" parent="dtdream_special_approval_root" groups="group_dtdream_special_approval_manager"/>
+        <menuitem name="部门权签设置" sequence="100" id="dtdream_special_approval_departmentconf_menu" parent="dtdream_special_approval_conf_menu" action="act_dtdream_approval_right_peo" groups=""/>
+        <menuitem name="特定权签设置" sequence="200" id="dtdream_special_approval_speconf_menu" parent="dtdream_special_approval_conf_menu" action="act_dtdream_specific_people" groups=""/>
 
     </data>
 </openerp>

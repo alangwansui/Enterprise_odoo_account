@@ -21,7 +21,7 @@
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="context">{'form_no_edit':[]}</field>
         <field name="domain">['|',('name.user_id', '=', uid),('create_uid','=',uid)]</field>
     </record>
@@ -31,7 +31,7 @@
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="domain">[('current_approver.user_id','=',uid),('state','not in',('5','99'))]</field>
     </record>
 
@@ -40,7 +40,7 @@
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="domain">[('his_app','=',uid)]</field>
     </record>
 
@@ -49,7 +49,7 @@
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="domain">['|','|','|','|',('current_approver.user_id','=',uid),('name.user_id', '=', uid),('create_uid','=',uid),('followers_user','=',uid),('his_app','=',uid)]</field>
     </record>
 
@@ -58,7 +58,7 @@
         <field name="res_model">dtdream_hr_business.dtdream_hr_business</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="search_view_id" ref="view_hr_business_filter"/>
         <field name="domain">[]</field>
     </record>
@@ -78,6 +78,42 @@
          </field>
      </record>
 
+
+      <record model="ir.ui.view" id="dtdream_hr_business_kanban_view">
+            <field name="name">dtdream.hr.business.kanban</field>
+            <field name="model">dtdream_hr_business.dtdream_hr_business</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="name"/>
+                    <field name="job_number"/>
+                    <field name="department"/>
+                    <field name="create_time"/>
+                    <field name="state"/>
+                    <field name="current_approver"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请人:</strong> <field name="name" /></li>
+                                        <li ><strong>工号:</strong> <field name="job_number" /></li>
+                                        <li ><strong>部门:</strong> <field name="department" /></li>
+                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
     <!--form视图-->
     <record model="ir.ui.view" id="business_form">
       <field name="name">business_form</field>
@@ -85,11 +121,11 @@
       <field name="arch" type="xml">
         <form>
           <header>
-            <button name="check_submit_dtdream_hr_business" type="object" string="提交" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('-8')),'&amp;',('is_create','=',False),('is_shenqingren','=',False)]}"></button>
-            <button name="btn_restart" type="workflow" string="重启流程" class="oe_highlight" attrs="{'invisible':['&amp;','|',('is_shenqingren','=',False),('state','not in',('99')),'|',('is_create','=',False),('state','not in',('99'))]}"></button>
-            <button name="btn_next" type="workflow"  string="批准" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
-            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" string="驳回" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"></button>
-            <field name="state" statusbar_visible="-8,0,5" widget="statusbar"></field>
+            <button name="check_submit_dtdream_hr_business" type="object" string="提交" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('-8')),'&amp;',('is_create','=',False),('is_shenqingren','=',False)]}"/>
+            <button name="btn_restart" type="workflow" string="重启流程" class="oe_highlight" attrs="{'invisible':['&amp;','|',('is_shenqingren','=',False),('state','not in',('99')),'|',('is_create','=',False),('state','not in',('99'))]}"/>
+            <button name="btn_next" type="workflow"  string="批准" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"/>
+            <button name="%(dtdream_hr_business.act_hr_business_wizard)d" type="action" string="驳回" class="oe_highlight" attrs="{'invisible':['|',('is_shenpiren','=',False),('state','not in',('0','1','2','3','4'))]}"/>
+            <field name="state" statusbar_visible="-8,0,5" widget="statusbar"/>
           </header>
           <sheet>
             <group>
@@ -121,13 +157,38 @@
             </group>
             <notebook>
               <page string="明细">
-                <field name="detail_ids"  attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenqingren','=',False),('state','not in',('-8')),'|',('is_create','=',False),('state','not in',('-8'))]}" >
+                <field name="detail_ids" mode="tree,kanban"  attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenqingren','=',False),('state','not in',('-8')),'|',('is_create','=',False),('state','not in',('-8'))]}" >
                   <tree editable="bottom">
-                    <field name="place"/>
-                    <field name="startTime"/>
-                    <field name="endTime"/>
-                    <field name="reason"/>
+                      <field name="place"/>
+                      <field name="startTime"/>
+                      <field name="endTime"/>
+                      <field name="reason"/>
                   </tree>
+                    <kanban class="o_res_partner_kanban" >
+                        <field name="place"/>
+                        <field name="startTime"/>
+                        <field name="endTime"/>
+                        <field name="reason"/>
+                        <templates>
+                            <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>地点:</strong> <field name="place" /></li>
+                                            <li > <strong>开始时间:</strong><field name="startTime" /></li>
+                                            <li ><strong>结束时间:</strong> <field name="endTime" /></li>
+                                            <li > <strong>原因:</strong><field name="reason"/></li>
+                                        </ul>
+                                <div name="tags"/>
+                                </div>
+                            </div>
+                            </t>
+                        </templates>
+                    </kanban>
                 </field>
               </page>
               </notebook>
@@ -193,11 +254,11 @@
 
 
     <menuitem name="外出公干" id="dtdream_hr_business_root" icon="fa-user"
-            web_icon="dtdream_hr_business,static/description/wcgg.png"></menuitem>
-    <menuitem name="我的申请" sequence="10" id="dtdream_hr_business" parent="dtdream_hr_business_root" action="act_dtdream_hr_business" ></menuitem>
-    <menuitem name="待我审批" sequence="20" id="dtdream_hr_business_wait" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_wait"></menuitem>
-    <menuitem name="我已审批" sequence="30" id="dtdream_hr_business_deal" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_deal"></menuitem>
-    <menuitem name="所有单据" sequence="40" id="dtdream_hr_business_all" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_all"></menuitem>
-    <menuitem name="报告" sequence="50" id="dtdream_hr_business_report" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_report" groups="base.group_hr_manager,base.group_hr_user"></menuitem>
+            web_icon="dtdream_hr_business,static/description/wcgg.png"/>
+    <menuitem name="我的申请" sequence="10" id="dtdream_hr_business" parent="dtdream_hr_business_root" action="act_dtdream_hr_business" />
+    <menuitem name="待我审批" sequence="20" id="dtdream_hr_business_wait" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_wait"/>
+    <menuitem name="我已审批" sequence="30" id="dtdream_hr_business_deal" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_deal"/>
+    <menuitem name="所有单据" sequence="40" id="dtdream_hr_business_all" parent="dtdream_hr_business_root" action="act_dtdream_hr_business_all"/>
+    <menuitem name="报告" sequence="50" id="dtdream_hr_business_report" parent="dtdream_hr_business_root"  action="act_dtdream_hr_business_report" groups="base.group_hr_manager,base.group_hr_user"/>
   </data>
 </openerp>

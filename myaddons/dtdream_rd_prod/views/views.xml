@@ -69,7 +69,7 @@
             <field name="res_model">dtdream_prod_appr</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
             <!--<field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>-->
@@ -81,7 +81,7 @@
             <field name="res_model">dtdream_prod_appr</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
         </record>
@@ -91,7 +91,7 @@
             <field name="res_model">dtdream_prod_appr</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
             <!--<field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>-->
@@ -104,7 +104,7 @@
             <field name="res_model">dtdream_prod_appr</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_dtdream_prod_appr_filter"/>
             <field name="context">{'search_default_group_by_department':'department','search_default_group_by_department_2':'department_2'}</field>
         </record>
@@ -124,6 +124,37 @@
             </field>
         </record>
 
+
+        <record model="ir.ui.view" id="dtdream_prod_appr_kanban_view">
+            <field name="name">dtdream.prod.appr.kanban</field>
+            <field name="model">dtdream_prod_appr</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="department"/>
+                    <field name="department_2"/>
+                    <field name="create_date"/>　　
+                    <field name="create_uid"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>项目名称:</strong> <field name="name" /></li>
+                                        <li > <strong>PDT经理:</strong><field name="PDT" /></li>
+                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
 
         <record id="view_dtdream_prod_appr_form" model="ir.ui.view">
             <field name="name">view.dtdream.prod.appr.form</field>
@@ -190,6 +221,11 @@
                                  <field name="is_shenpiren" invisible="1"/>
                              </group>
                         </group>
+                        <group>
+                            <group>
+                                <field name="pro_PDT" />
+                            </group>
+                        </group>
                         <notebook>
                             <page string="总体设计阶段" attrs="{'invisible':[('state','in',('state_00','state_01'))]}">
                                 <group>
@@ -207,14 +243,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                     <field name="is_pass" attrs="{'readonly':True}"/>
                                                     <field name="is_risk" attrs="{'readonly':True}"/>
                                                     <field name="is_refuse" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
-                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                         </page>
@@ -238,14 +274,14 @@
                                                     <field name="role" />
                                                     <field name="level"/>
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                     <field name="is_pass" attrs="{'readonly':True}"/>
                                                     <field name="is_risk" attrs="{'readonly':True}"/>
                                                     <field name="is_refuse" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
-                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
-                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
                                                 </tree>
                                             </field>
                                         </page>
@@ -253,11 +289,34 @@
                                 </group>
                             </page>
                             <page name="detail" string="角色信息">
-                                <field name="role_ids" string="角色" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}">
+                                <field name="role_ids" mode="tree,kanban" string="角色" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}">
                                     <tree default_order="id" editable="bottom">
                                         <field name="cof_id"/>
                                         <field name="person"/>
                                     </tree>
+
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="cof_id"/>
+                                        <field name="person"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>角色:</strong> <field name="cof_id" /></li>
+                                                            <li > <strong>人员:</strong><field name="person" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
                                 </field>
                             </page>
                             <page name="version" string="进度与计划" >
@@ -272,7 +331,7 @@
                                         <field name="overall_actual_time" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>
                                     </group>
                                 </group>
-                                <field name="version_ids" context="{'default_proName':id}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01','state_03'))]}">   <!--context="{'default_proName':id}"-->
+                                <field name="version_ids" mode="tree,kanban" context="{'default_proName':id}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00','state_01','state_03'))]}">   <!--context="{'default_proName':id}"-->
                                     <tree>
                                         <field name="proName" string="产品名称"/>
                                         <field name="version_numb"/>
@@ -283,10 +342,79 @@
                                         <field name="actual_check_pub_time" string="实际开发完成时间"/>
                                         <field name="actual_pub_time"/>
                                     </tree>
+
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="proName" string="产品名称"/>
+                                        <field name="version_numb"/>
+                                        <field name="pro_flag"/>
+                                        <field name="version_state"/>
+                                        <field name="plan_check_pub_time"/>
+                                        <field name="plan_pub_time"/>
+                                        <field name="actual_check_pub_time" string="实际开发完成时间"/>
+                                        <field name="actual_pub_time"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>产品:</strong> <field name="proName" /></li>
+                                                            <li > <strong>版本:</strong><field name="version_numb" /></li>
+                                                            <li ><strong>版本标识:</strong> <field name="pro_flag" /></li>
+                                                            <li > <strong>状态:</strong><field name="version_state" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
                                 </field>
                                 <field name="is_zantingtjN" invisible="1"/>
                                 <field name="is_zanting_backtjN" invisible="1"/>
                                 <field name="is_zhongzhitjN" invisible="1"/>
+                            </page>
+                            <page name="risk" string="风险与机遇">
+                                <field name="risk_ids" mode="tree,kanban">
+                                    <tree>
+                                        <field name="name" string="风险描述"/>
+                                        <field name="chance_describe" string="机遇描述"/>
+                                        <field name="plan_close_time" string="计划关闭日期"/>
+                                        <field name="PDT" string="责任人"/>
+                                        <field name="risk_state" string="风险状态"/>
+                                    </tree>
+                                    <kanban class="o_res_partner_kanban" >
+                                        <field name="name" string="风险描述"/>
+                                        <field name="chance_describe" string="机遇描述"/>
+                                        <field name="plan_close_time" string="计划关闭日期"/>
+                                        <field name="PDT" string="责任人"/>
+                                        <field name="risk_state" string="风险状态"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>风险描述:</strong> <field name="name" /></li>
+                                                            <li ><strong>机遇描述:</strong> <field name="chance_describe" /></li>
+                                                            <li > <strong>计划关闭日期:</strong><field name="plan_close_time" /></li>
+                                                            <li > <strong>责任人:</strong><field name="PDT" /></li>
+                                                            <li > <strong>风险状态:</strong><field name="risk_state" /></li>
+                                                        </ul>
+                                                <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -329,7 +457,9 @@
         <menuitem id="menu_finance_rd_config" name="配置" parent="menu_finance_rd" sequence="400" groups="group_dtdream_rd_qa"/>
         <menuitem id="menu_finance_rd_Rconfig" name="角色配置" parent="menu_finance_rd_config" sequence="100"  action="act_dtdream_rd_Rconfig"/>
         <menuitem id="menu_finance_rd_approver" name="产品审批人配置" parent="menu_finance_rd_config" sequence="200"  action="act_dtdream_rd_approver"/>
-         <menuitem id="menu_finance_rd_approver_ver" name="版本审批人配置" parent="menu_finance_rd_config" sequence="300"  action="act_dtdream_rd_approver_ver"/>
+        <menuitem id="menu_finance_rd_approver_ver" name="版本审批人配置" parent="menu_finance_rd_config" sequence="300"  action="act_dtdream_rd_approver_ver"/>
+        <menuitem id="menu_finance_rd_PDTconfig" name="PDT配置" parent="menu_finance_rd_config" sequence="400"  action="act_dtdream_rd_PDTconfig"/>
+        <menuitem id="menu_finance_rd_riskconfig" name="风险类型配置" parent="menu_finance_rd_config" sequence="500"  action="act_dtdream_rd_riskconfig"/>
 
         <menuitem id="menu_finance_prod_all" name="所有" parent="menu_finance_rd" sequence="500" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_prod_appr_all" name="所有产品" parent="menu_finance_prod_all" sequence="100" action="act_dtdream_prod_appr_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
@@ -339,6 +469,7 @@
         <menuitem id="menu_finance_suspension_rest_all" name="所有恢复暂停" parent="menu_finance_prod_all" sequence="500" action="act_dtdream_suspension_rest_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_termination_all" name="所有中止" parent="menu_finance_prod_all" sequence="600" action="act_dtdream_termination_meun" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
         <menuitem id="menu_finance_replanning_all" name="所有版本重计划" parent="menu_finance_prod_all" sequence="700" action="act_dtdream_replanning_menu_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
+        <menuitem id="menu_finance_risk_all" name="所有风险" parent="menu_finance_prod_all" sequence="800" action="act_dtdream_risk_menu_all" groups="group_dtdream_rd_qa,group_dtdream_rd_user"/>
 
         <menuitem id="menu_finance_suspension" name="暂停" parent="menu_finance_rd" sequence="350"/>
         <menuitem id="menu_finance_suspension_self" name="我相关的" parent="menu_finance_suspension" sequence="100" action="act_dtdream_prod_suspension_meun_self"/>

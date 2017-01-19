@@ -117,7 +117,7 @@ class dtdream_sale_own_report(models.Model):
         except:
             self.compute_project_info(a_report_end_time)
 
-    @api.onchange('zhengwu_project','lead_project')
+    @api.onchange('to_compute_zongjie')
     def _onchange_zhengwu_project(self):
         zhengwu_project_total = 0
         zhengwu_space_total = 0
@@ -131,39 +131,39 @@ class dtdream_sale_own_report(models.Model):
         monthly_lead_project_totals = 0
         weekly_project_totals = 0
         sys_list = []
-        for rec in self.zhengwu_project:
-            if rec.project_id.id != False:
+        projects_in_operation = self.env['crm.lead'].search([('sale_apply_id.user_id.id','=',self._uid),('stage_id.name','in',('项目启动','技术和商务交流','项目招投标'))])
+        for rec in projects_in_operation:
+            if rec.id != False:
                 zhengwu_project_total = zhengwu_project_total +1
-            if rec.project_id.system_department_id not in sys_list and rec.project_id.id != False:
-                sys_list.append(rec.project_id.system_department_id)
-            zhengwu_space_total = zhengwu_space_total + rec.project_id.space_total
-            if rec.project_id.project_leave in ('company_leave','department_leave'):
+            if rec.system_department_id not in sys_list and rec.id != False:
+                sys_list.append(rec.system_department_id)
+            zhengwu_space_total = zhengwu_space_total + rec.space_total
+            if rec.project_leave in ('company_leave','department_leave'):
                 zhengwu_important_project = zhengwu_important_project + 1;
-                zhengwu_important_space = zhengwu_important_space + rec.project_id.space_total
-            if rec.project_id.create_date:
-                if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
-                    week_add_spaces = week_add_spaces + rec.project_id.space_total
-            if rec.project_id.write_date:
-                if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
+                zhengwu_important_space = zhengwu_important_space + rec.space_total
+            if rec.create_date:
+                if rec.create_date[:10] > self.report_start_time and rec.create_date[:10] <= self.report_end_time:
+                    week_add_spaces = week_add_spaces + rec.space_total
+            if rec.write_date:
+                if rec.write_date[:10] > self.report_start_time and rec.write_date[:10] <= self.report_end_time:
                     weekly_project_totals = weekly_project_totals + 1
-        for recc in self.lead_project:
-            if recc.project_id.id != False:
+        projects_in_lead_stage = self.env['crm.lead'].search([('sale_apply_id.user_id.id','=',self._uid),('stage_id.name','=','机会点')])
+        for recc in projects_in_lead_stage:
+            if recc.id != False:
                 leads_project_total = leads_project_total +1
-            if recc.project_id.system_department_id not in sys_list and recc.project_id.id != False:
-                sys_list.append(recc.project_id.system_department_id)
-            leads_space_total = leads_space_total + recc.project_id.space_total
-            if recc.project_id.project_leave in ('company_leave','department_leave'):
+            if recc.system_department_id not in sys_list and recc.id != False:
+                sys_list.append(recc.system_department_id)
+            leads_space_total = leads_space_total + recc.space_total
+            if recc.project_leave in ('company_leave','department_leave'):
                 leads_important_project = leads_important_project + 1;
-                leads_important_space = leads_important_space + recc.project_id.space_total
-            if recc.project_id.create_date:
-                if recc.project_id.create_date[:10] > self.report_start_time and recc.project_id.create_date[:10] <= self.report_end_time:
-                    week_add_spaces = week_add_spaces + recc.project_id.space_total
-            if recc.project_id.write_date:
-                if recc.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
+                leads_important_space = leads_important_space + recc.space_total
+            if recc.create_date:
+                if recc.create_date[:10] > self.report_start_time and recc.create_date[:10] <= self.report_end_time:
+                    week_add_spaces = week_add_spaces + recc.space_total
+            if recc.write_date:
+                if recc.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
                     monthly_lead_project_totals = monthly_lead_project_totals + 1
         sys_compute_list = []
-        lead_project_total = 0
-        lead_space_total = 0
         for sys_name in sys_list:
             project_total = 0
             lead_project_total = 0
@@ -176,31 +176,31 @@ class dtdream_sale_own_report(models.Model):
             week_new_space = 0
             weekly_project_total = 0
             monthly_lead_project_total = 0
-            for rec in self.zhengwu_project:
-                if rec.project_id.system_department_id == sys_name and rec.project_id.id != False:
+            for rec in projects_in_operation:
+                if rec.system_department_id == sys_name and rec.id != False:
                     project_total = project_total + 1
-                    space_total = space_total + rec.project_id.space_total
-                    if rec.project_id.project_leave in ('company_leave','department_leave'):
+                    space_total = space_total + rec.space_total
+                    if rec.project_leave in ('company_leave','department_leave'):
                         important_project = important_project + 1;
-                        important_space = important_space + rec.project_id.space_total
-                    if rec.project_id.create_date:
-                        if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
-                            week_new_space = week_new_space + rec.project_id.space_total
-                    if rec.project_id.write_date:
-                        if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
+                        important_space = important_space + rec.space_total
+                    if rec.create_date:
+                        if rec.create_date[:10] > self.report_start_time and rec.create_date[:10] <= self.report_end_time:
+                            week_new_space = week_new_space + rec.space_total
+                    if rec.write_date:
+                        if rec.write_date[:10] > self.report_start_time and rec.write_date[:10] <= self.report_end_time:
                             weekly_project_total = weekly_project_total + 1
-            for lead_rec in self.lead_project:
-                if lead_rec.project_id.system_department_id == sys_name and lead_rec.project_id.id != False:
+            for lead_rec in projects_in_lead_stage:
+                if lead_rec.system_department_id == sys_name and lead_rec.id != False:
                     lead_project_total = lead_project_total + 1
-                    lead_space_total = lead_space_total + lead_rec.project_id.space_total
-                    if lead_rec.project_id.project_leave in ('company_leave','department_leave'):
+                    lead_space_total = lead_space_total + lead_rec.space_total
+                    if lead_rec.project_leave in ('company_leave','department_leave'):
                         lead_important_project = lead_important_project + 1;
-                        lead_important_space = lead_important_space + lead_rec.project_id.space_total
-                    if lead_rec.project_id.create_date:
-                        if lead_rec.project_id.create_date[:10] > self.report_start_time and lead_rec.project_id.create_date[:10] <= self.report_end_time:
-                            week_new_space = week_new_space + lead_rec.project_id.space_total
-                    if lead_rec.project_id.write_date:
-                        if lead_rec.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
+                        lead_important_space = lead_important_space + lead_rec.space_total
+                    if lead_rec.create_date:
+                        if lead_rec.create_date[:10] > self.report_start_time and lead_rec.create_date[:10] <= self.report_end_time:
+                            week_new_space = week_new_space + lead_rec.space_total
+                    if lead_rec.write_date:
+                        if lead_rec.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
                             monthly_lead_project_total = monthly_lead_project_total + 1
             if lead_project_total != 0:
                 monthly_laed_refresh_rate = float(monthly_lead_project_total)/lead_project_total*100
@@ -318,6 +318,7 @@ class dtdream_sale_own_report(models.Model):
         return [('id','>=',start_week),('id','<=',end_week)]
 
 
+    to_compute_zongjie = fields.Char(string="隐藏字段，用于计算空间情况总结")
     project_total = fields.Integer(string="项目个数")
     lead_space_total = fields.Integer(string="机会点空间(万元)")
     week_new_space = fields.Integer(string="本周新增项目空间(万元)")
@@ -333,7 +334,7 @@ class dtdream_sale_own_report(models.Model):
     contract_signing_amount = fields.Integer(string="合同签订额(万元)")
     received = fields.Integer(string="已收款(万元)")
     accounts_payable = fields.Integer(string="应付款(万元)")
-    submit_date = fields.Date(string="提交时间")
+    submit_date = fields.Datetime(string="提交时间")
 
     report_person = fields.Many2one('hr.employee','报告人',default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]))
     report_person_name = fields.Char(string="报告人",compute=_compute_reportor_info,store=True)
@@ -453,7 +454,6 @@ class dtdream_sale_own_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.zhengwu_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project()
 
     @api.constrains('lead_project')
     def _cons_lead_project(self):
@@ -500,7 +500,6 @@ class dtdream_sale_own_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.lead_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project()
 
     @api.constrains('other_project')
     def _cons_other_project(self):
@@ -1114,6 +1113,23 @@ class dtdream_sale_manager_report(models.Model):
     _description = u"主管周报"
     _order = "report_start_time desc"
 
+    @api.onchange("a_week")
+    @api.constrains('a_week')
+    def _onchange_a_week(self):
+        if datetime.weekday(datetime.now()) >= 4:
+            report_end_time = datetime.now() - relativedelta(days=((datetime.weekday(datetime.now())) - 4))
+            report_end_time = report_end_time
+        else:
+            report_end_time = datetime.now() + relativedelta(days=(4-7-datetime.weekday(datetime.now())))
+            report_end_time = report_end_time
+        report_start_time = report_end_time - relativedelta(days=7)
+        week = int(datetime.strftime(report_end_time,"%W"))
+        a_report_end_time = report_end_time - relativedelta(days=(week-int(self.a_week.name))*7)
+        self.a_report_end_time = a_report_end_time
+        self.a_report_start_time = report_start_time - relativedelta(days=(week-int(self.a_week.name))*7)
+        self.report_end_time = a_report_end_time
+        self.report_start_time = report_start_time - relativedelta(days=(week-int(self.a_week.name))*7)
+
     @api.model
     def default_get(self,fields):
         report_person = self.env['hr.employee'].search([('login','=',self.env.user.login)])
@@ -1129,16 +1145,17 @@ class dtdream_sale_manager_report(models.Model):
             ref.job_number = ref.report_person.job_number
             ref.department = ref.report_person.department_id.id
             ref.complete_name = ref.report_person.department_id.complete_name.replace(' ', '')
-            if datetime.weekday(datetime.now()) >= 4:
-                report_end_time = datetime.now() - relativedelta(days=((datetime.weekday(datetime.now())) - 4))
-                ref.a_report_end_time = report_end_time
-            else:
-                report_end_time = datetime.now() + relativedelta(days=(4-7-datetime.weekday(datetime.now())))
-                ref.a_report_end_time = report_end_time
-            ref.a_report_start_time = report_end_time - relativedelta(days=7)
-            ref.a_week = int(datetime.strftime(report_end_time,"%W"))
+            if not ref.report_end_time:
+                if datetime.weekday(datetime.now()) >= 4:
+                    report_end_time = datetime.now() - relativedelta(days=((datetime.weekday(datetime.now())) - 4))
+                    ref.a_report_end_time = report_end_time
+                else:
+                    report_end_time = datetime.now() + relativedelta(days=(4-7-datetime.weekday(datetime.now())))
+                    ref.a_report_end_time = report_end_time
+                ref.a_report_start_time = report_end_time - relativedelta(days=7)
+                ref.a_week = int(datetime.strftime(report_end_time,"%W"))
 
-    @api.onchange('zhengwu_project','lead_project')
+    @api.onchange('create_office','create_system')
     def _onchange_zhengwu_project(self):
         zhengwu_project_total = 0
         zhengwu_space_total = 0
@@ -1152,35 +1169,39 @@ class dtdream_sale_manager_report(models.Model):
         monthly_lead_project_totals = 0
         weekly_project_totals = 0
         sys_list = []
-        for rec in self.zhengwu_project:
-            if rec.project_id.id != False:
+        create_office_ids = [rec.id for rec in self.create_office]
+        system_department_ids = [recc.id for recc in self.create_system]
+        projects_in_operations = self.env['crm.lead'].search([('stage_id.name','in',('项目启动','技术和商务交流','项目招投标')),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        for rec in projects_in_operations:
+            if rec.id != False:
                 zhengwu_project_total = zhengwu_project_total +1
-            if rec.project_id.system_department_id not in sys_list and rec.project_id.id != False:
-                sys_list.append(rec.project_id.system_department_id)
-            zhengwu_space_total = zhengwu_space_total + rec.project_id.space_total
-            if rec.project_id.project_leave in ('company_leave','department_leave'):
+            if rec.system_department_id not in sys_list and rec.id != False:
+                sys_list.append(rec.system_department_id)
+            zhengwu_space_total = zhengwu_space_total + rec.space_total
+            if rec.project_leave in ('company_leave','department_leave'):
                 zhengwu_important_project = zhengwu_important_project + 1;
-                zhengwu_important_space = zhengwu_important_space + rec.project_id.space_total
-            if rec.project_id.create_date:
-                if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
-                    week_add_spaces = week_add_spaces + rec.project_id.space_total
-            if rec.project_id.write_date:
-                if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
+                zhengwu_important_space = zhengwu_important_space + rec.space_total
+            if rec.create_date:
+                if rec.create_date[:10] > self.report_start_time and rec.create_date[:10] <= self.report_end_time:
+                    week_add_spaces = week_add_spaces + rec.space_total
+            if rec.write_date:
+                if rec.write_date[:10] > self.report_start_time and rec.write_date[:10] <= self.report_end_time:
                     weekly_project_totals = weekly_project_totals + 1
-        for recc in self.lead_project:
-            if recc.project_id.id != False:
+        projects_in_lead = self.env['crm.lead'].search([('stage_id.name','=','机会点'),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
+        for recc in projects_in_lead:
+            if recc.id != False:
                 leads_project_total = leads_project_total +1
-            if recc.project_id.system_department_id not in sys_list and recc.project_id.id != False:
-                sys_list.append(recc.project_id.system_department_id)
-            leads_space_total = leads_space_total + recc.project_id.space_total
-            if recc.project_id.project_leave in ('company_leave','department_leave'):
+            if recc.system_department_id not in sys_list and recc.id != False:
+                sys_list.append(recc.system_department_id)
+            leads_space_total = leads_space_total + recc.space_total
+            if recc.project_leave in ('company_leave','department_leave'):
                 leads_important_project = leads_important_project + 1;
-                leads_important_space = leads_important_space + recc.project_id.space_total
-            if recc.project_id.create_date:
-                if recc.project_id.create_date[:10] > self.report_start_time and recc.project_id.create_date[:10] <= self.report_end_time:
-                    week_add_spaces = week_add_spaces + recc.project_id.space_total
-            if recc.project_id.write_date:
-                if recc.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time + " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
+                leads_important_space = leads_important_space + recc.space_total
+            if recc.create_date:
+                if recc.create_date[:10] > self.report_start_time and recc.create_date[:10] <= self.report_end_time:
+                    week_add_spaces = week_add_spaces + recc.space_total
+            if recc.write_date:
+                if recc.write_date[:10] >= (datetime.strptime(self.report_end_time + " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
                     monthly_lead_project_totals = monthly_lead_project_totals + 1
         sys_compute_list = []
         lead_project_total = 0
@@ -1197,31 +1218,31 @@ class dtdream_sale_manager_report(models.Model):
             week_new_space = 0
             weekly_project_total = 0
             monthly_lead_project_total = 0
-            for rec in self.zhengwu_project:
-                if rec.project_id.system_department_id == sys_name and rec.project_id.id != False:
+            for rec in projects_in_operations:
+                if rec.system_department_id == sys_name and rec.id != False:
                     project_total = project_total + 1
-                    space_total = space_total + rec.project_id.space_total
-                    if rec.project_id.project_leave in ('company_leave','department_leave'):
+                    space_total = space_total + rec.space_total
+                    if rec.project_leave in ('company_leave','department_leave'):
                         important_project = important_project + 1;
-                        important_space = important_space + rec.project_id.space_total
-                    if rec.project_id.create_date:
-                        if rec.project_id.create_date[:10] > self.report_start_time and rec.project_id.create_date[:10] <= self.report_end_time:
-                            week_new_space = week_new_space + rec.project_id.space_total
-                    if rec.project_id.write_date:
-                        if rec.project_id.write_date[:10] > self.report_start_time and rec.project_id.write_date[:10] <= self.report_end_time:
+                        important_space = important_space + rec.space_total
+                    if rec.create_date:
+                        if rec.create_date[:10] > self.report_start_time and rec.create_date[:10] <= self.report_end_time:
+                            week_new_space = week_new_space + rec.space_total
+                    if rec.write_date:
+                        if rec.write_date[:10] > self.report_start_time and rec.write_date[:10] <= self.report_end_time:
                             weekly_project_total = weekly_project_total + 1
-            for lead_rec in self.lead_project:
-                if lead_rec.project_id.system_department_id == sys_name and lead_rec.project_id.id != False:
+            for lead_rec in projects_in_lead:
+                if lead_rec.system_department_id == sys_name and lead_rec.id != False:
                     lead_project_total = lead_project_total + 1
-                    lead_space_total = lead_space_total + lead_rec.project_id.space_total
-                    if lead_rec.project_id.project_leave in ('company_leave','department_leave'):
+                    lead_space_total = lead_space_total + lead_rec.space_total
+                    if lead_rec.project_leave in ('company_leave','department_leave'):
                         lead_important_project = lead_important_project + 1;
-                        lead_important_space = lead_important_space + lead_rec.project_id.space_total
-                    if lead_rec.project_id.create_date:
-                        if lead_rec.project_id.create_date[:10] > self.report_start_time and lead_rec.project_id.create_date[:10] <= self.report_end_time:
-                            week_new_space = week_new_space + lead_rec.project_id.space_total
-                    if lead_rec.project_id.write_date:
-                        if lead_rec.project_id.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
+                        lead_important_space = lead_important_space + lead_rec.space_total
+                    if lead_rec.create_date:
+                        if lead_rec.create_date[:10] > self.report_start_time and lead_rec.create_date[:10] <= self.report_end_time:
+                            week_new_space = week_new_space + lead_rec.space_total
+                    if lead_rec.write_date:
+                        if lead_rec.write_date[:10] >= (datetime.strptime(self.report_end_time+ " 00:00:00","%Y-%m-%d %H:%M:%S") - relativedelta(months=1)).strftime('%Y-%m-%d'):
                             monthly_lead_project_total = monthly_lead_project_total + 1
             if lead_project_total != 0:
                 monthly_laed_refresh_rate = float(monthly_lead_project_total)/lead_project_total*100
@@ -1298,13 +1319,18 @@ class dtdream_sale_manager_report(models.Model):
         report_start_time = report_end_time - relativedelta(days=7)
         week = int(datetime.strftime(report_end_time,"%W"))
         self.report_start_time = report_start_time
-        a_report_end_time = report_end_time - relativedelta(days=(week-int(self.week.name))*7)
-        self.report_end_time = a_report_end_time
-        self.report_start_time = report_start_time - relativedelta(days=(week-int(self.week.name))*7)
-        try:
-            self.id - self.id
-        except:
-            self.compute_project_info(int(datetime.strftime(a_report_end_time,"%W")))
+        if not self.week:
+            self.report_end_time = self.a_report_end_time
+            self.report_start_time = self.a_report_start_time
+        else:
+            a_report_end_time = report_end_time - relativedelta(days=(week-int(self.week.name))*7)
+            self.report_end_time = a_report_end_time
+            self.report_start_time = report_start_time - relativedelta(days=(week-int(self.week.name))*7)
+            # self._onchange_zhengwu_project()
+            try:
+                self.id - self.id
+            except:
+                self.compute_project_info(int(datetime.strftime(a_report_end_time,"%W")))
 
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
@@ -1455,8 +1481,8 @@ class dtdream_sale_manager_report(models.Model):
     name = fields.Char('主管周报',default="主管周报")
     report_start_time = fields.Date(string="周报开始日期",compute=_onchange_week,store=True)
     report_end_time = fields.Date(string="周报结束日期",compute=_onchange_week,store=True)
-    a_report_start_time = fields.Date(string="周报开始日期",compute=_compute_reportor_info,store=True)
-    a_report_end_time = fields.Date(string="周报结束日期",compute=_compute_reportor_info,store=True)
+    a_report_start_time = fields.Date(string="周报开始日期")
+    a_report_end_time = fields.Date(string="周报结束日期")
     zhengwu_project = fields.One2many("manager.zhengwu.system.project","manager_zhengwu_project_id",copy=True)
     zhengwu_total_space = fields.Char("项目个数")
     zhengwu_total_project = fields.Float("整体空间(万元)")
@@ -1484,7 +1510,7 @@ class dtdream_sale_manager_report(models.Model):
 
     complete_name = fields.Char(string="部门")
     manager_reply_list = fields.One2many("reply.list","reply_list_to_manager_report_id",string="周报批复区")
-    submit_date = fields.Date(string="提交时间")
+    submit_date = fields.Datetime(string="提交时间")
 
     # if_see_manager_report = fields.Char(string="是否可查看主管周报",default="0",compute=_compute_if_see_manager_report,store=True)
 
@@ -1582,7 +1608,6 @@ class dtdream_sale_manager_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.zhengwu_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project()
 
     @api.constrains('lead_project')
     def _cons_lead_project(self):
@@ -1629,7 +1654,6 @@ class dtdream_sale_manager_report(models.Model):
                             crm_rec.des_records.create({"name":rec.project_process,"des_id":crm_rec.id,"week":int(self.week)})
                 if rec.bidding_time > (datetime.strptime(report_end_time,"%Y-%m-%d %H:%M:%S") + relativedelta(months=3)).strftime("%Y-%m-%d"):
                     self.lead_project = [(2,rec.id)]
-                    self._onchange_zhengwu_project()
 
     @api.constrains('other_project')
     def _cons_other_project(self):
@@ -1821,7 +1845,6 @@ class dtdream_sale_manager_report(models.Model):
                 list.append((0,0,{"partner_id":rec.partner_id,"system_department_id":rec.system_department_id,"office_id":rec.office_id,"visit_date":rec.visit_date,
                               "visit_object":rec.visit_object,"content":rec.content,'industry_id':rec.industry_id}))
         self.customer_visit_plan = list or False
-        self._onchange_zhengwu_project()
 
 class report_zongjie(models.Model):
     _name = "report.zongjie"

@@ -19,6 +19,45 @@
         </tree>
       </field>
     </record>
+
+
+    <record model="ir.ui.view" id="leaving_handle_kanban_view">
+            <field name="name">leaving.handle.kanban</field>
+            <field name="model">leaving.handle</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="name"/>
+                    <field name="full_name"/>
+                    <field name="job_number"/>
+                    <field name="department_id"/>
+                    <field name="leave_date"/>
+                    <field name="actual_leavig_date"/>
+                    <field name="state"/>
+                    <field name="cur_approvers" widget="many2many_tags"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请人:</strong> <field name="name" /></li>
+                                        <li ><strong>计划离职日期:</strong> <field name="leave_date" /></li>
+                                        <li ><strong>实际离职日期:</strong> <field name="actual_leavig_date" /></li>
+                                        <li ><strong>状态:</strong> <field name="state" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
     <!--form视图-->
     <record model="ir.ui.view" id="leaving_handle_form">
       <field name="name">leaving_handle form</field>
@@ -27,11 +66,11 @@
         <form>
           <header>
               <button name="btn_submit"
-                      type="workflow" states="0" string="提交" class="oe_highlight"></button>
+                      type="workflow" states="0" string="提交" class="oe_highlight"/>
               <button name="%(dtdream_hr_leaving.act_leaving_handle_wizard)d" type="action" string="审批" class="oe_highlight"
                       attrs="{'invisible':['|',('state','not in',('1','2','4','6', '7','8')),'&amp;',('is_approver','!=',True),('is_admin', '=', False)]}"
-                      context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"></button>
-              <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,8,99" widget="statusbar"></field>
+                      context="{'default_current_state': state,'default_actual_leavig_date':leave_date}"/>
+              <field name="state" statusbar_visible="0,1,2,3,4,5,6,7,8,99" widget="statusbar"/>
           </header>
           <sheet>
             <group  col="4">
@@ -54,30 +93,30 @@
               <page string="离岗后环节" states="5,6,7,8,99" >
                 <field name="leaving_handle_process_ids2" attrs="{'readonly':['|',('state','!=','5'),('is_admin', '=', False)]}">
                   <tree create="false" delete="false">
-                    <field name="process_id" readonly="True"></field>
-                    <field name="process_approver" readonly="True"></field>
+                    <field name="process_id" readonly="True"/>
+                    <field name="process_approver" readonly="True"/>
                     <button name="%(dtdream_hr_leaving.act_leaving_handle_process_wizard)d"
-                            attrs="{'invisible':[('process2_can_edit','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
-                    <field name="is_finish" invisible="True"></field>
-                    <field name="is_other" invisible="True"></field>
-                    <field name="remark" invisible="True"></field>
-                    <field name="remarks"></field>
-                    <field name="process2_can_edit" invisible="True"></field>
+                            attrs="{'invisible':[('process2_can_edit','=',False)]}" type="action" string="审批" class="oe_highlight"/>
+                    <field name="is_finish" invisible="True"/>
+                    <field name="is_other" invisible="True"/>
+                    <field name="remark" invisible="True"/>
+                    <field name="remarks"/>
+                    <field name="process2_can_edit" invisible="True"/>
                   </tree>
                 </field>
               </page>
               <page string="离岗前环节" states="3,4,5,6,7,8,99">
                 <field name="leaving_handle_process_ids1" attrs="{'readonly':['|',('state','!=','3'),('is_admin', '=', False)]}">
                   <tree create="false" delete="false">
-                    <field name="process_id" readonly="True"></field>
-                    <field name="process_approver" readonly="True"></field>
+                    <field name="process_id" readonly="True"/>
+                    <field name="process_approver" readonly="True"/>
                     <button name="%(dtdream_hr_leaving.act_leaving_handle_process_wizard)d"
-                            attrs="{'invisible':[('process1_can_edit','=',False)]}" type="action" string="审批" class="oe_highlight"></button>
-                    <field name="is_finish" invisible="True"></field>
-                    <field name="is_other" invisible="True"></field>
-                    <field name="remark" invisible="True"></field>
-                    <field name="remarks"></field>
-                    <field name="process1_can_edit" invisible="True"></field>
+                            attrs="{'invisible':[('process1_can_edit','=',False)]}" type="action" string="审批" class="oe_highlight"/>
+                    <field name="is_finish" invisible="True"/>
+                    <field name="is_other" invisible="True"/>
+                    <field name="remark" invisible="True"/>
+                    <field name="remarks"/>
+                    <field name="process1_can_edit" invisible="True"/>
                   </tree>
                 </field>
                 <field name="is_finish1" invisible="True"/>

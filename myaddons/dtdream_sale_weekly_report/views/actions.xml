@@ -7,7 +7,7 @@
             <field name="res_model">dtdream.sale.own.report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <!--<field name="domain">[('create_uid','=',uid)]</field>-->
         </record>
 
@@ -16,7 +16,7 @@
             <field name="res_model">dtdream.sale.manager.report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <!--<field name="domain">[('shenpiren.user_id','=',uid)]</field>-->
         </record>
 

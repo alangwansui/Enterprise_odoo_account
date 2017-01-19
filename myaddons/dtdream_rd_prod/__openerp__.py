@@ -35,6 +35,8 @@
         'views/replanning.xml',
         'views/dtdream_execption.xml',
         'views/dtdream_rd_config.xml',
+        'views/dtdream_rd_PDTconfig.xml',
+        'views/dtdream_rd_riskconfig.xml',
         'views/dtdream_rd_approver.xml',
         'views/dtdream_rd_approver_ver.xml',
         'views/dtdream_rd_process.xml',

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_dtdream_foreign_wizard_agree_form" model="ir.ui.view">
+            <field name="name">view.dtdream.foreign.wizard.agree.form</field>
+            <field name="model">dtdream.foreign.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="btn_agree" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="foreign_act_agree" model="ir.actions.act_window">
+            <field name="name">同意</field>
+            <field name="res_model">dtdream.foreign.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_foreign_wizard_agree_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_foreign_wizard_agree_form"/>
+            <field name="act_window_id" ref="foreign_act_agree"/>
+        </record>
+
+
+
+
+        <record id="view_dtdream_foreign_wizard_reject_form" model="ir.ui.view">
+            <field name="name">view.dtdream.foreign.wizard.reject.form</field>
+            <field name="model">dtdream.foreign.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="btn_reject" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="foreign_act_reject" model="ir.actions.act_window">
+            <field name="name">驳回</field>
+            <field name="res_model">dtdream.foreign.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_foreign_wizard_reject_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_foreign_wizard_reject_form"/>
+            <field name="act_window_id" ref="foreign_act_reject"/>
+        </record>
+
+
+
+
+        <record id="view_dtdream_foreign_wizard_disagree_form" model="ir.ui.view">
+            <field name="name">view.dtdream.foreign.wizard.disagree.form</field>
+            <field name="model">dtdream.foreign.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                            <field name="reason" string="理由"/>
+                    </group>
+                    <footer>
+                        <button name="btn_disagree" type="object"
+                                string="确认" class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="foreign_act_disagree" model="ir.actions.act_window">
+            <field name="name">不同意</field>
+            <field name="res_model">dtdream.foreign.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_dtdream_foreign_wizard_disagree_form" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dtdream_foreign_wizard_disagree_form"/>
+            <field name="act_window_id" ref="foreign_act_disagree"/>
+        </record>
+
+    </data>
+</openerp>

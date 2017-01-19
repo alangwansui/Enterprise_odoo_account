@@ -22,6 +22,7 @@
                 </form>
             </field>
         </record>
+
         <record model="ir.ui.view" id="dtdream_expense_account_credit_tree">
             <field name="name">dtdream.expense.account.credit.tree</field>
             <field name="model">dtdream.expense.account.credit</field>
@@ -34,11 +35,44 @@
                 </tree>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="dtdream_expense_account_credit_kanban">
+            <field name="name">dtdream.expense.account.credit.kanban</field>
+            <field name="model">dtdream.expense.account.credit</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="paytype"></field>
+                    <field name="paycatelog"></field>
+                    <field name="account"></field>
+                    <field name="account_name"></field>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>支付方式:</strong> <field name="paytype" /></li>
+                                        <li ><strong>支付类别:</strong> <field name="paycatelog" /></li>
+                                        <li ><strong>会计科目:</strong> <field name="account" /></li>
+                                        <li ><strong>会计科目名称:</strong> <field name="account_name" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
         <record model="ir.actions.act_window" id="act_dtdream_expense_account_credit">
             <field name="name">贷方会计科目表</field>
             <field name="res_model">dtdream.expense.account.credit</field>
             <field name="view_type">form</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">list,form,kanban</field>
         </record>
         <menuitem id="menu_dtdream_expense_account_credit" parent="dtdream_expense_configration"
                   action="act_dtdream_expense_account_credit" groups="group_dtdream_expense_admin" sequence="500"></menuitem>

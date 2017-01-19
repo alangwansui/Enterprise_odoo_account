@@ -1,0 +1,154 @@
+<openerp>
+    <data>
+    <!--风险配置-->
+        <record id="act_dtdream_rd_riskconfig" model="ir.actions.act_window">
+            <field name="name">风险配置</field>
+            <field name="res_model">dtdream_rd_riskconfig</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_riskconfig_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.riskconfig.from</field>
+            <field name="model">dtdream_rd_riskconfig</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_riskconfig_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.riskconfig.tree</field>
+            <field name="model">dtdream_rd_riskconfig</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name='name'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_riskconfig_kanban_view">
+            <field name="name">dtdream.rd.riskconfig.kanban</field>
+            <field name="model">dtdream_rd_riskconfig</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name='name'/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>状态:</strong> <field name="name" /></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_risk_form" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.risk.form</field>
+            <field name="model">dtdream_rd_risk</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="name" />
+                        <field name="chance_describe" />
+                    </group>
+                    <group>
+                        <group>
+                            <field name="plan_close_time" />
+                        </group>
+                        <group>
+                            <field name="PDT" />
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="risk_state" />
+                        </group>
+                    </group>
+                </form>
+          </field>
+        </record>
+    <!--所有风险-->
+        <record id="act_dtdream_risk_menu_all" model="ir.actions.act_window">
+            <field name="name">所有风险与机遇</field>
+            <field name="res_model">dtdream_rd_risk</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <record id="view_dtdream_rd_risk_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.risk.tree</field>
+            <field name="model">dtdream_rd_risk</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="risk_id" />
+                    <field name="risk_ver_id" />
+                    <field name="name" string="风险描述"/>
+                    <field name="chance_describe" string="机遇描述"/>
+                    <field name="plan_close_time" string="计划关闭日期"/>
+                    <field name="PDT" string="责任人"/>
+                    <field name="risk_state" string="风险状态"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="dtdream_rd_risk_kanban_view">
+            <field name="name">dtdream.rd.risk.kanban</field>
+            <field name="model">dtdream_rd_risk</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="risk_id" />
+                    <field name="risk_ver_id" />
+                    <field name="name" string="风险描述"/>
+                    <field name="chance_describe" string="机遇描述"/>
+                    <field name="plan_close_time" string="计划关闭日期"/>
+                    <field name="PDT" string="责任人"/>
+                    <field name="risk_state" string="风险状态"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>产品名称:</strong> <field name="risk_id" /></li>
+                                            <li > <strong>版本:</strong><field name="risk_ver_id" /></li>
+                                            <li > <strong>风险描述:</strong><field name="name"/></li>
+                                            <li ><strong>机遇描述:</strong> <field name="chance_describe" /></li>
+                                            <li > <strong>计划关闭日期:</strong><field name="plan_close_time" /></li>
+                                            <li > <strong>责任人:</strong><field name="PDT"/></li>
+                                            <li > <strong>风险状态:</strong><field name="risk_state"/></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</openerp>

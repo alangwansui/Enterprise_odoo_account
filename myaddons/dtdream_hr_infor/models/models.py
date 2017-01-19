@@ -170,6 +170,8 @@ class dtdream_hr_infor(models.Model):
     work_place = fields.Char(string="常驻工作地")
     recruit_place = fields.Char(string="招聘所在地")
     expatriate = fields.Boolean(string="是否外派")
+    travel_grant = fields.Boolean(string='是否享有交通补助')
+    standard_mobile_fee = fields.Integer(string='手机话费标准')
     nation = fields.Char(string="民族", track_visibility='onchange')
     political = fields.Selection([("0", "党员"), ("1", "群众"), ("2", "其它")], string="政治面貌", track_visibility='onchange')
     postcode = fields.Char(string="邮编", track_visibility='onchange')

@@ -8,15 +8,30 @@ var search_inputs = require('web.search_inputs');
 var Model = require('web.DataModel');
 var QWeb = core.qweb;
 var FormView = require('web.FormView');
+var Dialog = require('web.Dialog');
+var _t = core._t;
 FormView.include({
 
     events: _.defaults({
         'click .opp_stage button': 'opp_stage_click',
-        'click .btn btn-sm btn-primary' : 'change_stage_id'
+        'change .is_budget' : 'change_is_budget'
     }, FormView.prototype.events),
 
-    change_stage_id:function(){
-        alert(1)
+    change_is_budget:function(){
+        var self = this;
+        if ($('.is_budget')[1].value == $('.is_budget')[1][2].value){
+            Dialog.confirm(self, _t("选择无预算后，项目将进入机会点阶段，是否确认修改？"), {
+                confirm_callback: function() {
+                    new Model('crm.lead').call('action_set_lead_stage',[self.datarecord.id]).then(function(result){
+                        self.reload()
+                    })
+                },
+                cancel_callback: function() {
+                    $('.is_budget')[1].value = $('.is_budget')[1][1].value
+                },
+                title : "提示",
+            });
+        }
     },
     opp_stage_click: function(kwargs) {
         var self = this;

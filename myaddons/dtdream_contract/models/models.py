@@ -24,54 +24,97 @@ class dtdream_contract_url(models.Model):
 
 class dtdream_contract(models.Model):
     _name = 'dtdream.contract'
-    _inherit =['mail.thread']
+    _inherit = ['mail.thread']
     _description = u'合同评审'
 
-    his_approve=fields.Many2many('hr.employee',string="历史审批人")
+    his_approve = fields.Many2many('hr.employee',string="历史审批人")
     name = fields.Char(string="合同名称")
 
-    @api.constrains('constract_type')
-    @api.onchange('constract_type')
-    def _compute_constract_id(self):
-        if self.constract_type:
-            max_constract_id=''
-            baseid='DTD-'+self.constract_type.name_id+time.strftime("%Y%m%d", time.localtime())
+    def get_contract_id(self):
+        #    计算合同编号
+        max_contract_id = ''
+        name_id = self.contract_subtype.name_id or self.contract_type.name_id
+        if name_id:
+            baseid = 'HZSM-' + name_id + '-' + time.strftime("%Y%m", time.localtime())
             sql_baseid = baseid + "%"
-            self._cr.execute("select constract_id from dtdream_contract where constract_id like '"+sql_baseid+"' order by id desc limit 1")
+            self._cr.execute("select contract_id from dtdream_contract where contract_id like '"+sql_baseid+"' order by contract_id desc limit 1")
             for rec in self._cr.fetchall():
-
-                max_constract_id = rec[0]
-
-            if max_constract_id:
-
-                max_id = max_constract_id[15:]
-
-                if int(max_id)<9:
-                    self.constract_id_copy = baseid+'0'+str(int(max_id)+1)
-                    self.constract_id = baseid+'0'+str(int(max_id)+1)
-                else:
-                    self.constract_id_copy = baseid+str(int(max_id)+1)
-                    self.constract_id = baseid+str(int(max_id)+1)
+                max_contract_id = rec[0]
+            if max_contract_id:
+                max_id = max_contract_id[-4:]
+                return (baseid + '%04d' % (int(max_id)+1))
             else:
-                self.constract_id_copy = baseid+'01'
-                self.constract_id = baseid+'01'
+                return (baseid + '0001')
 
-    constract_id=fields.Char(string="合同编号",store=True)
-    constract_id_copy=fields.Char(string="合同编号_copy")
-    constract_type=fields.Many2one("dtdream.contract.config",string="合同类型")
-    constract_type_char=fields.Char(string="合同类型_copy")
-    @api.onchange("constract_type")
-    def _compute_people(self):
+    def get_approvers(self):
+        # 获取审批人
+        config = False
+        if self.contract_type.how_setting_approver == 'type':
+            config = self.contract_type
+        elif self.contract_type.how_setting_approver == 'subtype':
+            config = self.contract_subtype
+        if config:
+            self.legal_interface = config.legal_interface
+            self.review_ids = config.review_ids
+            self.huiqian_ids = config.huiqian_ids
+            self.quanqian_id = config.quanqian_id
+            self.stamp_id = config.stamp_id
+            self.file_id = config.file_id
 
-        self.constract_type_char=self.constract_type.name
-        config=self.env['dtdream.contract.config'].search([('name','=',self.constract_type.name)])
-        self.legal_interface=config.legal_interface
-        self.review_ids=config.review_ids
-        self.huiqian_ids=config.huiqian_ids
-        self.quanqian_id=config.quanqian_id
-        self.stamp_id=config.stamp_id
-        self.file_id=config.file_id
-    applicant=fields.Many2one('hr.employee',string='申请人',default=lambda self:self.env['hr.employee'].search([('user_id','=',self.env.user.id)]) )
+    @api.onchange('contract_subtype')
+    def compute_contract_id_and_approver_when_subtype_change(self):
+        if self.contract_subtype:
+            if self.contract_type != self.contract_subtype.parent_id:
+                self.contract_type = self.contract_subtype.parent_id.id
+        self.contract_id = self.get_contract_id()
+        self.contract_id_copy = self.get_contract_id()
+        self.get_approvers()
+
+    @api.onchange('contract_type')
+    def get_contract_subtype_domain(self):
+        if self.contract_type:
+            if self.contract_subtype.parent_id != self.contract_type:
+                self.contract_subtype = False
+            return {
+                'domain': {
+                    "contract_subtype": [('parent_id', '=', self.contract_type.id)]
+                }
+            }
+        elif not self.contract_type:
+            return {
+                'domain': {
+                    "contract_subtype": [('parent_id', '!=', False)]
+                }
+            }
+
+    @api.onchange('contract_type')
+    def compute_contract_id_and_approver_when_type_change(self):
+        if self.contract_type:
+            if self.contract_subtype.parent_id != self.contract_type:
+                self.contract_subtype = False
+        self.contract_id = self.get_contract_id()
+        self.contract_id_copy = self.get_contract_id()
+        self.get_approvers()
+
+    @api.constrains('contract_type','contract_subtype')
+    def save_readonly_contract_id_and_approver(self):
+        self.contract_id = self.contract_id_copy
+        self.get_approvers()
+
+    contract_id = fields.Char(string="合同编号", store=True)
+    if_must_subtype = fields.Boolean(string='是否必须选择合同子类型')
+
+    @api.onchange('contract_type')
+    def compute_if_must_subtype(self):
+        self.if_must_subtype = False
+        if self.contract_type.how_setting_approver == 'subtype':
+            self.if_must_subtype = True
+
+    contract_type = fields.Many2one("dtdream.contract.type", string="合同类型")
+    contract_subtype = fields.Many2one('dtdream.contract.subtype', string='合同子类型')
+    contract_id_copy = fields.Char(string="合同编号暂存")
+
+    applicant = fields.Many2one('hr.employee',string='申请人', default=lambda self:self.env['hr.employee'].search([('user_id', '=', self.env.user.id)]) )
     @api.one
     @api.onchange("applicant")
     def _compute_employee(self):
@@ -110,50 +153,49 @@ class dtdream_contract(models.Model):
     state=fields.Selection([("0", "草稿"), ("1", "主管审批"), ("2", "待组织评审"),("3","评审中"),("4","待组织会签"),("5","会签中"),("6","权签中"),("7","待盖章"),("8","待归档"),("9","闭环"),("10","作废")],string="合同状态")
     create_time=fields.Datetime(string='创建时间',default=lambda self:datetime.now(),readonly=1)
     money=fields.Float(string="合同金额(元)")
-    @api.onchange('money')
-    def _compute_money_final(self):
-        self.money_final = self.money
-
-    money_final=fields.Float(string="合同最终金额(元)",help='合同最终金额由合同归档人录入')
     background=fields.Text(string="合同背景介绍")
-    attachment=fields.Binary(string="合同附件（初稿）",store=True)
-    attachment_name=fields.Char(string="附件名")
-    att_final=fields.Binary(string="合同附件（最新稿）")
-    att_final_name=fields.Char(string="合同终稿附件名")
+    items = fields.Char(string='付款条款')
+    deadline = fields.Char(string='合同期限')
+    risk_warning = fields.Char(string='风险提示')
+    amounts = fields.Integer(string='合同份数')
+    stamp_type = fields.Selection([('1','公章'),('2','合同专用章'),('3','法人章')],string='印章类型')
+    attachment_ids = fields.One2many('dtdream.contract.attachment','contract_id',string='合同附件',required=1)
     remark=fields.Char(string="备注")
-    pro_name=fields.Many2one("crm.lead",string="项目名称")
+    # pro_name=fields.Many2one("crm.lead",string="项目名称")
+    pro_responsible_person = fields.Many2one('hr.employee',string='项目负责人')
     tip=fields.Char(default=lambda self:self.env['dtdream.contract.url'].search([],limit=1).name)
-
-    @api.onchange('pro_name')
-    @api.depends('pro_name')
-    def _compute_parter(self):
-        try:
-            self.partner=self.env['crm.lead'].search([('name','=',self.pro_name.name)]).partner_id.name
-        except:
-            return
-
-
-    partner=fields.Char(string="合作方",compute=_compute_parter,store=True)
-    provider=fields.Many2one('res.partner',string='合作方',domain=[('supplier','=',True)])
+    partner_jia = fields.Many2one('res.partner',string='签约方(甲方)',domain=['|',('supplier','=',True),('customer','=',True)])
+    partner_yi = fields.Many2one('res.partner',string='签约方(乙方)',domain=['|',('supplier','=',True),('customer','=',True)])
+    partner_bing = fields.Many2one('res.partner',string='签约方(其他方)',domain=['|',('supplier','=',True),('customer','=',True)])
     is_standard=fields.Boolean(string="是标准合同",help='标准合同无需评审，直接进入会签环节，可快速完成合同评审流程')
     current_handler_ids=fields.Many2many('hr.employee','c_i_h_e',string="当前处理人",store=True)
 
     @api.one
     def _compute_is_handler(self):
-        for handler in self.current_handler_ids:
-            if handler.user_id.id == self.env.user.id:
-                self.is_handler = True
+        self.is_handler = False
+        if self.current_handler_ids:
+            for handler in self.current_handler_ids:
+                if handler.user_id.id == self.env.user.id:
+                    self.is_handler = True
 
     @api.one
     def _compute_is_legal_interface(self):
         self.is_legal_interface = False
-        for people in self.legal_interface:
-            if people.user_id.id == self.env.user.id:
-                self.is_legal_interface = True
+        if self.legal_interface:
+            for people in self.legal_interface:
+                if people.user_id.id == self.env.user.id:
+                    self.is_legal_interface = True
     is_handler=fields.Boolean("是否当前处理人",compute=_compute_is_handler)
     is_legal_interface=fields.Boolean("是否法务部接口人",compute=_compute_is_legal_interface)
     legal_interface=fields.Many2many('hr.employee','dt_contract_legal_interface',string="法务接口人")
     review_ids=fields.Many2many('hr.employee','r_i_h_e',string="评审人",store=True)
+    def _compute_is_review_ids(self):
+        self.is_review_ids = False
+        if self.review_ids:
+            for people in self.review_ids:
+                if people.user_id.id == self.env.user.id:
+                    self.is_review_ids = True
+    is_review_ids = fields.Boolean(string='是否是评审人',compute=_compute_is_review_ids)
     huiqian_ids=fields.Many2many('hr.employee','h_i_h_e',string="会签人")
     quanqian_id=fields.Many2one('hr.employee',string="权签人")
     stamp_id=fields.Many2one('hr.employee',string="盖章处理人")
@@ -180,17 +222,36 @@ class dtdream_contract(models.Model):
         link='/web?#id=%s&view_type=form&model=dtdream.contract'%id
         url=base_url+link
         damn_self=self.pool.get('dtdream.contract').browse(cr, uid,id)
+        style1 = 'none'
+        style2 = 'none'
+        style3 = 'none'
+        if damn_self.partner_jia:
+            style1 = 'block'
+        if damn_self.partner_yi:
+            style2 = 'block'
+        if damn_self.partner_bing:
+            style3 = 'block'
         for people in damn_self.current_handler_ids:
             damn_self.env['mail.mail'].create({
-                    'subject': u'%s于%s提交合同：%s 评审申请，请您审批！' % (damn_self.applicant.name, damn_self.create_time[:10],damn_self.name),
+                    'subject': u'%s于%s提交合同：%s-%s 评审申请，请您审批！' % (damn_self.applicant.name, damn_self.create_time[:10],damn_self.contract_type.name,damn_self.contract_subtype.name),
                     'body_html': u'''
                     <p>%s，您好：</p>
                     <p>%s提交的合同评审正等待您的审批！</p>
+                    <p>合同信息如下：</p>
+                    <p>合同名称：%s</p>
+                    <p>合同编号：%s</p>
+                    <p>合同类型：%s-%s</p>
+                    <p style='display:%s'>签约方(甲方)：%s</p>
+                    <p style='display:%s'>签约方(乙方)：%s</p>
+                    <p style='display:%s'>签约方(其他方)：%s</p>
                     <p> 请点击链接进入审批:
                     <a href="%s">%s</a></p>
                     <p>dodo</p>
                     <p>万千业务，简单有do</p>
-                    <p>%s</p>''' % (people.name, damn_self.applicant.name, url, url, damn_self.write_date[:10]),
+                    <p>%s</p>''' % (people.name, damn_self.applicant.name,damn_self.name,
+                                    damn_self.contract_id,damn_self.contract_type.name,damn_self.contract_subtype.name,
+                                    style1,damn_self.partner_jia,style2,damn_self.partner_yi,
+                                    style3,damn_self.partner_bing, url, url, damn_self.write_date[:10]),
                     'email_from':damn_self.env['ir.mail_server'].search([], limit=1).smtp_user,
                     'email_to': people.work_email,
                 }).send()
@@ -198,52 +259,27 @@ class dtdream_contract(models.Model):
 
     @api.one
     def copy(self, default=None):
-        default = dict(default or {}, constract_id="")
+        default = dict(default or {}, contract_id="")
         print default
         return super(dtdream_contract, self).copy(default=default)
-    
+
     @api.model
     def create(self,vals):
-        config=self.env['dtdream.contract.config'].search([('name','=',vals['constract_type_char'])])
-        result=super(dtdream_contract,self).create(vals)
-        # 对只读字段重新写入
-        result.legal_interface=config.legal_interface
-        result.huiqian_ids=config.huiqian_ids
-        result.quanqian_id=config.quanqian_id
-        result.stamp_id=config.stamp_id
-        result.file_id=config.file_id
-        result.money_final=result.money
-        result.constract_id=result.constract_id_copy
-        # result.message_post(body=u"--------------：%s"%time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        result = super(dtdream_contract, self).create(vals)
         # 创建人不是申请人添加到关注者
         if self._context['uid'] != result.applicant.user_id.id:
             result.message_subscribe_users(user_ids=[result.applicant.user_id.id])
 
         return result
+
     @api.multi
     def write(self, vals):
-
-        if self.state == '0':
-
-            if vals.has_key('money'):
-
-                self.money_final=vals['money']
-            if vals.has_key('constract_type_char'):
-                config=self.env['dtdream.contract.config'].search([('name','=',vals['constract_type_char'])])
-                self.legal_interface=config.legal_interface
-                self.huiqian_ids=config.huiqian_ids
-                self.quanqian_id=config.quanqian_id
-                self.stamp_id=config.stamp_id
-                self.file_id=config.file_id
-
-                self.constract_id=vals['constract_id_copy']
-        result = super(dtdream_contract, self).write(vals)
-
-
-        return result
+        if vals.has_key('contract_id'):
+            self.message_post(body=u"合同编号：%s --> %s" % (self.contract_id,vals['contract_id']))
+        return super(dtdream_contract, self).write(vals)
 
     _sql_constraints = [
-          ('constract_id_unique','unique(constract_id)','合同编号重复，请刷新页面重新填写！')
+          ('contract_id_unique','unique(contract_id)','合同编号重复，请刷新页面重新填写！')
      ]
     @api.multi
     def wkf_draft(self):
@@ -256,7 +292,9 @@ class dtdream_contract(models.Model):
     @api.multi
     def wkf_manager_review(self):
         # 主管审批
-        self.message_post(body=u"合同编号：%s，提交，提交时间：%s"%(self.constract_id,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
+        if not self.attachment_ids:
+            raise ValidationError('请先上传附件！')
+        self.message_post(body=u"合同编号：%s，提交，提交时间：%s"%(self.contract_id,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
         self.current_handler_ids=self.deparment_manage
         self.state='1'
         self.send_email()
@@ -395,10 +433,10 @@ class dtdream_contract(models.Model):
                 doc.xpath("//form")[0].set("create", "false")
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
+            if res['type'] == "kanban":
+                doc.xpath("//kanban")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
-
-
 
 
 class dtdream_contract_wizard(models.TransientModel):
@@ -418,102 +456,86 @@ class dtdream_contract_wizard(models.TransientModel):
               self.reason=unicode('无','utf-8')
           if self.temp == 'agree':
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
-
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">同意</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               if current_record.state == '2' or current_record.state == '4':
                   current_record.signal_workflow('btn_agree')
               else:
                   if len(current_record.current_handler_ids) == 0:
                       current_record.signal_workflow('btn_agree')
-          elif self.temp == 'refuse':
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">不同意</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
+          # elif self.temp == 'refuse':
+          #     current_record.message_post(body=u"审批意见%s" % self.reason)
           elif self.temp == 'norefer':
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">不涉及</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               if len(current_record.current_handler_ids) == 0:
                   current_record.signal_workflow('btn_agree')
           elif self.temp == 'reject':
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">驳回</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>"""%(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_reject')
           elif self.temp == 'force':
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">强制通过</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_force_approve')
           elif self.temp == 'void':
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">作废</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_void')
           elif self.temp == 'stamp':
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">确认盖章</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>"""%(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_confirm_stamped')
           elif self.temp == 'file':
-              current_record.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">合同编号</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">状态</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批人</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批结果</td><td style="padding:10px">确认归档</td></tr>
-                                               <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
-                                               <tr><td style="padding:10px">审批时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" %(current_record.constract_id,state_code,self.env['hr.employee'].search([('login','=',self.env.user.login)]).name,self.reason,(datetime.now()+relativedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")))
               current_record.signal_workflow('btn_confirm_filed')
+          current_record.message_post(body=u"审批意见：%s" % self.reason)
 
-class dtdream_contract_config(models.Model):
-    _name = "dtdream.contract.config"
-    name=fields.Char(string="合同类型")
-    name_id=fields.Char(string="合同类型ID")
-    legal_interface=fields.Many2many('hr.employee',string="法务部接口人")
-    review_ids=fields.Many2many('hr.employee','dtdream_contract_config_review',string="评审人")
-    huiqian_ids=fields.Many2many('hr.employee','dtdream_contract_config_huiqian',string="会签人")
-    quanqian_id=fields.Many2one('hr.employee',string="权签人")
-    stamp_id=fields.Many2one('hr.employee',string="盖章处理人")
-    file_id=fields.Many2one('hr.employee',string="归档处理人")
+
+class dtdream_contract_type(models.Model):
+    _name = "dtdream.contract.type"
+    name = fields.Char(string="合同类型")
+    name_id = fields.Char(string="编号")
+    how_setting_approver = fields.Selection([('type', '按照合同类型'), ('subtype', '按照合同子类型')], string='审批人设置')
+
+    @api.constrains('how_setting_approver')
+    def check_approvers_set(self):
+        if self.how_setting_approver == 'type':
+            if not self.legal_interface or not self.review_ids or not self.huiqian_ids or not self.quanqian_id \
+                    or not self.stamp_id or not self.file_id:
+                raise ValidationError('请设置完所有审批人！')
+    legal_interface = fields.Many2many('hr.employee', string="法务部接口人")
+    review_ids = fields.Many2many('hr.employee', 'dtdream_contract_type_review', string="评审人")
+    huiqian_ids = fields.Many2many('hr.employee', 'dtdream_contract_type_huiqian', string="会签人")
+    quanqian_id = fields.Many2one('hr.employee', string="权签人")
+    stamp_id = fields.Many2one('hr.employee', string="盖章处理人")
+    file_id = fields.Many2one('hr.employee', string="归档处理人")
+
+
+class dtdream_contract_subtype(models.Model):
+    _name = "dtdream.contract.subtype"
+    _description = u"合同子类型"
+    name = fields.Char(string="合同子类型")
+    parent_id = fields.Many2one('dtdream.contract.type',string="合同类型")
+    name_id = fields.Char(string="编号")
+    if_display_approver = fields.Boolean(string='是否显示审批人')
+
+    @api.onchange('parent_id')
+    def compute_if_display_approver(self):
+        self.if_display_approver = False
+        if self.parent_id.how_setting_approver == 'subtype':
+            self.if_display_approver = True
+    legal_interface = fields.Many2many('hr.employee', string="法务部接口人")
+    review_ids = fields.Many2many('hr.employee', 'dtdream_contract_subtype_review', string="评审人")
+    huiqian_ids = fields.Many2many('hr.employee', 'dtdream_contract_subtype_huiqian', string="会签人")
+    quanqian_id = fields.Many2one('hr.employee', string="权签人")
+    stamp_id = fields.Many2one('hr.employee', string="盖章处理人")
+    file_id = fields.Many2one('hr.employee', string="归档处理人")
+
+    @api.constrains('parent_id')
+    def if_set_approvers(self):
+        if self.parent_id.how_setting_approver == 'subtype':
+            if not self.legal_interface or not self.review_ids or not self.huiqian_ids or not self.quanqian_id \
+                    or not self.stamp_id or not self.file_id:
+                raise ValidationError('请设置完所有审批人！')
+
+
+class dtdream_contract_attachment(models.Model):
+    _name = "dtdream.contract.attachment"
+    _description = u"合同评审附件"
+    contract_id = fields.Many2one("dtdream.contract", string="合同")
+    attachment = fields.Binary(string="附件", store=True, required=1)
+    attachment_name = fields.Char(string="附件名", invisible=1)
+    attachment_remark = fields.Char(string="说明")
+    attachment_upper = fields.Many2one('hr.employee', string='上传者', default = lambda self:self.env['hr.employee'].search([('user_id', '=', self.env.user.id)]))
 
 
 

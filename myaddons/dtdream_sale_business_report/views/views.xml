@@ -55,9 +55,9 @@
                 <field name="industry_id"  domain="[('parent_id.parent_id','=',False)]" options='{"no_create": True}' attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="partner_budget" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="have_hardware" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="total_chengben" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
-                <field name="total_zhuren_price" readonly="1" attrs="{'invisible':['|',('state','not in',('6','7','8','9')),('is_current','=',False)]}"/>
-                <field name="total_market_price" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
+                <!--<field name="total_chengben" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>-->
+                <field name="total_chuhuo_price" readonly="1" attrs="{'invisible':['|',('state','not in',('6','7','8','9')),('is_current','=',False)]}"/>
+                <field name="gross_profit" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
               </group>
               <group>
                 <field name="partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
@@ -67,11 +67,32 @@
                 <field name="pre_implementation_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="supply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="apply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
-                <field name="total_chuhuo_price" readonly="1" attrs="{'invisible':['|',('state','not in',('6','7','8','9')),('is_current','=',False)]}"/>
+                <field name="total_zhuren_price" readonly="1" attrs="{'invisible':['|',('state','not in',('6','7','8','9')),('is_current','=',False)]}"/>
                 <field name="total_sale_price" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
-                <field name="gross_profit" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}"/>
               </group>
             </group>
+              <field name="chengben_detail" readonly="1" attrs="{'invisible':['|',('state','not in',('7','8','9')),('is_current','=',False)]}">
+                  <tree>
+                      <field name="pro_source"/>
+                      <field name="pro_cost_price"/>
+                      <field name="pro_apply_price"/>
+                      <field name="pro_gross_profit"/>
+                  </tree>
+                  <form>
+                      <sheet>
+                          <group>
+                              <group>
+                                  <field name="pro_source"/>
+                                  <field name="pro_apply_price"/>
+                              </group>
+                              <group>
+                                  <field name="pro_cost_price"/>
+                                  <field name="pro_gross_profit"/>
+                              </group>
+                          </group>
+                      </sheet>
+                  </form>
+              </field>
             <!--<span style="color:red">-->
                 <!--<field name="warn_text" attrs="{'invisible':[('is_current','=',False)]}"></field>-->
             <!--</span>-->
@@ -117,12 +138,16 @@
                           <field name="bom" string="BOM" />
                           <field name="pro_type" string="产品类别" />
                           <field name="pro_description" string="产品对内中文描述" />
+                          <field name="pro_uom_name" string="单位" />
                           <field name="list_price" string="目录价" />
                           <field name="ref_discount" string="参考折扣(%)"/>
                           <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
                           <field name="pro_num" string="数量" />
-                          <field name="config_set" string="发货地"/>
-                          <field name="send_type" string="发货模式"/>
+                          <field name="pro_total_list_price" string="总目录价"/>
+                          <field name="pro_total_chuhuo_price" string="总出货价"/>
+                          <field name="pro_remark" string="备注"/>
+                          <!--<field name="config_set" string="发货地"/>-->
+                          <!--<field name="send_type" string="发货模式"/>-->
                       </tree>
                       <form>
                           <sheet>
@@ -134,18 +159,23 @@
                                       <field name="report_is_current" invisible="True"/>
                                       <field name="is_business_approveds" invisible="True"/>
                                       <field name="pro_name" invisible="True"/>
-                                      <field name="product_id" string="产品型号" attrs="{'readonly':['|',('report_state','not in',('0')),('report_is_current','=',False)]}"/>
+                                      <field name="product_id" string="产品型号" options='{ "no_create": True}'/>
+                                      <!--<field name="product_id" string="产品型号" options='{ "no_create": True}' attrs="{'readonly':['|',('report_state','not in',('0')),('report_is_current','=',False)]}"/>-->
                                       <field name="bom" string="BOM" readonly="True"/>
                                       <field name="pro_type" string="产品类别" readonly="True"/>
                                       <field name="pro_description" string="产品对内中文描述" readonly="True"/>
                                       <field name="list_price" string="目录价" readonly="True"/>
                                   </group>
                                   <group>
+                                      <field name="pro_uom_name" string="单位" readonly="True"/>
                                       <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
                                       <field name="apply_discount" string="申请折扣(%)" attrs="{'invisible':[('is_bus_shenpiren','=',False),('is_pro_shenpiren','=',True)]}"/>
                                       <field name="pro_num" string="数量"/>
-                                      <field name="config_set" string="发货地"/>
-                                      <field name="send_type" string="发货模式"/>
+                                      <field name="pro_total_list_price" string="总目录价"/>
+                                      <field name="pro_total_chuhuo_price" string="总出货价"/>
+                                      <field name="pro_remark" string="备注"/>
+                                      <!--<field name="config_set" string="发货地"/>-->
+                                      <!--<field name="send_type" string="发货模式"/>-->
                                   </group>
                               </group>
                           </sheet>
@@ -198,6 +228,48 @@
             <field name="shenpiren" string="当前审批人" widget="many2many_tags"></field>
             <field name="record_state" string="记录状态"/>
         </tree>
+      </field>
+    </record>
+
+
+      <record model="ir.ui.view" id="dtdream_sale_business_report_kanban">
+      <field name="name">dtdream.sale.business.report.kanban</field>
+      <field name="model">dtdream.sale.business.report</field>
+      <field name="arch" type="xml">
+        <kanban class="o_res_partner_kanban" >
+            <field name="is_current" invisible="True"/>
+            <field name="is_pro_shenpiren" invisible="True"/>
+            <field name="create_date" string="创建时间"/>
+            <field name="apply_person"/>
+            <field name="rep_pro_name"/>
+            <field name="project_number"/>
+            <field name="final_partner_id"/>
+            <field name="bidding_time"/>
+            <field name="pre_implementation_time"/>
+            <field name="supply_time"/>
+            <field name="apply_time"/>
+            <field name="state" string="审批环节"/>
+            <field name="shenpiren" string="当前审批人" widget="many2many_tags"/>
+            <templates>
+                <t t-name="kanban-box">
+                <div class="oe_kanban_global_click ">
+                     <div class="o_kanban_image">
+                          <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                      </div>
+                    <div class="oe_kanban_details">
+                        <div name="tags"/>
+                            <ul>
+                                <li ><strong>申请人:</strong> <field name="apply_person" /></li>
+                                <li ><strong>创建时间:</strong> <field name="create_date" /></li>
+                                <li ><strong>审批环节:</strong> <field name="state" /></li>
+                                <li ><strong>当前审批人:</strong> <field name="shenpiren" /></li>
+                            </ul>
+                    <div name="tags"/>
+                    </div>
+                </div>
+                </t>
+            </templates>
+        </kanban>
       </field>
     </record>
 
@@ -283,6 +355,7 @@
               </group>
               <group>
                   <field name="market_manager" options='{"no_open": True, "no_create": True}'></field>
+                  <field name="area_approve_email_cc" options='{"no_open": True, "no_create": True}'></field>
               </group>
             </group>
              <notebook colspan="4">

@@ -90,6 +90,42 @@
         </tree>
       </field>
     </record>
+
+    <record model="ir.ui.view" id="grants_allocation_detail_kanban">
+      <field name="name">grants.allocation.detail.kanban</field>
+      <field name="model">dtdream.grants</field>
+      <field name="arch" type="xml">
+        <kanban class="o_res_partner_kanban" create="false">
+          <field name="department"></field>
+          <field name="name"></field>
+          <field name="month"></field>
+          <field name="you_fill"></field>
+          <field name="fan_fill"></field>
+          <field name="cash"></field>
+          <templates>
+              <t t-name="kanban-box">
+              <div class="oe_kanban_global_click ">
+                   <div class="o_kanban_image">
+                        <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                    </div>
+                  <div class="oe_kanban_details">
+                      <div name="tags"/>
+                          <ul>
+                              <li ><strong>员工:</strong> <field name="name" /></li>
+                              <li ><strong>发放年月:</strong> <field name="month" /></li>
+                              <li ><strong>油卡充值:</strong> <field name="you_fill" /></li>
+                              <li ><strong>饭卡充值:</strong> <field name="fan_fill" /></li>
+                              <li ><strong>转工资金额:</strong> <field name="cash" /></li>
+                          </ul>
+                  <div name="tags"/>
+                  </div>
+              </div>
+              </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
     <record model="ir.ui.view" id="grants_allocation_detail_admin_tree">
       <field name="name">grants.allocation.detail.admin.tree</field>
       <field name="model">dtdream.grants</field>

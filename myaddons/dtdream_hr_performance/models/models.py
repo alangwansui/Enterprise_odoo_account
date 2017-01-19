@@ -5,6 +5,7 @@ from openerp.exceptions import ValidationError, AccessError
 from openerp.osv import expression
 from lxml import etree
 import time
+import json
 import re
 
 
@@ -23,7 +24,7 @@ class dtdream_hr_performance(models.Model):
     def refresh_when_department_changed(self, result=None):
         for cr in result:
             employee = cr.get('name', None)
-            if isinstance(employee, tuple) and cr.get('department', None):
+            if isinstance(employee, tuple) and cr.has_key('department'):
                 crr = self.env['hr.employee'].search([('id', '=', employee[0])])
                 cr['department'] = (crr.department_id.id, crr.department_id.complete_name)
         return result
@@ -146,9 +147,9 @@ class dtdream_hr_performance(models.Model):
     def track_pbc_value_change(self, vals):
         tab = u"<ul class='o_mail_thread_message_tracking'>"
         message = u'''<li>个人绩效目标:<table width='750px' border='1px' style='table-layout:fixed;'><thead><tr>
-                    <th style='width: 40px;'>动作</th><th style='width: 100px;'>工作目标</th><th style='width: 310px'>
-                    具体描述(请清晰说明完成该目标所需要的关键措施)</th><th style='width: 300px;'>关键事件达成</th>
-                    </tr></thead><tbody>'''
+                    <th style='width: 40px;'>动作</th><th style='width: 100px;'>工作目标</th><th style='width: 210px'>
+                    具体描述(请清晰说明完成该目标所需要的关键措施)</th><th style='width: 200px;'>关键事件达成</th>
+                    <th style='width: 200px;'>主管评价</th></tr></thead><tbody>'''
         tracked = False
         add = u''
         if vals.get('name', ''):
@@ -187,21 +188,22 @@ class dtdream_hr_performance(models.Model):
                     message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('result')
                 else:
                     message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.result
-                # if field.get('evaluate', None):
-                #     message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('evaluate')
-                # else:
-                #     message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.evaluate
+                if field.get('evaluate', None):
+                    message += u"<td style='color: red;word-wrap:break-word;'>%s</td>" % field.get('evaluate')
+                else:
+                    message += u"<td style='word-wrap:break-word;'>%s</td>" % cr.evaluate
             elif rec[0] == 0:
                 tracked = True
                 field = rec[2]
                 add += u'''<tr style='color: red;'><td>新增</td><td style='word-wrap:break-word;'>{0}</td>
-                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td></tr>'''.format(
-                    field.get('work', ''), field.get('detail', ''), field.get('result', ''))
+                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td><td style='
+                word-wrap:break-word;'>{3}</td></tr>'''.format(field.get('work', ''), field.get('detail', ''),
+                                                               field.get('result', ''), field.get('evaluate', ''))
             elif rec[0] == 2:
                 tracked = True
                 message += u'''<tr style='color: red;'><td>删除</td><td style='word-wrap:break-word;'>{0}</td>
-                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td></tr>'''.format(
-                    cr.work, cr.detail, cr.result)
+                <td style='word-wrap:break-word;'>{1}</td><td style='word-wrap:break-word;'>{2}</td><td style='
+                word-wrap:break-word;'>{3}</td></tr>'''.format(cr.work, cr.detail, cr.result, cr.evaluate)
         if not tracked:
             message = tab + u'</ul>'
             if message == u"<ul class='o_mail_thread_message_tracking'></ul>":
@@ -221,10 +223,17 @@ class dtdream_hr_performance(models.Model):
         if result and result.strip():
             if self.state == "6":
                 self.signal_workflow('btn_import')
-            else:
-                subject = u'【通知】您的绩效考核结果已导入'
-                content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
-                self.send_mail(self.name, subject=subject, content=content)
+            elif not self.result:
+                # subject = u'【通知】您的%s的绩效考核结果已导入' % self.quarter
+                # content = u'%s的绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。' % self.quarter
+                # self.send_mail(self.name, subject=subject, content=content)
+                if not self.email_state:
+                    email_state = ["11"]
+                else:
+                    email_state = json.loads(self.email_state)
+                    if '11' not in email_state:
+                        email_state.append('11')
+                vals['email_state'] = json.dumps(email_state)
                 self.message_post(body=u'绩效考核结果导入')
         return super(dtdream_hr_performance, self).write(vals)
 
@@ -284,6 +293,10 @@ class dtdream_hr_performance(models.Model):
                 doc.xpath("//tree")[0].set("create", "false")
                 if has_delete:
                     doc.xpath("//tree")[0].set("delete", "false")
+            if res['type'] == "kanban":
+                doc.xpath("//kanban")[0].set("create", "false")
+                if has_delete:
+                    doc.xpath("//kanban")[0].set("delete", "false")
         else:
             inter = self.env.ref("dtdream_hr_performance.group_hr_inter_performance") not in self.env.user.groups_id
             manage = self.env.ref("dtdream_hr_performance.group_hr_manage_performance") not in self.env.user.groups_id
@@ -292,12 +305,20 @@ class dtdream_hr_performance(models.Model):
                     doc.xpath("//form")[0].set("create", "false")
                 if res['type'] == "tree":
                     doc.xpath("//tree")[0].set("create", "false")
+                if res['type'] == "kanban":
+                    doc.xpath("//kanban")[0].set("create", "false")
             if manage:
                 if res['type'] == "form":
                     doc.xpath("//form")[0].set("delete", "false")
                 if res['type'] == "tree":
                     doc.xpath("//tree")[0].set("delete", "false")
+                if res['type'] == "kanban":
+                    doc.xpath("//kanban")[0].set("delete", "false")
         res['arch'] = etree.tostring(doc)
+        evalute = self.env["ir.actions.act_window"].search([('name', '=', '启动绩效目标考评'),
+                                                            ('res_model', '=', 'dtdream.hr.pbc.start')])
+        if evalute:
+            evalute.sudo().unlink()
         return res
 
     def unlink_message_subscribe(self, res_id):
@@ -329,10 +350,10 @@ class dtdream_hr_performance(models.Model):
                                 <p>%s</p>
                                 <p><a href="%s">点击进入查看</a></p>
                                 <h3>具体流程如图所示:</h3>
-                                <img src='http://www.dtdream.com/pub/res/jxgl.png'/>
+                                <img src='%s/dtdream_hr_performance/static/src/img/workflow.png'/>
                                 <p>dodo</p>
                                 <p>万千业务，简单有do</p>
-                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                                <p>%s</p>''' % (appellation, content, url, base_url, self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
@@ -360,6 +381,56 @@ class dtdream_hr_performance(models.Model):
             self.pbc_log = True
         else:
             self.pbc_log = False
+
+    def btn_send_email(self, rec):
+            if rec.state == '1':
+                subject = u'【通知】请尽快填写您的%s的绩效目标' % rec.quarter
+                content = u'您的%s的绩效目标仍未完成填写,请尽快提交。' % rec.quarter
+                rec.send_mail(rec.name, subject=subject, content=content)
+            elif rec.state == '2':
+                subject = u'【通知】请尽快审阅%s的%s的绩效目标' % (rec.name.name, rec.quarter)
+                content = u'您对%s的%s的绩效目标仍未完成确认,请尽快审阅。' % (rec.name.name, rec.quarter)
+                rec.send_mail(rec.officer, subject=subject, content=content)
+            elif rec.state == '4':
+                subject = u'【通知】请尽快填写您的%s的关键事项达成情况与主要工作成果' % rec.quarter
+                content = u'您的%s的关键事项达成情况与主要工作成果仍未完成填写,请尽快提交。' % rec.quarter
+                rec.send_mail(rec.name, subject=subject, content=content)
+            elif rec.state == '5':
+                subject = u'【通知】请尽快评价%s的%s的个人工作总结' % (rec.name.name, rec.quarter)
+                content = u'您对%s的%s的个人工作总结仍未完成评价,请尽快提交。' % (rec.name.name, rec.quarter)
+                rec.send_mail(rec.officer, subject=subject, content=content)
+
+    @api.model
+    def send_mail_interval(self):
+        """ ('00', '启动自评'),
+            ('01', '绩效管理员提交'),
+            ('10', '发送邮催'),
+            ('11', '导入结果')"""
+        performance = self.search([('email_state', '!=', False)])
+        for rec in performance:
+            for email_type in json.loads(rec.email_state):
+                if email_type == '00':
+                    subject = u'【通知】%s个人绩效已启动' % rec.quarter
+                    content = u'''您的%s的个人绩效已启动,请根据部门目标以及工作过程中与主管的沟通，完成对工作目标、关键措施、
+                    关键事件这三块内容的全面总结。''' % rec.quarter
+                    rec.send_mail(rec.name, subject=subject, content=content)
+                elif email_type == '01':
+                    if rec.state == '5':
+                        subject = u'【通知】绩效管理员代%s提交了您%s的个人绩效目标评价' % (rec.officer.name, rec.quarter)
+                        content = u'绩效管理员代%s提交了您的%s的个人绩效目标评价，请查看!' % (rec.officer.name, rec.quarter)
+                        rec.send_mail(rec.name, subject=subject, content=content)
+                    elif rec.state == '1':
+                        subject = u'【通知】绩效管理员代%s提交了%s的个人绩效目标' % (rec.name.name, rec.quarter)
+                        content = u'绩效管理员代%s提交了%s的个人绩效目标，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % (rec.name.name, rec.quarter)
+                        rec.send_mail(rec.name, subject=subject, content=content)
+                elif email_type == '10':
+                    rec.btn_send_email(rec)
+                elif email_type == '11':
+                    subject = u'【通知】您的%s的绩效考核结果已导入' % rec.quarter
+                    content = u'%s的绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。' % rec.quarter
+                    rec.send_mail(rec.name, subject=subject, content=content)
+                time.sleep(1)
+            rec.write({'email_state': False})
 
     name = fields.Many2one('hr.employee', string='花名', required=True)
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)
@@ -395,6 +466,7 @@ class dtdream_hr_performance(models.Model):
     inter = fields.Boolean(string='当前登入者是否接口人', compute=_compute_login_is_inter)
     manage = fields.Boolean(string='当前登入者是否绩效管理员', compute=_compute_login_is_manage)
     resume_approve = fields.Many2one('hr.employee', string="当前审批人")
+    email_state = fields.Char(string='发送邮催类型')
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter)', '每个员工每个季度只能有一条员工绩效目标!')
@@ -403,66 +475,95 @@ class dtdream_hr_performance(models.Model):
     @api.multi
     def wkf_wait_write(self):
         if self.state == '0':
-            subject = u'【通知】%s个人绩效目标填写已启动' % self.quarter
-            content = u'''您的个人季度绩效目标填写已启动,请根据部门季度绩效目标、及与主管沟通的情况,详细填写%s的工作目标,
-            并描述将如何达成该目标,采取哪些措施。''' % self.quarter
-            self.send_mail(self.name, subject=subject, content=content)
-            self.message_post(body=u'个人绩效目标填写启动')
-        elif self.state != '3':
-            subject = u'【通知】您的个人绩效目标已被返回修改'
-            content = u"您的个人季度绩效目标已被返回修改,请完善后提交主管确认!"
-            self.send_mail(self.name, subject=subject, content=content)
-        self.write({'state': '1', 'resume_approve': self.name.id})
+            # subject = u'【通知】%s个人绩效已启动' % self.quarter
+            # content = u'''您的%s的个人绩效已启动,请根据部门目标以及工作过程中与主管的沟通，完成对工作目标、关键措施、
+            # 关键事件这三块内容的全面总结。''' % self.quarter
+            # self.send_mail(self.name, subject=subject, content=content)
+        # elif self.state != '3':
+        #     subject = u'【通知】您的%s的个人绩效目标已被返回修改' % self.quarter
+        #     content = u"您的%s的个人绩效目标已被返回修改,请完善后提交主管确认!" % self.quarter
+        #     self.send_mail(self.name, subject=subject, content=content)
+            if not self.email_state:
+                email_state = ["00"]
+            else:
+                email_state = json.loads(self.email_state)
+                if '00' not in email_state:
+                    email_state.append('00')
+            self.write({'state': '1', 'email_state': json.dumps(email_state), 'resume_approve': self.name.id})
+            self.message_post(body=u'个人绩效目标启动')
 
     @api.multi
     def wkf_confirm(self):
         self.write({'state': '2', 'resume_approve': self.officer.id})
-        subject = u'【通知】%s提交了个人绩效目标' % self.name.name
-        content = u'%s的个人季度绩效目标已制定,请确认;如该季度绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % self.name.name
+        subject = u'【通知】%s提交了%s的个人绩效目标' % (self.name.name, self.quarter)
+        content = u'%s的%s的个人绩效目标已制定,请确认;如该绩效目标不够完善,请点击"返回修改"要求员工进一步调整。' % (self.name.name, self.quarter)
         self.send_mail(self.officer, subject=subject, content=content)
         self.message_post(body=u'%s提交了个人绩效目标' % self.name.name)
 
     @api.multi
     def wkf_evaluate(self):
         self.write({'state': '3', 'resume_approve': ''})
-        subject = u'【通知】%s确认了您的个人绩效目标' % self.officer.name
-        content = u"%s已针对您的个人季度绩效目标完成确认,请查阅。" % self.officer.name
+        subject = u'【通知】%s确认了您的%s的个人绩效目标' % (self.officer.name, self.quarter)
+        content = u"%s已针对您的%s的个人绩效目标完成确认,请查阅。" % (self.officer.name, self.quarter)
         self.send_mail(self.name, subject=subject, content=content)
 
     @api.multi
     def wkf_conclud(self):
         self.write({'state': '4', 'resume_approve': self.name.id})
         subject = u'【通知】%s个人绩效考核已启动' % self.quarter
-        content = u"绩效考核已正式启动,请根据个人季度绩效目标、以及实际完成情况,填写%s关键事项达成情况与主要工作成果。" % self.quarter
+        content = u"绩效考核已正式启动,请根据个人绩效目标、以及实际完成情况,填写%s关键事项达成情况与主要工作成果。" % self.quarter
         self.send_mail(self.name, subject=subject, content=content)
         self.message_post(body=u'个人绩效考评启动')
 
     @api.multi
     def wkf_rate(self):
-        self.write({'state': '5', 'resume_approve': self.officer.id})
-        subject = u'【通知】%s提交了个人绩效目标总结' % self.name.name
-        content = u'%s已完成个人工作总结，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % self.name.name
-        self.send_mail(self.officer, subject=subject, content=content)
-        self.message_post(body=u'%s提交了个人绩效目标总结' % self.name.name)
+        if not self.pbc_employee and not self.manage:
+            raise ValidationError("请至少添加一条个人绩效目标")
+        if self.manage and self.name.user_id != self.env.user:
+            if not self.pbc_employee:
+                self.pbc_employee.create({"work": "无", "detail": "无", "result": "无", 'perform': self.id})
+            # subject = u'【通知】绩效管理员代%s提交了%s的个人绩效目标' % (self.name.name, self.quarter)
+            # content = u'绩效管理员代%s提交了%s的个人绩效目标，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % (self.name.name, self.quarter)
+            # self.send_mail(self.officer, subject=subject, content=content)
+            self.write({'state': '5', 'resume_approve': self.officer.id})
+            self.message_post(body=u'绩效管理员代提交了%s的个人绩效目标' % self.name.name)
+        else:
+            for record in self.pbc_employee:
+                if (not record.work or not record.work.strip()) or (not record.detail or not record.detail.strip()) or \
+                        (not record.result or not record.result.strip()):
+                    raise ValidationError("工作目标,具体描述,关键事件达成为必填字段,请完整填写后再提交!")
+            self.write({'state': '5', 'resume_approve': self.officer.id})
+            subject = u'【通知】%s提交了%s的个人绩效目标' % (self.name.name, self.quarter)
+            content = u'%s已完成%s的个人绩效目标及工作总结，请根据员工实际工作情况进行评价，指导员工取得更好的进步!' % (self.name.name, self.quarter)
+            self.send_mail(self.officer, subject=subject, content=content)
+            self.message_post(body=u'%s提交了个人绩效目标' % self.name.name)
 
     @api.multi
     def wkf_final(self):
         if self.result:
             self.write({'state': '99', 'resume_approve': ''})
-
         else:
             self.write({'state': '6', 'resume_approve': ''})
-        subject = u'【通知】%s对您的个人绩效目标做了评价' % self.officer.name
-        content = u'%s已针对您的工作总结完成了评价,请查阅!' % self.officer.name
-        self.send_mail(self.name, subject=subject, content=content)
-        self.message_post(body=u'%s对个人绩效目标做了评价' % self.officer.name)
+        if not self.manage or (self.manage and self.is_officer):
+            subject = u'【通知】%s对您的%s个人绩效目标做了评价' % (self.officer.name, self.quarter)
+            content = u'%s已针对您的%s的工作总结完成了评价,请查阅!' % (self.officer.name, self.quarter)
+            self.send_mail(self.name, subject=subject, content=content)
+            self.message_post(body=u'%s对个人绩效目标做了评价' % self.officer.name)
+        else:
+            self.message_post(body=u'绩效管理员代%s提交了个人绩效目标评价' % self.officer.name)
 
     @api.multi
     def wkf_done(self):
-        self.write({'state': '99',  'resume_approve': ''})
-        subject = u'【通知】您的绩效考核结果已导入'
-        content = u'绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。'
-        self.send_mail(self.name, subject=subject, content=content)
+        if not self.email_state:
+            email_state = ["11"]
+        else:
+            email_state = json.loads(self.email_state)
+            if '11' not in email_state:
+                email_state.append('11')
+        self.write({'state': '99',  'email_state': json.dumps(email_state), 'resume_approve': ''})
+        # subject = u'【通知】您的%s的绩效考核结果已导入' % self.quarter
+        # content = u'%s的绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。' % self.quarter
+        # self.send_mail(self.name, subject=subject, content=content)
         self.message_post(body=u'绩效考核结果导入')
 
 
@@ -613,6 +714,9 @@ class dtdream_hr_pbc(models.Model):
             if res['type'] == "tree":
                 doc.xpath("//tree")[0].set("create", "false")
                 doc.xpath("//tree")[0].set("edit", "false")
+            if res['type'] == "kanban":
+                doc.xpath("//kanban")[0].set("create", "false")
+                doc.xpath("//kanban")[0].set("edit", "false")
         res['arch'] = etree.tostring(doc)
         return res
 
@@ -699,13 +803,14 @@ class dtdream_hr_pbc(models.Model):
                         department.append(depart.id)
                 if self.name.id not in department:
                     raise ValidationError("HR接口人只能编辑所接口部门的部门绩效目标!")
-            employee = self.env['hr.employee'].search(['|', ('department_id', '=', self.name.id), ('department_id', 'in', [cr.id for cr in self.name.child_ids])])
-            if vals.get('target', '') or vals.get('quarter', '') or vals.get('name'):
-                for name in employee:
-                    subject = u'【温馨提示】%s部门绩效业务目标修改通知'% self.quarter
-                    content = u'%s%s部门绩效业务目标或关键指标,关键动作,行为已修改,请进入dodo绩效查看，或点击链接' % (self.name.complete_name, self.quarter)
-                    self.send_mail(name, subject=subject, content=content)
-                    time.sleep(0.01)
+            if self.state == "99" and (vals.get('target', '') or vals.get('quarter', '') or vals.get('name')):
+                if not self.email_type:
+                    email_type = ["01"]
+                else:
+                    email_type = json.loads(self.email_type)
+                    if '01' not in email_type:
+                        email_type.append('01')
+                vals['email_type'] = json.dumps(email_type)
         return super(dtdream_hr_pbc, self).write(vals)
 
     def unlink_message_subscribe(self, res_id):
@@ -776,6 +881,28 @@ class dtdream_hr_pbc(models.Model):
         else:
             return [('id', '!=', False)]
 
+    @api.model
+    def send_pbcmail_interval(self):
+        """ ('00', '制定部门目标'),
+            ('01', '修改部门目标')"""
+        pbc = self.search([('email_type', '!=', False)])
+        for rec in pbc:
+            employee = self.env['hr.employee'].search(['|', ('department_id', '=', rec.name.id), ('department_id', 'in', [cr.id for cr in rec.name.child_ids])])
+            for email_type in json.loads(rec.email_type):
+                if email_type == '00':
+                    for name in employee:
+                        subject = u'【通知】%s%s部门绩效业务目标已制定' % (rec.name.complete_name,rec.quarter)
+                        content = u'%s%s部门绩效业务目标已制定，请查看' % (rec.name.complete_name,rec.quarter)
+                        rec.send_mail(name, subject=subject, content=content)
+                        time.sleep(1)
+                elif email_type == '01':
+                    for name in employee:
+                        subject = u'【温馨提示】%s部门绩效业务目标修改通知'% rec.quarter
+                        content = u'%s%s部门绩效业务目标或关键指标,关键动作,行为已修改,请进入dodo绩效查看，或点击链接' % (rec.name.complete_name, rec.quarter)
+                        rec.send_mail(name, subject=subject, content=content)
+                        time.sleep(1)
+            rec.write({'email_type': False})
+
     name = fields.Many2one('hr.department', string='部门', required=True, domain=_get_name_domain)
     is_inter = fields.Boolean(string="是否接口人", default=lambda self: True)
     is_in_department = fields.Boolean(string='是否所在部门')
@@ -786,6 +913,7 @@ class dtdream_hr_pbc(models.Model):
                               ('99', '完成'),
                               ], string='状态', default='0')
     target = fields.One2many('dtdream.pbc.target', 'target', string='工作内容')
+    email_type = fields.Char(string='邮催类型')
 
     _sql_constraints = [
         ('name_quarter_uniq', 'unique (name,quarter)', '每个季度只能有一条绩效目标!')
@@ -793,13 +921,13 @@ class dtdream_hr_pbc(models.Model):
 
     @api.multi
     def wkf_done(self):
-        self.write({'state': '99'})
-        employee = self.env['hr.employee'].search(['|', ('department_id', '=', self.name.id), ('department_id', 'in', [cr.id for cr in self.name.child_ids])])
-        for name in employee:
-            subject = u'【通知】%s%s部门绩效业务目标已制定' % (self.name.complete_name,self.quarter)
-            content = u'%s%s部门绩效业务目标已制定，请查看' % (self.name.complete_name,self.quarter)
-            self.send_mail(name, subject=subject, content=content)
-            time.sleep(0.01)
+        if not self.email_type:
+            email_type = ["00"]
+        else:
+            email_type = json.loads(self.email_type)
+            if '00' not in email_type:
+                email_type.append('00')
+        self.write({'state': '99', 'email_type': json.dumps(email_type)})
 
 
 class dtdream_pbc_target(models.Model):
@@ -882,10 +1010,19 @@ class dtdream_hr_pbc_start(models.TransientModel):
         pbc = context.get('active_ids', []) or []
         performance = self.env['dtdream.hr.performance'].browse(pbc)
         for rec in performance:
-            if rec.state in ('1', '4', '5'):
+            if (rec.state != '5' and rec.state != '1') or rec.name.user_id == rec.env.user:
+                continue
+            if not rec.email_state:
+                email_state = ["01"]
+            else:
+                email_state = json.loads(rec.email_state)
+                if '01' not in email_state:
+                    email_state.append('01')
+            rec.write({'email_state': json.dumps(email_state)})
+            if rec.state == '5':
                 rec.signal_workflow('btn_submit')
-            elif rec.state == '2':
-                rec.signal_workflow('btn_agree')
+            elif rec.state == '1':
+                rec.signal_workflow('btn_skip')
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one
@@ -894,23 +1031,15 @@ class dtdream_hr_pbc_start(models.TransientModel):
         pbc = context.get('active_ids', []) or []
         performance = self.env['dtdream.hr.performance'].browse(pbc)
         for rec in performance:
-            if rec.state == '1':
-                subject = u'【通知】请尽快填写您的个人季度绩效目标'
-                content = u'您的个人季度绩效目标仍未完成填写,请尽快提交。'
-                rec.send_mail(rec.name, subject=subject, content=content)
-            elif rec.state == '2':
-                subject = u'【通知】请尽快审阅%s的个人季度绩效目标' % rec.name.name
-                content = u'您对%s的个人季度绩效目标仍未完成确认,请尽快审阅。'% rec.name.name
-                rec.send_mail(rec.officer, subject=subject, content=content)
-            elif rec.state == '4':
-                subject = u'【通知】请尽快填写您的个人季度关键事项达成情况与主要工作成果'
-                content = u'您的个人季度关键事项达成情况与主要工作成果仍未完成填写,请尽快提交。'
-                rec.send_mail(rec.name, subject=subject, content=content)
-            elif rec.state == '5':
-                subject = u'【通知】请尽快评价%s的个人工作总结' % rec.name.name
-                content = u'您对%s的个人工作总结仍未完成评价,请尽快提交。'% rec.name.name
-                rec.send_mail(rec.officer, subject=subject, content=content)
-            time.sleep(0.01)
+            if rec.state == '99':
+                continue
+            if not rec.email_state:
+                email_state = ["10"]
+            else:
+                email_state = json.loads(rec.email_state)
+                if '10' not in email_state:
+                    email_state.append('10')
+            rec.write({'email_state': json.dumps(email_state)})
         return {'type': 'ir.actions.act_window_close'}
 
     @api.one

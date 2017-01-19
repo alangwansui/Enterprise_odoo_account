@@ -16,5 +16,35 @@
         </tree>
       </field>
     </record>
+
+    <record model="ir.ui.view" id="process_process_kanban">
+      <field name="name">process.process.kanban</field>
+      <field name="model">process.process</field>
+      <field name="arch" type="xml">
+        <kanban class="o_res_partner_kanban">
+            <field name="code"/>
+            <field name="name"/>
+            <field name="approver"/>
+            <templates>
+                <t t-name="kanban-box">
+                <div class="oe_kanban_global_click ">
+                     <div class="o_kanban_image">
+                          <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                      </div>
+                    <div class="oe_kanban_details">
+                        <div name="tags"/>
+                            <ul>
+                                <li ><strong>编码:</strong> <field name="code" /></li>
+                                <li ><strong>名称:</strong> <field name="name" /></li>
+                                <li ><strong>审批人:</strong> <field name="approver" /></li>
+                            </ul>
+                    <div name="tags"/>
+                    </div>
+                </div>
+                </t>
+            </templates>
+        </kanban>
+      </field>
+    </record>
   </data>
 </openerp>

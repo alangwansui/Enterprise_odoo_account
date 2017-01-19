@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.osv import osv
 
 
 class dtdream_assets_type(models.Model):
@@ -15,6 +16,18 @@ class dtdream_assets_type(models.Model):
             code += rec.name + '-' + (rec.code or "")
             data.append((rec.id, code))
         return data
+
+    @api.multi
+    def unlink(self):
+        assets_type = []
+        for rec in self:
+            manage = self.env['dtdream.assets.management'].search([('asset_type', '=', rec.id)])
+            check = self.env['dtdream.assets.check'].search([('asset_type', '=', rec.id)])
+            if manage or check:
+                assets_type.append(rec.code)
+        if assets_type:
+            raise osv.except_osv(u'资产类别编码(%s)已被引用,无法删除!' % ','.join(assets_type))
+        return super(dtdream_assets_type, self).unlink()
 
     name = fields.Char(string='资产类别名称', size=32)
     discount = fields.Integer(string='折旧年限(年)')

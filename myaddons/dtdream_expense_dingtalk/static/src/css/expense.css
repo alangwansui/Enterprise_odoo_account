@@ -591,5 +591,11 @@ table.dataTable thead .sorting:after {
 .panelbox-yellow-02 .fy-more {
     background-color: rgba(106,126,89,0.4);
 }
+.panel-footer .fy-t{
+    height: 66px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: keep-all;
+}
 
 

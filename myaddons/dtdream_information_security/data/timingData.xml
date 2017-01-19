@@ -12,7 +12,7 @@
             <field name="args">()</field>
         </record>
 
-        <record model="ir.cron" id="ir_cron_inf_purview_send_email">
+        <record model="ir.cron" id="ir_cron_inf_purview_send_email_before">
             <field name='name'>权限到期提前两周提醒</field>
             <field name='interval_number'>1</field>
             <field name='interval_type'>days</field>

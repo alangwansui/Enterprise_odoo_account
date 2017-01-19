@@ -7,7 +7,7 @@
             <field name="res_model">dtdream.sale.business.report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('create_uid','=',uid)]</field>
             <field name="context">{'search_default_effect_record':'record_state'}</field>
         </record>
@@ -17,7 +17,7 @@
             <field name="res_model">dtdream.sale.business.report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('shenpiren.user_id','=',uid)]</field>
             <field name="context">{'search_default_effect_record':'record_state'}</field>
         </record>
@@ -27,7 +27,7 @@
             <field name="res_model">dtdream.sale.business.report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('approveds.user_id','=',uid)]</field>
             <field name="context">{'search_default_effect_record':'record_state'}</field>
         </record>
@@ -40,7 +40,7 @@
                 'name':'所有单据',
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
-                'view_mode': 'tree,form',
+                'view_mode': 'tree,form,kanban',
                 'res_model': 'dtdream.sale.business.report',
                 'context':{'search_default_effect_record':'record_state'},
                 }

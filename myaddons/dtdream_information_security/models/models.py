@@ -4,7 +4,10 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
-from openerp.dtdream.confluence import confluence as confluenceSer
+
+from openerp.dtdream.ldap.dtldap import DTLdap
+
+
 
 class dtdream_information_purview(models.Model):
     _name = 'dtdream.information.purview'
@@ -29,15 +32,12 @@ class dtdream_information_purview(models.Model):
     @api.onchange('origin_department_01','origin_department_02','secret_level')
     def make_name(self):
         dep_01 = self.origin_department_01.name or ''
-        dep_02 = self.origin_department_02 or ''
-        if dep_02:
-            dep_02=u"/"+dep_02.name
         level=''
         if self.secret_level=='level_01':
             level=u'机密'
         elif self.secret_level=='level_02':
             level=u'绝密'
-        self.write({'name':dep_01+dep_02+level+u'文档'})
+        self.write({'name':dep_01+level+u'文档'})
 
     @api.onchange('style')
     def on_change_style(self):
@@ -81,8 +81,8 @@ class dtdream_information_purview(models.Model):
                 raise ValidationError(u"请填写"+lit.space.name+u"的权限")
 
     applicant = fields.Many2one("hr.employee",string="申请人",required=True,store=True,default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]),readonly=True,stroe=True)
-    department_01 = fields.Many2one("hr.department",compute=_compute_employee,string="申请一级部门" ,store=True)
-    department_02 = fields.Many2one("hr.department",compute=_compute_employee,string="申请二级部门" ,store=True)
+    department_01 = fields.Many2one("hr.department",compute=_compute_employee,string="申请人一级部门" ,store=True)
+    department_02 = fields.Many2one("hr.department",compute=_compute_employee,string="申请人二级部门" ,store=True)
     sq_department_code = fields.Char(compute=_compute_employee,string="申请部门编码" ,store=True)
     yuan_department_code = fields.Char(string="源部门编码",readonly=True)
 
@@ -110,7 +110,7 @@ class dtdream_information_purview(models.Model):
 
     origin_department_01 = fields.Many2one("hr.department",string="信息源一级部门" ,store=True,required=True)
     origin_department_02 = fields.Many2one("hr.department",string="信息源二级部门" ,store=True)
-    manager = fields.Many2one("hr.employee",string="直接主管",compute=_compute_employee ,store=True)
+    manager = fields.Many2one("hr.employee",string="申请人主管",required=True)
     secret_level = fields.Selection([('level_01','机密'),('level_02','绝密')],string="最高密级",required=True)
     state = fields.Selection([('state_01','草稿'),('state_02','主管审批'),('state_03','所有人审批'),('state_04','终止'),('state_05','完成')],string="状态",default='state_01')
     Co_applicant = fields.Many2many("hr.employee",string="共同申请人",domain=lambda self: [("user_id", "!=", self.env.user.id)])
@@ -129,6 +129,11 @@ class dtdream_information_purview(models.Model):
     def con_dead_line(self):
         if self.dead_line>(datetime.now() + relativedelta(years=1)).strftime("%Y-%m-%d"):
             raise ValidationError(u'期限要在一年之内')
+
+    @api.constrains('dead_line')
+    def cons_dead_line(self):
+        if self.dead_line and self.dead_line<=datetime.now().strftime("%Y-%m-%d"):
+            raise ValidationError(u'期限应大于今天')
 
     dead_line=fields.Date(string="期限",required=True)
     is_maturity = fields.Boolean(string="标记是否发过到期邮件",default=False)
@@ -235,20 +240,19 @@ class dtdream_information_purview(models.Model):
     #草稿提交
     @api.multi
     def do_cgtj(self):
-        if not self.manager:
-            raise ValidationError(u'直接主管不能为空')
-        if self.secret_level=="level_01":
-            if not self.origin_department_01 or not self.origin_department_01.manager_id:
-                raise ValidationError(u'最高机密为“机密”时，信息源一级部门不得为空且该部门的主管不能为空')
-            self.write({'information_syr':self.origin_department_01.manager_id.id})
-        elif self.secret_level=="level_02":
-            specificlist = self.env['dtdream.information.people'].search([])
-            specific=''
-            if len(specificlist)>0:
-                specific=specificlist[0]
-            if not specific:
-                raise ValidationError(u'请配置绝密信息审批人')
-            self.write({'information_syr':specific.juemi_shenpi.id})
+        if self.state!="state_01":
+            return
+        if self.style=="conf" and len(self.confluence_list)==0:
+            raise ValidationError("明细不能为空")
+        if self.style=="git" and len(self.git_list)==0:
+            raise ValidationError("明细不能为空")
+        if self.style=="other" and len(self.other_list)==0:
+
+            raise ValidationError("明细不能为空")
+        # if self.secret_level=="level_01":
+        if not self.origin_department_01.manager_id:
+            raise ValidationError(u'信息源一级部门主管不能为空')
+        self.write({'information_syr':self.origin_department_01.manager_id.id})
         if self.dead_line>(datetime.now() + relativedelta(months=1)).strftime("%Y-%m-%d"):
             self.write({'is_month':True})
         if self.applicant ==self.manager:
@@ -264,22 +268,18 @@ class dtdream_information_purview(models.Model):
 
 
 
-    #权限到期提前提醒(若申请期限大于一个月，则在到期前两周邮件提醒)
+    #权限到期提前提醒(在到期前两周邮件提醒)
     @api.model
     def timing_send_email_before(self):
-        applications=self.env['dtdream.information.purview'].sudo().search([('state','=',('state_05')),('is_maturity_before','=',False),('is_maturity','=',False),('is_month','=',True)])
+        applications = self.env['dtdream.information.record'].sudo().search([])
         for application in applications:
-            if application.dead_line<=(datetime.now() + relativedelta(days=14)).strftime("%Y-%m-%d"):
-                application.write({'is_maturity_before':True})
+            if application.dead_line==(datetime.now() + relativedelta(days=14)).strftime("%Y-%m-%d"):
                 base_url = self.get_base_url()
-                link = '/web#id=%s&view_type=form&model=dtdream.information.purview' % application.id
+                link = '/web#id=%s&view_type=form&model=dtdream.information.purview' % application.event.id
                 url = base_url+link
                 appellation = application.applicant.name+u",您好"
-                subject=application.applicant.name+u"申请的‘"+application.name+u"’的权限申请还有两周到期"
-                content = application.applicant.name+u"申请的‘"+application.name+u"’的权限申请还有两周到期，请注意！"
-                email_to=application.applicant.work_email
-                for co in application.Co_applicant:
-                    email_to+=';'+co.work_email
+                subject=application.applicant.name+u"申请的‘"+application.event.name+u"’的权限申请还有两周到期"
+                content = application.applicant.name+u"申请的‘"+application.event.name+u"’的权限申请还有两周到期，请注意！"
                 self.env['mail.mail'].create({
                     'body_html': u'''<p>%s</p>
                                  <p>%s</p>
@@ -289,7 +289,7 @@ class dtdream_information_purview(models.Model):
                                  <p>万千业务，简单有do</p>
                                  <p>%s</p>''' % (appellation,content, url,url,application.write_date[:10]),
                     'subject': '%s' % subject,
-                    'email_to': '%s' % email_to,
+                    'email_to': '%s' % application.applicat.work_email,
                     'auto_delete': False,
                     'email_from':self.get_mail_server_name(),
                 }).send()
@@ -297,86 +297,156 @@ class dtdream_information_purview(models.Model):
     #权限到期提醒
     @api.model
     def timing_send_email(self):
-        applications=self.env['dtdream.information.purview'].sudo().search([('state','=',('state_05')),('dead_line','<',datetime.now()),('is_maturity','=',False)])
-        for application in applications:
-            application.write({'is_maturity':True})
-            base_url = self.get_base_url()
-            link = '/web#id=%s&view_type=form&model=dtdream.information.purview' % application.id
-            url = base_url+link
-            appellation = application.applicant.name+u",您好"
-            subject=application.applicant.name+u"申请的‘"+application.name+u"’的权限申请已到期"
-            content = application.applicant.name+u"申请的‘"+application.name+u"’的权限申请已到期，若要继续查看请重新申请"
-            email_to=application.applicant.work_email
-            for co in application.Co_applicant:
-                email_to+=';'+co.work_email
-            self.env['mail.mail'].create({
-                'body_html': u'''<p>%s</p>
+        ldapconfig = self.env['res.company.ldap'].sudo().search([])[0]
+        host = ldapconfig.ldap_server
+        port = ldapconfig.ldap_port
+        dn = ldapconfig.ldap_binddn
+        passwd = ldapconfig.ldap_password
+        ou = 'ou=DTALL'
+        base = ldapconfig.ldap_base
+        cacertfile = ldapconfig.ldap_cert_file
+        try:
+            dtldap = DTLdap(host=host, port=port, dn=dn, passwd=passwd, ou=ou, base=base, cacertfile=cacertfile)
+            applications = self.env['dtdream.information.record'].sudo().search([('dead_line','<',datetime.now().strftime("%Y-%m-%d"))])
+            for application in applications:
+                base_url = self.get_base_url()
+                link = '/web#id=%s&view_type=form&model=dtdream.information.purview' % application.event.id
+                url = base_url+link
+                appellation = application.applicant.name+u",您好"
+                subject=application.applicant.name+u"申请的‘"+application.event.name+u"’的权限申请已到期"
+                content = application.applicant.name+u"申请的‘"+application.event.name+u"’的权限申请已到期，若要继续查看请重新申请"
+                self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                 <p>%s</p>
+                                 <p> 请点击链接进入:
+                                 <a href="%s">%s</a></p>
+                                <p>dodo</p>
+                                 <p>万千业务，简单有do</p>
+                                 <p>%s</p>''' % (appellation,content, url,url,application.write_date[:10]),
+                    'subject': '%s' % subject,
+                    'email_to': '%s' % appellation.appellat.work_email,
+                    'auto_delete': False,
+                    'email_from':self.get_mail_server_name(),
+                }).send()
+                dtldap.del_user_from_group(application.applicat.account,application.ldap_group)
+                appellation.sudo().unlink()
+        except Exception,e:
+            print u'ldap连接错误,请联系管理员检查公司LDAP数据配置'
+
+
+
+
+    def create_ldap_user(self, confluence_space_name, dtldap, person):
+        info = {
+            'displayName': person.name,
+            'mail': person.work_email,
+            'physicalDeliveryOfficeName': person.department_id.name,
+            'telephoneNumber': person.mobile_phone
+        }
+        dtldap.create_user(person.account, **info)
+        dtldap.add_user_to_group(person.account, confluence_space_name)
+
+    def add_employee_to_space_group(self,dtldap,confluence_space_name,shenqirenList):
+        if dtldap.is_group_exist(confluence_space_name):
+            for person in shenqirenList:
+                if dtldap.is_user_exist(person.account) and not dtldap.is_user_in_group(person.account, confluence_space_name):
+                    dtldap.add_user_to_group(person.account, confluence_space_name)
+                elif not dtldap.is_user_exist(person.account):
+                    # self.create_ldap_user(confluence_space_name, dtldap, person)
+                    raise ValidationError(person.account + u'用户不合法')
+                result = self.env["dtdream.information.record"].sudo().search([('applicant','=',person.id),("ldap_group",'=',confluence_space_name)])
+                if len(result)>0:
+                    if self.dead_line>result.dead_line:
+                        result.write({'event':self.id,'dead_line':self.dead_line})
+                else:
+                    self.env["dtdream.information.record"].sudo().create({"event":self.id,
+                        "applicant":person.id,"ldap_group":confluence_space_name,"dead_line":self.dead_line
+                    })
+        else:
+            dtldap.create_group(confluence_space_name)
+            for person in shenqirenList:
+                if dtldap.is_user_exist(person.account):
+                    dtldap.add_user_to_group(person.account, confluence_space_name)
+                elif not dtldap.is_user_exist(person.account):
+                    # self.create_ldap_user(confluence_space_name, dtldap, person)
+                    raise ValidationError(person.account+u'用户不合法')
+                result = self.env["dtdream.information.record"].sudo().search([('applicant','=',person.id),("ldap_group",'=',confluence_space_name)])
+                if len(result)>0:
+                    if self.dead_line>result.dead_line:
+                        result.write({'event':self.id,'dead_line':self.dead_line})
+                else:
+                    self.env["dtdream.information.record"].sudo().create({"event":self.id,
+                        "applicant":person.id,"ldap_group":confluence_space_name,"dead_line":self.dead_line
+                    })
+
+    #发送邮件给环境管理员配置权限
+    def send_email_space_admin(self,confluence_space_mane,type,admin):
+        appellation = admin.name + u",您好"
+        if type =="read":
+            subject = u'请您为群组'+confluence_space_mane+u'添加读权限'
+        else:
+            subject = u'请您为群组'+confluence_space_mane+u'添加读/写权限'
+
+        self.env['mail.mail'].create({
+            'body_html': u'''<p>%s</p>
                              <p>%s</p>
-                             <p> 请点击链接进入:
-                             <a href="%s">%s</a></p>
                             <p>dodo</p>
                              <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (appellation,content, url,url,application.write_date[:10]),
-                'subject': '%s' % subject,
-                'email_to': '%s' % email_to,
-                'email_cc':'%s' % application.information_syr.work_email,
-                'auto_delete': False,
-                'email_from':self.get_mail_server_name(),
-            }).send()
+                             <p>%s</p>''' % (appellation, subject, self.write_date[:10]),
+            'subject': '%s' % subject,
+            'email_to': '%s' % admin.work_email,
+            'auto_delete': False,
+            'email_from': self.get_mail_server_name(),
+        }).send()
 
-
-    def check_PermissionSets(self,ConfluenceServer,confluence_list):
+    def check_PermissionSets(self,confluence_list,dtldap,shenqirenList):
         for confluence in confluence_list:
-            PermissionSets = ConfluenceServer.GetSpacePermissionSets(spacekey=confluence.space.key)
             if confluence.read_right and not confluence.write_right:                                                    #只读权限
-                confluence_space_read=''
-                viewPermission = [x for x in PermissionSets if x['type'] == "VIEWSPACE"]
-                groupnames = [x['groupName'] for x in viewPermission[0]['spacePermissions'] if x.get('groupName')]
-                if confluence_space_read in groupnames:                                                                 #权限组存在
-                    print 111111111
-                else:
-                    print 222222222
+                confluence_space_read='conf_'+confluence.space.key+'_read'
+                confluence_space_read = str(confluence_space_read)
+                self.add_employee_to_space_group(dtldap,confluence_space_read,shenqirenList)
+                self.send_email_space_admin(confluence_space_mane=confluence_space_read,type='read',admin=confluence.conf.admin)
             if confluence.write_right:
-                editPermission = [x for x in PermissionSets if x['type']=="EDITSPACE"]
-                groupnames = [x['groupName'] for x in editPermission[0]['spacePermissions'] if x.get('groupName')]
+                confluence_space_write='conf_'+confluence.space.key+'_write'
+                confluence_space_write = str(confluence_space_write)
+                self.add_employee_to_space_group(dtldap,confluence_space_write,shenqirenList)
+                self.send_email_space_admin(confluence_space_mane=confluence_space_write,type='write',admin=confluence.conf.admin)
+
+    def check_git_PermissionSets(self,git_list,dtldap,shenqirenList):
+        for git in git_list:
+            for person in shenqirenList:
+                if not dtldap.is_user_in_group(person.account, git.git.git_group):
+                    dtldap.add_user_to_group(person.account, git.git.git_group)
+                result = self.env["dtdream.information.record"].sudo().search([('applicant','=',person.id),("ldap_group",'=',git.git.git_group)])
+                if len(result)>0:
+                    if self.dead_line>result.dead_line:
+                        result.write({'event':self.id,'dead_line':self.dead_line})
+                else:
+                    self.env["dtdream.information.record"].sudo().create({"event":self.id,
+                        "applicant":person.id,"ldap_group":git.git.git_group,"dead_line":self.dead_line
+                    })
+
+
 
     @api.multi
     def permission_settings(self):
-        if self.style=="conf":
-            confs = set([x.conf for x in self.confluence_list])     #检查有几个confluence环境
-            for conf in confs:
-                try:
-                    ConfluenceServer = confluenceSer.ConfluenceServer(ConfluenceURL=conf.url,login=conf.user,password=conf.passw)
-                    confluence_list = [x for x in self.confluence_list if x.conf == conf]
-                    self.check_PermissionSets(ConfluenceServer, confluence_list)
-                except Exception, e:
-                    raise ValidationError(conf.name+u"配置错误")
-
-
-        elif self.style=="git":
-            print 2222222222222
-        else:
-            print 33333333333333
-
-
-
-    # @api.multi
-    # def test(self):
-        # import requests
-        # url='http://confluence.dtdream.com'
-        # values ={'os_username':'g0335','os_password':'DT_GQ0335'}
-        # # jdata = json.dumps(values)
-        # send_headers = {
-        #                  'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
-        #                  'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        #                 'Content-type': 'application/json',
-        #                  'Connection':'keep-alive',
-        #                 }
-        # req = requests.post(url, values, headers=send_headers)
-        # get_url='http://confluence.dtdream.com/rest/api/content'
-        # response = requests.get(get_url,cookies=req.cookies,headers=send_headers)
-
-        # confluenceSpace = confluence.GetSpacePermissionsForUser(spacekey='CON',user='wx-0003')
-
+        if self.style=="conf" or self.style=="git":
+            shenqirenList = [self.applicant]+[x for x in self.Co_applicant]
+            ldapconfig = self.env['res.company.ldap'].sudo().search([])[0]
+            host = ldapconfig.ldap_domain
+            port = ldapconfig.ldap_port
+            dn = ldapconfig.ldap_binddn
+            passwd = ldapconfig.ldap_password
+            # ou = 'ou=DTALL'
+            base = ldapconfig.ldap_base
+            cacertfile = ldapconfig.ldap_cert_file
+            try:
+                dtldap = DTLdap(host=host, port=port, dn=dn, passwd=passwd, base=base, cacertfile=cacertfile)
+            except Exception,e:
+                raise ValidationError(u'ldap连接错误,请联系管理员检查公司LDAP数据配置')
+            if self.style=="conf":
+                self.check_PermissionSets(self.confluence_list,dtldap,shenqirenList)
+            elif self.style=="git":
+                self.check_git_PermissionSets(self.git_list,dtldap,shenqirenList)
 
 

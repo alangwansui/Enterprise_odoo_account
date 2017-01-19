@@ -60,17 +60,17 @@
 
         <record id="act_approve7" model="workflow.activity">
             <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">营销管理部商务审批</field>
+            <field name="name">区域商务审批</field>
             <field name="kind">function</field>
             <field name="action">wkf_approve7()</field>
         </record>
 
-        <record id="act_approve8" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_report_handle"/>
-            <field name="name">市场部商务审批</field>
-            <field name="kind">function</field>
-            <field name="action">wkf_approve8()</field>
-        </record>
+        <!--<record id="act_approve8" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_report_handle"/>-->
+            <!--<field name="name">市场部商务审批</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_approve8()</field>-->
+        <!--</record>-->
 
         <record id="act_approve9" model="workflow.activity">
             <field name="wkf_id" ref="workflow_report_handle"/>
@@ -151,12 +151,12 @@
             <field name="condition">pro_office_finish=="1"</field>
         </record>
 
-        <record id="trans_approve7_approve8" model="workflow.transition">
-            <field name="act_from" ref="act_approve7"/>
-            <field name="act_to" ref="act_approve8"/>
-            <field name="signal">btn_approve</field>
-            <field name="condition">if_out_grant=="1" and is_approve_repeat=="0"</field>
-        </record>
+        <!--<record id="trans_approve7_approve8" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve7"/>-->
+            <!--<field name="act_to" ref="act_approve8"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+            <!--<field name="condition">if_out_grant=="1" and is_approve_repeat=="0"</field>-->
+        <!--</record>-->
 
         <record id="trans_approve7_done" model="workflow.transition">
             <field name="act_from" ref="act_approve7"/>
@@ -165,26 +165,26 @@
             <field name="condition">if_out_grant=="0"</field>
         </record>
 
+        <!--<record id="trans_approve7_approve9" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve7"/>-->
+            <!--<field name="act_to" ref="act_approve9"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+            <!--<field name="condition">if_out_grant=="1" and is_approve_repeat=="1"</field>-->
+        <!--</record>-->
+
         <record id="trans_approve7_approve9" model="workflow.transition">
             <field name="act_from" ref="act_approve7"/>
-            <field name="act_to" ref="act_approve9"/>
-            <field name="signal">btn_approve</field>
-            <field name="condition">if_out_grant=="1" and is_approve_repeat=="1"</field>
-        </record>
-
-        <record id="trans_approve8_approve9" model="workflow.transition">
-            <field name="act_from" ref="act_approve8"/>
             <field name="act_to" ref="act_approve9"/>
             <field name="signal">btn_approve</field>
             <field name="condition">if_out_grant=="1"</field>
         </record>
 
-        <record id="trans_approve8_done" model="workflow.transition">
-            <field name="act_from" ref="act_approve8"/>
-            <field name="act_to" ref="act_done"/>
-            <field name="signal">btn_approve</field>
-            <field name="condition">if_out_grant=="0"</field>
-        </record>
+        <!--<record id="trans_approve8_done" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve8"/>-->
+            <!--<field name="act_to" ref="act_done"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+            <!--<field name="condition">if_out_grant=="0"</field>-->
+        <!--</record>-->
 
         <record id="trans_approve9_done" model="workflow.transition">
             <field name="act_from" ref="act_approve9"/>
@@ -210,11 +210,11 @@
             <field name="signal">btn_reject</field>
         </record>
 
-        <record id="trans_approve8_draft" model="workflow.transition">
-            <field name="act_from" ref="act_approve8"/>
-            <field name="act_to" ref="act_draft"/>
-            <field name="signal">btn_reject</field>
-        </record>
+        <!--<record id="trans_approve8_draft" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_approve8"/>-->
+            <!--<field name="act_to" ref="act_draft"/>-->
+            <!--<field name="signal">btn_reject</field>-->
+        <!--</record>-->
 
         <record id="trans_approve9_draft" model="workflow.transition">
             <field name="act_from" ref="act_approve9"/>

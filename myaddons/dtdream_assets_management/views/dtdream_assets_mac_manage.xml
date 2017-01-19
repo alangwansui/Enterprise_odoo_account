@@ -18,12 +18,17 @@
                       </group>
                   </group>
               </sheet>
+
+            <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
             </form>
         </field>
     </record>
 
     <record model="ir.ui.view" id="dtdream_assets_mac_manage_tree">
-      <field name="name">dtdream.assets.mac.manage</field>
+      <field name="name">dtdream.assets.mac.manage.tree</field>
       <field name="model">dtdream.assets.mac.manage</field>
       <field name="arch" type="xml">
         <tree>
@@ -35,13 +40,61 @@
       </field>
     </record>
 
+
+      <record id="dtdream_assets_mac_manage_kanban" model="ir.ui.view">
+        <field name="name">dtdream.assets.mac.manage.kanban</field>
+        <field name="model">dtdream.assets.mac.manage</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban" >
+                <field name="assets_code"/>
+                <field name="mac_address"/>
+                <field name="department"/>
+                <field name="name"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>资产编号:</strong><field name="assets_code"/></li>
+                                        <li ><strong>mac地址:</strong><field name="mac_address"/></li>
+                                        <li ><strong>资产责任人:</strong><field name="name"/></li>
+                                    </ul>
+                                <div name="tags"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+        </kanban>
+        </field>
+    </record>
+
+    <record id="view_dtdream_assets_mac_manage_filter" model="ir.ui.view">
+        <field name="name">dtdream.assets.mac.manage.filter</field>
+        <field name="model">dtdream.assets.mac.manage</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="assets_code"/>
+                <field name="mac_address"/>
+            </search>
+        </field>
+    </record>
+
+
     <record id="act_dtdream_assets_mac_manage" model="ir.actions.act_window">
             <field name="name">MAC地址管理</field>
             <field name="res_model">dtdream.assets.mac.manage</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="search_view_id" ref="dtdream_assets_management.view_dtdream_assets_mac_manage_filter"/>
+            <field name="domain">[]</field>
     </record>
+
 
   </data>
 </openerp>

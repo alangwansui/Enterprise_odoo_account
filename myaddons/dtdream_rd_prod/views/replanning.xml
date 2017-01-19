@@ -75,7 +75,7 @@
             <field name="res_model">dtdream.rd.replanning</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('version.id','=',active_id)]</field>
         </record>
 
@@ -84,7 +84,7 @@
             <field name="res_model">dtdream.rd.replanning</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
         </record>
 
@@ -93,7 +93,7 @@
             <field name="res_model">dtdream.rd.replanning</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('current_approver_user','=',uid)]</field>
         </record>
 
@@ -103,7 +103,7 @@
             <field name="res_model">dtdream.rd.replanning</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
         </record>
 
         <record id="view_dtdream_rd_replanning_tree" model="ir.ui.view">
@@ -120,6 +120,41 @@
                 </tree>
             </field>
         </record>
+
+
+        <record model="ir.ui.view" id="dtdream_rd_replanning_kanban_view">
+            <field name="name">dtdream.rd.replanning.kanban</field>
+            <field name="model">dtdream.rd.replanning</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="proname" />
+                    <field name="version" />
+                    <field name="old_plan_time"/>
+                    <field name="new_plan_time"/>
+                    <field name="state"/>
+                    <field name="current_approver"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>项目名称:</strong> <field name="proname" /></li>
+                                            <li > <strong>版本:</strong><field name="version" /></li>
+                                            <li > <strong>状态:</strong><field name="state"/></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
 
         <record id="view_dtdream_rd_replanning_form" model="ir.ui.view">
             <field name="name">view.dtdream.rd.replanning.form</field>
@@ -172,7 +207,7 @@
             <field name="model">dtdream.rd.replanning.wizard</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header class="no_hidden">
                         <button name="btn_replanning_tj"  string="提交"  type="object" attrs="{'invisible':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                     </header>
                     <sheet>

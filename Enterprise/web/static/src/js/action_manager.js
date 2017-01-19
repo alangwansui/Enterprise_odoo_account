@@ -561,12 +561,19 @@ var ActionManager = Widget.extend({
             return this.do_action(action_client, options);
         } else if (_.isNumber(action) || _.isString(action)) {
             var self = this;
+            var url =  window.location.href;
             var additional_context = {
                 active_id : options.additional_context.active_id,
                 active_ids : options.additional_context.active_ids,
-                active_model : options.additional_context.active_model
+                active_model : options.additional_context.active_model,
+                url: url,
+                allow: options.allow || false,
             };
             return self.rpc("/web/action/load", { action_id: action, additional_context : additional_context }).then(function(result) {
+                if (result.forbidden && !options.dashboard){
+                    alert('此操作已被禁止!');
+                    return self.do_action({}, options);
+                }
                 return self.do_action(result, options);
             });
         }

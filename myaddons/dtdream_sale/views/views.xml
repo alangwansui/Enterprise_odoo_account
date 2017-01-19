@@ -43,13 +43,13 @@
                   <!--<field name="pro_parent_id" string="上级BOM" widget="many2many_tags"/>-->
               </field>
               <field name="uom_id" position="before">
-                  <field name="cost_price" string="成本价" grpups="dtdream_sale.group_product_cost_query"/>
+                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
                   <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <!--<field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>-->
               </field>
               <field name="uom_id" position="after">
                   <field name="pro_version" />
@@ -142,13 +142,13 @@
                   <field name="pro_type"/>
                   <field name="pro_description_out" />
                   <field name="is_temporary_bom"/>
-                  <field name="cost_price" string="成本价" grpups="dtdream_sale.group_product_cost_query"/>
+                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
                   <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <!--<field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>-->
                   <field name="pro_status" string="状态"/>
                   <field name="effect_time"/>
                   <field name="write_uid" string="最后更新人"/>
@@ -209,13 +209,13 @@
                   <field name="pro_type"/>
                   <field name="pro_description_out" />
                   <field name="is_temporary_bom"/>
-                  <field name="cost_price" string="成本价" grpups="dtdream_sale.group_product_cost_query"/>
+                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
                   <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>
+                  <!--<field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>-->
                   <field name="pro_status" string="状态"/>
                   <field name="effect_time"/>
                   <field name="write_uid" string="最后更新人"/>
@@ -266,6 +266,28 @@
           </field>
       </record>
 
+      <!--产品搜索视图-->
+      <record id="product_template_search_view" model="ir.ui.view">
+          <field name="name">product.template.search</field>
+          <field name="model">product.template</field>
+          <field name="arch" type="xml">
+              <search string="Product">
+                  <field name="bom" string="BOM"/>
+                  <field name="name" string="产品型号"/>
+                  <field name="pro_type" string="产品类别"/>
+                  <field name="pro_description_out" string="产品对外中文描述"/>
+                  <field name="seller_ids" string="供应商"/>
+                  <filter string="产品一级分类" name="categ_id_leavel_one" domain="[('categ_id.parent_id','=',False)]"/>
+                  <filter string="产品二级分类" name="categ_id_leavel_two" domain="[('categ_id.parent_id.parent_id','=',False)]"/>
+                  <filter string="产品三级分类" name="categ_id_leavel_three" domain="[('categ_id.parent_id.parent_id.parent_id','=',False)]"/>
+                  <filter string="产品状态--生产" name="pro_status_outPro" domain="[('pro_status','=','inPro')]"/>
+                  <filter string="产品状态--停产" name="pro_status_inPro" domain="[('pro_status','=','outPro')]"/>
+                  <filter string="产品来源--自研" name="pro_source_own" domain="[('pro_source','=','1')]"/>
+                  <filter string="产品来源--外购" name="pro_source_buy" domain="[('pro_source','=','2')]"/>
+              </search>
+          </field>
+      </record>
+
       <record id="product.product_template_action" model="ir.actions.act_window">
           <field name="name">产品列表</field>
           <field name="type">ir.actions.act_window</field>
@@ -273,7 +295,7 @@
           <field name="view_mode">tree,kanban,form</field>
           <field name="view_type">form</field>
           <field name="view_id" ref="view_res_product_template_tree_list_view"/>
-          <field name="search_view_id" ref="product.product_template_search_view"/>
+          <field name="search_view_id" ref="product_template_search_view"/>
           <field name="context">{"search_default_filter_to_sell":1}</field>
           <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -408,6 +430,32 @@
                         <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                     </button>
                 </button>
+                <!--<button name="toggle_active" position="before">-->
+                    <!--<button name="%(action_contract_fee)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
+                          <!--<div class="o_stat_info">-->
+                              <!--<field name="sum_of_contract_fee" class="o_stat_value"/>-->
+                              <!--<span class="o_stat_text">合同额(万元)</span>-->
+                          <!--</div>-->
+                    <!--</button>-->
+                    <!--<button name="%(action_cash_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
+                          <!--<div class="o_stat_info">-->
+                              <!--<field name="sum_of_cash_income" class="o_stat_value"/>-->
+                              <!--<span class="o_stat_text">现金收入(万元)</span>-->
+                          <!--</div>-->
+                    <!--</button>-->
+                    <!--<button name="%(action_gaap_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
+                          <!--<div class="o_stat_info">-->
+                              <!--<field name="sum_of_gaap_income" class="o_stat_value"/>-->
+                              <!--<span class="o_stat_text">GAAP收入(万元)</span>-->
+                          <!--</div>-->
+                    <!--</button>-->
+                    <!--<button name="%(action_fee_pay)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
+                          <!--<div class="o_stat_info">-->
+                              <!--<field name="sum_of_fee_pay" class="o_stat_value"/>-->
+                              <!--<span class="o_stat_text">费用支出(万元)</span>-->
+                          <!--</div>-->
+                    <!--</button>-->
+                <!--</button>-->
                 <field name="partner_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -502,7 +550,7 @@
                     <field name="ali_division"/>
                     <field name="ali_saleman"/>
                     <field name="is_dtdream_integrated"/>
-                    <field name="is_project_budget"/>
+                    <field name="is_project_budget" class="is_budget"/>
                     <field name="is_invest_project"/>
                     <field name="partner_id" string="客户"
                            domain="[('customer','=','True')]"/>
@@ -586,11 +634,12 @@
                                     <field name="bom" string="BOM" />
                                     <field name="pro_type" string="产品类别"/>
                                     <field name="pro_description" string="产品对内中文描述"/>
+                                    <field name="pro_uom_name" string="单位"/>
                                     <field name="list_price" string="目录价"/>
                                     <field name="ref_discount" string="参考折扣(%)"/>
                                     <field name="apply_discount" string="申请折扣(%)"/>
                                     <field name="pro_num" string="数量"/>
-                                    <field name="config_set" string="发货地"/>
+                                    <!--<field name="config_set" string="发货地"/>-->
                                 </tree>
                                 <form>
                                     <sheet>
@@ -606,8 +655,9 @@
                                             <group>
                                                 <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
                                                 <field name="apply_discount" string="申请折扣(%)"/>
+                                                <field name="pro_uom_name" string="单位"/>
                                                 <field name="pro_num" string="数量"/>
-                                                <field name="config_set" string="发货地"/>
+                                                <!--<field name="config_set" string="发货地"/>-->
                                             </group>
                                         </group>
                                     </sheet>
@@ -685,11 +735,12 @@
                     <field name="software_space"/>
                     <field name="project_master_degree"/>
                     <field name="sale_apply_id"/>
-                    <field name="write_date" string="更新时间"/>
+                    <field name="write_date" string="更新时间" widget="date"/>
                     <field name="stage_id" string="阶段"/>
                     <field name="is_project_budget" invisible="1"/>
                     <field name="is_dtdream_integrated" invisible="1"/>
                     <field name="is_invest_project" invisible="1"/>
+                    <field name="ali_division" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -1113,28 +1164,6 @@
           </field>
       </record>
 
-      <record id="product.product_template_search_view" model="ir.ui.view">
-          <field name="name">product.template.search</field>
-          <field name="model">product.template</field>
-          <field name="arch" type="xml">
-              <search string="Product">
-                  <field name="bom" string="BOM"/>
-                  <field name="name" string="产品型号"/>
-                  <field name="pro_type" string="产品类别"/>
-                  <field name="pro_description_out" string="产品对外中文描述"/>
-                  <field name="remark" string="备注"/>
-                  <filter string="产品分类" name="categ_id" context="{'group_by':'categ_id'}"/>
-                  <filter string="Services" name="services" domain="[('type','=','service')]" invisible="True"/>
-                  <filter string="Products" name="consumable" domain="[('type','=','consu')]" help="Products your store in the inventory" invisible="True"/>
-                  <filter string="Can be Sold" name="filter_to_sell" domain="[('sale_ok','=',1)]" invisible="True"/>
-                  <filter string="Archived" name="inactive" domain="[('active','=',False)]" invisible="True"/>
-                  <field string="Attributes" name="attribute_line_ids" invisible="True"/>
-                  <field name="pricelist_id" widget="selection" context="{'pricelist': self}" filter_domain="[]" groups="product.group_sale_pricelist" invisible="True"/> <!-- Keep widget=selection on this field to pass numeric `self` value, which is not the case for regular m2o widgets! -->
-
-              </search>
-          </field>
-      </record>
-
       <!--产品搜索界面增加产品分类分组-->
       <!--<record id="product_search_form_inherit_view" model="ir.ui.view">-->
           <!--<field name="name">product.template.search.inherit</field>-->
@@ -1236,6 +1265,10 @@
                   <separator/>
                   <filter string="重点项目" name="important"
                           domain="[('is_important', '=', True)]"/>
+                  <filter string="商机" name="lead"
+                          domain="[('type', '=', 'lead')]"/>
+                  <filter string="运作中的项目" name="filter_project_processing"
+                          domain="[('stage_id.name', 'in', ['机会点','项目启动','技术和商务交流','项目招投标'])]"/>
                   <filter string="中标项目" name="won"
                           domain="[('is_won', '=', True)]"/>
                   <filter string="丢单项目" name="lost"
@@ -1248,6 +1281,7 @@
                         <filter string="阶段" name="groupby_stage_id" domain="[]" context="{'group_by':'stage_id'}"/>
                         <filter string="招标时间" name="groupby_time" domain="[]" context="{'group_by':'bidding_time'}"/>
                         <filter string="项目把握度" name="groupby_stage" domain="[]" context="{'group_by':'project_master_degree'}"/>
+                        <filter string="项目是否有预算" name="groupby_is_project_budget" domain="[]" context="{'group_by':'is_project_budget'}"/>
                         <filter string="省份" name="groupby_province" domain="[]" context="{'group_by':'project_province_new'}"/>
                         <filter string="城市" name="groupby_city" domain="[]" context="{'group_by':'project_place_new'}"/>
                         <filter string="渠道" name="groupby_channel" domain="[]" context="{'group_by':'sale_channel'}"/>
@@ -1266,6 +1300,7 @@
         <field name="domain">[]</field>
         <field name="context">{
                         'default_type': 'lead',
+                        'search_default_filter_project_processing': 1
         }</field>
         <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
         <field name="view_id" ref="crm.crm_case_form_view_oppor"/>

@@ -1,0 +1,89 @@
+<openerp>
+    <data>
+    <!--PDT配置-->
+        <record id="act_dtdream_rd_PDTconfig" model="ir.actions.act_window">
+            <field name="name">PDT配置</field>
+            <field name="res_model">dtdream.rd.pdtconfig</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_PDTconfig_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.pdtconfig.from</field>
+            <field name="model">dtdream.rd.pdtconfig</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="department" />
+                                <field name="name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_PDTconfig_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.pdtconfig.tree</field>
+            <field name="model">dtdream.rd.pdtconfig</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="department" />
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_PDTconfig_kanban_view">
+            <field name="name">dtdream.rd.pdtconfig.kanban</field>
+            <field name="model">dtdream.rd.pdtconfig</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="department" />
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>部门:</strong> <field name="department" /></li>
+                                            <li > <strong>PDT:</strong><field name="name" /></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!--<record id="view_dtdream_rd_role_from" model="ir.ui.view">-->
+            <!--<field name="name">view.dtdream.rd.role.from</field>-->
+            <!--<field name="model">dtdream_rd_role</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form>-->
+                    <!--<sheet>-->
+                        <!--<group>-->
+                            <!--<group>-->
+                                <!--<field name="cof_id" />-->
+                                <!--<field name="role_id" invisible="1"/>-->
+                            <!--</group>-->
+                            <!--<group>-->
+                                <!--<field name="person" />-->
+                            <!--</group>-->
+                        <!--</group>-->
+                    <!--</sheet>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+
+    </data>
+</openerp>

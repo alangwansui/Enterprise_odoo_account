@@ -28,7 +28,7 @@
           <field name="res_model">dtdream.grants</field>
           <field name="type">ir.actions.act_window</field>
           <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
+          <field name="view_mode">tree,form,kanban</field>
           <field name="domain">[('name.user_id','=',uid)]</field>
           <field name="view_id" ref="grants_allocation_detail_tree"></field>
       </record>
@@ -37,7 +37,7 @@
           <field name="res_model">dtdream.grants</field>
           <field name="type">ir.actions.act_window</field>
           <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
+          <field name="view_mode">tree,form,kanban</field>
           <field name="view_id" ref="grants_allocation_detail_admin_tree"></field>
       </record>
       <record model="ir.actions.server" id="act_grants_config">

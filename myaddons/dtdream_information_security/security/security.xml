@@ -25,5 +25,16 @@
              <field name="domain_force">[('is_create','=',True),('state','=','state_01')]</field>
          </record>
 
+        <record id="dtdream_information_purview_rule_02" model="ir.rule">
+             <field name="name">对外披露申请单删除</field>
+             <field name="model_id" ref="model_dtdream_foreign"/>
+             <field name="perm_read" eval="0"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">[('is_shenqingren','=',True),('state','=','0')]</field>
+         </record>
+
         </data>
     </openerp>

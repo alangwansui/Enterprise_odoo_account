@@ -30,7 +30,7 @@
         'hr_holidays_wizard.xml',
         'views/views.xml',
         'views/templates.xml',
-
+        'views/nianxiujia.xml',
         'data/data.xml',
 
         'workflow.xml',

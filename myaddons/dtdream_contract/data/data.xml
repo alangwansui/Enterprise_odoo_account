@@ -2,31 +2,59 @@
             <openerp>
                 <data noupdate="1">
 
+                     <!--<record model="dtdream.contract.config" id="contract_ifa">-->
+                        <!--<field name="name" eval="'投融资类协议'"/>-->
+                        <!--<field name="name_id" eval="'IFA'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_cfa">-->
+                        <!--<field name="name" eval="'战略合作框架'"/>-->
+                        <!--<field name="name_id" eval="'CFA'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_xm">-->
+                        <!--<field name="name" eval="'项目合同'"/>-->
+                        <!--<field name="name_id" eval="'&#45;&#45;'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_sc">-->
+                        <!--<field name="name" eval="'销售合同'"/>-->
+                        <!--<field name="name_id" eval="'SC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_pc">-->
+                        <!--<field name="name" eval="'采购合同'"/>-->
+                        <!--<field name="name_id" eval="'PC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_ac">-->
+                        <!--<field name="name" eval="'行政类合同'"/>-->
+                        <!--<field name="name_id" eval="'AC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_tc">-->
+                        <!--<field name="name" eval="'技术类合同'"/>-->
+                        <!--<field name="name_id" eval="'TC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_nda">-->
+                        <!--<field name="name" eval="'商业秘密合同'"/>-->
+                        <!--<field name="name_id" eval="'NDA'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_ec">-->
+                        <!--<field name="name" eval="'建筑工程合同'"/>-->
+                        <!--<field name="name_id" eval="'EC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_lc">-->
+                        <!--<field name="name" eval="'租赁合同'"/>-->
+                        <!--<field name="name_id" eval="'LC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_ac">-->
+                        <!--<field name="name" eval="'顾问服务协议'"/>-->
+                        <!--<field name="name_id" eval="'AC'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_ifa">-->
+                        <!--<field name="name" eval="'投融资类协议'"/>-->
+                        <!--<field name="name_id" eval="'IFA'"></field>-->
+                     <!--</record>-->
+                    <!--<record model="dtdream.contract.config" id="contract_ifa">-->
+                        <!--<field name="name" eval="'投融资类协议'"/>-->
+                        <!--<field name="name_id" eval="'IFA'"></field>-->
+                     <!--</record>-->
 
-                     <record model="dtdream.contract.config" id="contract_nda">
-                        <field name="name" eval="'保密协议'"/>
-                        <field name="name_id" eval="'NDA'"></field>
-                     </record>
-                     <record model="dtdream.contract.config" id="contract_npp">
-                        <field name="name" eval="'非生产采购协议'"/>
-                        <field name="name_id" eval="'NPP'"></field>
-                     </record>
-                     <record model="dtdream.contract.config" id="contract_cpa">
-                        <field name="name" eval="'商务平台协议'"/>
-                        <field name="name_id" eval="'CPA'"></field>
-                     </record>
-                     <record model="dtdream.contract.config" id="contract_ppa">
-                        <field name="name" eval="'生产采购协议'"/>
-                        <field name="name_id" eval="'PPA'"></field>
-                     </record>
-                     <record model="dtdream.contract.config" id="contract_spa">
-                        <field name="name" eval="'服务采购协议'"/>
-                        <field name="name_id" eval="'SPA'"></field>
-                     </record>
-                     <record model="dtdream.contract.config" id="contract_otr">
-                        <field name="name" eval="'其他类型协议'"/>
-                        <field name="name_id" eval="'OTR'"></field>
-                     </record>
                      <record model="dtdream.contract.url" id="contract_url">
                         <field name="name" eval="'http://'"/>
                      </record>

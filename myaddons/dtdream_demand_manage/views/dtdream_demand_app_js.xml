@@ -7,9 +7,9 @@
             </xpath>
         </template>
 
-        <template id="new" name="newcss" inherit_id="web.assets_backend">
+        <template id="demand_manage_css" name="demand app" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
-                <link rel="stylesheet" href="/dtdream_sale_business_report/static/src/css/new.css"></link>
+                <link rel="stylesheet" href="/dtdream_demand_manage/static/src/css/demand_manage.css"></link>
             </xpath>
         </template>
     </data>

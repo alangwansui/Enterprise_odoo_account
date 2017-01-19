@@ -113,6 +113,8 @@ class dtdream_rd_replanning(models.Model):
             doc.xpath("//form")[0].set("create", "false")
         if res['type'] == "tree":
             doc.xpath("//tree")[0].set("create", "false")
+        if res['type'] == "kanban":
+            doc.xpath("//kanban")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
 
@@ -461,6 +463,7 @@ class dtdream_rd_replanning_shenpi_wizard(models.TransientModel):
         replanning.write({'his_app_user': [(4, replanning.current_approver_user.id)]})
         self._message_post(replanning=replanning,current_product=replanning.proname,current_version=replanning.version,state=u'审批中->已审批')
         replanning.write({'shenpi_date':datetime.now()})
+        replanning.version.write({'plan_pub_time':replanning.new_plan_time})
 
 
     @api.one

@@ -335,6 +335,39 @@
         </field>
     </record>
 
+      <record id="view_dtdream_customer_reception_kanban" model="ir.ui.view">
+        <field name="name">view.dtdream.customer.reception.kanban</field>
+        <field name="model">dtdream.customer.reception</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban" >
+              <field name="bill_num"/>
+              <field name="name"/>
+              <field name="iphone"/>
+              <field name="state"/>
+              <field name="current_approve" string="当前处理人"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>单号:</strong> <field name="bill_num" /></li>
+                                        <li ><strong>申请人:</strong> <field name="name" /></li>
+                                        <li ><strong>状态:</strong> <field name="state" /></li>
+                                        <li ><strong>当前处理人:</strong> <field name="current_approve" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+
     <record id="view_marketing_activities_form" model="ir.ui.view">
         <field name="name">marketing.activities.form</field>
         <field name="model">res.partner</field>

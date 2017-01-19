@@ -27,6 +27,14 @@
             <field name="name">阿里商旅</field>
             <field name="category_id" ref="module_dtdream_expense_group"/>
         </record>
+        <record id="group_dtdream_expense_no_budget" model="res.groups">
+            <field name="name">预算不关联组</field>
+            <field name="category_id" ref="module_dtdream_expense_group"/>
+        </record>
+        <record id="group_dtdream_expense_no_zhuanx" model="res.groups">
+            <field name="name">专项不关联组</field>
+            <field name="category_id" ref="module_dtdream_expense_group"/>
+        </record>
 
 
 

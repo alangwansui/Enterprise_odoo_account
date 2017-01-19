@@ -3,8 +3,10 @@
 from openerp import models, fields, api
 from lxml import etree
 from openerp.osv import expression
-from openerp.exceptions import AccessError
+from openerp.exceptions import AccessError, ValidationError
 from datetime import datetime
+import json
+import time
 
 
 class dtdream_assets_check(models.Model):
@@ -24,7 +26,7 @@ class dtdream_assets_check(models.Model):
     def compute_workid_department(self):
         for rec in self:
             rec.workid = rec.name.job_number
-            rec.department = rec.name.department_id
+            rec.write({"department": rec.name.department_id.id})
             rec.department_code = rec.name.department_id.code
 
     @api.depends('asset_type')
@@ -81,6 +83,9 @@ class dtdream_assets_check(models.Model):
         if res['type'] == "tree":
             doc.xpath("//tree")[0].set("edit", "false")
             doc.xpath("//tree")[0].set("create", "false")
+        if res['type'] == "kanban":
+            doc.xpath("//kanban")[0].set("edit", "false")
+            doc.xpath("//kanban")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
 
@@ -128,19 +133,96 @@ class dtdream_assets_check(models.Model):
                 return False
             return True
 
+    def refresh_department_changed(self, result=None, load='_classic_read'):
+        if load == '_classic_read':
+            for cr in result:
+                employee = cr.get('name', None)
+                if isinstance(employee, tuple):
+                    crr = self.env['hr.employee'].search([('id', '=', employee[0])])
+                    cr['department'] = (crr.department_id.id, crr.department_id.complete_name)
+            return result
+
     @api.multi
     def read(self, fields=None, load='_classic_read'):
         result = super(dtdream_assets_check, self).read(fields=fields, load=load)
+        result = self.refresh_department_changed(result, load)
         perm_read = self.check_access_assets_check()
         if load == '_classic_read' and not perm_read:
             raise AccessError('由于安全限制，请求的操作不能被完成。请联系你的系统管理员。' +
                               '\n\n(单据类型: dtdream.assets.check, 操作: read.)')
         return result
 
+    def get_assets_check_email_url(self):
+        email_from = self.get_mail_server_name()
+        base_url = self.get_base_url()
+        menu_id, action = self.get_assets_check_menu()
+        url = '%s/web#id=%%s&view_type=form&model=dtdream.assets.check&action=%s&menu_id=%s' % (base_url, action, menu_id)
+        return email_from, url
+
+    def btn_send_email(self, checks):
+        for check in checks.values():
+            email_to = check.get('email')
+            appellation = u'{0},您好：'.format(check.get('name'))
+            for key, content in check.get('content').items():
+                text = {'00': u'资产盘点工作已启动,请对自己名下的资产信息进行盘点。资产信息如下:',
+                        '01': u'您名下存在未盘点的资产,请尽快完成盘点。资产信息如下:'}[key]
+                self.env['mail.mail'].create({
+                        'body_html': u'''<p>%s</p>
+                                        <p>%s</p>
+                                        <p>
+                                        <table border="1"><tr style="font-weight:bold;height:40px">
+                                        <td width="120px;">资产名称</td>
+                                        <td width="240px;">资产编号</td>
+                                        <td>盘点链接</td>
+                                        </tr>%s</table>
+                                        </p>
+                                        <p>dodo</p>
+                                        <p>万千业务，简单有do</p>
+                                        <p>%s</p>''' % (appellation, text, ''.join(content), check.get('date')),
+                        'subject': '%s' % {'00': u'资产盘点已启动,请完成盘点工作', '01': u'您名下存在未盘点的资产,请尽快完成盘点工作'}[key],
+                        'email_from': check.get('email_from'),
+                        'email_to': '%s' % email_to,
+                        'auto_delete': False,
+                    }).send()
+            for rec in check.get('asset'):
+                rec.write({"email_type": False})
+            time.sleep(0.2)
+
+    @api.model
+    def send_mail_interval(self):
+        """ ('00', '启动盘点'),
+            ('01', '盘点邮催')"""
+        checks = {}
+        record = self.search([('email_type', '!=', False)])
+        if record:
+            email_from, url = self.get_assets_check_email_url()
+            for asset in record:
+                for email_type in json.loads(asset.email_type):
+                    if not checks.has_key(asset.name.work_email):
+                        checks[asset.name.work_email] = {"name": asset.name.name,
+                                                         "asset": [asset],
+                                                         "email": asset.name.work_email,
+                                                         "email_from": email_from,
+                                                         'date': datetime.now().strftime('%Y-%m-%d'),
+                                                         "content": {email_type: [(u"<tr><td>{0}</td><td>{1}</td><td>" +
+                                                                                   u"<a href={2}>点击自盘</a></td></tr>").format(
+                                                             asset.asset_name.name, asset.asset_code, url) % asset.id]}}
+                    else:
+                        checks[asset.name.work_email]["asset"].append(asset)
+                        item = u"<tr><td>{0}</td><td>{1}</td><td><a href={2}>点击自盘</a></td></tr>".format(
+                                asset.asset_name.name, asset.asset_code, url) % asset.id
+                        if checks[asset.name.work_email]["content"].has_key(email_type):
+                            checks[asset.name.work_email]["content"][email_type].append(item)
+                        else:
+                            item = u"<tr><td>{0}</td><td>{1}</td><td><a href={2}>点击自盘</a></td></tr>".format(
+                                asset.asset_name.name, asset.asset_code, url) % asset.id
+                            checks[asset.name.work_email]["content"][email_type] = [item]
+            self.btn_send_email(checks)
+
     check_code = fields.Char(string='盘点编号')
     name = fields.Many2one('hr.employee', string='资产责任人')
     workid = fields.Char(string='工号', compute=compute_workid_department)
-    department = fields.Many2one('hr.department', string='归属部门', compute=compute_workid_department)
+    department = fields.Many2one('hr.department', string='归属部门')
     department_code = fields.Char(string='归属部门编码', compute=compute_workid_department)
     bill_num = fields.Char(string='资产订单号', size=32)
     asset_code = fields.Char(string='资产编码', size=32)
@@ -175,6 +257,7 @@ class dtdream_assets_check(models.Model):
     is_officer = fields.Boolean(string='是否部门资产管理员', compute=compute_assets_officer)
     assets_manage = fields.Many2one('dtdream.assets.management')
     current_approve = fields.Many2one('hr.employee', string='当前处理人')
+    email_type = fields.Char(string='发送邮催类型')
 
     @api.multi
     def wkf_check(self):
@@ -187,3 +270,19 @@ class dtdream_assets_check(models.Model):
     @api.multi
     def wkf_done(self):
         self.write({"state": '99', "current_approve": ''})
+
+    @api.multi
+    def act_dtdream_assets_check(self):
+        check = self.search([('id', '=', self.id)])
+        if not check:
+            raise ValidationError('记录不存在或已删除')
+        action = {
+            'name': '资产自盘',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+            'res_model': 'dtdream.assets.management.wizard',
+            'context': self._context,
+            }
+        return action

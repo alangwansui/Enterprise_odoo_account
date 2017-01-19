@@ -7,6 +7,7 @@ from openerp.exceptions import AccessError
 
 class dtdream_assets_mac_manage(models.Model):
     _name = "dtdream.assets.mac.manage"
+    _inherit = ['mail.thread']
 
     @api.depends("assets_code")
     def compute_name_department(self):

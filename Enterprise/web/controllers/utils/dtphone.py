@@ -60,30 +60,15 @@ def send_ms(**kw):
     return ERROR_NUM_SUCCESS
 
 
-# def send(**kw):
-#     url = 'http://localhost:8080/notify-server/rest/mail/send'
-#     appkey = "6df107d18140b0fb242b4382e0c7a77a"
-#     sn = str(uuid.uuid4())
-#     username = "夏雪宜"
-#     import code
-#     code = code.generate_verification_code()
-#     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#     mail_tmplate= MAIL % (username, code, date)
-#     mailTo="gaoq@dtdream.com"
-#     context = {
-#             "mailTo":"%s" % mailTo,
-#             "subject":"数梦域账号用户密码找回身份验证",
-#             "mailMode":"0",
-#             "context": "%s" % mail_tmplate
-#     }
-#
-#     if isinstance(json.dumps(context), str) == False:
-#         logging.error(type(context))
-#         logging.error("Invalid type %s" % context)
-#         return
-#     logging.info(json.dumps(context))
-#
-#     param = {'appkey':appkey, 'sn':sn, 'context':json.dumps(context)}
-#     r = requests.post(url=url, data=param)
-#     print r.status_code
-#     print r.text
+def send_sms_aliyun(**kw):
+    from openerp.dtdream.aliyun.sms import send_sms
+    recNum = kw['phone'].encode('utf-8')
+    smsparam = ("{'code': '%s','product': 'dodo'}" % kw['code']).encode('utf-8')
+    status = send_sms(recNum, smsparam)
+
+    if status == 200:
+        return ERROR_NUM_SUCCESS
+    elif status == -1:
+        return ERROR_NUM_HTTPS_ERROR
+    else:
+        return ERROR_NUM_SENDSMS_ERROR

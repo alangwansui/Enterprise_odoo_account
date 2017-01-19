@@ -24,3 +24,34 @@
     padding:7px 15px;
     border-radius: 2px;
 }
+.o_form_image_controls .o_addsize_file_button{
+    background-color: #81c48f;
+    padding:7px 15px;
+    border-radius: 2px;
+}
+.o_form_image_controls .o_reducesize_file_button{
+    background-color: #81c48f;
+    padding:7px 15px;
+    border-radius: 2px;
+}
+.o_form_image_controls .o_rotate_file_button{
+    background-color: #81c48f;
+    padding:7px 15px;
+    border-radius: 2px;
+}
+.o_form_view .oe_right .o_form_image_controls,.o_form_view .oe_avatar .o_form_image_controls{
+    width:33px;
+    height:76px;
+    top:30px;
+    left:-27px;
+    bottom:-5px;
+}
+.o_form_view .oe_right .o_form_image_controls .o_select_file_button,.o_form_view .oe_avatar .o_form_image_controls .o_select_file_button{
+    width:22px;
+    padding:5px 5px;
+    margin-bottom:15px;
+}
+.o_form_view .oe_right .o_form_image_controls .o_clear_file_button,.o_form_view .oe_avatar .o_form_image_controls .o_clear_file_button{
+    width:22px;
+    padding:5px 5px;
+}

@@ -32,6 +32,7 @@
         'views/templates.xml',
         'workflow/workflow.xml',
         'views/importcss.xml',
+        'views/send_mail_interval.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

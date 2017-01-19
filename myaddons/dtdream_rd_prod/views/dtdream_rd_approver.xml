@@ -40,5 +40,36 @@
                 </tree>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="dtdream_rd_approver_kanban_view">
+            <field name="name">dtdream.rd.approver.kanban</field>
+            <field name="model">dtdream_rd_approver</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name='name'/>
+                    <field name='pro_state'/>
+                    <field name='level'/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>角色:</strong> <field name="name" /></li>
+                                            <li > <strong>阶段:</strong><field name="pro_state" /></li>
+                                            <li > <strong>级别:</strong><field name="level"/></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
     </data>
 </openerp>

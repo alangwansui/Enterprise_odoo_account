@@ -173,7 +173,7 @@ class hr_holidays(osv.osv):
     _check_holidays = lambda self, cr, uid, ids, context=None: self.check_holidays(cr, uid, ids, context=context)
 
     _columns = {
-        'name': fields.char('Description', size=64),
+        'name': fields.text('Description', size=64),
         'state': fields.selection([('draft', 'To Submit'), ('cancel', 'Cancelled'),('confirm', 'To Approve'), ('refuse', 'Refused'), ('validate1', 'Second Approval'), ('validate', 'Approved')],
             'Status', readonly=True, track_visibility='onchange', copy=False,
             help='The status is set to \'To Submit\', when a holiday request is created.\

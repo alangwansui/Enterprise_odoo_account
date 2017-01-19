@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <openerp>
+        <data>
+                            <!--++++++++++++++++年休假余额+++++++++++++++++++++++-->
+            <record id="view_holiday_nianxiujia_tree" model="ir.ui.view">
+                <field name="name">view.holiday.nianxiujia.tree</field>
+                <field name="model">hr.holidays</field>
+                <field name="arch" type="xml">
+                    <tree>
+                        <field name="year" string="年度"/>
+                        <field name="nxj_fenpei" string="年休假配额"/>
+                        <field name="nxj_yixiu" string="已休年休假"/>
+                        <field name="nxj_tiaozheng" string="年休假调整天数"/>
+                        <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                        <field name="nxj_yue" string="年休假余额"/>
+                        <field name="state" invisible="1"/>
+                    </tree>
+                </field>
+            </record>
+
+            <record id="view_holiday_nianxiujia_form" model="ir.ui.view">
+                <field name="name">view.holiday.nianxiujia.form</field>
+                <field name="model">hr.holidays</field>
+                <field name="arch" type="xml">
+                    <form>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="year" string="年度"/>
+                                    <field name="nxj_fenpei" string="年休假配额"/>
+                                    <field name="nxj_yixiu" string="已休年休假"/>
+                                    <field name="state" invisible="1"/>
+                                </group>
+                                <group>
+                                    <field name="nxj_tiaozheng" string="年休假调整天数"/>
+                                    <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                                    <field name="nxj_yue" string="年休假余额"/>
+                                </group>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="view_holiday_nianxiujia_kanban">
+                <field name="name">view.holiday.nianxiujia.kanban</field>
+                <field name="model">hr.holidays</field>
+                <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="year" string="年度"/>
+                    <field name="nxj_fenpei" string="年休假配额"/>
+                    <field name="nxj_yixiu" string="已休年休假"/>
+                    <field name="nxj_tiaozheng" string="年休假调整天数"/>
+                    <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                    <field name="nxj_yue" string="年休假余额"/>
+                    <field name="state" invisible="1"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>年度:</strong> <field name="year" /></li>
+                                        <li ><strong>已休:</strong> <field name="nxj_yixiu" /></li>
+                                        <li ><strong>剩余:</strong> <field name="nxj_yue" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+            <record model="ir.actions.act_window" id="hr_holidays.open_nianxiujiayue"><!--年休假余额-->
+                <field name="name">年休假余额</field>
+                <field name="res_model">hr.holidays</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form,tree,kanban</field>
+                <field name="context">{
+                    'default_type':'add',
+                    'default_name':'年休假余额',
+                    'default_holiday_status_id':5,
+                    'needaction_menu_ref':
+                    [
+                        'hr_holidays.menu_open_company_allocation',
+                    ]
+                }</field>
+                <field name="domain">[('type','=','add'),('create_type','=','manage'),('nxj_jisuan','=',True)]</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_form"/>
+                <field name="view_id" ref="view_holiday_nianxiujia_kanban"/>
+                <field name="view_id" ref="view_holiday_nianxiujia_tree"/>
+            </record>
+
+            <record id="action_dtdream_nianxiujia_a" model="ir.actions.act_window.view">
+                <field eval="2" name="sequence"/>
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_form"/>
+                <field name="act_window_id" ref="hr_holidays.open_nianxiujiayue"/>
+            </record>
+
+            <record id="action_dtdream_nianxiujia_b" model="ir.actions.act_window.view">
+                <field eval="1" name="sequence"/>
+                <field name="view_mode">tree</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_tree"/>
+                <field name="act_window_id" ref="hr_holidays.open_nianxiujiayue"/>
+            </record>
+
+            <record id="action_dtdream_nianxiujia_c" model="ir.actions.act_window.view">
+                <field eval="3" name="sequence"/>
+                <field name="view_mode">kanban</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_kanban"/>
+                <field name="act_window_id" ref="hr_holidays.open_nianxiujiayue"/>
+            </record>
+
+                                <!--++++++++++++++++所有年休假余额+++++++++++++++++++++++-->
+            <record id="view_holiday_nianxiujia_all_tree" model="ir.ui.view">
+                <field name="name">view.holiday.nianxiujia.tree</field>
+                <field name="model">hr.holidays</field>
+                <field name="arch" type="xml">
+                    <tree>
+                        <field name="employee_id" string="员工"/>
+                        <field name="year" string="年度"/>
+                        <field name="nxj_fenpei" string="年休假配额"/>
+                        <field name="nxj_yixiu" string="已休年休假"/>
+                        <field name="nxj_tiaozheng" string="年休假调整天数"/>
+                        <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                        <field name="nxj_yue" string="年休假余额"/>
+                        <field name="state" invisible="1"/>
+                    </tree>
+                </field>
+            </record>
+
+            <record id="view_holiday_nianxiujia_all_form" model="ir.ui.view">
+                <field name="name">view.holiday.nianxiujia.form</field>
+                <field name="model">hr.holidays</field>
+                <field name="arch" type="xml">
+                    <form>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="employee_id" string="员工"/>
+                                    <field name="year" string="年度"/>
+                                    <field name="nxj_fenpei" string="年休假配额"/>
+                                    <field name="nxj_yixiu" string="已休年休假"/>
+                                    <field name="state" invisible="1"/>
+                                </group>
+                                <group>
+                                    <field name="nxj_tiaozheng" string="年休假调整天数"/>
+                                    <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                                    <field name="nxj_yue" string="年休假余额"/>
+                                </group>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="view_holiday_nianxiujia_all_kanban">
+                <field name="name">view.holiday.nianxiujia.kanban</field>
+                <field name="model">hr.holidays</field>
+                <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="employee_id" string="员工"/>
+                    <field name="year" string="年度"/>
+                    <field name="nxj_fenpei" string="年休假配额"/>
+                    <field name="nxj_yixiu" string="已休年休假"/>
+                    <field name="nxj_tiaozheng" string="年休假调整天数"/>
+                    <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                    <field name="nxj_yue" string="年休假余额"/>
+                    <field name="state" invisible="1"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>员工:</strong> <field name="employee_id" /></li>
+                                        <li ><strong>年度:</strong> <field name="year" /></li>
+                                        <li ><strong>已休:</strong> <field name="nxj_yixiu" /></li>
+                                        <li ><strong>剩余:</strong> <field name="nxj_yue" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+            <record model="ir.actions.act_window" id="hr_holidays.open_nianxiujiayue_all"><!--所有年休假余额-->
+                <field name="name">所有年休假余额</field>
+                <field name="res_model">hr.holidays</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form,tree,kanban</field>
+                <field name="context">{
+                    'default_type':'add',
+                    'default_name':'所有年休假余额',
+                    'default_holiday_status_id':5,
+                    'needaction_menu_ref':
+                    [
+                        'hr_holidays.menu_open_company_allocation',
+                    ]
+                }</field>
+                <field name="domain">[('type','=','add'),('create_type','=','manage'),('nxj_jisuan','=',True)]</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_form"/>
+                <field name="view_id" ref="view_holiday_nianxiujia_kanban"/>
+                <field name="view_id" ref="view_holiday_nianxiujia_tree"/>
+            </record>
+
+            <record id="action_dtdream_nianxiujia_all_a" model="ir.actions.act_window.view">
+                <field eval="2" name="sequence"/>
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_all_form"/>
+                <field name="act_window_id" ref="hr_holidays.open_nianxiujiayue_all"/>
+            </record>
+
+            <record id="action_dtdream_nianxiujia_all_b" model="ir.actions.act_window.view">
+                <field eval="1" name="sequence"/>
+                <field name="view_mode">tree</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_all_tree"/>
+                <field name="act_window_id" ref="hr_holidays.open_nianxiujiayue_all"/>
+            </record>
+
+            <record id="action_dtdream_nianxiujia_all_c" model="ir.actions.act_window.view">
+                <field eval="3" name="sequence"/>
+                <field name="view_mode">kanban</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_all_kanban"/>
+                <field name="act_window_id" ref="hr_holidays.open_nianxiujiayue_all"/>
+            </record>
+
+
+            <record model="ir.actions.act_window" id="hr_holidays.open_nianxiujiaxiujiajilu"><!--年休假休假记录-->
+                <field name="name">年休假休假记录</field>
+                <field name="res_model">hr.holidays</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form,tree,kanban</field>
+                <field name="context">{
+                    'default_name':'年休假休假记录',
+                    'default_holiday_status_id':5,
+                    'needaction_menu_ref':
+                    [
+                        'hr_holidays.menu_open_company_allocation',
+                    ]
+                }</field>
+                <field name="domain">[('holiday_status_id','=',5),('create_type','=',False),('type','=','remove'),('employee_id.user_id','=',uid)]</field>
+                <field name="view_id" ref="hr_holidays.view_holiday_simple"/>
+            </record>
+
+            <menuitem name="年休假" id="hr_holidays.menu_hr_holidays_nianxiujia" parent="hr_holidays.menu_hr_holidays_root" sequence="1"/>
+            <menuitem name="所有年休假余额" parent="hr_holidays.menu_hr_holidays_nianxiujia" id="menu_nianxiujiayue_all" action="hr_holidays.open_nianxiujiayue_all" groups="base.group_hr_user,base.group_hr_manager" />
+            <menuitem name="年休假余额" parent="hr_holidays.menu_hr_holidays_nianxiujia" id="menu_nianxiujiayue" action="hr_holidays.open_nianxiujiayue"/>
+            <menuitem name="年休假休假记录" parent="hr_holidays.menu_hr_holidays_nianxiujia" id="menu_nianxiujiaxiujiajilu" action="hr_holidays.open_nianxiujiaxiujiajilu"/>
+    </data>
+</openerp>

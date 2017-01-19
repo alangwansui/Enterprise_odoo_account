@@ -82,6 +82,9 @@
         background-color: @odoo-view-background-color;
         position: relative; // Needed for the "More" dropdown
         border-bottom: 1px solid @odoo-brand-secondary;
+        position: fixed;
+        z-index: 1;
+        width: 100%;
 
         > .o_statusbar_status {
             > .o_arrow_button {
@@ -157,6 +160,7 @@
     // Sheet
     .o_form_sheet_bg {
         background-color: @odoo-webclient-background-color;
+        margin-top:36px;
         .o_form_sheet {
             background-color: @odoo-view-background-color;
         }
@@ -741,4 +745,33 @@
 // Buttons in ControlPanel
 .o_control_panel .o_form_buttons_view > button:first-child {
     float: left; // Unfortunately needed for the bounce effect
+}
+
+@media(max-width: 768px){
+  .o_form_view .o_form_statusbar{
+    position:relative;
+  }
+  .o_form_view .o_form_sheet_bg{
+  margin-top:0px
+  }
+  }
+
+@media(max-width: 767px){
+  .o_form_view .o_form_statusbar{
+    position:relative;
+  }
+  .o_form_view .o_form_sheet_bg{
+  margin-top:0px
+  }
+  .table>caption+thead>tr:first-child>td, .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th{
+    font-size: 12px;
+  }
+  .o_form_field_image .oe_avatar .o_form_field{
+    display: none;
+  }
+  .o_treeview_table{
+    min-width: 500px;
+    font-size: 12px;
+  }
+
 }

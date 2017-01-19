@@ -18,7 +18,7 @@ class dtdream_rd_version(models.Model):
 
     name=fields.Char(string="产品名称")
     proName = fields.Many2one("dtdream_prod_appr" ,required=True)
-
+    risk_ver_ids = fields.One2many('dtdream_rd_risk', 'risk_ver_id', string='风险与机遇', track_visibility='onchange')
 
     pro_flag = fields.Selection([('flag_06','正式版本'),('flag_01','内部测试版本'),('flag_02','外部测试版本'),('flag_03','公测版本'),
                                 ('flag_04','演示版本'),('flag_05','补丁版本')],
@@ -228,6 +228,18 @@ class dtdream_rd_version(models.Model):
                                        <tr><td style="padding:10px">版本号</td><td style="padding:10px">%s</td></tr>
                                        <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
                                        </table>""" %(self.proName.name,self.version_numb,statechange))
+
+    @api.constrains('risk_ver_ids')
+    def _compute_risk_ver_ids(self):
+        for process in self.risk_ver_ids:
+            if process.risk_state != process.risk_state_old:
+                risk_description = process.name
+                risk_state = process.risk_state
+                if process.risk_state_old:
+                    self.message_post(body=u"""<p>把风险：%s 的状态改为%s</p>""" % (risk_description, risk_state.name))
+                else:
+                    self.message_post(body=u"""<p>创建风险：%s ，状态为%s</p>""" % (risk_description, risk_state.name))
+                process.write({'risk_state_old': process.risk_state.id})
 
     @api.model
     def wkf_draft(self):

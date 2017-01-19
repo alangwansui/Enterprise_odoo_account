@@ -14,11 +14,17 @@ class dtdream_confluence_space(models.Model):
     def timing_get_confluence_space(self):
         confluenceconfigs = self.env['dtdream.information.type'].search([('type','=','confluence')])
         for confluenceconfig in confluenceconfigs:
-            ConfluenceServer = confluence.ConfluenceServer(ConfluenceURL=confluenceconfig.url, login=confluenceconfig.user,password=confluenceconfig.passw)
-            confluenceSpace = ConfluenceServer.GetSpaces()
-            spaces = self.env['dtdream.confluence.space'].search([('type','=',confluenceconfig.id)])
-            keyList = [space['key'] for space in spaces]
-            for space in confluenceSpace:
-                if space['type'] == 'global' and space['key'] not in keyList:
-                    self.env['dtdream.confluence.space'].create({'name': space['name'], 'key': space['key'],'type':confluenceconfig.id})
+            try:
+                ConfluenceServer = confluence.ConfluenceServer(ConfluenceURL=confluenceconfig.url, login=confluenceconfig.user,password=confluenceconfig.passw)
+                confluenceSpace = ConfluenceServer.GetSpaces()
+                spaces = self.env['dtdream.confluence.space'].search([('type','=',confluenceconfig.id)])
+                keyList = [space['key'] for space in spaces]
+                for space in confluenceSpace:
+                    if space['type'] == 'global' and space['key'] not in keyList:
+                        self.env['dtdream.confluence.space'].create({'name': space['name'], 'key': space['key'],'type':confluenceconfig.id})
+            except Exception, e:
+                print confluenceconfig.name+u"配置错误"
+                continue
+
+
 

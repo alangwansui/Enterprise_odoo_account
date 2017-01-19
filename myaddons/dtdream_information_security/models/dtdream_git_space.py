@@ -13,14 +13,18 @@ class dtdream_confluence_space(models.Model):
 
     @api.model
     def timing_get_git_space(self):
-        gitconfigs = self.env['dtdream.information.type'].search([('type', '=', 'git')])[0]
+        gitconfigs = self.env['dtdream.information.type'].search([('type', '=', 'git')])
         for gitconfig in gitconfigs:
-            projectServer = project.DTProject(url="https://gitlab01.dtdream.com", token="mQkr1oPSFtVgT-e1VDu8")
-            gitprojects = projectServer.get_projects()
-            spaces = self.env['dtdream.git.space'].search([('type','=',gitconfig.id)])
-            keylist = [space['key'] for space in spaces]
-            for gitproject in gitprojects:
-                key =gitproject['namespace_name']+'/'+gitproject['name']
-                if key not in keylist:
-                    self.env['dtdream.confluence.space'].create(
-                        {'name': space['name'], 'key': key, 'type': gitconfig.id})
+            try:
+                projectServer = project.DTProject(url=gitconfig.url, token=gitconfig.token)
+                gitprojects = projectServer.get_projects()
+                spaces = self.env['dtdream.git.space'].search([('type','=',gitconfig.id)])
+                keylist = [space['key'] for space in spaces]
+                for gitproject in gitprojects:
+                    key =gitproject['namespace_name']+'/'+gitproject['name']
+                    if key not in keylist:
+                        self.env['dtdream.git.space'].create(
+                            {'name': gitproject['name'], 'key': key, 'type': gitconfig.id})
+            except Exception, e:
+                print gitconfig.name+u"配置错误"
+                continue

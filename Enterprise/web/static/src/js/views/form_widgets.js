@@ -1089,11 +1089,27 @@ var FieldBinary = common.AbstractField.extend(common.ReinitializeFieldMixin, {
         this.$inputFile = this.$('.o_form_input_file');
         this.$inputFile.change(this.on_file_change);
         var self = this;
-        this.$('.o_select_file_button').click(function(e) {
+//        console.log(this.$el.hasClass('oe_right'));
+        if(this.$el.hasClass('oe_right') || this.$el.hasClass('oe_avatar')){
+            this.$('.o_addsize_file_button').css('display','none');
+            this.$('.o_reducesize_file_button').css('display','none');
+            this.$('.o_rotate_file_button').css('display','none');
+        }
+        if(this.$el.find(".o_form_image_controls").length == 0 && this.$el.parent()[0].nodeName == "TD"){
+            var addSize='<span class="fa fa-plus fa-lg pull-left o_addsize_file_button" title="放大图片"></span>';
+            var reduceSize='<span class="fa fa-minus fa-lg pull-left o_reducesize_file_button" title="缩小图片"></span>';
+            var rotatePicture='<span class="fa fa-rotate-right fa-lg pull-left o_rotate_file_button" title="旋转图片"></span>';
+            var html='<div class="o_form_image_controls">'+addSize+reduceSize+rotatePicture+'</div>';
+            this.$el.append(html);
+        }
+        this.$('.o_select_file_button').click(function(e) { 
             self.$inputFile.click();
         });
         this.$('.o_save_file_button').click(this.on_save_as);
         this.$('.o_clear_file_button').click(this.on_clear);
+        this.$('.o_addsize_file_button').click(this.on_add_pictureSize);
+        this.$('.o_reducesize_file_button').click(this.on_reduce_pictureSize);
+        this.$('.o_rotate_file_button').click(this.on_rotate_picture);
     },
     on_file_change: function(e) {
         var self = this;
@@ -1180,6 +1196,46 @@ var FieldBinary = common.AbstractField.extend(common.ReinitializeFieldMixin, {
         this.binary_value = false;
         this.set_filename('');
         this.set_value(false); // FIXME do not really remove the value
+        this.$inputFile.val("")
+    },
+    on_add_pictureSize: function(){
+        var currentWidth=this.$('img[name="image"]')[0].width;
+        var currentHeight=this.$('img[name="image"]')[0].height;
+        this.$('img[name="image"]').css("width",currentWidth*1.2);
+        this.$('img[name="image"]').css("height",currentHeight*1.2);
+    },
+    on_reduce_pictureSize: function(){
+        var currentWidth=this.$('img[name="image"]')[0].width;
+        var currentHeight=this.$('img[name="image"]')[0].height;
+        if(currentWidth > 0 && currentHeight > 0){
+            this.$('img[name="image"]').css("width",currentWidth/1.2);
+            this.$('img[name="image"]').css("height",currentHeight/1.2);
+        }
+    },
+    on_rotate_picture: function(){
+        var picRotate=this.$('img[name="image"]').css('transform');
+        var step=90;
+        var deg=eval('this.get'+this.$('img[name="image"]').css('transform'));
+        if(picRotate == "none"){
+            this.$('img[name="image"]').css('transform','rotate('+step%360+'deg)');
+        }else{
+            this.$('img[name="image"]').css('transform','rotate('+(deg+step)%360+'deg)');
+        }
+    },
+    getmatrix: function(a,b,c,d,e,f){
+        var aa=Math.round(180*Math.asin(a)/ Math.PI);
+        var bb=Math.round(180*Math.acos(b)/ Math.PI);
+        var cc=Math.round(180*Math.asin(c)/ Math.PI);
+        var dd=Math.round(180*Math.acos(d)/ Math.PI);
+        var deg=0;
+        if(aa==bb||-aa==bb){
+            deg=dd;
+        }else if(-aa+bb==180){
+            deg=180+cc;
+        }else if(aa+bb==180){
+            deg=360-cc||360-dd;
+        }
+        return deg>=360?0:deg;
     }
 });
 

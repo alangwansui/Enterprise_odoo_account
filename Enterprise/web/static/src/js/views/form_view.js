@@ -336,8 +336,41 @@ var FormView = View.extend(common.FieldManagerMixin, {
         }
         return $.when(shown, this._super()).then(function() {
             self._actualize_mode(options.mode || self.options.initial_mode);
-            core.bus.trigger('form_view_shown', self);
+            var result=null;
+            result= core.bus.trigger('form_view_shown', self);
+            var timer = setInterval(function(){
+              self.show_form();
+              if(result){
+                clearInterval(timer);
+              }
+            },500)
         });
+
+    },
+    show_form:function(){
+        var btn=false
+        var drop=false
+        if(this.__parentedParent.$el.find(".o_statusbar_buttons").length>0){
+            var $elb = this.__parentedParent.$el.find(".o_statusbar_buttons");
+            if($elb.find(".btn-group").length>0){
+                if($elb.find(".btn-group").find("button.o_form_invisible").length==$elb.find(".btn-group").find("li").length){
+                    $elb.find(".btn-group").hide()
+                    btn=true
+                }
+            }
+        }
+        if(this.__parentedParent.$el.find(".o_statusbar_status").length>0){
+            var $elb = this.__parentedParent.$el.find(".o_statusbar_status");
+            if($elb.find(".dropdown-toggle").length>0){
+                if(!$elb.find(".dropdown-toggle")[0].innerText){
+                    $elb.find(".dropdown-toggle").hide()
+                    drop=true
+                }
+            }
+        }
+        if(btn && drop){
+            this.__parentedParent.$el.find(".o_form_statusbar").hide()
+        }
     },
     load_record: function(record) {
         var self = this, set_values = [];
@@ -397,6 +430,31 @@ var FormView = View.extend(common.FieldManagerMixin, {
     },
     on_form_changed: function() {
         this.trigger("view_content_has_changed");
+        var btn=false
+        var drop=false
+        if(this.__parentedParent.$el.find(".o_statusbar_buttons").length>0){
+            var $elb = this.__parentedParent.$el.find(".o_statusbar_buttons");
+            if($elb.find(".btn-group").length>0){
+                if($elb.find(".btn-group").find("button.o_form_invisible").length==$elb.find(".btn-group").find("li").length){
+                    $elb.find(".btn-group").hide()
+                    btn=true
+                }
+            }
+        }
+        if(this.__parentedParent.$el.find(".o_statusbar_status").length>0){
+            var $elb = this.__parentedParent.$el.find(".o_statusbar_status");
+            if($elb.find(".dropdown-toggle").length>0){
+                if(!$elb.find(".dropdown-toggle")[0].innerText){
+                    $elb.find(".dropdown-toggle").hide()
+                    drop=true
+                }
+            }
+        }
+        if(btn && drop){
+            this.__parentedParent.$el.find(".o_form_statusbar").hide()
+        }
+
+
     },
     do_notify_change: function() {
         this.$el.addClass('oe_form_dirty');
@@ -688,6 +746,16 @@ var FormView = View.extend(common.FieldManagerMixin, {
     },
     on_button_save: function(e) {
         var self = this;
+        var max_upload_size = 25 * 1024 * 1024;
+        var size = 0;
+        if ($('input.o_form_input_file').length && $('input.o_form_input_file')[0].files[0]){
+            size = $('input.o_form_input_file')[0].files[0].size;
+        }
+        if (size > max_upload_size){
+            var msg = _t("The selected file exceed the maximum file size of %s.");
+            this.do_warn(_t("File upload"), _.str.sprintf(msg, utils.human_size(max_upload_size)));
+            return;
+        }
         if (this.is_disabled) {
             return;
         }

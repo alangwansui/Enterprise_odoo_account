@@ -104,6 +104,12 @@
         <field name="signal">btn_submit</field>
     </record>
 
+    <record id="trans_write_rate" model="workflow.transition">
+        <field name="act_from" ref="act_wait_write"/>
+        <field name="act_to" ref="act_rate"/>
+        <field name="signal">btn_skip</field>
+    </record>
+
     <record id="trans_confirm_evaluate" model="workflow.transition">
         <field name="act_from" ref="act_confirm"/>
         <field name="act_to" ref="act_evaluate"/>

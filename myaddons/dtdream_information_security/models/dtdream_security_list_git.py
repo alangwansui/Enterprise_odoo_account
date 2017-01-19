@@ -7,10 +7,10 @@ class dtdream_security_list_git(models.Model):
 
     security_git= fields.Many2one("dtdream.information.purview")
 
-    git = fields.Many2one("dtdream.information.type", string="所属", domain=[('type', '=', 'git')])
-    space = fields.Many2one("dtdream.git.space",string="空间")
+    git = fields.Many2one("dtdream.information.type", string="所属", domain=[('type', '=', 'git')],required=True)
+    space = fields.Many2one("dtdream.git.space",string="项目",required=True)
     description = fields.Char(string="描述")
-    read_right = fields.Boolean(string="读权限")
+    read_right = fields.Boolean(string="读权限", default=True)
     write_right = fields.Boolean(string="写权限")
 
     @api.onchange('git')

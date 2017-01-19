@@ -102,14 +102,16 @@
             <form>
               <header>
                   <button name="btn_submit" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
-                          attrs="{'invisible':['|',('state', 'not in',('1','4','5')),'|','&amp;',('manage','=',False),'&amp;',('is_officer','=', False),('login','=',False),'|','&amp;',('state','in',('1', '4')),'&amp;',('login','=',False),('manage','=',False),'&amp;',('state','=','5'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
+                          attrs="{'invisible':['|',('state', '!=','5'),'&amp;',('state','=','5'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
+                  <button name="btn_skip" string="提交" type="workflow" class="oe_highlight" confirm="请确认是否提交?"
+                          attrs="{'invisible':['|',('state', '!=','1'),'&amp;',('state','=','1'),'&amp;',('login','=',False),('manage','=',False)]}"/>
                   <button name="%(act_dtdream_pbc_reject_wizard)d" string="返回修改" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
                   <button name="%(act_dtdream_pbc_agree_wizard)d" string="同意" type="action" class="oe_highlight"
                           attrs="{'invisible':['|',('state','!=','2'),'&amp;',('is_officer','=',False),('manage','=',False)]}"/>
                   <button name="btn_back" string="绩效目标修改" type="workflow" class="oe_highlight" confirm="请确认是否返回修改?"
                           attrs="{'invisible':['|',('login','=',False),('state','!=','3')]}"/>
-                  <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,5,6,99"/>
+                  <field name="state" widget="statusbar" statusbar_visible="0,1,5,6,99"/>
               </header>
 
               <sheet>
@@ -162,7 +164,7 @@
                                 <tree editable="bottom" name="personal_pbc" class="dtdream_hr_performance_tree dtdream_hr_pbc_tree">
                                     <field name="work" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="detail" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
-                                    <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','4'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '4'),'&amp;',('manage', '=', False),'&amp;',('login','=',False),('inter','=',False),'&amp;',('state', '!=','4'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
+                                    <field name="result" attrs="{'readonly':['|','&amp;','&amp;',('state', '!=','1'),('login','=',True),'&amp;',('inter','=',True),('manage','=',False),'&amp;',('state', '!=','1'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="evaluate" attrs="{'readonly':['|','&amp;','&amp;',('state', '=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;','&amp;',('state', '!=','5'),('login','=',True),'&amp;',('manage','=', False),('inter','=',True),'|','&amp;',('state','=', '5'),'&amp;',('manage', '=', False),'&amp;',('officer','=',False),('inter','=',False),'&amp;',('state', '!=','5'),'&amp;',('manage','=', False),('inter','=',False)]}"/>
                                     <field name="state" invisible="True"/>
                                     <field name="login" invisible="True"/>
@@ -205,6 +207,40 @@
                 <field name="state"/>
                 <field name="result"/>
             </tree>
+        </field>
+      </record>
+
+      <record id="view_dtdream_hr_performance_kanban" model="ir.ui.view">
+        <field name="name">view.dtdream.hr.performance.kanban</field>
+        <field name="model">dtdream.hr.performance</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban" >
+                <field name="name"/>
+                <field name="workid"/>
+                <field name="department"/>
+                <field name="quarter"/>
+                <field name="state"/>
+                <field name="result"/>
+                <templates>
+                    <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click ">
+                         <div class="o_kanban_image">
+                              <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                          </div>
+                        <div class="oe_kanban_details">
+                            <div name="tags"/>
+                                <ul>
+                                    <li ><strong>花名:</strong> <field name="name" /></li>
+                                    <li ><strong>考核记录:</strong> <field name="quarter" /></li>
+                                    <li ><strong>状态:</strong> <field name="state" /></li>
+                                    <li ><strong>考核结果:</strong> <field name="result" /></li>
+                                </ul>
+                        <div name="tags"/>
+                        </div>
+                    </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
       </record>
 
@@ -253,8 +289,8 @@
         <field name="name">view.dtdream.hr.pbc.start.from</field>
         <field name="model">dtdream.hr.pbc.start</field>
         <field name="arch" type="xml">
-            <form string="绩效目标填写">
-                <p>确定启动绩效目标填写?</p>
+            <form string="启动绩效自评">
+                <p>确定启动绩效自评?</p>
                 <footer>
                     <button string="确定" name="start_hr_pbc" type="object" class="oe_highlight"/>
                     <button string="取消" special="cancel"/>
@@ -267,7 +303,7 @@
           multi="True"
           key2="client_action_multi"
           id="act_dtdream_hr_pbc_start"
-          name="启动绩效目标填写"
+          name="启动绩效自评"
           src_model="dtdream.hr.performance"
           res_model="dtdream.hr.pbc.start"
           view_id="view_dtdream_hr_pbc_start_from"

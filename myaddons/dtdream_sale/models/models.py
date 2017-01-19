@@ -27,14 +27,14 @@ class dtdream_product(models.Model):
     remark = fields.Text(string="备注")
     office_manager_discount = fields.Float(string="办事处主任折扣(%)",required=True)
     system_department_discount = fields.Float(string="系统部折扣(%)",required=True)
-    market_president_discount = fields.Float(string="市场部总裁折扣(%)",required=True)
-    sale_grant_discount = fields.Float(string="营销管理部折扣(%)",required=True)
+    # market_president_discount = fields.Float(string="市场部总裁折扣(%)",required=True)
+    sale_grant_discount = fields.Float(string="区域折扣(%)",required=True)
     is_temporary_bom = fields.Selection([
         ('1','是'),
         ('2','否'),
     ],string="是否临时BOM",default="2")
     list_price = fields.Integer(string="目录价",required=True)
-    cost_price = fields.Integer(string="成本价",required=True)
+    cost_price = fields.Integer(string="成本价")
     pro_num = fields.Integer(string="数量")
     pro_source = fields.Selection([
         ('1','自研'),
@@ -81,15 +81,15 @@ class dtdream_product(models.Model):
                 }
             return {'warning': warning}
 
-    @api.onchange('market_president_discount')
-    def _onchange_market_president_discount(self):
-        if self.market_president_discount > 100 or self.market_president_discount < 0:
-            self.market_president_discount = "";
-            warning = {
-                    'title': '警告：',
-                    'message': '市场部总裁折扣应大于0%且小于100%',
-                }
-            return {'warning': warning}
+    # @api.onchange('market_president_discount')
+    # def _onchange_market_president_discount(self):
+    #     if self.market_president_discount > 100 or self.market_president_discount < 0:
+    #         self.market_president_discount = "";
+    #         warning = {
+    #                 'title': '警告：',
+    #                 'message': '市场部总裁折扣应大于0%且小于100%',
+    #             }
+    #         return {'warning': warning}
 
 # 定义产品类别
 class product_pro_type(models.Model):
@@ -212,6 +212,13 @@ class dtdream_office(models.Model):
 class dtdream_product_line(models.Model):
     _name = 'dtdream.product.line'
 
+    @api.depends('pro_num','apply_discount')
+    def _compute_total_list_price(self):
+        for rec in self:
+            rec.pro_total_list_price = rec.list_price * rec.pro_num
+            rec.pro_total_chuhuo_price = rec.pro_total_list_price * rec.apply_discount/100
+
+
     product_line_id = fields.Many2one('crm.lead', string='产品', required=True, ondelete='cascade', index=True, copy=False)
     product_id = fields.Many2one('product.template', string='产品',ondelete='restrict',track_visibility='onchange')
 
@@ -223,18 +230,26 @@ class dtdream_product_line(models.Model):
     ref_discount = fields.Float('参考折扣(%)')
     apply_discount = fields.Float('申请折扣(%)')
     pro_num = fields.Integer('数量')
-    config_set = fields.Char('发货地')
+    pro_uom_name = fields.Char('单位')
+    pro_total_list_price = fields.Float('总目录价',compute=_compute_total_list_price,store=True)
+    pro_total_chuhuo_price = fields.Float('总出货价',compute=_compute_total_list_price,store=True)
+    pro_remark = fields.Char("备注")
+    # config_set = fields.Char('发货地')
 
     @api.onchange("product_id")
     def _onchange_product_id(self):
         for rec in self:
             if rec.product_id.id:
+                if rec.product_id.pro_status == 'outPro' and not self.env.user.has_group('dtdream_sale.group_dtdream_sale_high_manager'):
+                    raise ValidationError("停产的项目仅营销管理组成员可录入")
                 rec.bom = rec.product_id.bom
                 rec.pro_type = rec.product_id.pro_type.name
                 rec.pro_description = rec.product_id.pro_description
                 rec.pro_name = rec.product_id.name
                 rec.ref_discount = rec.product_id.ref_discount
                 rec.list_price = rec.product_id.list_price
+                rec.pro_uom_name = rec.product_id.uom_id.name
+
 
     @api.model
     def create(self, vals):
@@ -246,6 +261,7 @@ class dtdream_product_line(models.Model):
                 vals['pro_description'] = rec.pro_description
                 vals['pro_name'] = rec.name
                 vals['list_price'] = rec.list_price
+                vals['pro_uom_name'] = rec.uom_id.name
                 vals['ref_discount'] = rec.ref_discount
                 vals['product_id'] = None
         result = super(dtdream_product_line, self).create(vals)
@@ -261,6 +277,7 @@ class dtdream_product_line(models.Model):
                 vals['pro_description'] = rec.pro_description
                 vals['pro_name'] = rec.name
                 vals['list_price'] = rec.list_price
+                vals['pro_uom_name'] = rec.uom_id.name
                 vals['ref_discount'] = rec.ref_discount
                 vals['product_id'] = None
         result = super(dtdream_product_line, self).write(vals)
@@ -282,7 +299,7 @@ class dtdream_product_line(models.Model):
             self.apply_discount = ""
             warning = {
                     'title': '警告：',
-                    'message': '参考折扣应在0%到100%之间',
+                    'message': '申请折扣应在0%到100%之间',
                 }
             return {'warning': warning}
 
@@ -435,17 +452,17 @@ class dtdream_sale(models.Model):
         ('10','无'),
     ],'阿里对应事业部')
     is_project_budget = fields.Selection([
-        ('1', '是'),
-        ('0', '否'),
+        ('1', '有预算'),
+        ('0', '无预算'),
     ],string='项目是否有预算',required=True,track_visibility='onchange')
     ali_saleman = fields.Char('阿里对应销售')
     is_dtdream_integrated = fields.Selection([
-        ('1', '是'),
-        ('0', '否'),
+        ('1', '数梦集成项目'),
+        ('0', '非数梦集成项目'),
     ],string='是否数梦集成项目',required=True,track_visibility='onchange')
     is_invest_project = fields.Selection([
-        ('1', '是'),
-        ('0', '否'),
+        ('1', '投资类项目'),
+        ('0', '非投资类项目'),
     ],string='是否投资类项目',required=True,track_visibility='onchange')
 
     @api.onchange("project_province_new")
@@ -567,9 +584,9 @@ class dtdream_sale(models.Model):
         if vals.get('project_number', 'New') == 'New':
             o_id = vals.get('office_id')
             office_rec = self.env['dtdream.office'].search([('id','=',o_id)])
-            num = len(self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)]))+1
-            if len(self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)], order="id desc"))>0:
-                num = int(self.search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)], order="id desc")[0].project_number[-3:-1])+1
+            num = len(self.sudo().search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)]))+1
+            if len(self.sudo().search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)], order="id desc"))>0:
+                num = int(self.sudo().search([('create_date','like',(datetime.now().strftime('%Y-%m-%d')+"%")),('office_id','=',o_id)], order="id desc")[0].project_number[-3:-1])+1
             if num < 10:
                 num = "%02d"%num
             if vals.get('project_leave') == "company_leave":
@@ -617,6 +634,8 @@ class dtdream_sale(models.Model):
         if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid and not self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
             raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
         if vals.has_key('stage_id'):
+            if self.stage_id.name == u"机会点" and self.is_project_budget == "0":
+                raise ValidationError("请将项目置为有预算后改变项目阶段。")
             if self.env['crm.stage'].search([('id','=',vals.get('stage_id'))]).name == u"机会点":
                 self.type = "lead"
             else :
@@ -762,6 +781,15 @@ class dtdream_sale(models.Model):
             stage_id = record[0].id
             rec = self.search([('id','=',int(rec_id))])
             rec.write({'stage_id': stage_id})
+
+    @api.model
+    def action_set_lead_stage(self,rec_id):
+        record = self.env['crm.stage'].search([('name','=',"机会点")])
+        if len(record) > 0 :
+            stage_id = record[0].id
+            rec = self.search([('id','=',int(rec_id))])
+            rec.write({'stage_id': stage_id,'is_project_budget':'0'})
+
 
     def action_set_important(self, cr, uid, ids, context=None):
         self.write(cr, uid,ids, {'is_important': True}, context=context)

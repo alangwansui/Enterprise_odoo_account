@@ -1247,12 +1247,51 @@ class Binary(http.Controller):
 
 class Action(http.Controller):
 
+    def range_action_id(self, menus, action_childs=[]):
+        for item in menus:
+            if item.child_id:
+                self.range_action_id(item.child_id, action_childs)
+            else:
+                if item.action.id:
+                    action_childs.append(item.action.id)
+        return action_childs
+
     @http.route('/web/action/load', type='json', auth="user")
     def load(self, action_id, do_not_eval=False, additional_context=None):
         Actions = request.session.model('ir.actions.actions')
         value = False
+        forbidden = {}
         try:
             action_id = int(action_id)
+            url = additional_context.get('url', None) if additional_context else None
+            if url:
+                model = re.search('(model=)(.+?)(&)', url)
+                if not model:
+                    forbidden['forbidden'] = True
+                else:
+                    model_name = model.group(2)
+                    res_model = request.env['ir.actions.act_window'].search([('id', '=', action_id)]).res_model
+                    if model_name != res_model:
+                        forbidden['forbidden'] = True
+                    menu_id = re.search('(menu_id=)(\d+)', url)
+                    if menu_id:
+                        menus = request.env['ir.ui.menu'].search([('id', '=', menu_id.group(2))]).child_id
+                        action_childs = self.range_action_id(menus)
+                        if action_id not in action_childs:
+                            forbidden['forbidden'] = True
+            allow = additional_context.get('allow', None) if additional_context else None
+            if allow:
+                menu_id_url = re.search('(menu_id=)(\d+)', url)
+                action_id_url = re.search('(action_id=)(\d+)', url)
+                if not menu_id_url or not action_id_url:
+                    forbidden['forbidden'] = True
+                else:
+                    menu = request.env['ir.ui.menu'].search([('id', '=', menu_id_url.group(2))]).child_id
+                    action_child = map(lambda x: str(x), self.range_action_id(menu))
+                    if action_id_url.group(2) not in action_child:
+                        forbidden['forbidden'] = True
+                    else:
+                        forbidden['forbidden'] = False
         except ValueError:
             try:
                 module, xmlid = action_id.split('.', 1)
@@ -1272,6 +1311,7 @@ class Action(http.Controller):
             action = request.session.model(action_type).read([action_id], False, ctx)
             if action:
                 value = clean_action(action[0])
+        value = dict(value, **forbidden) if value else {}
         return value
 
     @http.route('/web/action/run', type='json', auth="user")

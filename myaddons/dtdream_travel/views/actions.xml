@@ -7,7 +7,7 @@
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">['|',('create_uid','=', uid),('name.user_id','=',uid)]</field>
         </record>
 
@@ -16,7 +16,7 @@
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('is_current','=',True),('shenpiren.user_id','=',uid),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
@@ -25,7 +25,7 @@
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('approve.user_id','=',uid),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
@@ -37,7 +37,7 @@
                 'name':'所有单据',
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
-                'view_mode': 'tree,form',
+                'view_mode': 'tree,form,kanban',
                 'res_model': 'dtdream.travel.chucha',
                 'domain': ['|','&amp;',('message_follower_ids.partner_id', '=', user.partner_id.id),('name.Inaugural_state','=','Inaugural_state_01'),'|','&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('create_uid', '=', uid),'|','&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('shenpiren.user_id','=',uid),'|','&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('approve.user_id','=',uid),'&amp;',('name.Inaugural_state','=','Inaugural_state_01'),('name.user_id','=',uid)],
                 'context':context,
@@ -50,7 +50,7 @@
             <field name="res_model">dtdream.travel.chucha</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','!=','0'),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 

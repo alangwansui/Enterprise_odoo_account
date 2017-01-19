@@ -2,3 +2,4 @@
 
 from . import dtdream_information_purview_wizard
 from . import dtdream_information_shouquan_wizard
+from . import  dtdream_foreign_wizard

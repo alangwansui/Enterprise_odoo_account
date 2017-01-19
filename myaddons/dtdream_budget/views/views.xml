@@ -8,24 +8,24 @@
       <field name="arch" type="xml">
         <form class="zx_form">
           <header>
-            <button name="btn_submit" string="提交" attrs="{'invisible':['|',('state','!=','0'),('is_applicant','=',False)]}" class="oe_highlight zx_edit_invisible"></button>
-            <button name="%(dtdream_budget.act_dtdream_budget_wizard_agree)d" type="action" string="同意" attrs="{'invisible':[('is_current_handler','=',False)]}" class="zx_edit_invisible"></button>
-            <button name="%(dtdream_budget.act_dtdream_budget_wizard_reject)d" type="action" string="驳回" attrs="{'invisible':[('is_current_handler','=',False)]}" class="zx_edit_invisible"></button>
-            <field name="state" widget="statusbar"></field>
+            <button name="btn_submit" string="提交" attrs="{'invisible':['|',('state','!=','0'),('is_applicant','=',False)]}" class="oe_highlight zx_edit_invisible"/>
+            <button name="%(dtdream_budget.act_dtdream_budget_wizard_agree)d" type="action" string="同意" attrs="{'invisible':[('is_current_handler','=',False)]}" class="zx_edit_invisible"/>
+            <button name="%(dtdream_budget.act_dtdream_budget_wizard_reject)d" type="action" string="驳回" attrs="{'invisible':[('is_current_handler','=',False)]}" class="zx_edit_invisible"/>
+            <field name="state" widget="statusbar"/>
           </header>
           <sheet>
             <group string="基本信息">
               <group>
-                <field name="current_handler" readonly="1" options="{'no_open':True}" invisible="1"></field>
-                <field name="is_current_handler" invisible="1"></field>
-                <field name="is_applicant" invisible="1"></field>
-                <field name="his_handler" widget="many2many_tags" invisible="1"></field>
+                <field name="current_handler" readonly="1" options="{'no_open':True}" invisible="1"/>
+                <field name="is_current_handler" invisible="1"/>
+                <field name="is_applicant" invisible="1"/>
+                <field name="his_handler" widget="many2many_tags" invisible="1"/>
 
-                <field name="applicant" readonly="1"></field>
-                <field name="manager" invisible="1"></field>
-                <field name="signer_one" invisible="1"></field>
-                <field name="signer_two" invisible="1"></field>
-                <field name="apply_time" readonly="1"></field>
+                <field name="applicant" readonly="1"/>
+                <field name="manager" invisible="1"/>
+                <field name="signer_one" invisible="1"/>
+                <field name="signer_two" invisible="1"/>
+                <field name="apply_time" readonly="1"/>
               </group>
               <group>
                 <field name="department" readonly="1"/>
@@ -35,60 +35,160 @@
             </group>
             <group string="预算信息">
               <group>
-                <field name="budget_id"></field>
-                <field name="expensed_travel" invisible="1"></field>
-                <field name="expensed_daily" invisible="1"></field>
+                <field name="budget_id"/>
+                <field name="expensed_travel" invisible="1"/>
+                <field name="expensed_daily" invisible="1"/>
               </group>
               <group>
-                <field name="name" widget="selection" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"></field>
-                <field name="expensed_zhuanx" invisible="1"></field>
-                <field name="expensed_xingz" invisible="1"></field>
+                <field name="name" widget="selection" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"/>
+                <field name="expensed_zhuanx" invisible="1"/>
+                <field name="expensed_xingz" invisible="1"/>
 
               </group>
             </group>
             <group class="zx_group_border">
               <field name="fee_travel" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" create="false" delete="false" class="zx_left zx_four" options="{'no_open':True}">
-                  <field name="travel_travel" class="budget_int_cls" options="{'no_open':True}"></field>
-                  <field name="travel_bus" class="budget_int_cls"></field>
-                  <field name="travel_mobile" class="budget_int_cls"></field>
-                  <field name="travel_remark"></field>
+                  <field name="travel_travel" class="budget_int_cls" options="{'no_open':True}"/>
+                  <field name="travel_bus" class="budget_int_cls"/>
+                  <field name="travel_mobile" class="budget_int_cls" readonly="1"/>
+                  <field name="travel_remark"/>
                 </tree>
+
+              <kanban class="o_res_partner_kanban" >
+                  <field name="travel_travel" />
+                  <field name="travel_bus" />
+                  <field name="travel_mobile" />
+                  <field name="travel_remark"/>
+              <templates>
+                  <t t-name="kanban-box">
+                  <div class="oe_kanban_global_click ">
+                       <div class="o_kanban_image">
+                            <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                        </div>
+                      <div class="oe_kanban_details">
+                          <div name="tags"/>
+                              <ul>
+                                  <li ><strong>差旅费:</strong> <field name="travel_travel" /></li>
+                                  <li ><strong>市内公交费:</strong> <field name="travel_bus" /></li>
+                                  <li ><strong>手机话费:</strong> <field name="travel_mobile" /></li>
+                              </ul>
+                      <div name="tags"/>
+                      </div>
+                  </div>
+                  </t>
+              </templates>
+          </kanban>
+
+
               </field>
-              <field name="fee_travel_total"></field>
+              <field name="fee_travel_total"/>
             </group>
             <group class="zx_group_border">
               <field name="fee_daily" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
-                  <field name="daily_name"></field>
-                  <field name="daily_fee" class="budget_int_cls"></field>
-                  <field name="daily_remark"></field>
+                  <field name="daily_name"/>
+                  <field name="daily_fee" class="budget_int_cls"/>
+                  <field name="daily_remark"/>
                 </tree>
+
+                <kanban class="o_res_partner_kanban" >
+                  <field name="daily_name" />
+                  <field name="daily_fee" />
+                  <field name="daily_remark" />
+              <templates>
+                  <t t-name="kanban-box">
+                  <div class="oe_kanban_global_click ">
+                       <div class="o_kanban_image">
+                            <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                        </div>
+                      <div class="oe_kanban_details">
+                          <div name="tags"/>
+                              <ul>
+                                  <li ><strong>事务或项目名称:</strong> <field name="daily_name" /></li>
+                                  <li ><strong>员工预算金额:</strong> <field name="daily_fee" /></li>
+                              </ul>
+                      <div name="tags"/>
+                      </div>
+                  </div>
+                  </t>
+              </templates>
+          </kanban>
+
               </field>
-              <field name="fee_daily_total"></field>
+              <field name="fee_daily_total"/>
             </group>
             <group class="zx_group_border">
               <field name="fee_zhuanx" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
-                  <field name="zhuanx_name"></field>
-                  <field name="zhuanx_fee" class="budget_int_cls"></field>
-                  <field name="zhuanx_remark"></field>
+                  <field name="zhuanx_name"/>
+                  <field name="zhuanx_fee" class="budget_int_cls"/>
+                  <field name="zhuanx_remark"/>
                 </tree>
+
+                <kanban class="o_res_partner_kanban" >
+                  <field name="zhuanx_name" />
+                  <field name="zhuanx_fee" />
+                  <field name="zhuanx_remark" />
+              <templates>
+                  <t t-name="kanban-box">
+                  <div class="oe_kanban_global_click ">
+                       <div class="o_kanban_image">
+                            <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                        </div>
+                      <div class="oe_kanban_details">
+                          <div name="tags"/>
+                              <ul>
+                                  <li ><strong>专项名称:</strong> <field name="zhuanx_name" /></li>
+                                  <li ><strong>专项金额:</strong> <field name="zhuanx_fee" /></li>
+                              </ul>
+                      <div name="tags"/>
+                      </div>
+                  </div>
+                  </t>
+              </templates>
+          </kanban>
+
+
               </field>
-              <field name="fee_zhuanx_total"></field>
+              <field name="fee_zhuanx_total"/>
             </group>
             <group class="zx_group_border">
               <field name="fee_xingz" class="zx_label" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}">
                 <tree editable="bottom" class="zx_left zx_three">
-                  <field name="xingz_name"></field>
-                  <field name="xingz_fee" class="budget_int_cls"></field>
-                  <field name="xingz_remark"></field>
+                  <field name="xingz_name"/>
+                  <field name="xingz_fee" class="budget_int_cls"/>
+                  <field name="xingz_remark"/>
                 </tree>
+
+                <kanban class="o_res_partner_kanban" >
+                  <field name="xingz_name" />
+                  <field name="xingz_fee" />
+                  <field name="xingz_remark" />
+              <templates>
+                  <t t-name="kanban-box">
+                  <div class="oe_kanban_global_click ">
+                       <div class="o_kanban_image">
+                            <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                        </div>
+                      <div class="oe_kanban_details">
+                          <div name="tags"/>
+                              <ul>
+                                  <li ><strong>名称:</strong> <field name="xingz_name" /></li>
+                                  <li ><strong>员工预算金额:</strong> <field name="xingz_fee" /></li>
+                              </ul>
+                      <div name="tags"/>
+                      </div>
+                  </div>
+                  </t>
+              </templates>
+          </kanban>
+
               </field>
-              <field name="fee_xingz_total"></field>
+              <field name="fee_xingz_total"/>
             </group>
             <group>
-              <field name="all_total"></field>
+              <field name="all_total"/>
             </group>
           </sheet>
           <div class="oe_chatter">
@@ -104,19 +204,50 @@
       <field name="model">dtdream.budget</field>
       <field name="arch" type="xml">
         <tree class="zx_left">
-          <field name="budget_id"></field>
-          <field name="name"></field>
-          <field name="state"></field>
-          <field name="applicant"></field>
-          <field name="fee_travel_total"></field>
-          <field name="fee_daily_total"></field>
-          <field name="fee_zhuanx_total"></field>
-          <field name="fee_xingz_total"></field>
-          <field name="all_total"></field>
-          <field name="department"></field>
-          <field name="current_handler"></field>
-          <field name="is_current_handler" invisible="1"></field>
+          <field name="budget_id"/>
+          <field name="name"/>
+          <field name="state"/>
+          <field name="applicant"/>
+          <field name="fee_travel_total"/>
+          <field name="fee_daily_total"/>
+          <field name="fee_zhuanx_total"/>
+          <field name="fee_xingz_total"/>
+          <field name="all_total"/>
+          <field name="department"/>
+          <field name="current_handler"/>
+          <field name="is_current_handler" invisible="1"/>
         </tree>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="view_dtdream_budget_kanban">
+      <field name="name">view.dtdream.budget.kanban</field>
+      <field name="model">dtdream.budget</field>
+      <field name="arch" type="xml">
+        <kanban class="o_res_partner_kanban" >
+              <field name="name"/>
+              <field name="applicant"/>
+              <field name="state"/>
+              <templates>
+                  <t t-name="kanban-box">
+                  <div class="oe_kanban_global_click ">
+                       <div class="o_kanban_image">
+                            <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                        </div>
+                      <div class="oe_kanban_details">
+                          <div name="tags"/>
+                              <ul>
+                                  <li ><strong>单号:</strong> <field name="budget_id" /></li>
+                                  <li ><strong>申请人:</strong> <field name="applicant" /></li>
+                                  <li ><strong>状态:</strong> <field name="state" /></li>
+                              </ul>
+                      <div name="tags"/>
+                      </div>
+                  </div>
+                  </t>
+              </templates>
+          </kanban>
       </field>
     </record>
 
@@ -124,7 +255,7 @@
     <record id="edit_hr_employee_inher" model="ir.ui.view">
           <field name="name">edit.holiday.new.inher</field>
           <field name="model">hr.employee</field>
-          <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"></field>
+          <field name="inherit_id" ref="dtdream_hr.dtdream_view_employee_form"/>
           <field name="arch" type="xml">
                 <field name="image" position="before">
                     <field name="budget_ids" invisible="1"/>
@@ -137,12 +268,12 @@
             <field name="arch" type="xml">
                 <search string="Search employee_budget">
                     <field name="name"/>
-                    <field name="department_id"></field>
+                    <field name="department_id"/>
                     <filter string="上月预算未填写" domain="['&amp;',('department_id.is_budget_department','=',True),'|',('budget_ids', '!=', (context_today() + relativedelta(months=-1)).strftime('%Y%m')),('budget_ids','=',False)]" name="employee_budget2"/>
                     <filter string="本月预算未填写" domain="['&amp;',('department_id.is_budget_department','=',True),'|',('budget_ids', '!=', (context_today() + relativedelta(months=0)).strftime('%Y%m')),('budget_ids','=',False)]" name="employee_budget3"/>
                     <filter string="下月预算未填写" domain="['&amp;',('department_id.is_budget_department','=',True),'|',('budget_ids', '!=', (context_today() + relativedelta(months=1)).strftime('%Y%m')),('budget_ids','=',False)]" name="employee_budget4"/>
                     <group expand="0" string="Group By">
-                      <filter name="group_department" string="部门" context="{'group_by':'department_id'}"></filter>
+                      <filter name="group_department" string="部门" context="{'group_by':'department_id'}"/>
                     </group>
 
 
@@ -155,9 +286,9 @@
       <field name="arch" type="xml">
         <search string="Search employee_budget">
           <field name="name"/>
-          <field name="budget_id"></field>
-          <field name="applicant"></field>
-          <field name="department"></field>
+          <field name="budget_id"/>
+          <field name="applicant"/>
+          <field name="department"/>
           <filter domain="[('state','=','0')]" string="草稿" name="draft"/>
           <filter domain="[('state','=','1')]" string="主管审批" name="manager_review"/>
           <filter domain="[('state','=','2')]" string="第一权签人审批" name="signer_one_review"/>
@@ -165,9 +296,9 @@
           <filter domain="[('state','=','4')]" string="已审批" name="reviewed"/>
           <group expand="0" string="Group By">
             <filter name="group_applicant" string="申请人" context="{'group_by':'applicant'}"/>
-            <filter name="group_state" string="状态" context="{'group_by':'state'}"></filter>
-            <filter name="group_department" string="部门" context="{'group_by':'department'}"></filter>
-            <filter name="group_name" string="预算月份" context="{'group_by':'name'}"></filter>
+            <filter name="group_state" string="状态" context="{'group_by':'state'}"/>
+            <filter name="group_department" string="部门" context="{'group_by':'department'}"/>
+            <filter name="group_name" string="预算月份" context="{'group_by':'name'}"/>
           </group>
         </search>
       </field>
@@ -178,12 +309,12 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
-            <field name="temp" invisible="1"></field>
+            <field name="temp" invisible="1"/>
             <p>确定进行批量审批？</p>
           </sheet>
           <footer>
             <button special="cancel" string="取消" class="oe_highlight zx_button" style="float:right;margin-right:20px"/>
-            <button name="batch_approval" type="object" string="确定" class="oe_highlight zx_button" style="border-radius:5px;float:right;margin-right:20px" id="zx_button"></button>
+            <button name="batch_approval" type="object" string="确定" class="oe_highlight zx_button" style="border-radius:5px;float:right;margin-right:20px" id="zx_button"/>
           </footer>
         </form>
       </field>
@@ -197,16 +328,16 @@
           <sheet>
             <group>
               <group>
-                <field name="name" readonly="1"></field>
-                <field name="code" readonly="1"></field>
-                <field name="manager_id" readonly="1"></field>
-                <field name="parent_id" readonly="1"></field>
-                <field name="child_ids" invisible="1"></field>
+                <field name="name" readonly="1"/>
+                <field name="code" readonly="1"/>
+                <field name="manager_id" readonly="1"/>
+                <field name="parent_id" readonly="1"/>
+                <field name="child_ids" invisible="1"/>
               </group>
               <group>
-                <field name="is_budget_department"></field>
-                <field name="budget_sign_one"></field>
-                <field name="budget_sign_two"></field>
+                <field name="is_budget_department"/>
+                <field name="budget_sign_one"/>
+                <field name="budget_sign_two"/>
               </group>
             </group>
           </sheet>
@@ -220,13 +351,13 @@
       <field name="field_parent">child_ids</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="name"></field>
-          <field name="code"></field>
-          <field name="manager_id"></field>
-          <field name="parent_id" invisible="1"></field>
-          <field name="budget_sign_one"></field>
-          <field name="budget_sign_two"></field>
-          <field name="is_budget_department"></field>
+          <field name="name"/>
+          <field name="code"/>
+          <field name="manager_id"/>
+          <field name="parent_id" invisible="1"/>
+          <field name="budget_sign_one"/>
+          <field name="budget_sign_two"/>
+          <field name="is_budget_department"/>
         </tree>
       </field>
     </record>
@@ -238,7 +369,7 @@
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
       <field name="domain">[('applicant.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_to_approve">
@@ -246,7 +377,7 @@
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
       <field name="domain">[('current_handler.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_approved">
@@ -254,7 +385,7 @@
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
       <field name="domain">[('his_handler.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_draft">
@@ -262,7 +393,7 @@
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
       <field name="domain">[('state','=','0'),('applicant.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_all">
@@ -270,7 +401,7 @@
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
       <field name="domain">['|','|',('applicant.user_id','=',uid),('current_handler.user_id','=',uid),('his_handler.user_id','=',uid)]</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_report1">
@@ -278,7 +409,7 @@
       <field name="res_model">dtdream.budget</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,kanban</field>
     </record>
     <record model="ir.actions.act_window" id="open_budget_report2">
       <field name="name">查看未填写预算员工</field>
@@ -287,7 +418,7 @@
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
       <field name="context">{"search_default_employee_budget4":1}</field>
-      <field name="search_view_id" ref="view_budget_employee_filter"></field>
+      <field name="search_view_id" ref="view_budget_employee_filter"/>
       <field name="domain">[('department_id.is_budget_department','=',True)]</field>
     </record>
 
@@ -358,6 +489,6 @@
     <menuitem name="报告" id="menu_budget_report" parent="dtdream_budget_menu_root" groups="group_budget_admin"/>
     <menuitem name="报表" id="menu_budget_report1" parent="menu_budget_report" action="open_budget_report1"/>
     <menuitem name="查看未填写预算员工" id="menu_budget_report2" parent="menu_budget_report" action="open_budget_report2"/>
-    <menuitem name="部门权签人配置" id="menu_budget_config" parent="dtdream_budget_menu_root" action="open_budget_config" groups="group_budget_admin"></menuitem>
+    <menuitem name="部门权签人配置" id="menu_budget_config" parent="dtdream_budget_menu_root" action="open_budget_config" groups="group_budget_admin"/>
   </data>
 </openerp>

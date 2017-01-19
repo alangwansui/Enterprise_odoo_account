@@ -25,9 +25,23 @@
             }
         }
     }
-    .o_cannot_create .oe_view_nocontent_create {
-       display: none;
+    .o_cannot_create{
+        .oe_view_nocontent{
+            display:none;
+        }
+        .oe_view_nocontent_create {
+           display: none;
+        }
     }
+    .o_kanban_view{
+        .oe_view_nocontent{
+            display:none;
+        }
+    }
+    //.o_cannot_create {
+    //    display: none;
+    //}
+
     // Hide view_nocontent in x2many fields
     &.o_form_field .oe_view_nocontent {
         display: none;

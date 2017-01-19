@@ -1,0 +1,8 @@
+
+.dtdream_demand_manage .o_mail_body_short {
+    display: none;
+}
+
+.dtdream_demand_manage .o_thread_message_core .o_mail_body_long {
+    display: block !important;
+}

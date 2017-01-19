@@ -387,7 +387,7 @@
     </t>
 </t>
 
-<t t-name="TreeView">
+<div t-name="TreeView" class="table-responsive">
     <select t-if="toolbar" style="width: 30%"/>
     <table class="o_treeview_table">
         <thead>
@@ -402,7 +402,7 @@
         <tbody>
         </tbody>
     </table>
-</t>
+</div>
 <tr t-name="TreeView.rows"
         t-foreach="records" t-as="record"
         t-att-id="'treerow_' + record.id"
@@ -925,8 +925,10 @@
         <t t-if="!widget.get('effective_readonly')">
             <div class="o_form_image_controls">
                 <span class="fa fa-pencil fa-lg pull-left o_select_file_button" title="Edit"/>
-                <span class="fa fa-trash-o fa-lg pull-right o_clear_file_button" title="Clear"/>
-
+                <span class="fa fa-plus fa-lg pull-left o_addsize_file_button" title="放大图片"></span>
+                <span class="fa fa-minus fa-lg pull-left o_reducesize_file_button" title="缩小图片"></span>
+                <span class="fa fa-rotate-right fa-lg pull-left o_rotate_file_button" title="旋转图片"></span>
+                <span class="fa fa-trash-o fa-lg pull-left o_clear_file_button" title="Clear"/>
                 <span class="o_form_binary_progress">Uploading...</span>
                 <t t-call="HiddenInputFile">
                     <t t-set="fileupload_id" t-value="widget.fileupload_id"/>

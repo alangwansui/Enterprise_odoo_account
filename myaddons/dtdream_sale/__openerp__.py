@@ -24,6 +24,8 @@
     # always loaded
     'data': [
         'import.xml',
+        'views/incomes.xml',
+        'views/actions.xml',
         'security/dtdream_sale_security.xml',
         'security/dtdream_sale_permission_groups.xml',
         'security/ir.model.access.csv',

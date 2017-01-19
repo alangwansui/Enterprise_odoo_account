@@ -12,12 +12,15 @@
                         <button string="Apply" type="object" name="execute" class="oe_highlight"/>
                         <button string="Cancel" type="object" name="cancel" class="oe_link"/>
                     </header>
-                    <group string="钉钉">
-                        <field name="agentId"/>
-                        <field name="agentUrl"/>
-                        <field name="corpId"/>
-                        <field name="corpSecret"/>
-                    </group>
+                    <sheet>
+                        <group string="钉钉">
+                            <field name="agentId"/>
+                            <field name="agentUrl"/>
+                            <field name="corpId"/>
+                            <field name="corpSecret"/>
+                        </group>
+                    </sheet>
+
                 </form>
             </field>
         </record>
@@ -26,8 +29,9 @@
             <field name="name">报销单设置</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">dtdream.expense.config.settings</field>
-            <field name="view_mode">form</field>
-            <field name="target">inline</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!--<field name="target">inline</field>-->
         </record>
 
         <menuitem id="menu_expense_general_settings" name="设置" parent="dtdream_expense.dtdream_expense_configration"

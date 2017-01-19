@@ -27,6 +27,7 @@
                 <field name="his_approve" widget="many2many_tags" invisible="1"></field>
                 <field name="is_handler" invisible="1"></field>
                 <field name="is_legal_interface" invisible="1"></field>
+                <field name="is_review_ids" invisible="1"></field>
                 <field name="applicant" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1" options="{'no_create': True}"></field>
                 <field name="tel_number"></field>
                 <field name="deparment_manage" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
@@ -40,23 +41,38 @@
             </group>
             <group string="合同信息">
               <group>
-                <field name="constract_id" readonly="1" required="1"></field>
+                <field name="contract_id" readonly="1" required="1"></field>
+                <field name="contract_id_copy" invisible="1"></field>
                 <field name="name"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
-                <field name="constract_id_copy" invisible="1"></field>
                 <field name="money"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
-                <field name="money_final" attrs="{'readonly':['|',('state','not in','8'),('is_file_id','=',False)],'required':[('state','not in','8')]}"></field>
-                <field name="pro_name" attrs="{'invisible':[('constract_type_char','!=','商务平台协议')],'required':[('constract_type_char', '=', '商务平台协议')]}" options="{'no_create': True}"></field>
-                <field name="partner" attrs="{'invisible':[('constract_type_char','!=','商务平台协议')]}"></field>
-                <field name="provider" options="{'no_open':True,'no_create':True}" attrs="{'invisible':[('constract_type_char','=','商务平台协议')],'required':[('constract_type_char','!=','商务平台协议')],'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <!--<field name="money_final" attrs="{'readonly':['|',('state','not in','8'),('is_file_id','=',False)],'required':[('state','not in','8')]}"></field>-->
+                <field name="items"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="deadline"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <!--<field name="pro_name" attrs="{'invisible':[('constract_type_char','!=','商务平台协议')],'required':[('constract_type_char', '=', '商务平台协议')]}" options="{'no_create': True}"></field>-->
+                <field name="pro_responsible_person" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="partner_jia" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="partner_yi" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="partner_bing" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
               </group>
               <group>
                 <field name="create_time"></field>
-                <field name="constract_type"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1" options="{'no_create': True}"></field>
-                <field name="constract_type_char" invisible="1"></field>
-
+                <field name="contract_type" required="1" options="{'no_create': True,'no_open':True}"
+                       attrs="{'readonly':['&amp;',
+                       '|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False),
+                       '|',('state','not in',('1','2','3','4')),('is_legal_interface','=',False)]}"></field>
+                <field name="if_must_subtype" invisible="1"></field>
+                <field name="contract_subtype" options="{'no_create': True,'no_open':True}"
+                       attrs="{'readonly':['&amp;',
+                       '|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False),
+                       '|',('state','not in',('1','2','3','4')),('is_legal_interface','=',False)],
+                       'required':[('if_must_subtype','=',True)]}"></field>
                 <field name="is_standard"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
                 <label for="ttt"></label>
                 <span attrs="{'invisible':['|',('is_standard','=',False),('state','in',('1','2','3','4','5','6','7','8','9','10'))]}" style="text-align:right" name="ttt">标准合同无需评审，直接进入会签环节，可快速完成合同评审流程,模板下载地址：<field name="tip" readonly="1" widget="url" class="zx_inline"></field></span>
+                <field name="risk_warning"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="amounts"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+                <field name="stamp_type"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
+
 
 
               </group>
@@ -68,15 +84,34 @@
             <group class="zxgroup">
                 <field name="background"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
                 <field name="remark"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
-                <field name="attachment_name" invisible="1"></field>
-                <field name="attachment" widget="binary" filename="attachment_name" class="zxtest" attrs="{'readonly':['|',('is_applicant','=',False),('state','in',('1','2','3','4','5','6','7','8','9','10'))]}" required="1"></field>
-                <field name="att_final_name" invisible="1"></field>
-                <field name="att_final" widget="binary" filename="att_final_name" readonly="1"></field>
+                <field name="attachment_ids" create="false" options="{'no_create':True}" required="True"
+                       attrs="{'readonly':['&amp;','&amp;','&amp;',
+                       '|',('is_applicant','=',False),('state','in',('1','2','3','4','5','6','7','8','9','10')),
+                       '|',('is_manager','=',False),('state','!=','1'),
+                       '|',('is_legal_interface','=',False),('state','not in',('2','4')),
+                       '|',('is_review_ids','=',False),('state','!=','3')]}">
+                  <tree>
+                    <field name="attachment_name" invisible="1"></field>
+                    <field name="attachment" widget="binary" filename="attachment_name"></field>
+                    <field name="attachment_remark"></field>
+                    <field name="attachment_upper" readonly="1"></field>
+                  </tree>
+                  <form class="contract_attachment">
+                    <sheet>
+                      <group>
+                        <field name="attachment" widget="binary" filename="attachment_name"></field>
+                        <field name="attachment_name" invisible="1"></field>
+                        <field name="attachment_remark"/>
+                        <field name="attachment_upper" readonly="1"></field>
+                      </group>
+                    </sheet>
+                  </form>
+                </field>
 
             </group>
             <group string="流程信息">
               <group>
-                <field name="current_handler_ids" widget="many2many_tags" readonly="1"></field>
+                <field name="current_handler_ids" widget="many2many_tags" attrs="{'readonly':['|',('state','=','draft'),('is_legal_interface','=',False)]}"></field>
                 <field name="review_ids" widget="many2many_tags" attrs="{'readonly':['&amp;','&amp;','|',('is_manager','=',False),('state','not in','1'),'|',('is_legal_interface','=',False),('state','not in','2'),'|',('is_applicant','=',False),('state','in',('1','2','3','4','5','6','7','8','9','10'))]}"></field>
                 <field name="quanqian_id" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in',('2','3','4','5'))]}"></field>
                 <field name="stamp_id" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in',('2','3','4','5','6'))]}"></field>
@@ -86,7 +121,7 @@
               <group>
 
                 <field name="legal_interface" readonly="1" widget="many2many_tags"></field>
-                <field name="huiqian_ids" widget="many2many_tags" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in','4')]}"></field>
+                <field name="huiqian_ids" widget="many2many_tags" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in',('2','3','4'))]}"></field>
                 <field name="file_id" attrs="{'readonly':['|',('is_legal_interface','=',False),('state','not in',('2','3','4','5','6','7'))]}"></field>
                 <field name="is_filed" readonly="1"></field>
                 <field name="file_time" readonly="1"></field>
@@ -104,15 +139,33 @@
       </field>
     </record>
 
-
+    <record id="view_dtdream_contract_filter" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.filter</field>
+      <field name="model">dtdream.contract</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"></field>
+          <field name="contract_id"></field>
+          <field name="contract_type"></field>
+          <field name="contract_subtype"></field>
+          <field name="money"></field>
+          <field name="partner_jia"></field>
+          <field name="partner_yi"></field>
+          <field name="partner_bing"></field>
+          <field name="create_time"></field>
+          <field name="background"></field>
+          <field name="remark"></field>
+        </search>
+      </field>
+    </record>
     <record id="view_dtdream_contract_tree" model="ir.ui.view">
       <field name="name">view.dtdream.contract.tree</field>
       <field name="model">dtdream.contract</field>
       <field name="arch" type="xml">
         <tree colors="#00a4dd:name=='asd';">
-          <field name="constract_id"></field>
+          <field name="contract_id"></field>
           <field name="name"></field>
-          <field name="constract_type"></field>
+          <field name="contract_type"></field>
           <field name="state"></field>
           <field name="current_handler_ids"></field>
           <field name="applicant"></field>
@@ -121,24 +174,25 @@
         </tree>
       </field>
     </record>
-    <record id="view_dtdram_contract_config_form" model="ir.ui.view">
-      <field name="name">view.dtdream.contract.config.form</field>
-      <field name="model">dtdream.contract.config</field>
+    <record id="view_dtdram_contract_type_form" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.type.form</field>
+      <field name="model">dtdream.contract.type</field>
       <field name="arch" type="xml">
         <form>
           <sheet>
             <group>
               <group>
                 <field name="name" required="1"></field>
-                <field name="name_id" invisible="1"></field>
-                <field name="review_ids" required="1" widget="many2many_tags" options="{'no_create': True}"></field>
-                <field name="quanqian_id" required="1" options="{'no_create': True}"></field>
-                <field name="file_id" required="1" options="{'no_create': True}"></field>
+                <field name="name_id" required="1"></field>
+                <field name="how_setting_approver" required="1" widget="radio"></field>
               </group>
               <group>
-                <field name="legal_interface" required="1" widget="many2many_tags" options="{'no_create': True}"></field>
-                <field name="huiqian_ids" required="1" widget="many2many_tags" options="{'no_create': True}"></field>
-                <field name="stamp_id" required="1" options="{'no_create': True}"></field>
+                <field name="huiqian_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible':[('how_setting_approver','!=','type')]}"></field>
+                <field name="review_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible':[('how_setting_approver','!=','type')]}"></field>
+                <field name="quanqian_id" options="{'no_create': True}" attrs="{'invisible':[('how_setting_approver','!=','type')]}"></field>
+                <field name="file_id" options="{'no_create': True}" attrs="{'invisible':[('how_setting_approver','!=','type')]}"></field>
+                <field name="legal_interface" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible':[('how_setting_approver','!=','type')]}"></field>
+                <field name="stamp_id" options="{'no_create': True}" attrs="{'invisible':[('how_setting_approver','!=','type')]}" ></field>
               </group>
             </group>
           </sheet>
@@ -157,6 +211,69 @@
 
           </sheet>
         </form>
+      </field>
+    </record>
+
+    <record id="view_dtdream_contract_attachment_form" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.attachment.form</field>
+      <field name="model">dtdream.contract.attachment</field>
+      <field name="arch" type="xml">
+        <form class="contract_attachment">
+          <sheet>
+            <group class="contract_attachment">
+              <field name="attachment" widget="binary" filename="attachment_name" required="1"></field>
+              <field name="attachment_name" invisible="1" required="1" class="contract_attachment"></field>
+              <field name="attachment_remark"></field>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_dtdream_contract_attachment_tree" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.attachment.tree</field>
+      <field name="model">dtdream.contract.attachment</field>
+      <field name="arch" type="xml">
+        <tree>
+              <field name="attachment" widget="binary" filename="attachment_name"></field>
+              <field name="attachment_name" invisible="1"></field>
+        </tree>
+      </field>
+    </record>
+    <record id="view_dtdream_contract_subtype_form" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.subtype.form</field>
+      <field name="model">dtdream.contract.subtype</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="parent_id" required="1"></field>
+                <field name="name" required="1"></field>
+                <field name="name_id"></field>
+              </group>
+              <group>
+                <field name="if_display_approver" invisible="1"></field>
+                <field name="huiqian_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible':[('if_display_approver','=',False)]}"></field>
+                <field name="review_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible':[('if_display_approver','=',False)]}"></field>
+                <field name="quanqian_id" options="{'no_create': True}" attrs="{'invisible':[('if_display_approver','=',False)]}"></field>
+                <field name="file_id" options="{'no_create': True}" attrs="{'invisible':[('if_display_approver','=',False)]}"></field>
+                <field name="legal_interface" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible':[('if_display_approver','=',False)]}"></field>
+                <field name="stamp_id" options="{'no_create': True}" attrs="{'invisible':[('if_display_approver','=',False)]}" ></field>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <record id="view_dtdream_contract_subtype_tree" model="ir.ui.view">
+      <field name="name">view.dtdream.contract.subtype.tree</field>
+      <field name="model">dtdream.contract.subtype</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="parent_id"></field>
+          <field name="name"></field>
+        </tree>
       </field>
     </record>
     <!-- ====================================================动作===================================================== -->
@@ -201,8 +318,8 @@
       <field name="view_mode">tree,form</field>
     </record>
     <record model="ir.actions.act_window" id="open_contract_config">
-      <field name="name">审批人维护</field>
-      <field name="res_model">dtdream.contract.config</field>
+      <field name="name">合同类型管理</field>
+      <field name="res_model">dtdream.contract.type</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
@@ -210,6 +327,13 @@
     <record model="ir.actions.act_window" id="open_contract_url">
       <field name="name">标准合同下载地址管理</field>
       <field name="res_model">dtdream.contract.url</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <record id="open_contract_subtype" model="ir.actions.act_window">
+      <field name="name">合同子类型管理</field>
+      <field name="res_model">dtdream.contract.subtype</field>
       <field name="type">ir.actions.act_window</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
@@ -222,7 +346,8 @@
     <menuitem name="我已审批" id="menu_contract_approved" parent="menu_contract_root" action="open_approved" sequence="30"></menuitem>
     <menuitem name="所有单据" id="menu_contract_all" parent="menu_contract_root" action="open_all_contract" sequence="40"></menuitem>
     <menuitem name="报告" id="menu_contract_all_all" parent="menu_contract_root" action="open_all_all_contract" groups="group_contract_view_all" sequence="50"></menuitem>
-    <menuitem name="审批人维护" id="menu_contract_config" parent="menu_contract_root" action="open_contract_config" groups="group_contract_config" sequence="60"></menuitem>
+    <menuitem name="合同类型管理" id="menu_contract_config" parent="menu_contract_root" action="open_contract_config" groups="group_contract_config" sequence="60"></menuitem>
     <menuitem name="标准合同下载地址管理" id="menu_contract_url" parent="menu_contract_root" action="open_contract_url" groups="group_contract_config" sequence="70"></menuitem>
+    <menuitem name="合同子类型管理" id="menu_contract_subtype" parent="menu_contract_root" action="open_contract_subtype" groups="group_contract_config" sequence="65"></menuitem>
   </data>
 </openerp>

@@ -32,6 +32,7 @@
         'views/dtdream_assets_management.xml',
         'views/dtdream_assets_check.xml',
         'views/data.xml',
+        'views/send_mail_interval.xml',
         'security/ir.model.access.csv',
     ],
 }

@@ -15,6 +15,36 @@
             </field>
         </record>
 
+      <record id="view_dtdream_industry_kanban" model="ir.ui.view">
+            <field name="name">view.dtdream.industry.kanban</field>
+            <field name="model">dtdream.industry</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="name" />
+                    <field name="code" />
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>名称:</strong> <field name="name" /></li>
+                                        <li ><strong>编码:</strong> <field name="code" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
         <record id="view_dtdream_industry_form" model="ir.ui.view">
             <field name="name">view.dtdream.industry.form</field>
             <field name="model">dtdream.industry</field>
@@ -53,7 +83,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">dtdream.industry</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <!--<field name="domain">[('parent_id.parent_id','=',False)]</field>-->
             <field name="search_view_id" ref="view_dtdream_industry_search"></field>
             <field name="context">{'search_default_group_by_parent_id':'parent_id'}</field>

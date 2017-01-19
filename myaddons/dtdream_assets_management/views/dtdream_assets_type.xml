@@ -45,12 +45,46 @@
       </field>
     </record>
 
+    <record model="ir.ui.view" id="dtdream_assets_type_kanban">
+      <field name="name">dtdream.assets.type.kanban</field>
+      <field name="model">dtdream.assets.type</field>
+      <field name="arch" type="xml">
+        <kanban class="o_res_partner_kanban" >
+            <field name="name"/>
+            <field name="code"/>
+            <field name="discount"/>
+            <field name="account"/>
+            <field name="account_code"/>
+            <field name="des"/>
+            <templates>
+                <t t-name="kanban-box">
+                <div class="oe_kanban_global_click ">
+                     <div class="o_kanban_image">
+                          <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                      </div>
+                    <div class="oe_kanban_details">
+                        <div name="tags"/>
+                            <ul>
+                                <li ><strong>资产类别名称:</strong> <field name="name" /></li>
+                                <li ><strong>资产类别编号:</strong> <field name="code" /></li>
+                                <li ><strong>描述:</strong> <field name="des" /></li>
+                            </ul>
+                    <div name="tags"/>
+                    </div>
+                </div>
+                </t>
+            </templates>
+        </kanban>
+      </field>
+    </record>
+
+
     <record id="act_dtdream_assets_type_config" model="ir.actions.act_window">
             <field name="name">资产类别</field>
             <field name="res_model">dtdream.assets.type</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
     </record>
 
   </data>

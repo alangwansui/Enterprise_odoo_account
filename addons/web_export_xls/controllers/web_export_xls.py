@@ -20,6 +20,16 @@ class ExcelExportView(ExcelExport):
 
     @http.route('/web/export/xls_view', type='http', auth='user')
     def export_xls_view(self, data, token):
+        group = http.request.env['res.groups'].search([('name', '=', u'导出')])
+        invalid = True
+        for i in range(len(group.users)):
+            if http.request.uid == group.users[i].id:
+                invalid = False
+                break
+        if invalid:
+            data = {"code":1, "message":u"权限不足,请联系管理员"}
+            return request.make_response(json.dumps(data), headers=[('Content-Type', "application/json")])
+
         logger.info('+++ begin export_xls_view ++++')
         logger.info(data)
         logger.info(token)

@@ -25,7 +25,7 @@
             <field name="res_model">dtdream.hr.performance</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('officer.user_id','=',uid),('state', 'in', ('2','5')),('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
@@ -34,7 +34,7 @@
             <field name="res_model">dtdream.hr.performance</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 
@@ -43,7 +43,7 @@
             <field name="res_model">dtdream.hr.performance</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('name.Inaugural_state','=','Inaugural_state_01')]</field>
         </record>
 

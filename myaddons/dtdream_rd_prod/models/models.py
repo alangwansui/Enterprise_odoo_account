@@ -21,7 +21,8 @@ class dtdream_prod_appr(models.Model):
     _description = u"研发产品"
     department = fields.Many2one('hr.department', '部门', track_visibility='onchange', required=True)
     department_2 = fields.Many2one('hr.department', '二级部门', track_visibility='onchange')
-    name =fields.Char('产品名称', required=True, track_visibility='onchange')
+    name = fields.Char('产品名称', required=True, track_visibility='onchange')
+    pro_PDT = fields.Many2one('dtdream.rd.pdtconfig','PDT')
     state = fields.Selection([('state_00', '草稿'), ('state_01', '立项'), ('state_02', '总体设计'), ('state_03', '迭代开发'),
                               ('state_04', '验证发布'), ('state_06', '暂停'), ('state_07', '中止'), ('state_05', '完成')],'产品状态', readonly=True, default='state_00')
 
@@ -29,6 +30,7 @@ class dtdream_prod_appr(models.Model):
 
     version_ids = fields.One2many('dtdream_rd_version', 'proName', '版本')
     role_ids = fields.One2many('dtdream_rd_role', 'role_id', string='角色')
+    risk_ids = fields.One2many('dtdream_rd_risk', 'risk_id', string='风险与机遇', track_visibility='onchange')
 
     pro_time = fields.Date('立项时间', track_visibility='onchange')
     overall_plan_time = fields.Date('总体设计计划完成时间', track_visibility='onchange')
@@ -191,6 +193,18 @@ class dtdream_prod_appr(models.Model):
                 process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
                 self.add_follower(employee_id=process.approver.id)
+
+    @api.constrains('risk_ids')
+    def _compute_risk_ids(self):
+        for process in self.risk_ids:
+            if process.risk_state != process.risk_state_old:
+                risk_description = process.name
+                risk_state = process.risk_state
+                if process.risk_state_old :
+                    self.message_post(body=u"""<p>把风险：%s 的状态改为%s</p>""" % (risk_description, risk_state.name))
+                else :
+                    self.message_post(body=u"""<p>新创建风险：%s ，状态为%s</p>""" % (risk_description, risk_state.name))
+                process.write({'risk_state_old': process.risk_state.id})
 
     is_finsished_01 = fields.Boolean(string="立项多人审批是否结束",store=True)
     is_finsished_02 = fields.Boolean(string="总体设计多人审批是否结束",store=True)

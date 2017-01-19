@@ -32,7 +32,7 @@
         </field>
     </record>
 
-    <record id="act_dtdream_demand_app_reject_wizard" model="ir.actions.act_window">
+    <record id="act_dtdream_assets_check_wizard" model="ir.actions.act_window">
         <field name="name">资产自盘</field>
         <field name="res_model">dtdream.assets.management.wizard</field>
         <field name="type">ir.actions.act_window</field>

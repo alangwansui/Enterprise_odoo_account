@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import csv
 import datetime
 import io
@@ -307,7 +308,7 @@ class ir_import(orm.TransientModel):
             traversal.append(field)
         return traversal
 
-    def _match_headers(self, rows, fields, options):
+    def _match_headers(self, rows, fields, options,record=None):
         """ Attempts to match the imported model's fields to the
         titles of the parsed CSV file, if the file is supposed to have
         headers.
@@ -327,6 +328,12 @@ class ir_import(orm.TransientModel):
             return None, None
 
         headers = next(rows)
+        if record.res_model == "dtdream.product.line":
+                pro_dic = {u'临时目录价':'list_price',u'数量':'pro_num',u'申请折扣':'apply_discount',u'备注':'pro_remark'}
+                for rec in headers:
+                    headers[headers.index(rec)] = pro_dic.get(rec,rec)
+                    if rec.find('BOM') == 1:
+                        headers[headers.index(rec)] = u'bom'
         return headers, {
             index: [field['name'] for field in self._match_header(header, fields, options)] or None
             for index, header in enumerate(headers)
@@ -354,7 +361,7 @@ class ir_import(orm.TransientModel):
         try:
             rows = self._read_file(record.file_type, record, options)
 
-            headers, matches = self._match_headers(rows, fields, options)
+            headers, matches = self._match_headers(rows, fields, options, record)
             # Match should have consumed the first row (iif headers), get
             # the ``count`` next rows for preview
             preview = list(itertools.islice(rows, count))

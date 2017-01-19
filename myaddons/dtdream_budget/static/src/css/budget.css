@@ -28,3 +28,6 @@
 .o_form_view.zx_form.o_form_editable .zx_edit_invisible{
     display: none;
 }
+.o_chatter.o_form_field.oe_chatter tr{
+    width:200px;
+}

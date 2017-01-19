@@ -293,6 +293,7 @@ return Widget.extend({
         this._super(parent);
         this.filters = filters || [];
         this.searchview = parent;
+        var dt_searchview = this.searchview;
         this.propositions = [];
         this.fields_def = fields_def.then(function (data) {
             var fields = {
@@ -300,7 +301,21 @@ return Widget.extend({
             };
             _.each(data, function(field_def, field_name) {
                 if (field_def.selectable !== false && field_name !== 'id') {
-                    fields[field_name] = field_def;
+                    if (dt_searchview.dataset.model == "crm.lead" && ['is_important','create_date','supply_time','project_country','name','is_invest_project','is_dtdream_integrated','write_date','industry_id','ali_division','ali_saleman','project_leave','pre_implementation_time','pre_check_time'].indexOf(field_name) >= 0 ){
+                        if (fields.hasOwnProperty('id')){
+                            delete fields.id
+                        }
+                        if (field_name == "industry_id"){
+                            field_def.string = "二级行业"
+                        }
+                        if (field_name == "name"){
+                            field_def.string = "项目名称"
+                        }
+                        fields[field_name] = field_def;
+                    }
+                    else if (dt_searchview.dataset.model != "crm.lead" ){
+                        fields[field_name] = field_def;
+                    }
                 }
             });
             return fields;
@@ -423,11 +438,23 @@ return Widget.extend({
         });
     },
     get_groupable_fields: function (fields) {
+        var self = this;
         var groupable_types = ['many2one', 'char', 'boolean', 'selection', 'date', 'datetime'];
         var filter_group_field = _.filter(fields, function(field, name) {
             if (field.store && _.contains(groupable_types, field.type)) {
                 field.name = name;
-                return field;
+                if (self.searchview.dataset.model == "crm.lead" && ['create_date','supply_time','project_country','name','is_invest_project','is_dtdream_integrated','write_date','industry_id','ali_division','ali_saleman','project_leave','pre_implementation_time','pre_check_time'].indexOf(field.name) >= 0 ){
+                    if (field.name == "industry_id"){
+                        field.string = "二级行业"
+                    }
+                    if (field.name == "name"){
+                        field.string = "项目名称"
+                    }
+                    return field;
+                }
+                else if (self.searchview.dataset.model != "crm.lead" ){
+                    return field;
+                }
             }
         });
         this.groupable_fields = _.sortBy(filter_group_field, 'string');

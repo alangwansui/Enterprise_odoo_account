@@ -141,7 +141,8 @@ class DTAD(object):
                 if flag:
                     d = self._build_phone_msg(**kw)
                     if d:
-                        retval = DTPhone.send_ms(**d)
+                        # retval = DTPhone.send_ms(**d)
+                        retval = DTPhone.send_sms_aliyun(**d)
                         if retval == DTPhone.ERROR_NUM_SUCCESS:
                             if self._save_verifycode_and_date(login, d['code']):
                                 result = DTError.get_error_msg(DTError.DT_ERROR_NUM_SUCCESS)

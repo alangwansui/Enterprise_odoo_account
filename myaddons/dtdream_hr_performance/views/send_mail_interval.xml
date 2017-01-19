@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.cron" id="send_mail_task_hr_performance">
+            <field name='name'>员工绩效邮件</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="nextcall" eval="(DateTime.now().strftime('%Y-%m-%d %H:%M:%S'))[0:10] + ' 13:00:00'"/>
+            <field name="model">dtdream.hr.performance</field>
+            <field name="function">send_mail_interval</field>
+            <field name="args">()</field>
+        </record>
+
+        <record model="ir.cron" id="send_mail_task_hr_pbc">
+            <field name='name'>部门绩效邮件</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="nextcall" eval="(DateTime.now().strftime('%Y-%m-%d %H:%M:%S'))[0:10] + ' 15:00:00'"/>
+            <field name="model">dtdream.hr.pbc</field>
+            <field name="function">send_pbcmail_interval</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</openerp>

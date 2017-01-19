@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ##############################################################################
 #    
 #    OpenERP, Open Source Management Solution
@@ -275,6 +277,9 @@ class CompanyLDAP(osv.osv):
             help="Request secure TLS/SSL encryption when connecting to the LDAP server. "
                  "This option requires a server with STARTTLS enabled, "
                  "otherwise all authentication attempts will fail."),
+        'ldap_domain': fields.char(string=u"LDAP域名"),
+        'ldap_cert_file':fields.char(string=u"LDAP证书"),
+        'ldap_port': fields.integer(string="LDAPS port"),
     }
     _defaults = {
         'ldap_server': '127.0.0.1',

@@ -35,7 +35,7 @@
             <form>
               <header>
                 <button name="%(act_remind_assets_check)d" string="盘点邮催" type="action" class="oe_highlight" attrs="{'invisible':['|',('amongst','=',True),'|',('state','!=','1'),'&amp;',('is_manage','=',False),('is_officer','=',False)]}"/>
-                <button name="%(act_dtdream_demand_app_reject_wizard)d" string="自盘" type="action" class="oe_highlight" attrs="{'invisible':['|',('state','!=','1'),('amongst','=',False)]}"/>
+                <button name="act_dtdream_assets_check" string="自盘" type="object" class="oe_highlight" attrs="{'invisible':['|',('state','!=','1'),('amongst','=',False)]}"/>
                 <field name="state"  widget="statusbar" statusbar_visible="1,99"/>
               </header>
 
@@ -54,7 +54,7 @@
                           <field name="is_officer" invisible="1"/>
                       </group>
                       <group>
-                          <field name="bill_num" required="True"/>
+                          <field name="bill_num"/>
                           <field name="department" options="{'no_create': True, 'no_open': True}" required="True"/>
                           <field name="asset_name" options="{'no_create': True, 'no_open': True}" required="True"/>
                           <field name="asset_code" required="True"/>
@@ -128,6 +128,7 @@
                 <field name="asset_code"/>
                 <field name="asset_name"/>
                 <field name="name"/>
+                <field name="workid" invisible="1"/>
                 <field name="department"/>
                 <field name="has_label"/>
                 <field name="useable"/>
@@ -139,17 +140,46 @@
         </field>
     </record>
 
-    <record id="view_dtdream_assets_check_filter" model="ir.ui.view">
-        <field name="name">dtdream.assets.check.filter</field>
+
+      <record id="view_dtdream_assets_check_kanban" model="ir.ui.view">
+        <field name="name">view.dtdream.assets.check.kanban</field>
         <field name="model">dtdream.assets.check</field>
         <field name="arch" type="xml">
-            <search string="Search">
-                <field name="name"/>
+            <kanban class="o_res_partner_kanban" >
+                <field name="check_code"/>
                 <field name="asset_code"/>
                 <field name="asset_name"/>
-            </search>
+                <field name="name"/>
+                <field name="department"/>
+                <field name="has_label"/>
+                <field name="useable"/>
+                <field name="unused"/>
+                <field name="selfcheck_date"/>
+                <field name="state"/>
+                <field name="current_approve"/>
+                <templates>
+                    <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click ">
+                         <div class="o_kanban_image">
+                              <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                          </div>
+                        <div class="oe_kanban_details">
+                            <div name="tags"/>
+                                <ul>
+                                    <li ><strong>盘点编号:</strong> <field name="check_code" /></li>
+                                    <li > <strong>资产编号:</strong><field name="asset_code" /></li>
+                                    <li > <strong>资产责任人:</strong><field name="name" /></li>
+                                    <li > <strong>状态:</strong><field name="state"/></li>
+                                </ul>
+                        <div name="tags"/>
+                        </div>
+                    </div>
+                    </t>
+                </templates>
+        </kanban>
         </field>
     </record>
+
 
     <record id="sequence_assets_check" model="ir.sequence">
         <field name="name">盘点编号</field>
@@ -159,7 +189,7 @@
         <field eval="1" name="number_increment"/>
         <field eval="True" name="use_date_range"/>
         <field eval="False" name="company_id"/>
-        <field name="padding">2</field>
+        <field name="padding">4</field>
     </record>
 
   </data>

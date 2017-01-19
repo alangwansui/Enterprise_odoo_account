@@ -26,6 +26,9 @@
                                     <newline/>
                                     <field name="sequence"/>
                                     <field name="ldap_tls"/>
+                                    <field name="ldap_domain"/>
+                                    <field name="ldap_cert_file"/>
+                                    <field name="ldap_port"/>
                                 </group>
                             </form>
                             <tree string="LDAP Configuration">

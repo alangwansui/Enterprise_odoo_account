@@ -50,7 +50,7 @@ odoo.define('web_export_view.export_xls', function(require) {
                 // find only rows with data
                 if ($row.attr('data-id')) {
                     export_row = [];
-                    checked = $row.find('th input[type=checkbox]').attr("checked");
+//                    checked = $row.find('th input[type=checkbox]').attr("checked");
                     $.each(export_columns_keys, function () {
                         cell = $row.find('td[data-field="' + this + '"]').get(0);
                         text = cell.text || cell.textContent || cell.innerHTML || "";
@@ -74,7 +74,10 @@ odoo.define('web_export_view.export_xls', function(require) {
                             export_row.push(text.trim());
                         }
                     });
-                    export_rows.push(export_row);
+                    if ($row.find('input:checked').length > 0){
+                        export_rows.push(export_row);
+                    }
+
                 }
             });
             $.blockUI();
@@ -85,6 +88,9 @@ odoo.define('web_export_view.export_xls', function(require) {
                     headers: export_columns_names,
                     rows: export_rows
                 })},
+                error: function(error){
+                    alert("权限不足");
+                },
                 complete: $.unblockUI
             });
         }

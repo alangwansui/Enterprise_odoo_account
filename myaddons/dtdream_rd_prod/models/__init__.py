@@ -8,10 +8,13 @@ from . import models                    #研发产品
 from . import dtdream_rd_approver       #产品审批基础数据配置
 from . import dtdream_rd_role           #产品里的人员
 from . import dtdream_rd_process        #产品审批意见
+from . import dtdream_rd_risk           #产品风险与机遇
 
 from . import versionModels
 from . import dtdream_rd_approver_ver                  #版本审批基础数据配置
 from . import dtdream_rd_process_ver                   #版本审批意见
+from . import dtdream_rd_PDTconfig                     #PDT配置
+from . import dtdream_rd_riskconfig                    #风险配置
 
 from . import replanning                                #重计划
 

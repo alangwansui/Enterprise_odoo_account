@@ -71,10 +71,10 @@ class dtdream_grants(models.Model):
                 em.job_state = em.env['leaving.handle'].search([('name','=',em.name.id)]).actual_leavig_date
             em.full_name = em.name.full_name
             em.job_number = em.name.job_number
-            if em.name.department_id.parent_id:
-                em.top_department = em.name.department_id.parent_id.name
-            else:
-                em.top_department = em.name.department_id.name
+            current_deparment = em.name.department_id
+            while current_deparment.parent_id:
+                current_deparment = current_deparment.parent_id
+            em.top_department = current_deparment.name
 
     full_name = fields.Char(string="姓名",compute = _compute_employee_info,store=True)
     job_number = fields.Char(string="工号",compute = _compute_employee_info,store=True)
@@ -119,8 +119,8 @@ class dtdream_grants(models.Model):
 
 
     def _compute_if_last_month(self):
-        this_month = (datetime.today()+relativedelta(hours=8)).strftime('%Y%m')
-        if int(self.month)-int(this_month) == -1:
+        last_month = (datetime.today()+relativedelta(hours=8)-relativedelta(months=1)).strftime('%Y%m')
+        if self.month == last_month:
             self.if_last_month = True
         else:
             self.if_last_month = False
@@ -129,27 +129,31 @@ class dtdream_grants(models.Model):
     @api.model
     def create_allocation_regularly(self):
         if (datetime.today()+relativedelta(hours=8)).strftime('%d')=='01':
-            last_month = (datetime.now()-relativedelta(months=1)+relativedelta(hours=8)).strftime('%Y-%m')
-            last_month_fir = last_month+'-01'
-            this_month_fir = (datetime.now()+relativedelta(hours=8)).strftime('%Y-%m')+'-01'
-            last_month_like = last_month+'%'
-            # 上月1号入职之前的在职员工
-            zaizhi_employee = self.env['hr.employee'].search([('Inaugural_state','=','Inaugural_state_01'),('entry_day','<',last_month_fir)])
-            for rec in zaizhi_employee:
-                current_allocation = self.env['dtdream.grants.allocation'].search([('create_uid','=',rec.user_id.id)])
-                self.create({'name':rec.id,
+            self.create_allocation_manually()
+
+    @api.model
+    def create_allocation_manually(self):
+        last_month = (datetime.now()-relativedelta(months=1)+relativedelta(hours=8)).strftime('%Y-%m')
+        last_month_fir = last_month+'-01'
+        this_month_fir = (datetime.now()+relativedelta(hours=8)).strftime('%Y-%m')+'-01'
+        last_month_like = last_month+'%'
+        # 上月1号入职之前的在职员工
+        zaizhi_employee = self.env['hr.employee'].search([('Inaugural_state','=','Inaugural_state_01'),('entry_day','<',last_month_fir)])
+        for rec in zaizhi_employee:
+            current_allocation = self.env['dtdream.grants.allocation'].search([('create_uid','=',rec.user_id.id)])
+            self.create({'name':rec.id,
+                         'you_fill':current_allocation.you,
+                         'fan_fill':current_allocation.fan,
+                         'cash':current_allocation.cash if current_allocation else self.env['dtdream.grants.config'].search([]).total})
+
+        last_month_lizhi = self.env['leaving.handle'].search(['|',('actual_leavig_date','like',last_month_like),('actual_leavig_date','=',this_month_fir)])
+        for recd in last_month_lizhi:
+            if self.env['hr.employee'].search([('id','=',recd.name.id)]).Inaugural_state == 'Inaugural_state_02'and self.env['hr.employee'].search([('id','=',recd.name.id)]).entry_day<last_month_fir:
+                current_allocation = self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.name.user_id.id)])
+                self.create({'name':recd.name.id,
                              'you_fill':current_allocation.you,
                              'fan_fill':current_allocation.fan,
                              'cash':current_allocation.cash if current_allocation else self.env['dtdream.grants.config'].search([]).total})
-
-            last_month_lizhi = self.env['leaving.handle'].search(['|',('actual_leavig_date','like',last_month_like),('actual_leavig_date','=',this_month_fir)])
-            for recd in last_month_lizhi:
-                if self.env['hr.employee'].search([('id','=',recd.name.id)]).Inaugural_state == 'Inaugural_state_02'and self.env['hr.employee'].search([('id','=',recd.name.id)]).entry_day<last_month_fir:
-                    current_allocation = self.env['dtdream.grants.allocation'].search([('create_uid','=',recd.user_id.id)])
-                    self.create({'name':recd.name.id,
-                                 'you_fill':current_allocation.you,
-                                 'fan_fill':current_allocation.fan,
-                                 'cash':current_allocation.cash if current_allocation else self.env['dtdream.grants.config'].search([]).total})
 
     # @api.constrains('month')
     # def check_if_last_month(self):

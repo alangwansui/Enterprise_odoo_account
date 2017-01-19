@@ -163,6 +163,8 @@ class dtdream_prod_suspension_restoration(models.Model):
             doc.xpath("//form")[0].set("create", "false")
         if res['type'] == "tree":
             doc.xpath("//tree")[0].set("create", "false")
+        if res['type'] == "kanban":
+            doc.xpath("//kanban")[0].set("create", "false")
         res['arch'] = etree.tostring(doc)
         return res
 

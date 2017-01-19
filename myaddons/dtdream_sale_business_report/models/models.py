@@ -71,11 +71,12 @@ class dtdream_product_line(models.Model):
     is_pro_approveds = fields.Boolean(string="是否历史产品审批人",default=False,compute=_compute_is_pro_approveds)
     is_pro_shenpiren = fields.Boolean(string="是否产品审批人",compute=_compute_is_pro_shenpiren)
     is_bus_shenpiren = fields.Boolean(string="是否商务审批人",compute=_compute_is_pro_shenpiren)
-    send_type = fields.Selection([
-        ('1','借货核销'),
-        ('2','正常发货'),
-        ('3','服务订单'),
-    ],string='发货模式')
+
+    # send_type = fields.Selection([
+    #     ('1','借货核销'),
+    #     ('2','正常发货'),
+    #     ('3','服务订单'),
+    # ],string='发货模式')
 
 # 商务提前报备类
 class dtdream_sale_business_report(models.Model):
@@ -142,12 +143,12 @@ class dtdream_sale_business_report(models.Model):
         for rec in self.product_line:
             rec.write({'report_is_current':self.is_current})
 
-    @api.multi
-    def btn_finish(self):
-        if self.state == "8":
-            if self.if_out_grant == "1":
-                raise ValidationError('已经超出您的审批权限，无法直接完成。')
-        self.signal_workflow('btn_finish')
+    # @api.multi
+    # def btn_finish(self):
+    #     if self.state == "8":
+    #         if self.if_out_grant == "1":
+    #             raise ValidationError('已经超出您的审批权限，无法直接完成。')
+    #     self.signal_workflow('btn_finish')
 
     def get_base_url(self, cr, uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
@@ -156,7 +157,7 @@ class dtdream_sale_business_report(models.Model):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].search([], limit=1).smtp_user
 
-    def dtdream_send_mail(self, subject, content, email_to,appellation):
+    def dtdream_send_mail(self, subject, content, email_to,appellation,email_cc=None):
         base_url = self.get_base_url()
         link = '/web#id=%s&view_type=form&model=dtdream.sale.business.report' % self.id
         url = base_url+link
@@ -173,6 +174,7 @@ class dtdream_sale_business_report(models.Model):
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
+                'email_cc': '%s' % email_cc,
                 'auto_delete': False,
             }).send()
 
@@ -256,8 +258,8 @@ class dtdream_sale_business_report(models.Model):
     total_list_price = fields.Float('目录价总计',store=True,compute=_onchange_product_line)
     total_apply_price = fields.Float('申请折扣价总计',store=True,compute=_onchange_product_line)
     need_ali_grant = fields.Selection([
-        ('shi','是'),
-        ('fou','否')
+        ('shi','需要'),
+        ('fou','不需要')
     ],string="是否需要阿里项目授权", required=True,track_visibility='onchange')
     bidding_time = fields.Date("招标时间",required=True,track_visibility='onchange')
     pre_implementation_time = fields.Date("预计开始实施时间", required=True,track_visibility='onchange')
@@ -265,8 +267,8 @@ class dtdream_sale_business_report(models.Model):
     final_partner_id = fields.Many2one('res.partner',string="最终用户",required=True,track_visibility='onchange')
     partner_budget = fields.Float(string="客户整体预算（万元）", required=True,track_visibility='onchange')
     have_hardware = fields.Selection([
-        ('yse','是'),
-        ('no','否')
+        ('yse','含硬件'),
+        ('no','不含硬件')
     ],string="是否含硬件", required=True,track_visibility='onchange')
     supply_time = fields.Date(string="预计要货时间",required=True,track_visibility='onchange')
     apply_time = fields.Date(string="申请日期",default=lambda self:datetime.now(), required=True,track_visibility='onchange')
@@ -303,6 +305,7 @@ class dtdream_sale_business_report(models.Model):
     total_zhuren_price = fields.Float(string="办事处/系统部授权价(万元)")
     zhuren_grant_discount = fields.Float(string="主任授权折扣")
     total_chengben = fields.Float(string="项目成本(万元)")
+    chengben_detail = fields.One2many("chengben.detail.line","chengben_report_id",string="成本明细")
     gross_profit = fields.Float(string="毛利(%)")
     if_out_grant = fields.Char(default=0)
     approve_records = fields.One2many("report.handle.approve.record","report_handle_id",string="审批记录")
@@ -313,7 +316,7 @@ class dtdream_sale_business_report(models.Model):
          ('2', '规范性审核、配置清单审核'),
          ('6', '办事处商务审批'),
          ('7', '区域商务审批'),
-         ('8', '市场部商务审批'),
+         # ('8', '市场部商务审批'),
          ('9', '公司商务审批'),
          ('-1', '驳回'),
          ('done', '完成')], string="状态", default="0",track_visibility='onchange')
@@ -433,15 +436,15 @@ class dtdream_sale_business_report(models.Model):
                     raise ValidationError("请先配置区域商务审批人")
             else:
                 raise ValidationError("请先配置区域商务审批人")
-            market_manager = self.env['dtdream.shenpi.config'].search([])[0].market_manager
-            if not market_manager:
-                raise ValidationError("请先配置市场部部长")
-            if shenpiren.id == market_manager.id:
-                self.is_approve_repeat = "1"
-        if self.state=="8":
-            shenpiren = self.env['dtdream.shenpi.config'].search([])[0].market_manager
-            if not shenpiren:
-                raise ValidationError("请先配置市场部部长")
+            # market_manager = self.env['dtdream.shenpi.config'].search([])[0].market_manager
+            # if not market_manager:
+            #     raise ValidationError("请先配置市场部部长")
+            # if shenpiren.id == market_manager.id:
+            #     self.is_approve_repeat = "1"
+        # if self.state=="8":
+        #     shenpiren = self.env['dtdream.shenpi.config'].search([])[0].market_manager
+        #     if not shenpiren:
+        #         raise ValidationError("请先配置市场部部长")
         if self.state=="9":
             shenpiren = self.env['dtdream.shenpi.config'].search([])[0].company_manager
             if not shenpiren:
@@ -454,8 +457,8 @@ class dtdream_sale_business_report(models.Model):
         if len(self.product_line)==0:
             raise ValidationError("请先导入产品配置后提交")
         for product in self.product_line:
-            if product.list_price == 0:
-                raise ValidationError("产品目录价不能为0")
+            # if product.list_price == 0:
+            #     raise ValidationError("产品目录价不能为0")
             if not product.pro_num:
                 raise ValidationError("产品数量不能为0")
             if product.apply_discount <= 0 or product.apply_discount > 100:
@@ -474,29 +477,91 @@ class dtdream_sale_business_report(models.Model):
         total_sale_price = 0
         total_chengben = 0
         i=0
+        list = [
+                {'pro_source':u'自研软件','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'阿里软件','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'硬件','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'公有云','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'服务','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                ]
         for product in self.product_line:
             i = i + 1
             real_pro = self.env['product.template'].search([('bom','=',product.bom)])[0]
-            total_chuhuo_price = total_chuhuo_price + real_pro.list_price*product.pro_num*product.apply_discount/100
+            total_chuhuo_price = total_chuhuo_price + real_pro.list_price*product.pro_num*product.apply_discount/100.0
             total_chengben_price = total_chengben_price + product.list_price*product.pro_num
-            total_market_price = total_market_price + real_pro.list_price*real_pro.market_president_discount*product.pro_num/100
-            total_zhuren_price = total_zhuren_price + real_pro.list_price*real_pro.office_manager_discount*product.pro_num/100
-            total_sale_price = total_sale_price + real_pro.list_price*real_pro.sale_grant_discount*product.pro_num/100
+            # total_market_price = total_market_price + real_pro.list_price*real_pro.market_president_discount*product.pro_num/100
+            total_zhuren_price = total_zhuren_price + real_pro.list_price*real_pro.office_manager_discount*product.pro_num/100.0
+            total_sale_price = total_sale_price + real_pro.list_price*real_pro.sale_grant_discount*product.pro_num/100.0
             total_chengben = total_chengben + real_pro.cost_price*product.pro_num
-        self.total_chengben = round(total_chengben/10000,2)
-        self.a_apply_discount = round(total_chuhuo_price*100/total_chengben_price,2)
-        self.total_chuhuo_price = round(total_chuhuo_price/10000,2)
-        self.total_market_price = round(total_market_price/10000,2)
-        self.total_zhuren_price = round(total_zhuren_price/10000,2)
-        self.total_sale_price = round(total_sale_price/10000,2)
-        self.sale_grant_discount = round(total_sale_price*100/total_chengben_price,2)
-        self.market_grant_discount = round(total_market_price*100/total_chengben_price,2)
-        self.zhuren_grant_discount = round(total_zhuren_price*100/total_chengben_price,2)
-        self.gross_profit = round(((total_chuhuo_price - total_chengben)/total_chuhuo_price)*100,2)
+            rel_pro = self.env['product.template'].search([('bom','=',product.bom)])[0]
+            if len(rel_pro.pro_child_ids) > 0:
+                for zuhe_pro in rel_pro.pro_child_ids:
+                    child_total_num = zuhe_pro.child_pro_num * product.pro_num
+                    child_discount = product.apply_discount
+                    list = self.compute_sum_by_pro_name(zuhe_pro.dtdream_child_product_id,child_total_num,child_discount,list)
+            else:
+                list = self.compute_sum_by_pro_name(rel_pro,product.pro_num,product.apply_discount,list)
+        list_to_remove = []
+        for list_rec in list:
+            if list_rec['pro_cost_price'] == 0 and list_rec['pro_apply_price'] == 0 and list_rec['pro_gross_profit'] == 0:
+                list_to_remove.append(list_rec)
+        for list_remove_rec in list_to_remove:
+            list.remove(list_remove_rec)
+        for rec in list:
+            rec['pro_cost_price'] = rec['pro_cost_price'] / 10000.0
+            rec['pro_apply_price'] = rec['pro_apply_price'] / 10000.0
+        self.chengben_detail = [(6,0,[])]
+        self.chengben_detail = list
+        self.total_chengben = round(total_chengben/10000.0,2)
+        self.a_apply_discount = round(total_chuhuo_price*100.0/total_chengben_price,2)
+        self.total_chuhuo_price = round(total_chuhuo_price/10000.0,2)
+        # self.total_market_price = round(total_market_price/10000,2)
+        self.total_zhuren_price = round(total_zhuren_price/10000.0,2)
+        self.total_sale_price = round(total_sale_price/10000.0,2)
+        self.sale_grant_discount = round(total_sale_price*100.0/total_chengben_price,2)
+        # self.market_grant_discount = round(total_market_price*100/total_chengben_price,2)
+        self.zhuren_grant_discount = round(total_zhuren_price*100.0/total_chengben_price,2)
+        self.gross_profit = round(((total_chuhuo_price - total_chengben)/total_chuhuo_price)*100.0,2)
         self.pro_zongbu_finish = "0"
         self.write({'state':'6'})
         self.get_shenpiren()
 
+    def compute_sum_by_pro_name(self,pro,pro_num,pro_discount,list):
+        if pro.cost_price == 0 and pro.list_price == 0 and pro.pro_status == 'outPro':
+            raise ValidationError('请联系营销管理部订单管理员在系统中加入配置，并录入产品的成本信息，以便项目的成本核算')
+        if pro.categ_id.name == u"公有云":
+            list[3]['pro_cost_price'] = round((list[3]['pro_cost_price'] + pro.cost_price * pro_num),2)
+            list[3]['pro_apply_price'] = round((list[3]['pro_apply_price'] + pro.list_price * pro_num * pro_discount/100),2)
+            if list[3]['pro_cost_price'] != 0 and list[3]['pro_apply_price'] !=0:
+                list[3]['pro_gross_profit'] = round(((list[3]['pro_apply_price'] - list[3]['pro_cost_price']) / list[3]['pro_apply_price'])*100.0,2)
+        elif pro.categ_id.name == u"服务":
+            if pro.pro_type.name == u"产品服务":
+                list[2]['pro_cost_price'] = round((list[2]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[2]['pro_apply_price'] = round((list[2]['pro_apply_price'] + pro.list_price * pro_num * pro_discount/100),2)
+                if list[2]['pro_cost_price'] != 0 and list[2]['pro_apply_price'] !=0:
+                    list[2]['pro_gross_profit'] = round(((list[2]['pro_apply_price'] - list[2]['pro_cost_price']) / list[2]['pro_apply_price'])*100.0,2)
+            else:
+                list[4]['pro_cost_price'] = round((list[4]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[4]['pro_apply_price'] = round((list[4]['pro_apply_price'] + pro.list_price * pro_num * pro_discount/100),2)
+                if list[4]['pro_cost_price'] != 0 and list[4]['pro_apply_price'] !=0:
+                    list[4]['pro_gross_profit'] = round(((list[4]['pro_apply_price'] - list[4]['pro_cost_price']) / list[4]['pro_apply_price'])*100.0,2)
+        else:
+            if len(pro.seller_ids) > 0 and pro.seller_ids[0].name.name == u"数梦工场" and pro.pro_source == "1":
+                list[0]['pro_cost_price'] = round((list[0]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[0]['pro_apply_price'] = round((list[0]['pro_apply_price'] + pro.list_price * pro_num * pro_discount/100),2)
+                if list[0]['pro_cost_price'] != 0 and list[0]['pro_apply_price'] !=0:
+                    list[0]['pro_gross_profit'] = round(((list[0]['pro_apply_price'] - list[0]['pro_cost_price']) / list[0]['pro_apply_price'])*100.0,2)
+            elif len(pro.seller_ids) > 0 and pro.seller_ids[0].name.name == u"阿里巴巴" and pro.pro_source == "2":
+                list[1]['pro_cost_price'] = round((list[1]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[1]['pro_apply_price'] = round((list[1]['pro_apply_price'] + pro.list_price * pro_num * pro_discount/100),2)
+                if list[1]['pro_cost_price'] != 0 and list[1]['pro_apply_price'] !=0:
+                    list[1]['pro_gross_profit'] = round(((list[1]['pro_apply_price'] - list[1]['pro_cost_price']) / list[1]['pro_apply_price'])*100.0,2)
+            else:
+                list[2]['pro_cost_price'] = round((list[2]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[2]['pro_apply_price'] = round((list[2]['pro_apply_price'] + pro.list_price * pro_num * pro_discount/100),2)
+                if list[2]['pro_cost_price'] != 0 and list[2]['pro_apply_price'] !=0:
+                    list[2]['pro_gross_profit'] = round(((list[2]['pro_apply_price'] - list[2]['pro_cost_price']) / list[2]['pro_apply_price'])*100.0,2)
+        return list
 
     @api.multi
     def wkf_approve7(self):
@@ -509,23 +574,26 @@ class dtdream_sale_business_report(models.Model):
         self.write({'state':'7'})
         shenpiren = self.get_shenpiren()
         self.write({"shenpiren": [(6,0,[shenpiren.id])]})
+        email_cc = self.env['dtdream.shenpi.config'].search([])[0].area_approve_email_cc.work_email
+        if not email_cc:
+            email_cc = None
         self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
                        u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
+                       appellation = u'{0},您好：'.format(self.shenpiren.name),email_cc=email_cc)
 
-    @api.multi
-    def wkf_approve8(self):
-        # 判断市场部部长是否超权限审批
-        if self.a_apply_discount < self.market_grant_discount :
-            self.if_out_grant = 1
-        else :
-            self.if_out_grant = 0
-        self.write({'state':'8'})
-        shenpiren = self.get_shenpiren()
-        self.write({"shenpiren": [(6,0,[shenpiren.id])]})
-        self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
-                       u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
-                       appellation = u'{0},您好：'.format(self.shenpiren.name))
+    # @api.multi
+    # def wkf_approve8(self):
+    #     # 判断市场部部长是否超权限审批
+    #     if self.a_apply_discount < self.market_grant_discount :
+    #         self.if_out_grant = 1
+    #     else :
+    #         self.if_out_grant = 0
+    #     self.write({'state':'8'})
+    #     shenpiren = self.get_shenpiren()
+    #     self.write({"shenpiren": [(6,0,[shenpiren.id])]})
+    #     self.dtdream_send_mail(u"{0}于{1}提交了商务提前报备申请,请您进行审核!".format(self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, self.create_date[:10]),
+    #                    u"%s提交了商务提前报备申请,等待您审批" % self.env['hr.employee'].search([('login','=',self.create_uid.login)]).name, email_to=self.shenpiren.work_email,
+    #                    appellation = u'{0},您好：'.format(self.shenpiren.name))
 
     @api.multi
     def wkf_approve9(self):
@@ -574,7 +642,7 @@ class dtdream_sale_business_report(models.Model):
             self.remark = rec.remark
             list = []
             for pro_rec in rec.product_line:
-                vals = {'product_id':pro_rec.product_id,'bom':pro_rec.bom,'pro_type':pro_rec.pro_type,'pro_description':pro_rec.pro_description,'pro_name':pro_rec.pro_name,'list_price':pro_rec.list_price,'ref_discount':pro_rec.ref_discount,'apply_discount':pro_rec.apply_discount,'pro_num':pro_rec.pro_num,'config_set':pro_rec.config_set}
+                vals = {'product_id':pro_rec.product_id,'bom':pro_rec.bom,'pro_type':pro_rec.pro_type,'pro_description':pro_rec.pro_description,'pro_name':pro_rec.pro_name,'list_price':pro_rec.list_price,'ref_discount':pro_rec.ref_discount,'apply_discount':pro_rec.apply_discount,'pro_num':pro_rec.pro_num,'pro_uom_name':pro_rec.pro_uom_name}
                 list.append(vals)
             self.product_line = list
         else:
@@ -589,7 +657,7 @@ class dtdream_sale_business_report(models.Model):
             self.project_number = self.rep_pro_name.project_number
             list = []
             for rec in self.rep_pro_name.product_line:
-                vals = {'product_id':rec.product_id,'bom':rec.bom,'pro_type':rec.pro_type,'pro_description':rec.pro_description,'pro_name':rec.pro_name,'list_price':rec.list_price,'ref_discount':rec.ref_discount,'apply_discount':rec.apply_discount,'pro_num':rec.pro_num,'config_set':rec.config_set}
+                vals = {'product_id':rec.product_id,'bom':rec.bom,'pro_type':rec.pro_type,'pro_description':rec.pro_description,'pro_name':rec.pro_name,'list_price':rec.list_price,'ref_discount':rec.ref_discount,'apply_discount':rec.apply_discount,'pro_num':rec.pro_num,'pro_uom_name':rec.pro_uom_name}
                 list.append(vals)
             self.product_line = list
 
@@ -779,6 +847,7 @@ class dtdream_shenpi_config(models.Model):
     market_manager = fields.Many2one('hr.employee',string="市场部部长")
     company_manager = fields.Many2one('hr.employee',string="公司总裁")
     zongbu_service_charge = fields.Many2one('hr.employee',string="总部服务经理")
+    area_approve_email_cc = fields.Many2one('hr.employee',string="区域审批邮件抄送人")
 
 # 审批记录
 class report_handle_approve_record(models.Model):
@@ -820,33 +889,61 @@ class dtdream_ir_import(orm.TransientModel):
                                      message=u"导入文件中无bom编码，请添加后导入",
                                      moreinfo=""))
                     return messages
+                if not import_line.has_key('list_price'):
+                    messages.append(dict(type='error',
+                                     message=u"导入文件中无临时目录价，请添加后导入",
+                                     moreinfo=""))
+                    return messages
+                if not import_line.has_key('pro_num'):
+                    messages.append(dict(type='error',
+                                     message=u"导入文件中无数量，请添加后导入",
+                                     moreinfo=""))
+                    return messages
+                if not import_line.has_key('apply_discount'):
+                    messages.append(dict(type='error',
+                                     message=u"导入文件中无申请折扣，请添加后导入",
+                                     moreinfo=""))
+                    return messages
                 if import_line.has_key('apply_discount') and len(import_line['apply_discount'].replace(' ','')) > 0:
+                    if import_line['apply_discount'].index('%') > 0:
+                        import_line['apply_discount'] = import_line['apply_discount'][:import_line['apply_discount'].index('%')]
+                    else:
+                        messages.append(dict(type='error',
+                                         message=u"申请折扣格式错误，正确格式如20%",
+                                         moreinfo=""))
+                        return messages
                     if float(import_line['apply_discount']) > 100 or float(import_line['apply_discount']) <= 0:
                         messages.append(dict(type='error',
                                          message=u"申请折扣应在0%到100%之间",
                                          moreinfo=""))
                         return messages
-                if import_line.has_key('send_type'):
-                    if import_line['send_type'] and import_line['send_type'] not in (u'借货核销',u'正常发货',u'服务订单'):
-                        messages.append(dict(type='error',
-                                    message=u"导入发货模式信息错误，只有'借货核销'、'正常发货'、'服务订单'三种",
-                                    moreinfo=""))
-                        return messages
-                    elif import_line['send_type'] in (u'借货核销',u'正常发货',u'服务订单'):
-                        list = {
-                            u'借货核销':'1',
-                            u'正常发货':'2',
-                            u'服务订单':'3',
-                        }
-                        import_line['send_type'] = list[import_line['send_type']]
+                # if import_line.has_key('send_type'):
+                #     if import_line['send_type'] and import_line['send_type'] not in (u'借货核销',u'正常发货',u'服务订单'):
+                #         messages.append(dict(type='error',
+                #                     message=u"导入发货模式信息错误，只有'借货核销'、'正常发货'、'服务订单'三种",
+                #                     moreinfo=""))
+                #         return messages
+                #     elif import_line['send_type'] in (u'借货核销',u'正常发货',u'服务订单'):
+                #         list = {
+                #             u'借货核销':'1',
+                #             u'正常发货':'2',
+                #             u'服务订单':'3',
+                #         }
+                #         import_line['send_type'] = list[import_line['send_type']]
                 if len(self.pool["product.template"].search(cr,uid,[('bom','=',import_line['bom'])]))==1:
                     product_rec_id = self.pool["product.template"].search(cr,uid,[('bom','=',import_line['bom'])])[0]
                     product_rec = self.pool.get('product.template').browse(cr,uid,[product_rec_id])
+                    if int(import_line['list_price']) != product_rec.list_price:
+                        messages.append(dict(type='error',
+                                     message=u"bom编码为[%s]的产品存在，但对应目录价与导入目录价不同,请修改后导入"%import_line['bom'],
+                                     moreinfo=""))
+                        return messages
                     import_line['pro_name'] = product_rec.name
                     import_line['pro_type'] = product_rec.pro_type.name
                     import_line['pro_description'] = product_rec.pro_description
                     import_line['list_price'] = product_rec.list_price
                     import_line['ref_discount'] = product_rec.ref_discount
+                    import_line['pro_uom_name'] = product_rec.uom_id.name
                     if len(self.pool[record.res_model].search(cr,uid,[('bom','=',import_line['bom']),('product_business_line_id','=',rec_id)],limit=1))==1 :
                         old_rec_id = self.pool[record.res_model].search(cr,uid,[('bom','=',import_line['bom']),('product_business_line_id','=',rec_id)],limit=1)[0]
                         self.pool[record.res_model].write(cr, uid, [old_rec_id], import_line, context=context)

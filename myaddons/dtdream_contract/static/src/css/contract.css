@@ -7,3 +7,9 @@
 .o_form_view .o_form_field.zx_inline{
     text-align: left;
 }
+.o_form_editable .o_statusbar_buttons{
+    visibility: hidden;
+}
+.o_form_editable .no_hidden .o_statusbar_buttons{
+    visibility: visible;
+}
