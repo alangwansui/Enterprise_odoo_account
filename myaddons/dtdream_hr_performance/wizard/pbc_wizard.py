@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.osv import osv
 
 
 class Wizard_reject(models.TransientModel):
@@ -31,4 +32,27 @@ class Wizard_agree(models.TransientModel):
             body = u"同意"
         performance.message_post(body=body)
         performance.signal_workflow('btn_agree')
+
+
+class dtimport_hr_performance(osv.osv):
+    _name = 'dtimport.hr.performance'
+    _inherit = ['dtimport.wizard']
+
+    def need_column_date_header(self, cr, uid, context=None):
+        return {}
+
+    def return_vals_action(self, cr, uid, ids, this_id, context=None):
+        return {'type': 'ir.actions.act_window',
+                'res_model': 'dtimport.hr.performance',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'res_id': this_id,
+                'views': [(False, 'form')],
+                'target': 'new'}
+
+    def judge_and_write_vals(self, cr, uid, ids, data_dict, context=None):
+        pass
+
+
+
 

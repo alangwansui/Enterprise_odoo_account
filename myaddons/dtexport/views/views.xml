@@ -1,0 +1,59 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="dtexport.list">
+      <field name="name">dtexport list</field>
+      <field name="model">dtexport.dtexport</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="dtexport.action_window">
+      <field name="name">dtexport window</field>
+      <field name="res_model">dtexport.dtexport</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="dtexport.action_server">
+      <field name="name">dtexport server</field>
+      <field name="model_id" ref="model_dtexport_dtexport"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="dtexport" id="dtexport.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="dtexport.menu_1" parent="dtexport.menu_root"/>
+    <menuitem name="Menu 2" id="dtexport.menu_2" parent="dtexport.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="dtexport.menu_1_list" parent="dtexport.menu_1"
+              action="dtexport.action_window"/>
+    <menuitem name="Server to list" id="dtexport" parent="dtexport.menu_2"
+              action="dtexport.action_server"/>
+    -->
+  </data>
+</openerp>
