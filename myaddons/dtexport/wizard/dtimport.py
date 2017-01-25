@@ -68,14 +68,13 @@ class dtimport_wizard(osv.osv):
     def judge_data_is_pass(self, record, need_head, header):
         pass
 
-    @api.one
     def return_vals_action(self):
         pass
 
     def judge_and_write_vals(self, data_dict):
         pass
 
-    @api.one
+    @api.multi
     def button_next(self):
         xls_file = StringIO.StringIO(base64.decodestring(self.data))
         workbook = xlrd.open_workbook(file_contents=xls_file.read())
@@ -93,7 +92,7 @@ class dtimport_wizard(osv.osv):
                     raise osv.except_osv(u'错误', u'需要导入字段未导入或者导入字段重复，请重新上传!')
             else:
                 if all([record[header.index(val)] for key, val in need_head.items() if key != 'result']):
-                    self.judge_data_is_pass(record, need_head, header)
+                    result = self.judge_data_is_pass(record, need_head, header)
                     to_import.append({key: record[header.index(val)] for key, val in need_head.items()})
         if selected > 0:
             selected -= 1

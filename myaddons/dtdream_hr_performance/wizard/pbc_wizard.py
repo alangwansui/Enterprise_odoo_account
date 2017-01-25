@@ -42,24 +42,21 @@ class dtimport_hr_performance(osv.osv):
     def need_column_date_header(self):
         return {'workid': u'工号', 'quarter': u'考核季度', 'officer': u'一考主管', 'officer_sec': u'二考主管', 'result': u'考核结果'}
 
-    @api.one
     def return_vals_action(self):
         return {'type': 'ir.actions.act_window',
                 'res_model': 'dtimport.hr.performance',
                 'view_mode': 'form',
                 'view_type': 'form',
-                'res_id': self._context.get('active_id'),
+                'res_id': self.id,
                 'views': [(False, 'form')],
                 'target': 'new'}
 
     def judge_data_is_pass(self, record, need_head, header):
         for key, val in need_head.items():
-            if key in ['workid', 'officer', 'officer_sec']:
-                text = record[header.index(val)]
-                text = text if isinstance(text, str) else str(text)
-                if not text.isdigit():
-                    return {'code': 1000, 'message': u'%s格式错误' % val}
-            elif key == 'quarter'and not re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年年度$)', str(val)):
+            text = record[header.index(val)]
+            if key in ['workid', 'officer', 'officer_sec'] and not text.isdigit():
+                return {'code': 1000, 'message': u'%s格式错误' % val}
+            elif key == 'quarter'and not re.match(u'(^\d{4}财年Q[1-4]$)|(^\d{4}财年年度$)', text):
                 return {'code': 1001, 'message': u'考核季度的格式必须是XXXX财年Q1~Q4，' +
                                                  u'或XXXX财年年度；如2016财年Q1，或2016财年年度'}
         return {'code': 0, 'message': 'ok'}
