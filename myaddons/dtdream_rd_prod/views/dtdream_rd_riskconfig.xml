@@ -82,6 +82,9 @@
                         <group>
                             <field name="risk_state" />
                         </group>
+                        <group>
+                            <field name="risk_sort_state" />
+                        </group>
                     </group>
                 </form>
           </field>
@@ -104,6 +107,7 @@
                     <field name="risk_ver_id" />
                     <field name="name" string="风险描述"/>
                     <field name="chance_describe" string="机遇描述"/>
+                    <field name="risk_sort_state" string="风险类别"/>
                     <field name="plan_close_time" string="计划关闭日期"/>
                     <field name="PDT" string="责任人"/>
                     <field name="risk_state" string="风险状态"/>
@@ -121,6 +125,7 @@
                     <field name="risk_ver_id" />
                     <field name="name" string="风险描述"/>
                     <field name="chance_describe" string="机遇描述"/>
+                    <field name="risk_sort_state" string="风险类别"/>
                     <field name="plan_close_time" string="计划关闭日期"/>
                     <field name="PDT" string="责任人"/>
                     <field name="risk_state" string="风险状态"/>
@@ -137,6 +142,7 @@
                                             <li > <strong>版本:</strong><field name="risk_ver_id" /></li>
                                             <li > <strong>风险描述:</strong><field name="name"/></li>
                                             <li ><strong>机遇描述:</strong> <field name="chance_describe" /></li>
+                                            <li > <strong>风险类别:</strong><field name="risk_sort_state"/></li>
                                             <li > <strong>计划关闭日期:</strong><field name="plan_close_time" /></li>
                                             <li > <strong>责任人:</strong><field name="PDT"/></li>
                                             <li > <strong>风险状态:</strong><field name="risk_state"/></li>

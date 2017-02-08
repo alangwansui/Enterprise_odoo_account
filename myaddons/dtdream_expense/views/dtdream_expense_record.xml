@@ -90,10 +90,11 @@
                             <group>
                                 <field name="report_ids_count" invisible="1"/>
                                 <field name="expensecatelog"
-                                       attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                       attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
                                 <field name="expensedetail" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}" options="{'no_create': True}" domain="[('parentid','=',expensecatelog)]"/>
                                 <field name="currentdate" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
                                 <field name="invoicevalue" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
+                                <field name="kuanji_koujian" groups="dtdream_expense.group_dtdream_expense_jiekoukuaiji"/>
                                 <field name="koujianamount" attrs="{'invisible':[('state','!=','jiekoukuaiji')]}" groups="dtdream_expense.group_dtdream_expense_jiekoukuaiji"/>
                                 <field name="report_ids" invisible="1"/>
                                 <label for="province" string="发生城市"/>

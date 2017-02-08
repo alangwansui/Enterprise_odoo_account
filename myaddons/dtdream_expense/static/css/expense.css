@@ -1,11 +1,12 @@
-
 .expense_catelog_tree .o_list_view.table td{
     word-break: break-all;
 }
 .expense_catelog.o_form_field{
     word-break: break-all;
 }
-
+.o_form_view.o_form_nosheet{
+    overflow:visible;
+}
 .o_form_view .o_form_field_image .o_form_image_controls{
     opacity: 1;
     background-color: transparent;
@@ -54,4 +55,12 @@
 .o_form_view .oe_right .o_form_image_controls .o_clear_file_button,.o_form_view .oe_avatar .o_form_image_controls .o_clear_file_button{
     width:22px;
     padding:5px 5px;
+}
+.o_form_image_controls .o_clear_file_button{
+    background-color: #81c48f;
+    padding:7px 15px;
+    border-radius: 2px;
+}
+.page_project_ids .o_list_editable .o_form_view.o_list_editable_form .o_form_field_number {
+    text-align: left;
 }

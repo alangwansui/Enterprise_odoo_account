@@ -62,7 +62,7 @@ class dtdream_hr_business(models.Model):
     full_name = fields.Char(compute=_compute_employee,string="姓名")
     job_number = fields.Char(compute=_compute_employee,string="工号")
     department = fields.Char(compute=_compute_employee,string="部门" ,store=True)
-    create_time = fields.Datetime(string='申请时间',default=lambda self: datetime.now(),readonly=True)
+    create_time = fields.Datetime(string='申请时间', required=True)
     approver_fir = fields.Many2one("hr.employee" ,string="第一审批人",store=True,required=True,default=_get_appFir)
     approver_sec = fields.Many2one("hr.employee",string="第二审批人")
     approver_thr = fields.Many2one("hr.employee",string="第三审批人")

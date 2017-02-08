@@ -6,7 +6,7 @@ access_dtdream_hr_pbc_employee,dtdream_hr_pbc_employee.dtdream_hr_pbc_employee,m
 access_dtdream_hr_pbc_start,dtdream_hr_pbc_start.dtdream_hr_pbc_start,model_dtdream_hr_pbc_start,,1,1,1,1
 access_dtdream_pbc_hr_config,dtdream_pbc_hr_config.dtdream_pbc_hr_config,model_dtdream_pbc_hr_config,,1,1,1,1
 access_dtdream_pbc_hr_interface,dtdream_pbc_hr_interface.dtdream_pbc_hr_interface,model_dtdream_pbc_hr_interface,,1,1,1,1
-access_ir_exports_hr_pbc,ir_exports hr_pbc,base.model_ir_exports,group_hr_inter_performance,1,1,1,1
 access_ir_mail_server,ir.mail_server performance,base.model_ir_mail_server,,1,0,0,0
 access_mail_followers_performance_manage,mail.followers.performance.manage,mail.model_mail_followers,group_hr_manage_performance,1,1,1,1
 access_mail_followers_performance_inter,mail.followers.performance.inter,mail.model_mail_followers,group_hr_inter_performance,1,1,1,1
+access_dtimport_hr_performance,dtimport.hr.performance,model_dtimport_hr_performance,,1,1,1,1

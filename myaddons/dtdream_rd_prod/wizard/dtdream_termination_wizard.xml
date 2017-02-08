@@ -9,7 +9,7 @@
                     <group>
                         <field name="reason"/>
                     </group>
-                    <footer>
+                    <footer class='no_hidden'>
                         <button name="btn_agree" type="object"
                                 string="确认" class="oe_highlight"/>
                         或
@@ -46,7 +46,7 @@
                     <group>
                             <field name="reason"/>
                     </group>
-                    <footer>
+                    <footer class='no_hidden'>
                         <button name="btn_disagree" type="object"
                                 string="确认" class="oe_highlight"/>
                         或

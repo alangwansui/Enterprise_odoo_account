@@ -133,7 +133,7 @@
                 <field name="name" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenqingren','=',False),('state','not in',('-8')),'|',('is_create','=',False),('state','not in',('-8'))]}"/>
                 <field name="job_number"/>
                 <field name="department"/>
-                <field name="create_time"/>
+                <field name="create_time" attrs="{'readonly':['&amp;','&amp;',('is_admin','=',False),'|',('is_shenqingren','=',False),('state','not in',('-8')),'|',('is_create','=',False),('state','not in',('-8'))]}"/>
                 <field name="is_shenpiren" invisible="1"/>
                 <field name="is_shenqingren" invisible="1"/>
                 <field name="is_admin" invisible="1"/>

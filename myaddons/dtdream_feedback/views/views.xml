@@ -1,11 +1,11 @@
-<?xml version='1.0'?>
+<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
 
         <record id="dtdream_feedback_filter" model="ir.ui.view">
             <field name="name">view.dtdream.feedback.advice.filter</field>
             <field name="model">dtdream.feedback.advice</field>
-            <field name="arch" type="xml"> <!--create='false' edit='false'-->
+            <field name="arch" type="xml">
                 <search string="Search">
                     <field name="name"/>
                     <filter string="未回复" domain="[('state','=','confirm')]" name='state_confirm'/>
@@ -15,11 +15,13 @@
             </field>
         </record>
 
-        <!-- 未回复意见tree视图 -->
-        <record id='dtdream_feedback_advice_tree' model='ir.ui.view'>
-            <field name='name'>view.dtdream.feedback.advice.tree</field>
+
+        <!-- 意见tree视图 -->
+        <record id='dtdream_feedback_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.feedback.tree</field>
             <field name='type'>tree</field>
             <field name='model'>dtdream.feedback.advice</field>
+            <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
                 <tree string='意见列表'>
                     <field name='adviceMan'/>
@@ -30,51 +32,35 @@
             </field>
         </record>
 
-        <!-- 其他意见tree视图 -->
-        <record id='dtdream_feedback_tree' model='ir.ui.view'>
-            <field name='name'>view.dtdream.feedback.tree</field>
-            <field name='type'>tree</field>
-            <field name='model'>dtdream.feedback.advice</field>
-            <field name='arch' type='xml'>
-                <tree string='意见列表' create='false' edit='false'>
-                    <field name='adviceMan'/>
-                    <field name='adviceTime'/>
-                    <field name='name'/>
-                    <field name='state'/>
-                </tree>
-            </field>
-        </record>
+        <!-- 意见反馈kanban -->
+        <record model="ir.ui.view" id="dtdream_feedback_kanban">
+            <field name="name">view.dtdream.feedback.kanban</field>
+            <field name="model">dtdream.feedback.advice</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="state" />
+                    <field name="is_manager"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>反馈人:</strong> <field name="adviceMan" /></li>
+                                        <li ><strong>反馈时间:</strong> <field name="adviceTime" /></li>
+                                        <li ><strong>问题模块:</strong> <field name="name" /></li>
+                                        <li > <strong>意见状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
 
-        <!-- 未回复意见表单视图 -->
-        <record id='dtdream_feedback_advice_form' model='ir.ui.view'>
-            <field name='name'>view.dtdream.feedback.advice.form</field>
-            <field name='type'>form</field>
-            <field name='model'>dtdream.feedback.advice</field>
-            <field name='arch' type='xml'>
-                <form  string='意见详情' create='false' edit='false'>
-                    <header class='no_hidden'>
-                        <button name='btn_confirm' type='workflow' attrs="{'invisible':[('state', 'not in', ['draft'])]}" string='提交' class='oe_highlight' />
-                        <button name='feedback_answer' type='object' string='回复' class='oe_highlight'
-                            attrs="{'invisible':['|', ('is_manager','=', False),('state', 'not in', ['confirm'])]}" />
-                        <field name="state" widget="statusbar" statusbar_visible="confirm,answer" statusbar_colors='{"confirm":"blue","anwser":"blue"}'/>
-                    </header>
-
-                    <sheet>
-                        <group name='group_top' string='反馈意见单'>
-                            <group name='group_left'>
-                                <field name='adviceMan' />
-                                <field name='adviceTime' />
-                            </group>
-                            <group name='group_right'>
-                                <field name='name' />
-                            </group>
-                        </group>
-                        <group name='group_below'>
-                            <field name='advice'/>
-                            <field name='is_manager' invisible="1"/>
-                        </group>
-                    </sheet>
-                </form>
+                        </t>
+                    </templates>
+                </kanban>
             </field>
         </record>
 
@@ -83,6 +69,7 @@
             <field name='name'>view.dtdream.feedback.answer.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.feedback.advice</field>
+            <field eval="2" name="priority"/>
             <field name='arch' type='xml'>
                 <form  string='意见回复详情' create='false' edit='false'>
                     <header class='no_hidden'>
@@ -91,7 +78,7 @@
                     </header>
 
                     <sheet>
-                        <group name='group_top' string='反馈意见单回复'>
+                        <group name='group_top' string='基本信息'>
                             <group name='group_left'>
                                 <field name='adviceMan' attrs="{'readonly':'True'}"/>
                                 <field name='adviceTime'/>
@@ -101,24 +88,24 @@
                                 <field name='answerTime' />
                             </group>
                         </group>
-                        <group name='group_below'>
-                            <field name='advice' attrs="{'readonly':'True'}"/>
-                            <field name='answer' />
+                        <group name='group_below' string='意见与回复'>
+                            <field name='advice' attrs="{'readonly':'True'}"  />
+                            <field name='answer'  />
                         </group>
                     </sheet>
                 </form>
             </field>
         </record>
 
-        <!-- 意见反馈all表单视图 -->
+        <!-- 意见反馈表单视图 -->
         <record id='dtdream_feedback_all_form' model='ir.ui.view'>
             <field name='name'>view.dtdream.feedback.all.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.feedback.advice</field>
+            <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
-                <form  string='意见详情' create='false' edit='false'>
+                <form string='意见详情' create='false' edit='false'>
                     <header>
-                        <button name='btn_confirm' type='workflow' attrs="{'invisible':[('state', 'not in', ['draft'])]}" string='提交' class='oe_highlight' />
                         <button name='feedback_answer' type='object' string='回复' class='oe_highlight'
                             attrs="{'invisible':['|', ('is_manager','=', False),('state', 'not in', ['confirm'])]}" />
                         <field name="state" widget="statusbar" statusbar_visible="confirm,answer"
@@ -126,7 +113,7 @@
                     </header>
 
                     <sheet>
-                        <group name='group_top' string='反馈意见单'>
+                        <group name='group_top' string='基本信息'>
                             <group name='group_left'>
                                 <field name='adviceMan'/>
                                 <field name='adviceTime'/>
@@ -136,12 +123,15 @@
                                 <field name='answerTime' attrs="{'invisible':[('state','not in', ['answer'])]}" />
                             </group>
                         </group>
-                        <group name='group_below'>
+                        <group name='group_below' string='意见与回复'>
                             <field name='advice' attrs="{'readonly':'True'}"/>
                             <field name='answer' attrs="{'invisible':[('state','not in', ['answer'])]}" />
                             <field name='is_manager' invisible="1"/>
                         </group>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -151,6 +141,7 @@
             <field name='name'>view.dtdream.feedback.add.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.feedback.advice</field>
+            <field eval="4" name="priority"/>
             <field name='arch' type='xml'>
                 <form  string='吐槽单'>
                     <header class='no_hidden'>
@@ -159,19 +150,19 @@
                     </header>
 
                     <sheet>
-                        <group name='group_top' string='吐槽单'>
+                        <group name='group_top' string='基本信息' >
                             <group name='group_left'>
-                                <field name='adviceMan' />
+                                <field name='adviceMan' attrs="{'readonly':'True'}"/>
                                 <field name='adviceTime' />
                             </group>
                             <group name='group_right'>
                                 <field name='name' />
                             </group>
                         </group>
-                        <group name='group_below'>
+                        <group name='group_below' string='意见内容'>
                             <div tyle="font-family:微软雅黑, 'Microsoft Yahei', 'Hiragino Sans GB', tahoma, arial, 宋体, sans-serif;">
                                 <p>请提出您的宝贵意见，以便我们改进，谢谢</p>
-                                <field name='advice'/>
+                                <field name='advice' class="zx_group_border"/>
                             </div>
                         </group>
                     </sheet>
@@ -210,54 +201,60 @@
             </field>
         </record>
 
+        <!-- 处理人kanban -->
+        <record model="ir.ui.view" id="dtdream_feedback_configuration_kanban">
+            <field name="name">view.dtdream.feedback.configuration.kanban</field>
+            <field name="model">dtdream.feedback.configuration</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>模块:</strong> <field name="name" /></li>
+                                        <li ><strong>处理人:</strong> <field name="manager" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
          <!-- 打开未回复意见反馈的动作 -->
         <act_window id='act_dtdream_feedback_confirm'
                     name='未回复意见'
                     res_model='dtdream.feedback.advice'
-                    view_mode='tree,form'
+                    view_type='form'
+                    view_mode='tree_dtdream_feedback_advice,form,kanban_dtdream_feedback_advice'
+                    view_id='dtdream_feedback_tree'
                     domain="[('state','=','confirm')]" />
 
-        <record model="ir.actions.act_window.view" id="act_dtdream_feedback_confirm_tree_view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="dtdream_feedback_advice_tree"/>
-            <field name="act_window_id" ref="act_dtdream_feedback_confirm"/>
-        </record>
-
-        <record model="ir.actions.act_window.view" id="act_dtdream_feedback_confirm_form_view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="dtdream_feedback_advice_form"/>
-            <field name="act_window_id" ref="act_dtdream_feedback_confirm"/>
-        </record>
 
          <!-- 打开已回复意见反馈的动作 -->
         <act_window id='act_dtdream_feedback_answer'
                     name='已回复意见'
                     res_model='dtdream.feedback.advice'
-                    view_mode='tree,form'
+                    view_type='form'
+                    view_mode='tree_dtdream_feedback_advice,form,kanban_dtdream_feedback_advice'
                     domain="[('state','=','answer')]" />
-
-         <record model="ir.actions.act_window.view" id="act_dtdream_feedback_answer_tree_view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="dtdream_feedback_tree"/>
-            <field name="act_window_id" ref="act_dtdream_feedback_answer"/>
-        </record>
-
-        <record model="ir.actions.act_window.view" id="act_dtdream_feedback_answer_form_view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="dtdream_feedback_answer_form"/>
-            <field name="act_window_id" ref="act_dtdream_feedback_answer"/>
-        </record>
 
          <!-- 打开所有意见反馈的动作 -->
         <act_window id='act_dtdream_feedback_all'
-                    name='反馈意见'
+                    name='所有意见'
                     res_model='dtdream.feedback.advice'
-                    view_mode='tree,form' />
+                    view_type='form'
+                    view_mode='tree_dtdream_feedback_advice,form,kanban_dtdream_feedback_advice' />
 
+<!--
         <record model="ir.actions.act_window.view" id="act_dtdream_feedback_all_tree_view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -271,10 +268,11 @@
             <field name="view_id" ref="dtdream_feedback_all_form"/>
             <field name="act_window_id" ref="act_dtdream_feedback_all"/>
         </record>
+-->
 
         <!-- 打开意见反馈的动作 -->
         <act_window id='act_feedback'
-                    name='意见'
+                    name='吐槽单'
                     res_model='dtdream.feedback.advice'
                     view_mode='form'
                     target='new'
@@ -284,10 +282,10 @@
         <act_window id='act_feedback_configuration'
                     name='模块对应处理人'
                     res_model='dtdream.feedback.configuration'
-                    view_mode='tree,form'/>
+                    view_mode='tree,form,kanban'/>
 
         <!-- 菜单 -->
-        <menuitem id='menu_feedback' name='意见反馈' sequence='0' />
+        <menuitem id='menu_feedback' name='意见反馈' sequence='0' web_icon="dtdream_feedback,static/description/fankui.png"/>
         <menuitem id='menu_feedback_advice_checked' name='未回复意见' sequence="0" parent='menu_feedback' action='act_dtdream_feedback_confirm' />
         <menuitem id='menu_feedback_advice_answer' name='已回复意见' sequence="1" parent='menu_feedback' action='act_dtdream_feedback_answer' />
         <menuitem id='menu_feedback_advice_all' name='所有意见' sequence="2" parent='menu_feedback' action='act_dtdream_feedback_all' />

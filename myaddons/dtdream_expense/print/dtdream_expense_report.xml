@@ -28,7 +28,8 @@
                                                 }
                     .info h4{margin-bottom:5px;font-weight:bold;}
                     .info h2{margin-bottom:10px;font-weight:bold;}
-                    .info .billcode{text-align:right;margin-bottom:30px; }
+                    .info .billcode{text-align:right;}
+                    .info .billcode1{text-align:right;margin-bottom:30px; }
                 </style>
 
                     <div class="row ">
@@ -40,7 +41,7 @@
                     <div class="row" name="total">
                          <div class="col-xs-11 ">
                              <div class="billcode" size="7" >单据号:<span t-field="doc.name"/></div>
-  <!--填单时间:<span t-field="doc.create_date"/>-->
+                             <div class="billcode1" size="7" >创建时间:<span t-field="doc.create_date"/></div>
                          </div>
                     </div>
 
@@ -194,6 +195,75 @@
                  </table>
 
 <br />
+                <div class="row ">
+                    <div class="col-xs-12">
+                        <h4>预算申请单</h4>
+                        <table>
+                            <tr>
+                                <td><span class="o_td_label">预算月份:</span></td>
+                                <td><span t-field="doc.budget_id"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="text-right">手机话费(元)</th>
+                                <th class="text-right">市内交通费(元)</th>
+                                <th class="text-right">差旅费(元)</th>
+                                <th class="text-right">日常业务费(元)</th>
+                                <th class="text-right">专项业务费(元)</th>
+                                <th class="text-right">行政平台费(元)</th>
+                            </tr>
+                       </thead>
+                       <tbody class="sale_tbody">
+                            <tr>
+                                <td class="text-right"><span t-field="doc.budget_mobile"/></td>
+                                <td class="text-right"><span t-field="doc.budget_bus"/></td>
+                                <td class="text-right"><span t-field="doc.budget_travel"/></td>
+                                <td class="text-right"><span t-field="doc.budget_daily"/></td>
+                                <td class="text-right"><span t-field="doc.budget_zhuanx"/></td>
+                                <td class="text-right"><span t-field="doc.budget_xingz"/></td>
+                            </tr>
+                       </tbody>
+                </table>
+
+                <div class="row ">
+                    <div class="col-xs-12">
+                        <h4>专项申请单</h4>
+                        <table>
+                            <tr>
+                                <td><span class="o_td_label">专项编号:</span></td>
+                                <td><span t-field="doc.zhuanxiang_id"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="text-right">费用类别</th>
+                                <th class="text-right">金额（元）</th>
+                                <th class="text-right">费用事项说明</th>
+                            </tr>
+                       </thead>
+                       <tbody class="sale_tbody">
+                            <t t-foreach="doc.zhuanxiang_fee_ids" t-as="d">
+                                <tr >
+                                    <td>
+                                       <span t-field="d.fee_type"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.fee_amount"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="d.fee_description"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                 </table>
 
                 <div class="row ">
                     <div class="col-xs-12">
@@ -206,10 +276,13 @@
                                 <th>消费明细</th>
                                 <th class="text-right">发生日期</th>
                                 <th class="text-right">票据金额</th>
-                                <th class="text-right">扣减金额</th>
                                 <th class="text-right">实报金额</th>
                                 <th class="text-right">超期时长</th>
-                                <th class="text-right">创建时间</th>
+                                <t t-if ="doc.record_ids[0].expensecatelog.name == unicode('日常业务费', 'utf-8')">
+                                    <th class="text-right">客户人数</th>
+                                    <th class="text-right">陪同人数</th>
+                                    <th class="text-right">人均消费</th>
+                                </t>
                             </tr>
                        </thead>
                        <tbody class="sale_tbody">
@@ -225,17 +298,22 @@
                                         <span t-field="d.invoicevalue"/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-field="d.koujianamount"/>
-                                    </td>
-                                    <td class="text-right">
                                         <span t-field="d.shibaoamount"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-field="d.outtimenumber"/>
                                     </td>
-                                    <td class="text-right">
-                                        <span t-field="d.create_date"/>
-                                    </td>
+                                    <t t-if="d.expensecatelog.name == unicode('日常业务费', 'utf-8')">
+                                        <td class="text-right">
+                                            <span t-field="d.customernumber"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="d.peitongnumber"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="d.everyonecost"/>
+                                        </td>
+                                    </t>
                                 </tr>
                             </t>
                         </tbody>

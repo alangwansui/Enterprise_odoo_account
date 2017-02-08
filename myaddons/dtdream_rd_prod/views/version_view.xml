@@ -138,7 +138,7 @@
             <field name="model">dtdream_rd_version</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header  class='no_hidden'>
                         <button name="%(dtdream_rd_prod.act_version_wizard)d" string="进入下一阶段"  type="action"  attrs="{'invisible':['|','|','|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_click_03','=',True),('is_click_02','=',True),('is_click_01','=',True),('version_state','not in',('draft','initialization','Development','pending')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一步阶段" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('version_state','in',('draft','pause','stop')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_zhongzhi_back" string="恢复中止" type="object" confirm="确认恢复中止" attrs="{'invisible':['|',('version_state','not in',('stop')),('is_Qa','=',False)]}"/>
@@ -242,9 +242,10 @@
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                     <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
                                                             attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
-                                                    <field name="is_pass" attrs="{'readonly':True}"/>
-                                                    <field name="is_risk" attrs="{'readonly':True}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <!--<field name="is_pass" attrs="{'readonly':True}"/>-->
+                                                    <!--<field name="is_risk" attrs="{'readonly':True}"/>-->
+                                                    <!--<field name="is_refuse" attrs="{'readonly':True}"/>-->
+                                                    <field name="approve_state" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
@@ -273,9 +274,10 @@
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                      <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
                                                             attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
-                                                    <field name="is_pass" attrs="{'readonly':True}"/>
-                                                    <field name="is_risk" attrs="{'readonly':True}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <!--<field name="is_pass" attrs="{'readonly':True}"/>-->
+                                                    <!--<field name="is_risk" attrs="{'readonly':True}"/>-->
+                                                    <!--<field name="is_refuse" attrs="{'readonly':True}"/>-->
+                                                    <field name="approve_state" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
@@ -347,9 +349,10 @@
                                                     <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
                                                     <button name="%(dtdream_rd_prod.act_dtdream_ver_process_wizard)d"
                                                             attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
-                                                    <field name="is_pass" attrs="{'readonly':True}"/>
-                                                    <field name="is_risk" attrs="{'readonly':True}"/>
-                                                    <field name="is_refuse" attrs="{'readonly':True}"/>
+                                                    <!--<field name="is_pass" attrs="{'readonly':True}"/>-->
+                                                    <!--<field name="is_risk" attrs="{'readonly':True}"/>-->
+                                                    <!--<field name="is_refuse" attrs="{'readonly':True}"/>-->
+                                                    <field name="approve_state" attrs="{'readonly':True}"/>
                                                     <field name="reason" attrs="{'readonly':True}"/>
                                                     <field name="editable" invisible="1"/>
                                                     <field name="is_Qa" invisible="1"/>
@@ -368,6 +371,7 @@
                                     <tree>
                                         <field name="name" string="风险描述"/>
                                         <field name="chance_describe" string="机遇描述"/>
+                                        <field name="risk_sort_state" string="风险类别"/>
                                         <field name="plan_close_time" string="计划关闭日期"/>
                                         <field name="PDT" string="责任人"/>
                                         <field name="risk_state" string="风险状态"/>
@@ -375,6 +379,7 @@
                                     <kanban class="o_res_partner_kanban" >
                                         <field name="name" string="风险描述"/>
                                         <field name="chance_describe" string="机遇描述"/>
+                                        <field name="risk_sort_state" string="风险类别"/>
                                         <field name="plan_close_time" string="计划关闭日期"/>
                                         <field name="PDT" string="责任人"/>
                                         <field name="risk_state" string="风险状态"/>
@@ -389,6 +394,7 @@
                                                         <ul>
                                                             <li ><strong>风险描述:</strong> <field name="name" /></li>
                                                             <li ><strong>机遇描述:</strong> <field name="chance_describe" /></li>
+                                                            <li > <strong>风险类别:</strong><field name="risk_sort_state" /></li>
                                                             <li > <strong>计划关闭日期:</strong><field name="plan_close_time" /></li>
                                                             <li > <strong>责任人:</strong><field name="PDT" /></li>
                                                             <li > <strong>风险状态:</strong><field name="risk_state" /></li>

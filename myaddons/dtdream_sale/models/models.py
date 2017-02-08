@@ -25,10 +25,10 @@ class dtdream_product(models.Model):
     ref_discount = fields.Float(string="参考折扣(%)",required=True)
     pro_version = fields.Char(string="版本")
     remark = fields.Text(string="备注")
-    office_manager_discount = fields.Float(string="办事处主任折扣(%)",required=True)
-    system_department_discount = fields.Float(string="系统部折扣(%)",required=True)
+    office_manager_discount = fields.Float(string="办事处主任折扣(%)")
+    system_department_discount = fields.Float(string="系统部折扣(%)")
     # market_president_discount = fields.Float(string="市场部总裁折扣(%)",required=True)
-    sale_grant_discount = fields.Float(string="区域折扣(%)",required=True)
+    sale_grant_discount = fields.Float(string="区域折扣(%)")
     is_temporary_bom = fields.Selection([
         ('1','是'),
         ('2','否'),
@@ -295,11 +295,11 @@ class dtdream_product_line(models.Model):
 
     @api.onchange("apply_discount")
     def _onchange_apply_discount(self):
-        if self.apply_discount > 100 or self.apply_discount < 0:
+        if self.apply_discount < 0:
             self.apply_discount = ""
             warning = {
                     'title': '警告：',
-                    'message': '申请折扣应在0%到100%之间',
+                    'message': '申请折扣应大于0%',
                 }
             return {'warning': warning}
 

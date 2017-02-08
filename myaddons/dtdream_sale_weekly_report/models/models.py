@@ -23,8 +23,8 @@ class dtdream_sale_own_report(models.Model):
 
     def get_access_domain(self,domain):
         ex_domain = [("create_uid",'=',self._uid)]
-        if self.user_has_groups('dtdream_sale.group_dtdream_sale_office_manager'):
-            ex_domain = expression.OR([['&',("department",'in',[x.name for x in self.env.user.user_access_department]),('state','=','submit')],ex_domain])
+        # if self.user_has_groups('dtdream_sale.group_dtdream_sale_office_manager'):
+        ex_domain = expression.OR([['&',("department",'in',[x.name for x in self.env.user.user_access_department]),('state','=','submit')],ex_domain])
         if self.user_has_groups('dtdream_sale.group_dtdream_sale_high_manager') or self.user_has_groups('dtdream_sale.group_dtdream_weekly_report_manager'):
             ex_domain = []
         return expression.AND([ex_domain,domain])

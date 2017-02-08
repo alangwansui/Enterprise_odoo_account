@@ -258,6 +258,8 @@ class dtdream_execption(models.Model):
     @api.model
     def get_apply(self):
         applies=[]
+        state_list = [('dsp', '待审批'), ('yjsp', '一级审批'), ('Nyjsp', '一级审批不通过'), ('ejsp', '二级审批'), ('Nejsp', '二级审批不通过'), ('ysp', '已审批')]
+        state_dict = dict(state_list)
         appr = self.env['dtdream_execption'].search([('create_uid','=',self.env.user.id)])
         menu_id = self._get_menu_id()
         for app in appr:
@@ -277,6 +279,7 @@ class dtdream_execption(models.Model):
                 'version':app.version.version_numb or '',
                 'PDT': app.name.PDT.name or '',
                 'style':u'例外',
+                'state': state_dict[app.state],
                 'defer':defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -298,6 +301,9 @@ class dtdream_execption(models.Model):
     @api.model
     def get_affair(self):
         affairs = []
+        state_list = [('dsp', '待审批'), ('yjsp', '一级审批'), ('Nyjsp', '一级审批不通过'), ('ejsp', '二级审批'), ('Nejsp', '二级审批不通过'),
+                      ('ysp', '已审批')]
+        state_dict = dict(state_list)
         appr = self.env['dtdream_execption'].search([('current_approver_user', '=', self.env.user.id)])
         menu_id = self._get_menu_id()
         for app in appr:
@@ -317,6 +323,7 @@ class dtdream_execption(models.Model):
                 'version': app.version.version_numb or '',
                 'PDT': app.name.PDT.name or '',
                 'style': u'例外',
+                'state': state_dict[app.state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -327,6 +334,9 @@ class dtdream_execption(models.Model):
     @api.model
     def get_done(self):
         affairs = []
+        state_list = [('dsp', '待审批'), ('yjsp', '一级审批'), ('Nyjsp', '一级审批不通过'), ('ejsp', '二级审批'), ('Nejsp', '二级审批不通过'),
+                      ('ysp', '已审批')]
+        state_dict = dict(state_list)
         appr = self.env['dtdream_execption'].search([('his_app_user', '=', self.env.user.id)])
         menu_id = self._get_menu_id()
         for app in appr:
@@ -346,6 +356,7 @@ class dtdream_execption(models.Model):
                 'version': app.version.version_numb or '',
                 'PDT': app.name.PDT.name or '',
                 'style': u'例外',
+                'state': state_dict[app.state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays

@@ -452,9 +452,11 @@ class dtdream_contract_wizard(models.TransientModel):
               current_record.write({"his_approve":[(4,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
           state=dict(self.env['dtdream.contract']._columns['state'].selection)[current_record.state]
           state_code=unicode(state,'utf-8')
+          result = ''
           if not self.reason:
               self.reason=unicode('无','utf-8')
           if self.temp == 'agree':
+              result = u'同意'
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
               if current_record.state == '2' or current_record.state == '4':
                   current_record.signal_workflow('btn_agree')
@@ -464,20 +466,26 @@ class dtdream_contract_wizard(models.TransientModel):
           # elif self.temp == 'refuse':
           #     current_record.message_post(body=u"审批意见%s" % self.reason)
           elif self.temp == 'norefer':
+              result = u'不涉及'
               current_record.write({'current_handler_ids':[(3,self.env['hr.employee'].search([('user_id','=',self.env.user.id)]).id)]})
               if len(current_record.current_handler_ids) == 0:
                   current_record.signal_workflow('btn_agree')
           elif self.temp == 'reject':
+              result = u'驳回'
               current_record.signal_workflow('btn_reject')
           elif self.temp == 'force':
+              result = u'强制通过'
               current_record.signal_workflow('btn_force_approve')
           elif self.temp == 'void':
+              result = u'作废'
               current_record.signal_workflow('btn_void')
           elif self.temp == 'stamp':
+              result = u'确认盖章'
               current_record.signal_workflow('btn_confirm_stamped')
           elif self.temp == 'file':
+              result = u'确认归档'
               current_record.signal_workflow('btn_confirm_filed')
-          current_record.message_post(body=u"审批意见：%s" % self.reason)
+          current_record.message_post(body=u"审批意见：%s，%s" % (result,self.reason))
 
 
 class dtdream_contract_type(models.Model):

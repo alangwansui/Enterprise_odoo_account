@@ -34,7 +34,7 @@
             <field name="model">dtdream.prod.suspension.restoration</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header class='no_hidden'>
                         <button name="rest_suspensiontj" string="提交恢复暂停" confirm="确认提交恢复暂停？" type="object" attrs="{'invisible':['|',('state','not in',('cg')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_rest_suspensionwizard_agree)d"  string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('spz')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_rest_suspensionwizard_disagree)d"  string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('spz')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
@@ -125,7 +125,7 @@
             <field name="model">dtdream.prod.suspension.restoration.w</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header class='no_hidden'>
                         <button name="rest_suspensiontj" string="提交恢复暂停" confirm="确认提交恢复暂停？" type="object" />
                         <field name="state" widget="statusbar" statusbar_visible="cg,spz,ysp" />
                     </header>

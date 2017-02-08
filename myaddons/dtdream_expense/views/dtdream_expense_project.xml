@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="dtdream_expense_project_form">
+            <field name="name">dtdream.expense.project.form</field>
+            <field name="model">dtdream.expense.project</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" options="{'no_create':True}"></field>
+                            <field name="share_percent"></field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

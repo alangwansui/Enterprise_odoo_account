@@ -41,11 +41,11 @@ class DtdreamExpense(ExcelExport):
             invoice_type = 'AP'
             company = '0010'
             gongyingshang = ''
-            product = '0000'
+            product = '0000000'
             region = '0000'
-            bm = '0000'
+            bm = '00'
             sm = '0000'
-            ic = '0000'
+            ic = '000'
             spare = '0000'
             currency = 'CNY'
             cstcenter = dtdream_expense_report.department_number
@@ -129,7 +129,7 @@ class DtdreamExpense(ExcelExport):
             self.from_data(excel_header, excel_values),
             headers=[
                 ('Content-Disposition', 'attachment; filename="%s"'
-                 % self.filename("test")),
+                 % self.filename("dtdream_expense_export")),
                 ('Content-Type', self.content_type)
             ],
             cookies={'fileToken': token}

@@ -62,7 +62,7 @@
                             <field name="employee_id" string="申请人" attrs="{'readonly':[('state','not in','draft')]}"/>
                             <field name="gonghao"/>
                             <field name="department_id"/>
-                            <field name="create_time"/>
+                            <field name="create_time" attrs="{'readonly':[('state','not in','draft')]}"/>
                             <field name="attachment_name" invisible="1"/>
 
                             <field name="attachment" widget="binary" height="64" filename="attachment_name" attrs="{'readonly':[('state','not in','draft')]}"/>

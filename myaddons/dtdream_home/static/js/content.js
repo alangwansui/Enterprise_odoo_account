@@ -41,7 +41,8 @@ var Main = Widget.extend({
 var Related = Widget.extend({
     template: 'related',
     events:{
-        'click .o_user_search_btn': 'search'
+        'click .o_user_search_btn': 'search',
+        'click .teasing':'teasing'
     },
     init: function (parent) {
         this._super(parent);
@@ -97,6 +98,125 @@ var Related = Widget.extend({
                     $info.appendTo('.o_user_search');
                 }
             );
+    },
+    teasing:function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        var self = this;
+        var $action = $(ev.currentTarget);
+        var action_name = $action.attr('name');
+        var action_extra = $action.data('extra');
+        var additional_context = {'dashboard': true};
+
+        var html=[
+        '<div class=pw-box-body>',
+                '<div class=\'form-group margin-layer\'>',
+                    '<label for=feedback_user class=\'col-sm-3 control-label\'>用户</label>',
+                    '<div class=col-sm-6><input type=text class=form-control id=feedback_user readonly></div>',
+                '</div>',
+                '<div class=\'form-group margin-layer\'>',
+                    '<label for=feedback_date class=\'col-sm-3 control-label\'>时间</label>',
+                    '<div class=col-sm-6><input type=text class=form-control id=feedback_date  readonly></div>',
+                '</div>',
+                '<div class=\'form-group margin-layer\'>',
+                    '<label for=feedbackPrmModels class=\'col-sm-3 control-label\'>问题模块</label>',
+                    '<div class=col-sm-6>',
+                        '<select id=feedbackPrmModels class=form-control  placeholder=问题模块>',
+                            '<option disabled selected value=0>请选择</option>',
+                        '</select>',
+                    '</div>',
+                '</div>',
+                '<div class=\'form-group errorSelect margin-layer\'>',
+                    '<div class=col-sm-offset-3>',
+                        '<p>请选择问题模块！</p>',
+                    '</div>',
+                '</div>',
+                '<div class=\'form-group margin-layer\'>',
+                    '<label for=feedbackAdvice class=\'col-sm-3 control-label\'>意见</label>',
+                    '<div class=col-sm-6><textarea id=feedbackAdvice class=form-control rows=8 placeholder=\'请提出您的宝贵意见，以便我们改进，谢谢\'></textarea></div>',
+                '</div>',
+                '<div class=\'form-group errorAdvice margin-layer\'>',
+                    '<div class=col-sm-offset-3>',
+                        '<p>请填写意见！</p>',
+                    '</div>',
+                '</div>',
+                '<div class=\'form-group margin-layer\'>',
+                    '<div class=col-sm-offset-3>',
+                        '<button class=\'btn btn-default feedbackBtn\'>提交</button>',
+                    '</div>',
+                '</div>',
+        '</div>'
+        ].join('\n');
+        layer.open({
+          title: "我要吐槽",
+          type: 1,
+          skin: 'layui-layer-rim', //加上边框
+          area: ['980px', '560px'], //宽高
+          content: html
+        });
+        function getCurrentDate(){
+            var date = new Date();
+            var seperator1 = "-";
+            var seperator2 = ":";
+            var month = date.getMonth() + 1;
+            var strDate = date.getDate();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                                + " " + date.getHours() + seperator2 + date.getMinutes()
+                                + seperator2 + date.getSeconds();
+            return currentdate;
+        }
+        var feedback_userId=this.uid;
+        var feedbackUser=this.user;
+        var feedbackDate=getCurrentDate();
+
+        $("#feedback_user").val(feedbackUser);
+        $("#feedback_date").val(feedbackDate);
+        $(".form-control[readonly]").css("background-color","#fff");
+        new Model('dtdream.feedback.advice')
+                    .call('get_feedbackmodels_record', [{}]).then(function(result){
+                    console.log(result);
+                    var $html=$("#feedbackPrmModels").html();
+                    console.log($html);
+                    $.each(result,function(i,ele){
+                        console.log(ele[1]);
+                        $html+="<option value="+ele[0]+">"+ele[1]+"</option>"
+                    });
+                    $("#feedbackPrmModels").html($html);
+                });
+        var $button = $(".feedbackBtn").on('click', function (e){
+        var data ={
+        "adviceMan":feedback_userId,
+        "adviceTime":$("#feedback_date").val(),
+		"promblemModels_name":$('#feedbackPrmModels').val(),
+		"feedback_advice":$('#feedbackAdvice').val()
+        }
+        console.log(data);
+        if(data.promblemModels_name == null){
+            $('.errorSelect').css("display","block");
+        }else if(data.feedback_advice == ""){
+            $('.errorAdvice').css("display","block");
+        }else{
+            new Model('dtdream.feedback.advice')
+                    .call('add_feedback', data).then(function(result){
+                        console.log(result);
+                        if(result){
+                            console.log("success!");
+                            $(".layui-layer-shade").remove();
+                            $(".layui-layer").remove();
+                        }else{
+                            alert('数据传入失败！');
+                        }
+                    });
+        }
+
+        });
     }
 
 });

@@ -189,6 +189,8 @@ class dtdream_prod_termination(models.Model):
     @api.model
     def get_apply(self):
         applies=[]
+        state_list = [('cg', '草稿'), ('spz', '审批中'), ('ysp', '已审批')]
+        state_dict = dict(state_list)
         appr = self.env['dtdream.prod.termination'].search([('create_uid','=',self.env.user.id)])
         menu_id = self._get_menu_id()
         for app in appr:
@@ -208,6 +210,7 @@ class dtdream_prod_termination(models.Model):
                 'version':app.version.version_numb or '',
                 'PDT': app.project.PDT.name or '',
                 'style':u'中止',
+                'state': state_dict[app.state],
                 'defer':defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -218,6 +221,8 @@ class dtdream_prod_termination(models.Model):
     @api.model
     def get_affair(self):
         affairs = []
+        state_list = [('cg', '草稿'), ('spz', '审批中'), ('ysp', '已审批')]
+        state_dict = dict(state_list)
         appr = self.env['dtdream.prod.termination'].search([('current_approver_user', '=', self.env.user.id)])
         menu_id = self._get_menu_id()
         for app in appr:
@@ -237,6 +242,7 @@ class dtdream_prod_termination(models.Model):
                 'version': app.version.version_numb or '',
                 'PDT': app.project.PDT.name or '',
                 'style': u'中止',
+                'state': state_dict[app.state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -247,6 +253,8 @@ class dtdream_prod_termination(models.Model):
     @api.model
     def get_done(self):
         affairs = []
+        state_list = [('cg', '草稿'), ('spz', '审批中'), ('ysp', '已审批')]
+        state_dict = dict(state_list)
         appr = self.env['dtdream.prod.termination'].search([('his_app_user', '=', self.env.user.id)])
         menu_id = self._get_menu_id()
         for app in appr:
@@ -266,6 +274,7 @@ class dtdream_prod_termination(models.Model):
                 'version': app.version.version_numb or '',
                 'PDT': app.project.PDT.name or '',
                 'style': u'中止',
+                'state': state_dict[app.state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays

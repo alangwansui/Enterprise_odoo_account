@@ -467,6 +467,10 @@ var ListView = View.extend( /** @lends instance.web.ListView# */ {
                 }
                 reloaded.resolve();
             });
+            if (self.model == "dtdream.hr.performance"){
+                self.add_button_import();
+            }
+
         });
         this.do_push_state({
             min: this.current_min,

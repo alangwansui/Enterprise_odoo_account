@@ -9,22 +9,22 @@ var FormView = require('web.FormView');
 var rec_id;
 FormView.include({
     // Stores all the parameters of the action.
-    load_record: function(record) {
-        this._super.apply(this, arguments);
-        var timer = window.setInterval(function(){
-            if($('.apply_dis_sale_report th:eq(6)').length != 0){
-                if (record.is_bus_shenpiren == false && record.is_pro_shenpiren == true){
-                    if(!$('.apply_dis_sale_report th:eq(6)').is(":hidden")){
-                        $('.apply_dis_sale_report th:eq(6)').hide();
-                        $('.apply_dis_sale_report td[data-field="apply_discount"]').hide();
-                        clearInterval(timer);
-                    }
-                }
-                else
-                    clearInterval(timer);
-            }
-        },300)
-    },
+    //load_record: function(record) {
+    //    this._super.apply(this, arguments);
+    //    var timer = window.setInterval(function(){
+    //        if($('.apply_dis_sale_report th:eq(6)').length != 0){
+    //            if (record.is_bus_shenpiren == false && record.is_pro_shenpiren == true){
+    //                if(!$('.apply_dis_sale_report th:eq(6)').is(":hidden")){
+    //                    $('.apply_dis_sale_report th:eq(6)').hide();
+    //                    $('.apply_dis_sale_report td[data-field="apply_discount"]').hide();
+    //                    clearInterval(timer);
+    //                }
+    //            }
+    //            else
+    //                clearInterval(timer);
+    //        }
+    //    },300)
+    //},
 
     events: _.defaults({
         'click .dtdream_import': 'import_click',
@@ -33,7 +33,7 @@ FormView.include({
     }, FormView.prototype.events),
 
     download_click: function(kwargs) {
-        window.open("../dtdream_sale_business_report/static/src/downloads/pro_list_module.xls")
+        window.open("../dtdream_sale_business_report/static/src/downloads/pro_list_module.xlsx")
     },
 
     import_click: function(kwargs) {

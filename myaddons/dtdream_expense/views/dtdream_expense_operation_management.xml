@@ -8,7 +8,7 @@
                     <form>
                         <sheet>
                             <group>
-                                <field name="name" invisible="1"></field>
+                                <field name="name"></field>
                                 <field name="dep_name"></field>
                             </group>
                         </sheet>
@@ -20,6 +20,7 @@
                 <field name="model">dtdream.expense.operation.management</field>
                 <field name="arch" type="xml">
                     <tree>
+                        <field name="name"></field>
                         <field name="dep_name"></field>
                     </tree>
                 </field>

@@ -62,7 +62,7 @@ html {
   content: "\e610";
 }
 .doicon-settings:before {
-  content: "\e610";
+  content: "\e61e";
 }
 .doicon-hr:before {
   content: "\e612";
@@ -99,6 +99,9 @@ html {
 }
 .doicon-security:before { 
   content: "\e682"; 
+}
+.doicon-feedback:before{
+    content:"\e61f";
 }
 /*font-family*/
 html,
@@ -514,6 +517,20 @@ h6 {
  display: inline;
 margin-top: 5.744rem;
 }
+.dodo-container .content .related .teasing{
+    width: 100%;
+    height: 50px;
+    padding: 0;
+    background-color: #39b4e1;
+    border: 0;
+    color: #fff;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
 .dodo-container .content .related .btn {
   height: 1.317rem;
   display: block;
@@ -571,7 +588,17 @@ padding-left:0;
 display:none;
 }
 
-
+/*修改我要吐槽弹框*/
+.pw-box-body .errorSelect,.pw-box-body .errorAdvice{
+    font-size:12px;
+    line-height:1.4;
+    color:red;
+    padding-left:0;
+    display:none;
+}
+.layui-layer-content .pw-box-body .margin-layer{
+    margin-bottom:30px;
+}
 /*mobile*/
 @media (max-width:768px) {
  .dodo-container .content .main {

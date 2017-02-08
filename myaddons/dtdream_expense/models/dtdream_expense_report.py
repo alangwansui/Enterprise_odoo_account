@@ -41,9 +41,25 @@ class dtdream_expense_report(models.Model):
     name = fields.Char(string=u'单据号')
     title = fields.Char(string=u"标题", default=lambda self: self.env['hr.employee'].search([('login', '=', self.env.user.login)]).name + u"的报销单")
     benefitdep_ids  =fields.One2many("dtdream.expense.benefitdep","report_id",string=u"受益部门分摊比例")
+    project_ids = fields.One2many("dtdream.expense.project","report_id",string="项目分摊比例")
+
+    @api.constrains('project_ids')
+    def check_project_ids(self):
+        if self.project_ids:
+            crm_lead_list = []
+            total_percent = 0
+            for rec in self.project_ids:
+                crm_lead_list.append(rec.name.id)
+                total_percent += rec.share_percent
+            if len(crm_lead_list) != len(set(crm_lead_list)):
+                raise ValidationError("不能有重复的项目!")
+            else:
+                if total_percent != 100:
+                    raise ValidationError("项目分摊比例之和必须为100%！")
     record_ids=fields.Many2many('dtdream.expense.record','dtdream_exprense_record_report_ref','record_id','report_id',u'费用明细')
     state = fields.Selection([('draft', u'草稿'), ('xingzheng', u'行政助理审批'), ('zhuguan', u'主管审批'), ('quanqianren', u'权签人审批'),('jiekoukuaiji', u'接口会计审批'), ('daifukuan', u'待付款'),
                               ('yifukuan', u'已付款')], string="状态", default="draft")
+    jiekou_approve_time = fields.Datetime(string="接口会计审批时间")
     xingzhengzhuli = fields.Many2one("hr.employee",string=u"部门行政助理",default=_get_default_val,
                                      domain=lambda self:[('id','in',[x.id for x in self.env['hr.employee'].search([('user_id', '=',self.env.user.id)]).department_id.assitant_id])])
     currentauditperson = fields.Many2one("hr.employee",string=u"当前处理人")
@@ -192,7 +208,7 @@ class dtdream_expense_report(models.Model):
     @api.depends('record_ids')
     def _compute_total_koujianamount(self):
         for report in self:
-            if report.state == "draft":
+            if report.state == "draft" or report.state == "jiekoukuaiji":
                 koujian = 0.0
                 invoice = 0.0
                 #计算消费明细扣罚金额
@@ -225,21 +241,11 @@ class dtdream_expense_report(models.Model):
                             months = 0
 
                         # if xishu != 1:
-                        r_shibaoamount = rd.invoicevalue * xishu
-                        r_koujianamount = rd.invoicevalue - r_shibaoamount
+                        r_shibaoamount = (rd.invoicevalue-rd.kuanji_koujian) * xishu
+                        r_koujianamount = rd.invoicevalue - r_shibaoamount - rd.kuanji_koujian
                         # rd._cr.execute("update dtdream_expense_record set outtimenumber = %s,koujianamount = %s,shibaoamount = %s",(months,r_koujianamount,r_shibaoamount))
                         rd.write({'outtimenumber':months,'koujianamount':r_koujianamount,'shibaoamount':r_shibaoamount})
-                        koujian += rd.koujianamount
-                        invoice += rd.invoicevalue
-                report.total_koujianamount = koujian
-                report.total_invoicevalue = invoice
-                report.total_shibaoamount = report.total_invoicevalue - report.total_koujianamount
-            if report.state == "jiekoukuaiji":
-                koujian = 0.0
-                invoice = 0.0
-                if report.record_ids:
-                    for rd in report.record_ids:
-                        koujian += rd.koujianamount
+                        koujian += rd.koujianamount + rd.kuanji_koujian
                         invoice += rd.invoicevalue
                 report.total_koujianamount = koujian
                 report.total_invoicevalue = invoice
@@ -541,14 +547,21 @@ class dtdream_expense_report(models.Model):
             if report.state == 'draft':
                 if report.xingzhengzhuli.id == False:
                     raise Warning(u'请选择行政助理!')
-                if not report.budget_id and self.env['dtdream.expense.operation.management'].search([]):
-                    if report.department_id in self.env['dtdream.expense.operation.management'].search([])[0].dep_name \
+                if not report.budget_id and self.env['dtdream.expense.operation.management'].search([('name', '=', 'budget')]):
+                    if report.department_id in self.env['dtdream.expense.operation.management'].search([('name', '=', 'budget')])[0].dep_name \
                             and not report.create_uid_self.has_group('dtdream_expense.group_dtdream_expense_no_budget') \
                             and report.paycatelog == 'fukuangeiyuangong':
                         raise Warning(u'请选择预算月份!')
+                if report.if_display_zhuanxiang == 1 and not report.project_ids \
+                        and self.env['dtdream.expense.operation.management'].search([('name', '=', 'project')]) \
+                        and report.department_id in self.env['dtdream.expense.operation.management'].search([('name', '=', 'project')])[0].dep_name \
+                        and not report.create_uid_self.has_group('dtdream_expense.group_dtdream_expense_no_project'):
+                        raise Warning(u'请填写项目分摊比例!')
                 if not report.zhuanxiang_id and report.if_display_zhuanxiang == 1 \
                         and not report.create_uid_self.has_group('dtdream_expense.group_dtdream_expense_no_zhuanx'):
                     raise Warning(u'请选择专项编号!')
+                if not report.expensereason:
+                    raise ValidationError("请填写报销事由！")
                 self.check_report_params(report)
 
                 a=[]#存储费用类别，一张报销单只能有一个费用类别
@@ -730,15 +743,18 @@ class dtdream_expense_report(models.Model):
                 assistant_ids = self.env['hr.department'].search([('id', '=', depid)]).chunakuaiji[0].id
             except:
                 raise Warning(u'参数配置不全,请联系管理员!')
-            report.write({"hasauditor": [(4, report.currentauditperson.id)]})
+            report.write({"hasauditor": [(4, report.currentauditperson.id)],'jiekou_approve_time':datetime.now()})
             report.write({'state': 'daifukuan', 'currentauditperson': assistant_ids})
-            report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
-                           u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
-                           email_to=report.currentauditperson.work_email)
+            report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,发生扣款!".format(report.create_uid.name, report.create_date[:10]),
+                           u"您提交的费用报销单%s,发生了%s元扣款!" % (report.name,report.total_koujianamount),
+                           email_to=self.env['hr.employee'].search([('user_id','=',report.create_uid.id)]).work_email)
             self.send_dingding_msg(report, report.currentauditperson.user_id.id)
             content = u"您提交的报销单到了待付款阶段"
             if report.total_koujianamount > 0:
                 content = u"您提交的报销单到了待付款阶段,发生%s元扣款！" % report.total_koujianamount
+                report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
+                           u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
+                           email_to=report.currentauditperson.work_email)
             self.send_dingding_msg(report, report.create_uid.id, content=content)
             for rc in report.record_ids:
                 rc.write({'state': 'daifukuan'})

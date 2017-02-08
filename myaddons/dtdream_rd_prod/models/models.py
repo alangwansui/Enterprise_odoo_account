@@ -194,17 +194,51 @@ class dtdream_prod_appr(models.Model):
                 self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
                 self.add_follower(employee_id=process.approver.id)
 
+    # 获取抄送人邮箱
+    def compute_email_list(self):
+        people_email_list = ''
+        appro = self.env['dtdream_rd_role'].search([('role_id', '=', self.id), ('person', '!=', False)])
+        for record in appro:
+            people_email_list += record.person.work_email + ';'
+        return people_email_list
+
     @api.constrains('risk_ids')
     def _compute_risk_ids(self):
+        email_list = self.compute_email_list()
         for process in self.risk_ids:
-            if process.risk_state != process.risk_state_old:
+            is_change = process.is_risk_change()
+            if is_change:
+                # 记备注
+                risk_sort_state_change = process.risk_sort_state_change()
+                risk_state_change = process.risk_state_change()
+                risk_PDT_change = process.risk_PDT_change()
+                risk_plan_close_time_change = process.risk_plan_close_time_change()
+                risk_chance_describe_change = process.risk_chance_describe_change()
+                risk_name_change = process.risk_name_change()
                 risk_description = process.name
-                risk_state = process.risk_state
-                if process.risk_state_old :
-                    self.message_post(body=u"""<p>把风险：%s 的状态改为%s</p>""" % (risk_description, risk_state.name))
-                else :
-                    self.message_post(body=u"""<p>新创建风险：%s ，状态为%s</p>""" % (risk_description, risk_state.name))
-                process.write({'risk_state_old': process.risk_state.id})
+                ins = u"<p>风险：%s 变更信息</p>%s%s%s%s%s%s"% (risk_description,
+                                risk_name_change, risk_chance_describe_change, risk_plan_close_time_change,
+                                risk_PDT_change, risk_state_change, risk_sort_state_change)
+                self.message_post(body=u"""%s""" % (ins))
+                process.update_old_ins()
+                # 发邮件
+                subject = u"%s更新了风险信息，请查看" % (self.name)
+                appellation = u"您好"
+                base_url = self.get_base_url()
+                link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
+                url = base_url + link
+                self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                     %s
+                                     <p>查看详情请点击链接:<a href="%s">%s</a></p>
+                                    ''' % (appellation, ins, url, url),
+                    'subject': '%s' % subject,
+                    'email_to': '%s' % process.PDT.work_email,
+                    'email_cc': '%s' % email_list,
+                    'auto_delete': False,
+                    'email_from': self.get_mail_server_name(),
+                }).send()
+
 
     is_finsished_01 = fields.Boolean(string="立项多人审批是否结束",store=True)
     is_finsished_02 = fields.Boolean(string="总体设计多人审批是否结束",store=True)
@@ -872,7 +906,8 @@ class dtdream_prod_appr(models.Model):
                 'appr': app.name,
                 'version':'',
                 'PDT': app.PDT.name or '',
-                'style':state_dict[app.state],
+                'style':u'产品',
+                'state': state_dict[app.state],
                 'defer':defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -915,7 +950,8 @@ class dtdream_prod_appr(models.Model):
                 'appr': app.name,
                 'version': '',
                 'PDT': app.PDT.name or '',
-                'style': state_dict[app.state],
+                'style':u'产品',
+                'state': state_dict[app.state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -947,7 +983,8 @@ class dtdream_prod_appr(models.Model):
                 'appr': app.name,
                 'version': '',
                 'PDT': app.PDT.name or '',
-                'style': state_dict[app.state],
+                'style':u'产品',
+                'state': state_dict[app.state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays

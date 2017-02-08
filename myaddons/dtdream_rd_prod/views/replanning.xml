@@ -9,7 +9,7 @@
                     <group>
                             <field name="reason"  class="expense_catelog"/>
                     </group>
-                    <footer>
+                    <footer class='no_hidden'>
                         <button name="btn_agree" type="object"
                                 string="确认" class="oe_highlight"/>
                         或
@@ -44,7 +44,7 @@
                     <group>
                             <field name="reason"  class="expense_catelog"/>
                     </group>
-                    <footer>
+                    <footer class='no_hidden'>
                         <button name="btn_disagree" type="object"
                                 string="确认" class="oe_highlight"/>
                         或
@@ -161,7 +161,7 @@
             <field name="model">dtdream.rd.replanning</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header class='no_hidden'>
                         <button name="btn_replanning_tj"  string="提交"  type="object" attrs="{'invisible':['|',('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_agree)d" string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('state_02')),'&amp;',('is_shenpiren','=',False),('is_Qa','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_disagree)d" string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('state_02')),'&amp;',('is_shenpiren','=',False),('is_Qa','=',False)]}"/>

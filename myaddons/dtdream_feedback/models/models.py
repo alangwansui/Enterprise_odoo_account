@@ -134,7 +134,7 @@ class dtdream_feedback_advice(models.Model):
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                        <tr><th style="padding:10px">反馈人</th><th style="padding:10px">%s</th></tr>
                                                        <tr><td style="padding:10px">反馈时间</td><td style="padding:10px">%s</td></tr>
-                                                       </table>""" % (self.adviceMan, self.adviceTime))
+                                                       </table>""" % (self.adviceMan.nick_name, self.adviceTime))
         self.confirm_send_email()
         self.send_to_manager()
 
@@ -145,7 +145,28 @@ class dtdream_feedback_advice(models.Model):
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                <tr><th style="padding:10px">回复人</th><th style="padding:10px">%s</th></tr>
                                                <tr><td style="padding:10px">回复时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" % (self.name.manager, self.answerTime))
+                                               </table>""" % (self.name.manager.nick_name, self.answerTime))
         self.answer_send_email()
 
+    #获取表中的所有问题模块
+    @api.model
+    def get_feedbackmodels_record(self):
+        ids = self.env['dtdream.feedback.configuration'].sudo().search([])
+        array = [(id.id, id.name) for id in ids]
+        return array
 
+    #传入用户名、时间、问题模块、意见这四个参数
+    @api.model
+    def add_feedback(self, adviceMan=None,adviceTime=None,feedback_advice=None,promblemModels_name=None):
+        em = self.env['hr.employee'].search([('user_id','=',adviceMan)])
+        result = self.create({
+            'adviceMan': em.id,
+            'adviceTime': adviceTime,
+            'advice': feedback_advice,
+            'name': promblemModels_name
+        })
+        if result.id:
+            result.wkf_confirm()
+            return True
+        else:
+            return False

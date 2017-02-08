@@ -233,6 +233,14 @@ class dtdream_hr_resume(models.Model):
                                                <tr><td style="padding:10px">下一审批人</td><td style="padding:10px">%s</td></tr>
                                                </table>""" % (state, action, approve))
 
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        for rec in domain:
+            if 'entry_day' in rec:
+                rec[rec.index('entry_day')] = 'name.entry_day'
+        return super(dtdream_hr_resume, self).search_read(domain=domain, fields=fields, offset=offset,
+                                                          limit=limit, order=order)
+
     name = fields.Many2one("hr.employee", string="花名", default=lambda self: self.env['hr.employee'].search(
         [("id", "=", self.env.context.get('active_id'))]))
     is_graduate = fields.Boolean(string="是应届毕业生")
@@ -256,6 +264,7 @@ class dtdream_hr_resume(models.Model):
     is_shenqingren = fields.Boolean(string="是否申请人", compute=_compute_is_shenqingren)
     approved = fields.Many2many("hr.employee", string="已批准的审批人")
     resume_name = fields.Char(default=lambda self: "履历")
+    entry_day = fields.Date("入职时间")
     state = fields.Selection(
         [("0", "草稿"),
          ("1", "人力资源部审批"),

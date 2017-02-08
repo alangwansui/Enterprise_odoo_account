@@ -1,0 +1,65 @@
+<openerp>
+    <data>
+    <!--风险类别配置-->
+        <record id="act_dtdream_rd_risksortconfig" model="ir.actions.act_window">
+            <field name="name">风险类别配置</field>
+            <field name="res_model">dtdream_rd_risksortconfig</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="view_dtdream_rd_risksortconfig_from" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.risksortconfig.from</field>
+            <field name="model">dtdream_rd_risksortconfig</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_dtdream_rd_risksortconfig_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.rd.risksortconfig.tree</field>
+            <field name="model">dtdream_rd_risksortconfig</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name='name'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_risksortconfig_kanban_view">
+            <field name="name">dtdream.rd.risksortconfig.kanban</field>
+            <field name="model">dtdream_rd_risksortconfig</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name='name'/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                 <div class="o_kanban_image">
+                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                  </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>类别:</strong> <field name="name" /></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</openerp>

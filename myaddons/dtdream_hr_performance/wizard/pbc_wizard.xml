@@ -66,34 +66,24 @@
         <field name="arch" type="xml">
             <form string="导入">
                 <field name="state" invisible="True"/>
-                <div states="1">
-                    <b>注意:</b>
-                    <p>请上传导入文件</p>
+                <div>
+                    <div states="1">
+                        <b>注意:</b>
+                        <p>请先上传需要导入的excel文件</p>
+                    </div>
                     <field name="filename" invisible="1"/>
-                    <field name="data" filename="filename"/>
+                    <field name="data" filename="filename" attrs="{'readonly':[('state', '!=','1')]}"/>
+                    <group states="1">
+                        <button name="button_next" type="object" string="验证" class="oe_highlight"/>
+                    </group>
+                    <group states="2">
+                        <field name="imported"/>
+                        <button name="button_ok" type="object" string="导入" class="oe_highlight"/>
+                    </group>
                 </div>
-                <group states="1">
-                    <button name="button_next" type="object" string="导入"/>
-                </group>
-                <group states="2">
-                    <field name="selected"/>
-                    <field name="imported"/>
-                    <button name="button_ok" type="object" string="确定"/>
-                </group>
             </form>
         </field>
     </record>
-
-    <act_window
-          id="dtimport_hr_performance_btn"
-          name="导入"
-          key2="client_action_multi"
-          res_model="dtimport.hr.performance"
-          src_model="dtdream.hr.performance"
-          view_id="view_dtimport_hr_performance_from"
-          view_mode="form"
-          view_type="form"
-          target="new"/>
 
     </data>
 </openerp>

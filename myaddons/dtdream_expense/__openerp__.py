@@ -39,6 +39,7 @@
         'views/dtdream_expense_account_credit.xml',
         'views/dtdream_expense_batch_approval.xml',
         'views/dtdream_expense_operation_management.xml',
+        'views/dtdream_expense_project.xml',
         'workflow/expenseworkflow.xml',
         'views/expense_data.xml',
         'print/dtdream_expense_report.xml',

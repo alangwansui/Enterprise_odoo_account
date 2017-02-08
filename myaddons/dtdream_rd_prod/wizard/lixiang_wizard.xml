@@ -13,7 +13,7 @@
                         <div>确定进入下一阶段？</div>
                     </group>
                 </group>
-                <footer>
+                <footer class='no_hidden'>
                     <button name="btn_confirm" type="object"
                             string="确认" class="oe_highlight"/>
                     或
@@ -43,7 +43,7 @@
                         <div>确定进入下一阶段？</div>
                     </group>
                 </group>
-                <footer>
+                <footer class='no_hidden'>
                     <button name="btn_confirm" type="object"
                             string="确认" class="oe_highlight"/>
                     或
@@ -75,7 +75,7 @@
                         <div>确定进入下一阶段？</div>
                     </group>
                 </group>
-                <footer>
+                <footer class='no_hidden'>
                     <button name="btn_version_submit" type="object"
                             string="确认" class="oe_highlight"/>
                     或
@@ -128,7 +128,7 @@
                         <field name="liyou"/>
                     </group>
                 </group>
-                <footer>
+                <footer class='no_hidden'>
                     <button name="btn_confirm_liwai" type="object"
                             string="确认" class="oe_highlight"/>
                     或

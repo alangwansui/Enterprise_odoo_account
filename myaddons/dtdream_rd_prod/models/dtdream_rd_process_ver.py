@@ -36,6 +36,7 @@ class dtdream_rd_process_ver(models.Model):
     is_pass = fields.Boolean("通过")
     is_refuse = fields.Boolean("不通过")
     is_risk = fields.Boolean("带风险通过")
+    approve_state = fields.Text('状态')
     reason = fields.Text("意见")
 
     process_01_id = fields.Many2one('dtdream_rd_version',string='研发版本')

@@ -13,7 +13,8 @@
                             <td>版本号</td>
                             <td>PDT经理</td>
                             <td>类型</td>
-                            <td>延期状态</td>
+                            <td>状态</td>
+                            <td>停留天数</td>
                             <td>操作</td>
                         </tr>
                     </thead>
@@ -25,12 +26,13 @@
                                 <td><t t-esc="affair.version"/> </td>
                                 <td><t t-esc="affair.PDT"/> </td>
                                 <td><t t-esc="affair.style"/> </td>
+                                <td><t t-esc="affair.state"/> </td>
                                 <td>
                                     <t t-if="affair.defer">
                                         <span class="defer">停留<t t-esc="affair.deferdays"/>天 </span>
                                     </t>
                                     <t t-if="!affair.defer">
-                                        <span class="normal">正常</span>
+                                        <span class="normal">新申请</span>
                                     </t>
                                 </td>
                                 <td><a t-att-href="affair.url">审批</a></td>
@@ -63,7 +65,8 @@
                             <td>版本号</td>
                             <td>PDT经理</td>
                             <td>类型</td>
-                            <td>延期状态</td>
+                            <td>状态</td>
+                            <td>停留天数</td>
                             <td>操作</td>
                         </tr>
                     </thead>
@@ -75,12 +78,13 @@
                                 <td><t t-esc="apply.version"/> </td>
                                 <td><t t-esc="apply.PDT"/> </td>
                                 <td><t t-esc="apply.style"/> </td>
+                                <td><t t-esc="apply.state"/> </td>
                                 <td>
                                     <t t-if="apply.defer">
                                         <span class="defer">停留<t t-esc="apply.deferdays"/>天 </span>
                                     </t>
                                     <t t-if="!apply.defer">
-                                        <span class="normal">正常</span>
+                                        <span class="normal">新申请</span>
                                     </t>
                                 </td>
                                 <td><a t-att-href="apply.url">查看</a></td>
@@ -114,7 +118,8 @@
                         <td>版本号</td>
                         <td>PDT经理</td>
                         <td>类型</td>
-                        <td>延期状态</td>
+                        <td>状态</td>
+                        <td>停留天数</td>
                         <td>操作</td>
                     </tr>
                 </thead>
@@ -126,12 +131,13 @@
                             <td><t t-esc="done.version"/> </td>
                             <td><t t-esc="done.PDT"/> </td>
                             <td><t t-esc="done.style"/> </td>
+                            <td><t t-esc="done.state"/> </td>
                             <td>
                                 <t t-if="done.defer">
                                     <span class="defer">停留<t t-esc="done.deferdays"/>天 </span>
                                 </t>
                                 <t t-if="!done.defer">
-                                    <span class="normal">正常</span>
+                                    <span class="normal">新申请</span>
                                 </t>
                             </td>
                             <td><a t-att-href="done.url">查看</a></td>

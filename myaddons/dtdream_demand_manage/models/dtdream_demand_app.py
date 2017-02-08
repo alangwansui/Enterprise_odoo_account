@@ -53,7 +53,7 @@ class dtdream_demand_app(models.Model):
             self.is_direct_manage = False
 
     def _compute_is_it_manage(self):
-        it = self.env['hr.department'].search([('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1)
+        it = self.env['dtdream.demand.it.department'].search([], limit=1)[0].department
         if it.manager_id.user_id == self.env.user:
             self.is_IT_manage = True
         else:
@@ -212,8 +212,8 @@ class dtdream_demand_app(models.Model):
     @api.multi
     def wkf_draft(self):
         if self.state != '0':
-            approve = self.name.department_id.manager_id if self.state == '1' else self.env['hr.department'].search(
-                    [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
+            approve = self.name.department_id.manager_id if self.state == '1' else \
+                self.env['dtdream.demand.it.department'].search([], limit=1)[0].department.manager_id
             self.write({"state": '0', 'current_approve': self.name.id, 'approves': [(4, approve.id)]})
             self.add_follower(user_id=approve.user_id)
 
@@ -228,8 +228,7 @@ class dtdream_demand_app(models.Model):
 
     @api.multi
     def wkf_demand_approve(self):
-        current_approve = self.env['hr.department'].search(
-            [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
+        current_approve = self.env['dtdream.demand.it.department'].search([], limit=1)[0].department.manager_id
         approve = self.name.department_id.manager_id
         if not self.comments or not self.comments.strip():
             raise ValidationError('评审意见不能为空，请填写评审意见!')
@@ -248,8 +247,7 @@ class dtdream_demand_app(models.Model):
             if not self.analyst:
                 raise ValidationError('方案分析人员不能为空，请指定方案分析人员!')
             current_approve = self.analyst
-            approve = self.env['hr.department'].search(
-                [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
+            approve = self.env['dtdream.demand.it.department'].search([], limit=1)[0].department.manager_id
             self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve.id)]})
             self.add_follower(user_id=approve.user_id)
             subject = u'【通知】%s提交了应用开发及优化类需求申请' % self.name.name
@@ -262,8 +260,7 @@ class dtdream_demand_app(models.Model):
 
     @api.multi
     def wkf_plan_approve(self):
-        current_approve = self.env['hr.department'].search(
-            [('name', '=', u'信息开发部'), ('parent_id.name', '=', u'综合开发部')], limit=1).manager_id
+        current_approve = self.env['dtdream.demand.it.department'].search([], limit=1)[0].department.manager_id
         if self.entrusted_analyst:
             approve = self.entrusted_analyst
         else:
@@ -325,6 +322,33 @@ class dtdream_demand_employee(models.Model):
             self.env['dtdream.demand.app'].search([('name.nick_name', '=', self.nick_name),
                                                    ('state', '=', '1')]).write({'current_approve': manager_id})
         return super(dtdream_demand_employee, self).write(vals)
+
+
+class dtdream_demand_it_department(models.Model):
+    _name = 'dtdream.demand.it.department'
+    _rec_name = 'department'
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(dtdream_demand_it_department, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=False)
+        doc = etree.XML(res['arch'])
+        if res['type'] == "form":
+            doc.xpath("//form")[0].set("create", "false")
+        if res['type'] == "tree":
+            doc.xpath("//tree")[0].set("create", "false")
+        if res['type'] == "kanban":
+            doc.xpath("//kanban")[0].set("create", "false")
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    @api.onchange('department')
+    def update_demand_app_record(self):
+        record = self.env['dtdream.demand.app'].search([('state', 'in', ('2', '4'))])
+        for cr in record:
+            if cr.current_approve != self.department.manager_id:
+                cr.write({'current_approve': self.department.manager_id.id})
+
+    department = fields.Many2one('hr.department', string='IT部门')
 
 
 

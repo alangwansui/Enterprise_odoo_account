@@ -1095,7 +1095,7 @@ var FieldBinary = common.AbstractField.extend(common.ReinitializeFieldMixin, {
             this.$('.o_reducesize_file_button').css('display','none');
             this.$('.o_rotate_file_button').css('display','none');
         }
-        if(this.$el.find(".o_form_image_controls").length == 0 && this.$el.parent()[0].nodeName == "TD"){
+        if(this.$el.find(".o_form_image_controls").length == 0 && this.$el.parent()[0].nodeName == "TD" && !this.$el.hasClass("o_form_field_binary_file")){
             var addSize='<span class="fa fa-plus fa-lg pull-left o_addsize_file_button" title="放大图片"></span>';
             var reduceSize='<span class="fa fa-minus fa-lg pull-left o_reducesize_file_button" title="缩小图片"></span>';
             var rotatePicture='<span class="fa fa-rotate-right fa-lg pull-left o_rotate_file_button" title="旋转图片"></span>';

@@ -33,7 +33,8 @@ var Main = Widget.extend({
             "公告":"notice",
             "电子名片":"ecard",
             "资产管理":"assets",
-			"信息安全":"security"
+			"信息安全":"security",
+			"意见反馈":"feedback"
         },
         init: function (parent) {
 //            this._super(parent);

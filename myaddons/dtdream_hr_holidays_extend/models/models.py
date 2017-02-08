@@ -34,7 +34,7 @@ class dtdream_hr_holidays_extend(models.Model):
         self.gonghao=self.employee_id.job_number
     gonghao=fields.Char(string="工号",compute=_compute_gonghao,readonly=1)
     bumen=fields.Char(string="部门",default=lambda self:self.env['hr.employee'].search([('login','=',self.env.user.login)]).department_id.name,readonly=1)
-    create_time= fields.Datetime(string='申请时间',default=lambda self: datetime.now(),readonly=1)
+    create_time= fields.Datetime(string='申请时间', required=True)
     # create_time=openerp.fields.Datetime.now()
     # approver1_auto = fields.Many2one("hr.employee",string="第一审批人(只用于显示)",compute=_compute_approver1)
 

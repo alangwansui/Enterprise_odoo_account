@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="FeedbackListView.buttons">
+        <div class="oe_list_buttons">
+            <button type="button" name="dtdream_feedback.act_feedback" class="btn btn-sm btn-primary oe_add_advice">
+                吐槽
+            </button>
+        </div>
+    </t>
+    <t t-name="FeedbackKanban.buttons">
+        <div class="oe_list_buttons">
+            <button type="button" name="dtdream_feedback.act_feedback" class="btn btn-sm btn-primary oe_add_advice">
+                吐槽
+            </button>
+        </div>
+    </t>
+</templates>

@@ -872,6 +872,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="o_report_project_ids">
+                    <div class="content-block-title">
+                        <div class="row">
+                            <div class="col-80">项目分摊比例</div>
+                            <div class="col-20">
+                                <a class="pull-right o_add_project">
+                                    <i class="icon iconfont" style="font-size: 24px">&#xe641;</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="o_report_chuchai_ids">
                     <div class="content-block-title">
@@ -1017,6 +1029,61 @@
                 </div>
 
                 <div class="o_report_department"></div>
+            </div>
+
+        </div>
+
+        <div class="popup popup-project login-screen">
+            <div class="content">
+                <div class="list-block o_project_form">
+                    <ul>
+                        <!-- Text inputs -->
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">项目名称</div>
+                                    <div class="item-input">
+                                        <input type="text" data-name="pro_name" readonly="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">分摊比例</div>
+                                    <div class="item-input">
+                                        <input type="text" data-id="share_percent"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+            <nav class="bar bar-tab o_create_report">
+
+                <a class="tab-item active" data-item-id="sumbit_project" href="#">
+                    确定
+                </a>
+                <a class="tab-item " href="#" data-item-id="cancel_add_project">
+                    返回
+                </a>
+            </nav>
+        </div>
+
+        <div class="popup popup-pro login-screen">
+            <div class="content">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <label class="icon icon-search" for="search"></label>
+                        <input type="text" class="o_search_project" id='search' placeholder='搜索...'/>
+                    </div>
+                </div>
+
+                <div class="o_report_project"></div>
             </div>
 
         </div>
@@ -1171,6 +1238,23 @@
         </div>
     </t>
 
+    <t t-name="project">
+        <div class="list-block">
+            <ul>
+                <t t-foreach="departments" t-as="i">
+                    <li class="item-content o_select_project" t-att-data-id="i.id" t-att-data-name="i.name">
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <t t-esc="i.name"/>
+                            </div>
+                        </div>
+                    </li>
+
+                </t>
+            </ul>
+        </div>
+    </t>
+
     <t t-name="xingzhengzhuli">
         <div class="list-block">
             <ul>
@@ -1207,6 +1291,34 @@
                         </div>
                         <t t-if="state=='draft'">
                             <div class="item-media o_delete_benefitdep">
+                                <i class="icon iconfont" style="font-size:24px;">&#xe66a;</i>
+                            </div>
+                        </t>
+                    </li>
+                </t>
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="project_list">
+        <div class="list-block">
+            <ul>
+                <t t-foreach="project_records" t-as="i">
+                    <li class="item-content o_project_list" t-att-data-id="i.id" t-att-data-name="i.name[0]"
+                        t-att-data-share_percent="i.share_percent">
+
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <t t-esc="i.name[1]"/>
+                            </div>
+                            <div class="item-after">
+                                <a class="pull-center">
+                                    <t t-esc="i.share_percent+'%'"/>
+                                </a>
+                            </div>
+                        </div>
+                        <t t-if="state=='draft'">
+                            <div class="item-media o_delete_project">
                                 <i class="icon iconfont" style="font-size:24px;">&#xe66a;</i>
                             </div>
                         </t>

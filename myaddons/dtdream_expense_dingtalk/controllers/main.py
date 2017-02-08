@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import http, fields
 from openerp.http import request
-from ..api import auth, user
+from openerp.dtdream.dingding import auth, user
+
 import werkzeug
 import logging
 import json
@@ -141,8 +142,9 @@ class dingTalk(http.Controller):
         _logger.info("users:" + str(res_users))
         if res_users:
             res_user = res_users[0]
+            _logger.info("db:" + str(request.session.db))
+            _logger.info("login:" + str(res_user.login))
             uid = request.session.authenticate(request.session.db, res_user.login, userid)
-
             _logger.info("user id:" + str(request.session.uid))
             _logger.info("uid:" + str(uid))
 

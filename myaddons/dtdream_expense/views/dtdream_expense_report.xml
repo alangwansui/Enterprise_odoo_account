@@ -82,7 +82,7 @@
                             </group>
                             <group string="支付信息">
                                 <field name="paytype" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <field name="paycatelog" widget="radio" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="paycatelog" widget="radio" attrs="{'readonly':[('state','not in',('draft','jiekoukuaiji'))]}"/>
                                 <field name="shoukuanrenxinming" attrs="{'readonly':['|',('state','!=','draft'),('paycatelog','=','fukuangeiyuangong')]}"/>
                                 <field name="kaihuhang" attrs="{'readonly':['|',('state','!=','draft'),('paycatelog','=','fukuangeiyuangong')]}"/>
                                 <field name="yinhangkahao" attrs="{'readonly':['|',('state','!=','draft'),('paycatelog','=','fukuangeiyuangong')]}"/>
@@ -130,6 +130,14 @@
                                             </t>
                                         </templates>
                                     </kanban>
+                                </field>
+                            </page>
+                            <page string="项目分摊比例" class="page_project_ids">
+                                <field name="project_ids" options="{'no_create': True}" create="false" attrs="{'readonly':[('state','!=','draft')]}">
+                                    <tree editable="bottom" >
+                                        <field name="name" required="1"></field>
+                                        <field name="share_percent" required="1"></field>
+                                    </tree>
                                 </field>
                             </page>
                         </notebook>
@@ -223,6 +231,7 @@
                                         <field name="expensedetail" />
                                         <field name="currentdate"/>
                                         <field name="invoicevalue"/>
+                                        <field name="kuanji_koujian" />
                                         <field name="koujianamount" />
                                         <field name="outtimenumber" />
                                         <field name="create_uid" string="创建人" readonly="1"/>
@@ -231,6 +240,7 @@
                                         <field name="expensedetail"/>
                                         <field name="currentdate"/>
                                         <field name="invoicevalue"/>
+                                        <field name="kuanji_koujian" />
                                         <field name="koujianamount"/>
                                         <field name="province"  />
                                         <field name="city"  />
@@ -308,6 +318,7 @@
                     <field name="total_shibaoamount"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
+                    <field name="jiekou_approve_time"></field>
                     <field name="department_id"/>
 
 
@@ -328,6 +339,7 @@
                     <field name="total_shibaoamount"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
+                    <field name="jiekou_approve_time"></field>
                     <field name="department_id"/>
 
 

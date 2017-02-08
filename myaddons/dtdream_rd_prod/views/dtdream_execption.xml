@@ -71,7 +71,7 @@
             <field name="model">dtdream_execption</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header class='no_hidden'>
                         <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object" attrs="{'invisible':['|',('state','not in',('dsp')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}" />
                         <button name="%(dtdream_rd_prod.act_liwaiwizardagree)d"  string="同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp','Nyjsp','Nejsp')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_liwaiwizard)d"  string="不同意"  type="action" attrs="{'invisible':['|',('state','not in',('yjsp','ejsp','Nyjsp','Nejsp')),'&amp;',('is_Qa','=',False),('is_shenpiren','=',False)]}"/>
@@ -165,7 +165,7 @@
             <field name="model">dtdream_execption_w</field>
             <field name="arch" type="xml">
                 <form>
-                    <header>
+                    <header class='no_hidden'>
                         <button name="execptiontj" string="提交例外" confirm="确认提交例外？" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="dsp,yjsp,Nyjsp,ejsp,Nejsp,ysp" />
                     </header>

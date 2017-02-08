@@ -125,7 +125,7 @@ class process_wizard(models.TransientModel):
     def btn_agree(self):
         active_id = self._context['active_id']
         current_process = self.env['dtdream_rd_process'].browse(active_id)
-        current_process.write({"is_pass":True,'is_risk':False,'is_refuse':False,"reason":self.reason})
+        current_process.write({"is_pass":True,'is_risk':False,'is_refuse':False,'approve_state':"通过","reason":self.reason})
         current_product = current_process.process_id or current_process.ztsj_process_id
         if current_process.pro_state=='state_01' and current_process.pro_state==current_product.state:
             self.check_process_ids(current_process=current_process,current_product=current_product,flag=u'通过')
@@ -142,7 +142,7 @@ class process_wizard(models.TransientModel):
     def btn_other(self):
         active_id = self._context['active_id']
         current_process = self.env['dtdream_rd_process'].browse(active_id)
-        current_process.write({"is_pass":False,'is_risk':True,'is_refuse':False,"reason":self.reason})
+        current_process.write({"is_pass":False,'is_risk':True,'is_refuse':False,'approve_state':"带风险通过","reason":self.reason})
         current_product = current_process.process_id or current_process.ztsj_process_id
         if current_process.pro_state=='state_01' and current_process.pro_state==current_product.state:
             self.check_process_ids(current_process=current_process,current_product=current_product,flag=u'带风险通过')
@@ -162,7 +162,7 @@ class process_wizard(models.TransientModel):
         current_process = self.env['dtdream_rd_process'].browse(active_id)
         if not self.reason:
             raise ValidationError(u'不通过时意见必填')
-        current_process.write({"is_pass":False,'is_risk':False,'is_refuse':True,"reason":self.reason})
+        current_process.write({"is_pass":False,'is_risk':False,'is_refuse':True,'approve_state':"不通过","reason":self.reason})
         current_product = current_process.process_id or current_process.ztsj_process_id
         current_product.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
         if current_process.pro_state=='state_01' and current_process.pro_state==current_product.state:
@@ -346,7 +346,7 @@ class ver_process_wizard(models.TransientModel):
     def btn_agree(self):
         active_id = self._context['active_id']
         current_process = self.env['dtdream_rd_process_ver'].browse(active_id)
-        current_process.write({"is_pass":True,'is_risk':False,'is_refuse':False,"reason":self.reason})
+        current_process.write({"is_pass":True,'is_risk':False,'is_refuse':False,'approve_state':"通过","reason":self.reason})
         current_version=current_process.process_01_id or current_process.process_02_id or current_process.process_03_id
         current_version.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
         current_product=current_version.proName
@@ -368,7 +368,7 @@ class ver_process_wizard(models.TransientModel):
     def btn_other(self):
         active_id = self._context['active_id']
         current_process = self.env['dtdream_rd_process_ver'].browse(active_id)
-        current_process.write({"is_pass":False,'is_risk':True,'is_refuse':False,"reason":self.reason})
+        current_process.write({"is_pass":False,'is_risk':True,'is_refuse':False,'approve_state':"带风险通过","reason":self.reason})
         current_version=current_process.process_01_id or current_process.process_02_id or current_process.process_03_id
         current_version.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
         current_product=current_version.proName
@@ -391,7 +391,7 @@ class ver_process_wizard(models.TransientModel):
         current_process = self.env['dtdream_rd_process_ver'].browse(active_id)
         if not self.reason:
             raise ValidationError(u'不通过时意见必填')
-        current_process.write({"is_pass":False,'is_risk':False,'is_refuse':True,"reason":self.reason})
+        current_process.write({"is_pass":False,'is_risk':False,'is_refuse':True,'approve_state':"不通过","reason":self.reason})
         current_version=current_process.process_01_id or current_process.process_02_id or current_process.process_03_id
         current_version.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
         current_product=current_version.proName

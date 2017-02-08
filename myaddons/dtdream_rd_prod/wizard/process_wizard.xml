@@ -12,7 +12,7 @@
                         <field name="reason"/>
                     </group>
                 </group>
-                <footer>
+                <footer class='no_hidden'>
                     <button name="btn_agree" type="object" string="通过" class="oe_highlight oe_edit_only"/>
                     <button name="btn_other" type="object" string="带风险通过" class="oe_highlight oe_edit_only"/>
                     <button name="btn_reject" type="object" string="不通过" class="oe_highlight oe_edit_only"/>
@@ -40,7 +40,7 @@
                         <field name="reason"/>
                     </group>
                 </group>
-                <footer>
+                <footer class='no_hidden'>
                     <button name="btn_agree" type="object" string="通过" class="oe_highlight oe_edit_only"/>
                     <button name="btn_other" type="object" string="带风险通过" class="oe_highlight oe_edit_only"/>
                     <button name="btn_reject" type="object" string="不通过" class="oe_highlight oe_edit_only"/>

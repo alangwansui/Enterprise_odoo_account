@@ -9,11 +9,11 @@
                     <group>
                         <field name="reason"/>
                     </group>
-                    <footer>
+                    <footer class='no_hidden'>
                         <button name="btn_agree" type="object"
                                 string="确认" class="oe_highlight"/>
                         或
-                        <button special="cancel" string="取消"/>
+                        <button class='no_hidden' special="cancel" string="取消"/>
                     </footer>
                 </form>
             </field>
@@ -46,11 +46,11 @@
                     <group>
                         <field name="reason"/>
                     </group>
-                    <footer>
+                    <footer class='no_hidden'>
                         <button name="btn_disagree" type="object"
                                 string="确认" class="oe_highlight"/>
                         或
-                        <button special="cancel" string="取消"/>
+                        <button class='no_hidden' special="cancel" string="取消"/>
                     </footer>
                 </form>
             </field>

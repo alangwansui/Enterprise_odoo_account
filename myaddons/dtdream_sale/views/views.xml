@@ -43,13 +43,8 @@
                   <!--<field name="pro_parent_id" string="上级BOM" widget="many2many_tags"/>-->
               </field>
               <field name="uom_id" position="before">
-                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
-                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
-                  <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <!--<field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>-->
               </field>
               <field name="uom_id" position="after">
                   <field name="pro_version" />
@@ -142,13 +137,8 @@
                   <field name="pro_type"/>
                   <field name="pro_description_out" />
                   <field name="is_temporary_bom"/>
-                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
-                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
-                  <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <!--<field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>-->
                   <field name="pro_status" string="状态"/>
                   <field name="effect_time"/>
                   <field name="write_uid" string="最后更新人"/>
@@ -209,13 +199,8 @@
                   <field name="pro_type"/>
                   <field name="pro_description_out" />
                   <field name="is_temporary_bom"/>
-                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
-                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
-                  <field name="system_department_discount" groups="dtdream_sale.group_product_system_query,dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
-                  <!--<field name="market_president_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage"/>-->
                   <field name="pro_status" string="状态"/>
                   <field name="effect_time"/>
                   <field name="write_uid" string="最后更新人"/>

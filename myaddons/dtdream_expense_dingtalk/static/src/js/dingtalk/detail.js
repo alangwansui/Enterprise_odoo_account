@@ -1943,11 +1943,14 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          * @property {method} action_paycatelog 选择支付类别事件
          * @property {method} add_expense 添加报销申请事件
          * @property {method} add_benefitdep 添加分摊比例事件
+         * @property {method} add_project 添加项目分摊比例事件
          * @property {method} get_department 获取分摊比例所属部门事件
          * @property {method} select_department 打开部门界面事件
          * @property {method} delete_benefitdep 删除分摊比例事件
+         * @property {method} delete_project 删除项目分摊比例事件
          * @property {method} delete_detail 删除消费明细事件
          * @property {method} edit_benefitdep 编辑分摊比例事件
+         * @property {method} edit_project 编辑项目分摊比例事件
          * @property {method} select_reject_state 选择拒绝申请后，接收人事件
          * @property {method} search_detail 搜索报销申请事件
          * @property {method} add_chuchai 添加出差明细事件
@@ -1956,6 +1959,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          * @property {method} search_chuchai 选择出差明细事件
          * @property {method} get_xingzhengzhuli 打开行政助理选择界面
          * @property {method} search_department 搜索部门
+         * @property {method} search_project 搜索项目
          */
         events: {
             'click .tab-item': 'action_button',
@@ -1974,6 +1978,13 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             'click input[data-name=dep_name]': 'get_department',
             'keyup .o_search_department': 'search_department',
             'click .o_select_dep': 'select_department',
+
+            'click .o_add_project': 'add_project',
+            'click .o_project_list': 'edit_project',
+            'click .o_delete_project': 'delete_project',
+            'click input[data-name=pro_name]': 'get_project',
+            'keyup .o_search_project': 'search_project',
+            'click .o_select_project': 'select_project',
 
             'click .o_add_chuchai': 'add_chuchai',
             'click .o_select_chuchai': 'select_chuchai',
@@ -2258,10 +2269,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          * @param {object} ev dom对象
          */
         search_department: function (ev) {
-            if (ev.keyCode == "13") {
-                this.$('.o_report_department').empty();
-                this.get_department(this);
-            }
+            this.$('.o_report_department').empty();
+            this.get_department(this);
         },
 
         /**
@@ -2550,6 +2559,198 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
 
         /**
          * @memberOf Report_detail_screen
+         * @description 搜索项目
+         * @param {object} ev dom对象
+         */
+        search_project: function (ev) {
+
+            this.$('.o_report_project').empty();
+            this.get_project(this);
+
+        },
+        /**
+         * @memberOf Report_detail_screen
+         * @description 编辑项目分摊比例
+         * @param ｛object} e dom对象
+         * @returns {boolean}
+         */
+        edit_project: function (e) {
+            e.preventDefault();
+
+            if (this.options.expense_report[0].state != 'draft') {
+                return false;
+            }
+
+            var self = this;
+            var id = $(e.currentTarget).data('id');
+            var name = $(e.currentTarget).data('name');
+            var share_percent = $(e.currentTarget).data('share_percent');
+            var pro_name = $(e.currentTarget).find('.item-title').html();
+
+            self.$('.o_project_form').data('id', id);
+            self.$('.o_project_form').data('edit-type', "edit");
+            self.$('input[data-name=pro_name]').val(pro_name);
+            self.$('input[data-name=pro_name]').data('id', name);
+            self.$('input[data-id=share_percent]').val(share_percent);
+
+            $.popup('.popup-project');
+
+        },
+        /**
+         * @memberOf Report_detail_screen
+         * @description 删除项目分摊比例
+         * @param {object} e dom对象
+         */
+        delete_project: function (e) {
+            e.preventDefault();
+            var li = e.currentTarget.parentNode;
+            if ($(li).data('id') > 0) {
+                $(li).hide();
+            } else {
+                $(li).detach();
+            }
+
+            e.stopPropagation();
+        },
+        /**
+         * @memberOf Report_detail_screen
+         * @description 选择项目
+         * @param {object} e dom对象
+         */
+        select_project: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var self = this;
+            var id = $(e.currentTarget).data('id');
+            if (self.projects) {
+                $.each(self.projects, function (key, value) {
+                    if (value.id == id) {
+                        $('input[data-name=pro_name]').val(value.name);
+                        $('input[data-name=pro_name]').data('id', value.id);
+                    }
+                });
+            }
+
+            self.$('.o_report_project').empty();
+            $.popup('.popup-project');
+        },
+        /**
+         * @memberOf Report_detail_screen
+         * @description 从服务端获取项目列表
+         * @param {object} e dom对象
+         */
+        get_project: function (e) {
+
+            var self = this;
+            var def = $.Deferred();
+            var old_project_ids = [];
+
+            $.each(self.$('.o_project_list'), function (key, value) {
+                var name = $(value).data('name');
+                if (!$(value).is(":hidden")) {
+                    old_project_ids.push(name);
+                }
+            });
+
+            //var condition = [['id', 'not in', old_project_ids],['create_date','>','20000101']];
+            var value = $('.o_search_project').val()
+            //if (value) {
+            //    condition.push(['name', 'ilike', value]);
+            //}
+
+            var def = new $.Deferred();
+            //new Model('crm.lead').query(['id', 'name',])
+            //    .filter(condition)
+            //    .all({'timeout': 3000, 'shadow': true})
+            //    .then(function (projects) {
+            //        var project_ids = [];
+            //        self.projects = projects;
+            //        $.each(projects, function (key, value) {
+            //            project_ids.push(value.id);
+            //        });
+            //        $.when(new Model('crm.lead').call('name_get', [project_ids]), projects).then(function (record, projects) {
+            //            //$.each(projects, function (key, value) {
+            //            //    $.each(record, function (key1, value1) {
+            //            //        if (value.id == value1[0]) {
+            //            //            value.name = value1[1];
+            //            //        }
+            //            //    })
+            //            //})
+            //
+            //            if (self.render_project(projects, self.$('.o_report_project'))) {
+            //                def.resolve();
+            //            } else {
+            //                def.reject();
+            //            }
+            //        });
+            //    }, function (err, event) {
+            //        event.preventDefault();
+            //        def.reject();
+            //    });
+
+            new Model('crm.lead').call('name_search',[value,[['id', 'not in', old_project_ids]]]).then(function (projects) {
+                var records = [];
+                $.each(projects,function(key,value){
+                    records.push({"id":value[0],"name":value[1]});
+                });
+                self.projects = records;
+                        if (self.render_project(records, self.$('.o_report_project'))) {
+                            def.resolve();
+                        } else {
+                            def.reject();
+                        }
+                    }, function (err, event) {
+                    event.preventDefault();
+                    def.reject();
+                });
+
+            $.popup('.popup-pro');
+
+            dd.biz.navigation.setRight({
+                show: true,//控制按钮显示， true 显示， false 隐藏， 默认true
+                control: true,//是否控制点击事件，true 控制，false 不控制， 默认false
+                text: '取消',//控制显示文本，空字符串表示显示默认文本
+                onSuccess: function (result) {
+
+                    self.$('.o_report_project').empty();
+                    $.popup('.popup-project');
+                    dd.biz.navigation.setRight({
+                        show: true,//控制按钮显示， true 显示， false 隐藏， 默认true
+                        control: false,
+                    });
+                },
+                onFail: function (err) {
+                }
+            });
+
+        },
+        /**
+         * @memberOf Report_detail_screen
+         * @description 显示项目列表
+         * @param {json} departments 项目列表
+         * @param {object} $el dom 对象
+         */
+        render_project: function (projects, $el) {
+            var $projects = $(QWeb.render('receipts_search_project', {'projects': projects}));
+            $el.prepend($projects);
+
+        },
+        /**
+         * @memberOf Report_detail_screen
+         * @description 添加项目分摊比例
+         * @param {object} ev dom对象
+         */
+        add_project: function (ev) {
+            ev.preventDefault();
+            $.popup('.popup-project');
+            self.$('.o_project_form').data('edit-type', "create");
+            self.$('input[data-name=pro_name]').val("");
+            self.$('input[data-id=share_percent]').val("");
+
+        },
+
+        /**
+         * @memberOf Report_detail_screen
          * @description 选择驳回节点
          * @param {object} e dom对象
          */
@@ -2638,6 +2839,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
          * @description 工具栏列表事件
          * @property {string} sumbit_benefitdep 保存费用分摊比例
          * @property {string} cancel_add_benefitdep 取消保存费用分摊比例
+         * @property {string} sumbit_project 保存项目分摊比例
+         * @property {string} cancel_add_project 取消保存项目分摊比例
          * @property {string} cancel_add_chuchai 取消保存费用分摊比例
          * @property {string} add_chuchai 保存出差明细
          * @property {string} cancel_add_expense 取消保存出差明细
@@ -2739,6 +2942,96 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             var self = this;
             $.closeModal();
             self.$('.o_report_benefitdep').empty();
+        },
+
+        action_add_project: function(parent){
+
+            var self = this;
+            var edit_type = self.$('.o_project_form').data('edit-type');
+
+            if (!self.$('input[data-name=pro_name]').data('id')) {
+                dd.device.notification.alert({
+                    message: "请选择项目",
+                    title: "提示",//可传空
+                    buttonName: "确定",
+                    onSuccess: function () {
+                        //onSuccess将在点击button之后回调
+                        /*回调*/
+                    },
+                    onFail: function (err) {
+                    }
+                });
+                return;
+            }
+
+            var pro_percent = self.$('input[data-id=share_percent]').val();
+
+            if (!$.isNumeric(pro_percent)) {
+                dd.device.notification.alert({
+                    message: "分配比例必须为数字",
+                    title: "提示",//可传空
+                    buttonName: "确定",
+                    onSuccess: function () {
+                        //onSuccess将在点击button之后回调
+                        /*回调*/
+                    },
+                    onFail: function (err) {
+                    }
+                });
+                return;
+            }
+
+            if (pro_percent <= 0 || pro_percent > 100) {
+                dd.device.notification.alert({
+                    message: "分配比例必须在0和100之间",
+                    title: "提示",//可传空
+                    buttonName: "确定",
+                    onSuccess: function () {
+                        //onSuccess将在点击button之后回调
+                        /*回调*/
+                        console.log("success");
+                    },
+                    onFail: function (err) {
+                        console.log(err)
+                    }
+                });
+                return;
+            }
+
+            if (edit_type == 'edit') {
+                var id = self.$('.o_project_form').data('id');
+                var benefit_project = $('.o_project_list[data-id=' + id + ']');
+                benefit_project.attr('data-name', self.$('input[data-name=pro_name]').data('id'));
+                benefit_project.attr('data-share_percent', self.$('input[data-id=share_percent]').val());
+
+                benefit_project.find('.item-title').html(self.$('input[data-name=pro_name]').val());
+                benefit_project.find('.pull-center').html(self.$('input[data-id=share_percent]').val() + "%");
+            }
+
+            if (edit_type == 'create') {
+                var project_id = self.$('input[data-name=pro_name]').data('id');
+                var project_name = self.$('input[data-name=pro_name]').val();
+                var project_sharepercent = self.$('input[data-id=share_percent]').val();
+                var projects = [{
+                    id: -new Date().getTime(),
+                    name: [project_id, project_name],
+                    share_percent: project_sharepercent
+                }]
+                self.rend_project_detail(projects, self.$el);
+            }
+
+            self.$('input[data-name=dep_name]').val("");
+            self.$('input[data-name=dep_name]').data('id', "");
+            self.$('input[data-id=share_percent]').val("");
+
+            $.closeModal();
+            self.$('.o_report_project').empty();
+        },
+
+        action_cancel_project: function(parent){
+            var self = this;
+            $.closeModal();
+            self.$('.o_report_project').empty();
         },
 
         action_add_chuchai: function(parent){
@@ -2916,6 +3209,38 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 return;
             }
 
+            var project_ids = [];
+            var sum_share_percent = 0;
+            $.each(self.$('.o_project_list'), function (key, value) {
+
+                var id = parseInt($(value).data('id'));
+                var name = $(value).data('name');
+                var share_percent = $(value).data('share_percent');
+
+                if (id > 0) {
+                    if ($(value).is(":hidden")) {
+                        project_ids.push([2, id]);
+                    } else {
+                        project_ids.push([1, id, {
+                            name: name,
+                            share_percent: share_percent,
+                        }]);
+                        sum_share_percent += parseFloat(share_percent);
+                    }
+                } else {
+                    project_ids.push([0, 0, {
+                        name: name,
+                        share_percent: share_percent,
+                    }])
+                    sum_share_percent += parseFloat(share_percent);
+                }
+            });
+
+            if (sum_share_percent != 100 && self.$('.o_project_list').length) {
+                $.toast('项目分摊比例不等于100%');
+                return;
+            }
+
             if (this.$('input[data-id=paycatelog]').data('paycatelog-id') == "fukuangeigongyingshang"){
 
                 if($.trim(this.$('input[data-id=shoukuanren]').val()) == ""){
@@ -2945,6 +3270,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 'xingzhengzhuli': xingzhengzhuli_id,
                 'expensereason': this.$('textarea[data-id=expensereason]').val(),
                 'benefitdep_ids': benefitdep_ids,
+                'project_ids': project_ids,
                 'record_ids': expense_ids,
                 'chuchaishijian_ids': chuchai_ids,
                 'kaihuhang':$.trim(this.$('input[data-id=kaihuhang]').val()),
@@ -2959,6 +3285,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 'xingzhengzhuli': xingzhengzhuli_id,
                 'expensereason': this.$('textarea[data-id=expensereason]').val(),
                 'benefitdep_ids': benefitdep_ids,
+                'project_ids': project_ids,
                 'record_ids': expense_ids,
                 'chuchaishijian_ids': chuchai_ids,
                 'budget_id': this.$('.o_budget').val()
@@ -3155,6 +3482,10 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 this.action_add_benefitdep(parent);
             } else if (itemID == 'cancel_add_benefitdep') {
                 this.action_cancel_benefitdep(parent);
+            } else if(itemID == 'sumbit_project'){
+                this.action_add_project(parent);
+            } else if(itemID == 'cancel_add_project'){
+                this.action_cancel_project(parent);
             } else if (itemID == "add_chuchai") {
                 this.action_add_chuchai(parent);
             } else if (itemID == "cancel_add_chuchai") {
@@ -3376,6 +3707,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
 
                 this.rend_expense(this);
                 this.rend_benefitdep(this);
+                this.rend_project(this);
                 this.rend_chuchai(this);
 
                 if ( this.expense_report.compute_currentaudit == true && this.options.edit_type == "approval" && this.expense_report.state != 'draft' ) {
@@ -3404,6 +3736,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     this.$('.o_add_expense').hide();
                     this.$('.o_add_benefitdep').hide();
                     this.$('.o_add_chuchai').hide();
+                    this.$('.o_add_project').hide();
 
                     this.$('textarea[data-id=expensereason]').attr("readonly", "readonly");
                     this.$('input[data-id=shoukuanren]').attr("readonly", "readonly");
@@ -3415,6 +3748,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     this.$('.o_add_expense').hide();
                     this.$('.o_add_benefitdep').hide();
                     this.$('.o_add_chuchai').hide();
+                    this.$('.o_add_project').hide();
 
                     this.$('textarea[data-id=expensereason]').attr("readonly", "readonly");
                     this.$('input[data-id=shoukuanren]').attr("readonly", "readonly");
@@ -3583,6 +3917,51 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
 
         /**
          * @memberOf Report_detail_screen
+         * @description 从服务端获取项目分摊明细
+         * @param {object} parent 父对象
+         */
+        rend_project: function (parent) {
+            var def = new $.Deferred();
+            var self = this;
+            new Model('dtdream.expense.project')
+                .query(['id', 'name', 'share_percent', 'write_date'])
+                .filter([['report_id', '=', this.expense_report.id]])
+                .all({'timeout': 3000, 'shadow': true})
+                .then(function (project_records) {
+                        self.project_records = project_records;
+                        var project_ids = [];
+                        $.each(project_records, function (key, value) {
+                            project_ids.push = value.name[0];
+                        })
+                        $.when(new Model('crm.lead').call('name_get', [project_ids]), project_records)
+                        .fail(function (err) {
+                            $.alert(err.data.message.replace('None', ""));
+                        })
+                        .then(function (record, project_records) {
+                            $.each(project_records, function (key, value) {
+                                $.each(record, function (key1, value1) {
+                                    if (value.name[0] == value1[0]) {
+                                        value.name[1] = value1[1];
+                                    }
+                                })
+                            })
+                            if (parent.rend_project_detail(project_records, parent.$el)) {
+                                def.resolve();
+                            } else {
+                                def.reject();
+                            }
+
+                        })
+
+                    }, function (err, event) {
+                        event.preventDefault();
+                        def.reject();
+                    }
+                );
+        },
+
+        /**
+         * @memberOf Report_detail_screen
          * @description 显示费用分摊明细
          * @param {json} benefitdep_records 费用分摊明细
          * @param {object} $el dom对象
@@ -3594,6 +3973,23 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     'state': this.options.expense_report[0].state
                 }));
                 $el.find('.o_report_benefitdep_ids').append($benefitdep_records);
+
+            }
+        },
+
+        /**
+         * @memberOf Report_detail_screen
+         * @description 显示项目分摊明细
+         * @param {json} benefitdep_records 项目分摊明细
+         * @param {object} $el dom对象
+         */
+        rend_project_detail: function (project_records, $el) {
+            if (project_records) {
+                var $project_records = $(QWeb.render('receipts_project_list', {
+                    'project_records': project_records,
+                    'state': this.options.expense_report[0].state
+                }));
+                $el.find('.o_report_project_ids').append($project_records);
 
             }
         },

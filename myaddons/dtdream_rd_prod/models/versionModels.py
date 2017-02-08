@@ -229,17 +229,62 @@ class dtdream_rd_version(models.Model):
                                        <tr><td style="padding:10px">状态变化</td><td style="padding:10px">%s</td></tr>
                                        </table>""" %(self.proName.name,self.version_numb,statechange))
 
+    # 获取抄送人邮箱
+    def compute_email_list(self):
+        people_email_list = ''
+        appro = self.env['dtdream_rd_role'].search([('role_id', '=', self.proName.id), ('person', '!=', False)])
+        for record in appro:
+            people_email_list += record.person.work_email + ';'
+        return people_email_list
+
+    # # 产品id记入版本风险
+    # def compute_risk_ver_proName(self):
+    #     proName = self.proName
+    #     for process in self.risk_ver_ids:
+    #         if process.risk_id:
+    #             pass
+    #         else:
+    #             process.write({'risk_id': proName})
+
     @api.constrains('risk_ver_ids')
     def _compute_risk_ver_ids(self):
+        email_list = self.compute_email_list()
         for process in self.risk_ver_ids:
-            if process.risk_state != process.risk_state_old:
+            is_change = process.is_risk_change()
+            if is_change:
+                process.write({'risk_id': self.proName.id})
+                # 记备注
+                risk_sort_state_change = process.risk_sort_state_change()
+                risk_state_change = process.risk_state_change()
+                risk_PDT_change = process.risk_PDT_change()
+                risk_plan_close_time_change = process.risk_plan_close_time_change()
+                risk_chance_describe_change = process.risk_chance_describe_change()
+                risk_name_change = process.risk_name_change()
                 risk_description = process.name
-                risk_state = process.risk_state
-                if process.risk_state_old:
-                    self.message_post(body=u"""<p>把风险：%s 的状态改为%s</p>""" % (risk_description, risk_state.name))
-                else:
-                    self.message_post(body=u"""<p>创建风险：%s ，状态为%s</p>""" % (risk_description, risk_state.name))
-                process.write({'risk_state_old': process.risk_state.id})
+                ins = u"<p>风险：%s 变更信息</p>%s%s%s%s%s%s" % (risk_description,
+                                                           risk_name_change, risk_chance_describe_change,
+                                                           risk_plan_close_time_change,
+                                                           risk_PDT_change, risk_state_change, risk_sort_state_change)
+                self.message_post(body=u"""%s""" % (ins))
+                process.update_old_ins()
+                # 发邮件
+                subject = u"%s的%s版本更新了风险信息，请查看" % (self.proName.name, self.version_numb)
+                appellation = u"您好"
+                base_url = self.get_base_url()
+                link = '/web#id=%s&view_type=form&model=dtdream_rd_version' % self.id
+                url = base_url + link
+                self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                     %s
+                                     <p>查看详情请点击链接:<a href="%s">%s</a></p>
+                                    ''' % (appellation, ins, url, url),
+                    'subject': '%s' % subject,
+                    'email_to': '%s' % process.PDT.work_email,
+                    'email_cc': '%s' % email_list,
+                    'auto_delete': False,
+                    'email_from': self.get_mail_server_name(),
+                }).send()
+
 
     @api.model
     def wkf_draft(self):
@@ -740,7 +785,8 @@ class dtdream_rd_version(models.Model):
                 'appr': app.proName.name,
                 'version':app.version_numb,
                 'PDT': app.PDT.name or '',
-                'style':state_dict[app.version_state],
+                'style':u'版本',
+                'state': state_dict[app.version_state],
                 'defer':defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -772,7 +818,8 @@ class dtdream_rd_version(models.Model):
                 'appr': app.proName.name,
                 'version': app.version_numb,
                 'PDT': app.PDT.name or '',
-                'style': state_dict[app.version_state],
+                'style':u'版本',
+                'state': state_dict[app.version_state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays
@@ -815,7 +862,8 @@ class dtdream_rd_version(models.Model):
                 'appr': app.proName.name,
                 'version': app.version_numb,
                 'PDT': app.PDT.name or '',
-                'style': state_dict[app.version_state],
+                'style':u'版本',
+                'state': state_dict[app.version_state],
                 'defer': defer,
                 'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
                 'deferdays': deferdays

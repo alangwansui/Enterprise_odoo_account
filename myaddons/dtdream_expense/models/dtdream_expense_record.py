@@ -17,17 +17,10 @@ class dtdream_expense_record(models.Model):
     _description = u"消费明细"
 
     @api.multi
-    @api.depends('koujianamount', 'invoicevalue')
-    def _compute_shibaoamount(self):
-        for record in self:
-            record.shibaoamount = record.invoicevalue - record.koujianamount
-            record.notaxamount =record.shibaoamount
-
-    @api.multi
-    @api.depends('taxamount', 'invoicevalue')
+    @api.depends('taxamount', 'invoicevalue','koujianamount','kuanji_koujian')
     def _compute_notaxamount(self):
         for record in self:
-            record.shibaoamount = record.invoicevalue - record.koujianamount
+            record.shibaoamount = record.invoicevalue - record.koujianamount - record.kuanji_koujian
             record.notaxamount = record.shibaoamount-record.taxamount
 
     @api.multi
@@ -53,8 +46,9 @@ class dtdream_expense_record(models.Model):
     taxamount = fields.Float(digits=(11, 2), string="税金",default = 0)
     notaxamount = fields.Float(digits=(11, 2), string="不含税金额",compute = _compute_notaxamount)
     taxpercent = fields.Selection([('0.03', '3%'), ('0.05', '5%'), ('0.06', '6%'), ('0.11', '11%'),('0.17', '17%')],string='税率')
-    koujianamount = fields.Float(digits=(11, 2), string="扣减金额(元)")
-    shibaoamount = fields.Float(digits=(11, 2), string="实报金额(元)", compute=_compute_shibaoamount, store=True)
+    koujianamount = fields.Float(digits=(11, 2), string="超期扣款(元)")
+    kuanji_koujian = fields.Float(digits=(11, 2),string="接口会计扣款(元)")
+    shibaoamount = fields.Float(digits=(11, 2), string="实报金额(元)", compute=_compute_notaxamount, store=True)
     currentdate = fields.Date(string="发生日期", default=lambda self: datetime.now(), track_visibility='onchange')
     city = fields.Many2one("dtdream.expense.city",required=True, string="发生城市", track_visibility='onchange',default= lambda self:self.search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).city)
     province = fields.Many2one("res.country.state",required=True, string="发生省份", track_visibility='onchange',default= lambda self:self.search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).city.provinceid)
