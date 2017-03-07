@@ -1,0 +1,258 @@
+<openerp>
+  <data>
+
+    <record id="view_dtdream_hotels_manage_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hotels.management.form</field>
+        <field name="model">dtdream.hotels.management</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <div class="oe_button_box" name="button_box">
+                      <button class="oe_stat_button" type="object" name="act_dtdream_hotels_relation"
+                        icon="fa-edit">
+                          <field string="关联次数" name="use_times" widget="statinfo"/>
+                      </button>
+                  </div>
+
+                  <group string="酒店基本信息">
+                      <group>
+                          <field name="name" required="True"/>
+                          <field name="parent_id" options="{'no_open': True}" required="True"/>
+                          <field name="addr" required="True"/>
+                          <field name="expense_up" required="True"/>
+                      </group>
+                      <group>
+                          <field name="type" required="True"/>
+                          <field name="star" required="True"/>
+                          <field name="tel" required="True"/>
+                          <field name="contact"/>
+                      </group>
+                  </group>
+
+                  <group>
+                      <field name="infor"/>
+                  </group>
+
+                  <group>
+                      <field name="mark"/>
+                  </group>
+
+                  <group>
+                      <field name="tips"/>
+                  </group>
+
+                  <group string="住宿餐饮信息">
+                      <notebook>
+                          <page string="酒店住宿">
+                              <field name="room">
+                                  <tree editable="bottom">
+                                      <field name="name" required="True"/>
+                                      <field name="price" required="True"/>
+                                      <field name="mark"/>
+                                  </tree>
+
+                                  <kanban class="o_res_partner_kanban" >
+                                        <field name="name"/>
+                                        <field name="price"/>
+                                        <field name="mark"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>房型:</strong> <field name="name" /></li>
+                                                            <li > <strong>房价:</strong><field name="price" /></li>
+                                                            <li ><strong>备注:</strong> <field name="mark" /></li>
+                                                        </ul>
+                                                    <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                              </field>
+                          </page>
+
+                          <page string="酒店餐饮">
+                              <field name="dinner">
+                                  <tree editable="bottom">
+                                      <field name="price" required="True"/>
+                                      <field name="tastes"/>
+                                      <field name="mark"/>
+                                  </tree>
+
+                                  <kanban class="o_res_partner_kanban" >
+                                        <field name="price"/>
+                                        <field name="tastes"/>
+                                        <field name="mark"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>人均:</strong> <field name="price" /></li>
+                                                            <li > <strong>菜系:</strong><field name="tastes" /></li>
+                                                            <li ><strong>备注:</strong> <field name="mark" /></li>
+                                                        </ul>
+                                                    <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                  </kanban>
+                              </field>
+                          </page>
+                      </notebook>
+                  </group>
+
+              </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hotels_management_filter" model="ir.ui.view">
+        <field name="name">dtdream.hotels.management.filter</field>
+        <field name="model">dtdream.hotels.management</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="parent_id"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="view_dtdream_hotels_management_kanban" model="ir.ui.view">
+        <field name="name">view.dtdream.hotels.management.kanban</field>
+        <field name="model">dtdream.hotels.management</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban" >
+              <field name="name"/>
+              <field name="star"/>
+              <field name="type"/>
+              <field name="parent_id"/>
+              <field name="tel"/>
+              <field name="expense_up"/>
+              <field name="use_times"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <h3><strong><field name="name" /></strong></h3>
+                                    <div style="overflow:hidden;">
+                                        <ul style="float:left; width:50%; height:54px; margin-bottom:0px;">
+                                            <li ><strong>星级:</strong> <field name="star" /></li>
+                                            <li ><strong>类型:</strong> <field name="type" /></li>
+                                            <li ><strong>区域:</strong> <field name="parent_id" /></li>
+                                        </ul>
+                                        <ul style="float:right; width:50%;height:54px; margin-bottom:0px;">
+                                            <li ><strong>是否可以挂账:</strong> <field name="expense_up"/></li>
+                                            <li ><strong>关联次数:</strong> <field name="use_times"/></li>
+                                        </ul>
+                                        <ul style="float:left;margin-top:6px">
+                                            <li ><strong>电话:</strong> <field name="tel" /></li>
+                                        </ul>
+                                    </div>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hotel_zone_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hotel.zone.form</field>
+        <field name="model">dtdream.hotel.zone</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="name" required="True"/>
+                      </group>
+                      <group/>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hotel_room_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hotel.room.form</field>
+        <field name="model">dtdream.hotel.room</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="name"/>
+                      </group>
+                      <group>
+                          <field name="price"/>
+                      </group>
+                      <group>
+                          <field name="mark"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hotel_dinner_form" model="ir.ui.view">
+        <field name="name">view.dtdream.hotel.dinner.form</field>
+        <field name="model">dtdream.hotel.dinner</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="price"/>
+                      </group>
+                      <group>
+                          <field name="tastes"/>
+                      </group>
+                      <group>
+                          <field name="mark"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_hotel_zone_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.hotel.zone.tree</field>
+        <field name="model">dtdream.hotel.zone</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

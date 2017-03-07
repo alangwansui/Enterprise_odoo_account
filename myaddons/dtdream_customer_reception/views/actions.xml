@@ -28,6 +28,38 @@
             <field name="view_mode">tree,form,kanban</field>
         </record>
 
+        <record id="act_dtdream_hotels_room" model="ir.actions.act_window">
+            <field name="name">酒店管理</field>
+            <field name="res_model">dtdream.hotels.management</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form</field>
+        </record>
+
+        <record id="act_dtdream_hotels_dinner" model="ir.actions.act_window">
+            <field name="name">餐饮管理</field>
+            <field name="res_model">dtdream.dinner.management</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form</field>
+        </record>
+
+        <record id="act_dtdream_hotel_zone" model="ir.actions.act_window">
+            <field name="name">酒店区域配置</field>
+            <field name="res_model">dtdream.hotel.zone</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="act_dtdream_dinner_zone" model="ir.actions.act_window">
+            <field name="name">餐饮区域配置</field>
+            <field name="res_model">dtdream.dinner.zone</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
         <record model="ir.actions.server" id="act_dtdream_customer_reception_config">
             <field name="name">配置</field>
             <field name="model_id" ref="model_dtdream_customer_reception_config"/>

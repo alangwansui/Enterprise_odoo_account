@@ -50,18 +50,21 @@ class DtdreamExpense(ExcelExport):
             currency = 'CNY'
             cstcenter = dtdream_expense_report.department_number
             accounted_cr = dtdream_expense_report.total_shibaoamount
-            tax_total = 0
+            tax_other = 0
+            tax_stay = 0
 
             if dtdream_expense_report.paycatelog == 'fukuangeigongyingshang':
-                gongyingshang = dtdream_expense_report.shoukuanrenxinming
+                gongyingshang = "@"+dtdream_expense_report.shoukuanrenxinming+"@"
 
             duplicate_removal = {}
             for record in dtdream_expense_report.record_ids:
                 if record.taxamount > 0:
-                    tax_total += record.taxamount
+                    if u"住宿费" in record.expensedetail.name:
+                        tax_stay += record.taxamount
+                    else:
+                        tax_other += record.taxamount
                 if not dtdream_expense_report.benefitdep_ids:
                     if record.expensedetail.id in duplicate_removal:
-                        duplicate_removal[record.expensedetail.id]["description"] += ";"+record.currentdate[:-3]+"@"+(gongyingshang or "")+"@"+(record.actiondesc or "")
                         duplicate_removal[record.expensedetail.id]["accounted_dr"] += record.notaxamount
 
                     else:
@@ -70,7 +73,7 @@ class DtdreamExpense(ExcelExport):
                         duplicate_removal[record.expensedetail.id]["account"] = record.expensedetail.account
                         duplicate_removal[record.expensedetail.id]["account_name"] = record.expensedetail.account_name
                         duplicate_removal[record.expensedetail.id]["type"] = pay_type[dtdream_expense_report.paycatelog][record.expensedetail.parentid.name]
-                        duplicate_removal[record.expensedetail.id]["description"] = record.currentdate[:-3]+"@"+(gongyingshang or "")+"@"+(record.actiondesc or "")
+                        duplicate_removal[record.expensedetail.id]["description"] = record.currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or "")
                         duplicate_removal[record.expensedetail.id]["accounted_dr"] = record.notaxamount
                         duplicate_removal[record.expensedetail.id]["accounted_cr"] = 0
                 else:
@@ -78,7 +81,6 @@ class DtdreamExpense(ExcelExport):
                     for benefitdep in dtdream_expense_report.benefitdep_ids:
                         benefitdep_index += 0.01
                         if benefitdep_index in duplicate_removal:
-                            duplicate_removal[benefitdep_index]["description"] += ";"+record.currentdate[:-3]+"@"+(gongyingshang or "")+"@"+(record.actiondesc or "")
                             duplicate_removal[benefitdep_index]["accounted_dr"] += record.notaxamount*float(benefitdep.sharepercent)/100
 
                         else:
@@ -87,20 +89,30 @@ class DtdreamExpense(ExcelExport):
                             duplicate_removal[benefitdep_index]["account"] = record.expensedetail.account
                             duplicate_removal[benefitdep_index]["account_name"] = record.expensedetail.account_name
                             duplicate_removal[benefitdep_index]["type"] = pay_type[dtdream_expense_report.paycatelog][record.expensedetail.parentid.name]
-                            duplicate_removal[benefitdep_index]["description"] = record.currentdate[:-3]+"@"+(gongyingshang or "")+"@"+(record.actiondesc or "")
+                            duplicate_removal[benefitdep_index]["description"] = record.currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or "")
                             duplicate_removal[benefitdep_index]["accounted_dr"] = record.notaxamount*float(benefitdep.sharepercent)/100
                             duplicate_removal[benefitdep_index]["accounted_cr"] = 0
 
 
 
-            if tax_total > 0:
+            if tax_other > 0:
                 duplicate_removal[9999] = {
                     "cstcenter":"000000",
-                    "account": "2210101",
-                    "account_name": u"应交税金-应交增值税-进项(境内)",
+                    "account": "2211604",
+                    "account_name": u"应交税金-待认证进项税额(其它)",
                     "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
-                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+"@"+(gongyingshang or "")+"@"+(dtdream_expense_report.record_ids[0].actiondesc or ""),
-                    "accounted_dr": tax_total,
+                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or ""),
+                    "accounted_dr": tax_other,
+                    "accounted_cr": 0
+                }
+            if tax_stay > 0:
+                duplicate_removal[9999.1] = {
+                    "cstcenter":"000000",
+                    "account": "2211601",
+                    "account_name": u"应交税金-待认证进项税额(住宿)",
+                    "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
+                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or ""),
+                    "accounted_dr": tax_stay,
                     "accounted_cr": 0
                 }
             account_credit = request.env['dtdream.expense.account.credit'].search([('paytype','=',dtdream_expense_report.paytype),('paycatelog','=',dtdream_expense_report.paycatelog)])
@@ -109,7 +121,7 @@ class DtdreamExpense(ExcelExport):
                 "account": account_credit.account,
                 "account_name": account_credit.account_name,
                 "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
-                "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+"@"+(gongyingshang or "")+"@"+(dtdream_expense_report.record_ids[0].actiondesc or ""),
+                "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or ""),
                 "accounted_dr": 0,
                 "accounted_cr": accounted_cr
 

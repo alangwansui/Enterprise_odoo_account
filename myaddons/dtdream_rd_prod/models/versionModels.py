@@ -3,7 +3,7 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 import openerp
 from openerp.osv import expression
-from datetime import datetime
+from datetime import datetime,timedelta
 
 #版本
 class dtdream_rd_version(models.Model):
@@ -100,7 +100,7 @@ class dtdream_rd_version(models.Model):
         if self.department_2 != self.proName.department_2:
             raise ValidationError(u"版本与产品的二级部门不同")
 
-    department = fields.Many2one('hr.department',string='部门')
+    department = fields.Many2one('hr.department',required=True,string='部门')
     department_2 = fields.Many2one('hr.department',string='二级部门')
 
     def _get_department_domain(self, rd_list=None):
@@ -258,12 +258,13 @@ class dtdream_rd_version(models.Model):
                 risk_state_change = process.risk_state_change()
                 risk_PDT_change = process.risk_PDT_change()
                 risk_plan_close_time_change = process.risk_plan_close_time_change()
+                risk_chance_avoid_measure = process.risk_chance_avoid_measure()
                 risk_chance_describe_change = process.risk_chance_describe_change()
                 risk_name_change = process.risk_name_change()
                 risk_description = process.name
-                ins = u"<p>风险：%s 变更信息</p>%s%s%s%s%s%s" % (risk_description,
+                ins = u"<p>风险：%s 变更信息</p>%s%s%s%s%s%s%s" % (risk_description,
                                                            risk_name_change, risk_chance_describe_change,
-                                                           risk_plan_close_time_change,
+                                                            risk_chance_avoid_measure,risk_plan_close_time_change,
                                                            risk_PDT_change, risk_state_change, risk_sort_state_change)
                 self.message_post(body=u"""%s""" % (ins))
                 process.update_old_ins()
@@ -775,7 +776,7 @@ class dtdream_rd_version(models.Model):
                 department = app.department.name + '/' + app.department_2.name
             else:
                 department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -808,7 +809,7 @@ class dtdream_rd_version(models.Model):
                 department = app.department.name + '/' + app.department_2.name
             else:
                 department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -852,7 +853,7 @@ class dtdream_rd_version(models.Model):
                 department = app.department.name + '/' + app.department_2.name
             else:
                 department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:

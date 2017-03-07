@@ -1,0 +1,135 @@
+@media screen and (max-width: 992px) {
+  body {
+    background-color: #EFF2F7;
+  }
+  .salaryResult {
+    font-family: "Microsoft YaHei", SansSerif, Arial;
+    background-color: rgba( 98,131,196 ,.1);
+    width:100%;
+    height:100%;
+  }
+  .salaryResult .testImg {
+    background-color: #51BCEC;
+    height: 55px;
+  }
+  .salaryResult .testImg img {
+    margin-top: 10px;
+  }
+  .salaryResult p {
+    margin: 0;
+  }
+  .salaryResult h1 {
+    font-size: 20px;
+    color: #414a54;
+    letter-spacing: 1.25px;
+    margin-left: 15px;
+    font-weight: bold;
+    margin-bottom: 31px;
+  }
+  .salaryResult .ResultTitle {
+    margin-bottom: 10px;
+  }
+  .salaryResult h2 {
+    font-size: 16px;
+    color: #626d78;
+    letter-spacing: 1.75px;
+    margin-left: 20px;
+    font-weight: bold;
+  }
+  .salaryResult .toIndex {
+    display: inline-block;
+    width: 100%;
+    text-align: right;
+    padding-right: 20px;
+    color: #00bfee;
+    text-decoration: none;
+  }
+  .salaryResult .back:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .salaryResult .list-group {
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+  .salaryResult .list-group .list-group-item {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    height: 46px;
+    padding: 10px 20px;
+    border: 0;
+    margin-bottom: 0;
+    background-color:rgba(255,255,255,.7);
+  }
+  .salaryResult .list-group .list-group-item .titleYM {
+    font-family: Arial;
+    font-weight: bold;
+  }
+  .salaryResult .list-group .list-group-item .pull-left {
+    font-size: 16px;
+    color: #646d78;
+  }
+  .salaryResult .list-group .list-group-item .pull-right {
+    font-size: 16px;
+    color: #646d78;
+  }
+  .salaryResult .list-group .list-group-item:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .salaryResult .list-group li:nth-child(1) {
+    border-top: 1px solid #e0e6ed;
+    border-bottom: 1px solid #e0e6ed;
+  }
+  .salaryResult .resultQuery {
+    margin-top: 5px;
+  }
+  .salaryResult .queryData li:last-child {
+    border-bottom: 1px solid #e0e6ed;
+  }
+  .salaryResult .queryData li:last-child .listCtn {
+    border-bottom: 0;
+  }
+  .salaryResult .queryData .list-group-item a {
+    color: #CAD1D9;
+  }
+  .salaryResult .queryData .list-group-item .qyDetail {
+    float: right;
+  }
+  .salaryResult .queryData .list-group-item .qyDetail .qyText {
+    font-size: 16px;
+    color: #00bfee;
+    letter-spacing: 1.5px;
+    padding-right: 3px;
+  }
+  .salaryResult .queryData .list-group-item .listCtn {
+    height: 46px;
+    border-bottom: 1px solid #e0e6ed;
+    padding: 10px 20px 10px 0;
+  }
+  .salaryResult .queryData .list-group-item .listCtn:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .salaryResult .queryData .noPadding {
+    padding: 0 0 0 20px;
+  }
+  .salaryResult .footText {
+    font-size: 12px;
+    color: #ff4738;
+    letter-spacing: 0.75px;
+    font-weight: bold;
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+  .salaryResult .detailData li:nth-child(1) {
+    height: 47px;
+    border-bottom: 0;
+  }
+}

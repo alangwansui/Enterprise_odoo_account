@@ -73,7 +73,8 @@
             <field name='arch' type='xml'>
                 <form  string='意见回复详情' create='false' edit='false'>
                     <header class='no_hidden'>
-                        <button name='btn_answer' type='workflow' attrs="{'invisible':[('state', 'not in', ['confirm'])]}" string='确认回复' class='oe_highlight' />
+                        <button name='btn_answer' type='workflow' attrs="{'invisible':[('state', 'not in', ['confirm'])]}"
+                                string='确认回复' class='oe_highlight' />
                         <field name="state" widget="statusbar" statusbar_visible="confirm,answer" statusbar_colors='{"confirm":"blue","anwser":"blue"}'/>
                     </header>
 
@@ -82,6 +83,9 @@
                             <group name='group_left'>
                                 <field name='adviceMan' attrs="{'readonly':'True'}"/>
                                 <field name='adviceTime'/>
+                                <field name="attachment_name" invisible="1"/>
+                                <field name="attachment" widget="binary" height="64" filename="attachment_name"
+                                       attrs="{'readonly':[('state','not in','draft')], 'invisible':[('attachment_name','=', False)]}"/>
                             </group>
                             <group name='group_right'>
                                 <field name='name' attrs="{'readonly':'True'}"/>
@@ -90,7 +94,7 @@
                         </group>
                         <group name='group_below' string='意见与回复'>
                             <field name='advice' attrs="{'readonly':'True'}"  />
-                            <field name='answer'  />
+                            <field name='answer' attrs="{'required':'True'}" />
                         </group>
                     </sheet>
                 </form>
@@ -117,6 +121,9 @@
                             <group name='group_left'>
                                 <field name='adviceMan'/>
                                 <field name='adviceTime'/>
+                                <field name="attachment_name" invisible="1"/>
+                                <field name="attachment" widget="binary" height="64" filename="attachment_name"
+                                       attrs="{'readonly':[('state','not in','draft')], 'invisible':[('attachment_name','=', False)]}"/>
                             </group>
                             <group name='group_right'>
                                 <field name='name'/>
@@ -153,10 +160,12 @@
                         <group name='group_top' string='基本信息' >
                             <group name='group_left'>
                                 <field name='adviceMan' attrs="{'readonly':'True'}"/>
-                                <field name='adviceTime' />
+                                <field name="attachment_name" invisible="1"/>
+                                <field name="attachment" widget="binary" height="64" filename="attachment_name" attrs="{'readonly':[('state','not in','draft')]}"/>
                             </group>
                             <group name='group_right'>
                                 <field name='name' />
+                                <field name='adviceTime' />
                             </group>
                         </group>
                         <group name='group_below' string='意见内容'>
@@ -164,6 +173,7 @@
                                 <p>请提出您的宝贵意见，以便我们改进，谢谢</p>
                                 <field name='advice' class="zx_group_border"/>
                             </div>
+
                         </group>
                     </sheet>
                 </form>
@@ -229,7 +239,7 @@
             </field>
         </record>
 
-         <!-- 打开未回复意见反馈的动作 -->
+        <!-- 打开未回复意见反馈的动作 -->
         <act_window id='act_dtdream_feedback_confirm'
                     name='未回复意见'
                     res_model='dtdream.feedback.advice'

@@ -48,6 +48,10 @@ class dtdream_expense_record(models.Model):
     taxpercent = fields.Selection([('0.03', '3%'), ('0.05', '5%'), ('0.06', '6%'), ('0.11', '11%'),('0.17', '17%')],string='税率')
     koujianamount = fields.Float(digits=(11, 2), string="超期扣款(元)")
     kuanji_koujian = fields.Float(digits=(11, 2),string="接口会计扣款(元)")
+    @api.constrains('kuanji_koujian')
+    def check_if_gt_invoicevalue(self):
+        if self.kuanji_koujian > self.invoicevalue:
+            raise ValidationError("接口会计扣款金额不能大于票据金额！")
     shibaoamount = fields.Float(digits=(11, 2), string="实报金额(元)", compute=_compute_notaxamount, store=True)
     currentdate = fields.Date(string="发生日期", default=lambda self: datetime.now(), track_visibility='onchange')
     city = fields.Many2one("dtdream.expense.city",required=True, string="发生城市", track_visibility='onchange',default= lambda self:self.search([('create_uid','=',self.env.user.id)],order="id desc",limit=1).city)
@@ -82,7 +86,7 @@ class dtdream_expense_record(models.Model):
     report_ids_count = fields.Integer(compute=_compute_report_ids_count, store=True)
 
     @api.multi
-    @api.onchange('report_ids', 'koujianamount', 'invoicevalue', 'currentdate')
+    @api.onchange('report_ids', 'koujianamount', 'invoicevalue', 'currentdate','kuanji_koujian')
     def _calaulte_record_ids(self):
         for record in self:
             if record.report_ids:

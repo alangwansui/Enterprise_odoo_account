@@ -64,7 +64,8 @@ class dtdream_content_event_affairs(models.Model):
 
     #待我处理的事项
     @api.model
-    def get_all_affairs(self,menu_date=None,currentPage=None):
+    # def get_all_affairs(self, menu_date=None, currentPage=None):
+    def get_all_affairs(self,menu_date=None):
         t_in = time.clock()
         affairs = []
         lists = self._get_lists(menu_date=menu_date)
@@ -109,18 +110,20 @@ class dtdream_content_event_affairs(models.Model):
                 'deferdays':deferdays
             }
             affairs.append(affair)
-        totalPage= int(math.ceil(len(affairs)/5.0))
-        for page in range(totalPage):
-            for i in range(5):
-                if len(affairs)>page*5+i:
-                    affairs[page*5+i]['affair_id']='affair_'+str(page+1)+'_';
+        # totalPage= int(math.ceil(len(affairs)/5.0))
+        # for page in range(totalPage):
+        #     for i in range(5):
+        #         if len(affairs)>page*5+i:
+        #             affairs[page*5+i]['affair_id']='affair_'+str(page+1)+'_';
 
-        data = {'affairs': affairs, 'currentPage': currentPage, 'totalPage':totalPage}
+        # data = {'affairs': affairs, 'currentPage': currentPage, 'totalPage':totalPage}
+        data = {'affairs': affairs}
         print "========================get_all_affairs=====================", time.clock() - t_in
         return data
 
     @api.model
-    def get_all_applies(self, menu_date=None,currentPage=None):
+    # def get_all_applies(self, menu_date=None, currentPage=None):
+    def get_all_applies(self, menu_date=None):
         t_in = time.clock()
         applies = []
         resultList=[]
@@ -175,12 +178,13 @@ class dtdream_content_event_affairs(models.Model):
                     'deferdays':deferdays
                 }
                 applies.append(apply)
-        totalPage=int(math.ceil(len(applies)/5.0))
-        for page in range(totalPage):
-            for i in range(5):
-                if len(applies)>page*5+i:
-                    applies[page*5+i]['apply_id']='apply_'+str(page+1)+'_';
-        data = {'applies': applies, 'currentPage': currentPage, 'totalPage': totalPage}
+        # totalPage=int(math.ceil(len(applies)/5.0))
+        # for page in range(totalPage):
+        #     for i in range(5):
+        #         if len(applies)>page*5+i:
+        #             applies[page*5+i]['apply_id']='apply_'+str(page+1)+'_';
+        # data = {'applies': applies, 'currentPage': currentPage, 'totalPage': totalPage}
+        data = {'applies': applies}
         print "========================get_all_applies=====================", time.clock() - t_in
         return data
 

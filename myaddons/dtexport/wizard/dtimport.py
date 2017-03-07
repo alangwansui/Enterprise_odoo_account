@@ -22,6 +22,9 @@ class dtimport_wizard(osv.osv):
     def judge_data_is_pass(self, record, need_head, header):
         pass
 
+    def judge_need_import_header(self, need_head, header):
+        pass
+
     def return_new_action(self):
         pass
 
@@ -45,14 +48,14 @@ class dtimport_wizard(osv.osv):
             record = worksheet.row_values(i)
             if i == 0:
                 header = record
-                if any([True for key, val in need_head.items() if header.count(val) > 1 or header.count(val) == 0]):
+                res = self.judge_need_import_header(need_head, header)
+                if not res:
                     raise osv.except_osv(u'错误', u'需要导入字段未导入或者导入字段重复，请重新上传!')
             else:
-                if all([record[header.index(val)] for key, val in need_head.items() if key != 'result']):
-                    result = self.judge_data_is_pass(record, need_head, header)
-                    if result.get('code') != 0:
-                        raise osv.except_osv(u'错误', u'行号: ' + str(i) + u', 错误信息: ' + result.get('message'))
-                    to_import.append({key: record[header.index(val)] for key, val in need_head.items()})
+                result = self.judge_data_is_pass(record, need_head, header)
+                if result.get('code') != 0:
+                    raise osv.except_osv(u'错误', u'行号: ' + str(i) + u', 错误信息: ' + result.get('message'))
+                to_import.append({key: record[header.index(val)] for key, val in need_head.items() if val in header})
         imported = len(to_import)
         vals = {'state': '2',
                 'imported': imported,

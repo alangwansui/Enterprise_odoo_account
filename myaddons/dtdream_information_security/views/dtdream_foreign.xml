@@ -9,15 +9,15 @@
                     <header>
                         <button name="do_cgtj" string="提交" type="object" class="oe_highlight" confirm="请确认是否提交?" attrs="{'invisible':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
                         <button name="%(dtdream_information_security.foreign_act_agree)d" string="同意" type="action" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('1','2','3','4')),('is_shenpiren','=',False)]}"> </button>
-                        <button name="%(dtdream_information_security.foreign_act_reject)d" string="驳回" type="action" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('1','2','3','4')),('is_shenpiren','=',False)]}"/>
                         <button name="%(dtdream_information_security.foreign_act_disagree)d" string="不同意" type="action" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('2','3','4')),('is_shenpiren','=',False)]}"/>
+                        <button name="%(dtdream_information_security.foreign_act_reject)d" string="驳回" type="action" class="oe_highlight" attrs="{'invisible':['|',('state','not in',('1','2','3','4')),('is_shenpiren','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,-99,99"/>
                     </header>
                     <sheet>
                         <group string="基本信息">
                             <group>
                                 <field name="applicant"/>
-                                <field name="manager" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
+                                <field name="manager" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}" options="{'no_create':True}"/>
                                 <field name="is_shenpiren" invisible="1"/>
                                 <field name="is_shenqingren" invisible="1"/>
                             </group>
@@ -33,19 +33,29 @@
                                 <field name="target_email" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="origin_department_01" domain="[('parent_id','=',False)]" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
-                                <field name="secret_person" placeholder="填写后，则需要信息安全员检查" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
+                                <field name="origin_department_01" domain="[('parent_id','=',False)]" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}" options="{'no_create':True}"/>
+                                <field name="secret_person" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}" options="{'no_create':True}"/>
                                 <field name="secret_level" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
                             </group>
                             <group colspan="12" >
                                 <field name="reason" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
                             </group>
                         </group>
-                         <group colspan="12">
-                              <field name="attachment_name" invisible="True"/>
-                              <field name="attachment" widget="binary" filename="attachment_name" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
+                        <group colspan="12">
+                              <!--<field name="attachment_name" invisible="True"/>-->
+                              <!--<field name="attachment" widget="binary" filename="attachment_name" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>-->
                               <field name="url_address" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}"/>
-                         </group>
+                        </group>
+                        <notebook>
+                            <page string="附件明细">
+                                <field name="attachment_ids" attrs="{'readonly':['|',('state','not in',('0')),('is_shenqingren','=',False)]}">
+                                    <tree editable="bottom">
+                                        <field name="attachment_name" invisible="True"/>
+                                        <field name="attachment" widget="binary" filename="attachment_name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                       </sheet>
                       <div class="oe_chatter">
                           <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
@@ -104,7 +114,7 @@
 
 
         <record id="act_dtdream_foreign_self" model="ir.actions.act_window">
-            <field name="name">我相关的</field>
+            <field name="name">对外披露/我相关的</field>
             <field name="res_model">dtdream.foreign</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -112,7 +122,7 @@
         </record>
 
         <record id="act_dtdream_foreign_wait" model="ir.actions.act_window">
-            <field name="name">待我审批</field>
+            <field name="name">对外披露/待我审批</field>
             <field name="res_model">dtdream.foreign</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_wage_admin,dtdream_wage,model_dtdream_wage,group_dtdream_wage_admin,1,1,1,1
+access_dtdream_verification_code_admin,dtdream_verification_code,model_dtdream_verification_code,group_dtdream_wage_admin,1,1,1,0
+
+
+access_dtdream_wage,dtdream_wage,model_dtdream_wage,group_dtdream_wage_jiekou,1,0,0,0
+access_dtdream_verification_code,dtdream_verification_code,model_dtdream_verification_code,group_dtdream_wage_jiekou,1,1,1,0

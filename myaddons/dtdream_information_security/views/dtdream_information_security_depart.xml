@@ -31,7 +31,7 @@
             <field name="name">hr.department.form.security.inherit</field>
             <field name="model">hr.department</field>
             <field name="arch" type="xml">
-                <form string="department">
+                <form string="department" create="false">
                     <sheet>
                         <group>
                             <group>
@@ -61,7 +61,7 @@
             <field name="model">hr.department</field>
             <field name="field_parent">child_ids</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree create="false">
                     <field name="complete_name"/>
                     <field name="manager_id" string="主管"/>
                     <field name="assitant_id"/>

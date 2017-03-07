@@ -94,13 +94,13 @@ class dtdream_foreign_wizard(models.TransientModel):
         foreign.write({'approves': [(4, foreign.current_approve.id)]})
         if foreign.state == '2':
             foreign.write({'current_approve': False})
-            foreign.signal_workflow('zzsp_to_zz')
-            foreign.message_poss_foreign_shenpi(statechange=u'主管审批->终止', action=u'不同意',next_shenpiren=foreign.current_approve.name, reason=self.reason)
+            foreign.signal_workflow('zgsp_to_zz')
+            foreign.message_poss_foreign_shenpi(statechange=u'主管审批->不通过', action=u'不同意',next_shenpiren=foreign.current_approve.name, reason=self.reason)
         elif foreign.state == '3':
             foreign.write({'current_approve': False})
             foreign.signal_workflow('xxyzgsp_to_zz')
-            foreign.message_poss_foreign_shenpi(statechange=u'信息源主管->终止', action=u'不同意',next_shenpiren=foreign.current_approve.name, reason=self.reason)
+            foreign.message_poss_foreign_shenpi(statechange=u'信息源主管->不通过', action=u'不同意',next_shenpiren=foreign.current_approve.name, reason=self.reason)
         elif foreign.state == '4':
             foreign.write({'current_approve': False})
             foreign.signal_workflow('qqrsp_to_zz')
-            foreign.message_poss_foreign_shenpi(statechange=u'权签人审批->终止', action=u'不同意',next_shenpiren=foreign.current_approve.name, reason=self.reason)
+            foreign.message_poss_foreign_shenpi(statechange=u'权签人审批->不通过', action=u'不同意',next_shenpiren=foreign.current_approve.name, reason=self.reason)

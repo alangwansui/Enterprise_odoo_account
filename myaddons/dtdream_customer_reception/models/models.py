@@ -294,7 +294,7 @@ class dtdream_customer_reception(models.Model):
         action = menu.action.id
         return menu_id, action
 
-    def send_mail(self, name, subject, content):
+    def send_mail(self, name, subject, content, date=None):
         email_to = name.work_email
         appellation = u'{0},您好：'.format(name.name)
         base_url = self.get_base_url()
@@ -308,7 +308,7 @@ class dtdream_customer_reception(models.Model):
                                 <p><a href="%s">点击进入查看</a></p>
                                 <p>dodo</p>
                                 <p>万千业务，简单有do</p>
-                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                                <p>%s</p>''' % (appellation, content, url, date or self.write_date[:10]),
                 'subject': '%s' % subject,
                 'email_from': self.get_mail_server_name(),
                 'email_to': '%s' % email_to,
@@ -345,6 +345,47 @@ class dtdream_customer_reception(models.Model):
                                                <tr><td style="padding:10px">操作</td><td style="padding:10px">%s</td></tr>
                                                <tr><td style="padding:10px">下一处理人</td><td style="padding:10px">%s</td></tr>
                                                </table>""" % (state, action, approve))
+
+    @api.onchange('hotels_name')
+    def parent_id_depends_name(self):
+        self.hotel_room = False
+        if self.hotels_name:
+            self.zone = self.hotels_name.parent_id
+            return {"domain": {"hotel_room": [('hotel_id', '=', self.hotels_name.id)]}}
+
+    @api.onchange('zone')
+    def domain_hotels_name(self):
+        if self.zone:
+            if self.hotels_name.parent_id.id != self.zone.id:
+                self.hotels_name = False
+            return {"domain": {"hotels_name": [('parent_id', '=', self.zone.id)]}}
+        else:
+            self.hotels_name = False
+
+    @api.onchange('hotels_name_r')
+    def parent_id_depends_name_r(self):
+        if self.hotels_name_r:
+            self.zone_r = self.hotels_name_r.parent_id
+
+    @api.depends('hotels_name_r')
+    def compute_hotel_dinner(self):
+        self.hotel_dinner = self.hotels_name_r.price
+
+    @api.onchange('zone_r')
+    def domain_hotels_name_r(self):
+        if self.zone_r:
+            if self.hotels_name_r.parent_id.id != self.zone_r.id:
+                self.hotels_name_r = False
+            return {"domain": {"hotels_name_r": [('parent_id', '=', self.zone_r.id)]}}
+        else:
+            self.hotels_name_r = False
+
+    @api.model
+    def send_mail_interval(self):
+        record = self.search(['&', ('state', '=', '4'), '|', ('evaluate', '=', False), ('score', '=', False)])
+        for rec in record:
+            rec.send_mail(rec.name, subject=u'【通知】您还未对客户接待进行评价并打分', content=u'您还未对本次客户接待进行评价并打分，请做出评价并打分!',
+                          date=datetime.now().strftime("%Y-%m-%d"))
 
     bill_num = fields.Char(string='单据号', store=True)
     title = fields.Char(default='客户接待')
@@ -399,11 +440,20 @@ class dtdream_customer_reception(models.Model):
     assistance = fields.Boolean(string='接机/接站人员')
     card = fields.Boolean(string='接机牌')
     flower = fields.Boolean(string='鲜花')
+    zone = fields.Many2one('dtdream.hotel.zone', string='酒店区域')
+    zone_r = fields.Many2one('dtdream.dinner.zone', string='餐饮区域')
+    hotels_name = fields.Many2one('dtdream.hotels.management', string='住宿酒店名称')
+    hotels_name_r = fields.Many2one('dtdream.dinner.management', '餐饮酒店名称')
+    hotel_room = fields.Many2one('dtdream.hotel.room', string='房间类型')
+    hotel_dinner = fields.Char(string='酒店餐饮(人均)', compute=compute_hotel_dinner)
+    live_in = fields.Date(string='入住时间')
+    room_num = fields.Integer(string='房间数量(间)')
     single_room = fields.Boolean(string='标准单人房')
     single_room_num = fields.Integer(string='标准单人房')
     double_room = fields.Boolean(string='标准双人房')
     double_room_num = fields.Integer(string='标准双人房')
-    room_self = fields.Boolean(string='自理安排酒店')
+    room_self = fields.Boolean(string='自行安排住宿')
+    hotel_self = fields.Boolean(string='自行安排餐饮')
     hotel = fields.Selection([('5', '五星级'), ('4', '四星级'), ('3', '三星级或快捷酒店'), ('0', '其它')],
                              string='酒店标准', default='5')
     hotel_position = fields.Selection([('0', '商业区'), ('1', '景区')], string='酒店位置', default='0')
@@ -421,6 +471,7 @@ class dtdream_customer_reception(models.Model):
     special_code = fields.Many2one('dtdream.special.approval', string='专项编码')
     receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
+    evaluate = fields.Text(string='评价及建议')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)], string='评分')
     current_approve = fields.Many2one('hr.employee', string='当前审批人')
     approves = fields.Many2many('hr.employee', string='已审批的人')
@@ -523,8 +574,8 @@ class dtdream_customer_reception(models.Model):
         approve = self.current_approve.id
         current_approve = self.name
         self.write({"state": '4', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
-        subject = u'【通知】请您对接待效果做出评价!'
-        content = u'您提交的客户接待申请进入执行评价阶段,请您对接待效果做出评价!'
+        subject = u'【通知】请您对接待效果做出评价并打分!'
+        content = u'您提交的客户接待申请进入执行评价阶段,请您对接待效果做出评价或者给出宝贵的建议并打分!'
         self.send_mail(current_approve, subject=subject, content=content)
         self._message_poss(state=u'接待安排与执行-->执行评价', action=u'提交', approve=current_approve.name)
 
@@ -532,7 +583,7 @@ class dtdream_customer_reception(models.Model):
     def wkf_done(self):
         self.write({"state": '99', 'current_approve': ''})
         officer = self.env['dtdream.customer.reception.config'].search([], limit=1).officer
-        subject = u'【通知】请您查看接待效果评价!'
+        subject = u'【通知】请您查看接待效果评价及评分!'
         content = u'%s对客户接待效果做出了评价,评分:%s分,请您查看!' % (self.name.name, self.score)
         self.send_mail(officer, subject=subject, content=content)
         self._message_poss(state=u'执行评价-->完成', action=u'提交')
@@ -621,6 +672,7 @@ class dtdream_customer_reception_config(models.Model):
     officer = fields.Many2one('hr.employee', string='客工部主管')
     car = fields.Many2one('hr.employee', string='车辆负责人')
     inter = fields.Many2one('hr.employee', string='企划部接口人')
+    hotel_manage = fields.Many2one('hr.employee', string='酒店餐饮管理员')
     purpose = fields.One2many('dtdream.visit.purpose', 'config')
     memory = fields.One2many('dtdream.customer.memories', 'config')
     metting_room = fields.One2many('dtdream.meeting.room', 'config')

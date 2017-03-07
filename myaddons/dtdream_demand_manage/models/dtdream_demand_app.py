@@ -167,8 +167,14 @@ class dtdream_demand_app(models.Model):
         """添加关注者"""
         self.message_subscribe_users(user_ids=[user_id.id])
 
+    @api.model
+    def create(self, vals):
+        vals['code'] = self.env['ir.sequence'].next_by_code('dtdream.demand.app')
+        return super(dtdream_demand_app, self).create(vals)
+
     name = fields.Many2one('hr.employee', string='申请人', default=lambda self: self.env["hr.employee"].
                            search([("user_id", "=", self.env.user.id)]), required=True)
+    code = fields.Char(string='单据编号')
     department = fields.Many2one('hr.department', string='所属部门', compute=_compute_department_belong)
     expect_complete_time = fields.Date(string='期望完成时间', required=True)
     operate_type = fields.Selection([('create', '新增需求'), ('update', '优化需求')], string='需求类别', required=True)

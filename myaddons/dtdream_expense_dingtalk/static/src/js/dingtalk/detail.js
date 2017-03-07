@@ -1977,6 +1977,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             'click .o_delete_benefitdep': 'delete_benefitdep',
             'click input[data-name=dep_name]': 'get_department',
             'keyup .o_search_department': 'search_department',
+            'change .o_search_department': 'search_department',
             'click .o_select_dep': 'select_department',
 
             'click .o_add_project': 'add_project',
@@ -1984,6 +1985,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             'click .o_delete_project': 'delete_project',
             'click input[data-name=pro_name]': 'get_project',
             'keyup .o_search_project': 'search_project',
+            'change .o_search_project': 'search_project',
             'click .o_select_project': 'select_project',
 
             'click .o_add_chuchai': 'add_chuchai',
@@ -2511,7 +2513,9 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     def.reject();
                 });
 
-            $.popup('.popup-department');
+            if (!$('.popup-department').hasClass('modal-in')) {
+                $.popup('.popup-department');
+            }
 
             dd.biz.navigation.setRight({
                 show: true,//控制按钮显示， true 显示， false 隐藏， 默认true
@@ -2704,7 +2708,9 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     def.reject();
                 });
 
-            $.popup('.popup-pro');
+            if (!$('.popup-pro').hasClass('modal-in')){
+                $.popup('.popup-pro');
+            }
 
             dd.biz.navigation.setRight({
                 show: true,//控制按钮显示， true 显示， false 隐藏， 默认true

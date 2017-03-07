@@ -1,0 +1,208 @@
+.salaryIndex{
+    width:100%
+}
+.salaryIndex p {
+  margin: 0;
+}
+.salaryIndex .testImg {
+  background-color: #51BCEC;
+  height: 55px;
+}
+.salaryIndex .testImg img {
+  margin-top: 10px;
+}
+.salaryIndex .container {
+  width: 100%;
+  font-family: "Microsoft YaHei", sans-serif, Arial;
+}
+.salaryIndex .container .blueMark {
+  color: #2BC6EA;
+  font-weight: bold;
+}
+.salaryIndex .container .titleContainer {
+  margin-top: 20px;
+  height: 30px;
+  line-height: 30px;
+}
+.salaryIndex .container .titleContainer h1 {
+  float: left;
+  font-size: 16px;
+  color: #414a54;
+  letter-spacing: 1px;
+  text-align: left;
+  margin: 0;
+  font-weight: bold;
+  height: 30px;
+  line-height: 30px;
+}
+.salaryIndex .container .titleContainer p {
+  float: right;
+  margin: 0;
+  font-size: 12px;
+  color: #626d78;
+  letter-spacing: 0.75px;
+  text-align: left;
+}
+.salaryIndex .container .midContainer {
+  height: 36px;
+  line-height: 36px;
+  margin-top: 45px;
+}
+.salaryIndex .container .midContainer span.pull-left {
+  margin-right: 10px;
+}
+.salaryIndex .container .midContainer span.mt {
+  margin-left: 10px;
+}
+.salaryIndex .container .midContainer div.date {
+  float: left;
+}
+.salaryIndex .container .midContainer div.date .form-control[readonly] {
+  background-color: #fff;
+  outline: 0;
+  border:1px solid #cfcfcf;
+/*  border-right: 0;*/
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 0 0 0;
+  -moz-box-shadow: 0 0 0 0;
+  box-shadow: 0 0 0 0;
+/*  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;*/
+}
+.salaryIndex .container .midContainer div.date .input-group-addon {
+  color: #CAD1D9;
+  background: #fff;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.salaryIndex .container .midContainer .btn {
+  float: left;
+  margin-left: 10px;
+  background-color: #51bcec;
+  color: #fff;
+  border-radius: 4px;
+  width: 63px;
+  height: 34px;
+}
+.salaryIndex .container .midContainer .rightText {
+  float: left;
+  width: 500px;
+  font-size: 14px;
+  color: #ff4738;
+  letter-spacing: 0.75px;
+  margin-top: 8px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+.salaryIndex .container .midContainer .botmTextsecond {
+  display: none;
+}
+.salaryIndex .container .midContainer:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.salaryIndex .container .dataContainer {
+  margin-top: 15px;
+}
+.salaryIndex .container .dataContainer .table-responsive .table thead {
+  background: rgba(173,175,178,.1);
+}
+.salaryIndex .container .dataContainer .table-responsive .table thead th {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #646d78;
+  text-align: left;
+  border-bottom-width: 1px;
+}
+.salaryIndex .container .dataContainer .table-responsive .table tbody td {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #646d78;
+}
+.salaryIndex .container .dataContainer .table-responsive .table tbody td a {
+  color: #51bcec;
+  cursor:pointer;
+}
+.salaryIndex .container .dataContainer .table-responsive .tbbtomText {
+  padding-left: 20px;
+  overflow: hidden;
+}
+.salaryIndex .container .dataContainer .table-responsive .tbbtomText p {
+  margin: 0;
+  padding: 0;
+}
+.salaryIndex .container .dataContainer .table-responsive .tbbtomText .leftText {
+  float: left;
+  font-size: 12px;
+  color: #ff4738;
+  letter-spacing: 0.75px;
+  text-align: left;
+  font-weight: bold;
+}
+@media screen and (min-width: 992px) {
+  .salaryIndex .container .midContainer .col-md-1 {
+    width: 156px;
+  }
+}
+@media screen and (max-width: 992px) {
+  body {
+    background-color: #EFF2F7;
+  }
+  .o_web_client .o_content .o_kanban_view{
+    overflow-x:inherit;
+  }
+  .salaryIndex .container .titleContainer h1 {
+    font-size: 22px;
+  }
+  .salaryIndex .container .titleContainer p {
+    display: none;
+  }
+  .salaryIndex .container .midContainer {
+    margin-top: 31px;
+  }
+  .salaryIndex .container .midContainer span.pull-left {
+    display: none;
+  }
+  .salaryIndex .container .midContainer div.date .form-control[readonly] {
+    height: 45px;
+    border-radius: 0;
+    border-right: 1px solid #ccc;
+  }
+  .salaryIndex .container .midContainer div.date .input-group-addon {
+    display: none;
+  }
+  .salaryIndex .container .midContainer div.date:nth-child(2) .form-control[readonly] {
+    border-bottom: 0;
+  }
+  .salaryIndex .container .midContainer .btn {
+    float: none;
+    width: 100%;
+    height: 46px;
+    margin-top: 20px;
+    margin-left: 0;
+  }
+  .salaryIndex .container .midContainer .rightText {
+    display: none;
+  }
+  .salaryIndex .container .midContainer .botmTextfirst {
+    display: none;
+  }
+  .salaryIndex .container .midContainer .botmTextsecond {
+    display: block;
+    font-size: 16px;
+    color: #a7b2bd;
+    letter-spacing: 0px;
+    text-align: left;
+    margin-top: 24px;
+  }
+  .salaryIndex .container .dataContainer {
+    display: none;
+  }
+}

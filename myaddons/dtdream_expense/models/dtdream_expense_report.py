@@ -62,7 +62,12 @@ class dtdream_expense_report(models.Model):
     jiekou_approve_time = fields.Datetime(string="接口会计审批时间")
     xingzhengzhuli = fields.Many2one("hr.employee",string=u"部门行政助理",default=_get_default_val,
                                      domain=lambda self:[('id','in',[x.id for x in self.env['hr.employee'].search([('user_id', '=',self.env.user.id)]).department_id.assitant_id])])
-    currentauditperson = fields.Many2one("hr.employee",string=u"当前处理人")
+    currentauditperson = fields.Many2one("hr.employee",string=u"当前处理人_")
+    current_handler = fields.Many2many("hr.employee","expense_current_handler","expense_id","employee_id",string="当前处理人")
+    directors = fields.Many2many("hr.employee","expense_handle_directors","expense_id","employee_id",string="审批的主管")
+    no_one_quanqian = fields.Many2many("hr.employee","expense_handle_no_one","expense_id","employee_id",string="审批的第一权签人")
+    no_two_quanqian = fields.Many2many("hr.employee","expense_handle_no_two","expense_id","employee_id",string="审批的第二权签人")
+    if_by_zongcai = fields.Boolean(string="是否需要总裁审批",help="在多个受益部门的时候")
     create_uid_self = fields.Many2one("res.users",string=u"申请人",default=lambda self: self.env.user.id)
     chuchaishijian_ids = fields.Many2many('dtdream.travel.journey', 'travel_journey_expense_report_ref','journey_id','report_id', u'出差时间',domain=lambda self:[('travel_id.state','=','99'),('travel_id.name.user_id','=',self.env.user.id)])
     can_pass_jiekoukuaiji = fields.Char(string=u'权签人审批后是否到接口会计', default="0")
@@ -264,11 +269,10 @@ class dtdream_expense_report(models.Model):
     compute_shenqingren = fields.Boolean(string=u"是否为申请人",compute=_compute_shenqingren)
 
 
-    @api.depends('currentauditperson')
+    @api.depends('current_handler')
     def _compute_currentaudit(self):
         self.compute_currentaudit = False
-
-        if int(self.currentauditperson) == int(self.env['hr.employee'].search( [('login', '=', self.env.user.login)]).id):
+        if self.env['hr.employee'].search([('user_id','=',self.env.user.id)]) in self.current_handler:
             self.compute_currentaudit = True
 
     compute_currentaudit = fields.Boolean(string=u"是否为当前处理人",compute=_compute_currentaudit)
@@ -518,11 +522,12 @@ class dtdream_expense_report(models.Model):
     @api.multi
     def action_draft(self):
         for report in self:
-            if report.currentauditperson:
-                report.write({"hasauditor": [(4, report.currentauditperson.id)]})
+            # if report.currentauditperson:
+            #     report.write({"hasauditor": [(4, report.currentauditperson.id)]})
             if report.state != 'draft':
                 report.send_dingding_msg(report, report.create_uid.id, content=u"您提交的报销单被驳回到草稿了。")
-            report.write({'state': 'draft', 'currentauditperson': False})
+            report.write({'state': 'draft', 'current_handler': False})
+            report.current_handler = ''
 
         # 同步更新消费记录状态
             for rc in report.record_ids:
@@ -545,7 +550,7 @@ class dtdream_expense_report(models.Model):
                 raise Warning(u'参数配置不全,请联系管理员!')
 
             if report.state == 'draft':
-                if report.xingzhengzhuli.id == False:
+                if not report.xingzhengzhuli.id:
                     raise Warning(u'请选择行政助理!')
                 if not report.budget_id and self.env['dtdream.expense.operation.management'].search([('name', '=', 'budget')]):
                     if report.department_id in self.env['dtdream.expense.operation.management'].search([('name', '=', 'budget')])[0].dep_name \
@@ -578,7 +583,7 @@ class dtdream_expense_report(models.Model):
                 if s_len != 1:
                     raise exceptions.ValidationError(u"请检查费用类别，一张单据费用类别必须相同！")
 
-                if len(report.benefitdep_ids)<1:
+                if len(report.benefitdep_ids) < 1:
                     raise exceptions.ValidationError(u"请选择受益部门！")
 
                 if len(report.benefitdep_ids) != len(set(b)):
@@ -586,7 +591,7 @@ class dtdream_expense_report(models.Model):
 
                 total_sharepercent = 0
                 for rec in report.benefitdep_ids:
-                    if rec.name.id==False:
+                    if not rec.name.id:
                         raise exceptions.ValidationError(u'受益部门不能有空记录，请选择或删除！')
                     total_sharepercent = total_sharepercent + float(rec.sharepercent)
                     if float(rec.sharepercent) <= 0 or float(rec.sharepercent) > 100:
@@ -602,23 +607,45 @@ class dtdream_expense_report(models.Model):
                 for rs in report.record_ids:
                     if rs.expensecatelog.name == u"差旅费" and len(report.chuchaishijian_ids) < 1:
                         if not self.create_uid.has_group("dtdream_expense.group_dtdream_expense_ali"):
-                            if rs.expensedetail.name !=u"市内交通费" and rs.expensedetail.name !=u"手机话费" and rs.expensedetail.name !=u"过路费":
+                            if rs.expensedetail.name != u"市内交通费" and rs.expensedetail.name != u"手机话费" \
+                                    and rs.expensedetail.name != u"过路费":
                                 raise exceptions.ValidationError(u'请选择出差申请单！')
 
                 message = u"申请人提交报销单，状态：草稿---->行政助理审批。"
                 report.message_post(body=message)
-            elif report.state != "draft":
-                report.write({"hasauditor": [(4, report.currentauditperson.id)]})
 
-            report.write({'state':'xingzheng','currentauditperson':report.xingzhengzhuli.id})
+                if len(report.benefitdep_ids) > 1:
+                    report.directors = ""
+                    report.no_one_quanqian = ""
+                    report.no_two_quanqian = ""
+                    for department in report.benefitdep_ids:
+                        department_amount = report.total_invoicevalue * float(department.sharepercent)/100
+                        if department.name.manager_id.user_id.id != self.env.user.id:
+                            report.write({'directors': [(4, department.name.manager_id.id)]})
+                        if department.name.no_one_auditor != department.name.manager_id and \
+                                department.name.no_one_auditor.user_id != self.create_uid_self:
+                            report.write({'no_one_quanqian': [(4, department.name.no_one_auditor.id)]})
+                        if department_amount > department.name.no_one_auditor_amount and \
+                            department.name.no_two_auditor != department.name.no_one_auditor and \
+                            department.name.no_two_auditor != department.name.manager_id and \
+                            department.name.no_two_auditor.user_id != self.create_uid_self:
+                            report.write({'no_two_quanqian': [(4, department.name.no_two_auditor.id)]})
+                        if department_amount > department.name.no_two_auditor_amount:
+                            self.if_by_zongcai = True
+
+            # elif report.state != "draft":
+            #     report.write({"hasauditor": [(4, report.currentauditperson.id)]})
+
+            report.write({'state':'xingzheng','current_handler':report.xingzhengzhuli})
+            report.current_handler = report.xingzhengzhuli
 
             report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
                            u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
-                           email_to=report.currentauditperson.work_email)
+                           email_to=report.current_handler[0].work_email)
 
-            report.send_dingding_msg(report, report.currentauditperson.user_id.id)
+            report.send_dingding_msg(report, report.current_handler[0].user_id.id)
             report.send_dingding_msg(report, report.create_uid.id, content=u"您提交的报销单到了行政助理审批阶段")
-            #同步更新消费记录状态
+            # 同步更新消费记录状态
             for rc in report.record_ids:
                 rc.write({'state': 'xingzheng'})
 
@@ -632,21 +659,32 @@ class dtdream_expense_report(models.Model):
                 create_hr_id = self.get_employee_id(report.create_uid.id)  # 本单创建人hr.employee中id
             except:
                 raise Warning(u'参数配置不全,请联系管理员!')
+            current_applicant = self.env['hr.employee'].search([('user_id','=',self.env.user.id)])
 
-            if create_hr_id==zhuguan_id_hr_employee:
-                #一级主管提交到总裁,二级主管不走主管审批
-                re_currentauditperson = zongcai_hr_employee_id
+            if create_hr_id == zhuguan_id_hr_employee:
+                if not report.department_id.parent_id:
+                    # 一级主管提交到总裁
+                    re_currentauditperson = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name
+                else:
+                    if len(report.benefitdep_ids) == 1:
+                        # 只有一个受益部门时，二级部门主管提交到上级部门主管
+                        re_currentauditperson = report.department_id.parent_id.manager_id
+                    else:
+                        # 多个受益部门时，二级部门主管提交到受益部门主管审批
+                        re_currentauditperson = report.directors
 
-            else:#员工提交到部门主管
-                re_currentauditperson = zhuguan_id_hr_employee
+            else:#员工提交到受益部门主管
+                re_currentauditperson = report.directors or report.department_id.manager_id
 
             # 更新报销单
-            report.write({"hasauditor": [(4, report.currentauditperson.id)]})
-            report.write({'state': 'zhuguan', 'currentauditperson': re_currentauditperson})
-            report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
-                           u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
-                           email_to=report.currentauditperson.work_email)
-            self.send_dingding_msg(report, report.currentauditperson.user_id.id)
+            # report.write({"hasauditor": [(4, report.currentauditperson.id)]})
+            report.write({'state': 'zhuguan', 'current_handler': re_currentauditperson})
+            report.current_handler = re_currentauditperson
+            for person in re_currentauditperson:
+                report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
+                               u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
+                               email_to=person.work_email)
+                self.send_dingding_msg(report,person.user_id.id)
             self.send_dingding_msg(report, report.create_uid.id, content=u"您提交的报销单到了主管审批阶段")
 
             # 更新消费记录状态
@@ -660,45 +698,58 @@ class dtdream_expense_report(models.Model):
             try:
                 zongcai_hr_employee_id = self.get_company_president()  #总裁在hr.employee中的id
                 zhuguan_id_hr_employee = self.get_zhuguan(report.create_uid.id)  #主管hr.employee中id
-                no_one_auditor_hr_employee =  self.get_no_one_auditor(report.create_uid.id) #第一审批人在hr.employee中id
-                no_one_auditor_amount =  self.get_no_one_auditor_amount(report.create_uid.id)    #第一审批人上限金额
+                no_one_auditor_hr_employee = self.get_no_one_auditor(report.create_uid.id) #第一审批人在hr.employee中id
+                no_one_auditor_amount = self.get_no_one_auditor_amount(report.create_uid.id)    #第一审批人上限金额
                 no_two_auditor_hr_employee = self.get_no_two_auditor(report.create_uid.id)  # 第二审批人在hr.employee中id
-                no_two_auditor_amount =  self.get_no_two_auditor_amount(report.create_uid.id)  # 第二审批人上限金额
+                no_two_auditor_amount = self.get_no_two_auditor_amount(report.create_uid.id)  # 第二审批人上限金额
                 zhuguan_login = self.get_employee_login(zhuguan_id_hr_employee)
                 parentdepartmentid = self.get_employee_parentdepartmentid(zhuguan_login)  # 上级部门是否为空，为空则为一级，否则为二级
                 create_hr_id = self.get_employee_id(report.create_uid.id)  # 本单创建人hr.employee中id
             except:
                 raise Warning(u'参数配置不全,请联系管理员!')
 
-            if create_hr_id == zhuguan_id_hr_employee:
-                if parentdepartmentid != False:
-                    # 二级部门主管没有经过主管审批，取自己和权签人比较决定权签阶段的审批人
-                    compare_person = create_hr_id
-                else:  # 一级主管提交到总裁
-                    compare_person = zongcai_hr_employee_id
-            else:  # 员工提交到二级主管
-                compare_person = zhuguan_id_hr_employee
-            # 判断申请人或者是主管审批阶段审批人和权签人的关系
-            if compare_person == no_two_auditor_hr_employee and report.total_invoicevalue > no_two_auditor_amount:
-                # 和第二审批人重复，且超出第二审批人金额，进入总裁审批
-                re_currentauditperson = zongcai_hr_employee_id
-                report.which_quanqianren = '3'
-            elif compare_person == no_one_auditor_hr_employee and report.total_invoicevalue > no_one_auditor_amount:
-                # 第一审批人重复，且超出第一审批人金额，进入第二权签人审批
-                re_currentauditperson = no_two_auditor_hr_employee
-                report.which_quanqianren = '2'
+            if len(report.benefitdep_ids) == 1:
+                if create_hr_id == zhuguan_id_hr_employee:
+                    if parentdepartmentid:
+                        # 二级部门主管没有经过主管审批，取自己和权签人比较决定权签阶段的审批人
+                        compare_person = create_hr_id
+                    else:  # 一级主管提交到总裁
+                        compare_person = zongcai_hr_employee_id
+                else:  # 员工提交到部门主管
+                    compare_person = zhuguan_id_hr_employee
+                # 判断申请人或者是主管审批阶段审批人和权签人的关系
+                if compare_person == no_two_auditor_hr_employee and report.total_invoicevalue > no_two_auditor_amount:
+                    # 和第二审批人重复，且超出第二审批人金额，进入总裁审批
+                    re_currentauditperson = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name
+                    report.which_quanqianren = '3'
+                elif compare_person == no_one_auditor_hr_employee and report.total_invoicevalue > no_one_auditor_amount:
+                    # 第一审批人重复，且超出第一审批人金额，进入第二权签人审批
+                    re_currentauditperson = report.benefitdep_ids[0].name.no_two_auditor
+                    report.which_quanqianren = '2'
+                else:
+                    # 未重复的到第一权签人审批
+                    re_currentauditperson = report.benefitdep_ids[0].name.no_one_auditor
+                    report.which_quanqianren = '1'
             else:
-                # 未重复的到第一权签人审批
-                re_currentauditperson = no_one_auditor_hr_employee
-                report.which_quanqianren = '1'
+                if report.no_one_quanqian:
+                    re_currentauditperson = report.no_one_quanqian
+                    report.which_quanqianren = '1'
+                elif report.no_two_quanqian:
+                    re_currentauditperson = report.no_two_quanqian
+                    report.which_quanqianren = '2'
+                else:
+                    re_currentauditperson = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name
+                    report.which_quanqianren = '3'
 
             #更新报销单
-            report.write({"hasauditor": [(4, self.currentauditperson.id)]})
-            report.write({'state': 'quanqianren', 'currentauditperson': re_currentauditperson})
-            report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
-                           u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
-                           email_to=report.currentauditperson.work_email)
-            self.send_dingding_msg(report, report.currentauditperson.user_id.id)
+            # report.write({"hasauditor": [(4, self.currentauditperson.id)]})
+            report.write({'state': 'quanqianren', 'current_handler': re_currentauditperson})
+            report.current_handler = re_currentauditperson
+            for person in re_currentauditperson:
+                report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
+                               u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
+                               email_to=person.work_email)
+                self.send_dingding_msg(report, person.user_id.id)
             self.send_dingding_msg(report, report.create_uid.id, content=u"您提交的报销单到了权签人审批阶段")
 
             for rc in report.record_ids:
@@ -709,28 +760,28 @@ class dtdream_expense_report(models.Model):
     def action_jiekoukuaiji(self):
 
         for report in self:
-            if report.xingzhengzhuli.id == False:
+            if not report.xingzhengzhuli.id:
                 raise Warning(u'请选择行政助理!')
             self.check_report_params(report)
             try:
-                jiekoukuaiji  = self.get_jiekoukuaiji(report.create_uid.id) # 接口会计
+                jiekoukuaiji = self.env['hr.department'].search([('id', '=', report.department_id.id)]).jiekoukuaiji[0]
             except:
                 raise Warning(u'接口会计没有配置,请联系管理员!')
-            if report.state != "draft":
-                report.write({"hasauditor": [(4, report.currentauditperson.id)]})
+            # if report.state != "draft":
+            #     report.write({"hasauditor": [(4, report.currentauditperson.id)]})
             else:
                 message = u"申请人提交报销单，状态：草稿---->接口会计审批。"
                 report.message_post(body=message)
-            report.write({'state': 'jiekoukuaiji', 'currentauditperson': jiekoukuaiji})
+            report.write({'state': 'jiekoukuaiji', 'current_handler': jiekoukuaiji})
+            report.current_handler = jiekoukuaiji
             report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
                            u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
-                           email_to=report.currentauditperson.work_email)
-            report.send_dingding_msg(report, report.currentauditperson.user_id.id)
+                           email_to=report.current_handler[0].work_email)
+            report.send_dingding_msg(report, report.current_handler[0].user_id.id)
             self.send_dingding_msg(report, report.create_uid.id, content=u"您提交的报销单到了接口会计审批阶段")
             # 更新消费记录状态
             for rc in report.record_ids:
                 rc.write({'state': 'jiekoukuaiji'})
-
 
     @api.multi
     def action_daifukuan(self):
@@ -740,21 +791,22 @@ class dtdream_expense_report(models.Model):
             try:
                 hr_employee_login = self.env['res.users'].search([('id', '=', report.create_uid.id)]).login
                 depid = self.env['hr.employee'].search([('login', '=', hr_employee_login)]).department_id[0].id
-                assistant_ids = self.env['hr.department'].search([('id', '=', depid)]).chunakuaiji[0].id
+                chunakuaiji = self.env['hr.department'].search([('id', '=', depid)]).chunakuaiji[0]
             except:
                 raise Warning(u'参数配置不全,请联系管理员!')
-            report.write({"hasauditor": [(4, report.currentauditperson.id)],'jiekou_approve_time':datetime.now()})
-            report.write({'state': 'daifukuan', 'currentauditperson': assistant_ids})
-            report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,发生扣款!".format(report.create_uid.name, report.create_date[:10]),
-                           u"您提交的费用报销单%s,发生了%s元扣款!" % (report.name,report.total_koujianamount),
-                           email_to=self.env['hr.employee'].search([('user_id','=',report.create_uid.id)]).work_email)
-            self.send_dingding_msg(report, report.currentauditperson.user_id.id)
+            report.write({'jiekou_approve_time': datetime.now()})
+            report.write({'state': 'daifukuan', 'current_handler': chunakuaiji})
+            report.current_handler = chunakuaiji
+            report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
+                           u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
+                           email_to=report.current_handler[0].work_email)
+            self.send_dingding_msg(report, report.current_handler[0].user_id.id)
             content = u"您提交的报销单到了待付款阶段"
             if report.total_koujianamount > 0:
                 content = u"您提交的报销单到了待付款阶段,发生%s元扣款！" % report.total_koujianamount
-                report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(report.create_uid.name, report.create_date[:10]),
-                           u"%s提交的费用报销单,等待您的审批!" % report.create_uid.name,
-                           email_to=report.currentauditperson.work_email)
+                report.send_mail(u"【提醒】{0}于{1}提交的费用报销单,发生扣款!".format(report.create_uid.name, report.create_date[:10]),
+                           u"您提交的费用报销单%s,发生了%s元扣款!" % (report.name,report.total_koujianamount),
+                           email_to=self.env['hr.employee'].search([('user_id','=',report.create_uid.id)]).work_email)
             self.send_dingding_msg(report, report.create_uid.id, content=content)
             for rc in report.record_ids:
                 rc.write({'state': 'daifukuan'})
@@ -764,8 +816,9 @@ class dtdream_expense_report(models.Model):
     def action_yifukuan(self):
 
         for report in self:
-            report.write({"hasauditor": [(4, self.currentauditperson.id)]})
-            report.write({'state': 'yifukuan', 'currentauditperson': ''})
+            # report.write({"hasauditor": [(4, self.currentauditperson.id)]})
+            report.write({'state': 'yifukuan', 'current_handler': ''})
+            report.current_handler = ''
             content = u"您于{0}提交的费用报销单已完成审批!".format(report.create_date[:10])
             self.send_dingding_msg(report, report.create_uid.id, content=content, action="view")
             for rc in report.record_ids:
@@ -792,12 +845,13 @@ class dtdream_expense_report(models.Model):
     @api.multi
     def btn_cuiqian(self):
         for report in self:
-            self.send_mail(u"【邮催】{0}于{1}提交的费用报销单,请您尽快审批!".format(report.create_uid.name, report.create_date[:10]),u"%s提交的费用报销单,等待您的审批" % self.create_uid.name, email_to=self.currentauditperson.work_email)
             message = u"申请人发送了邮催。"
             self.message_post(body=message)
-            # send dingding msg
-            content = u"{0}于{1}提交的费用报销单,请您尽快审批!".format(report.create_uid.name, report.create_date[:10])
-            self.send_dingding_msg(report, self.currentauditperson.user_id.id, content=content)
+            for person in report.current_handler:
+                self.send_mail(u"【邮催】{0}于{1}提交的费用报销单,请您尽快审批!".format(report.create_uid.name, report.create_date[:10]),u"%s提交的费用报销单,等待您的审批" % self.create_uid.name, email_to=person.work_email)
+                # send dingding msg
+                content = u"{0}于{1}提交的费用报销单,请您尽快审批!".format(report.create_uid.name, report.create_date[:10])
+                self.send_dingding_msg(report, person.user_id.id, content=content)
 
     @api.multi
     def unlink(self):
@@ -808,8 +862,8 @@ class dtdream_expense_report(models.Model):
                 raise Warning(u'只能删除自己的报销单!')
             res = super(dtdream_expense_report, self).unlink()
             return res
-    is_outtime=fields.Boolean(u'已超期',compute="_cal_outtime",store=True)
-    outtime_amount=fields.Float(u'超期金额',compute="_cal_outtime",store=True)
+    is_outtime=fields.Boolean(u'已超期', compute="_cal_outtime", store=True)
+    outtime_amount=fields.Float(u'超期金额', compute="_cal_outtime", store=True)
 
     @api.multi
     @api.depends('record_ids')
@@ -818,9 +872,9 @@ class dtdream_expense_report(models.Model):
             outtime_amount=0;
             if report.record_ids:
                 for record in report.record_ids:
-                    if record.outtimenumber>0:
-                        report.is_outtime=True
-                        outtime_amount+=record.invoicevalue
+                    if record.outtimenumber > 0:
+                        report.is_outtime = True
+                        outtime_amount += record.invoicevalue
 
             report.outtime_amount=outtime_amount
 

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!--合同额FORM-->
+    <record model="ir.ui.view" id="dtdream_sale_contract_fee_form">
+        <field name="name">dtdream.sale.contract.fee.form</field>
+        <field name="model">contract.fee</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="contract_project_id" invisible="1"/>
+                            <field name="contract_total_chuhuo_price" string="合同额(万元)"/>
+                            <field name="create_date" string="创建时间"/>
+                            <field name="contract_sequence_num" string="序号"/>
+                            <field name="contract_order_date" string="下单日期"/>
+                            <field name="contract_name" string="项目名称"/>
+                            <field name="contract_partner" string="客户名称"/>
+                            <field name="contract_num" string="合同编号"/>
+                            <!--<field name="contract_order_num" string="一级订单号"/>-->
+                            <field name="contract_sale_apply_person" string="营销责任人"/>
+                            <field name="contract_office" string="办事处"/>
+                            <field name="contract_system" string="系统部"/>
+                            <field name="contract_industry" string="行业"/>
+                            <field name="contract_categ_id_parent" string="产品一级分类"/>
+                        </group>
+                        <group>
+                            <field name="contract_categ_id" string="产品二级分类"/>
+                            <field name="contract_bom" string="bom编码"/>
+                            <field name="contract_pro_type" string="产品类别"/>
+                            <field name="contract_pro_description_out" string="产品对外中文描述"/>
+                            <field name="contract_pro_num" string="数量"/>
+                            <field name="contract_total_list_price" string="总目录价"/>
+                            <field name="contract_list_price" string="目录价"/>
+                            <field name="contract_pro_uom_name" string="单位"/>
+                            <field name="contract_apply_discount" string="申请折扣(%)"/>
+                            <field name="contract_pro_seller" string="供应商"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--合同额TREE-->
+    <record model="ir.ui.view" id="dtdream_sale_contract_fee_tree">
+        <field name="name">dtdream.sale.contract.fee.tree</field>
+        <field name="model">contract.fee</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contract_total_chuhuo_price" string="合同额(万元)"/>
+                <field name="create_date" string="创建时间"/>
+                <field name="contract_sequence_num" string="序号"/>
+                <field name="contract_order_date" string="下单日期"/>
+                <field name="contract_name" string="项目名称"/>
+                <field name="contract_partner" string="客户名称"/>
+                <field name="contract_num" string="合同编号"/>
+                <!--<field name="contract_order_num" string="一级订单号"/>-->
+                <field name="contract_sale_apply_person" string="营销责任人"/>
+                <field name="contract_office" string="办事处"/>
+                <field name="contract_system" string="系统部"/>
+                <field name="contract_industry" string="行业"/>
+                <field name="contract_categ_id_parent" string="产品一级分类"/>
+                <field name="contract_categ_id" string="产品二级分类"/>
+                <field name="contract_bom" string="bom编码"/>
+                <field name="contract_pro_type" string="产品类别"/>
+                <field name="contract_pro_description_out" string="产品对外中文描述"/>
+                <field name="contract_pro_num" string="数量"/>
+                <field name="contract_total_list_price" string="总目录价"/>
+                <field name="contract_list_price" string="目录价"/>
+                <field name="contract_pro_uom_name" string="单位"/>
+                <field name="contract_apply_discount" string="申请折扣(%)"/>
+                <field name="contract_pro_seller" string="供应商"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

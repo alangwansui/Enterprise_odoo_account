@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.module.category" id="module_dtdream_wage_group">
+            <field name="name">工资</field>
+            <field name="description">工资</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="group_dtdream_wage_admin" model="res.groups">
+            <field name="name">工资管理员</field>
+            <field name="category_id" ref="module_dtdream_wage_group"/>
+        </record>
+
+        <record id="group_dtdream_wage_jiekou" model="res.groups">
+            <field name="name">工资接口</field>
+            <field name="category_id" ref="module_dtdream_wage_group"/>
+        </record>
+    </data>
+</openerp>

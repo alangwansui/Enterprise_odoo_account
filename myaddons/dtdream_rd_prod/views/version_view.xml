@@ -368,21 +368,23 @@
                             </page>
                             <page name="risk" string="风险与机遇">
                                 <field name="risk_ver_ids" mode="tree,kanban">
-                                    <tree>
+                                    <tree class="apply_dis_prod_risk">
                                         <field name="name" string="风险描述"/>
                                         <field name="chance_describe" string="机遇描述"/>
-                                        <field name="risk_sort_state" string="风险类别"/>
+                                        <field name="avoid_measure" string="规避措施"/>
+                                        <field name="risk_sort_state" string="风险类别" options="{'no_create': True}"/>
                                         <field name="plan_close_time" string="计划关闭日期"/>
-                                        <field name="PDT" string="责任人"/>
-                                        <field name="risk_state" string="风险状态"/>
+                                        <field name="PDT" string="责任人" options="{'no_create': True}"/>
+                                        <field name="risk_state" string="风险状态" options="{'no_create': True}"/>
                                     </tree>
                                     <kanban class="o_res_partner_kanban" >
                                         <field name="name" string="风险描述"/>
                                         <field name="chance_describe" string="机遇描述"/>
-                                        <field name="risk_sort_state" string="风险类别"/>
+                                        <field name="avoid_measure" string="规避措施"/>
+                                        <field name="risk_sort_state" string="风险类别" options="{'no_create': True}"/>
                                         <field name="plan_close_time" string="计划关闭日期"/>
-                                        <field name="PDT" string="责任人"/>
-                                        <field name="risk_state" string="风险状态"/>
+                                        <field name="PDT" string="责任人" options="{'no_create': True}"/>
+                                        <field name="risk_state" string="风险状态" options="{'no_create': True}"/>
                                         <templates>
                                             <t t-name="kanban-box">
                                             <div class="oe_kanban_global_click ">
@@ -394,6 +396,7 @@
                                                         <ul>
                                                             <li ><strong>风险描述:</strong> <field name="name" /></li>
                                                             <li ><strong>机遇描述:</strong> <field name="chance_describe" /></li>
+                                                            <li ><strong>规避措施:</strong> <field name="avoid_measure" /></li>
                                                             <li > <strong>风险类别:</strong><field name="risk_sort_state" /></li>
                                                             <li > <strong>计划关闭日期:</strong><field name="plan_close_time" /></li>
                                                             <li > <strong>责任人:</strong><field name="PDT" /></li>

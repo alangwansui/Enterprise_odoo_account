@@ -28,16 +28,14 @@ class dtdream_information_purview(models.Model):
 
 
     name = fields.Char(string="摘要")
-    @api.constrains('origin_department_01','origin_department_02','secret_level')
-    @api.onchange('origin_department_01','origin_department_02','secret_level')
+    @api.constrains('origin_department_01','origin_department_02','style')
+    @api.onchange('origin_department_01','origin_department_02')
     def make_name(self):
+        state_list = [('conf','Confluence'),('git','Gitlab'),('other',u'其他')]
+        state_dict = dict(state_list)
+        style=state_dict[self.style]
         dep_01 = self.origin_department_01.name or ''
-        level=''
-        if self.secret_level=='level_01':
-            level=u'机密'
-        elif self.secret_level=='level_02':
-            level=u'绝密'
-        self.write({'name':dep_01+level+u'文档'})
+        self.write({'name':dep_01+style+u'权限'})
 
     @api.onchange('style')
     def on_change_style(self):
@@ -65,10 +63,10 @@ class dtdream_information_purview(models.Model):
     git_flag = fields.Boolean(string="标记git显示",default=False)
     other_flag = fields.Boolean(string="标记other显示",default=False)
 
-    style=fields.Selection([('conf','confluence'),('git','git'),('other','其他')],string="类别",default='conf')
-    confluence_list= fields.One2many("dtdream.security.list.confluence","security_conf",string="confluence清单")
-    git_list= fields.One2many("dtdream.security.list.git","security_git",string="git清单")
-    other_list= fields.One2many("dtdream.security.list.other","security_other",string="other清单")
+    style=fields.Selection([('conf','Confluence'),('git','Gitlab'),('other','其他')],string="类别",default='conf',required=True)
+    confluence_list= fields.One2many("dtdream.security.list.confluence","security_conf",string="Confluence清单")
+    git_list= fields.One2many("dtdream.security.list.git","security_git",string="Gitlab清单")
+    other_list= fields.One2many("dtdream.security.list.other","security_other",string="Other清单")
 
     @api.constrains("confluence_list")
     def _constraint_conf(self):
@@ -111,9 +109,11 @@ class dtdream_information_purview(models.Model):
     origin_department_01 = fields.Many2one("hr.department",string="信息源一级部门" ,store=True,required=True)
     origin_department_02 = fields.Many2one("hr.department",string="信息源二级部门" ,store=True)
     manager = fields.Many2one("hr.employee",string="申请人主管",required=True)
-    secret_level = fields.Selection([('level_01','机密'),('level_02','绝密')],string="最高密级",required=True)
-    state = fields.Selection([('state_01','草稿'),('state_02','主管审批'),('state_03','所有人审批'),('state_04','终止'),('state_05','完成')],string="状态",default='state_01')
+    # secret_level = fields.Selection([('level_01','机密'),('level_02','绝密')],string="最高密级",required=True)
+    state = fields.Selection([('state_01','草稿'),('state_02','主管审批'),('state_03','信息所有人审批'),('state_04','不通过'),('state_05','完成')],string="状态",default='state_01')
     Co_applicant = fields.Many2many("hr.employee",string="共同申请人",domain=lambda self: [("user_id", "!=", self.env.user.id)])
+
+    reason = fields.Text(string='申请原因', required=True)
 
     @api.onchange('Co_applicant')
     @api.constrains('Co_applicant')
@@ -139,7 +139,7 @@ class dtdream_information_purview(models.Model):
     is_maturity = fields.Boolean(string="标记是否发过到期邮件",default=False)
     is_maturity_before = fields.Boolean(string="标记是否到期前提醒",default=False)
     is_month = fields.Boolean(string="标记申请期限是否大于一个月")
-
+    shenqing_date = fields.Datetime(string="申请时间")
 
 
     current_approver_user = fields.Many2one("res.users",string="当前审批人用户")
@@ -247,16 +247,15 @@ class dtdream_information_purview(models.Model):
         if self.style=="git" and len(self.git_list)==0:
             raise ValidationError("明细不能为空")
         if self.style=="other" and len(self.other_list)==0:
-
             raise ValidationError("明细不能为空")
         # if self.secret_level=="level_01":
         if not self.origin_department_01.manager_id:
             raise ValidationError(u'信息源一级部门主管不能为空')
-        self.write({'information_syr':self.origin_department_01.manager_id.id})
+        self.write({'information_syr':self.origin_department_01.manager_id.id,'shenqing_date':datetime.now()})
         if self.dead_line>(datetime.now() + relativedelta(months=1)).strftime("%Y-%m-%d"):
             self.write({'is_month':True})
         if self.applicant ==self.manager:
-            self._message_poss(statechange=u'草稿->所有人审批',action=u'提交',next_shenpiren=self.information_syr.name)
+            self._message_poss(statechange=u'草稿->信息所有人审批',action=u'提交',next_shenpiren=self.information_syr.name)
             self.write({'current_approver_user': self.information_syr.user_id.id})
             self._send_email(next_approver=self.information_syr)
             self.signal_workflow('cg_to_syrsp')

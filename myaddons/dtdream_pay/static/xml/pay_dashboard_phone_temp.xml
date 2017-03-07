@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_pay.dashboardPhoneView">
+    <div class="salaryResult">
+        <h1 class="ResultTitle">收入汇总表</h1>
+        <a class="toIndex">返回&gt;&gt;</a>
+        <ul class="list-group resultQuery">
+            <li class="list-group-item">
+                <p class="pull-left">查询日期</p>
+                <p class="pull-right titleYM"><t t-esc="startMonth"/>至<t t-esc="endMonth"/></p>
+            </li>
+        </ul>
+        <t t-foreach="lists" t-as="list">
+            <ul class="list-group queryData">
+                <li class="list-group-item">
+                    <p class="pull-left titleYM faxinyue"><t t-esc="list.month"/></p>
+                    <a class="qyDetail">
+                        <span class="qyText open_detail_phone">查看详情</span>
+                        <!--<span class="glyphicon glyphicon-menu-right"></span>-->
+                    </a>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">本月应发</p>
+                        <p class="pull-right"><t t-esc="list.benyueyingfa"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣社保公积金</p>
+                        <p class="pull-right"><t t-esc="list.koushebaogjj"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">税前收入</p>
+                        <p class="pull-right"><t t-esc="list.shuiqianshouru"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣个人所得税</p>
+                        <p class="pull-right"><t t-esc="list.kougeren"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">实发收入</p>
+                        <p class="pull-right"><t t-esc="list.shifa"/></p>
+                    </div>
+                </li>
+            </ul>
+        </t>
+        <p class="footText">工资保密，请勿传播，多谢合作！</p>
+    </div>
+    </t>
+</templates>

@@ -2,7 +2,7 @@
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from lxml import etree
-from datetime import datetime
+from datetime import datetime,timedelta
 
 #暂停
 
@@ -197,7 +197,7 @@ class dtdream_prod_suspension(models.Model):
                 department = app.project.department.name + '/' + app.project.department_2.name
             else:
                 department = app.project.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -240,7 +240,7 @@ class dtdream_prod_suspension(models.Model):
                 department = app.project.department.name + '/' + app.project.department_2.name
             else:
                 department = app.project.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -272,7 +272,7 @@ class dtdream_prod_suspension(models.Model):
                 department = app.project.department.name + '/' + app.project.department_2.name
             else:
                 department = app.project.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:

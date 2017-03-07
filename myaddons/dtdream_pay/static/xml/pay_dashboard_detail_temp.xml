@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_pay.dashboard_detailView">
+        <div class="salaryDetailPC" style="width: 100%;">
+            <div class="container">
+                <h1>工资详情</h1>
+                <t t-foreach="lists" t-as="list">
+                <div class="titleContainer">
+                    <p class="currentMonth">发薪月份：<t t-esc="faxinyue"/></p>
+                    <a class="return">返回查询&gt;&gt;</a>
+                </div>
+                <div class="contTable">
+                    <p class="titleText">工资项</p>
+                    <div class="row judge">
+                        <div class="col-xs-4">
+                            <span class="tText">基本工资</span>
+                            <span class="cText"><t t-esc="basic_wage"/></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <span class="tText">岗位津贴</span>
+                            <span class="cText"><t t-esc="gangweijintie"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">补发上月基本工资和岗位津贴</span>
+                            <span class="cText"><t t-esc="bfsyjbgzhgwjt"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">事假扣款</span>
+                            <span class="cText"><t t-esc="shijiakoukuang"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">病假扣款</span>
+                            <span class="cText"><t t-esc="bingjiakoukuan"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">产假扣款</span>
+                            <span class="cText"><t t-esc="chanjiakoukuan"/></span>
+                        </div>
+                    </div>
+                    <p class="titleText">其他发放项</p>
+                    <div class="row judge">
+                        <div class="col-xs-4">
+                            <span class="tText">上月交通伙食补助</span>
+                            <span class="cText"><t t-esc="shangyuehuoshibuzhu"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">上月市内交通报销转补助</span>
+                            <span class="cText"><t t-esc="sysnjtbxzbz"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">上月外派津贴</span>
+                            <span class="cText"><t t-esc="shangyuewaipaijintie"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">司机加班费</span>
+                            <span class="cText"><t t-esc="sijijiabanfei"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">专利奖</span>
+                            <span class="cText"><t t-esc="zhuanlijiang"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">内部推荐奖</span>
+                            <span class="cText"><t t-esc="neibutuijianjiang"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">信息安全奖</span>
+                            <span class="cText"><t t-esc="xinxianquanjiang"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">年休假兑现</span>
+                            <span class="cText"><t t-esc="nianxiujiaduixian"/></span>
+                        </div>
+                    </div>
+                    <p class="totalNumber">应发合计：<t t-esc="yingfashouru"/></p>
+                    <p class="titleText">扣社保公积金</p>
+                    <div class="row basis">
+                        <div class="col-xs-4">
+                            <span class="tText">扣个人养老险</span>
+                            <span class="cText"><t t-esc="kouyanglaoxian"/></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <span class="tText">扣个人医疗险</span>
+                            <span class="cText"><t t-esc="kouyiliaoxian"/></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <span class="tText">扣个人失业险</span>
+                            <span class="cText"><t t-esc="koushiyexian"/></span>
+                        </div>
+                        <div class="col-xs-12">
+                            <span class="tText">扣个人住房公积金</span>
+                            <span class="cText"><t t-esc="kougongjijin"/></span>
+                        </div>
+                    </div>
+                    <div class="row basis bkstyle">
+                        <div class="col-xs-4 canhidedif">
+                            <span class="tText">补扣个人养老险</span>
+                            <span class="cText"><t t-esc="bukouyanglaoxian"/></span>
+                        </div>
+                        <div class="col-xs-4 canhidedif">
+                            <span class="tText">补扣个人医疗险</span>
+                            <span class="cText"><t t-esc="bukouyiliaoxian"/></span>
+                        </div>
+                        <div class="col-xs-4 canhidedif">
+                            <span class="tText">补扣个人失业险</span>
+                            <span class="cText"><t t-esc="bukoushiyexian"/></span>
+                        </div>
+                        <div class="col-xs-12 canhidedif">
+                            <span class="tText">补扣个人住房公积金</span>
+                            <span class="cText"><t t-esc="bugongjijin"/></span>
+                        </div>
+                    </div>
+                    <p class="titleText">所得税及实发</p>
+                    <div class="row judge">
+                        <div class="col-xs-4">
+                            <span class="tText">税前收入</span>
+                            <span class="cText"><t t-esc="shuiqianshouru"/></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <span class="tText">扣个人所得税</span>
+                            <span class="cText"><t t-esc="kousuodeshui"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">税后代扣家属保险费</span>
+                            <span class="cText"><t t-esc="shuihoudaikoujiashubaoxianfei"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">税后代扣党费</span>
+                            <span class="cText"><t t-esc="shuihoudaikoudangfei"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">税后代扣资产</span>
+                            <span class="cText"><t t-esc="shuihoudaikouzichan"/></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <span class="tText">实发收入</span>
+                            <span class="cText"><t t-esc="shifashouru"/></span>
+                        </div>
+                    </div>
+                </div>
+                </t>
+                <div class="footText">
+                    <p class="noticeText">工资保密，请勿传播，多谢合作！</p>
+                    <p class="rightText">注：如对数据有疑问，请咨询人力资源部 <span class="blueMark"> 黄蓉0292</span>。</p>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

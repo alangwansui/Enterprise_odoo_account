@@ -1,0 +1,22 @@
+/*.o_form_statusbar{*/
+    /*height : 37px*/
+/*}*/
+
+.apply_dis_prod_risk table td:nth-child(1){width:20%;word-break:break-all}
+.apply_dis_prod_risk table td:nth-child(2){width:20%;word-break:break-all}
+.apply_dis_prod_risk table td:nth-child(3){width:20%;word-break:break-all}
+.apply_dis_prod_risk table td:nth-child(4){width:8%}
+.apply_dis_prod_risk table td:nth-child(5){width:10%}
+.apply_dis_prod_risk table td:nth-child(6){width:14%}
+.apply_dis_prod_risk table td:nth-child(7){width:8%}
+
+.apply_dis_prod_allrisk table td:nth-child(1){width:2%}
+.apply_dis_prod_allrisk table td:nth-child(2){width:11%}
+.apply_dis_prod_allrisk table td:nth-child(3){width:5%}
+.apply_dis_prod_allrisk table td:nth-child(4){width:18%;word-break:break-all}
+.apply_dis_prod_allrisk table td:nth-child(5){width:18%;word-break:break-all}
+.apply_dis_prod_allrisk table td:nth-child(6){width:18%;word-break:break-all}
+.apply_dis_prod_allrisk table td:nth-child(7){width:5%}
+.apply_dis_prod_allrisk table td:nth-child(8){width:8%}
+.apply_dis_prod_allrisk table td:nth-child(9){width:10%}
+.apply_dis_prod_allrisk table td:nth-child(10){width:5%}

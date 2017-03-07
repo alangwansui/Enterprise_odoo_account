@@ -1,4 +1,4 @@
-odoo.define('dtdream_customer_recce.test', function (require) {
+odoo.define('dtdream_hr_performance.test', function (require) {
 "use strict";
 
 var core = require('web.core');

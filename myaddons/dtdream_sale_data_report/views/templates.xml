@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_sale_data_report.sale_report">
+        <div class="marketing" style="width:100%;">
+            <div class="container">
+                <h1 class="mkTitle">各行业收入概况</h1>
+                <h2>以下数据来源于您可见范围内的项目</h2>
+                <div class="partPanels">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="panel panel-cash">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title pull-left">现金收入</h3>
+                                    <span class="pull-right">单位：万元</span>
+                                </div>
+                                <!--<div class="panel-footer panel-cash">-->
+                                    <!--<p class="dollar">￥7086.34</p>-->
+                                <!--</div>-->
+                                <div class="panel-footer panel-cash">
+                                    <p class="dollar">
+                                        <t t-esc="cash_income_sum"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="panel panel-bargain">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title pull-left">合同额</h3>
+                                    <span class="pull-right">单位：万元</span>
+                                </div>
+                                <div class="panel-footer panel-bargain">
+                                    <p class="dollar">￥7086.34</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="panel panel-winning">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title pull-left">中标额</h3>
+                                    <span class="pull-right">单位：万元</span>
+                                </div>
+                                <div class="panel-footer panel-winning">
+                                    <p class="dollar">￥7086.34</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="panel panel-space">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title pull-left">运作中项目空间</h3>
+                                    <span class="pull-right">单位：万元</span>
+                                </div>
+                                <div class="panel-footer panel-space">
+                                    <p class="dollar">￥7086.34</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="panel panel-GAAP">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title pull-left">GAAP收入</h3>
+                                    <span class="pull-right">单位：万元</span>
+                                </div>
+                                <div class="panel-footer panel-GAAP">
+                                    <p class="dollar">￥7086.34</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="mkTitle mkTitleChart">市场营收情况统计</h1>
+                <div class="mkselected">
+                    <span class="pull-left text">从</span>
+                    <div class="input-group date col-md-1 col-xs-12" data-date="" data-date-format="yyyy-mm-dd"  data-link-format="yyyy-mm-dd">
+                        <input class="form-control datepickerstart" type="text" placeholder="请选择开始日期" readonly="1"/>
+                        <!--<span class="input-group-addon start"><span class="glyphicon glyphicon-calendar"></span></span>-->
+                    </div>
+                    <span class="pull-left text">至</span>
+                    <div class="input-group date col-md-1 col-xs-12" data-date="" data-date-format="yyyy-mm-dd"  data-link-format="yyyy-mm-dd">
+                        <input class="form-control datepickerend" type="text" placeholder="请选择截止日期" readonly="1"/>
+                        <!--<span class="input-group-addon end"><span class="glyphicon glyphicon-calendar"></span></span>-->
+                    </div>
+                    <span class="pull-left text">区域</span>
+                    <select name="area" id="area" class="form-control mkAreaSelect">
+                        <option value="selectArea" selected="0">选择区域</option>
+                        <t t-foreach="area" t-as="selection">
+                            <option>
+                                <t t-esc="selection"/>
+                            </option>
+                        </t>
+                    </select>
+                    <select name="province" id="selectprovince" class="form-control mkAreaSelect provinceSelect">
+                    </select>
+                    <button class="btn pull-left" id="selectQueryBtn">查询</button>
+                </div>
+                <div class="chart">
+                    <!--&lt;!&ndash;标签页&#45;&#45;头部&ndash;&gt;-->
+                    <ul class="nav nav-tabs" role="tablist" id="MKmyTab">
+                        <li role="presentation" data-index="mkcash" class="active">
+                            <a href="#mkcash" aria-controls="mkcash" role="tab" data-toggle="tab">现金收入</a>
+                        </li>
+                        <li role="presentation" data-index="mkbargain">
+                            <a href="#mkbargain" aria-controls="mkbargain" role="tab" data-toggle="tab">合同额</a>
+                        </li>
+                        <li role="presentation" data-index="mkwinning">
+                            <a href="#mkwinning" aria-controls="mkwinning" role="tab" data-toggle="tab">中标额</a>
+                        </li>
+                        <li role="presentation" data-index="mkspace">
+                            <a href="#mkspace" aria-controls="mkspace" role="tab" data-toggle="tab">运作中项目空间</a>
+                        </li>
+                        <li role="presentation" data-index="mkGaap">
+                            <a href="#mkGaap" aria-controls="mkGaap" role="tab" data-toggle="tab">GAAP收入</a>
+                        </li>
+                        <li class="inline"></li>
+                    </ul>
+                    <!--&lt;!&ndash;标签页&#45;&#45;内容&ndash;&gt;-->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active in" id="mkcash">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="setBorder" id="cashEchart" style="width:100%;height:500px;"></div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="setBorder" id="cashpie" style="width:100%;height:500px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="mkbargain">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="setBorder" id="bargainEchart" style="width:100%;height:500px;"></div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="setBorder" id="bargainpie" style="width:100%;height:500px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="mkwinning">
+                            <div class="row">
+                            <div class="col-sm-8">
+                                <div class="setBorder" id="winningEchart" style="width:100%;height:500px;"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="setBorder" id="winningpie" style="width:100%;height:500px;"></div>
+                            </div>
+                        </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="mkspace">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="setBorder" id="spaceEchart" style="width:100%;height:500px;"></div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="setBorder" id="spacepie" style="width:100%;height:500px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="mkGaap">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="setBorder" id="GaapEchart" style="width:100%;height:500px;"></div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="setBorder" id="Gaappie" style="width:100%;height:500px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

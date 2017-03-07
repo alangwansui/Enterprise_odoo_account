@@ -4,6 +4,7 @@
                 <template id="new" name="newcss" inherit_id="web.assets_backend">
                     <xpath expr="." position="inside">
                         <link rel="stylesheet" href="/dtdream_hr_holidays_extend/static/src/css/new.css"></link>
+                        <script src="/dtdream_hr_holidays_extend/static/src/js/dtdream_hr_holidays_extend.js"></script>
                     </xpath>
                 </template>
             </data>

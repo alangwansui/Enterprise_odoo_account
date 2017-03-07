@@ -1,0 +1,151 @@
+<openerp>
+    <data>
+        <record id="view_dtdream_wage_form" model="ir.ui.view">
+            <field name="name">view.dtdream.wage.form</field>
+            <field name="model">dtdream.wage</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="job_code"/>
+                                <field name="name"/>
+                                <field name="nick_name"/>
+                                <field name="entry_day"/>
+                                <field name="department"/>
+                                <field name="nashui_place"/>
+                                <field name="work_place"/>
+                                <field name="basic_wage"/>
+                                <field name="gangweijintie"/>
+                                <field name="bingjiakoukuan"/>
+                                <field name="shijiakoukuang"/>
+                                <field name="chanjiakoukuan"/>
+                                <field name="yingfashouru"/>
+                                <field name="shangyuehuoshibuzhu"/>
+                                <field name="sysnjtbxzbz"/>
+                                <field name="bfsyjbgzhgwjt"/>
+                                <field name="shangyuewaipaijintie"/>
+                                <field name="nianxiujiaduixian"/>
+                                <field name="shuihoudaikoujiashubaoxianfei"/>
+                            </group>
+                            <group>
+                                <field name="shuihoudaikoudangfei"/>
+                                <field name="shuihoudaikouzichan"/>
+                                <field name="sijijiabanfei"/>
+                                <field name="zhuanlijiang"/>
+                                <field name="neibutuijianjiang"/>
+                                <field name="xinxianquanjiang"/>
+                                <field name="kouyanglaoxian"/>
+                                <field name="kouyiliaoxian"/>
+                                <field name="koushiyexian"/>
+                                <field name="kougongjijin"/>
+                                <field name="bukouyanglaoxian"/>
+                                <field name="bukouyiliaoxian"/>
+                                <field name="bukoushiyexian"/>
+                                <field name="bugongjijin"/>
+                                <field name="shuiqianshouru"/>
+                                <field name="kousuodeshui"/>
+                                <field name="shifashouru"/>
+                                <field name="faxinyue"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_dtdream_wage_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.wage.tree</field>
+            <field name="model">dtdream.wage</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                            <field name="job_code"/>
+                                <field name="name"/>
+                                <field name="nick_name"/>
+                                <field name="entry_day"/>
+                                <field name="department"/>
+                                <field name="nashui_place"/>
+                                <field name="work_place"/>
+                                <field name="basic_wage"/>
+                                <field name="gangweijintie"/>
+                                <field name="bingjiakoukuan"/>
+                                <field name="shijiakoukuang"/>
+                                <field name="chanjiakoukuan"/>
+                                <field name="yingfashouru"/>
+                                <field name="shangyuehuoshibuzhu"/>
+                                <field name="sysnjtbxzbz"/>
+                                <field name="bfsyjbgzhgwjt"/>
+                                <field name="shangyuewaipaijintie"/>
+                                <field name="nianxiujiaduixian"/>
+                                <field name="shuihoudaikoujiashubaoxianfei"/>
+                                <field name="shuihoudaikoudangfei"/>
+                                <field name="shuihoudaikouzichan"/>
+                                <field name="sijijiabanfei"/>
+                                <field name="zhuanlijiang"/>
+                                <field name="neibutuijianjiang"/>
+                                <field name="xinxianquanjiang"/>
+                                <field name="kouyanglaoxian"/>
+                                <field name="kouyiliaoxian"/>
+                                <field name="koushiyexian"/>
+                                <field name="kougongjijin"/>
+                                <field name="bukouyanglaoxian"/>
+                                <field name="bukouyiliaoxian"/>
+                                <field name="bukoushiyexian"/>
+                                <field name="bugongjijin"/>
+                                <field name="shuiqianshouru"/>
+                                <field name="kousuodeshui"/>
+                                <field name="shifashouru"/>
+                                <field name="faxinyue"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_wage_kanban_view">
+            <field name="name">dtdream.wage.kanban</field>
+            <field name="model">dtdream.wage</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <field name="job_code"/>
+                    <field name="name" />
+                    <field name="nick_name" />
+                    <field name="yingfashouru" />
+                    <field name="shifashouru" />
+                    <field name="faxinyue" />
+                    <field name='shuiqianshouru'/>
+                    <field name='gangweijintie'/>
+                    <field name='basic_wage'/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click ">
+                                <div class="o_kanban_image">
+                                    <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <div name="tags"/>
+                                        <ul>
+                                            <li ><strong>姓名:</strong> <field name="name" /></li>
+                                            <li ><strong>应发收入:</strong> <field name="yingfashouru" /></li>
+                                            <li ><strong>实发收入:</strong> <field name="shifashouru" /></li>
+                                            <li > <strong>发薪月:</strong><field name="faxinyue"/></li>
+                                        </ul>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+         </record>
+
+        <record id="act_dtdream_wage" model="ir.actions.act_window">
+            <field name="name">工资</field>
+            <field name="res_model">dtdream.wage</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <menuitem name="工资查询系统" id="dtdream_wage_root" icon="fa-user" web_icon="dtdream_special_approval,static/description/dtdream_special_approval.png"/>
+        <menuitem name="工资" id="dtdream_wage" parent="dtdream_wage_root" action="act_dtdream_wage"/>
+    </data>
+</openerp>

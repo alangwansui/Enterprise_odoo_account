@@ -3,12 +3,20 @@ odoo.define('dtdream_feedback.dtdream_feedback_add_advice', function (require) {
 
 var core = require('web.core');
 var Model = require('web.DataModel');
-var ListView = require('web.ListView');
-var KanbanView = require('web_kanban.KanbanView')
-
 var QWeb = core.qweb;
 var _t = core._t;
+var ListView = require('web.ListView');
+var KanbanView = require('web_kanban.KanbanView')
+var FormView = require('web.FormView');
 
+FormView.include({
+     events: _.defaults({
+        'click .btn_confirm_refresh': 'refresh_feedback',
+    }, FormView.prototype.events),
+
+    refresh_feedback: function() {
+    },
+});
 
 var FeedbackListView = ListView.extend({
     render_buttons: function ($node) {

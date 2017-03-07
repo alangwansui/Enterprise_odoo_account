@@ -3,9 +3,9 @@
 from openerp import models, fields, api
 class dtdream_security_list_git(models.Model):
     _name = "dtdream.security.list.git"
-    _description = "权限申请列表"
+    _description = u"权限申请列表"
 
-    security_git= fields.Many2one("dtdream.information.purview")
+    security_git= fields.Many2one("dtdream.information.purview",string="摘要")
 
     git = fields.Many2one("dtdream.information.type", string="所属", domain=[('type', '=', 'git')],required=True)
     space = fields.Many2one("dtdream.git.space",string="项目",required=True)

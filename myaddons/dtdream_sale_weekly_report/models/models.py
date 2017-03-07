@@ -1774,9 +1774,11 @@ class dtdream_sale_manager_report(models.Model):
         res_ids = [rec[0] for rec in result]
         zhengwu_project = self.env['zhengwu.system.project'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
+        list_pro_ids = []
         if len(zhengwu_project) > 0:
             for rec in zhengwu_project:
-                if rec.project_id.stage_id.name in (u'项目启动',u'技术和商务交流',u'项目招投标') and rec.project_id.active != False:
+                if rec.project_id.stage_id.name in (u'项目启动',u'技术和商务交流',u'项目招投标') and rec.project_id.active != False and rec.project_id not in list_pro_ids:
+                    list_pro_ids.append(rec.project_id)
                     list.append((0,0,{"project_id":rec.project_id,"office_id":rec.office_id,"sale_apply_id":rec.sale_apply_id,"space_total":rec.space_total,
                                   "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
                                   "project_process":rec.project_process,'project_leave':rec.project_leave,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))
@@ -1788,9 +1790,11 @@ class dtdream_sale_manager_report(models.Model):
         res_ids = [rec[0] for rec in result]
         lead_project = self.env['lead.project'].search([('id','in',res_ids),('office_id.id','in',create_office_ids),('industry_id.id','in',system_department_ids)])
         list = []
+        list_lead_ids = []
         if len(lead_project) > 0:
             for rec in lead_project:
-                if rec.project_id.stage_id.name == u'机会点' and rec.project_id.active != False:
+                if rec.project_id.stage_id.name == u'机会点' and rec.project_id.active != False and rec.project_id not in list_lead_ids:
+                    list_lead_ids.append(rec.project_id)
                     list.append((0,0,{"project_id":rec.project_id,"office_id":rec.office_id,"sale_apply_id":rec.sale_apply_id,"space_total":rec.space_total,
                                   "project_master_degree":rec.project_master_degree,"bidding_time":rec.bidding_time,"project_number":rec.project_number,
                                   "project_process":rec.project_process,'system_department_id':rec.system_department_id,'industry_id':rec.industry_id}))

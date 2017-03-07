@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_pay.dashboardView">
+        <div class="salaryIndex" >
+            <div class="container">
+                <div class="titleContainer">
+                    <h1>收入汇总表</h1>
+                    <p>本次是第 <span class="blueMark"><t t-esc="times"/></span> 次登录，上次登录时间：<t t-esc="previous_date"/>。</p>
+                </div>
+                <div class="midContainer">
+                    <span class="pull-left">从</span>
+                    <div class="input-group date col-md-1 col-xs-12" data-date="" data-date-format="MM yyyy"  data-link-format="yyyy-mm">
+                        <input class="form-control datepicker" id="startmonth" type="text" placeholder="选择开始月份" readonly="1"/>
+                    </div>
+                    <span class="pull-left mt">至</span>
+                    <div class="input-group date col-md-1 col-xs-12" data-date="" data-date-format="MM yyyy"  data-link-format="yyyy-mm">
+                        <input class="form-control datepicker" type="text" id="endmonth" placeholder="选择截止月份" readonly="1"/>
+                    </div>
+                    <button id="queryBtn" class="btn queryBtn" href="">查询</button>
+                    <p class="rightText">注：点击月份可查看当月详情。</p>
+                    <p class="botmTextsecond">注：请选择开始月份和结束月份进行查询。</p>
+                </div>
+                <div id="datacontainer" class="dataContainer">
+
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="dtdream_pay.content_event_data">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>发薪月份</th>
+                    <th>本月应发</th>
+                    <th>扣社保公积金</th>
+                    <th>税前收入</th>
+                    <th>扣个人所得税</th>
+                    <th>实发收入</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="lists" t-as="list">
+                        <tr t-att-class="list.id">
+                            <td><a class="open_detail"><t t-esc="list.month"/></a> </td>
+                            <td><t t-esc="list.benyueyingfa"/> </td>
+                            <td><t t-esc="list.koushebaogjj"/> </td>
+                            <td><t t-esc="list.shuiqianshouru"/> </td>
+                            <td><t t-esc="list.kougeren"/> </td>
+                            <td><t t-esc="list.shifa"/> </td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td><b>总计:</b></td>
+                        <td><t t-esc="total_benyueyingfa"/></td>
+                        <td><t t-esc="total_koushebaogjj"/></td>
+                        <td><t t-esc="total_shuiqianshouru"/></td>
+                        <td><t t-esc="total_kougeren"/></td>
+                        <td><t t-esc="total_shifa"/></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="tbbtomText">
+                <p class="leftText">工资保密，请勿传播，多谢合作！</p>
+            </div>
+        </div>
+    </t>
+
+</templates>

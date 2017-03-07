@@ -19,10 +19,3158 @@
         </record>
 
         <record id="visit_purpose_three" model="dtdream.visit.purpose">
-            <field name="name">会议交流</field>
+            <field name="name">公司展厅参观+会议交流</field>
             <field name="config" ref="customer_reception_config"/>
         </record>
 
+        <record id="hotel_zone_SQ" model="dtdream.hotel.zone">
+            <field name="name">市区</field>
+        </record>
+
+        <record id="hotel_zone_JQ" model="dtdream.hotel.zone">
+            <field name="name">景区</field>
+        </record>
+
+        <record id="hotel_zone_XX" model="dtdream.hotel.zone">
+            <field name="name">西溪</field>
+        </record>
+
+        <record id="hotel_zone_ZT" model="dtdream.hotel.zone">
+            <field name="name">转塘</field>
+        </record>
+
+        <record id="hotel_zone_BJ" model="dtdream.hotel.zone">
+            <field name="name">滨江</field>
+        </record>
+
+        <record id="hotel_zone_QT" model="dtdream.hotel.zone">
+            <field name="name">其它</field>
+        </record>
+
+        <record id="hotel_res_huanglong" model="dtdream.hotels.management">
+            <field name="name">杭州黄龙饭店</field>
+            <field name="star">5</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市西湖区曙光路120号</field>
+            <field name="contact">毛经理</field>
+            <field name="tel">0571-81969666;18958188129</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合重要客户</field>
+            <field name="infor">预订时报数梦工场即可，已签订协议</field>
+            <field name="tips">黄龙饭店为五星级标准，适合S类客户前往入住，靠近黄龙商圈，离西湖咫尺。附近有茶室</field>
+            <field name="parent_id" eval="ref('hotel_zone_SQ')"/>
+        </record>
+
+        <record id="hotel_res_junlan" model="dtdream.hotels.management">
+            <field name="name">杭州世贸君澜大饭店</field>
+            <field name="star">5</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市西湖区曙光路122号</field>
+            <field name="contact">刘经理</field>
+            <field name="tel">0571-87990888;13958160080</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合重要客户</field>
+            <field name="infor">预订时报数梦工场即可，已签订协议</field>
+            <field name="tips">地理位置好，在黄龙体育中心附近，酒店内部，华丽和雍容的感觉依然让人舒适。相对于一般的豪华商务型酒店，君澜酒店品牌会故意在商务元素之余加入一些国学元素或是异域元素，使得游人品评起来更有味道。硬件设施不错，服务也很到位</field>
+            <field name="parent_id" eval="ref('hotel_zone_SQ')"/>
+        </record>
+
+        <record id="hotel_res_zhouji" model="dtdream.hotels.management">
+            <field name="name">杭州洲际酒店</field>
+            <field name="star">5</field>
+            <field name="type">1</field>
+            <field name="addr">杭州市解放东路2号</field>
+            <field name="contact">王姣娜</field>
+            <field name="tel">0571-89810040;15988480117</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合重要客户</field>
+            <field name="infor">预订时报数梦工场即可，已签订协议</field>
+            <field name="tips">杭州洲际国际酒店坐落于钱江新城核心上午去，环境优雅宁静，适合S类客户前往入住。</field>
+            <field name="parent_id" eval="ref('hotel_zone_SQ')"/>
+        </record>
+
+        <!--<record id="hotel_res_wendemu" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州温德姆至尊豪廷大酒店</field>-->
+            <!--<field name="star">5</field>-->
+            <!--<field name="type">1</field>-->
+            <!--<field name="addr">杭州市下城区凤起路555号，近环城西路</field>-->
+            <!--<field name="contact">梅经理</field>-->
+            <!--<field name="tel">13958171784</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合重要客户</field>-->
+            <!--<field name="infor">无纸质协议，直接电话预订 报数梦工场即可</field>-->
+            <!--<field name="tips">酒店位置很好，离西湖很近，设施齐全，服务好。各种用品很齐全。早餐品种丰富，很满意。</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_feili" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州翡丽大酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市文二西路706号</field>-->
+            <!--<field name="contact">罗经理</field>-->
+            <!--<field name="tel">0571-87358796;13634123745</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">适合城西区域的客户，酒店地理位置不错，就在西溪湿地的东北角上，酒店设施服务都很不错</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_makeboluo_garden" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州马可波罗花园酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">1</field>-->
+            <!--<field name="addr">杭州市拱康路100号</field>-->
+            <!--<field name="contact">来云焘</field>-->
+            <!--<field name="tel">13486351876</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">酒店位于拱墅区 拱康路100号（运河商务区），距离景区、市区较远，环境不错，设施齐全，性价比高。</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_makeboluo_holiday" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州马可波罗假日酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">1</field>-->
+            <!--<field name="addr">杭州市平海路38号</field>-->
+            <!--<field name="contact">来云焘</field>-->
+            <!--<field name="tel">13486351876</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通客户</field>-->
+            <!--<field name="infor">合同已至客工部，待审核签订协议</field>-->
+            <!--<field name="tips">酒店位于西湖边上，所以说周边的环境非常的好，出行也非常便利，这边有很多餐饮娱乐，生活便利。酒店设施、服务都不错</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_youhao" model="dtdream.hotels.management">
+            <field name="name">友好饭店</field>
+            <field name="star">4</field>
+            <field name="type">1</field>
+            <field name="addr">平海路53号（西湖附近）</field>
+            <field name="contact">林经理</field>
+            <field name="tel">0571-87077888;15158193231</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通客户，餐饮人均消费150元左右</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">四星级酒店，地处杭州闹市区，交通餐饮非常便利，离西湖很近，放眼望下优美的西湖山水大饱眼福，五光十色，烟雨江南，尽收眼底。其自助餐，菜品丰富</field>
+            <field name="parent_id" eval="ref('hotel_zone_SQ')"/>
+        </record>
+
+        <!--<record id="hotel_res_yilianjunting" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州艺联君亭酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区学院路29号</field>-->
+            <!--<field name="contact">潘经理</field>-->
+            <!--<field name="tel">0571-85122666;13071815331</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预订时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">酒店位置闹中取静，装修风格简洁明快，服务卫生也不错，总体感觉很舒服</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xinyu" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州心隅精品酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区西溪路550号西溪新座1幢</field>-->
+            <!--<field name="contact">张经理</field>-->
+            <!--<field name="tel">0571-87758888;18968060125</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预订时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">地理位置比较安静，酒店设计很有特色</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州西溪谷君亭酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西溪路535号</field>-->
+            <!--<field name="contact">王经理</field>-->
+            <!--<field name="tel">0571-87157666;13388609963</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预订时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">在支付宝旁边，酒店南侧依山而建，酒店整体配套还不错，房间布置也古香古色</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing" model="dtdream.hotels.management">-->
+            <!--<field name="name">帝景大酒店</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州西湖区紫霞街155号</field>-->
+            <!--<field name="contact">畅经理</field>-->
+            <!--<field name="tel">0571-28232300;15503425915</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预订时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">适合西溪区域的客户，性价比高</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_lvwang" model="dtdream.hotels.management">
+            <field name="name">浙旅望湖宾馆</field>
+            <field name="star">4</field>
+            <field name="type">0</field>
+            <field name="addr">环城西路2号（西湖附近）</field>
+            <field name="contact">杨经理</field>
+            <field name="tel">0571-87078888;18814813773</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合重要客户</field>
+            <field name="infor">预订时报数梦工场即可，已签订协议</field>
+            <field name="tips">地理位置好，环境好，离西湖近，就餐方便，周边繁华商圈</field>
+            <field name="parent_id" eval="ref('hotel_zone_SQ')"/>
+        </record>
+
+        <!--<record id="hotel_res_baihehua" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州百合花饭店</field>-->
+            <!--<field name="star">3</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区曙光路156号</field>-->
+            <!--<field name="contact">金经理</field>-->
+            <!--<field name="tel">13336064661</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通客户</field>-->
+            <!--<field name="infor">预订时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">酒店靠近黄龙体育中心，离西湖新十景也比较近，性价比较高，缺点是酒店建造悠久，建筑陈旧</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_quanji" model="dtdream.hotels.management">-->
+            <!--<field name="name">全季酒店（杭州黄龙店）</field>-->
+            <!--<field name="star">3</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区浙大路41号（浙大玉泉校区附近）</field>-->
+            <!--<field name="contact"/>-->
+            <!--<field name="tel">0571-87977999</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通客户</field>-->
+            <!--<field name="infor">无纸质协议，直接电话预订 或官网预定</field>-->
+            <!--<field name="tips">酒店位置好,交通方便,离西湖景区很近</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali" model="dtdream.hotels.management">-->
+            <!--<field name="name">华里酒店</field>-->
+            <!--<field name="star">3</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区文二西路822号</field>-->
+            <!--<field name="contact">黄经理</field>-->
+            <!--<field name="tel">0571-88987979;18868759635;13336187726</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">酒店就在西溪湿地公园旁边，离市区不远，很安静，酒店很有书香文化气息，早餐很简约，总体性价比高。</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_SQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_zhejiang" model="dtdream.hotels.management">-->
+            <!--<field name="name">浙江宾馆</field>-->
+            <!--<field name="star">5</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市三台山路278号（近茶叶博物馆）</field>-->
+            <!--<field name="contact">王经理</field>-->
+            <!--<field name="tel">18668166632</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">位于三台山景区，环境优雅，将军楼为林彪行宫，可参观，房间性价比较高</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_JQ')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_qianxi" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州千禧度假酒店</field>-->
+            <!--<field name="star">5</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">西湖区九溪路15号</field>-->
+            <!--<field name="contact">钱经理,王经理</field>-->
+            <!--<field name="tel">0571-87613666;13805794626</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合重要客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可，已签订协议</field>-->
+            <!--<field name="tips">环境设施一流，森林氧吧，周围全是茶山和树林。北望的阳台下面就是九溪涧流，空气清新醉人。各种设备舒适宜人。服务态度不错</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_JQ')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_haihuamanlong" model="dtdream.hotels.management">
+            <field name="name">杭州海华满陇度假酒店</field>
+            <field name="star">4</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市西湖区满觉陇路2号（近五老峰隧道）</field>
+            <field name="contact">陆宝仙,查理</field>
+            <field name="tel">0571-56150700;13606702953;15888877440</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通客户</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">酒店位置就在西湖景区内，地处满陇桂雨边上，自然环境幽静，绿意盎然，酒店设施一般</field>
+            <field name="parent_id" eval="ref('hotel_zone_JQ')"/>
+        </record>
+
+        <!--<record id="hotel_res_xilaideng" model="dtdream.hotels.management">-->
+            <!--<field name="name">西溪喜来登度假酒店</field>-->
+            <!--<field name="star">5</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">西湖区紫金港路西溪天堂国际旅游综合体1号，近文苑路</field>-->
+            <!--<field name="contact"/>-->
+            <!--<field name="tel">0571-85002222</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合重要客户</field>-->
+            <!--<field name="infor">未签订协议</field>-->
+            <!--<field name="tips">酒店位于西溪天堂度假区域内，周边餐饮娱乐设施齐全，进西溪湿地游玩也非常方便，服务水准高，客房极具度假风格。</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_XX')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_xixi" model="dtdream.hotels.management">
+            <field name="name">杭州西溪宾馆</field>
+            <field name="star">4</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市西湖区文二西路803号 ，近西溪湿地北门</field>
+            <field name="contact">陈泽华</field>
+            <field name="tel">0571-85396666;13758159713</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合重要客户</field>
+            <field name="infor">预定时报数梦工场即可；已签订协议</field>
+            <field name="tips">酒店环境好，硬件设施佳，酒店自带的泳池不错，干净清静</field>
+            <field name="parent_id" eval="ref('hotel_zone_XX')"/>
+        </record>
+
+        <!--<record id="hotel_res_xixigarden" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州西溪庄园酒店管理有限公司</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭西溪国家湿地公园</field>-->
+            <!--<field name="contact">余经理</field>-->
+            <!--<field name="tel">0571-56888678;15068127521</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通重要客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">地理位置很好，酒店位于景区内，设施不错，性价比高</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_XX')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_naderuize" model="dtdream.hotels.management">
+            <field name="name">纳德润泽园酒店</field>
+            <field name="star">3</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市花坞路3号</field>
+            <field name="contact"/>
+            <field name="tel">0571-85351888;13735222947</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通重要客户</field>
+            <field name="infor">预定时报数梦工场即可；已签订协议</field>
+            <field name="tips">酒店是万向集团旗下的，在万向技术学院内。绿化非常好，而且离西溪高庄入口很近</field>
+            <field name="parent_id" eval="ref('hotel_zone_XX')"/>
+        </record>
+
+        <!--<record id="hotel_res_buluke" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州西溪布鲁克酒店</field>-->
+            <!--<field name="star">3</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州西湖区紫金港路21号（西溪天堂旅游综合体内），近天目山路</field>-->
+            <!--<field name="contact">谭衡</field>-->
+            <!--<field name="tel">0571-85863333;13588370043</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通客户</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">便捷酒店，离西溪湿地近，地理位置好，设施一般</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_XX')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_meiguigarden" model="dtdream.hotels.management">
+            <field name="name">绿城杭州玫瑰园假日酒店</field>
+            <field name="star">5</field>
+            <field name="type">0</field>
+            <field name="addr">杭州西湖区之江路128号</field>
+            <field name="contact">曹鑫鉴</field>
+            <field name="tel">0571-87667188转8185或8192;15869182107</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合高端客户</field>
+            <field name="infor">预定时报数梦工场即可；已签订协议</field>
+            <field name="tips">杭州玫瑰园度假酒店，掩隐于绿荫山水之间，以精品小酒店的理念悉心打理，营造出庄园一般憩静恬美的别样景致。</field>
+            <field name="parent_id" eval="ref('hotel_zone_ZT')"/>
+        </record>
+
+        <!--<record id="hotel_res_lijing" model="dtdream.hotels.management">-->
+            <!--<field name="name">丽景美庐</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">1</field>-->
+            <!--<field name="addr">杭州市之北路8号(宋城北门对面)</field>-->
+            <!--<field name="contact"/>-->
+            <!--<field name="tel">0571-87098800</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合高端客户、餐饮人均300以上</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">离宋城很近，装修欧式风格，硬件设施不错，周边环境非常安逸</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_ZT')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_shuian" model="dtdream.hotels.management">-->
+            <!--<field name="name">水岸山居</field>-->
+            <!--<field name="star">4</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州转塘街道象山路352号（中国美术学院象山校区内）</field>-->
+            <!--<field name="contact">赵经理</field>-->
+            <!--<field name="tel">0571-87200999;15805811010</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">住宿适合普通重要客户；餐饮适合普通重要客户、餐饮人均150以上</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">水岸山居由普里兹克建筑学奖获得者—中国当代建筑大师王澍设计，环境不错，菜色一般，有茶室。</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_ZT')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_cuizhuang" model="dtdream.hotels.management">-->
+            <!--<field name="name">翠庄酒店</field>-->
+            <!--<field name="star">3</field>-->
+            <!--<field name="type">1</field>-->
+            <!--<field name="addr">西湖区转塘街道常陇路10号（近庙山）</field>-->
+            <!--<field name="contact"/>-->
+            <!--<field name="tel">0571-86659166</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合普通客户、餐饮人均100-150不等</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">酒店环境清静优雅，位置较偏僻。酒店菜色一般。特色菜食饼筒和咸猪手焖竹笋上过舌尖</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_ZT')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_boyuelanwan" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州铂悦蓝湾酒店</field>-->
+            <!--<field name="star">2</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区转塘街道美院南路89号象山国际大厦2号楼（华润万家超市旁）</field>-->
+            <!--<field name="contact">吴秀伶</field>-->
+            <!--<field name="tel">0571-87170808;15988472408</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合员工住宿</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">地理位置比较好，交通便利，适合员工住宿</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_ZT')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_rujia" model="dtdream.hotels.management">-->
+            <!--<field name="name">如家（转塘美院店）</field>-->
+            <!--<field name="star">2</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">杭州市西湖区转塘镇美院南街象山国际广场3号楼</field>-->
+            <!--<field name="contact">李耀元,靳庆</field>-->
+            <!--<field name="tel">0571-876028289;13958131589;15068862809</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark">适合员工住宿</field>-->
+            <!--<field name="infor">预定时报数梦工场即可；已签订协议</field>-->
+            <!--<field name="tips">地理位置比较好，交通便利，适合员工住宿</field>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_ZT')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_block" model="dtdream.hotels.management">
+            <field name="name">钱江BLOCK</field>
+            <field name="star">0</field>
+            <field name="type">0</field>
+            <field name="addr">西湖区转塘街道科海路市委党校旁(钱江BLOCK)</field>
+            <field name="contact">各部门行政助理</field>
+            <field name="tel"> </field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合员工住宿</field>
+            <field name="infor">钱江公寓宿舍6个房间，其中有4套一室一厅单人间，1套两室一厅双人间。</field>
+            <field name="tips">数梦总部旁，适合员工住宿</field>
+            <field name="parent_id" eval="ref('hotel_zone_ZT')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng" model="dtdream.hotels.management">
+            <field name="name">滨江福朋喜来登</field>
+            <field name="star">5</field>
+            <field name="type">0</field>
+            <field name="addr">杭州滨江区东信大道868号(东信大道与南环路交叉口)</field>
+            <field name="contact">王经理,黄承</field>
+            <field name="tel">18058107726;15168254967</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通重要客户</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">交通便利，附近餐饮比较多</field>
+            <field name="parent_id" eval="ref('hotel_zone_BJ')"/>
+        </record>
+
+        <record id="hotel_res_yintaixilaideng" model="dtdream.hotels.management">
+            <field name="name">滨江银泰喜来登</field>
+            <field name="star">5</field>
+            <field name="type">0</field>
+            <field name="addr">杭州滨江区江南大道228号星光国际广场3-101、102</field>
+            <field name="contact">王萍</field>
+            <field name="tel">0571-87907777;18969979876</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通重要客户</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">酒店位置环境较好，在钱塘江边，交通便利</field>
+            <field name="parent_id" eval="ref('hotel_zone_BJ')"/>
+        </record>
+
+        <record id="hotel_res_pingyue" model="dtdream.hotels.management">
+            <field name="name">浙江歌山品悦大酒店</field>
+            <field name="star">4</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市滨江区江虹路1537号（闻涛小学西面，近星光大道）</field>
+            <field name="contact">张花红,曹经理</field>
+            <field name="tel">0571-87776688;13857181322;13615714012</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通客户</field>
+            <field name="infor">无纸质协议，直接电话预订 报数梦工场即可</field>
+            <field name="tips">酒店位置较好，离星光大道商业中心及钱塘江边均较近。性价比较高</field>
+            <field name="parent_id" eval="ref('hotel_zone_BJ')"/>
+        </record>
+
+        <record id="hotel_res_yuerui" model="dtdream.hotels.management">
+            <field name="name">杭州元瑞城市花园酒店</field>
+            <field name="star">4</field>
+            <field name="type">0</field>
+            <field name="addr">杭州市滨江区滨和路998号</field>
+            <field name="contact">赵杭燕</field>
+            <field name="tel">0571-87666108;18267588203</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通重要客户</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">酒店在位置较好，在中赢国际，离星光大道很近</field>
+            <field name="parent_id" eval="ref('hotel_zone_BJ')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng" model="dtdream.hotels.management">
+            <field name="name">杭州志成大酒店</field>
+            <field name="star">3</field>
+            <field name="type">1</field>
+            <field name="addr">杭州市滨江区东信大道688号</field>
+            <field name="contact">郑萍</field>
+            <field name="tel">13567136223;18957131181</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合员工住宿</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">地理位置比较好，性价比高</field>
+            <field name="parent_id" eval="ref('hotel_zone_BJ')"/>
+        </record>
+
+        <record id="hotel_res_gaoxinshangwu" model="dtdream.hotels.management">
+            <field name="name">高新商务酒店</field>
+            <field name="star">2</field>
+            <field name="type">0</field>
+            <field name="addr">高新区(滨江)南环路4179号</field>
+            <field name="contact"/>
+            <field name="tel">0571-86673888</field>
+            <field name="expense_up">0</field>
+            <field name="mark">适合普通客户、与小江南餐饮同属一家公司、餐饮人均消费100元左右</field>
+            <field name="infor">预定时报数梦工场即可，已签订协议</field>
+            <field name="tips">附近餐饮比较多，小江南，潮牛海记，灶头烧等。小江南以杭帮菜为主打，档次不高，服务一般，口味一般，适合一般客户前往就餐和部门聚会。</field>
+            <field name="parent_id" eval="ref('hotel_zone_BJ')"/>
+        </record>
+
+        <!--<record id="hotel_res_haiwaihai" model="dtdream.hotels.management">-->
+            <!--<field name="name">杭州千岛湖海外海假日酒店</field>-->
+            <!--<field name="star">1</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">千岛湖镇南山开发路1号（开发路与南山大街交汇口）</field>-->
+            <!--<field name="contact"/>-->
+            <!--<field name="tel">0571-64880888</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="infor">未签协议</field>-->
+            <!--<field name="tips"/>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_QT')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_lvcheng" model="dtdream.hotels.management">-->
+            <!--<field name="name">千岛湖绿城度假酒店</field>-->
+            <!--<field name="star">1</field>-->
+            <!--<field name="type">0</field>-->
+            <!--<field name="addr">浙江杭州千岛湖镇新安北路绿城度假公寓6号楼</field>-->
+            <!--<field name="contact"/>-->
+            <!--<field name="tel">0571-65088888</field>-->
+            <!--<field name="expense_up">0</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="infor">未签协议</field>-->
+            <!--<field name="tips"/>-->
+            <!--<field name="parent_id" eval="ref('hotel_zone_QT')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_room_huanglong_GJD" model="dtdream.hotel.room">
+            <field name="name">高级间（大床）</field>
+            <field name="price">1000</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_huanglong_GJS" model="dtdream.hotel.room">
+            <field name="name">高级间（双床）</field>
+            <field name="price">1000</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_huanglong_HHD" model="dtdream.hotel.room">
+            <field name="name">豪华客房（大床）</field>
+            <field name="price">1200</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_huanglong_HHS" model="dtdream.hotel.room">
+            <field name="name">豪华客房（双床）</field>
+            <field name="price">1200</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_huanglong_YZD" model="dtdream.hotel.room">
+            <field name="name">雅致景观客房（大床）</field>
+            <field name="price">1400</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_huanglong_YZS" model="dtdream.hotel.room">
+            <field name="name">雅致景观客房（双床）</field>
+            <field name="price">1400</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_huanglong_XZ" model="dtdream.hotel.room">
+            <field name="name">行政豪华客房（大床）</field>
+            <field name="price">1750</field>
+            <field name="mark">+15%服务费</field>
+            <field name="hotel_id" eval="ref('hotel_res_huanglong')"/>
+        </record>
+
+        <record id="hotel_room_junlan_BZ" model="dtdream.hotel.room">
+            <field name="name">标准客房</field>
+            <field name="price">700</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_junlan')"/>
+        </record>
+
+        <record id="hotel_room_junlan_SJBZ" model="dtdream.hotel.room">
+            <field name="name">山景标准房</field>
+            <field name="price">750</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_junlan')"/>
+        </record>
+
+        <record id="hotel_room_junlan_SJGJ" model="dtdream.hotel.room">
+            <field name="name">山景高级房</field>
+            <field name="price">800</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_junlan')"/>
+        </record>
+
+        <record id="hotel_room_zhouji_HH" model="dtdream.hotel.room">
+            <field name="name">豪华客房（50平方米）</field>
+            <field name="price">1117</field>
+            <field name="mark">单人1000、双人1117</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhouji')"/>
+        </record>
+
+        <record id="hotel_room_zhouji_JJ" model="dtdream.hotel.room">
+            <field name="name">豪华江景客房（65平方米）</field>
+            <field name="price">1317</field>
+            <field name="mark">单人1200、双人1317</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhouji')"/>
+        </record>
+
+        <record id="hotel_room_zhouji_XZ" model="dtdream.hotel.room">
+            <field name="name">行政豪华房（65平方米）</field>
+            <field name="price">1500</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_zhouji')"/>
+        </record>
+
+        <!--<record id="hotel_room_wendemu_JC" model="dtdream.hotel.room">-->
+            <!--<field name="name">基础房型</field>-->
+            <!--<field name="price">1050</field>-->
+            <!--<field name="mark">含单早餐饮,免15%服务费</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_wendemu')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_BZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务标准房</field>-->
+            <!--<field name="price">428</field>-->
+            <!--<field name="mark">周末458</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_HH" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华大床房</field>-->
+            <!--<field name="price">458</field>-->
+            <!--<field name="mark">周末488</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_STBZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">生态标准间</field>-->
+            <!--<field name="price">498</field>-->
+            <!--<field name="mark">周末528</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_STDC" model="dtdream.hotel.room">-->
+            <!--<field name="name">生态大床房</field>-->
+            <!--<field name="price">528</field>-->
+            <!--<field name="mark">周末558</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_XZDC" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政大床房</field>-->
+            <!--<field name="price">588</field>-->
+            <!--<field name="mark">周末618</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_SW" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务套房</field>-->
+            <!--<field name="price">758</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_feili_HHTF" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华套房</field>-->
+            <!--<field name="price">1028</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_feili')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_garden_TH" model="dtdream.hotel.room">-->
+            <!--<field name="name">特惠房</field>-->
+            <!--<field name="price">308</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_garden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_garden_HH" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华房</field>-->
+            <!--<field name="price">358</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_garden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_garden_XZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政房</field>-->
+            <!--<field name="price">438</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_garden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_garden_XZTF" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政套房</field>-->
+            <!--<field name="price">788</field>-->
+            <!--<field name="mark">（含早餐）餐饮可享受八五折优惠（烟酒、海鲜、标准筵席除外）</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_garden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_holiday_HH" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华房</field>-->
+            <!--<field name="price">460</field>-->
+            <!--<field name="mark">含早餐,周日,周一价格下调30元（3,4,5,7,8,9,10月除外）;周五,周六价格(3,4,5,7,8,9,10)月上调100元，其它月份上调50元。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_holiday')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_holiday_SWHH" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务豪华房</field>-->
+            <!--<field name="price">550</field>-->
+            <!--<field name="mark">含早餐,周日,周一价格下调30元（3,4,5,7,8,9,10月除外）;周五,周六价格(3,4,5,7,8,9,10)月上调100元，其它月份上调50元。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_holiday')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_holiday_SWJG" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务景观房</field>-->
+            <!--<field name="price">650</field>-->
+            <!--<field name="mark">含早餐,周日,周一价格下调30元（3,4,5,7,8,9,10月除外）;周五,周六价格(3,4,5,7,8,9,10)月上调100元，其它月份上调50元。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_holiday')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_holiday_JPSW" model="dtdream.hotel.room">-->
+            <!--<field name="name">精品商务豪华房</field>-->
+            <!--<field name="price">750</field>-->
+            <!--<field name="mark">含早餐,周日,周一价格下调30元（3,4,5,7,8,9,10月除外）;周五,周六价格(3,4,5,7,8,9,10)月上调100元，其它月份上调50元。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_holiday')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_holiday_XZHJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">精品行政湖景房</field>-->
+            <!--<field name="price">880</field>-->
+            <!--<field name="mark">含早餐,周日,周一价格下调30元（3,4,5,7,8,9,10月除外）;周五,周六价格(3,4,5,7,8,9,10)月上调100元，其它月份上调50元。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_holiday')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_room_makeboluo_holiday_XZTF" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政套房</field>-->
+            <!--<field name="price">1280</field>-->
+            <!--<field name="mark">含早餐,周日,周一价格下调30元（3,4,5,7,8,9,10月除外）;周五,周六价格(3,4,5,7,8,9,10)月上调100元，其它月份上调50元。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_makeboluo_holiday')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_youhao_SWS" model="dtdream.hotel.room">
+            <field name="name">商务单人房</field>
+            <field name="price">488</field>
+            <field name="mark">单早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <record id="hotel_res_youhao_SWD" model="dtdream.hotel.room">
+            <field name="name">商务双床房</field>
+            <field name="price">528</field>
+            <field name="mark">单早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <record id="hotel_res_youhao_SWHJ" model="dtdream.hotel.room">
+            <field name="name">商务湖景单人房</field>
+            <field name="price">588</field>
+            <field name="mark">单早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <record id="hotel_res_youhao_SWSC" model="dtdream.hotel.room">
+            <field name="name">高级商务双床房</field>
+            <field name="price">588</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <record id="hotel_res_youhao_SWDC" model="dtdream.hotel.room">
+            <field name="name">高级商务大床房</field>
+            <field name="price">628</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <record id="hotel_res_youhao_SWHJS" model="dtdream.hotel.room">
+            <field name="name">商务湖景双床房</field>
+            <field name="price">788</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <record id="hotel_res_youhao_SWHJD" model="dtdream.hotel.room">
+            <field name="name">商务湖景大床房</field>
+            <field name="price">788</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_youhao')"/>
+        </record>
+
+        <!--<record id="hotel_res_yilianjunting_HHD" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华大床</field>-->
+            <!--<field name="price">388</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_yilianjunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_yilianjunting_HHS" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华双床房</field>-->
+            <!--<field name="price">398</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_yilianjunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_yilianjunting_SJDS" model="dtdream.hotel.room">-->
+            <!--<field name="name">四季都市大床房</field>-->
+            <!--<field name="price">459</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_yilianjunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_yilianjunting_SJGN" model="dtdream.hotel.room">-->
+            <!--<field name="name">四季概念房</field>-->
+            <!--<field name="price">529</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_yilianjunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_yilianjunting_XZSW" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政商务房</field>-->
+            <!--<field name="price">589</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_yilianjunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xinyu_JB" model="dtdream.hotel.room">-->
+            <!--<field name="name">基本大床房</field>-->
+            <!--<field name="price">450</field>-->
+            <!--<field name="mark">含早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xinyu')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xinyu_SJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">山景经典房</field>-->
+            <!--<field name="price">550</field>-->
+            <!--<field name="mark">含早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xinyu')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xinyu_JD" model="dtdream.hotel.room">-->
+            <!--<field name="name">经典大床房</field>-->
+            <!--<field name="price">520</field>-->
+            <!--<field name="mark">含早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xinyu')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xinyu_LT" model="dtdream.hotel.room">-->
+            <!--<field name="name">露台大床房</field>-->
+            <!--<field name="price">600</field>-->
+            <!--<field name="mark">含早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xinyu')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xinyu_SJD" model="dtdream.hotel.room">-->
+            <!--<field name="name">山景大床房</field>-->
+            <!--<field name="price">700</field>-->
+            <!--<field name="mark">含早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xinyu')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_GJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级大床房</field>-->
+            <!--<field name="price">450</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_HHD" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华大床房</field>-->
+            <!--<field name="price">480</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_HHS" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华双床房</field>-->
+            <!--<field name="price">480</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_SJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">四季大床房</field>-->
+            <!--<field name="price">510</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_GN" model="dtdream.hotel.room">-->
+            <!--<field name="name">君亭概念大床房</field>-->
+            <!--<field name="price">600</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_SW" model="dtdream.hotel.room">-->
+            <!--<field name="name">四季商务大床房</field>-->
+            <!--<field name="price">650</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_XZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政商务大床房</field>-->
+            <!--<field name="price">700</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_DS" model="dtdream.hotel.room">-->
+            <!--<field name="name">四季都市大床房</field>-->
+            <!--<field name="price">750</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_gujunting_JT" model="dtdream.hotel.room">-->
+            <!--<field name="name">君亭套房</field>-->
+            <!--<field name="price">1800</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_gujunting')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_SWD" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务大床房</field>-->
+            <!--<field name="price">318</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_SWBZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务标准房</field>-->
+            <!--<field name="price">318</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_TSD" model="dtdream.hotel.room">-->
+            <!--<field name="name">特色大床房</field>-->
+            <!--<field name="price">358</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_HHBZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华标准间</field>-->
+            <!--<field name="price">358</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_HHD" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华大床房</field>-->
+            <!--<field name="price">388</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_SWT" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务套房</field>-->
+            <!--<field name="price">558</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_dijing_XZT" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政套房</field>-->
+            <!--<field name="price">698</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_dijing')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_lvwang_GJ" model="dtdream.hotel.room">
+            <field name="name">高级房</field>
+            <field name="price">700</field>
+            <field name="mark">包含15%的服务费，两份早餐；周五周六晚价格自动上调100元，1,2,6,12月以上协议价自动下调50元。</field>
+            <field name="hotel_id" eval="ref('hotel_res_lvwang')"/>
+        </record>
+
+        <record id="hotel_res_lvwang_YT" model="dtdream.hotel.room">
+            <field name="name">阳台房</field>
+            <field name="price">800</field>
+            <field name="mark">包含15%的服务费，两份早餐；周五周六晚价格自动上调100元，1,2,6,12月以上协议价自动下调50元。</field>
+            <field name="hotel_id" eval="ref('hotel_res_lvwang')"/>
+        </record>
+
+        <record id="hotel_res_lvwang_YJ" model="dtdream.hotel.room">
+            <field name="name">园景房</field>
+            <field name="price">800</field>
+            <field name="mark">包含15%的服务费，两份早餐；周五周六晚价格自动上调100元，1,2,6,12月以上协议价自动下调50元。</field>
+            <field name="hotel_id" eval="ref('hotel_res_lvwang')"/>
+        </record>
+
+        <record id="hotel_res_lvwang_HJ" model="dtdream.hotel.room">
+            <field name="name">湖景房</field>
+            <field name="price">1000</field>
+            <field name="mark">包含15%的服务费，两份早餐；周五周六晚价格自动上调100元，1,2,6,12月以上协议价自动下调50元。</field>
+            <field name="hotel_id" eval="ref('hotel_res_lvwang')"/>
+        </record>
+
+        <record id="hotel_res_lvwang_ZZHJ" model="dtdream.hotel.room">
+            <field name="name">至尊湖景房</field>
+            <field name="price">1600</field>
+            <field name="mark">包含15%的服务费，两份早餐；周五周六晚价格自动上调100元，1,2,6,12月以上协议价自动下调50元。</field>
+            <field name="hotel_id" eval="ref('hotel_res_lvwang')"/>
+        </record>
+
+        <!--<record id="hotel_res_baihehua_DR" model="dtdream.hotel.room">-->
+            <!--<field name="name">单人房</field>-->
+            <!--<field name="price">240</field>-->
+            <!--<field name="mark">逢周四,五,六房价均上涨50。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_baihehua')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_baihehua_BZSR" model="dtdream.hotel.room">-->
+            <!--<field name="name">标准双人房</field>-->
+            <!--<field name="price">290</field>-->
+            <!--<field name="mark">逢周四,五,六房价均上涨50。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_baihehua')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_baihehua_HHSW" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华商务房</field>-->
+            <!--<field name="price">450</field>-->
+            <!--<field name="mark">逢周四,五,六房价均上涨50。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_baihehua')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_baihehua_SR" model="dtdream.hotel.room">-->
+            <!--<field name="name">双人套间</field>-->
+            <!--<field name="price">700</field>-->
+            <!--<field name="mark">逢周四,五,六房价均上涨50。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_baihehua')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_baihehua_DC" model="dtdream.hotel.room">-->
+            <!--<field name="name">大床套间</field>-->
+            <!--<field name="price">800</field>-->
+            <!--<field name="mark">逢周四,五,六房价均上涨50。</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_baihehua')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_quanji_PTD" model="dtdream.hotel.room">-->
+            <!--<field name="name">普通大床房</field>-->
+            <!--<field name="price">320</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_quanji')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_quanji_PTS" model="dtdream.hotel.room">-->
+            <!--<field name="name">普通双床房</field>-->
+            <!--<field name="price">320</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_quanji')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_BZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级标准房</field>-->
+            <!--<field name="price">433</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_GJD" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级大床房</field>-->
+            <!--<field name="price">433</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_SWB" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务标间</field>-->
+            <!--<field name="price">447</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_SWD" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务大床房</field>-->
+            <!--<field name="price">468</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_SWT" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务套房</field>-->
+            <!--<field name="price">508</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_GJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">观景精品房</field>-->
+            <!--<field name="price">552</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_TY" model="dtdream.hotel.room">-->
+            <!--<field name="name">庭院精品房</field>-->
+            <!--<field name="price">552</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_YC" model="dtdream.hotel.room">-->
+            <!--<field name="name">尊享跃层房</field>-->
+            <!--<field name="price">656</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_huali_XZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政套房</field>-->
+            <!--<field name="price">656</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_huali')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_zhejiang_GJD" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级房（大床）</field>-->
+            <!--<field name="price">650</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_zhejiang')"/>-->
+        <!--</record>-->
+
+         <!--<record id="hotel_res_zhejiang_GJS" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级房（双床）</field>-->
+            <!--<field name="price">650</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_zhejiang')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_qianxi_north_D" model="dtdream.hotel.room">-->
+            <!--<field name="name">北望阁豪华房大床</field>-->
+            <!--<field name="price">800</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_qianxi')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_qianxi_north_S" model="dtdream.hotel.room">-->
+            <!--<field name="name">北望阁豪华房双床</field>-->
+            <!--<field name="price">850</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_qianxi')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_qianxi_sourth_D" model="dtdream.hotel.room">-->
+            <!--<field name="name">南临阁尊享房大床</field>-->
+            <!--<field name="price">1000</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_qianxi')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_qianxi_sourth_S" model="dtdream.hotel.room">-->
+            <!--<field name="name">南临阁尊享房双床</field>-->
+            <!--<field name="price">1050</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_qianxi')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_qianxi_SX" model="dtdream.hotel.room">-->
+            <!--<field name="name">拾溪套间</field>-->
+            <!--<field name="price">2000</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_qianxi')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_haihuamanlong_BZ" model="dtdream.hotel.room">
+            <field name="name">普通标准间</field>
+            <field name="price">428</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_haihuamanlong')"/>
+        </record>
+
+        <record id="hotel_res_haihuamanlong_HHBZ" model="dtdream.hotel.room">
+            <field name="name">豪华标准间</field>
+            <field name="price">458</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_haihuamanlong')"/>
+        </record>
+
+        <record id="hotel_res_haihuamanlong_HHDC" model="dtdream.hotel.room">
+            <field name="name">豪华大床房</field>
+            <field name="price">458</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_haihuamanlong')"/>
+        </record>
+
+        <record id="hotel_res_haihuamanlong_XZBZ" model="dtdream.hotel.room">
+            <field name="name">行政标准间</field>
+            <field name="price">518</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_haihuamanlong')"/>
+        </record>
+
+        <record id="hotel_res_haihuamanlong_XZTF" model="dtdream.hotel.room">
+            <field name="name">行政套房大床间</field>
+            <field name="price">888</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_haihuamanlong')"/>
+        </record>
+
+        <!--<record id="hotel_res_xilaideng_GJD" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级房单人</field>-->
+            <!--<field name="price">950</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xilaideng')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xilaideng_GJS" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级房双人</field>-->
+            <!--<field name="price">1050</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xilaideng')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xilaideng_HHD" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华房单人</field>-->
+            <!--<field name="price">1150</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xilaideng')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xilaideng_HHS" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华房双人</field>-->
+            <!--<field name="price">1250</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xilaideng')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xilaideng_XZD" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政房单人</field>-->
+            <!--<field name="price">1550</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xilaideng')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xilaideng_XZS" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政房双人</field>-->
+            <!--<field name="price">1650</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xilaideng')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_xixi_JGD" model="dtdream.hotel.room">
+            <field name="name">园景,景观房大床</field>
+            <field name="price">750</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <record id="hotel_res_xixi_JGS" model="dtdream.hotel.room">
+            <field name="name">园景,景观房双床</field>
+            <field name="price">750</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <record id="hotel_res_xixi_HJS" model="dtdream.hotel.room">
+            <field name="name">豪华湖景双床房</field>
+            <field name="price">950</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <record id="hotel_res_xixi_HJD" model="dtdream.hotel.room">
+            <field name="name">行政湖景大床房</field>
+            <field name="price">950</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <record id="hotel_res_xixi_HHD" model="dtdream.hotel.room">
+            <field name="name">高级豪华大床</field>
+            <field name="price">950</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <record id="hotel_res_xixi_HHS" model="dtdream.hotel.room">
+            <field name="name">高级豪华双床</field>
+            <field name="price">950</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <record id="hotel_res_xixi_TF" model="dtdream.hotel.room">
+            <field name="name">套房</field>
+            <field name="price">1800</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_xixi')"/>
+        </record>
+
+        <!--<record id="hotel_res_xixigarden_TJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">特价房</field>-->
+            <!--<field name="price">428</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xixigarden_BZS" model="dtdream.hotel.room">-->
+            <!--<field name="name">标准双床房</field>-->
+            <!--<field name="price">558</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xixigarden_BZD" model="dtdream.hotel.room">-->
+            <!--<field name="name">标准大床房</field>-->
+            <!--<field name="price">558</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xixigarden_HHS" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华双床房</field>-->
+            <!--<field name="price">758</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xixigarden_HHT" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华套房</field>-->
+            <!--<field name="price">888</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xixigarden_HHYC" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华跃层房</field>-->
+            <!--<field name="price">1088</field>-->
+            <!--<field name="mark">含双早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_xixigarden_BS" model="dtdream.hotel.room">-->
+            <!--<field name="name">别墅</field>-->
+            <!--<field name="price">6588</field>-->
+            <!--<field name="mark">含6早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_xixigarden')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_naderuize_WXS" model="dtdream.hotel.room">
+            <field name="name">温馨双床房</field>
+            <field name="price">358</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_JRS" model="dtdream.hotel.room">
+            <field name="name">假日双床房</field>
+            <field name="price">388</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_JXD" model="dtdream.hotel.room">
+            <field name="name">锦绣大床房</field>
+            <field name="price">428</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_JXS" model="dtdream.hotel.room">
+            <field name="name">锦绣双床房</field>
+            <field name="price">428</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_ZXD" model="dtdream.hotel.room">
+            <field name="name">尊享大床房</field>
+            <field name="price">488</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_ZXS" model="dtdream.hotel.room">
+            <field name="name">尊享双床房</field>
+            <field name="price">488</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_LTYG" model="dtdream.hotel.room">
+            <field name="name">露台阳光大床房</field>
+            <field name="price">518</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_JTQZ" model="dtdream.hotel.room">
+            <field name="name">家庭亲子大床房</field>
+            <field name="price">558</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_LTXZ" model="dtdream.hotel.room">
+            <field name="name">露台行政大床房</field>
+            <field name="price">658</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_HHT" model="dtdream.hotel.room">
+            <field name="name">豪华套房</field>
+            <field name="price">958</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <record id="hotel_res_naderuize_RZ" model="dtdream.hotel.room">
+            <field name="name">润泽三套件</field>
+            <field name="price">1988</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_naderuize')"/>
+        </record>
+
+        <!--<record id="hotel_res_buluke_JXD" model="dtdream.hotel.room">-->
+            <!--<field name="name">精选大床房</field>-->
+            <!--<field name="price">280</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_buluke')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_buluke_YGD" model="dtdream.hotel.room">-->
+            <!--<field name="name">阳光大床房（带阳台）</field>-->
+            <!--<field name="price">298</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_buluke')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_buluke_JXBZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">精选标准房</field>-->
+            <!--<field name="price">280</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_buluke')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_buluke_YGBZ" model="dtdream.hotel.room">-->
+            <!--<field name="name">阳光标准房（带阳台）</field>-->
+            <!--<field name="price">298</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_buluke')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_buluke_YCD" model="dtdream.hotel.room">-->
+            <!--<field name="name">跃层套房（带阳台）</field>-->
+            <!--<field name="price">418</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_buluke')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_buluke_SWT" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务套房（带阳台）</field>-->
+            <!--<field name="price">518</field>-->
+            <!--<field name="mark">含早餐,周五周六晚加价20元</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_buluke')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_meiguigarden_GJ" model="dtdream.hotel.room">
+            <field name="name">高级房</field>
+            <field name="price">950</field>
+            <field name="mark">周末1180元</field>
+            <field name="hotel_id" eval="ref('hotel_res_meiguigarden')"/>
+        </record>
+
+        <record id="hotel_res_meiguigarden_HH" model="dtdream.hotel.room">
+            <field name="name">豪华房</field>
+            <field name="price">1280</field>
+            <field name="mark">周末1480元</field>
+            <field name="hotel_id" eval="ref('hotel_res_meiguigarden')"/>
+        </record>
+
+        <record id="hotel_res_meiguigarden_HHSJ" model="dtdream.hotel.room">
+            <field name="name">豪华山景房</field>
+            <field name="price">2280</field>
+            <field name="mark">周末2580元</field>
+            <field name="hotel_id" eval="ref('hotel_res_meiguigarden')"/>
+        </record>
+
+        <record id="hotel_res_meiguigarden_MG" model="dtdream.hotel.room">
+            <field name="name">玫瑰套房</field>
+            <field name="price">3980</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_meiguigarden')"/>
+        </record>
+
+        <!--<record id="hotel_res_lijing_YJS" model="dtdream.hotel.room">-->
+            <!--<field name="name">园景双床房</field>-->
+            <!--<field name="price">780</field>-->
+            <!--<field name="mark">含双早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_lijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_lijing_YJD" model="dtdream.hotel.room">-->
+            <!--<field name="name">院景大床房</field>-->
+            <!--<field name="price">780</field>-->
+            <!--<field name="mark">含双早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_lijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_lijing_YJDF" model="dtdream.hotel.room">-->
+            <!--<field name="name">园景大床房</field>-->
+            <!--<field name="price">980</field>-->
+            <!--<field name="mark">含双早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_lijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_lijing_HHT" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华套房</field>-->
+            <!--<field name="price">1680</field>-->
+            <!--<field name="mark">含双早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_lijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_lijing_LJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">丽晶套房</field>-->
+            <!--<field name="price">2380</field>-->
+            <!--<field name="mark">含双早餐</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_lijing')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_shuian_DJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">单间</field>-->
+            <!--<field name="price">450</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_shuian')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_shuian_BJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">标间大床</field>-->
+            <!--<field name="price">600</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_shuian')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_shuian_HH" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华标间</field>-->
+            <!--<field name="price">700</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_shuian')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_shuian_SRJ" model="dtdream.hotel.room">-->
+            <!--<field name="name">三人间</field>-->
+            <!--<field name="price">900</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_shuian')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_cuizhuang_BZS" model="dtdream.hotel.room">-->
+            <!--<field name="name">标准双间</field>-->
+            <!--<field name="price">288</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_cuizhuang')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_cuizhuang_HHD" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华单间</field>-->
+            <!--<field name="price">488</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_cuizhuang')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_cuizhuang_XZT" model="dtdream.hotel.room">-->
+            <!--<field name="name">行政套房</field>-->
+            <!--<field name="price">588</field>-->
+            <!--<field name="mark"/>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_cuizhuang')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_boyuelanwan_GJS" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级双床房</field>-->
+            <!--<field name="price">258</field>-->
+            <!--<field name="mark">（周五、周六）278</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_boyuelanwan')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_boyuelanwan_GJD" model="dtdream.hotel.room">-->
+            <!--<field name="name">高级大床房</field>-->
+            <!--<field name="price">258</field>-->
+            <!--<field name="mark">（周五、周六）278</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_boyuelanwan')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_boyuelanwan_HHD" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华大床房</field>-->
+            <!--<field name="price">288</field>-->
+            <!--<field name="mark">（周五、周六）308</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_boyuelanwan')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_boyuelanwan_HHS" model="dtdream.hotel.room">-->
+            <!--<field name="name">豪华双床房</field>-->
+            <!--<field name="price">288</field>-->
+            <!--<field name="mark">（周五、周六）308</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_boyuelanwan')"/>-->
+        <!--</record>-->
+
+        <!--<record id="hotel_res_boyuelanwan_SWT" model="dtdream.hotel.room">-->
+            <!--<field name="name">商务套房</field>-->
+            <!--<field name="price">418</field>-->
+            <!--<field name="mark">（周五、周六）438</field>-->
+            <!--<field name="hotel_id" eval="ref('hotel_res_boyuelanwan')"/>-->
+        <!--</record>-->
+
+        <record id="hotel_res_block_one" model="dtdream.hotel.room">
+            <field name="name">一室一厅</field>
+            <field name="price">120</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_block')"/>
+        </record>
+
+        <record id="hotel_res_block_two" model="dtdream.hotel.room">
+            <field name="name">两室一厅</field>
+            <field name="price">120</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_block')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_PTD" model="dtdream.hotel.room">
+            <field name="name">普通大床房</field>
+            <field name="price">550</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_PTS" model="dtdream.hotel.room">
+            <field name="name">普通双床房</field>
+            <field name="price">640</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_GJD" model="dtdream.hotel.room">
+            <field name="name">高级大床房</field>
+            <field name="price">600</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_GJS" model="dtdream.hotel.room">
+            <field name="name">高级双床房</field>
+            <field name="price">690</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_HHD" model="dtdream.hotel.room">
+            <field name="name">豪华大床房</field>
+            <field name="price">700</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_HHS" model="dtdream.hotel.room">
+            <field name="name">豪华双床房</field>
+            <field name="price">790</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_fupengxilaideng_TF" model="dtdream.hotel.room">
+            <field name="name">套房</field>
+            <field name="price">1050</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_fupengxilaideng')"/>
+        </record>
+
+        <record id="hotel_res_yintaixilaideng_HHD" model="dtdream.hotel.room">
+            <field name="name">豪华大床房</field>
+            <field name="price">800</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yintaixilaideng')"/>
+        </record>
+
+        <record id="hotel_res_yintaixilaideng_HHS" model="dtdream.hotel.room">
+            <field name="name">豪华双床房</field>
+            <field name="price">910</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yintaixilaideng')"/>
+        </record>
+
+        <record id="hotel_res_yintaixilaideng_ZGD" model="dtdream.hotel.room">
+            <field name="name">尊贵豪华大床房</field>
+            <field name="price">900</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yintaixilaideng')"/>
+        </record>
+
+        <record id="hotel_res_yintaixilaideng_ZGS" model="dtdream.hotel.room">
+            <field name="name">尊贵豪华双床房</field>
+            <field name="price">1010</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yintaixilaideng')"/>
+        </record>
+
+        <record id="hotel_res_yintaixilaideng_XZ" model="dtdream.hotel.room">
+            <field name="name">行政客房</field>
+            <field name="price">1150</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yintaixilaideng')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_GJD" model="dtdream.hotel.room">
+            <field name="name">高级大床房</field>
+            <field name="price">398</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_GJS" model="dtdream.hotel.room">
+            <field name="name">高级双人床房</field>
+            <field name="price">398</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_HHD" model="dtdream.hotel.room">
+            <field name="name">豪华大床房</field>
+            <field name="price">458</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_HHS" model="dtdream.hotel.room">
+            <field name="name">豪华双人床房</field>
+            <field name="price">458</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_XZD" model="dtdream.hotel.room">
+            <field name="name">行政大床房</field>
+            <field name="price">518</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_XZS" model="dtdream.hotel.room">
+            <field name="name">行政双人床房</field>
+            <field name="price">518</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_PYD" model="dtdream.hotel.room">
+            <field name="name">品悦大床房</field>
+            <field name="price">558</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_XZT" model="dtdream.hotel.room">
+            <field name="name">行政套房</field>
+            <field name="price">958</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_pingyue_PYT" model="dtdream.hotel.room">
+            <field name="name">品悦套房</field>
+            <field name="price">1888</field>
+            <field name="mark">含早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_pingyue')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_GJB" model="dtdream.hotel.room">
+            <field name="name">高级标准间</field>
+            <field name="price">398</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_GJD" model="dtdream.hotel.room">
+            <field name="name">高级大床间</field>
+            <field name="price">398</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_HHB" model="dtdream.hotel.room">
+            <field name="name">豪华标准间</field>
+            <field name="price">448</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_HHD" model="dtdream.hotel.room">
+            <field name="name">豪华大床间</field>
+            <field name="price">448</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_XZD" model="dtdream.hotel.room">
+            <field name="name">行政大床间</field>
+            <field name="price">508</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_XZB" model="dtdream.hotel.room">
+            <field name="name">行政标准间</field>
+            <field name="price">508</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_yuerui_XZT" model="dtdream.hotel.room">
+            <field name="name">行政套房</field>
+            <field name="price">988</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_yuerui')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_JZBZ" model="dtdream.hotel.room">
+            <field name="name">精致标准房</field>
+            <field name="price">248</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_SSBZ" model="dtdream.hotel.room">
+            <field name="name">时尚标准房</field>
+            <field name="price">268</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_JZDR" model="dtdream.hotel.room">
+            <field name="name">精致单人房</field>
+            <field name="price">268</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_SSDR" model="dtdream.hotel.room">
+            <field name="name">时尚单人房</field>
+            <field name="price">298</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_JT" model="dtdream.hotel.room">
+            <field name="name">家庭房</field>
+            <field name="price">478</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_YQ" model="dtdream.hotel.room">
+            <field name="name">雅趣房</field>
+            <field name="price">518</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_SW" model="dtdream.hotel.room">
+            <field name="name">商务标准房</field>
+            <field name="price">338</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_XZD" model="dtdream.hotel.room">
+            <field name="name">行政单人房</field>
+            <field name="price">378</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_XZBZ" model="dtdream.hotel.room">
+            <field name="name">行政标准房</field>
+            <field name="price">378</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_ZZD" model="dtdream.hotel.room">
+            <field name="name">至尊单人房</field>
+            <field name="price">578</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_zhicheng_ZZT" model="dtdream.hotel.room">
+            <field name="name">至尊套房</field>
+            <field name="price">678</field>
+            <field name="mark">含双早餐</field>
+            <field name="hotel_id" eval="ref('hotel_res_zhicheng')"/>
+        </record>
+
+        <record id="hotel_res_gaoxinshangwu_BZD" model="dtdream.hotel.room">
+            <field name="name">标准单间</field>
+            <field name="price">218</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_gaoxinshangwu')"/>
+        </record>
+
+        <record id="hotel_res_gaoxinshangwu_BZS" model="dtdream.hotel.room">
+            <field name="name">标准双间</field>
+            <field name="price">258</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_gaoxinshangwu')"/>
+        </record>
+
+        <record id="hotel_res_gaoxinshangwu_SWS" model="dtdream.hotel.room">
+            <field name="name">商务双间</field>
+            <field name="price">348</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_gaoxinshangwu')"/>
+        </record>
+
+        <record id="hotel_res_gaoxinshangwu_SWT" model="dtdream.hotel.room">
+            <field name="name">商务套间</field>
+            <field name="price">398</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_gaoxinshangwu')"/>
+        </record>
+
+        <record id="hotel_res_gaoxinshangwu_HHT" model="dtdream.hotel.room">
+            <field name="name">豪华套间</field>
+            <field name="price">498</field>
+            <field name="mark"/>
+            <field name="hotel_id" eval="ref('hotel_res_gaoxinshangwu')"/>
+        </record>
+
+        <record id="dtdream_dinner_zone_ZT" model="dtdream.dinner.zone">
+            <field name="name">转塘附近</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_BJ" model="dtdream.dinner.zone">
+            <field name="name">滨江一带</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_SQ" model="dtdream.dinner.zone">
+            <field name="name">市区</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_XH" model="dtdream.dinner.zone">
+            <field name="name">西湖附近</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_LJ" model="dtdream.dinner.zone">
+            <field name="name">龙井附近</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_MSL" model="dtdream.dinner.zone">
+            <field name="name">梅家坞,三天竺,灵隐</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_XX" model="dtdream.dinner.zone">
+            <field name="name">西溪景区</field>
+        </record>
+
+        <record id="dtdream_dinner_zone_PC" model="dtdream.dinner.zone">
+            <field name="name">品茶资源</field>
+        </record>
+
+        <record id="dtdream_dinner_JYJ" model="dtdream.dinner.management">
+            <field name="name">龙源九号花园酒店</field>
+            <field name="price">150</field>
+            <field name="addr">之江路延伸段留泗路(西湖高尔夫球场大门北侧)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87882777</field>
+            <field name="info">环境优雅，以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_ZT')"/>
+        </record>
+
+        <record id="dtdream_dinner_JYJ_LY" model="dtdream.special.dishes">
+            <field name="name">龙源一锅鲜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JYJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_JYJ_SFY" model="dtdream.special.dishes">
+            <field name="name">私房多宝鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JYJ')"/>
+        </record>
+
+
+        <record id="dtdream_dinner_SAS" model="dtdream.dinner.management">
+            <field name="name">水岸山居</field>
+            <field name="price">150</field>
+            <field name="addr">杭州市西湖区转塘街道象山路352号中国美术学院象山校区内</field>
+            <field name="contact"/>
+            <field name="tel">0571-87200987</field>
+            <field name="info">由Pritzker Architecture Prize获得者—中国当代建筑大师王澍设计，环境优雅，粤菜及新杭帮菜为主</field>
+            <field name="mark">推荐10人以上可前往就餐，10人以下不适合。</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_ZT')"/>
+        </record>
+
+        <record id="dtdream_dinner_SAS_SWY" model="dtdream.special.dishes">
+            <field name="name">风声水起捞三文鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_SAS')"/>
+        </record>
+
+        <record id="dtdream_dinner_SAS_HNY" model="dtdream.special.dishes">
+            <field name="name">干葱头抽蒸海鲈鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_SAS')"/>
+        </record>
+
+        <record id="dtdream_dinner_YXL" model="dtdream.dinner.management">
+            <field name="name">云巷里</field>
+            <field name="price">150</field>
+            <field name="addr">西湖区科海路188号10幢101-102</field>
+            <field name="contact">汪赛云经理</field>
+            <field name="tel">15855591280</field>
+            <field name="info">位于数梦工场附近一公里，以杭帮菜、温州菜、海鲜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_ZT')"/>
+        </record>
+
+        <record id="dtdream_dinner_YXL_BEFF" model="dtdream.special.dishes">
+            <field name="name">五香酱牛肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_YXL')"/>
+        </record>
+
+        <record id="dtdream_dinner_YXL_JB" model="dtdream.special.dishes">
+            <field name="name">清汤本鸡煲</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_YXL')"/>
+        </record>
+
+        <record id="dtdream_dinner_YXL_JC" model="dtdream.special.dishes">
+            <field name="name">蛋黄鸡翅</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_YXL')"/>
+        </record>
+
+        <record id="dtdream_dinner_WG" model="dtdream.dinner.management">
+            <field name="name">味港餐厅</field>
+            <field name="price">90</field>
+            <field name="addr">西湖区转塘街道江口大厦内4楼</field>
+            <field name="contact"/>
+            <field name="tel">0571-87098168</field>
+            <field name="info">以杭帮、江浙菜为主</field>
+            <field name="mark">推荐公司内部员工就餐为主</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_ZT')"/>
+        </record>
+
+        <record id="dtdream_dinner_WG_YGZ" model="dtdream.special.dishes">
+            <field name="name">竹溪鱼锅仔</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_WG')"/>
+        </record>
+
+        <record id="dtdream_dinner_WG_XY" model="dtdream.special.dishes">
+            <field name="name">鲍汁香芋</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_WG')"/>
+        </record>
+
+        <record id="dtdream_dinner_XLD" model="dtdream.dinner.management">
+            <field name="name">滨江银泰喜来登</field>
+            <field name="price">中式300,自助餐360</field>
+            <field name="addr">江虹路1769号杭州滨江银泰喜来登大酒店二楼</field>
+            <field name="contact">权经理</field>
+            <field name="tel">0571-87907777,15267893942</field>
+            <field name="info">以杭帮菜，粤菜，自助餐为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_XLD_JXY" model="dtdream.special.dishes">
+            <field name="name">焗鳕鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XLD')"/>
+        </record>
+
+        <record id="dtdream_dinner_XLD_EG" model="dtdream.special.dishes">
+            <field name="name">红酒鹅肝</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XLD')"/>
+        </record>
+
+        <record id="dtdream_dinner_JBJH" model="dtdream.dinner.management">
+            <field name="name">江滨九号</field>
+            <field name="price">200</field>
+            <field name="addr">江南大道518号兴耀大厦群楼</field>
+            <field name="contact">汤美丽经理</field>
+            <field name="tel">0571-86672999,13967182009</field>
+            <field name="info">环境优雅，以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_JBJH_DTJ" model="dtdream.special.dishes">
+            <field name="name">松茸菌炖土鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JBJH')"/>
+        </record>
+
+        <record id="dtdream_dinner_JBJH_XZY" model="dtdream.special.dishes">
+            <field name="name">千岛湖溪竹鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JBJH')"/>
+        </record>
+
+        <record id="dtdream_dinner_DY" model="dtdream.dinner.management">
+            <field name="name">德悦大酒店(滨江店)</field>
+            <field name="price">150</field>
+            <field name="addr">滨江区长河街道滨盛路1776号星光城二期5F</field>
+            <field name="contact"/>
+            <field name="tel">0571-87171197</field>
+            <field name="info">以海鲜为主，种类繁多</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_DY_LX" model="dtdream.special.dishes">
+            <field name="name">蒜茸蒸波士顿龙虾</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_DY')"/>
+        </record>
+
+        <record id="dtdream_dinner_DY_HS" model="dtdream.special.dishes">
+            <field name="name">翅汤海参螺片</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_DY')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZC" model="dtdream.dinner.management">
+            <field name="name">花中城(滨江店)</field>
+            <field name="price">150</field>
+            <field name="addr">滨江区长河街道滨盛路1776号星光城二期5F</field>
+            <field name="contact"/>
+            <field name="tel">0571-88935098,0571-88935096</field>
+            <field name="info">以传统杭帮菜为主，可看钱塘江江景</field>
+            <field name="mark">其酒店最好的包厢三潭印月517</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZC_FTY" model="dtdream.special.dishes">
+            <field name="name">沸腾鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HZC')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZC_DCY" model="dtdream.special.dishes">
+            <field name="name">金牌稻草鸭</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HZC')"/>
+        </record>
+
+        <record id="dtdream_dinner_XJN" model="dtdream.dinner.management">
+            <field name="name">小江南</field>
+            <field name="price">100</field>
+            <field name="addr">杭州滨江区南环路3999号</field>
+            <field name="contact">佟经理</field>
+            <field name="tel">0571-86609999,13588119809</field>
+            <field name="info">环境优雅，以杭帮菜为主</field>
+            <field name="mark">餐饮8.8折（不含海鲜、香烟、酒水)</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_XJN_GGJ" model="dtdream.special.dishes">
+            <field name="name">干锅鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XJN')"/>
+        </record>
+
+        <record id="dtdream_dinner_XJN_YT" model="dtdream.special.dishes">
+            <field name="name">千岛湖鱼头</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XJN')"/>
+        </record>
+
+        <record id="dtdream_dinner_BY" model="dtdream.dinner.management">
+            <field name="name">巴国布衣(滨江店)</field>
+            <field name="price">100</field>
+            <field name="addr">杭州滨江区江南大道228号星光国际广场4幢4F </field>
+            <field name="contact"/>
+            <field name="tel">0571-81067777</field>
+            <field name="info">辣味川菜，口味比较正宗，环境不错，有变脸喷火表演</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_BY_MXW" model="dtdream.special.dishes">
+            <field name="name">巴国毛血旺</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_BY')"/>
+        </record>
+
+        <record id="dtdream_dinner_BY_YT" model="dtdream.special.dishes">
+            <field name="name">布衣大鱼头</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_BY')"/>
+        </record>
+
+        <record id="dtdream_dinner_JJG" model="dtdream.dinner.management">
+            <field name="name">江君港(江汉店)</field>
+            <field name="price">100</field>
+            <field name="addr">江汉路1785号网新双城国际大厦四号楼3楼(近滨盛路)</field>
+            <field name="contact"/>
+            <field name="tel">0571-86587977</field>
+            <field name="info">衢州开化菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_JJG_QSY" model="dtdream.special.dishes">
+            <field name="name">开化清水鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JJG')"/>
+        </record>
+
+        <record id="dtdream_dinner_JJG_BTJ" model="dtdream.special.dishes">
+            <field name="name">老村长爆土鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JJG')"/>
+        </record>
+
+        <record id="dtdream_dinner_CJDY" model="dtdream.dinner.management">
+            <field name="name">崔家大院</field>
+            <field name="price">70</field>
+            <field name="addr">杭州滨江区江汉路和阡陌路交叉口（人才公寓旁）</field>
+            <field name="contact">崔女士</field>
+            <field name="tel">0571-87711679,13958082591</field>
+            <field name="info">以农家菜为主</field>
+            <field name="mark">适合公司内部聚餐</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_BJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_CJDY_ZPG" model="dtdream.special.dishes">
+            <field name="name">铁板牛仔骨</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_CJDY')"/>
+        </record>
+
+        <record id="dtdream_dinner_CJDY_SL" model="dtdream.special.dishes">
+            <field name="name">毛笋干烧肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_CJDY')"/>
+        </record>
+
+        <record id="dtdream_dinner_HL" model="dtdream.dinner.management">
+            <field name="name">黄龙饭店</field>
+            <field name="price">中式450,自助餐460</field>
+            <field name="addr">曙光路120号黄龙饭店1楼(近杭大路)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87998833</field>
+            <field name="info">中餐以杭帮菜、粤菜为主 ,自助餐为菜式品种多，以海鲜为主,服务周到</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_SYT" model="dtdream.dinner.management">
+            <field name="name">上阳台</field>
+            <field name="price">400</field>
+            <field name="addr">上城区解放路251号解百B座7楼(延安路与解放路的交叉口)</field>
+            <field name="contact">闵青霞经理</field>
+            <field name="tel">0571-56596077,15168377732</field>
+            <field name="info">带着亲民却又精致典雅的气质大隐于解百的顶楼，俯瞰西湖美景</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_SYT_BEFF" model="dtdream.special.dishes">
+            <field name="name">石锅安格斯牛肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_SYT')"/>
+        </record>
+
+        <record id="dtdream_dinner_SYT_GX" model="dtdream.special.dishes">
+            <field name="name">咸肉蒸青膏蟹</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_SYT')"/>
+        </record>
+
+        <record id="dtdream_dinner_JL" model="dtdream.dinner.management">
+            <field name="name">浙江世贸君澜大饭店</field>
+            <field name="price">350</field>
+            <field name="addr">杭州市西湖区曙光路122号(黄龙洞对面世贸展馆边)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87990888</field>
+            <field name="info">自助餐，食材新鲜，环境不错，服务周到</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_JL_JG" model="dtdream.special.dishes">
+            <field name="name">菌锅</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JL')"/>
+        </record>
+
+        <record id="dtdream_dinner_JL_WN" model="dtdream.special.dishes">
+            <field name="name">世贸蜗牛</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_JL')"/>
+        </record>
+
+        <record id="dtdream_dinner_TL" model="dtdream.dinner.management">
+            <field name="name">天伦精品酒店(曙光店)</field>
+            <field name="price">300</field>
+            <field name="addr">曙光路124号(世贸中心旁)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87979888</field>
+            <field name="info">店里装修有古典气息，主打全蟹宴</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_TL_THX" model="dtdream.special.dishes">
+            <field name="name">清蒸太湖蟹</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_TL')"/>
+        </record>
+
+        <record id="dtdream_dinner_TL_BTY" model="dtdream.special.dishes">
+            <field name="name">太湖白条鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_TL')"/>
+        </record>
+
+        <record id="dtdream_dinner_YH" model="dtdream.dinner.management">
+            <field name="name">友好饭店</field>
+            <field name="price">中餐262,晚餐388,日料260</field>
+            <field name="addr">上城区平海路53号友好饭店</field>
+            <field name="contact">顾轶龙经理</field>
+            <field name="tel">0571-87077888,0571-87023536,13588735863</field>
+            <field name="info">环境优雅，种类繁多，纳思比十千花前日料 、自助餐，中餐均有</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZHT" model="dtdream.dinner.management">
+            <field name="name">嘉里中心综合体</field>
+            <field name="price"/>
+            <field name="addr">延安路353号</field>
+            <field name="contact"/>
+            <field name="tel"/>
+            <field name="info">城市综合体,集餐饮杭儿风、煮火火锅、翠园港式餐厅，咖啡（星巴克），休闲（哈根达斯），购物商城等场所</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZHT_YC" model="dtdream.special.dishes">
+            <field name="name">粤菜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZHT')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZHT_HBC" model="dtdream.special.dishes">
+            <field name="name">杭帮菜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZHT')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZHT_LL" model="dtdream.special.dishes">
+            <field name="name">日本料理</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZHT')"/>
+        </record>
+
+        <record id="dtdream_dinner_XGLL" model="dtdream.dinner.management">
+            <field name="name">城中香格里拉</field>
+            <field name="price">大厅点餐人均150，包厢配菜套餐400</field>
+            <field name="addr">长寿路6号</field>
+            <field name="contact"/>
+            <field name="tel">0571-81590555</field>
+            <field name="info">以杭帮菜为主</field>
+            <field name="mark">需提前1天预定，尤其节假日需提前3天预定。</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_XGLL_X" model="dtdream.special.dishes">
+            <field name="name">珊汁芝麻虾</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XGLL')"/>
+        </record>
+
+        <record id="dtdream_dinner_XGLL_B" model="dtdream.special.dishes">
+            <field name="name">灵隐素斋煲</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XGLL')"/>
+        </record>
+
+        <record id="dtdream_dinner_HXC" model="dtdream.dinner.management">
+            <field name="name">象山石浦海鲜城</field>
+            <field name="price">150</field>
+            <field name="addr">杭大路16号(近新宇之星)</field>
+            <field name="contact"/>
+            <field name="tel">0571-85125508</field>
+            <field name="info">大众海鲜餐厅，海鲜生鲜</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HXC_HX" model="dtdream.special.dishes">
+            <field name="name">象山海鲜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HXC')"/>
+        </record>
+
+        <record id="dtdream_dinner_MRMJ" model="dtdream.dinner.management">
+            <field name="name">名人名家(文二店)</field>
+            <field name="price">150</field>
+            <field name="addr">杭州市文二路38号浙江文华大酒店5楼</field>
+            <field name="contact"/>
+            <field name="tel">0571-88060008</field>
+            <field name="info">以杭帮菜、粤菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_MRMJ_DBY" model="dtdream.special.dishes">
+            <field name="name">广式蒸多宝鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_MRMJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_MRMJ_KRG" model="dtdream.special.dishes">
+            <field name="name">烤乳鸽</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_MRMJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZJJ" model="dtdream.dinner.management">
+            <field name="name">杭州酒家(延安路店)</field>
+            <field name="price">100</field>
+            <field name="addr">杭州上城区延安路205号1-3楼(延安路邮电路口)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87087123</field>
+            <field name="info">以杭帮菜为主，离西湖很近</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_SQ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZJJ_YT" model="dtdream.special.dishes">
+            <field name="name">木郎紫苏鱼头</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HZJJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZJJ_NG" model="dtdream.special.dishes">
+            <field name="name">闷骚南瓜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HZJJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZX" model="dtdream.dinner.management">
+            <field name="name">紫萱度假村</field>
+            <field name="price">500</field>
+            <field name="addr">八盘岭路1号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87975858</field>
+            <field name="info">环境幽静，格调高，服务周到</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZX_SKY" model="dtdream.special.dishes">
+            <field name="name">笋壳鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZX')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZX_EG" model="dtdream.special.dishes">
+            <field name="name">腐乳鹅肝</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZX')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZBL" model="dtdream.dinner.management">
+            <field name="name">湛碧楼</field>
+            <field name="price">300</field>
+            <field name="addr">杨公堤30号曲院风荷公园内</field>
+            <field name="contact"/>
+            <field name="tel">0571-87961798</field>
+            <field name="info">又名风荷御酒坊，位于曲苑风荷内，与著名的西湖会遥遥相望</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZBL_HT" model="dtdream.special.dishes">
+            <field name="name">红烧河豚鱼拌饭</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZBL')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZBL_KRG" model="dtdream.special.dishes">
+            <field name="name">烤乳鸽</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZBL')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZUBL" model="dtdream.dinner.management">
+            <field name="name">醉白楼</field>
+            <field name="price">200</field>
+            <field name="addr">茅家埠龙井路69号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87888887,0571-87999997</field>
+            <field name="info">环境优雅，以杭帮菜、粤菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZUBL_XR" model="dtdream.special.dishes">
+            <field name="name">龙井虾仁</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZUBL')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZUBL_NZG" model="dtdream.special.dishes">
+            <field name="name">铁板牛仔骨</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZUBL')"/>
+        </record>
+
+        <record id="dtdream_dinner_LWL" model="dtdream.dinner.management">
+            <field name="name">楼外楼(孤山路店)</field>
+            <field name="price">150</field>
+            <field name="addr">杭州市西湖区孤山路30号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87969023</field>
+            <field name="info">杭州楼外楼菜馆是一家名闻中外、有160年历史的名餐馆，坐落在西湖的孤山脚下</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_LWL_CY" model="dtdream.special.dishes">
+            <field name="name">西湖醋鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_LWL')"/>
+        </record>
+
+        <record id="dtdream_dinner_LWL_JHJ" model="dtdream.special.dishes">
+            <field name="name">叫花鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_LWL')"/>
+        </record>
+
+        <record id="dtdream_dinner_XX" model="dtdream.dinner.management">
+            <field name="name">新新饭店</field>
+            <field name="price">150</field>
+            <field name="addr">西湖区北山路58号(紧邻西湖)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87660000</field>
+            <field name="info">风光秀丽，以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_XX_GY" model="dtdream.special.dishes">
+            <field name="name">松鼠桂鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_XX_SX" model="dtdream.special.dishes">
+            <field name="name">杭三鲜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_WZ" model="dtdream.dinner.management">
+            <field name="name">杨公堤味庄</field>
+            <field name="price">150</field>
+            <field name="addr">杨公堤10-12号（西湖西线）</field>
+            <field name="contact"/>
+            <field name="tel">0571-87970568</field>
+            <field name="info">杭州老字号杭帮菜馆，位于杨公堤上著名的花港观鱼景区旁边</field>
+            <field name="mark">包厢保留到18:30</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_WZ_DPR" model="dtdream.special.dishes">
+            <field name="name">东坡肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_WZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_WZ_CY" model="dtdream.special.dishes">
+            <field name="name">西湖醋鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_WZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_CT" model="dtdream.dinner.management">
+            <field name="name">西湖春天(南山路店)</field>
+            <field name="price">150</field>
+            <field name="addr">南山路101-17号(中国美院斜对面)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87085551,0571-87035551</field>
+            <field name="info">环境优雅，以粤菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_CT_RG" model="dtdream.special.dishes">
+            <field name="name">沙田乳鸽</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_CT')"/>
+        </record>
+
+        <record id="dtdream_dinner_CT_XJ" model="dtdream.special.dishes">
+            <field name="name">春天虾饺皇</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_CT')"/>
+        </record>
+
+        <record id="dtdream_dinner_LLXZ" model="dtdream.dinner.management">
+            <field name="name">玲珑小镇(南山路店)</field>
+            <field name="price">100</field>
+            <field name="addr">南山路198号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87025558</field>
+            <field name="info">以台湾菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_LLXZ_SBJ" model="dtdream.special.dishes">
+            <field name="name">三杯鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_LLXZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_LLXZ_NY" model="dtdream.special.dishes">
+            <field name="name">油淋鲈鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_LLXZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_NJL" model="dtdream.dinner.management">
+            <field name="name">三台山农家乐</field>
+            <field name="price">150</field>
+            <field name="addr">西湖以西三台山路沿线</field>
+            <field name="contact"/>
+            <field name="tel"/>
+            <field name="info">西湖西面沿着三台山路一带农家住宿餐饮，环境清静，陈设尽显农家古朴风格</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XH')"/>
+        </record>
+
+        <record id="dtdream_dinner_GY" model="dtdream.dinner.management">
+            <field name="name">桂语山房</field>
+            <field name="price">450</field>
+            <field name="addr">满觉陇路2-1号(近五老峰隧道)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87977677,0571-86972737</field>
+            <field name="info">满觉陇上，桂语山房，曲径通幽处，禅房花木深，属于中式的雅韵和古典的风格，服务很好</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_LJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_GY_BEEF" model="dtdream.special.dishes">
+            <field name="name">祖母酱汁牛肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_GY')"/>
+        </record>
+
+        <record id="dtdream_dinner_GY_HB" model="dtdream.special.dishes">
+            <field name="name">杭帮私房菜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_GY')"/>
+        </record>
+
+        <record id="dtdream_dinner_YCY" model="dtdream.dinner.management">
+            <field name="name">老龙井御茶园(老龙井店)</field>
+            <field name="price">350</field>
+            <field name="addr">龙井村龙井狮峰148号(走到尽头景区内)</field>
+            <field name="contact">毛瑞峰经理</field>
+            <field name="tel">15968129778</field>
+            <field name="info">环境优雅，包间雅致，以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_LJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_YCY_XR" model="dtdream.special.dishes">
+            <field name="name">龙井虾仁</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_YCY')"/>
+        </record>
+
+        <record id="dtdream_dinner_YCY_TJ" model="dtdream.special.dishes">
+            <field name="name">土鸡汤</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_YCY')"/>
+        </record>
+
+        <record id="dtdream_dinner_HY" model="dtdream.dinner.management">
+            <field name="name">春夏秋冬花园餐厅</field>
+            <field name="price">150</field>
+            <field name="addr">龙井路98号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87985188</field>
+            <field name="info">以农家菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_LJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HY_X" model="dtdream.special.dishes">
+            <field name="name">茶香虾</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HY')"/>
+        </record>
+
+        <record id="dtdream_dinner_HY_Y" model="dtdream.special.dishes">
+            <field name="name">乾隆鱼头</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HY')"/>
+        </record>
+
+        <record id="dtdream_dinner_XY" model="dtdream.dinner.management">
+            <field name="name">西院1号</field>
+            <field name="price">130</field>
+            <field name="addr">龙井路76号茅乡茶居1号楼</field>
+            <field name="contact"/>
+            <field name="tel">0571-87993701</field>
+            <field name="info">以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_LJ')"/>
+        </record>
+
+        <record id="dtdream_dinner_XY_ZR" model="dtdream.special.dishes">
+            <field name="name">笋蒸肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XY')"/>
+        </record>
+
+        <record id="dtdream_dinner_XY_HY" model="dtdream.special.dishes">
+            <field name="name">黄鱼年糕</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XY')"/>
+        </record>
+
+        <record id="dtdream_dinner_LJL" model="dtdream.dinner.management">
+            <field name="name">梅家坞农家乐</field>
+            <field name="price">150</field>
+            <field name="addr"/>
+            <field name="contact"/>
+            <field name="tel"/>
+            <field name="info">梅家坞茶文化特色村落位西湖区西湖梅家坞村，梅灵大道旁。是杭州最有名的餐饮喝茶休闲农家乐，农家菜系</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_CY" model="dtdream.dinner.management">
+            <field name="name">梅山茶苑</field>
+            <field name="price">100</field>
+            <field name="addr">梅灵南路梅家坞139号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87092092</field>
+            <field name="info">梅家坞内典型的农家乐餐厅，以农家菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_CY_WGJ" model="dtdream.special.dishes">
+            <field name="name">瓦罐鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_CY')"/>
+        </record>
+
+        <record id="dtdream_dinner_CY_YG" model="dtdream.special.dishes">
+            <field name="name">红烧鱼钩</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_CY')"/>
+        </record>
+
+        <record id="dtdream_dinner_XYW" model="dtdream.dinner.management">
+            <field name="name">小牙坞农家乐</field>
+            <field name="price">150</field>
+            <field name="addr"/>
+            <field name="contact"/>
+            <field name="tel"/>
+            <field name="info">位于西湖区梅灵南路（梅家坞往北500米左右）。比起大名鼎鼎的梅家坞老村、龙井村、满觉陇，知道这里的不多。从村口一直往里走，“柳暗花明又一村”的感觉扑面而来。</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_HLC" model="dtdream.dinner.management">
+            <field name="name">洪良茶楼</field>
+            <field name="price">100</field>
+            <field name="addr">梅灵南路小牙坞2号</field>
+            <field name="contact"/>
+            <field name="tel">0571-87321967,13634196565</field>
+            <field name="info">小牙坞内典型的农家乐餐厅，以农家菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_HLC_TJ" model="dtdream.special.dishes">
+            <field name="name">土鸡汤</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HLC')"/>
+        </record>
+
+        <record id="dtdream_dinner_HLC_Y" model="dtdream.special.dishes">
+            <field name="name">红烧鳊鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HLC')"/>
+        </record>
+
+        <record id="dtdream_dinner_STZ" model="dtdream.dinner.management">
+            <field name="name">江南驿-上天竺店</field>
+            <field name="price">100</field>
+            <field name="addr">天竺路355号（近法喜寺）</field>
+            <field name="contact"/>
+            <field name="tel">0571-87153273</field>
+            <field name="info">以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_STZ_MJ" model="dtdream.special.dishes">
+            <field name="name">椒麻鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_STZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_STZ_BXC" model="dtdream.special.dishes">
+            <field name="name">酸辣包心菜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_STZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZCG" model="dtdream.dinner.management">
+            <field name="name">蒸菜馆</field>
+            <field name="price">350</field>
+            <field name="addr">法云弄22号安缦法云</field>
+            <field name="contact"/>
+            <field name="tel">0571-87329999</field>
+            <field name="info">以蒸菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZCG_ZC" model="dtdream.special.dishes">
+            <field name="name">蒸菜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZCG')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZCG_SC" model="dtdream.special.dishes">
+            <field name="name">灵隐素菜</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_ZCG')"/>
+        </record>
+
+        <record id="dtdream_dinner_RL" model="dtdream.dinner.management">
+            <field name="name">汝拉小镇(龙井路店)</field>
+            <field name="price">100</field>
+            <field name="addr">龙井路双峰村鸡笼山68-4号（五老峰隧道吉庆山隧道间）</field>
+            <field name="contact"/>
+            <field name="tel">0571-87828369</field>
+            <field name="info">以创意菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_MSL')"/>
+        </record>
+
+        <record id="dtdream_dinner_RL_YP" model="dtdream.special.dishes">
+            <field name="name">烤羊排</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_RL')"/>
+        </record>
+
+        <record id="dtdream_dinner_RL_FJ" model="dtdream.special.dishes">
+            <field name="name">私房鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_RL')"/>
+        </record>
+
+        <record id="dtdream_dinner_BYZ" model="dtdream.dinner.management">
+            <field name="name">碧云庄</field>
+            <field name="price">450</field>
+            <field name="addr">国家西溪湿地公园良渚街C1-31号（西溪湿地内河良渚塔）</field>
+            <field name="contact"/>
+            <field name="tel">0571-89716688</field>
+            <field name="info">以江浙本帮菜、粤式菜和创意菜为主，环境古朴幽静</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_ZJ" model="dtdream.special.dishes">
+            <field name="name">岭南滋补竹林鸡</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_BYZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_STY" model="dtdream.special.dishes">
+            <field name="name">土烧开化生态鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_BYZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZBY" model="dtdream.dinner.management">
+            <field name="name">洪钟别宴</field>
+            <field name="price">400</field>
+            <field name="addr">杭州市西湖区天目山路518号西溪国家湿地公园内</field>
+            <field name="contact">浦经理,邬桂英</field>
+            <field name="tel">15967170765,15957122187</field>
+            <field name="info">环境闹中取静，以杭帮菜为主</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZBY_DBT" model="dtdream.special.dishes">
+            <field name="name">广式蒸钱塘江大白条</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HZBY')"/>
+        </record>
+
+        <record id="dtdream_dinner_HZBY_YR" model="dtdream.special.dishes">
+            <field name="name">农家养生羊肉大盆</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_HZBY')"/>
+        </record>
+
+        <record id="dtdream_dinner_XXLD" model="dtdream.dinner.management">
+            <field name="name">西溪喜来登</field>
+            <field name="price">中式包厢500,自助餐300</field>
+            <field name="addr">紫金港路西溪天堂国际旅游综合体1号西溪喜来登酒店</field>
+            <field name="contact"/>
+            <field name="tel">0571-85002222</field>
+            <field name="info">环境优雅，菜色品种多，服务到位</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_XXLD_R" model="dtdream.special.dishes">
+            <field name="name">外婆鲍鱼红烧肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XXLD')"/>
+        </record>
+
+        <record id="dtdream_dinner_XXLD_X" model="dtdream.special.dishes">
+            <field name="name">油爆虾</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XXLD')"/>
+        </record>
+
+        <record id="dtdream_dinner_XXBG" model="dtdream.dinner.management">
+            <field name="name">杭州西溪宾馆</field>
+            <field name="price">中式包厢350,自助餐258</field>
+            <field name="addr">文二西路803号(西溪湿地景区)</field>
+            <field name="contact"/>
+            <field name="tel">0571-85396666</field>
+            <field name="info">位于西溪湿地北边，环境幽静，菜品雅致</field>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_XXBG_HX" model="dtdream.special.dishes">
+            <field name="name">砂锅湖蟹</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XXBG')"/>
+        </record>
+
+        <record id="dtdream_dinner_XXBG_XY" model="dtdream.special.dishes">
+            <field name="name">越氏银鳕鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XXBG')"/>
+        </record>
+
+        <record id="dtdream_dinner_TZ" model="dtdream.dinner.management">
+            <field name="name">茭芦田庄</field>
+            <field name="price">150</field>
+            <field name="addr">天目山路西溪国家湿地公园高庄南门2号入口</field>
+            <field name="contact">朱青松经理</field>
+            <field name="tel">0571-88257777,13917221711</field>
+            <field name="info">位于西溪景点外围，环境清静，装修格调，以杭帮菜为主</field>
+            <field name="mark">餐饮享受9折</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_TZ_BT" model="dtdream.special.dishes">
+            <field name="name">清蒸西溪白条</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_TZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_TZ_N" model="dtdream.special.dishes">
+            <field name="name">牛气冲天</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_TZ')"/>
+        </record>
+
+        <record id="dtdream_dinner_TLL" model="dtdream.dinner.management">
+            <field name="name">天伦里</field>
+            <field name="price">150</field>
+            <field name="addr">杭州市西溪路550号西溪新座</field>
+            <field name="contact">刘经理</field>
+            <field name="tel">0571-81060001,18989863255</field>
+            <field name="info">杭州知名的蟹料理餐厅，经典又不缺时尚，传统江南韵味和现代意境的完美融合，湖州菜系</field>
+            <field name="mark">普通菜肴8.5折 海鲜9折</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_TLL_X" model="dtdream.special.dishes">
+            <field name="name">太湖蟹</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_TLL')"/>
+        </record>
+
+        <record id="dtdream_dinner_TLL_B" model="dtdream.special.dishes">
+            <field name="name">太湖三白</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_TLL')"/>
+        </record>
+
+        <record id="dtdream_dinner_XKY" model="dtdream.dinner.management">
+            <field name="name">新开元西溪餐厅</field>
+            <field name="price">100</field>
+            <field name="addr">文二西路808号</field>
+            <field name="contact"/>
+            <field name="tel">0571-85889887</field>
+            <field name="info">以杭帮菜为主</field>
+            <field name="mark">普通菜肴8.5折 海鲜9折</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_XX')"/>
+        </record>
+
+        <record id="dtdream_dinner_XKY_R" model="dtdream.special.dishes">
+            <field name="name">东坡肉</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XKY')"/>
+        </record>
+
+        <record id="dtdream_dinner_XKY_Y" model="dtdream.special.dishes">
+            <field name="name">葱油小鲍鱼</field>
+            <field name="mark"/>
+            <field name="dinner_id" eval="ref('dtdream_dinner_XKY')"/>
+        </record>
+
+        <record id="dtdream_dinner_HPJ" model="dtdream.dinner.management">
+            <field name="name">湖畔居茶楼</field>
+            <field name="price">350</field>
+            <field name="addr">圣塘景区1号(望湖宾馆对面)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87020701,0571-87021618</field>
+            <field name="info"/>
+            <field name="mark">包厢需提前一天预约</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_PC')"/>
+        </record>
+
+        <record id="dtdream_dinner_HCG" model="dtdream.dinner.management">
+            <field name="name">和茶馆(法云弄店)</field>
+            <field name="price">220</field>
+            <field name="addr">西湖街道法云弄22号安缦酒店内(近灵隐寺)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87979556</field>
+            <field name="info"/>
+            <field name="mark">无包厢</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_PC')"/>
+        </record>
+
+        <record id="dtdream_dinner_XYCG" model="dtdream.dinner.management">
+            <field name="name">西园茶馆</field>
+            <field name="price">200</field>
+            <field name="addr">南山路37号西子宾馆(雷峰塔旁)</field>
+            <field name="contact"/>
+            <field name="tel">0571-87021888</field>
+            <field name="info"/>
+            <field name="mark">需提前预定</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_PC')"/>
+        </record>
+
+        <record id="dtdream_dinner_CSY" model="dtdream.dinner.management">
+            <field name="name">湖隐茶书屋</field>
+            <field name="price">150</field>
+            <field name="addr">北山路59号新新饭店内</field>
+            <field name="contact"/>
+            <field name="tel">18067990199</field>
+            <field name="info"/>
+            <field name="mark">包厢只有三个，需提前预订</field>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_PC')"/>
+        </record>
+
+        <record id="dtdream_dinner_JSSY" model="dtdream.dinner.management">
+            <field name="name">景上书院</field>
+            <field name="price">150</field>
+            <field name="addr">玉泉路11号（植物园内）</field>
+            <field name="contact"/>
+            <field name="tel">0571-87997909,13758268470</field>
+            <field name="info"/>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_PC')"/>
+        </record>
+
+        <record id="dtdream_dinner_QTCG" model="dtdream.dinner.management">
+            <field name="name">青藤茶馆（元华店）</field>
+            <field name="price">100</field>
+            <field name="addr">南山路278号元华广场2楼（一公园对面）</field>
+            <field name="contact"/>
+            <field name="tel">0571-87022777,0571-87020084</field>
+            <field name="info"/>
+            <field name="mark"/>
+            <field name="parent_id" eval="ref('dtdream_dinner_zone_PC')"/>
+        </record>
 
     </data>
 </openerp>

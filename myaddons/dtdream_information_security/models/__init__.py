@@ -14,3 +14,4 @@ from . import dtdream_information_record
 
 
 from . import dtdream_foreign
+from . import dtdream_foreign_attachment

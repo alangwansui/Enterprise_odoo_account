@@ -41,7 +41,7 @@ class dtimport_hr_performance(osv.osv):
 
     def need_import_columns_name(self):
         return {'workid': u'工号', 'quarter': u'考核季度', 'officer': u'一考主管', 'officer_sec': u'二考主管',
-                'result': u'考核结果', 'time_range': u'考核时间范围'}
+                'time_range': u'考核时间范围', 'result': u'考核结果'}
 
     def return_new_action(self):
         return {'type': 'ir.actions.act_window',
@@ -53,8 +53,20 @@ class dtimport_hr_performance(osv.osv):
                 'views': [(False, 'form')],
                 'target': 'new'}
 
+    def judge_need_import_header(self, need_head, header):
+        if u'考核结果' in header:
+            need_head = {'workid': u'工号',  'quarter': u'考核季度', 'result': u'考核结果'}
+        else:
+            need_head = {'workid': u'工号', 'quarter': u'考核季度', 'officer': u'一考主管', 'officer_sec': u'二考主管',
+                         'time_range': u'考核时间范围'}
+        if any([True for key, val in need_head.items() if header.count(val) > 1 or header.count(val) == 0]):
+            return False
+        return True
+
     def judge_data_is_pass(self, record, need_head, header):
         for key, val in need_head.items():
+            if val not in header:
+                continue
             text = record[header.index(val)]
             text = str(int(text)) if isinstance(text, float) else text
             if key in ['workid', 'officer', 'officer_sec']:
@@ -72,23 +84,20 @@ class dtimport_hr_performance(osv.osv):
         return {'code': 0, 'message': 'ok'}
 
     def create_or_update_records(self, data_dict):
-        workid = data_dict.get('workid')
-        quarter = data_dict.get('quarter')
-        result = data_dict.get('result')
-        time_range = data_dict.get('time_range')
+        workid = data_dict.get('workid', '')
+        quarter = data_dict.get('quarter', '')
+        result = data_dict.get('result', '')
+        time_range = data_dict.get('time_range', '')
         time_range = str(int(time_range)) if isinstance(time_range, float) else time_range
         name = self.env['hr.employee'].search([('job_number', '=', workid)]).id
-        officer = self.env['hr.employee'].search([('job_number', '=', data_dict.get('officer'))]).id
-        officer_sec = self.env['hr.employee'].search([('job_number', '=', data_dict.get('officer_sec'))]).id
+        officer = self.env['hr.employee'].search([('job_number', '=', data_dict.get('officer', ''))]).id
+        officer_sec = self.env['hr.employee'].search([('job_number', '=', data_dict.get('officer_sec', ''))]).id
         record = self.env['dtdream.hr.performance'].search([('name', '=', name), ('quarter', '=', quarter)])
         if record:
-            if result:
-                record.write({'quarter': quarter, 'time_range': time_range, 'result': result, 'officer': officer,
-                              'officer_sec': officer_sec})
-            else:
-                record.write({'quarter': quarter, 'time_range': time_range, 'officer': officer,
-                              'officer_sec': officer_sec})
-        else:
+            record.write({'quarter': quarter or record.quarter, 'time_range': time_range or record.time_range,
+                          'result': result or record.result, 'officer': officer or record.officer.id, 'officer_sec':
+                              officer_sec or record.officer_sec.id})
+        elif quarter and time_range and name and officer and officer_sec:
             self.env['dtdream.hr.performance'].create({'name': name, 'quarter': quarter, 'officer': officer,
                                                        'time_range': time_range, 'officer_sec': officer_sec})
 

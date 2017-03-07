@@ -91,9 +91,7 @@
                         'hr_holidays.menu_open_company_allocation',
                     ]
                 }</field>
-                <field name="domain">[('type','=','add'),('create_type','=','manage'),('nxj_jisuan','=',True)]</field>
-                <field name="view_id" ref="view_holiday_nianxiujia_form"/>
-                <field name="view_id" ref="view_holiday_nianxiujia_kanban"/>
+                <field name="domain">[('type','=','add'),('create_type','=','manage')]</field>
                 <field name="view_id" ref="view_holiday_nianxiujia_tree"/>
             </record>
 
@@ -120,7 +118,7 @@
 
                                 <!--++++++++++++++++所有年休假余额+++++++++++++++++++++++-->
             <record id="view_holiday_nianxiujia_all_tree" model="ir.ui.view">
-                <field name="name">view.holiday.nianxiujia.tree</field>
+                <field name="name">view.holiday.nianxiujia.all.tree</field>
                 <field name="model">hr.holidays</field>
                 <field name="arch" type="xml">
                     <tree>
@@ -212,10 +210,8 @@
                         'hr_holidays.menu_open_company_allocation',
                     ]
                 }</field>
-                <field name="domain">[('type','=','add'),('create_type','=','manage'),('nxj_jisuan','=',True)]</field>
-                <field name="view_id" ref="view_holiday_nianxiujia_form"/>
-                <field name="view_id" ref="view_holiday_nianxiujia_kanban"/>
-                <field name="view_id" ref="view_holiday_nianxiujia_tree"/>
+                <field name="domain">[('type','=','add'),('create_type','=','manage')]</field>
+                <field name="view_id" ref="view_holiday_nianxiujia_all_tree"/>
             </record>
 
             <record id="action_dtdream_nianxiujia_all_a" model="ir.actions.act_window.view">
@@ -253,11 +249,11 @@
                         'hr_holidays.menu_open_company_allocation',
                     ]
                 }</field>
-                <field name="domain">[('holiday_status_id','=',5),('create_type','=',False),('type','=','remove'),('employee_id.user_id','=',uid)]</field>
+                <field name="domain">[('holiday_status_id','=',5),('type','=','remove'),('employee_id.user_id','=',uid)]</field>
                 <field name="view_id" ref="hr_holidays.view_holiday_simple"/>
             </record>
 
-            <menuitem name="年休假" id="hr_holidays.menu_hr_holidays_nianxiujia" parent="hr_holidays.menu_hr_holidays_root" sequence="1"/>
+            <menuitem name="年休假" id="hr_holidays.menu_hr_holidays_nianxiujia" parent="hr_holidays.menu_hr_holidays_root" sequence="3"/>
             <menuitem name="所有年休假余额" parent="hr_holidays.menu_hr_holidays_nianxiujia" id="menu_nianxiujiayue_all" action="hr_holidays.open_nianxiujiayue_all" groups="base.group_hr_user,base.group_hr_manager" />
             <menuitem name="年休假余额" parent="hr_holidays.menu_hr_holidays_nianxiujia" id="menu_nianxiujiayue" action="hr_holidays.open_nianxiujiayue"/>
             <menuitem name="年休假休假记录" parent="hr_holidays.menu_hr_holidays_nianxiujia" id="menu_nianxiujiaxiujiajilu" action="hr_holidays.open_nianxiujiaxiujiajilu"/>

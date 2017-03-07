@@ -39,6 +39,14 @@ class dtdream_foreign(models.Model):
         if self.origin_department_01:
             self.secret_person = self.origin_department_01.xinxianquanyuan
 
+    @api.constrains('target_email')
+    def check_email(self):
+        if self.target_email:
+            import re
+            str = r'^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){0,4}@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){0,4}$'
+            if not re.match(str, self.target_email):
+                raise ValidationError(u"邮箱格式不正确")
+
     applicant = fields.Many2one('hr.employee', string='申请人',default=lambda self: self.env["hr.employee"].search([("user_id", "=", self.env.user.id)]),readonly=True)
     name=fields.Char(string="披露信息",required=True)
     department_01 = fields.Many2one("hr.department", compute=_compute_employee, string="申请人一级部门")
@@ -48,8 +56,8 @@ class dtdream_foreign(models.Model):
     manager = fields.Many2one("hr.employee", string="申请人主管",required=True)
     target=fields.Char(string='披露对象',required=True,help=u'向谁披露')
     target_email = fields.Char(string='披露对象邮箱')
-    attachment = fields.Binary(string="附件(限制25M以下)", store=True)
-    attachment_name = fields.Char(string='附件名')
+    # attachment = fields.Binary(string="附件(限制25M以下)", store=True)
+    # attachment_name = fields.Char(string='附件名')
     url_address = fields.Char(string='链接')
     reason=fields.Text(string='披露原因',required='true')
     secret_level = fields.Selection([('level_00', '内部公开 '),('level_01', '机密'), ('level_02', '绝密')], string="最高密级", required=True)
@@ -59,16 +67,18 @@ class dtdream_foreign(models.Model):
     # sfxytm=fields.Boolean(string='是否脱敏文件')
     # tminstructions=fields.Text(string="脱敏说明")
     approves = fields.Many2many('hr.employee', string='历史审批人')
-    secret_person = fields.Many2one('hr.employee', string='信息安全员',)
+    secret_person = fields.Many2one('hr.employee', string='信息安全员',help=u'信息安全员可帮助审查对外披露信息是否满足信息安全要求（如是否添加水印，密级填写是否准确等）')
     current_approve = fields.Many2one('hr.employee', string='当前处理人')
     state = fields.Selection([('0', '草稿'),
                               ('1', '信息安全员检查'),
                               ('2', '申请人主管审批'),
                               ('3', '信息源主管审批'),
                               ('4', '权签人审批'),
-                              ('-99', '终止'),
+                              ('-99', '不通过'),
                               ('99', '完成'),
                               ], string='状态', default='0')
+
+    attachment_ids = fields.One2many('dtdream.foreign.attachment', 'record_id', u'附件明细')
 
     @api.multi
     def _compute_is_shenpiren(self):
@@ -171,11 +181,16 @@ class dtdream_foreign(models.Model):
                                                            <tr><td style="padding:10px">审批意见</td><td style="padding:10px">%s</td></tr>
                                                            </table>""" % (self.name, statechange, action, next_shenpiren, reason))
 
+    @api.constrains("attachment_ids")
+    def attachment_ids_che(self):
+        for attachment in self.attachment_ids:
+            if not attachment.attachment:
+                raise ValidationError(u'附件明细中新建记录未上传附件，请上传附件')
     @api.multi
     def do_cgtj(self):
         if self.state!="0":
             return
-        if not self.attachment and not self.url_address:
+        if  len(self.attachment_ids)==0 and not self.url_address:
             raise ValidationError(u'附件或链接必须填写一个')
 
         if self.secret_person:
@@ -196,7 +211,7 @@ class dtdream_foreign(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-            if menu == u"与我相关":
+            if menu == u"我相关的":
                 uid = self._context.get('uid', '')
                 domain = expression.AND([['|', '|', '|', ('applicant.user_id', '=', uid), ('create_uid', '=', uid),
                                           ('current_approve.user_id', '=', uid), ('approves.user_id', '=', uid)],
@@ -211,7 +226,7 @@ class dtdream_foreign(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-            if menu == u"与我相关":
+            if menu == u"我相关的":
                 uid = self._context.get('uid', '')
                 domain = expression.AND([['|', '|', '|', ('applicant.user_id', '=', uid), ('create_uid', '=', uid),
                                               ('current_approve.user_id', '=', uid), ('approves.user_id', '=', uid)],

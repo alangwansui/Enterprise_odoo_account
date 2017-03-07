@@ -20,6 +20,7 @@
               <sheet>
                 <group string="需求信息">
                   <group>
+                      <field name="code" readonly="True" attrs="{'invisible':[('code','=',False)]}"/>
                       <field name="name" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
                       <field name="expect_complete_time" required="True" attrs="{'readonly':['|','&amp;',('state','!=','0'),('is_manage','=',False),'&amp;','&amp;',('state','=','0'),('is_creator','=',False),'&amp;',('is_applicant','=',False),('is_manage','=',False)]}"/>
                       <field name="is_applicant" invisible="True"/>
@@ -62,7 +63,7 @@
                                 <field name="require_comments" attrs="{'readonly':[('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="analyst" attrs="{'readonly':[('is_manage','=',False)],'invisible':[('flow','=','0')]}" domain="[('department_id.name','=',u'信息技术部')]"/>
+                                <field name="analyst" attrs="{'readonly':[('is_manage','=',False)],'invisible':[('flow','=','0')]}"/>
                             </group>
                         </group>
                     </page>
@@ -70,7 +71,7 @@
                     <page string="IT方案分析" attrs="{'invisible':['|',('state','in',('0','1','2')),('flow','=', '0')]}" class="manage_page">
                         <group>
                             <group attrs="{'invisible':[('state','in',('4','5','6')),('entrusted_analyst','=',False)]}">
-                                <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息技术部')]"/>
+                                <field name="entrusted_analyst" attrs="{'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_entrusted_analyst','=',True),'&amp;',('state','=','3'),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
                             </group>
                             <group colspan="12" attrs="{'invisible':[('entrusted_analyst','!=',False),('is_analyst','=',True)]}">
                                 <field name="conclude" attrs="{'required':['|','&amp;',('is_entrusted_analyst','=',True),('flow','=','1'),'&amp;',('state','not in', ('0','1','2')),'&amp;',('entrusted_analyst','=',False),('flow','=','1')],'readonly':['|','&amp;',('state','!=','3'),('is_manage','=',False),'|','&amp;','&amp;',('state','=','3'),('entrusted_analyst','=',False),'&amp;',('is_analyst','=',False),('is_manage','=',False),'&amp;','&amp;',('state','=','3'),('entrusted_analyst','!=',False),'&amp;',('is_entrusted_analyst','=',False),('is_manage','=',False)]}"/>
@@ -90,7 +91,7 @@
                                 <field name="plan_comments" attrs="{'readonly':[('is_manage','=',False)]}"/>
                             </group>
                             <group>
-                                <field name="practice_man" attrs="{'readonly':[('is_manage','=',False)]}" domain="[('department_id.name','=',u'信息技术部')]"/>
+                                <field name="practice_man" attrs="{'readonly':[('is_manage','=',False)]}"/>
                             </group>
                         </group>
                     </page>
@@ -125,6 +126,7 @@
         <field name="model">dtdream.demand.app</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="code"/>
                 <field name="name"/>
                 <field name="department"/>
                 <field name="app_name"/>
@@ -197,6 +199,30 @@
             'context':context,
             }
         </field>
+    </record>
+
+    <record id="sequence_demand_app" model="ir.sequence">
+        <field name="name">需求编号</field>
+        <field name="code">dtdream.demand.app</field>
+        <field name="prefix">XQ%(year)s%(month)s%(day)s</field>
+        <field eval="1" name="number_next"/>
+        <field eval="1" name="number_increment"/>
+        <field eval="True" name="use_date_range"/>
+        <field eval="False" name="company_id"/>
+        <field name="padding">3</field>
+    </record>
+
+    <record id="view_demand_app_filter" model="ir.ui.view">
+        <field name="name">应用开发及优化</field>
+        <field name="model">dtdream.demand.app</field>
+        <field name="arch" type="xml">
+            <search string="check">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="app_name"/>
+                <field name="description"/>
+            </search>
+         </field>
     </record>
 
     <record id="act_dtdream_demand_manage" model="ir.actions.act_window">

@@ -17,14 +17,15 @@
                 <button name="%(act_report_wizard)d" string="驳回" type="action" class="oe_highlight"
                 attrs="{'invisible':['|','|',('is_newest_record','=',False),('is_current','=',False),('state','not in',('2','3','5','6','7','8','9'))]}"/>
                 <field name="state"  widget="statusbar"
-                       statusbar_visible="0,done"/>
+                       statusbar_visible="0,2,6,7,9,done"/>
             </header>
           <sheet>
             <div class="label label-success pull-right" attrs="{'invisible': [('is_newest_record', '=', False)]}">有效</div>
             <div class="label label-danger pull-right" attrs="{'invisible': [('is_newest_record', '=', True)]}">无效</div>
             <group>
               <group>
-                <field name="is_bohui" invisible="True"/>
+                <field name="is_banshichu_bohui" invisible="True"/>
+                <field name="is_quyu_zongcai_bohui" invisible="True"/>
                 <field name="if_gongkan" invisible="True"/>
                 <field name="has_import_button" invisible="True"/>
                 <field name="is_approve_repeat" invisible="True"/>
@@ -76,7 +77,7 @@
                         dtdream_sale.group_dtdream_management_vice_manager,
                         dtdream_sale.group_dtdream_market_manager,
                         dtdream_sale.group_dtdream_company_manager,
-                        dtdream_sale.group_dtdream_marketing_department_manager" attrs="{'invisible':[('state','not in',('7','9')),('is_bohui','=',False)]}"/>
+                        dtdream_sale.group_dtdream_marketing_department_manager" attrs="{'invisible':[('state','not in',('7','9','done')),('is_quyu_zongcai_bohui','=',False)]}"/>
               </group>
               <group>
                 <field name="partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
@@ -87,21 +88,14 @@
                 <field name="supply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="apply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="total_zhuren_price" readonly="1"
-                       groups="dtdream_sale.group_dtdream_sale_office_manager,
-                        dtdream_sale.group_dtdream_system_manager,
-                        dtdream_sale.group_dtdream_market_manager,
-                        dtdream_sale.group_dtdream_marketing_department_manager,
-                        dtdream_sale.group_dtdream_management_manager,
-                        dtdream_sale.group_dtdream_management_vice_manager,
-                        dtdream_sale.group_dtdream_company_manager,
-                        dtdream_sale.group_dtdream_sale_high_manager" attrs="{'invisible':[('state','not in',('6','7','9')),('is_bohui','=',False)]}"/>
+                       groups="dtdream_sale.group_dtdream_sale_office_manager"/>
                 <field name="total_sale_price" readonly="1"
                        groups="dtdream_sale.group_dtdream_management_manager,
                         dtdream_sale.group_dtdream_market_manager,
                         dtdream_sale.group_dtdream_marketing_department_manager,
                         dtdream_sale.group_dtdream_management_vice_manager,
                         dtdream_sale.group_dtdream_company_manager,
-                        dtdream_sale.group_dtdream_sale_high_manager"  attrs="{'invisible':[('state','not in',('7','9')),('is_bohui','=',False)]}"/>
+                        dtdream_sale.group_dtdream_sale_high_manager"  attrs="{'invisible':[('state','not in',('7','9','done')),('is_quyu_zongcai_bohui','=',False)]}"/>
               </group>
             </group>
               <field name="chengben_detail" readonly="1"
@@ -109,7 +103,7 @@
                         dtdream_sale.group_dtdream_management_vice_manager,
                         dtdream_sale.group_dtdream_market_manager,
                         dtdream_sale.group_dtdream_company_manager,
-                        dtdream_sale.group_dtdream_marketing_department_manager" attrs="{'invisible':[('state','not in',('7','9')),('is_bohui','=',False)]}">
+                        dtdream_sale.group_dtdream_marketing_department_manager" attrs="{'invisible':[('state','not in',('7','9','done')),('is_quyu_zongcai_bohui','=',False)]}">
                   <tree>
                       <field name="pro_source"/>
                       <field name="pro_cost_price"/>

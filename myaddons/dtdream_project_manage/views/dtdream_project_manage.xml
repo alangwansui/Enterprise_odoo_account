@@ -1,0 +1,323 @@
+<openerp>
+  <data>
+
+    <record id="view_dtdream_project_manage_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.manage.form</field>
+        <field name="model">dtdream.project.manage</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state_y"  widget="statusbar" statusbar_visible="0,1,2,3,4,99" attrs="{'invisible':[('yunwei','=','0')]}"/>
+                    <field name="state_n"  widget="statusbar" statusbar_visible="0,1,2,3,99" attrs="{'invisible':['|',('yunwei','=','1'),('yunwei','=',False)]}"/>
+                </header>
+
+                <sheet>
+                    <group string="项目基本信息">
+                        <group>
+                          <field name="code" required="True"/>
+                          <field name="name" required="True"/>
+                          <field name="product_manage" required="True"/>
+                          <field name="project_leval"/>
+                          <field name="project_manage"/>
+                          <field name="contract" required="True"/>
+                        </group>
+                        <group>
+                          <field name="customer" required="True"/>
+                          <field name="customer_manage" required="True"/>
+                          <field name="pay_way" required="True"/>
+                          <field name="office" required="True"/>
+                          <field name="sys_department" required="True"/>
+                          <field name="yunwei" required="True"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                          <page string="项目负责人">
+                              <field name="role">
+                                  <tree editable="bottom" create="0" delete="0">
+                                      <field name="name" readonly="True"/>
+                                      <field name="state" invisible="True"/>
+                                      <field name="required" invisible="True"/>
+                                      <field name="leader" attrs="{'required':[('required','=','1'),('state','=','11')]}" options="{'no_create': True, 'no_open': True}"/>
+                                      <field name="leader_history" widget="many2many_tags" options="{'no_create': True,'no_open': True}"/>
+                                  </tree>
+
+                                  <kanban class="o_res_partner_kanban" >
+                                      <field name="name"/>
+                                      <field name="leader"/>
+                                      <field name="leader_history"/>
+                                      <templates>
+                                          <t t-name="kanban-box">
+                                          <div class="oe_kanban_global_click">
+                                               <div class="o_kanban_image">
+                                                    <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                </div>
+                                              <div class="oe_kanban_details">
+                                                  <div name="tags"/>
+                                                        <div style="overflow:hidden;">
+                                                            <ul style="float:left; width:50%">
+                                                                <li ><strong>角色名称:</strong> <field name="name"/></li>
+                                                                <li ><strong>负责人:</strong> <field name="leader" options="{'no_create': True, 'no_open': True}"/></li>
+                                                            </ul>
+                                                            <ul style="float:right; width:50%">
+                                                                <li><strong>历史负责人列表:</strong> <field name="leader_history" widget="many2many_tags" options="{'no_create': True,'no_open': True}"/></li>
+                                                            </ul>
+                                                        </div>
+                                                  <div name="tags"/>
+                                              </div>
+                                          </div>
+                                          </t>
+                                      </templates>
+                                  </kanban>
+
+                              </field>
+                          </page>
+
+                          <page string="项目订单信息">
+                              <field name="order">
+                                  <tree editable="bottom">
+                                      <field name="code" required="True"/>
+                                      <field name="order_type" required="True"/>
+                                      <field name="bom" required="True"/>
+                                      <field name="version" required="True"/>
+                                      <field name="product_type" required="True"/>
+                                      <field name="product_des" required="True"/>
+                                      <field name="company" required="True"/>
+                                      <field name="vender" required="True"/>
+                                      <field name="num"/>
+                                  </tree>
+
+                                  <kanban class="o_res_partner_kanban" >
+                                      <field name="code"/>
+                                      <field name="order_type"/>
+                                      <field name="bom"/>
+                                      <field name="version"/>
+                                      <field name="product_type"/>
+                                      <field name="product_des"/>
+                                      <field name="company"/>
+                                      <field name="vender"/>
+                                      <field name="num"/>
+                                      <templates>
+                                          <t t-name="kanban-box">
+                                          <div class="oe_kanban_global_click ">
+                                               <div class="o_kanban_image">
+                                                    <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                </div>
+                                              <div class="oe_kanban_details">
+                                                  <div name="tags"/>
+                                                        <div style="overflow:hidden;">
+                                                            <ul style="float:left; width:50%">
+                                                                <li ><strong>订单编号:</strong> <field name="code" /></li>
+                                                                <li > <strong>订单类型:</strong><field name="order_type" /></li>
+                                                                <li ><strong>BOM:</strong> <field name="bom" /></li>
+                                                                <li > <strong>型号:</strong><field name="version"/></li>
+                                                            </ul>
+                                                            <ul style="float:right; width:50%">
+                                                                <li><strong>产品类别:</strong> <field name="product_type"/></li>
+                                                                <li><strong>单位:</strong> <field name="company"/></li>
+                                                                <li><strong>生产厂家:</strong> <field name="vender"/></li>
+                                                                <li><strong>数量:</strong> <field name="num"/></li>
+                                                            </ul>
+                                                        </div>
+
+                                                  <div name="tags"/>
+                                              </div>
+                                          </div>
+                                          </t>
+                                      </templates>
+                                  </kanban>
+                              </field>
+                          </page>
+
+                          <page string="项目阶段点">
+                              <field name="stage">
+                                  <tree editable="bottom" create="0">
+                                      <field name="name" readonly="True"/>
+                                      <field name="plan_start_time"/>
+                                      <field name="plan_end_time"/>
+                                      <field name="fact_start_time"/>
+                                      <field name="fact_end_time"/>
+                                  </tree>
+
+                                  <kanban class="o_res_partner_kanban" >
+                                      <field name="name"/>
+                                      <field name="plan_start_time"/>
+                                      <field name="plan_end_time"/>
+                                      <field name="fact_start_time"/>
+                                      <field name="fact_end_time"/>
+                                      <templates>
+                                          <t t-name="kanban-box">
+                                          <div class="oe_kanban_global_click ">
+                                               <div class="o_kanban_image">
+                                                    <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                </div>
+                                              <div class="oe_kanban_details">
+                                                  <div name="tags"/>
+                                                        <div style="overflow:hidden;">
+                                                            <ul style="float:left; width:50%">
+                                                                <li ><strong>阶段名称:</strong> <field name="name" /></li>
+                                                                <li > <strong>计划开始时间:</strong><field name="plan_start_time" /></li>
+                                                                <li ><strong>计划结束时间:</strong> <field name="plan_end_time" /></li>
+                                                            </ul>
+                                                            <ul style="float:right; width:50%">
+                                                                <li><strong>实际开始时间:</strong> <field name="fact_start_time"/></li>
+                                                                <li><strong>实际结束时间:</strong> <field name="fact_end_time"/></li>
+                                                            </ul>
+                                                        </div>
+                                                  <div name="tags"/>
+                                              </div>
+                                          </div>
+                                          </t>
+                                      </templates>
+                                  </kanban>
+
+                              </field>
+                          </page>
+
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_manage_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.manage.tree</field>
+        <field name="model">dtdream.project.manage</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="project_manage"/>
+                <field name="project_leval"/>
+                <field name="contract"/>
+                <field name="yunwei"/>
+                <field name="state_y"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_manage_kanban" model="ir.ui.view">
+        <field name="name">view.dtdream.project.manage.kanban</field>
+        <field name="model">dtdream.project.manage</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban" >
+                <field name="name"/>
+                <field name="code"/>
+                <field name="project_manage"/>
+                <field name="project_leval"/>
+                <field name="contract"/>
+                <field name="yunwei"/>
+                <templates>
+                    <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click ">
+                         <div class="o_kanban_image">
+                              <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                          </div>
+                        <div class="oe_kanban_details">
+                            <div name="tags"/>
+                                <h3><strong><field name="name" /></strong></h3>
+                                <div style="overflow:hidden;">
+                                    <ul style="float:left; width:55%">
+                                        <li><strong>项目编码:</strong> <field name="code"/></li>
+                                        <li><strong>项目等级:</strong> <field name="project_leval"/></li>
+                                        <li><strong>是否需要转运维:</strong> <field name="yunwei"/></li>
+                                    </ul>
+                                    <ul style="float:right; width:45%">
+                                        <li><strong>项目经理:</strong> <field name="project_manage"/></li>
+                                        <li><strong>合同签订:</strong> <field name="contract"/></li>
+                                    </ul>
+                                </div>
+                        <div name="tags"/>
+                        </div>
+                    </div>
+                    </t>
+                </templates>
+        </kanban>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_manage_filter" model="ir.ui.view">
+        <field name="name">dtdream_project_manage</field>
+        <field name="model">dtdream.project.manage</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+            </search>
+         </field>
+    </record>
+
+    <record id="act_dtdream_project_apply" model="ir.actions.act_window">
+        <field name="name">我的申请</field>
+        <field name="res_model">dtdream.project.manage</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[]</field>
+    </record>
+
+    <record id="act_dtdream_project_approve" model="ir.actions.act_window">
+        <field name="name">待我审批</field>
+        <field name="res_model">dtdream.project.manage</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[]</field>
+    </record>
+
+    <record id="act_dtdream_project_all" model="ir.actions.act_window">
+        <field name="name">所有单据</field>
+        <field name="res_model">dtdream.project.manage</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[]</field>
+    </record>
+
+    <record id="view_dtdream_project_stage_setting_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.stage.setting.tree</field>
+        <field name="model">dtdream.project.stage.setting</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="order"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_stage_setting_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.stage.setting.form</field>
+        <field name="model">dtdream.project.stage.setting</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="True"/>
+                        </group>
+                        <group>
+                            <field name="order" required="True"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_dtdream_project_stage_setting" model="ir.actions.act_window">
+        <field name="name">项目阶段点配置</field>
+        <field name="res_model">dtdream.project.stage.setting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="项目管理" id="menu_dtdream_project_manage_root" icon="fa-user" web_icon="dtdream_assets_management,static/description/icon.jpg"/>
+    <menuitem name="项目管理" id="menu_dtdream_project_manage" parent="menu_dtdream_project_manage_root" sequence="10"/>
+    <menuitem name="我的申请" id="menu_dtdream_project_apply" parent="menu_dtdream_project_manage" action="act_dtdream_project_apply" sequence="8"/>
+    <menuitem name="待我审批" id="menu_dtdream_project_approve" parent="menu_dtdream_project_manage" action="act_dtdream_project_approve" sequence="10"/>
+    <menuitem name="所有单据" id="menu_dtdream_project_all" parent="menu_dtdream_project_manage" action="act_dtdream_project_all" sequence="12"/>
+    <menuitem name="配置" id="menu_dtdream_project_manage_setting" parent="menu_dtdream_project_manage_root" sequence="12"/>
+    <menuitem name="项目阶段点配置" id="menu_dtdream_project_stage_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_stage_setting" sequence="12"/>
+  </data>
+</openerp>

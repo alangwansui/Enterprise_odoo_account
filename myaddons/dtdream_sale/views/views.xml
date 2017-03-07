@@ -415,32 +415,32 @@
                         <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                     </button>
                 </button>
-                <!--<button name="toggle_active" position="before">-->
-                    <!--<button name="%(action_contract_fee)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
-                          <!--<div class="o_stat_info">-->
-                              <!--<field name="sum_of_contract_fee" class="o_stat_value"/>-->
-                              <!--<span class="o_stat_text">合同额(万元)</span>-->
-                          <!--</div>-->
-                    <!--</button>-->
-                    <!--<button name="%(action_cash_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
-                          <!--<div class="o_stat_info">-->
-                              <!--<field name="sum_of_cash_income" class="o_stat_value"/>-->
-                              <!--<span class="o_stat_text">现金收入(万元)</span>-->
-                          <!--</div>-->
-                    <!--</button>-->
-                    <!--<button name="%(action_gaap_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
-                          <!--<div class="o_stat_info">-->
-                              <!--<field name="sum_of_gaap_income" class="o_stat_value"/>-->
-                              <!--<span class="o_stat_text">GAAP收入(万元)</span>-->
-                          <!--</div>-->
-                    <!--</button>-->
-                    <!--<button name="%(action_fee_pay)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">-->
-                          <!--<div class="o_stat_info">-->
-                              <!--<field name="sum_of_fee_pay" class="o_stat_value"/>-->
-                              <!--<span class="o_stat_text">费用支出(万元)</span>-->
-                          <!--</div>-->
-                    <!--</button>-->
-                <!--</button>-->
+                <button name="toggle_active" position="before">
+                    <button name="%(action_contract_fee)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_contract_fee" class="o_stat_value"/>
+                              <span class="o_stat_text">合同额(万元)</span>
+                          </div>
+                    </button>
+                    <button name="%(action_cash_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_cash_income" class="o_stat_value"/>
+                              <span class="o_stat_text">现金收入(万元)</span>
+                          </div>
+                    </button>
+                    <button name="%(action_gaap_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_gaap_income" class="o_stat_value"/>
+                              <span class="o_stat_text">GAAP收入(万元)</span>
+                          </div>
+                    </button>
+                    <button name="%(action_fee_pay)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_fee_pay" class="o_stat_value"/>
+                              <span class="o_stat_text">费用支出(万元)</span>
+                          </div>
+                    </button>
+                </button>
                 <field name="partner_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -1330,6 +1330,8 @@
             id="base.menu_base_partner"
             web_icon="sale,static/description/icon.png"
             groups="group_dtdream_sale_salesman_all_leads,group_dtdream_sale_salesman,group_dtdream_sale_manager,group_dtdream_sale_read,group_dtdream_sale_rep,group_dtdream_sale_office_manager,group_dtdream_office_product_vice_manager,group_dtdream_headquarters_server_manager,group_dtdream_server_manager,group_dtdream_marketing_department_manager,group_dtdream_marketing_department_vice_manager,group_dtdream_marketing_department_business_interface_person,group_dtdream_system_manager,group_dtdream_system_vice_manager,group_dtdream_system_product_vice_manager,group_dtdream_market_manager,group_dtdream_headquarters_product_manager,group_dtdream_product_director,group_dtdream_management_manager,group_dtdream_management_vice_manager,group_dtdream_management_product_vice_manager,group_dtdream_company_manager,group_dtdream_devolopement_manager,group_dtdream_sale_high_manager" sequence="6"/>
+
+
 
       //仪表盘
       <menuitem id="sales_team.menu_sales_team_act" action="sales_team.crm_team_salesteams_act" sequence="1" parent="base.menu_base_partner" name="Dashboard" groups="group_menu_hide"/>

@@ -31,6 +31,7 @@
         'security/ir.model.access.csv',
         'sale_sequence.xml',
         'views/crm_lead_won_view.xml',
+        'views/incomes_contract_fee.xml',
         'views/views.xml',
         'views/industry_office.xml',
         'views/templates.xml',

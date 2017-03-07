@@ -2,7 +2,7 @@
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from lxml import etree
-from datetime import datetime
+from datetime import datetime,timedelta
 
 #例外
 class dtdream_execption(models.Model):
@@ -268,7 +268,7 @@ class dtdream_execption(models.Model):
                 department = app.name.department.name + '/' + app.name.department_2.name
             else:
                 department = app.name.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -312,7 +312,7 @@ class dtdream_execption(models.Model):
                 department = app.name.department.name + '/' + app.name.department_2.name
             else:
                 department = app.name.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -345,7 +345,7 @@ class dtdream_execption(models.Model):
                 department = app.name.department.name + '/' + app.name.department_2.name
             else:
                 department = app.name.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:

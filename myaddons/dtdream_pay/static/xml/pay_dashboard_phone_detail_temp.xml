@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_pay.dashboard_detailphoneView">
+        <div class="salaryResult">
+            <t t-foreach="lists" t-as="list">
+            <h1>收入汇总表</h1>
+            <ul class="list-group queryData">
+                <li class="list-group-item">
+                    <p class="pull-left titleYM"><t t-esc="faxinyue"/></p>
+                    <a class="qyDetail">
+                        <span class="qyText phone_back">返回</span>
+                        <span class="glyphicon glyphicon-menu-right"/>
+                    </a>
+                </li>
+            </ul>
+            <h2>工资项</h2>
+            <ul class="list-group queryData detailData">
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">基本工资</p>
+                        <p class="pull-right"><t t-esc="basic_wage"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">补发上月基本工资和岗位津贴</p>
+                        <p class="pull-right"><t t-esc="bfsyjbgzhgwjt"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">事假扣款</p>
+                        <p class="pull-right"><t t-esc="shijiakoukuang"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">病假扣款</p>
+                        <p class="pull-right"><t t-esc="bingjiakoukuan"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">产假扣款</p>
+                        <p class="pull-right"><t t-esc="chanjiakoukuan"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">岗位津贴</p>
+                        <p class="pull-right"><t t-esc="gangweijintie"/></p>
+                    </div>
+                </li>
+            </ul>
+            <h2>其他发放项</h2>
+            <ul class="list-group queryData detailData">
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">上月交通伙食补助</p>
+                        <p class="pull-right"><t t-esc="shangyuehuoshibuzhu"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">上月市内交通报销转补助</p>
+                        <p class="pull-right"><t t-esc="sysnjtbxzbz"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">上月外派津贴</p>
+                        <p class="pull-right"><t t-esc="shangyuewaipaijintie"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">司机加班费</p>
+                        <p class="pull-right"><t t-esc="sijijiabanfei"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">专利奖</p>
+                        <p class="pull-right"><t t-esc="zhuanlijiang"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">内部推荐奖</p>
+                        <p class="pull-right"><t t-esc="neibutuijianjiang"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">信息安全奖</p>
+                        <p class="pull-right"><t t-esc="xinxianquanjiang"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">年休假兑现</p>
+                        <p class="pull-right"><t t-esc="nianxiujiaduixian"/></p>
+                    </div>
+                </li>
+            </ul>
+            <h2>扣社保公积金</h2>
+            <ul class="list-group queryData detailData">
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣个人养老险</p>
+                        <p class="pull-right"><t t-esc="kouyanglaoxian"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣个人医疗险</p>
+                        <p class="pull-right"><t t-esc="kouyiliaoxian"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣个人失业险</p>
+                        <p class="pull-right"><t t-esc="koushiyexian"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣个人住房公积金</p>
+                        <p class="pull-right"><t t-esc="kougongjijin"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhidedif">
+                        <p class="pull-left">补扣个人养老险</p>
+                        <p class="pull-right"><t t-esc="bukouyanglaoxian"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhidedif">
+                        <p class="pull-left">补扣个人医疗险</p>
+                        <p class="pull-right"><t t-esc="bukouyiliaoxian"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhidedif">
+                        <p class="pull-left">补扣个人失业险</p>
+                        <p class="pull-right"><t t-esc="bukoushiyexian"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhidedif">
+                        <p class="pull-left">补扣个人住房公积金</p>
+                        <p class="pull-right"><t t-esc="bugongjijin"/></p>
+                    </div>
+                </li>
+            </ul>
+            <h2>所得税及实发</h2>
+            <ul class="list-group queryData detailData">
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">税前收入</p>
+                        <p class="pull-right"><t t-esc="shuiqianshouru"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">扣个人所得税</p>
+                        <p class="pull-right"><t t-esc="kousuodeshui"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">税后代扣家属保险费</p>
+                        <p class="pull-right"><t t-esc="shuihoudaikoujiashubaoxianfei"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">税后代扣党费</p>
+                        <p class="pull-right"><t t-esc="shuihoudaikoudangfei"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn canhide">
+                        <p class="pull-left">税后代扣资产</p>
+                        <p class="pull-right"><t t-esc="shuihoudaikouzichan"/></p>
+                    </div>
+                </li>
+                <li class="list-group-item noPadding">
+                    <div class="listCtn">
+                        <p class="pull-left">实发收入</p>
+                        <p class="pull-right"><t t-esc="shifashouru"/></p>
+                    </div>
+                </li>
+            </ul>
+            </t>
+            <p class="footText">工资保密，请勿传播，多谢合作！</p>
+        </div>
+    </t>
+</templates>

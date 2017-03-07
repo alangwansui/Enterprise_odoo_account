@@ -10,6 +10,9 @@ var QWeb = core.qweb;
 
 var Main = Widget.extend({
         template: 'sidebar',
+        events:{
+            'click .panel': 'set_sidebar_effect'
+        },
         xls: {
             "销售":"sell",
             "产品":"product",
@@ -34,7 +37,38 @@ var Main = Widget.extend({
             "电子名片":"ecard",
             "资产管理":"assets",
 			"信息安全":"security",
-			"意见反馈":"feedback"
+			"意见反馈":"feedback",
+			"工资":"dtpay",
+            "项目管理": "project_manage"
+        },
+//        模块类别配置--导航条分类--5类：通用(general)、财务(financial)、HR、市场(market)、研发(RD)
+        classify:{
+            "合同评审":"general",
+            "应用":"general",
+            "设置":"general",
+            "公告":"general",
+            "电子名片":"general",
+            "意见反馈":"general",
+            "预算管理":"financial",
+            "专项审批":"financial",
+            "费用报销":"financial",
+            "资产管理":"financial",
+            "外出公干":"HR",
+            "绩效":"HR",
+            "出差":"HR",
+            "补助金管理":"HR",
+            "人力资源":"HR",
+            "休假":"HR",
+            "员工":"HR",
+            "工资":"HR",
+            "销售":"market",
+            "产品":"market",
+            "客户接待":"market",
+            "开票":"market",
+            "研发":"RD",
+            "IT需求管理":"RD",
+            "信息安全":"RD",
+            "项目管理": 'service'
         },
         init: function (parent) {
 //            this._super(parent);
@@ -79,10 +113,50 @@ var Main = Widget.extend({
                 });
         },
         render_data: function (info, $el) {
+            var self=this;
+
+            var general=[];
+            var financial=[];
+            var HR=[];
+            var market=[];
+            var rd=[];
+            var service=[];
 
             if (info) {
+                $.each(info,function(i,ele){
+                    var search=self.classify[ele.name];
+                    switch (search) {
+                        case "general":
+                            general.push(ele);
+                            break;
+                        case "financial":
+                            financial.push(ele);
+                            break;
+                        case "HR":
+                            HR.push(ele);
+                            break;
+                        case "market":
+                            market.push(ele);
+                            break;
+                        case "RD":
+                            rd.push(ele);
+                            break;
+                        case "service":
+                            service.push(ele);
+                            break;
+                        default:
+                            alert("孩砸，去前面代码看看模块类别配置对不对");
+                            break;
+                    }
+                });
                 var $info = $(QWeb.render('sidebar_info', {
-                    'model_sets': info
+                    'model_sets': info,
+                    'general_sets':general,
+                    'financial_sets':financial,
+                    'HR_sets':HR,
+                    'market_sets':market,
+                    'rd_sets':rd,
+                    'service_sets':service
                 }));
                 $el.append($info);
             }
@@ -93,7 +167,25 @@ var Main = Widget.extend({
         detach: function () {
             this.$el.detach();
         },
-
+        set_sidebar_effect: function(e){
+            var $target=$(e.target);
+            var $span=$target.find("span");
+            var $panel=$target.closest(".panel");
+            var $expand=$panel.find(".panel-collapse");
+            if(!$panel.hasClass("select")){
+                $panel.addClass("select").siblings(".select").removeClass("select");
+            }
+            if($expand.hasClass("in")){
+                if(!$span.hasClass("doicon-jiantouyou")){
+                    $span.removeClass("doicon-jiantouxia").addClass("doicon-jiantouyou");
+                }
+            }else{
+                if(!$span.hasClass("doicon-jiantouxia")){
+                    $span.removeClass("doicon-jiantouyou").addClass("doicon-jiantouxia");
+                    $panel.siblings(".panel").find(".doicon-jiantouxia").removeClass("doicon-jiantouxia").addClass("doicon-jiantouyou");
+                }
+            }
+        }
     });
 
 

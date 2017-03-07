@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="sale_assets_backend" name="dtdream_sale_data_report assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/dtdream_sale_data_report/static/src/css/marketing.css"/>
+                <script type="text/javascript"
+                        src="/dtdream_sale_data_report/static/src/js/dtdream_sale_data_report_dashboard.js"></script>
+            </xpath>
+        </template>
+
+        <record model="ir.actions.act_window" id="act_open_dtdream_sale_data_report">
+            <field name="name">销售数据报表</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dtdream.sale.data.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">dtdream_sale_data_report</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.ui.view" id="test_test">
+            <field name="name">test.test</field>
+            <field name="model">dtdream.sale.data.report</field>
+            <field name="arch" type="xml">
+                <dtdream_sale_data_report create="false"></dtdream_sale_data_report>
+            </field>
+        </record>
+
+        <menuitem id="dtdream_menu_business_report"
+                  name="销售数据报表"
+                  parent="base.menu_base_partner"
+                  sequence="1"
+                  action="act_open_dtdream_sale_data_report"/>
+
+    </data>
+</openerp>

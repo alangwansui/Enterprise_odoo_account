@@ -60,6 +60,8 @@
 
         'data/timingData.xml',
 
+        'import.xml',
+
     ],
      'qweb': [
         'views/rd_dashboard_templates.xml',

@@ -3,7 +3,7 @@ import openerp
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.osv import expression
-from datetime import datetime
+from datetime import datetime,timedelta
 import threading
 from openerp.api import Environment
 mutex = threading.Lock()
@@ -22,7 +22,7 @@ class dtdream_prod_appr(models.Model):
     department = fields.Many2one('hr.department', '部门', track_visibility='onchange', required=True)
     department_2 = fields.Many2one('hr.department', '二级部门', track_visibility='onchange')
     name = fields.Char('产品名称', required=True, track_visibility='onchange')
-    pro_PDT = fields.Many2one('dtdream.rd.pdtconfig','PDT')
+    pro_PDT = fields.Many2one('dtdream.rd.pdtconfig','PDT',track_visibility='onchange')
     state = fields.Selection([('state_00', '草稿'), ('state_01', '立项'), ('state_02', '总体设计'), ('state_03', '迭代开发'),
                               ('state_04', '验证发布'), ('state_06', '暂停'), ('state_07', '中止'), ('state_05', '完成')],'产品状态', readonly=True, default='state_00')
 
@@ -213,11 +213,12 @@ class dtdream_prod_appr(models.Model):
                 risk_state_change = process.risk_state_change()
                 risk_PDT_change = process.risk_PDT_change()
                 risk_plan_close_time_change = process.risk_plan_close_time_change()
+                risk_chance_avoid_measure = process.risk_chance_avoid_measure()
                 risk_chance_describe_change = process.risk_chance_describe_change()
                 risk_name_change = process.risk_name_change()
                 risk_description = process.name
-                ins = u"<p>风险：%s 变更信息</p>%s%s%s%s%s%s"% (risk_description,
-                                risk_name_change, risk_chance_describe_change, risk_plan_close_time_change,
+                ins = u"<p>风险：%s 变更信息</p>%s%s%s%s%s%s%s"% (risk_description,
+                                risk_name_change, risk_chance_describe_change, risk_chance_avoid_measure,risk_plan_close_time_change,
                                 risk_PDT_change, risk_state_change, risk_sort_state_change)
                 self.message_post(body=u"""%s""" % (ins))
                 process.update_old_ins()
@@ -896,7 +897,7 @@ class dtdream_prod_appr(models.Model):
                 department = app.department.name + '/' + app.department_2.name
             else:
                 department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -940,7 +941,7 @@ class dtdream_prod_appr(models.Model):
                 department = app.department.name + '/' + app.department_2.name
             else:
                 department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -973,7 +974,7 @@ class dtdream_prod_appr(models.Model):
                 department = app.department.name+'/'+app.department_2.name
             else:
                 department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:

@@ -19,7 +19,11 @@ class ReportWizard(models.TransientModel):
             current_report.write({'product_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
         else :
             current_report.write({'business_approveds':[(4,self.env['hr.employee'].search([('login','=',self.env.user.login)]).id)]})
-        current_report.write({'warn_text':"",'is_bohui':True})
+        if current_report.state == '6':
+            current_report.write({'is_banshichu_bohui':True})
+        if current_report.state in ('7','9'):
+            current_report.write({'is_quyu_zongcai_bohui':True})
+        current_report.write({'warn_text':""})
         current_report.signal_workflow('btn_reject')
 
 class ReportApproveWizard(models.TransientModel):

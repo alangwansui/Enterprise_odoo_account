@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.cron" id="send_mail_task_customer_reception">
+            <field name='name'>客户接待评价邮催</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="nextcall" eval="(DateTime.now().strftime('%Y-%m-%d %H:%M:%S'))[0:10] + ' 10:00:00'"/>
+            <field name="model">dtdream.customer.reception</field>
+            <field name="function">send_mail_interval</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</openerp>

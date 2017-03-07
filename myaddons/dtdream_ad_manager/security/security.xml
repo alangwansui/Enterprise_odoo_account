@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.module.category" id="module_ad_manager_group">
+            <field name="name">域信息管理</field>
+            <field name="description">域信息权限管理</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="group_ad_apply" model="res.groups">
+            <field name="name">域信息创建申请</field>
+            <field name="category_id" ref="module_ad_manager_group"/>
+        </record>
+
+        <record id="group_ad_implement" model="res.groups">
+            <field name="name">域信息申请实施</field>
+            <field name="category_id" ref="module_ad_manager_group"/>
+        </record>
+<!--
+        <record id="rule_group_apply_other" model="ir.rule">
+             <field name="name">非草稿只读权限</field>
+             <field name="model_id" ref="dtdream_ad_manager.model_dtdream_group_apply"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('group_ad_apply'))]"/>
+             <field name="domain_force">[('state', '!=', 'draft')]</field>
+        </record>
+
+         <record id="rule_group_change_draft" model="ir.rule">
+             <field name="name">草稿修改权限</field>
+             <field name="model_id" ref="dtdream_ad_manager.model_dtdream_change_apply"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="1"/>
+             <field name="perm_write" eval="1"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">[('state', '=', 'draft'),('apply.login', '=', user.login)]</field>
+        </record>
+
+        <record id="rule_group_change_other" model="ir.rule">
+             <field name="name">非草稿只读权限</field>
+             <field name="model_id" ref="dtdream_ad_manager.model_dtdream_change_apply"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">[('state', '!=', 'draft'),('apply.login', '=', user.login)]</field>
+        </record>
+
+        <record id="rule_group_approve_base" model="ir.rule">
+             <field name="name">审批群组权限</field>
+             <field name="model_id" ref="dtdream_ad_manager.model_dtdream_group_apply"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="1"/>
+             <field name="perm_write" eval="1"/>
+             <field name="perm_unlink" eval="1"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">[('approver.login', '=', user.login), ('state', '=', 'confirm')]</field>
+        </record>
+
+        <record id="rule_group_own_base" model="ir.rule">
+             <field name="name">查看群组权限</field>
+             <field name="model_id" ref="dtdream_ad_manager.model_dtdream_ad_group"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">[ ('users', '=', user.id)]</field>
+        </record>
+-->
+    </data>
+</openerp>

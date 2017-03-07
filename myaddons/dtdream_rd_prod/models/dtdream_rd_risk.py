@@ -11,6 +11,8 @@ class dtdream_rd_risk(models.Model):
     name_old = fields.Text('风险描述')
     chance_describe = fields.Text('机遇描述', required=True)
     chance_describe_old = fields.Text('机遇描述')
+    avoid_measure = fields.Text('规避措施', required=True)
+    avoid_measure_old = fields.Text('规避措施')
     plan_close_time = fields.Date("计划关闭日期")
     plan_close_time_old = fields.Date("计划关闭日期")
     PDT = fields.Many2one("hr.employee",'责任人', required=True)
@@ -24,11 +26,12 @@ class dtdream_rd_risk(models.Model):
     def is_risk_change(self):
         name_ins = self.name != self.name_old
         chance_describe_ins = self.chance_describe != self.chance_describe_old
+        avoid_measure_ins = self.avoid_measure != self.avoid_measure_old
         plan_close_time_ins = self.plan_close_time != self.plan_close_time_old
         PDT_ins = self.PDT != self.PDT_old
         risk_state_ins = self.risk_state != self.risk_state_old
         risk_sort_state_ins = self.risk_sort_state != self.risk_sort_state_old
-        return name_ins or chance_describe_ins or plan_close_time_ins or plan_close_time_ins or PDT_ins or risk_state_ins or risk_sort_state_ins
+        return name_ins or chance_describe_ins or avoid_measure_ins or plan_close_time_ins or plan_close_time_ins or PDT_ins or risk_state_ins or risk_sort_state_ins
 
     # 判断风险类别是否变更
     def risk_sort_state_change(self):
@@ -66,6 +69,15 @@ class dtdream_rd_risk(models.Model):
             plan_close_time_ins = u"<p>风险计划关闭日期：%s --> %s</p>" % (old, new)
         return plan_close_time_ins
 
+    # 判断规避措施是否变更
+    def risk_chance_avoid_measure(self):
+        old = self.avoid_measure_old
+        new = self.avoid_measure
+        avoid_measure_ins = ''
+        if new != old:
+            avoid_measure_ins = u"<p>规避措施：%s --> %s</p>" % (old, new)
+        return avoid_measure_ins
+
     # 判断机遇描述是否变更
     def risk_chance_describe_change(self):
         old = self.chance_describe_old
@@ -89,6 +101,7 @@ class dtdream_rd_risk(models.Model):
         self.write({'risk_state_old': self.risk_state.id})
         self.write({'name_old': self.name})
         self.write({'chance_describe_old': self.chance_describe})
+        self.write({'avoid_measure_old': self.avoid_measure})
         self.write({'plan_close_time_old': self.plan_close_time})
         self.write({'PDT_old': self.PDT.id})
         self.write({'risk_sort_state_old': self.risk_sort_state.id})

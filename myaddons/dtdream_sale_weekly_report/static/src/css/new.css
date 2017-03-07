@@ -48,13 +48,13 @@
 
 .dtdream_weekly_report_tree table td:nth-child(1){width:9%}
 .dtdream_weekly_report_tree table td:nth-child(2){width:9%}
-.dtdream_weekly_report_tree table td:nth-child(3){width:9%}
-.dtdream_weekly_report_tree table td:nth-child(4){width:9%}
-.dtdream_weekly_report_tree table td:nth-child(5){width:9%}
-.dtdream_weekly_report_tree table td:nth-child(6){width:9%}
+.dtdream_weekly_report_tree table td:nth-child(3){width:7%}
+.dtdream_weekly_report_tree table td:nth-child(4){width:7%}
+.dtdream_weekly_report_tree table td:nth-child(5){width:17%}
+.dtdream_weekly_report_tree table td:nth-child(6){width:12%}
 .dtdream_weekly_report_tree table td:nth-child(7){width:9%}
 .dtdream_weekly_report_tree table td:nth-child(8){width:10%}
-.dtdream_weekly_report_tree table td:nth-child(9){width:27%;word-break:break-all}
+.dtdream_weekly_report_tree table td:nth-child(9){width:20%;word-break:break-all}
 .dtdream_zhuguan_zongjie_tree table td:nth-child(1){width:30%;word-break:break-all}
 .dtdream_zhuguan_zongjie_tree table td:nth-child(2){width:35%;word-break:break-all}
 .dtdream_zhuguan_zongjie_tree table td:nth-child(3){width:35%;word-break:break-all}

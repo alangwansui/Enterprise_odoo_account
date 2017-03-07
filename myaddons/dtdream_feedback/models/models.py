@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from .. import config
-
+from datetime import datetime
+import pytz
 
 # 模块处理人的model
 class dtdream_feedback_configuration(models.Model):
@@ -9,6 +10,9 @@ class dtdream_feedback_configuration(models.Model):
 
     name = fields.Char(string=u'模块', required=True)
     manager = fields.Many2one('hr.employee', string=u'模块处理人', required=True)
+    _sql_constraints = {
+        ('feedback_name_is_unique', 'UNIQUE(name)', u'模块名称已存在')
+    }
 
 
 # 意见反馈的model
@@ -20,6 +24,8 @@ class dtdream_feedback_advice(models.Model):
     advice = fields.Text(string=u'反馈意见', required=True)
     adviceTime = fields.Datetime(string=u'反馈时间', required=True, readonly=True)
     name = fields.Many2one('dtdream.feedback.configuration', string=u'问题模块', required=True)
+    attachment = fields.Binary(string=u'附件', store=True)
+    attachment_name = fields.Char(string=u'附件名')
     answer = fields.Text(string=u'回复反馈')
     answerTime = fields.Datetime(string=u'回复时间', readonly=True)
     state = fields.Selection([
@@ -42,7 +48,7 @@ class dtdream_feedback_advice(models.Model):
 
     _defaults = {
         'adviceMan': lambda self, cr, uid, context: self.get_employee(cr, uid, context),
-        'adviceTime': fields.Datetime.now(),
+        'adviceTime': datetime.utcnow(),
         'state': 'draft',
         'name': lambda self, cr, uid, context: self.get_name(cr, uid, context)
     }
@@ -105,7 +111,7 @@ class dtdream_feedback_advice(models.Model):
         }).send()
 
     def feedback_answer(self, cr, uid, ids, context={}):
-        self.write(cr, uid, ids, {'answerTime': fields.Datetime.now()}, context=context)
+        self.write(cr, uid, ids, {'answerTime': datetime.utcnow()}, context=context)
         obj = self.pool.get('ir.ui.view')
         viewID = obj.search(cr, uid, [('name', '=', 'view.dtdream.feedback.answer.form')], context=context)
         return {
@@ -132,38 +138,41 @@ class dtdream_feedback_advice(models.Model):
     def wkf_confirm(self):
         self.write({'state': 'confirm'})
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                       <tr><th style="padding:10px">反馈人</th><th style="padding:10px">%s</th></tr>
-                                                       <tr><td style="padding:10px">反馈时间</td><td style="padding:10px">%s</td></tr>
-                                                       </table>""" % (self.adviceMan.nick_name, self.adviceTime))
+                                                       <tr><th style="padding:10px">反馈人</th><th style="padding:10px">问题模块</th></tr>
+                                                       <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                       </table>""" % (self.adviceMan.nick_name, self.name.name))
         self.confirm_send_email()
         self.send_to_manager()
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     # 工作流状态answer的处理
     @api.multi
     def wkf_answer(self):
         self.write({'state': 'answer'})
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                               <tr><th style="padding:10px">回复人</th><th style="padding:10px">%s</th></tr>
-                                               <tr><td style="padding:10px">回复时间</td><td style="padding:10px">%s</td></tr>
-                                               </table>""" % (self.name.manager.nick_name, self.answerTime))
+                                               <tr><th style="padding:10px">回复人</th><th style="padding:10px">问题模块</th></tr>
+                                               <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                               </table>""" % (self.name.manager.nick_name, self.name.name))
         self.answer_send_email()
 
-    #获取表中的所有问题模块
+    # 获取表中的所有问题模块
     @api.model
     def get_feedbackmodels_record(self):
         ids = self.env['dtdream.feedback.configuration'].sudo().search([])
         array = [(id.id, id.name) for id in ids]
         return array
 
-    #传入用户名、时间、问题模块、意见这四个参数
+    # 传入用户名、时间、问题模块、意见这四个参数
     @api.model
-    def add_feedback(self, adviceMan=None,adviceTime=None,feedback_advice=None,promblemModels_name=None):
+    def add_feedback(self, adviceMan=None, feedback_advice=None, promblemModels_name=None, attachment=None, attachment_name=None):
         em = self.env['hr.employee'].search([('user_id','=',adviceMan)])
         result = self.create({
             'adviceMan': em.id,
-            'adviceTime': adviceTime,
+            'adviceTime': datetime.utcnow(),
             'advice': feedback_advice,
-            'name': promblemModels_name
+            'name': promblemModels_name,
+            'attachment': attachment,
+            'attachment_name': attachment_name
         })
         if result.id:
             result.wkf_confirm()

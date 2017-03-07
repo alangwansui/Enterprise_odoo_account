@@ -1,0 +1,46 @@
+<openerp>
+    <data>
+        <template id="assets_backend" name="dtdream_pay assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/dtdream_pay/static/css/pay_dashboard/bootstrap-datetimepicker.css"/>
+
+                <link rel="stylesheet" href="/dtdream_pay/static/css/pay_dashboard/phoneVcode.css"/>
+                <link rel="stylesheet" href="/dtdream_pay/static/css/pay_dashboard/salary_detailsPC.css"/>
+                <link rel="stylesheet" href="/dtdream_pay/static/css/pay_dashboard/salary_style.css"/>
+                <link rel="stylesheet" href="/dtdream_pay/static/css/pay_dashboard/salaryDetailPC.css"/>
+                <link rel="stylesheet" href="/dtdream_pay/static/css/pay_dashboard/salaryResult.css"/>
+
+
+                <!--<script type="text/javascript" src="/dtdream_pay/static/js/js/bootstrap-datetimepicker.js"/>-->
+                <!--<script type="text/javascript" src="/dtdream_pay/static/js/js/bootstrap-datetimepicker.zh-CN.js"/>-->
+
+                <script type="text/javascript" src="/dtdream_pay/static/js/pay_dashboard/pay_dashboard.js"/>
+
+            </xpath>
+        </template>
+
+        <record id="dtdream_pay_dashboard_view_kanban" model="ir.ui.view">
+            <field name="name">dtdream.pay.dashboard</field>
+            <field name="model">dtdream.pay</field>
+            <field name="arch" type="xml">
+                <dtdream_pay_dashboard create="0">
+                </dtdream_pay_dashboard>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="act_open_dtdream_pay_dashboard_view">
+            <field name="name">工资查询</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dtdream.pay</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">dtdream_pay_dashboard</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+
+        <menuitem id="menu_finance_pay" name="工资"  icon="fa-user"/>
+        <menuitem id="menu_rd_dashboard" name="工资查询" parent="menu_finance_pay" sequence="50" action="act_open_dtdream_pay_dashboard_view"/>
+    </data>
+</openerp>

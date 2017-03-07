@@ -1,0 +1,192 @@
+<openerp>
+  <data>
+
+    <record id="view_dtdream_dinner_manage_form" model="ir.ui.view">
+        <field name="name">view.dtdream.dinner.management.form</field>
+        <field name="model">dtdream.dinner.management</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <div class="oe_button_box" name="button_box">
+                      <button class="oe_stat_button" type="object" name="act_dtdream_dinner_relation"
+                        icon="fa-edit">
+                          <field string="关联次数" name="use_times" widget="statinfo"/>
+                      </button>
+                  </div>
+
+                  <group string="基本信息">
+                      <group>
+                          <field name="name" required="True"/>
+                          <field name="parent_id" options="{'no_open': True}" required="True"/>
+                          <field name="addr" required="True"/>
+                      </group>
+                      <group>
+                          <field name="price" required="True"/>
+                          <field name="contact"/>
+                          <field name="tel" required="True"/>
+                      </group>
+                  </group>
+
+                  <group>
+                      <field name="info"/>
+                  </group>
+
+                  <group>
+                      <field name="mark"/>
+                  </group>
+
+                  <group string="餐饮信息">
+                      <notebook>
+                          <page string="特色菜">
+                              <field name="dinner">
+                                  <tree editable="bottom">
+                                      <field name="name" required="True"/>
+                                      <field name="price" required="True"/>
+                                      <field name="mark"/>
+                                  </tree>
+
+                                  <kanban class="o_res_partner_kanban" >
+                                        <field name="name"/>
+                                        <field name="price"/>
+                                        <field name="mark"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click ">
+                                                 <div class="o_kanban_image">
+                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                  </div>
+                                                <div class="oe_kanban_details">
+                                                    <div name="tags"/>
+                                                        <ul>
+                                                            <li ><strong>菜名:</strong> <field name="name" /></li>
+                                                            <li > <strong>价格:</strong><field name="price" /></li>
+                                                            <li ><strong>备注:</strong> <field name="mark" /></li>
+                                                        </ul>
+                                                    <div name="tags"/>
+                                                </div>
+                                            </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                              </field>
+                          </page>
+
+                      </notebook>
+                  </group>
+
+              </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_dinner_management_filter" model="ir.ui.view">
+        <field name="name">dtdream.dinner.management.filter</field>
+        <field name="model">dtdream.dinner.management</field>
+        <field name="arch" type="xml">
+            <search string="Search">
+                <field name="name"/>
+                <field name="parent_id"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="view_dtdream_dinner_management_kanban" model="ir.ui.view">
+        <field name="name">view.dtdream.dinner.management.kanban</field>
+        <field name="model">dtdream.dinner.management</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban" >
+              <field name="name"/>
+              <field name="parent_id"/>
+              <field name="contact"/>
+              <field name="tel"/>
+              <field name="use_times"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <h3><strong><field name="name" /></strong></h3>
+                                    <div style="overflow:hidden;">
+                                        <ul style="float:left; width:45%; height:40px; margin-bottom:0px;">
+                                            <li ><strong>关联次数:</strong> <field name="use_times"/></li>
+                                            <li ><strong>联系人:</strong> <field name="contact" /></li>
+                                        </ul>
+                                        <ul style="float:right; width:55%;height:40px; margin-bottom:0px;">
+                                            <li ><strong>区域:</strong> <field name="parent_id" /></li>
+                                        </ul>
+                                        <ul style="float:left;margin-top:6px">
+                                            <li ><strong>电话:</strong> <field name="tel" /></li>
+                                        </ul>
+                                    </div>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+
+    <record id="view_dtdream_dinner_zone_form" model="ir.ui.view">
+        <field name="name">view.dtdream.dinner.zone.form</field>
+        <field name="model">dtdream.dinner.zone</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="name" required="True"/>
+                      </group>
+                      <group/>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_special_dishes_form" model="ir.ui.view">
+        <field name="name">view.dtdream.special.dishes.form</field>
+        <field name="model">dtdream.special.dishes</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+               </header>
+              <sheet>
+                  <group>
+                      <group>
+                          <field name="name" required="True"/>
+                      </group>
+                      <group>
+                          <field name="price"/>
+                      </group>
+                      <group>
+                          <field name="mark"/>
+                      </group>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_dtdream_dinner_zone_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.dinner.zone.tree</field>
+        <field name="model">dtdream.dinner.zone</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

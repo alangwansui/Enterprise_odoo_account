@@ -67,37 +67,23 @@ var Related = Widget.extend({
     },
     search:function(){
         $('.o_user_search').html('');
-        var full_name = $('.o_full_name').val().trim();
-        var nick_name = $('.o_nick_name').val().trim();
-        var job_number = $('.o_job_number').val().trim();
-        var condition = ""
-        if ((full_name == undefined || full_name == "")
-            && (nick_name == undefined || nick_name == "")
-            && (job_number == undefined || job_number == "") ){
+        var condition = [];
+        var input_search_text=$('.o_input_text').val().trim();
+        if(input_search_text == undefined ||　input_search_text == ""){
             return;
         }
-        condition = []
-        if (full_name){
-            condition.push(['full_name', '=', full_name]);
-        }
-        if (nick_name){
-            condition.push(['nick_name', '=', nick_name]);
-        }
-        if (job_number){
-            condition.push(['job_number', '=', job_number]);
-        }
+        condition.push('|', '|', ['full_name', '=', input_search_text], ['nick_name', '=', input_search_text], ['job_number', '=', input_search_text]);
         new Model('hr.employee')
             .query(['full_name', 'nick_name', 'job_number', 'work_email', 'mobile_phone','department_id'])
             .filter(condition)
             .all({'timeout': 3000, 'shadow': true})
             .then(function (result) {
-                    var $info = $(QWeb.render('user_search', {
-                        'users': result,
-                        'result': result.length
-                    }));
-                    $info.appendTo('.o_user_search');
-                }
-            );
+                var $info = $(QWeb.render('user_search', {
+                'users': result,
+                'result': result.length
+                }));
+                $info.appendTo('.o_user_search');
+            });
     },
     teasing:function(ev){
         ev.preventDefault();
@@ -116,10 +102,6 @@ var Related = Widget.extend({
                     '<div class=col-sm-6><input type=text class=form-control id=feedback_user readonly></div>',
                 '</div>',
                 '<div class=\'form-group margin-layer\'>',
-                    '<label for=feedback_date class=\'col-sm-3 control-label\'>时间</label>',
-                    '<div class=col-sm-6><input type=text class=form-control id=feedback_date  readonly></div>',
-                '</div>',
-                '<div class=\'form-group margin-layer\'>',
                     '<label for=feedbackPrmModels class=\'col-sm-3 control-label\'>问题模块</label>',
                     '<div class=col-sm-6>',
                         '<select id=feedbackPrmModels class=form-control  placeholder=问题模块>',
@@ -133,6 +115,16 @@ var Related = Widget.extend({
                     '</div>',
                 '</div>',
                 '<div class=\'form-group margin-layer\'>',
+                    '<label for=feedback_file class=\'col-sm-3 control-label\'>附件</label>',
+                    '<div class=col-sm-3 style=\'height:34px;padding-left:0;\'>',
+                        '<button type=button class=\'form-control feedback_file_btn\' id=feedback_file>上传附件</button>',
+                        '<input type=file class=\'form-control feedback_file_input_btn\' style=\'display:block;\' id=feedback_file_input>',
+                    '</div>',
+                    '<div class=col-sm-3>',
+                        '<input type=text class=\'form-control\' id=feedback_file_text style=\'display:none;\'>',
+                    '</div>',
+                '</div>',
+                '<div class=\'form-group margin-layer\'>',
                     '<label for=feedbackAdvice class=\'col-sm-3 control-label\'>意见</label>',
                     '<div class=col-sm-6><textarea id=feedbackAdvice class=form-control rows=8 placeholder=\'请提出您的宝贵意见，以便我们改进，谢谢\'></textarea></div>',
                 '</div>',
@@ -142,8 +134,11 @@ var Related = Widget.extend({
                     '</div>',
                 '</div>',
                 '<div class=\'form-group margin-layer\'>',
-                    '<div class=col-sm-offset-3>',
+                    '<div class=\'col-sm-offset-3 col-sm-1\' style=\'padding-left:0;\'>',
                         '<button class=\'btn btn-default feedbackBtn\'>提交</button>',
+                    '</div>',
+                    '<div class=col-sm-3>',
+                        '<button class=\'btn btn-default feedbackCancelBtn\'>取消</button>',
                     '</div>',
                 '</div>',
         '</div>'
@@ -155,67 +150,83 @@ var Related = Widget.extend({
           area: ['980px', '560px'], //宽高
           content: html
         });
-        function getCurrentDate(){
-            var date = new Date();
-            var seperator1 = "-";
-            var seperator2 = ":";
-            var month = date.getMonth() + 1;
-            var strDate = date.getDate();
-            if (month >= 1 && month <= 9) {
-                month = "0" + month;
+
+        var input_file_attachment="";
+        $("#feedback_file_input").on('change',function(){
+
+            var file=document.getElementById("feedback_file_input").files[0];
+            var File_reader=new FileReader();
+            File_reader.onload = function(upload){
+                var data=upload.target.result;
+                data = data.split(',')[1];
+                input_file_attachment=data;
+            };
+            File_reader.readAsDataURL(file);
+
+            var fileAll=$(this).val();
+            var fileName="";
+            if(fileAll.indexOf("\\") == 0){
+                fileName=fileAll;
+            }else{
+                var fileArr=fileAll.split("\\");
+                fileName=fileArr[fileArr.length-1];
             }
-            if (strDate >= 0 && strDate <= 9) {
-                strDate = "0" + strDate;
-            }
-            var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-                                + " " + date.getHours() + seperator2 + date.getMinutes()
-                                + seperator2 + date.getSeconds();
-            return currentdate;
-        }
+            $("#feedback_file_text").css("display","block");
+            $("#feedback_file_text").val(fileName);
+        });
+
         var feedback_userId=this.uid;
         var feedbackUser=this.user;
-        var feedbackDate=getCurrentDate();
 
         $("#feedback_user").val(feedbackUser);
-        $("#feedback_date").val(feedbackDate);
         $(".form-control[readonly]").css("background-color","#fff");
         new Model('dtdream.feedback.advice')
                     .call('get_feedbackmodels_record', [{}]).then(function(result){
-                    console.log(result);
-                    var $html=$("#feedbackPrmModels").html();
-                    console.log($html);
-                    $.each(result,function(i,ele){
-                        console.log(ele[1]);
-                        $html+="<option value="+ele[0]+">"+ele[1]+"</option>"
+                        var $html=$("#feedbackPrmModels").html();
+                        $.each(result,function(i,ele){
+                            $html+="<option value="+ele[0]+">"+ele[1]+"</option>"
+                        });
+                        $("#feedbackPrmModels").html($html);
                     });
-                    $("#feedbackPrmModels").html($html);
-                });
         var $button = $(".feedbackBtn").on('click', function (e){
-        var data ={
-        "adviceMan":feedback_userId,
-        "adviceTime":$("#feedback_date").val(),
-		"promblemModels_name":$('#feedbackPrmModels').val(),
-		"feedback_advice":$('#feedbackAdvice').val()
-        }
-        console.log(data);
-        if(data.promblemModels_name == null){
-            $('.errorSelect').css("display","block");
-        }else if(data.feedback_advice == ""){
-            $('.errorAdvice').css("display","block");
-        }else{
-            new Model('dtdream.feedback.advice')
-                    .call('add_feedback', data).then(function(result){
-                        console.log(result);
-                        if(result){
-                            console.log("success!");
-                            $(".layui-layer-shade").remove();
-                            $(".layui-layer").remove();
-                        }else{
-                            alert('数据传入失败！');
-                        }
-                    });
-        }
-
+            var input_file="";
+            var input_file_name="";
+            console.log(input_file_attachment);
+            if($("#feedback_file_input").val() == ""){
+                input_file="";
+                input_file_name="";
+            }else{
+                input_file=input_file_attachment;
+                input_file_name=document.getElementById("feedback_file_input").files[0].name;
+            }
+            var data ={
+                "adviceMan":feedback_userId,
+                "promblemModels_name":$('#feedbackPrmModels').val(),
+                "feedback_advice":$('#feedbackAdvice').val(),
+                "attachment_name":input_file_name,
+                "attachment":input_file
+            }
+            console.log(data);
+            if(data.promblemModels_name == null){
+                $('.errorSelect').css("display","block");
+            }else if(data.feedback_advice == ""){
+                $('.errorAdvice').css("display","block");
+            }else{
+                new Model('dtdream.feedback.advice')
+                        .call('add_feedback', data).then(function(result){
+                            console.log(result);
+                            if(result){
+                                $(".layui-layer-shade").remove();
+                                $(".layui-layer").remove();
+                            }else{
+                                alert('数据传入失败！');
+                            }
+                        });
+            }
+        });
+        var $cancelbutton=$(".feedbackCancelBtn").on('click',function(){
+            $(".layui-layer-shade").remove();
+            $(".layui-layer").remove();
         });
     }
 
@@ -244,6 +255,7 @@ var Content = Widget.extend({
         this.render_dashboard(this);
         this.render_notice();
         this.render_event();
+        this.render_slider();
     },
     render_title: function(){
         var username = this.user;
@@ -464,7 +476,8 @@ var Content = Widget.extend({
             Menus.call('load_menus', [core.debug], {context: session.user_context}).
                 then( function(menu_data) {
                     new Model("dtdream.content.event.affairs")
-                    .call("get_all_affairs", [menu_data,currentPage],{},null)
+//                    .call("get_all_affairs", [menu_data,currentPage],{},null)
+                    .call("get_all_affairs", [menu_data],{},null)
                     .then(function (data) {
                         if (data) {
                             affairData=data
@@ -472,13 +485,13 @@ var Content = Widget.extend({
                         }
                         var $info = $(QWeb.render('content_event_affairs', {
                             'affairs': affairs,
-                            'afftotalPage':data['totalPage'],
-                            'affcurrentPage':data['currentPage'],
-                            'affnextPage':parseInt(data['currentPage'])+1,
-                            'affpreviousPage':parseInt(data['currentPage'])-1,
+//                            'afftotalPage':data['totalPage'],
+//                            'affcurrentPage':data['currentPage'],
+//                            'affnextPage':parseInt(data['currentPage'])+1,
+//                            'affpreviousPage':parseInt(data['currentPage'])-1,
                         }));
                         $info.appendTo('.o_content_event_affairs');
-                        currentPage = 'affair_'+currentPage+'_'
+                        /*currentPage = 'affair_'+currentPage+'_'
                         var all = $("tr[class*='affair_']")
                         for (var i=0;i<all.length;i++){
                             if (all[i].className!=currentPage){
@@ -495,7 +508,7 @@ var Content = Widget.extend({
                             $("li.next[type='affairs']").addClass('disabled')
                         }else{
                             $("li.next[type='affairs']").removeClass('disabled')
-                        }
+                        }*/
                     })
                 });
 
@@ -507,7 +520,8 @@ var Content = Widget.extend({
             Menus.call('load_menus', [core.debug], {context: session.user_context}).
                 then( function(menu_data) {
                     new Model("dtdream.content.event.affairs")
-                    .call("get_all_applies", [menu_data,currentPage],{},null)
+//                    .call("get_all_applies", [menu_data,currentPage],{},null)
+                    .call("get_all_applies", [menu_data],{},null)
                     .then(function (data) {
                         if (data) {
                             applyData =data
@@ -515,13 +529,13 @@ var Content = Widget.extend({
                         }
                         var $info = $(QWeb.render('content_event_applies', {
                             'applies': applies,
-                            'totalPage':data['totalPage'],
-                            'currentPage':data['currentPage'],
-                            'nextPage':parseInt(data['currentPage'])+1,
-                            'previousPage':parseInt(data['currentPage'])-1,
+//                            'totalPage':data['totalPage'],
+//                            'currentPage':data['currentPage'],
+//                            'nextPage':parseInt(data['currentPage'])+1,
+//                            'previousPage':parseInt(data['currentPage'])-1,
                         }));
                         $info.appendTo('.o_content_event_applies');
-                        currentPage = 'apply_'+currentPage+'_'
+                        /*currentPage = 'apply_'+currentPage+'_'
                         var all = $("tr[class*='apply_']")
                         for (var i=0;i<all.length;i++){
                             if (all[i].className!=currentPage){
@@ -538,7 +552,7 @@ var Content = Widget.extend({
                             $("li.next[type='applies']").addClass('disabled')
                         }else{
                             $("li.next[type='applies']").removeClass('disabled')
-                        }
+                        }*/
                     })
                 });
 
@@ -612,6 +626,23 @@ var Content = Widget.extend({
                 $("li.next[type='applies']").removeClass('disabled')
             }
         }
+    },
+    render_slider: function(){
+        if($("#sliderSelectOptions li.active a").html() == "待我处理事项"){
+            $('#sliderSelectOptions .inline').css('width','150px').css('left',0);
+        }
+        $("#sliderSelectOptions").on("mouseenter","li.slider_li",function(){
+            if(!$(this).hasClass('active')){
+                $(this).addClass("active").siblings(".active").removeClass("active");
+            }
+            var movedistance=($(this).index())*150;
+            $('#sliderSelectOptions .inline').css('width','150px').css('left',movedistance);
+
+            var sliderEvent=$(this).data('index')+"_events";
+            if(!$("#"+sliderEvent).hasClass("active")){
+                $("#"+sliderEvent).addClass("active").addClass("in").siblings(".active").removeClass("active").removeClass("in");
+            }
+        });
     }
 });
 

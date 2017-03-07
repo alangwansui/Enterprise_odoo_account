@@ -8,7 +8,7 @@
                 <kanban class="o_res_partner_kanban">
                     <field name="name"/>
                     <field name="state"/>
-                    <field name="currentauditperson"/>
+                    <field name="current_handler"/>
                     <field name="create_uid_self"/>
                     <field name="create_date" />
                     <field name="department_id"/>
@@ -24,7 +24,7 @@
                                     <ul>
                                         <li > <strong>单号:</strong><field name="name" /></li>
                                         <li > <strong>状态:</strong><field name="state" /></li>
-                                        <li > <strong>审批人:</strong><field name="currentauditperson" /></li>
+                                        <li > <strong>审批人:</strong><field name="current_handler" /></li>
                                         <li > <strong>申请日期:</strong><field name="create_date" /></li>
 
                                     </ul>
@@ -314,7 +314,7 @@
                     <field name="name"/>
                     <!--<field name="title"/>-->
                     <field name="state"/>
-                    <field name="currentauditperson"/>
+                    <field name="current_handler" widget="many2many_tags"/>
                     <field name="total_shibaoamount"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
@@ -335,7 +335,7 @@
                     <field name="name"/>
                     <!--<field name="title"/>-->
                     <field name="state"/>
-                    <field name="currentauditperson"/>
+                    <field name="current_handler"/>
                     <field name="total_shibaoamount"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
@@ -354,7 +354,7 @@
                 <search>
                     <field name="name"/>
                     <field name="state"/>
-                    <field name="currentauditperson"/>
+                    <field name="current_handler"/>
                     <field name="create_uid_self" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <filter string="草稿" name="search_willaudit" domain="[('state','=','draft')]" />
@@ -373,7 +373,7 @@
         <record model="ir.actions.act_window" id="action_dtdream_expense_pending">
             <field name="name">待我审批</field>
             <field name="res_model">dtdream.expense.report</field>
-            <field name="domain">[('currentauditperson.user_id','=',uid)]</field>
+            <field name="domain">[('current_handler.user_id','=',uid)]</field>
             <field name="view_mode">tree,form,kanban</field>
         </record>
 
@@ -455,7 +455,7 @@
             <field name="name">所有单据</field>
             <field name="res_model">dtdream.expense.report</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">['|','|','|',('create_uid','=',uid),('hasauditor.user_id','=',uid),('currentauditperson.user_id','=',uid),('followers_user','=',uid)]</field>
+            <field name="domain">['|','|','|',('create_uid','=',uid),('hasauditor.user_id','=',uid),('current_handler.user_id','=',uid),('followers_user','=',uid)]</field>
         </record>
         <record model="ir.actions.act_window" id="action_dtdream_expense_jiekoukuaiji_export">
             <field name="name">接口会计导出</field>

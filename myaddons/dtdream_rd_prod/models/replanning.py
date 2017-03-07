@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
-from datetime import datetime
+from datetime import datetime,timedelta
 from openerp.osv import expression
 from lxml import etree
 
@@ -238,7 +238,7 @@ class dtdream_rd_replanning(models.Model):
                 department = app.proname.department.name + '/' + app.proname.department_2.name
             else:
                 department = app.proname.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -281,7 +281,7 @@ class dtdream_rd_replanning(models.Model):
                 department = app.proname.department.name + '/' + app.proname.department_2.name
             else:
                 department = app.proname.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:
@@ -313,7 +313,7 @@ class dtdream_rd_replanning(models.Model):
                 department = app.proname.department.name + '/' + app.proname.department_2.name
             else:
                 department = app.proname.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S')).days
+            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
             if deferdays == 0:
                 defer = False
             else:

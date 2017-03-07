@@ -2,7 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_feedback_advice_base,access_feedback_advice_base,model_dtdream_feedback_advice,base.group_user,1,1,1,0
 access_feedback_configuration_base,access_feedback_configuration_base,model_dtdream_feedback_configuration,base.group_user,1,0,0,0
 
-access_feedback_advice,access_feedback_advice,model_dtdream_feedback_advice,group_feedback_deal,1,1,1,1
+access_feedback_advice,access_feedback_advice,model_dtdream_feedback_advice,group_feedback_deal,1,1,1,0
 access_feedback_configuration,access_feedback_configuration,model_dtdream_feedback_configuration,group_feedback_deal,1,0,0,0
 
 access_feedback_advice_manager,access_feedback_advice_manager,model_dtdream_feedback_advice,group_manager_deal,1,1,1,1

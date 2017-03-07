@@ -185,7 +185,7 @@
         <record model="workflow.transition" id="dtdream_expense_daifukuan_to_yifukuan">
             <field name="act_from" ref="daifukuan"/>
             <field name="act_to" ref="yifukuan"/>
-            <field name="signal">btn_confirmmoney</field>
+            <field name="signal">btn_agree</field>
         </record>
 
         <record model="workflow.transition" id="dtdream_expense_daifukuan_to_jiekoukuaiji">

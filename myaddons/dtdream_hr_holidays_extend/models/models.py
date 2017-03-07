@@ -75,7 +75,10 @@ class dtdream_hr_holidays_extend(models.Model):
     nxj_tiaozhengbeizhu = fields.Text(string="年休假调整备注")
     nxj_yue = fields.Float(string="年休假余额")
 
+    nxj_jiesuan = fields.Float(string="年休假结算天数",default=0.0)
+
     nxj_jisuan = fields.Boolean(string="标记计算数据",default=False)
+    is_nxj_jiesuan = fields.Boolean(string="标记年休假受否结算", default=False)
 
     _check_holidays = lambda self, cr, uid, ids, context=None: self.check_holidays(cr, uid, ids, context=context)
 
@@ -97,8 +100,7 @@ class dtdream_hr_holidays_extend(models.Model):
         (_check_holidays, '所休假期余额不足！', ['state', 'number_of_days_temp'])
     ]
 
-    def get_mail_server_name(self):
-        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
 
     @api.constrains('shenpiren1','shenpiren2','shenpiren3','shenpiren4','shenpiren5','employee_id','holiday_status_id','number_of_days_temp')
     def change(self):
@@ -184,23 +186,26 @@ class dtdream_hr_holidays_extend(models.Model):
                            'Status', readonly=True, track_visibility='onchange',default='draft')
 
     @api.one
-    def _compute_is_shenpiren(self):
-        if (self.shenpiren1.user_id.id==self.env.user.id) and self.state=='confirm':
-            self.is_shenpiren=True
-        elif (self.shenpiren2.user_id.id==self.env.user.id) and self.state=='confirm2':
-            self.is_shenpiren=True
-
-        elif (self.shenpiren3.user_id.id==self.env.user.id) and self.state=='confirm3':
-            self.is_shenpiren=True
-
-        elif (self.shenpiren4.user_id.id==self.env.user.id) and self.state=='confirm4':
-            self.is_shenpiren=True
-
-        elif (self.shenpiren5.user_id.id==self.env.user.id) and self.state=='confirm5':
-            self.is_shenpiren=True
-
+    def _compute_is_shenpiren(self):            #为什么不用current_shenpiren来判断？
+        # if (self.shenpiren1.user_id.id==self.env.user.id) and self.state=='confirm':
+        #     self.is_shenpiren=True
+        # elif (self.shenpiren2.user_id.id==self.env.user.id) and self.state=='confirm2':
+        #     self.is_shenpiren=True
+        #
+        # elif (self.shenpiren3.user_id.id==self.env.user.id) and self.state=='confirm3':
+        #     self.is_shenpiren=True
+        #
+        # elif (self.shenpiren4.user_id.id==self.env.user.id) and self.state=='confirm4':
+        #     self.is_shenpiren=True
+        #
+        # elif (self.shenpiren5.user_id.id==self.env.user.id) and self.state=='confirm5':
+        #     self.is_shenpiren=True
+        # else:
+        #     self.is_shenpiren=False
+        if self.current_shenpiren and (self.current_shenpiren.user_id.id==self.env.user.id):
+            self.is_shenpiren = True
         else:
-            self.is_shenpiren=False
+            self.is_shenpiren = False
 
     is_shenpiren=fields.Boolean(compute=_compute_is_shenpiren,string="是否审批人")
 
@@ -231,6 +236,26 @@ class dtdream_hr_holidays_extend(models.Model):
     def get_base_url(self,cr,uid):
         base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
         return base_url
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
+
+    def send_emial_to_spr(self, shenpiren, url):
+        self.env['mail.mail'].create({
+            'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
+            'body_html': u'''
+                <p>%s，您好：</p>
+                <p>%s提交的请假申请正等待您的审批！</p>
+                <p> 请点击链接进入审批:
+                <a href="%s">%s</a></p>
+               <p>dodo</p>
+                <p>万千业务，简单有do</p>
+                <p>%s</p>''' % (shenpiren.name, self.employee_id.name, url, url, self.write_date[:10]),
+            'email_from': self.get_mail_server_name(),
+
+            'email_to': shenpiren.work_email,
+        }).send()
+
     @api.multi
     def holidays_confirm(self):
         self.message_post(body=u'提交，状态：草稿 --> 一级审批 ')
@@ -238,132 +263,62 @@ class dtdream_hr_holidays_extend(models.Model):
         self.write({'state':'confirm','current_shenpiren':self.shenpiren1.id})
 
         # 邮件通知
+        shenpiren = self.shenpiren1
         link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
         url=self.get_base_url()+link
         if self.create_type==False:
-            self.env['mail.mail'].create({
-                'subject': u'%s于%s提交请假申请，请您审批！' %(self.employee_id.name,self.create_time[:10]),
-                'body_html': u'''
-                <p>%s，您好：</p>
-                <p>%s提交的请假申请正等待您的审批！</p>
-                <p> 请点击链接进入审批:
-                <a href="%s">%s</a></p>
-               <p>dodo</p>
-                <p>万千业务，简单有do</p>
-                <p>%s</p>''' % (self.shenpiren1.name, self.employee_id.name, url, url, self.write_date[:10]),
-                'email_from':self.get_mail_server_name(),
-
-                'email_to': self.shenpiren1.work_email,
-            }).send()
+            self.send_emial_to_spr(shenpiren, url)
 
     @api.multi
     def holidays_confirm2(self):
-            self.message_post(body=u'批准，状态：一级审批 --> 二级审批 ')
-            if self.shenpiren2==False and self.create_type==False:
-                raise ValidationError('请先填写第二审批人')
-            else:
-                self.shenpiren_his2=self.shenpiren2.user_id
-                self.write({'state':'confirm2','current_shenpiren':self.shenpiren2.id})
+        self.message_post(body=u'批准，状态：一级审批 --> 二级审批 ')
+        if self.shenpiren2==False and self.create_type==False:
+            raise ValidationError('请先填写第二审批人')
+        else:
+            self.shenpiren_his2=self.shenpiren2.user_id
+            self.write({'state':'confirm2','current_shenpiren':self.shenpiren2.id})
 
-            # 邮件通知
-            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-            url=self.get_base_url()+link
-
-            self.env['mail.mail'].create({
-                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
-                    'body_html': u'''
-                    <p>%s，您好：</p>
-                    <p>%s提交的请假申请正等待您的审批！</p>
-                    <p> 请点击链接进入审批:
-                    <a href="%s">%s</a></p>
-                   <p>dodo</p>
-                    <p>万千业务，简单有do</p>
-                    <p>%s</p>''' % (self.shenpiren2.name, self.employee_id.name, url, url, self.write_date[:10]),
-                    'email_from':self.get_mail_server_name(),
-                    'email_to': self.shenpiren2.work_email,
-                }).send()
-
+        # 邮件通知
+        shenpiren = self.shenpiren2
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+        self.send_emial_to_spr(shenpiren, url)
 
     @api.multi
     def holidays_confirm3(self):
-            self.message_post(body=u'批准，状态：二级审批 --> 三级审批 ')
-            self.shenpiren_his3=self.shenpiren3.user_id
-            self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
+        self.message_post(body=u'批准，状态：二级审批 --> 三级审批 ')
+        self.shenpiren_his3=self.shenpiren3.user_id
+        self.write({'state':'confirm3','current_shenpiren':self.shenpiren3.id})
 
-            # 邮件通知
-            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-            url=self.get_base_url()+link
-
-            self.env['mail.mail'].create({
-                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
-                    'body_html': u'''
-                    <p>%s，您好：</p>
-                    <p>%s提交的请假申请正等待您的审批！</p>
-                    <p> 请点击链接进入审批:
-                    <a href="%s">%s</a></p>
-                   <p>dodo</p>
-                    <p>万千业务，简单有do</p>
-                    <p>%s</p>''' % (self.shenpiren3.name, self.employee_id.name, url, url, self.write_date[:10]),
-                    'email_from':self.get_mail_server_name(),
-                    'email_to': self.shenpiren3.work_email,
-                }).send()
-
-
+        # 邮件通知
+        shenpiren = self.shenpiren3
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+        self.send_emial_to_spr(shenpiren, url)
 
     @api.multi
     def holidays_confirm4(self):
-            self.message_post(body=u'批准，状态：三级审批 --> 四级审批 ')
-            self.shenpiren_his4=self.shenpiren4.user_id
-            self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
+        self.message_post(body=u'批准，状态：三级审批 --> 四级审批 ')
+        self.shenpiren_his4=self.shenpiren4.user_id
+        self.write({'state':'confirm4','current_shenpiren':self.shenpiren4.id})
 
-            # 邮件通知
-            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-            url=self.get_base_url()+link
-
-            self.env['mail.mail'].create({
-                    'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
-                    'body_html': u'''
-                             <p>%s，您好：</p>
-                             <p>%s提交的请假申请正等待您的审批！</p>
-                             <p> 请点击链接进入审批:
-                             <a href="%s">%s</a></p>
-                            <p>dodo</p>
-                             <p>万千业务，简单有do</p>
-                             <p>%s</p>''' % (self.shenpiren4.name, self.employee_id.name, url, url, self.write_date[:10]),
-                    'email_from':self.get_mail_server_name(),
-                    'email_to': self.shenpiren2.work_email,
-                }).send()
-
-
+        # 邮件通知
+        shenpiren = self.shenpiren4
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+        self.send_emial_to_spr(shenpiren, url)
 
     @api.multi
     def holidays_confirm5(self):
-            self.message_post(body=u'批准，状态：四级审批 --> 五级审批 ')
-            self.shenpiren_his5=self.shenpiren5.user_id
-            self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
+        self.message_post(body=u'批准，状态：四级审批 --> 五级审批 ')
+        self.shenpiren_his5=self.shenpiren5.user_id
+        self.write({'state':'confirm5','current_shenpiren':self.shenpiren5.id})
 
-            # 邮件通知
-            link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
-            url=self.get_base_url()+link
-
-            self.env['mail.mail'].create({
-                'subject': u'%s于%s提交请假申请，请您审批！' % (self.employee_id.name, self.create_time[:10]),
-                'body_html': u'''
-                         <p>%s，您好：</p>
-                         <p>%s提交的请假申请正等待您的审批！</p>
-                         <p> 请点击链接进入审批:
-                         <a href="%s">%s</a></p>
-                        <p>dodo</p>
-                         <p>万千业务，简单有do</p>
-                         <p>%s</p>''' % (self.shenpiren5.name, self.employee_id.name, url, url, self.write_date[:10]),
-                    'email_from':self.get_mail_server_name(),
-
-                    'email_to': self.shenpiren2.work_email,
-                }).send()
-
-
-
-
+        # 邮件通知
+        shenpiren = self.shenpiren5
+        link='/web?#id=%s&view_type=form&model=hr.holidays'%self.id
+        url=self.get_base_url()+link
+        self.send_emial_to_spr(shenpiren, url)
 
     def holidays_reset(self, cr, uid, ids, context=None):#重写该方法，开放重置按钮权限
         # print "reset------------"
@@ -484,6 +439,7 @@ class dtdream_hr_holidays_extend(models.Model):
 
         return models.Model.unlink(self, cr, uid, ids, context=None)
 
+    # 重写父类onchange_date_from
     def onchange_date_from(self, cr, uid, ids, date_to, date_from):
         """
         If there are no date set for date_to, automatically set one 8 hours later than
@@ -504,6 +460,24 @@ class dtdream_hr_holidays_extend(models.Model):
         # else:
         #     result['value']['number_of_days_temp'] = 0
 
+        return result
+
+    # 重写父类onchange_date_to
+    def onchange_date_to(self, cr, uid, ids, date_to, date_from):
+        """
+        Update the number_of_days.
+        """
+        # date_to has to be greater than date_from
+
+
+        result = {'value': {}}
+
+        # Compute and update the number of days
+        # if (date_to and date_from) and (date_from <= date_to):
+        #     diff_day = self._get_number_of_days(date_from, date_to)
+        #     result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
+        # else:
+        #     result['value']['number_of_days_temp'] = 0
         return result
 
     @api.model
@@ -553,58 +527,84 @@ class dtdream_hr_holidays_extend(models.Model):
         print new_value
         print initial_value
         return changes, tracking_value_ids
+
     @api.multi
     def message_track(self, tracked_fields, initial_values):
 
         return
 
-    def onchange_date_to(self, cr, uid, ids, date_to, date_from):
-        """
-        Update the number_of_days.
-        """
-        # date_to has to be greater than date_from
-
-
-        result = {'value': {}}
-
-        # Compute and update the number of days
-        # if (date_to and date_from) and (date_from <= date_to):
-        #     diff_day = self._get_number_of_days(date_from, date_to)
-        #     result['value']['number_of_days_temp'] = round(math.floor(diff_day))+1
-        # else:
-        #     result['value']['number_of_days_temp'] = 0
-        return result
-
+    @api.model
     def compute_nianxiujia(self, em, results):
         nianxiujia_yixiu = 0
-        xiujia_list = self.env["hr.holidays"].search(
-            [('employee_id', '=', em.id), ('holiday_status_id', '=', 5), ('create_type', '=', False),
-             ('type', '=', 'remove'),('state','=','validate')])
-        for xiujia in xiujia_list:
-            nianxiujia_yixiu += xiujia.number_of_days_temp
-        for result in results:
-            nianxiujia_tiaozheng = 0
-            nianxiujia_tiaozheng_yy = ''
-            xiujia_list_tz = self.env["hr.holidays"].search(
-                [('employee_id', '=', em.id), ('holiday_status_id', '=', 5), ('create_type', '=', 'manage'),
-                 ('type', '=', 'remove'), ('year', '=', result['year']),('state','=','validate')])
-            for xiujia_tz in xiujia_list_tz:
-                nianxiujia_tiaozheng += xiujia_tz.number_of_days_temp
-                nianxiujia_tiaozheng_yy += xiujia_tz.name + ';'
-            result['nxj_tiaozheng'] = nianxiujia_tiaozheng
-            result['nxj_tiaozhengbeizhu'] = nianxiujia_tiaozheng_yy
+        nianxiujia_tiaozheng = 0
+        nianxiujia_tiaozheng_bz=''
+        xiujia_list = self.env["hr.holidays"].sudo().search(
+            [('employee_id', '=', em.id), ('holiday_status_id', '=', 5),
+             ('type', '=', 'remove'),('state','=','validate')],order="id ASC")
+        if len(xiujia_list) > 0:
+            for xiujia in xiujia_list:
+                if xiujia.create_type==False:
+                    nianxiujia_yixiu+=xiujia.number_of_days_temp
+                else:
+                    nianxiujia_tiaozheng+=xiujia.number_of_days_temp
+                    nianxiujia_tiaozheng_bz+=xiujia.name+';'
+                for result in results:
+                    nxj_shijishengyu=result['nxj_fenpei']-result['nxj_jiesuan']
+                    if nianxiujia_yixiu+nianxiujia_tiaozheng>=nxj_shijishengyu:
+                        if xiujia.create_type==False:
+                            self.env["hr.holidays"].browse(result["id"]).sudo().write(
+                                {"nxj_yue": 0,
+                                 "nxj_yixiu": nxj_shijishengyu-nianxiujia_tiaozheng,
+                                 "nxj_tiaozheng": nianxiujia_tiaozheng,
+                                 "nxj_tiaozhengbeizhu":nianxiujia_tiaozheng_bz,
+                                 "nxj_fenpei": result["nxj_fenpei"]
+                                 })
+                            nianxiujia_yixiu = nianxiujia_yixiu+nianxiujia_tiaozheng-nxj_shijishengyu
+                            nianxiujia_tiaozheng = 0
+                            if xiujia != xiujia_list[-1]:
+                                results.remove(result)
+                                break;
+                        else:
+                            ttt = xiujia.number_of_days_temp + nxj_shijishengyu - nianxiujia_yixiu - nianxiujia_tiaozheng
+                            nianxiujia_tiaozheng_bz += u'调整' + str(ttt)
+                            self.env["hr.holidays"].browse(result["id"]).sudo().write(
+                                {"nxj_yue": 0,
+                                 "nxj_yixiu": nianxiujia_yixiu,
+                                 "nxj_tiaozheng": nxj_shijishengyu - nianxiujia_yixiu,
+                                 "nxj_tiaozhengbeizhu": nianxiujia_tiaozheng_bz,
+                                 "nxj_fenpei": result["nxj_fenpei"]
+                                 })
+                            zzz =nianxiujia_yixiu+nianxiujia_tiaozheng-nxj_shijishengyu
+                            nianxiujia_tiaozheng_bz = xiujia.name + u'调整'+str(zzz)
+                            nianxiujia_tiaozheng = nianxiujia_yixiu + nianxiujia_tiaozheng - nxj_shijishengyu
+                            nianxiujia_yixiu = 0
+                            if xiujia != xiujia_list[-1]:
+                                results.remove(result)
+                                break;
+                    else:
+                        if xiujia==xiujia_list[-1]:
+                            self.env["hr.holidays"].browse(result["id"]).sudo().write(
+                                {"nxj_yue": nxj_shijishengyu-nianxiujia_yixiu-nianxiujia_tiaozheng,
+                                 "nxj_yixiu": nianxiujia_yixiu,
+                                 "nxj_tiaozheng": nianxiujia_tiaozheng,
+                                 "nxj_tiaozhengbeizhu": nianxiujia_tiaozheng_bz,
+                                 "nxj_fenpei": result["nxj_fenpei"]
+                                 })
+                            nianxiujia_tiaozheng = 0
+                            nianxiujia_yixiu = 0
+                            nianxiujia_tiaozheng_bz=''
+                        else:
+                            break;
+        else:
+            for result in results:
+                self.env["hr.holidays"].browse(result["id"]).sudo().write(
+                    {"nxj_yue": result["nxj_fenpei"]-result['nxj_jiesuan'],
+                     "nxj_yixiu": 0,
+                     "nxj_tiaozheng": 0,
+                     "nxj_tiaozhengbeizhu": '',
+                     "nxj_fenpei": result["nxj_fenpei"]
+                     })
 
-            if nianxiujia_yixiu > result['nxj_fenpei'] - result['nxj_tiaozheng']:
-                result['nxj_yixiu'] = result['nxj_fenpei'] - result['nxj_tiaozheng']
-                nianxiujia_yixiu -= result['nxj_yixiu']
-            else:
-                result['nxj_yixiu'] = nianxiujia_yixiu
-                nianxiujia_yixiu = 0
-            result["nxj_yue"] = result["nxj_fenpei"] - result["nxj_yixiu"] - result["nxj_tiaozheng"]
-            self.env["hr.holidays"].browse(result["id"]).sudo().write(
-                {"nxj_yue": result["nxj_yue"], "nxj_yixiu": result["nxj_yixiu"],
-                 "nxj_tiaozheng": result["nxj_tiaozheng"],
-                 "nxj_tiaozhengbeizhu": result['nxj_tiaozhengbeizhu'],"nxj_fenpei":result["nxj_fenpei"],"nxj_jisuan":True})
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
@@ -655,13 +655,13 @@ class dtdream_hr_holidays_extend(models.Model):
                 for t in tt:
                     t["nxj_fenpei"] = year_total
                 results.append(tt[0])
-
-            self.compute_nianxiujia(em, results)
-
-
+            if len(results)>0:
+                self.compute_nianxiujia(em, results)
 
 
 
+
+#-------------无用model---------------------
 class dtdream_nianjia(models.Model):
     _name = "dtdream.nianjia"
 
@@ -691,7 +691,7 @@ class dtdream_nianjia(models.Model):
         nianjia.write({'number_of_days_temp':0})
         return super(dtdream_nianjia,self).unlink()
 
-
+#批量处理
 class batch_approval(models.Model):
     _name = "batch.approval"
 
@@ -751,6 +751,8 @@ class hr_holidays_status_extend(osv.osv):
                     status_dict['leaves_taken'] += holiday.number_of_days_temp
                     status_dict['remaining_leaves'] -= holiday.number_of_days_temp
         return result
+
+#关联hr
 class dtdream_holidays_hr(models.Model):
     _inherit = 'hr.employee'
 

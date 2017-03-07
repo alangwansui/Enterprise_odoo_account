@@ -15,7 +15,7 @@ class dtdream_information_type(models.Model):
     admin = fields.Many2one("hr.employee",string="管理员",required=True)
     token = fields.Char(string="token")
     git_group = fields.Char(string="git群组")
-    type = fields.Selection([('confluence','confluence'),('git','git')],string="类别",default='confluence',required=True)
+    type = fields.Selection([('confluence','Confluence'),('git','Gitlab')],string="类别",default='confluence',required=True)
     is_conf = fields.Boolean(string="标记是否是confluence",default=True)
     is_git = fields.Boolean(string="标记是否是git",default=False)
 

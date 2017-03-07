@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_sale_data_report_dtdream_sale_data_report,dtdream_sale_data_report.dtdream_sale_data_report,model_dtdream_sale_data_report_dtdream_sale_data_report,,1,0,0,0

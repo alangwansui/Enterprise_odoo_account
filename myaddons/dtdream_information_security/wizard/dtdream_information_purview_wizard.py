@@ -37,7 +37,7 @@ class dtdream_information_purview_wizard(models.TransientModel):
         url = base_url+link
         appellation = next_approver.name+u",您好"
         subject=approval.applicant.name+u"提交的权限申请，等待您的审批"
-        content = approval.applicant.name+u"提交的‘"+approval.name+u"’的权限申请进入‘所有人审批’阶段，等待您的审批"
+        content = approval.applicant.name+u"提交的‘"+approval.name+u"’的权限申请进入‘信息所有人审批’阶段，等待您的审批"
         self.env['mail.mail'].create({
             'body_html': u'''<p>%s</p>
                          <p>%s</p>
@@ -62,14 +62,15 @@ class dtdream_information_purview_wizard(models.TransientModel):
                 approval.signal_workflow('zgsp_to_wc')
                 self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'主管审批->完成',result=u'同意',reason=self.reason)
                 approval.current_approver_user=False
+                approval.permission_settings()
             else:
                 approval.signal_workflow('zgsp_to_syrsp')
-                self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'主管审批->所有人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.information_syr.name)
+                self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'主管审批->信息所有人审批',result=u'同意',reason=self.reason,next_shenpiren=approval.information_syr.name)
                 approval.write({'current_approver_user': approval.information_syr.user_id.id})
                 self._send_email(approval=approval,next_approver=approval.information_syr)
         elif approval.state=="state_03":
             approval.signal_workflow('syrsp_to_wc')
-            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'所有人审批->完成',result=u'同意',reason=self.reason)
+            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'信息所有人审批->完成',result=u'同意',reason=self.reason)
             approval.current_approver_user=False
             approval.permission_settings()
 
@@ -86,7 +87,7 @@ class dtdream_information_purview_wizard(models.TransientModel):
             approval.current_approver_user=False
         elif approval.state=="state_03":
             approval.signal_workflow('syrsp_to_cg')
-            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'所有人审批->草稿',result=u'驳回',reason=self.reason)
+            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'信息所有人审批->草稿',result=u'驳回',reason=self.reason)
             approval.current_approver_user=False
 
     #不同意
@@ -98,9 +99,9 @@ class dtdream_information_purview_wizard(models.TransientModel):
         approval.write({'his_approver_user': [(4, approval.current_approver_user.id)]})
         if approval.state=="state_02":
             approval.signal_workflow('zgsp_to_zhongzhi')
-            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'主管审批->终止',result=u'不同意',reason=self.reason)
+            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'主管审批->不通过',result=u'不同意',reason=self.reason)
             approval.current_approver_user=False
         elif approval.state=="state_03":
             approval.signal_workflow('syrsp_to_zhongzhi')
-            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'所有人审批->终止',result=u'不同意',reason=self.reason)
+            self._message_poss(approval=approval,current_approver=approval.current_approver,statechange=u'信息所有人审批->不通过',result=u'不同意',reason=self.reason)
             approval.current_approver_user=False

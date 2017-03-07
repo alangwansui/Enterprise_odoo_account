@@ -37,6 +37,24 @@ class dtdream_deliver_object(models.Model):
 class dtdream_product_line(models.Model):
     _inherit = 'dtdream.product.line'
 
+    @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        for rec in self:
+            try:
+                if str(fields).find('apply_discount') > 0 and str(fields).find('pro_total_chuhuo_price') > 0 and not ((self.user_has_groups('dtdream_sale.group_dtdream_sale_rep') and rec.product_business_line_id.create_uid.id == self._uid)
+                    or self.user_has_groups('dtdream_sale.group_dtdream_sale_office_manager') or self.user_has_groups('dtdream_sale.group_dtdream_server_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_manager') or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_vice_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_business_interface_person') or self.user_has_groups('dtdream_sale.group_dtdream_system_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_system_vice_manager') or self.user_has_groups('dtdream_sale.group_dtdream_market_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_product_director') or self.user_has_groups('dtdream_sale.group_dtdream_management_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_management_vice_manager') or self.user_has_groups('dtdream_sale.group_dtdream_company_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_devolopement_manager') or self.user_has_groups('dtdream_sale.group_dtdream_sale_high_manager')):
+                        fields.remove('apply_discount')
+                        fields.remove('pro_total_chuhuo_price')
+            except Exception,e:
+                pass
+        return super(dtdream_product_line, self).read(fields=fields, load=load)
+
     def _compute_is_pro_shenpiren(self):
         for rec in self:
             rec.is_pro_shenpiren = rec.product_business_line_id.is_pro_shenpiren
@@ -64,7 +82,7 @@ class dtdream_product_line(models.Model):
         self.write({'report_is_current':self.product_business_line_id.is_current})
 
     is_business_approveds = fields.Boolean(string="是否历史商务审批人",default=False,compute=_compute_is_pro_approveds)
-    product_business_line_id = fields.Many2one('dtdream.sale.business.report',string="产品", ondelete='cascade', index=True, copy=False)
+    product_business_line_id = fields.Many2one('dtdream.sale.business.report',string="产品", ondelete='cascade')
     product_line_id = fields.Many2one(required=False)
     report_state = fields.Char(string="报备流程状态",default="0")
     report_is_current = fields.Boolean(string="是否报备流程当前审批人",default=True)
@@ -87,6 +105,28 @@ class dtdream_sale_business_report(models.Model):
     # _sql_constraints = [
     #     ('name_unique', 'UNIQUE(project_number)', "项目不能重复。"),
     # ]
+
+    @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        for rec in self:
+            try:
+                if str(fields).find('total_apply_price') > 0 and not ((self.user_has_groups('dtdream_sale.group_dtdream_sale_rep') and rec.create_uid.id == self._uid)
+                    or self.user_has_groups('dtdream_sale.group_dtdream_sale_office_manager') or self.user_has_groups('dtdream_sale.group_dtdream_server_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_manager') or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_vice_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_business_interface_person') or self.user_has_groups('dtdream_sale.group_dtdream_system_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_system_vice_manager') or self.user_has_groups('dtdream_sale.group_dtdream_market_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_product_director') or self.user_has_groups('dtdream_sale.group_dtdream_management_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_management_vice_manager') or self.user_has_groups('dtdream_sale.group_dtdream_company_manager')
+                    or self.user_has_groups('dtdream_sale.group_dtdream_devolopement_manager') or self.user_has_groups('dtdream_sale.group_dtdream_sale_high_manager')):
+                        fields.remove('total_apply_price')
+            except Exception,e:
+                pass
+        if str(fields).find('chengben_detail') > 0 and str(fields).find('gross_profit') > 0 and not (self.user_has_groups('dtdream_sale.group_dtdream_management_manager')
+            or self.user_has_groups('dtdream_sale.group_dtdream_management_vice_manager') or self.user_has_groups('dtdream_sale.group_dtdream_market_manager')
+            or self.user_has_groups('dtdream_sale.group_dtdream_company_manager') or self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_manager')):
+                fields.remove('chengben_detail')
+                fields.remove('gross_profit')
+        return super(dtdream_sale_business_report, self).read(fields=fields, load=load)
 
     @api.one
     def _compute_is_current(self):
@@ -387,7 +427,9 @@ class dtdream_sale_business_report(models.Model):
     gongkan_content = fields.Text(string="工勘内容")
     not_gongkan_content  = fields.Text(string="工勘内容",default="未工勘")
     business_friends_competition_analysis = fields.Text(string="友商竞争分析",track_visibility='onchange', required=True)
-    is_bohui = fields.Boolean(string="是否驳回记录",default=False)
+    is_banshichu_bohui = fields.Boolean(string="是否办事处驳回记录",default=False)
+    is_quyu_zongcai_bohui = fields.Boolean(string="是否区域或总裁驳回记录",default=False)
+
 
     @api.multi
     def act_report_approve_crm(self):

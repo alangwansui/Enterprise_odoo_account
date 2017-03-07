@@ -1,0 +1,173 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+.phoneVcode {
+  background: #ececec;
+  color: #666;
+  min-height: 700px;
+  height: 100%;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.phoneVcode .phoneContainer {
+  width: 997px;
+  margin: 0 auto;
+  background-color: #fff;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.phoneVcode .phoneContainer .phone-title {
+  padding: 30px 0 0 30px;
+}
+.phoneVcode .phoneContainer .phone-title h2 {
+  padding: 0;
+  margin: 0;
+  padding-left: 15px;
+  font-size: 20px;
+  border-left: 4px solid #27b4e7;
+}
+.phoneVcode .phoneContainer .phone-body {
+  margin: 40px 10px 0 96px;
+}
+.phoneVcode .phoneContainer .phone-body .line {
+  height: 70px;
+  position: relative;
+}
+.phoneVcode .phoneContainer .phone-body .line .linetext {
+  text-align: right;
+  width: 110px;
+  margin-right: 20px;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 42px;
+  float: left;
+  height: 40px;
+  display: inline-block;
+}
+.phoneVcode .phoneContainer .phone-body .line .lineInput-no {
+  width: 260px;
+  float: left;
+  border: 1px solid #DCDCDC;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #666;
+  transition-property: border;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+  padding: 10px;
+  background: #f2f2f2;
+}
+.phoneVcode .phoneContainer .phone-body .line .lineInput-no:focus {
+  outline: none;
+  border: 1px solid #27b4e7;
+}
+.phoneVcode .phoneContainer .phone-body .line .lineInput-btn {
+  width: 115px;
+  height: 40px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #27b4e7;
+  font-size: 14px;
+  color: white;
+  float: left;
+  margin-left: 20px;
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.phoneVcode .phoneContainer .phone-body .line .line-error {
+  margin-left: 30px;
+  float: left;
+  width: 280px;
+  padding-top: 10px;
+  padding-left: 10px;
+  display: none;
+}
+.phoneVcode .phoneContainer .phone-body .line .line-error label {
+  font-size: 12px;
+  padding-left: 20px;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.phoneVcode .phoneContainer .phone-body .line .line-error .lineFt-error {
+  background: url(/web/static/src/img/tishi_error.png) no-repeat left center;
+}
+.phoneVcode .phoneContainer .phone-body .line .line-error .lineSr-error {
+  background: url("../img/smallNo.png") no-repeat left center;
+  color: #e4393c;
+}
+.phoneVcode .phoneContainer .phone-body .line .line-error .line-prompt {
+  background: url("../img/smallOk.png") no-repeat left center;
+}
+.phoneVcode .phoneContainer .phone-body .line .appearError {
+  display: block;
+}
+.phoneVcode .phoneContainer .phone-body .line .errorBorder {
+  border: 1px solid #e4393c;
+}
+.phoneVcode .phoneContainer .phone-body .line .savebtn {
+  font-size: 16px;
+  margin-left: 0;
+  width: 115px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #27b4e7;
+  color: white;
+  float: left;
+  height: 40px;
+  border: 0;
+  outline: none;
+  font-family: "Microsoft YaHei", sans-serif;
+  cursor: pointer;
+}
+.phoneVcode .phoneContainer .phone-body .line:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+@media screen and (max-width: 992px) {
+  .phoneVcode .phoneContainer {
+    width: 100%;
+  }
+  .phoneVcode .phoneContainer .phone-title h2 {
+    font-size: 22px;
+  }
+  .phoneVcode .phoneContainer .phone-body {
+    margin: 20px 30px 0 30px;
+  }
+  .phoneVcode .phoneContainer .phone-body .line {
+    /*width: 70%;*/
+    margin: 0 auto;
+    height: 80px;
+  }
+  .phoneVcode .phoneContainer .phone-body .line .linetext {
+    font-size: 18px;
+    text-align:left;
+    width:60px;
+  }
+  .phoneVcode .phoneContainer .phone-body .line .lineInput-no {
+    background-color: #fff;
+    width:120px;
+    height: 30px;
+    margin-top:5px;
+  }
+  .phoneVcode .phoneContainer .phone-body .line .lineInput-btn {
+    font-size: 12px;
+    height: 30px;
+    width: 80px;
+    margin-top:5px;
+  }
+  .phoneVcode .phoneContainer .phone-body .line .line-error {
+    width:80%;
+    margin-left: 70px;
+    padding-top:0;
+  }
+  .phoneVcode .phoneContainer .phone-body .line .line-error label {
+    font-size: 12px;
+  }
+}

@@ -40,8 +40,8 @@
                     <group>
                         <field name="liyou" placeholder="请填写意见" required="True"/>
                         <field name="need" attrs="{'invisible': [('state','!=','2')]}" required="True"/>
-                        <field name="analyst" attrs="{'invisible': ['|',('state','!=','2'),'&amp;',('state','=','2'),('need','in',('1',False))],'required':[('state','=','2'),('need','=','0')]}" domain="[('department_id.name','=',u'信息技术部')]" options="{'no_create': True}"/>
-                        <field name="practice_man" attrs="{'invisible': ['|',('state','not in',('2','4')),'&amp;',('state','=','2'),('need','in',('0', False))],'required':['|',('state','=','4'),'&amp;',('state','=','2'),('need','=','1')]}" domain="[('department_id.name','=',u'信息技术部')]" options="{'no_create': True}"/>
+                        <field name="analyst" attrs="{'invisible': ['|',('state','!=','2'),'&amp;',('state','=','2'),('need','in',('1',False))],'required':[('state','=','2'),('need','=','0')]}" options="{'no_create': True}"/>
+                        <field name="practice_man" attrs="{'invisible': ['|',('state','not in',('2','4')),'&amp;',('state','=','2'),('need','in',('0', False))],'required':['|',('state','=','4'),'&amp;',('state','=','2'),('need','=','1')]}" options="{'no_create': True}"/>
                         <field name="state" invisible="True"/>
                     </group>
                 </group>

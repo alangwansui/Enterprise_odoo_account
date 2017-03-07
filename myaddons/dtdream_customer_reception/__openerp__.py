@@ -30,9 +30,12 @@
         'views/menu.xml',
         'wizard/customer_reception_wizard.xml',
         'views/views.xml',
+        'views/dtdream_hotels_manage.xml',
+        'views/dtdream_dinner_manage.xml',
         'workflow/workflow.xml',
         'security/ir.model.access.csv',
         'security/dtdream_customer_reception_security.xml',
+        'views/send_mail_interval.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
