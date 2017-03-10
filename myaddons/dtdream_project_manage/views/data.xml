@@ -2,7 +2,7 @@
 <openerp>
     <data noupdate="1">
         <record id="dtdream_project_LX" model="dtdream.project.stage.setting">
-            <field name="name">项目立项</field>
+            <field name="name">项目启动</field>
             <field name="order">1</field>
         </record>
 
@@ -16,18 +16,28 @@
             <field name="order">3</field>
         </record>
 
-        <record id="dtdream_project_YW" model="dtdream.project.stage.setting">
-            <field name="name">项目运维</field>
+        <record id="dtdream_project_JF_yw" model="dtdream.project.stage.setting">
+            <field name="name">交付转运维</field>
             <field name="order">4</field>
         </record>
 
-        <record id="dtdream_project_JX" model="dtdream.project.stage.setting">
-            <field name="name">项目结项</field>
+        <record id="dtdream_project_YW" model="dtdream.project.stage.setting">
+            <field name="name">项目运维</field>
             <field name="order">5</field>
+        </record>
+
+        <record id="dtdream_project_JX" model="dtdream.project.stage.setting">
+            <field name="name">项目验收</field>
+            <field name="order">6</field>
         </record>
 
         <record id="dtdream_project_role_PMO" model="dtdream.project.role.setting">
             <field name="name">PMO接口人</field>
+            <field name="required">1</field>
+        </record>
+
+        <record id="dtdream_project_role_PMOO" model="dtdream.project.role.setting">
+            <field name="name">PMO主管</field>
             <field name="required">1</field>
         </record>
 

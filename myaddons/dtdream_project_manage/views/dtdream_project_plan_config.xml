@@ -1,0 +1,45 @@
+<openerp>
+  <data>
+    <record id="view_dtdream_project_plan_configr_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.plan.config.form</field>
+        <field name="model">dtdream.project.plan.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="项目阶段">
+                        <group>
+                            <field name="name" options="{'no_create': True}" required="True"/>
+                        </group>
+                    </group>
+
+                    <group string="工作事项">
+                        <notebook>
+                            <page>
+                                <field name="plan">
+                                    <tree editable="bottom">
+                                        <field name="work_item" required="True"/>
+                                        <field name="leader" required="True"/>
+                                        <field name="work_details" required="True"/>
+                                        <field name="can_delete"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_plan_config_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.plan.config.tree</field>
+        <field name="model">dtdream.project.plan.config</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

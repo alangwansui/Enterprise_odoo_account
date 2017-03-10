@@ -15,17 +15,17 @@ class dtdream_project_role(models.Model):
     leader = fields.Many2one('hr.employee', string='负责人')
     leader_history = fields.Many2many('hr.employee', string='历史负责人列表')
     required = fields.Selection([('0', '非必填'), ('1', '必填')], string='是否必填')
+    approved = fields.Boolean(string='已审批')
     state = fields.Selection([('0', '草稿'),
-                              ('10', 'PMO主管'),
-                              ('11', '项目经理'),
-                              ('12', '交付服务经理'),
-                              ('13', '发布章程'),
-                              ('1', '已立项'),
+                              ('10', '指派项目经理'),
+                              ('11', '同步项目订单信息'),
+                              ('12', '交付服务经理审批'),
+                              ('1', '立项'),
                               ('20', '发起策划'),
                               ('21', 'PMO审核策划'),
-                              ('2', '已策划'),
-                              ('3', '已交付'),
-                              ('4', '已运维'),
+                              ('2', '策划'),
+                              ('3', '交付'),
+                              ('4', '运维'),
                               ('99', '结项')], string='状态', compute=compute_project_state)
     project_manage_id = fields.Many2one('dtdream.project.manage')
 

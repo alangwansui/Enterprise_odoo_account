@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "dtdream_project_manage",
+    'name': "项目管理",
 
     'summary': """服务部项目管理""",
 
@@ -18,15 +18,18 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr', 'dtexport'],
+    'depends': ['base', 'hr'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/dtdream_project_stage.xml',
+        'views/dtdream_project_plan_config.xml',
         'views/dtdream_project_order.xml',
         'views/dtdream_project_role.xml',
         'views/dtdream_project_manage.xml',
         'views/data.xml',
+        'views/workflow.xml',
+        'views/dtdream_pmoo_wizard.xml',
     ],
 }
