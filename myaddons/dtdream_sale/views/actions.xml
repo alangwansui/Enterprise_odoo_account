@@ -1,43 +1,5 @@
 <?xml version="1.0"?>
 <odoo>
-    <!--现金收入豆腐块跳转动作-->
-    <record id="action_cash_income" model="ir.actions.act_window">
-        <field name="name">现金收入</field>
-        <field name="res_model">cash.income</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{
-                        'default_cash_project_id': active_id
-        }</field>
-        <field name="domain">[('cash_project_id','=',active_id)]</field>
-    </record>
-
-    <!--GAAP收入豆腐块跳转动作-->
-    <record id="action_gaap_income" model="ir.actions.act_window">
-        <field name="name">GAAP收入</field>
-        <field name="res_model">gaap.income</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{
-                        'default_gaap_project_id': active_id
-        }</field>
-        <field name="domain">[('gaap_project_id','=',active_id)]</field>
-    </record>
-
-    <!--合同额豆腐块跳转动作-->
-    <record id="action_contract_fee" model="ir.actions.act_window">
-        <field name="name">合同额</field>
-        <field name="res_model">contract.fee</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{
-                        'default_contract_project_id': active_id
-        }</field>
-        <field name="domain">[('contract_project_id','=',active_id)]</field>
-    </record>
 
     <!--费用支出豆腐块跳转动作-->
     <record id="action_fee_pay" model="ir.actions.act_window">
@@ -50,5 +12,21 @@
                         'default_pay_project_id': active_id
         }</field>
         <field name="domain">[('pay_project_id','=',active_id)]</field>
+    </record>
+
+    <record model="ir.actions.server" id="product_yunwei_config_action">
+        <field name="name">运维系数配置</field>
+        <field name="model_id" ref="model_yunwei_config"/>
+        <field name="code">
+            action = {
+                'name':'运维系数配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'yunwei.config',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else self.create(cr,uid,{},context=None),
+                'context':context
+            }
+        </field>
     </record>
 </odoo>

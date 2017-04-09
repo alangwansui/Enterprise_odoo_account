@@ -6,7 +6,7 @@
 .yf .container > h6 {
   font-size: 18px;
   font-family: "Microsoft YaHei";
-  color: #7f7f7f;
+  color: #4a4a4a;
   text-align: justify;
   font-weight: bold;
 }
@@ -64,6 +64,10 @@
 .yf .panel-footer img {
   float: right;
 }
+.yf .table {
+    color:#4a4a4a;
+    margin-top: 1.5rem;
+}
 .yf .table caption {
   font-size: 18px;
   color: #444954;
@@ -102,10 +106,119 @@
   padding: 0 15px;
   line-height: 18px;
 }
-.yf table tbody td:last-child {
-  /*color: #39b4e1;*/
+.yf table tbody {
+    border-bottom: 1px solid #ddd;
 }
-.yf .pager {
+.yf .rd_table_tabs .nav-tabs{
+    height: 4.325rem;
+    line-height: 4.325rem;
+    background-color: #F9FAFC;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.2);
+    margin-top: 2.5rem;
+}
+.yf .rd_table_tabs .slider_li{
+    height: 4rem;
+}
+.yf .rd_table_tabs .nav-tabs li a{
+    width: 155px;
+    padding-top: 13px;
+    font-size: 1.5rem;
+    color: #4a4a4a;
+    text-align: center;
+    border:0;
+    background-color:#F9FAFC;
+    cursor: pointer;
+}
+.yf .rd_table_tabs .nav-tabs>li.active>a,.yf .rd_table_tabs .nav-tabs>li.active>a:focus,.yf .rd_table_tabs .nav-tabs>li.active>a:hover{
+    font-weight: bold;
+    border:0;
+    background-color:#F9FAFC;
+}
+.yf .rd_table_tabs .inline{
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: #00C1DE;
+    bottom: 0;
+    left: 0;
+    transition: all 0.3s;
+}
+.yf .nopadding{
+    padding-left: 0;
+    padding-right: 0;
+}
+.yf .pager_select {
+    width: 100%;
+    overflow: hidden;
+}
+.yf .pager_select .btn {
+    float: right;
+    border-radius: 4px;
+}
+.yf .pager_select .previous {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.yf .pager_select .next {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.yf .pager_select .btn-default {
+    border: 1px solid #e0e0e0;
+    color: #00C1DE;
+}
+.yf .pager_select .btn-default:focus {
+    background-color: #fff;
+    color: #00C1DE;
+}
+.yf .pager_select .btn-default:hover {
+    background-color: #00C1DE;
+    color: #fff;
+}
+.yf .pager_select .disabled {
+    opacity: 1;
+    background-color: #fff;
+    color: #bfbfbf;
+}
+.yf .pager_select .disabled:hover {
+    background-color: #fff;
+    color: #bfbfbf;
+}
+.yf .pager_select .pager_number {
+    float: right;
+    list-style:none;
+    padding:0;
+    margin:0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+.yf .pager_select .pager_number li {
+    color: #00C1DE;
+    padding: 6px 12px;
+    display: table-cell;
+    border-right: 1px solid #e0e0e0;
+}
+.yf .pager_select .pager_number li.active{
+    background-color: #00C1DE;
+    color: #fff;
+}
+.yf .pager_select .pager_number li:last-child {
+    border-right: 0;
+}
+.yf .pager_select .pager_number li:hover {
+    background-color: #00C1DE;
+    color: #fff;
+    cursor: pointer;
+}
+.yf .pager_select p {
+    float: right;
+    height:32px;
+    line-height:32px;
+    margin-bottom: 0;
+    margin-right: 10px;
+}
+/*.yf .pager {
   width: 100%;
   overflow: hidden;
 }
@@ -130,9 +243,9 @@
 .yf .pager .next-btn {
   width: 20%;
   float: right;
-}
+}*/
 .yf .table-div {
-  height: 270px;
+  /*height: 270px;*/
 }
 .yf .interval {
   margin-top: 20px;

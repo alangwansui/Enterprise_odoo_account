@@ -4,14 +4,15 @@
     <t t-name="dtdream_rd_prod.content_event_affairs">
         <div>
             <div class="table-responsive table-div" >
-                <table class="table text-center" style="margin:0px;">
-                    <caption class="bold">待我审批流程</caption>
+                <table class="table text-center">
+                    <!--<caption class="bold">待我审批流程</caption>-->
                     <thead>
-                        <tr style="background:#e2e2e0;">
+                        <tr style="background:#F2F3F8;">
                             <td>部门</td>
                             <td>产品名称</td>
                             <td>版本号</td>
                             <td>PDT经理</td>
+                            <td>研发经理</td>
                             <td>类型</td>
                             <td>状态</td>
                             <td>停留天数</td>
@@ -25,6 +26,7 @@
                                 <td><t t-esc="affair.appr"/> </td>
                                 <td><t t-esc="affair.version"/> </td>
                                 <td><t t-esc="affair.PDT"/> </td>
+                                <td><t t-esc="affair.YF_manager"/> </td>
                                 <td><t t-esc="affair.style"/> </td>
                                 <td><t t-esc="affair.state"/> </td>
                                 <td>
@@ -41,7 +43,22 @@
                     </tbody>
                 </table>
             </div>
-            <div class="pager">
+            <div class="pager_select">
+                <button class="btn btn-default next" type="affairs" t-att-value="nextPage">&gt;</button>
+                <ul class="pager_number">
+                    <t t-foreach="btnPage" t-as="page">
+                        <t t-if="page==currentPage">
+                            <li class="clickPage active" type="affairs" t-att-data-index="page"><t t-esc="page"/></li>
+                        </t>
+                        <t t-if="page!=currentPage">
+                            <li class="clickPage" type="affairs" t-att-data-index="page"><t t-esc="page"/></li>
+                        </t>
+                    </t>
+                </ul>
+                <button class="btn btn-default previous" type="affairs" t-att-value="previousPage">&lt;</button>
+                <p>共 <t t-esc="totalNumber"/> 条</p>
+            </div>
+            <!--<div class="pager">
                 <div class="prev-btn text-center">
                     <a class="btn btn-default previous" type="affairs" t-att-value="previousPage" >上一页</a>
                 </div>
@@ -49,21 +66,22 @@
                 <div class="next-btn text-center">
                     <a class="btn btn-default next" type="affairs" t-att-value="nextPage" >下一页</a>
                 </div>
-            </div>
+            </div>-->
         </div>
     </t>
 
     <t t-name="dtdream_rd_prod.content_event_applies">
         <div>
             <div class="table-responsive table-div" >
-                <table class="table text-center" style="margin:0px;">
-                    <caption class="bold">我提交的流程</caption>
+                <table class="table text-center">
+                    <!--<caption class="bold">我提交的流程</caption>-->
                     <thead>
-                        <tr style="background:#e2e2e0;">
+                        <tr style="background:#F2F3F8;">
                             <td>部门</td>
                             <td>产品名称</td>
                             <td>版本号</td>
                             <td>PDT经理</td>
+                            <td>研发经理</td>
                             <td>类型</td>
                             <td>状态</td>
                             <td>停留天数</td>
@@ -77,6 +95,7 @@
                                 <td><t t-esc="apply.appr"/> </td>
                                 <td><t t-esc="apply.version"/> </td>
                                 <td><t t-esc="apply.PDT"/> </td>
+                                <td><t t-esc="apply.YF_manager"/> </td>
                                 <td><t t-esc="apply.style"/> </td>
                                 <td><t t-esc="apply.state"/> </td>
                                 <td>
@@ -93,7 +112,22 @@
                     </tbody>
                 </table>
             </div>
-            <div class="pager">
+            <div class="pager_select">
+                <button class="btn btn-default next" type="applies" t-att-value="nextPage">&gt;</button>
+                <ul class="pager_number">
+                    <t t-foreach="btnPage" t-as="page">
+                        <t t-if="page==currentPage">
+                            <li class="clickPage active" type="applies" t-att-data-index="page"><t t-esc="page"/></li>
+                        </t>
+                        <t t-if="page!=currentPage">
+                            <li class="clickPage" type="applies" t-att-data-index="page"><t t-esc="page"/></li>
+                        </t>
+                    </t>
+                </ul>
+                <button class="btn btn-default previous" type="applies" t-att-value="previousPage">&lt;</button>
+                <p>共 <t t-esc="totalNumber"/> 条</p>
+            </div>
+            <!--<div class="pager">
                 <div class="prev-btn text-center">
                     <a class="btn btn-default previous" type="applies" t-att-value="previousPage" >上一页</a>
                 </div>
@@ -101,7 +135,7 @@
                 <div class="next-btn text-center">
                     <a class="btn btn-default next" type="applies" t-att-value="nextPage" >下一页</a>
                 </div>
-            </div>
+            </div>-->
         </div>
 
     </t>
@@ -109,17 +143,18 @@
     <t t-name="dtdream_rd_prod.content_event_dones">
          <div>
             <div class="table-responsive table-div" >
-                <table class="table text-center" style="margin:0px;">
-                <caption class="bold">我已审批完成的流程</caption>
+                <table class="table text-center">
+                <!--<caption class="bold">我已审批完成的流程</caption>-->
                 <thead>
-                    <tr style="background:#e2e2e0;">
+                    <tr style="background:#F2F3F8;">
                         <td>部门</td>
                         <td>产品名称</td>
                         <td>版本号</td>
                         <td>PDT经理</td>
+                        <td>研发经理</td>
                         <td>类型</td>
                         <td>状态</td>
-                        <td>停留天数</td>
+                        <!--<td>停留天数</td>-->
                         <td>操作</td>
                     </tr>
                 </thead>
@@ -130,16 +165,17 @@
                             <td><t t-esc="done.appr"/> </td>
                             <td><t t-esc="done.version"/> </td>
                             <td><t t-esc="done.PDT"/> </td>
+                            <td><t t-esc="done.YF_manager"/> </td>
                             <td><t t-esc="done.style"/> </td>
                             <td><t t-esc="done.state"/> </td>
-                            <td>
+                            <!--<td>
                                 <t t-if="done.defer">
                                     <span class="defer">停留<t t-esc="done.deferdays"/>天 </span>
                                 </t>
                                 <t t-if="!done.defer">
                                     <span class="normal">新申请</span>
                                 </t>
-                            </td>
+                            </td>-->
                             <td><a t-att-href="done.url">查看</a></td>
                         </tr>
                     </t>
@@ -153,7 +189,22 @@
                 </tbody>
             </table>
             </div>
-            <div class="pager">
+            <div class="pager_select">
+                <button class="btn btn-default next" type="dones" t-att-value="nextPage">&gt;</button>
+                <ul class="pager_number">
+                    <t t-foreach="btnPage" t-as="page">
+                        <t t-if="page==currentPage">
+                            <li class="clickPage active" type="dones" t-att-data-index="page"><t t-esc="page"/></li>
+                        </t>
+                        <t t-if="page!=currentPage">
+                            <li class="clickPage" type="dones" t-att-data-index="page"><t t-esc="page"/></li>
+                        </t>
+                    </t>
+                </ul>
+                <button class="btn btn-default previous" type="dones" t-att-value="previousPage">&lt;</button>
+                <p>共 <t t-esc="totalNumber"/> 条</p>
+            </div>
+            <!--<div class="pager">
                 <div class="prev-btn text-center">
                     <a class="btn btn-default previous" type="dones" t-att-value="previousPage" >上一页</a>
                 </div>
@@ -161,7 +212,7 @@
                 <div class="next-btn text-center">
                     <a class="btn btn-default next" type="dones" t-att-value="nextPage" >下一页</a>
                 </div>
-            </div>
+            </div>-->
         </div>
     </t>
 
@@ -200,9 +251,40 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 o_content_event_affairs "/>
+                    <div class="col-xs-12 rd_table_tabs">
+                        <ul class="nav nav-tabs" role="tablist" id="rd_sliderSelectOptions">
+                            <li role="presentation" data-index="rd_slider_affairs" class="slider_li active">
+                                <a href="#rd_slider_affairs_events" aria-controls="rd_slider_affairs_events" role="tab" data-toggle="tab">待我审批流程</a>
+                            </li>
+                            <li role="presentation" data-index="rd_slider_applies" class="slider_li">
+                                <a href="#rd_slider_applies_events" aria-controls="rd_slider_applies_events" role="tab" data-toggle="tab">我提交的流程</a>
+                            </li>
+                            <li role="presentation" data-index="rd_slider_dones" class="slider_li">
+                                <a href="#rd_slider_dones_events" aria-controls="rd_slider_dones_events" role="tab" data-toggle="tab">我已审批完成的流程</a>
+                            </li>
+                            <li class="inline"></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active fade in" role="tabpanel" id="rd_slider_affairs_events">
+                                <div class=" tb-box-l  col-xs-12 nopadding">
+                                    <div class="o_content_event_affairs"/>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" role="tabpanel" id="rd_slider_applies_events">
+                                <div class=" tb-box-r col-xs-12 nopadding">
+                                    <div class="o_content_event_applies"/>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" role="tabpanel" id="rd_slider_dones_events">
+                                <div class=" tb-box-r col-xs-12 nopadding">
+                                    <div class="o_content_event_dones"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="col-md-6 o_content_event_affairs "/>
                     <div class="col-md-6 o_content_event_applies"/>
-                    <div class="col-md-6 o_content_event_dones"/>
+                    <div class="col-md-6 o_content_event_dones"/>-->
                 </div>
             </div>
         </div>

@@ -33,7 +33,7 @@ class ExpenseWizard(models.TransientModel):
                     re = [('draft', '申请人'), ('xingzheng', '行政助理')]
             elif cur_rec.state == 'jiekoukuaiji':
                 re = [('draft', '申请人'), ('xingzheng', '行政助理'), ('zhuguan', '主管'), ('quanqianren', '权签人')]
-                if cur_rec.create_uid.id == zongcai.user_id.id:
+                if cur_rec.applicant == zongcai:
                     re = [('draft', '申请人')]
                 else:
                     if cur_rec.xingzheng2who == "1":
@@ -45,7 +45,7 @@ class ExpenseWizard(models.TransientModel):
                         re = [('draft', '申请人'), ('xingzheng', '行政助理')]
             elif cur_rec.state == 'daifukuan':
                 re = [('draft', '申请人'), ('xingzheng', '行政助理'), ('zhuguan', '主管'), ('quanqianren', '权签人'), ('jiekoukuaiji','接口会计')]
-                if cur_rec.create_uid.id == zongcai.user_id.id:
+                if cur_rec.applicant == zongcai:
                     re = [('draft', '申请人'), ('jiekoukuaiji', '接口会计')]
                 else:
                     if cur_rec.xingzheng2who == "1":
@@ -69,10 +69,15 @@ class ExpenseWizard(models.TransientModel):
         if len(current_expense_model.current_handler) > 1:
             for people in current_expense_model.current_handler:
                 if people != current_login_employee:
-                    current_expense_model.send_mail(u"%s于%s提交的费用报销单,已被%s驳回!"%(
-                        current_expense_model.create_uid.name, current_expense_model.create_date[:10], current_login_employee.nick_name),
-                           u"%s提交的费用报销单,等待您的审批!" % current_expense_model.create_uid.name,
-                           email_to=people.work_email)
+                    current_expense_model.send_mail(
+                            u"%s于%s提交的费用报销单,已被%s驳回!"%(
+                                current_expense_model.applicant.name,
+                                current_expense_model.create_date[:10],
+                                current_login_employee.nick_name
+                            ),
+                            u"%s提交的费用报销单,等待您的审批!" % current_expense_model.applicant.name,
+                            email_to=people.work_email
+                    )
 
         if self.state == "draft" and current_expense_model.state == "xingzheng":
             message = u"驳回，状态：行政助理审批---->草稿"

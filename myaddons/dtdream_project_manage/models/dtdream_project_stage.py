@@ -16,7 +16,12 @@ class dtdream_project_stage(models.Model):
 
 class dtdream_project_stage_setting(models.Model):
     _name = 'dtdream.project.stage.setting'
+    _order = 'order'
 
     name = fields.Char('阶段名称', size=8)
     order = fields.Integer(string='序号')
+
+    _sql_constraints = [
+        ('stage_name', 'UNIQUE(name)', "阶段名称已存在!"),
+    ]
 

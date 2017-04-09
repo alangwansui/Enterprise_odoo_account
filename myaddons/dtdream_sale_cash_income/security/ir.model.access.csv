@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_sale_cash_income,dtdream_sale_cash_income users,model_dtdream_sale_cash_income,,1,1,1,1

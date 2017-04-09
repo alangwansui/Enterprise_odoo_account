@@ -1,0 +1,238 @@
+<openerp>
+  <data>
+    <record id="view_dtdream_project_stage_setting_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.stage.setting.tree</field>
+        <field name="model">dtdream.project.stage.setting</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="order"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_stage_setting_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.stage.setting.form</field>
+        <field name="model">dtdream.project.stage.setting</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="True"/>
+                        </group>
+                        <group>
+                            <field name="order" required="True"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_level_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.level.tree</field>
+        <field name="model">dtdream.project.level</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_level_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.level.form</field>
+        <field name="model">dtdream.project.level</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="True"/>
+                        </group>
+                        <group/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_deliver_config_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.deliver.config.tree</field>
+        <field name="model">dtdream.project.deliver.config</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="order"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_deliver_config_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.deliver.config.form</field>
+        <field name="model">dtdream.project.deliver.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="True"/>
+                        </group>
+                        <group>
+                            <field name="order" required="True"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_plan_config_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.plan.config.form</field>
+        <field name="model">dtdream.project.plan.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="项目阶段">
+                        <group>
+                            <field name="name" options="{'no_create': True}" required="True"/>
+                        </group>
+                        <group>
+                            <field name="project_type" required="True"/>
+                        </group>
+                    </group>
+
+                    <group string="工作事项">
+                        <notebook>
+                            <page>
+                                <field name="plan">
+                                    <tree editable="bottom">
+                                        <field name="work_item" required="True"/>
+                                        <field name="leader" required="True"/>
+                                        <field name="work_details" required="True"/>
+                                        <field name="can_delete"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_plan_config_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.plan.config.tree</field>
+        <field name="model">dtdream.project.plan.config</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="project_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_output_plan_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.output.plan.form</field>
+        <field name="model">dtdream.project.output.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="项目阶段">
+                        <group>
+                            <field name="name" options="{'no_create': True}" required="True"/>
+                        </group>
+                        <group>
+                            <field name="project_type" required="True"/>
+                        </group>
+                    </group>
+
+                    <group string="输出物">
+                        <notebook>
+                            <page>
+                                <field name="plan_manage">
+                                    <tree editable="bottom">
+                                        <field name="output" required="True"/>
+                                        <field name="can_delete"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_output_plan_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.output.plan.tree</field>
+        <field name="model">dtdream.project.output.plan</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="project_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_output_deliver_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.output.deliver.form</field>
+        <field name="model">dtdream.project.output.deliver</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="交付类别">
+                        <group>
+                            <field name="name" options="{'no_create': True}" required="True"/>
+                        </group>
+                        <group>
+                            <field name="project_type" required="True"/>
+                        </group>
+                    </group>
+
+                    <group string="交付输出物">
+                        <notebook>
+                            <page>
+                                <field name="deliver_manage">
+                                    <tree editable="bottom">
+                                        <field name="deliver" required="True"/>
+                                        <field name="can_delete"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_output_deliver_tree" model="ir.ui.view">
+        <field name="name">view.dtdream.project.output.deliver.tree</field>
+        <field name="model">dtdream.project.output.deliver</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="project_type" required="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dtdream_project_type_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.type.form</field>
+        <field name="model">dtdream.project.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="True"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+  </data>
+</openerp>

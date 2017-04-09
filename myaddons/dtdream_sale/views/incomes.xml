@@ -1,66 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
 
-    <!--现金收入FORM-->
-    <record model="ir.ui.view" id="dtdream_sale_cash_income_form">
-        <field name="name">dtdream.sale.cash.income.form</field>
-        <field name="model">cash.income</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name" string="现金收入(万元)"/>
-                            <field name="cash_project_id" invisible="1"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!--现金收入TREE-->
-    <record model="ir.ui.view" id="dtdream_sale_cash_income_tree">
-        <field name="name">dtdream.sale.cash.income.tree</field>
-        <field name="model">cash.income</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name" string="现金收入(万元)"/>
-                <field name="create_date" string="创建时间"/>
-            </tree>
-        </field>
-    </record>
-
-    <!--GAAP收入FORM-->
-    <record model="ir.ui.view" id="dtdream_sale_gaap_income_form">
-        <field name="name">dtdream.sale.gaap.income.form</field>
-        <field name="model">gaap.income</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name" string="GAAP收入(万元)"/>
-                            <field name="gaap_project_id" invisible="1"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!--GAAP收入TREE-->
-    <record model="ir.ui.view" id="dtdream_sale_gaap_income_tree">
-        <field name="name">dtdream.sale.gaap.income.tree</field>
-        <field name="model">gaap.income</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name" string="GAAP收入(万元)"/>
-                <field name="create_date" string="创建时间"/>
-            </tree>
-        </field>
-    </record>
-
     <!--费用支出FORM-->
     <record model="ir.ui.view" id="dtdream_sale_fee_pay_form">
         <field name="name">dtdream.sale.fee.pay.form</field>

@@ -38,13 +38,17 @@
                   <field name="is_temporary_bom"/>
                   <field name="categ_id"/>
                   <field name="pro_type" />
+                  <field name="is_software" />
+                  <field name="is_operations_software" />
                   <field name="pro_description_out" />
                   <field name="pro_description" />
-                  <!--<field name="pro_parent_id" string="上级BOM" widget="many2many_tags"/>-->
               </field>
               <field name="uom_id" position="before">
+                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
+                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
+                  <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
               </field>
               <field name="uom_id" position="after">
                   <field name="pro_version" />
@@ -137,8 +141,11 @@
                   <field name="pro_type"/>
                   <field name="pro_description_out" />
                   <field name="is_temporary_bom"/>
+                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
+                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
+                  <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
                   <field name="pro_status" string="状态"/>
                   <field name="effect_time"/>
                   <field name="write_uid" string="最后更新人"/>
@@ -199,8 +206,11 @@
                   <field name="pro_type"/>
                   <field name="pro_description_out" />
                   <field name="is_temporary_bom"/>
+                  <field name="cost_price" string="成本价" groups="dtdream_sale.group_product_cost_query"/>
                   <field name="list_price" string="目录价" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
                   <field name="ref_discount" groups="dtdream_sale.group_product_list_query,dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
+                  <field name="office_manager_discount" groups="dtdream_sale.group_product_banshichu_query,dtdream_sale.group_product_system_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_market_query,dtdream_sale.group_product_sale_manager"/>
+                  <field name="sale_grant_discount" groups="dtdream_sale.group_product_market_query,dtdream_sale.group_product_manage,dtdream_sale.group_product_sale_manager"/>
                   <field name="pro_status" string="状态"/>
                   <field name="effect_time"/>
                   <field name="write_uid" string="最后更新人"/>
@@ -416,24 +426,6 @@
                     </button>
                 </button>
                 <button name="toggle_active" position="before">
-                    <button name="%(action_contract_fee)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
-                          <div class="o_stat_info">
-                              <field name="sum_of_contract_fee" class="o_stat_value"/>
-                              <span class="o_stat_text">合同额(万元)</span>
-                          </div>
-                    </button>
-                    <button name="%(action_cash_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
-                          <div class="o_stat_info">
-                              <field name="sum_of_cash_income" class="o_stat_value"/>
-                              <span class="o_stat_text">现金收入(万元)</span>
-                          </div>
-                    </button>
-                    <button name="%(action_gaap_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
-                          <div class="o_stat_info">
-                              <field name="sum_of_gaap_income" class="o_stat_value"/>
-                              <span class="o_stat_text">GAAP收入(万元)</span>
-                          </div>
-                    </button>
                     <button name="%(action_fee_pay)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
                           <div class="o_stat_info">
                               <field name="sum_of_fee_pay" class="o_stat_value"/>
@@ -623,6 +615,7 @@
                                     <field name="list_price" string="目录价"/>
                                     <field name="ref_discount" string="参考折扣(%)"/>
                                     <field name="apply_discount" string="申请折扣(%)"/>
+                                    <field name="pro_status" string="产品状态"/>
                                     <field name="pro_num" string="数量"/>
                                     <!--<field name="config_set" string="发货地"/>-->
                                 </tree>
@@ -640,8 +633,9 @@
                                             <group>
                                                 <field name="ref_discount" string="参考折扣(%)" readonly="True"/>
                                                 <field name="apply_discount" string="申请折扣(%)"/>
-                                                <field name="pro_uom_name" string="单位"/>
+                                                <field name="pro_uom_name" string="单位" readonly="True"/>
                                                 <field name="pro_num" string="数量"/>
+                                                <field name="pro_status" string="产品状态" readonly="True"/>
                                                 <!--<field name="config_set" string="发货地"/>-->
                                             </group>
                                         </group>

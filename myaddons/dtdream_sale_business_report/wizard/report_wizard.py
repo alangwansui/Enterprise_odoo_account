@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-from datetime import datetime
+from openerp .exceptions import ValidationError
 
 class ReportWizard(models.TransientModel):
     _name = 'dtdream.report.wizard'
@@ -37,11 +37,6 @@ class ReportApproveWizard(models.TransientModel):
     gongkan_content = fields.Text(string="工勘内容")
     if_view_gongkan = fields.Boolean(string="是否显示工勘")
 
-    # @api.onchange('if_gongkan')
-    # def _onchange_id_gongkan(self):
-    #     if self.if_gongkan == "1" and self.gongkan_content == u"未工勘":
-    #         self.gongkan_content = ""
-
     @api.one
     def btn_confirm(self):
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
@@ -73,6 +68,11 @@ class ReportSubmitWizard(models.TransientModel):
 
     @api.one
     def btn_confirm(self):
-
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
+        pro_list = []
+        for product in current_report.product_line:
+            if product.pro_status in ('outPro','controlled') and (product.controlled_pro_cost_price == 0 or product.list_price == 0):
+                pro_list.append(product.bom)
+        if len(pro_list) > 0:
+            raise ValidationError(u'bom编号为%s的产品为受控/停产产品，请联系营销管理部产品管理员导入目录价后提交' % [(pro_bom).encode('utf-8') for pro_bom in pro_list])
         current_report.signal_workflow('btn_submit')

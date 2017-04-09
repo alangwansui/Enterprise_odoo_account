@@ -32,6 +32,7 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
             'click .panel': 'on_dashboard_action_clicked',
             'click .next': 'on_next_click',
             'click .previous': 'on_next_click',
+            'click .clickPage': 'on_btnPage_click'
         },
 
         fetch_data: function () {
@@ -56,20 +57,25 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
                 self.render_affairs();
                 self.render_applies();
                 self.render_done();
+                self.render_rd_slider_tab();
             });
         },
         render_affairs: function(){
             var affairs = [];
-            var currentPage =1
+            var currentPage =1;
+            var btnPage=[];
             new Model("dtdream.rd.dashboard")
             .call("get_all_affairs", [currentPage],{},null)
             .then(function (data) {
                 if (data) {
-                    affairData=data
-                    affairs=data['affairs']
+                    affairData=data;
+                    affairs=data['affairs'];
+                    btnPage=_.range(1,data['totalPage']+1);
                 }
                 var $info = $(QWeb.render('dtdream_rd_prod.content_event_affairs', {
                     'affairs': affairs,
+                    'totalNumber':affairs.length,
+                    'btnPage':btnPage,
                     'totalPage':data['totalPage'],
                     'currentPage':data['currentPage'],
                     'nextPage':parseInt(data['currentPage'])+1,
@@ -84,33 +90,37 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
                     }
                 }
                 if (parseInt(data['currentPage'])-1==0){
-                    $("a.previous[type='affairs']").addClass('disabled')
+                    $(".previous[type='affairs']").addClass('disabled')
                 }
                 else{
-                    $("a.previous[type='affairs']").removeClass('disabled')
+                    $(".previous[type='affairs']").removeClass('disabled')
                 }
                 if (parseInt(data['currentPage'])+1>data['totalPage']){
-                    $("a.next[type='affairs']").addClass('disabled')
+                    $(".next[type='affairs']").addClass('disabled')
                 }else{
-                    $("a.next[type='affairs']").removeClass('disabled')
+                    $(".next[type='affairs']").removeClass('disabled')
                 }
-                if (affairs.length==0){
+                /*if (affairs.length==0){
                     $('.o_content_event_affairs').hide()
-                }
+                }*/
             })
         },
         render_applies: function(){
-            var applies=[]
-            var currentPage =1
+            var applies=[];
+            var currentPage =1;
+            var btnPage=[];
             new Model("dtdream.rd.dashboard")
             .call("get_all_applies", [currentPage],{},null)
             .then(function (data) {
                 if (data) {
-                    applyData =data
-                    applies=data['applies']
+                    applyData =data;
+                    applies=data['applies'];
+                    btnPage=_.range(1,data['totalPage']+1);
                 }
                 var $info = $(QWeb.render('dtdream_rd_prod.content_event_applies', {
                     'applies': applies,
+                    'totalNumber':applies.length,
+                    'btnPage':btnPage,
                     'totalPage':data['totalPage'],
                     'currentPage':data['currentPage'],
                     'nextPage':parseInt(data['currentPage'])+1,
@@ -125,33 +135,37 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
                     }
                 }
                 if (parseInt(data['currentPage'])-1==0){
-                    $("a.previous[type='applies']").addClass('disabled')
+                    $(".previous[type='applies']").addClass('disabled')
                 }
                 else{
-                    $("a.previous[type='applies']").removeClass('disabled')
+                    $(".previous[type='applies']").removeClass('disabled')
                 }
                 if (parseInt(data['currentPage'])+1>data['totalPage']){
-                    $("a.next[type='applies']").addClass('disabled')
+                    $(".next[type='applies']").addClass('disabled')
                 }else{
-                    $("a.next[type='applies']").removeClass('disabled')
+                    $(".next[type='applies']").removeClass('disabled')
                 }
-                if (applies.length==0){
+                /*if (applies.length==0){
                     $('.o_content_event_applies').hide()
-                }
+                }*/
             })
         },
         render_done: function(){
             var affairs = [];
-            var currentPage =1
+            var currentPage =1;
+            var btnPage=[];
             new Model("dtdream.rd.dashboard")
             .call("get_all_dones", [currentPage],{},null)
             .then(function (data) {
                 if (data) {
-                    doneData=data
-                    affairs=data['dones']
+                    doneData=data;
+                    affairs=data['dones'];
+                    btnPage=_.range(1,data['totalPage']+1);
                 }
                 var $info = $(QWeb.render('dtdream_rd_prod.content_event_dones', {
                     'dones': affairs,
+                    'totalNumber':affairs.length,
+                    'btnPage':btnPage,
                     'totalPage':data['totalPage'],
                     'currentPage':data['currentPage'],
                     'nextPage':parseInt(data['currentPage'])+1,
@@ -166,20 +180,37 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
                     }
                 }
                 if (parseInt(data['currentPage'])-1==0){
-                    $("a.previous[type='dones']").addClass('disabled')
+                    $(".previous[type='dones']").addClass('disabled')
                 }
                 else{
-                    $("a.previous[type='dones']").removeClass('disabled')
+                    $(".previous[type='dones']").removeClass('disabled')
                 }
                 if (parseInt(data['currentPage'])+1>data['totalPage']){
-                    $("a.next[type='dones']").addClass('disabled')
+                    $(".next[type='dones']").addClass('disabled')
                 }else{
-                    $("a.next[type='dones']").removeClass('disabled')
+                    $(".next[type='dones']").removeClass('disabled')
                 }
-                if (affairs.length==0){
+                /*if (affairs.length==0){
                     $('.o_content_event_dones').hide()
-                }
+                }*/
             })
+        },
+        render_rd_slider_tab: function(){
+            if($("#rd_sliderSelectOptions li.active a").html() == "待我审批流程"){
+                $('#rd_sliderSelectOptions .inline').css({'width':'155px','left':0});
+            }
+            $("#rd_sliderSelectOptions").on("mouseenter","li.slider_li",function(){
+                if(!$(this).hasClass('active')){
+                    $(this).addClass("active").siblings(".active").removeClass("active");
+                }
+                var movedistance=($(this).index())*155;
+                $('#rd_sliderSelectOptions .inline').css({'width':'155px','left':movedistance});
+
+                var sliderEvent=$(this).data('index')+"_events";
+                if(!$("#"+sliderEvent).hasClass("active")){
+                    $("#"+sliderEvent).addClass("active").addClass("in").siblings(".active").removeClass("active").removeClass("in");
+                }
+            });
         },
         /**
          * @description 跳转界面
@@ -234,96 +265,211 @@ odoo.define('dtdream_rd_prod.ui.dashboard', function (require) {
 
         },
         on_next_click:function(ev){
-        if($(ev.currentTarget).hasClass('disabled')) return true
-        var currentPage=$(ev.currentTarget).attr('value')
-        if ($(ev.currentTarget).attr('type')=='affairs'){
-            $('.o_content_event_affairs').html('')
-            var $info = $(QWeb.render('dtdream_rd_prod.content_event_affairs', {
-                'affairs': affairData['affairs'],
-                'totalPage':affairData['totalPage'],
-                'currentPage':currentPage,
-                'nextPage':parseInt(currentPage)+1,
-                'previousPage':parseInt(currentPage)-1,
-            }));
-            $info.appendTo('.o_content_event_affairs');
-            var affair_currentPage = 'affair_'+currentPage+'_'
-            var all = $("tr[class*='affair_']")
-            for (var i=0;i<all.length;i++){
-                if (all[i].className!=affair_currentPage){
-                    $(all[i]).hide()
+            if($(ev.currentTarget).hasClass('disabled')) return true
+            var currentPage=$(ev.currentTarget).attr('value')
+            if ($(ev.currentTarget).attr('type')=='affairs'){
+                $('.o_content_event_affairs').html('');
+                var affair_btnPage=[];
+                affair_btnPage=_.range(1,affairData['totalPage']+1);
+                var $info = $(QWeb.render('dtdream_rd_prod.content_event_affairs', {
+                    'affairs': affairData['affairs'],
+                    'totalNumber':affairData['affairs'].length,
+                    'btnPage':affair_btnPage,
+                    'totalPage':affairData['totalPage'],
+                    'currentPage':currentPage,
+                    'nextPage':parseInt(currentPage)+1,
+                    'previousPage':parseInt(currentPage)-1,
+                }));
+                $info.appendTo('.o_content_event_affairs');
+                var affair_currentPage = 'affair_'+currentPage+'_'
+                var all = $("tr[class*='affair_']")
+                for (var i=0;i<all.length;i++){
+                    if (all[i].className!=affair_currentPage){
+                        $(all[i]).hide()
+                    }
+                }
+                if (parseInt(currentPage)-1==0){
+                    $(".previous[type='affairs']").addClass('disabled')
+                }
+                else{
+                    $(".previous[type='affairs']").removeClass('disabled')
+                }
+                if (parseInt(currentPage)+1>affairData['totalPage']){
+                    $(".next[type='affairs']").addClass('disabled')
+                }else{
+                    $(".next[type='affairs']").removeClass('disabled')
                 }
             }
-            if (parseInt(currentPage)-1==0){
-                $("a.previous[type='affairs']").addClass('disabled')
-            }
-            else{
-                $("a.previous[type='affairs']").removeClass('disabled')
-            }
-            if (parseInt(currentPage)+1>affairData['totalPage']){
-                $("a.next[type='affairs']").addClass('disabled')
-            }else{
-                $("a.next[type='affairs']").removeClass('disabled')
-            }
-        }
-        else if ($(ev.currentTarget).attr('type')=='applies'){
-            $('.o_content_event_applies').html('')
-            var $info = $(QWeb.render('dtdream_rd_prod.content_event_applies', {
-                'applies': applyData['applies'],
-                'totalPage':applyData['totalPage'],
-                'currentPage':currentPage,
-                'nextPage':parseInt(currentPage)+1,
-                'previousPage':parseInt(currentPage)-1,
-            }));
-            $info.appendTo('.o_content_event_applies');
-            var apply_currentPage = 'apply_'+currentPage+'_'
-            var all = $("tr[class*='apply_']")
-            for (var i=0;i<all.length;i++){
-                if (all[i].className!=apply_currentPage){
-                    $(all[i]).hide()
+            else if ($(ev.currentTarget).attr('type')=='applies'){
+                $('.o_content_event_applies').html('');
+                var apply_btnPage=[];
+                apply_btnPage=_.range(1,applyData['totalPage']+1);
+                var $info = $(QWeb.render('dtdream_rd_prod.content_event_applies', {
+                    'applies': applyData['applies'],
+                    'totalNumber':applyData['applies'].length,
+                    'btnPage':apply_btnPage,
+                    'totalPage':applyData['totalPage'],
+                    'currentPage':currentPage,
+                    'nextPage':parseInt(currentPage)+1,
+                    'previousPage':parseInt(currentPage)-1,
+                }));
+                $info.appendTo('.o_content_event_applies');
+                var apply_currentPage = 'apply_'+currentPage+'_'
+                var all = $("tr[class*='apply_']")
+                for (var i=0;i<all.length;i++){
+                    if (all[i].className!=apply_currentPage){
+                        $(all[i]).hide()
+                    }
+                }
+                if (parseInt(currentPage)-1==0){
+                    $(".previous[type='applies']").addClass('disabled')
+                }
+                else{
+                    $(".previous[type='applies']").removeClass('disabled')
+                }
+                if (parseInt(currentPage)+1>applyData['totalPage']){
+                    $(".next[type='applies']").addClass('disabled')
+                }else{
+                    $(".next[type='applies']").removeClass('disabled')
                 }
             }
-            if (parseInt(currentPage)-1==0){
-                $("a.previous[type='applies']").addClass('disabled')
-            }
             else{
-                $("a.previous[type='applies']").removeClass('disabled')
-            }
-            if (parseInt(currentPage)+1>applyData['totalPage']){
-                $("a.next[type='applies']").addClass('disabled')
-            }else{
-                $("a.next[type='applies']").removeClass('disabled')
-            }
-        }
-        else{
-            $('.o_content_event_dones').html('')
-            var $info = $(QWeb.render('dtdream_rd_prod.content_event_dones', {
-                'dones': doneData['dones'],
-                'totalPage':doneData['totalPage'],
-                'currentPage':currentPage,
-                'nextPage':parseInt(currentPage)+1,
-                'previousPage':parseInt(currentPage)-1,
-            }));
-            $info.appendTo('.o_content_event_dones');
-            var apply_currentPage = 'done_'+currentPage+'_'
-            var all = $("tr[class*='done_']")
-            for (var i=0;i<all.length;i++){
-                if (all[i].className!=apply_currentPage){
-                    $(all[i]).hide()
+                $('.o_content_event_dones').html('');
+                var done_btnPage=[];
+                done_btnPage=_.range(1,doneData['totalPage']+1);
+                var $info = $(QWeb.render('dtdream_rd_prod.content_event_dones', {
+                    'dones': doneData['dones'],
+                    'totalNumber':doneData['dones'].length,
+                    'btnPage':done_btnPage,
+                    'totalPage':doneData['totalPage'],
+                    'currentPage':currentPage,
+                    'nextPage':parseInt(currentPage)+1,
+                    'previousPage':parseInt(currentPage)-1,
+                }));
+                $info.appendTo('.o_content_event_dones');
+                var apply_currentPage = 'done_'+currentPage+'_'
+                var all = $("tr[class*='done_']")
+                for (var i=0;i<all.length;i++){
+                    if (all[i].className!=apply_currentPage){
+                        $(all[i]).hide()
+                    }
+                }
+                if (parseInt(currentPage)-1==0){
+                    $(".previous[type='dones']").addClass('disabled')
+                }
+                else{
+                    $(".previous[type='dones']").removeClass('disabled')
+                }
+                if (parseInt(currentPage)+1>doneData['totalPage']){
+                    $(".next[type='dones']").addClass('disabled')
+                }else{
+                    $(".next[type='dones']").removeClass('disabled')
                 }
             }
-            if (parseInt(currentPage)-1==0){
-                $("a.previous[type='dones']").addClass('disabled')
+        },
+        on_btnPage_click: function(ev){
+            var currentPage=$(ev.currentTarget).data('index');
+            if ($(ev.currentTarget).attr('type')=='affairs'){
+                $('.o_content_event_affairs').html('');
+                var affair_btnPage=[];
+                affair_btnPage=_.range(1,affairData['totalPage']+1);
+                var $info = $(QWeb.render('dtdream_rd_prod.content_event_affairs', {
+                    'affairs': affairData['affairs'],
+                    'totalNumber':affairData['affairs'].length,
+                    'btnPage':affair_btnPage,
+                    'totalPage':affairData['totalPage'],
+                    'currentPage':currentPage,
+                    'nextPage':parseInt(currentPage)+1,
+                    'previousPage':parseInt(currentPage)-1,
+                }));
+                $info.appendTo('.o_content_event_affairs');
+
+                var affair_currentPage = 'affair_'+currentPage+'_'
+                var all = $("tr[class*='affair_']")
+                for (var i=0;i<all.length;i++){
+                    if (all[i].className!=affair_currentPage){
+                        $(all[i]).hide()
+                    }
+                }
+                if (parseInt(currentPage)-1==0){
+                    $(".previous[type='affairs']").addClass('disabled')
+                }
+                else{
+                    $(".previous[type='affairs']").removeClass('disabled')
+                }
+                if (parseInt(currentPage)+1>affairData['totalPage']){
+                    $(".next[type='affairs']").addClass('disabled')
+                }else{
+                    $(".next[type='affairs']").removeClass('disabled')
+                }
+            }
+            else if ($(ev.currentTarget).attr('type')=='applies'){
+                $('.o_content_event_applies').html('');
+                var applies_btnPage=[];
+                applies_btnPage=_.range(1,applyData['totalPage']+1);
+                var $info = $(QWeb.render('dtdream_rd_prod.content_event_applies', {
+                    'applies': applyData['applies'],
+                    'totalNumber':applyData['applies'].length,
+                    'btnPage':applies_btnPage,
+                    'totalPage':applyData['totalPage'],
+                    'currentPage':currentPage,
+                    'nextPage':parseInt(currentPage)+1,
+                    'previousPage':parseInt(currentPage)-1,
+                }));
+                $info.appendTo('.o_content_event_applies');
+                var apply_currentPage = 'apply_'+currentPage+'_'
+                var all = $("tr[class*='apply_']")
+                for (var i=0;i<all.length;i++){
+                    if (all[i].className!=apply_currentPage){
+                        $(all[i]).hide()
+                    }
+                }
+                if (parseInt(currentPage)-1==0){
+                    $(".previous[type='applies']").addClass('disabled')
+                }
+                else{
+                    $(".previous[type='applies']").removeClass('disabled')
+                }
+                if (parseInt(currentPage)+1>applyData['totalPage']){
+                    $(".next[type='applies']").addClass('disabled')
+                }else{
+                    $(".next[type='applies']").removeClass('disabled')
+                }
             }
             else{
-                $("a.previous[type='dones']").removeClass('disabled')
-            }
-            if (parseInt(currentPage)+1>doneData['totalPage']){
-                $("a.next[type='dones']").addClass('disabled')
-            }else{
-                $("a.next[type='dones']").removeClass('disabled')
+                $('.o_content_event_dones').html('');
+                var done_btnPage=[];
+                done_btnPage=_.range(1,doneData['totalPage']+1);
+                var $info = $(QWeb.render('dtdream_rd_prod.content_event_dones', {
+                    'dones': doneData['dones'],
+                    'totalNumber':doneData['dones'].length,
+                    'btnPage':done_btnPage,
+                    'totalPage':doneData['totalPage'],
+                    'currentPage':currentPage,
+                    'nextPage':parseInt(currentPage)+1,
+                    'previousPage':parseInt(currentPage)-1,
+                }));
+                $info.appendTo('.o_content_event_dones');
+                var apply_currentPage = 'done_'+currentPage+'_'
+                var all = $("tr[class*='done_']")
+                for (var i=0;i<all.length;i++){
+                    if (all[i].className!=apply_currentPage){
+                        $(all[i]).hide()
+                    }
+                }
+                if (parseInt(currentPage)-1==0){
+                    $(".previous[type='dones']").addClass('disabled')
+                }
+                else{
+                    $(".previous[type='dones']").removeClass('disabled')
+                }
+                if (parseInt(currentPage)+1>doneData['totalPage']){
+                    $(".next[type='dones']").addClass('disabled')
+                }else{
+                    $(".next[type='dones']").removeClass('disabled')
+                }
             }
         }
-    }
     });
 
     core.view_registry.add('rd_dashboard', RdDashboardView);

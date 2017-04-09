@@ -1,0 +1,31 @@
+# 用于代码仓库的迁移
+# 目录结构
+# .
+# ├── conf.py
+# ├── gitlab
+# │   ├── gitlab.py
+# │   ├── __init__.py
+# │   └── project.py              //gitlab的接口封装
+# ├── trans.conf                  //配置文件
+# ├── trans.py                    //工具执行入口
+# └── utils
+#    ├── DTHttps.py
+#    └── __init__.py
+#
+#
+# 操作步骤
+# 0. 寻找一台已经安装了Python 2.7和git的机器（Linux一般都默认安装的，无需自己安装）
+# 1. 克隆代码到本地
+git clone git@gitlab04.dtdream.com:IT/gitlab_repos_trans_tool.git
+cd gitlab_repos_trans_tool
+# 2. 配置trans.conf，详情见trans.conf文件
+# 3. 执行trans.py
+python trans.py trans.conf
+# 遇到问题
+# 1. 认证失败
+# 需要预先在源和目的Gitlab服务器上配置SSH key，详见 http://confluence.dtdream.com/pages/viewpage.action?pageId=5669746
+# 2. windos平台不支持
+# 作者水平有限和时间有限 o(╯□╰)o
+# 3. 貌似只同步了分支代码和标签代码，我在源库提的issue、Merge Request不见了
+# 作者时间有限，周末还要嗨皮 o(╯□╰)o， Gitlab REST API很丰富，完全可以实现支持同步你说的issue 和 Merge
+# 详细见： https://gitlab04.dtdream.com/help/api/README.md

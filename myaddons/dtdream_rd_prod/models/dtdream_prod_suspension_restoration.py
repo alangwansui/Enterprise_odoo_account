@@ -179,7 +179,7 @@ class dtdream_prod_suspension_restoration(models.Model):
         applies=[]
         state_list = [('cg', '草稿'), ('spz', '审批中'), ('ysp', '已审批')]
         state_dict = dict(state_list)
-        appr = self.env['dtdream.prod.suspension.restoration'].search([('create_uid','=',self.env.user.id)])
+        appr = self.env['dtdream.prod.suspension.restoration'].search([('create_uid','=',self.env.user.id),('state','!=','ysp')])
         menu_id = self._get_menu_id()
         for app in appr:
             department = ''
@@ -197,6 +197,7 @@ class dtdream_prod_suspension_restoration(models.Model):
                 'appr': app.project.name,
                 'version':app.version.version_numb,
                 'PDT': app.project.PDT.name or '',
+                'YF_manager': app.project.YF_manager.name or '',
                 'style':u'恢复暂停',
                 'state': state_dict[app.state],
                 'defer':defer,
@@ -206,6 +207,7 @@ class dtdream_prod_suspension_restoration(models.Model):
             applies.append(apply)
         return applies
 
+    # 待我审批流程
     @api.model
     def get_affair(self):
         affairs = []
@@ -229,6 +231,7 @@ class dtdream_prod_suspension_restoration(models.Model):
                 'appr': app.project.name,
                 'version': app.version.version_numb,
                 'PDT': app.project.PDT.name or '',
+                'YF_manager': app.project.YF_manager.name or '',
                 'style': u'恢复暂停',
                 'state': state_dict[app.state],
                 'defer': defer,
@@ -261,6 +264,7 @@ class dtdream_prod_suspension_restoration(models.Model):
                 'appr': app.project.name,
                 'version': app.version.version_numb,
                 'PDT': app.project.PDT.name or '',
+                'YF_manager': app.project.YF_manager.name or '',
                 'style': u'恢复暂停',
                 'state': state_dict[app.state],
                 'defer': defer,

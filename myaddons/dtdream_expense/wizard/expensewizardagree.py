@@ -9,113 +9,7 @@ import time
 
 class ExpenseWizard(models.TransientModel):
     _name = 'dtdream.expense.agree.wizard'
-
     advice = fields.Text(string="审批意见")
-
-    ###################公用函数定义区##################################################
-    # 获取公司总裁在hr.employee中的id,模型名称:dtdream.expense.president
-    def get_company_president(self):
-        re = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')])
-        return re.name.id
-
-    # 根据uid（res.users中的id）获取登录账号
-    def get_users_login(self, uuid):
-        re = self.env['res.users'].search([('id', '=', uuid)])
-        return re.login
-
-    # 根据id(hr.employee)获取登录账号
-    def get_employee_login(self, hrid):
-        re = self.env['hr.employee'].search([('id', '=', hrid)])
-        return re.login
-
-    # 根据登录账号获取员工所在部门id
-    def get_employee_departmentid(self, loginid):
-        re = self.env['hr.employee'].search([('login', '=', loginid)])
-        return re.department_id[0].id
-
-    # 根据登录账号获取员工所在部门的上级部门id
-    def get_employee_parentdepartmentid(self, loginid):
-        re = self.env['hr.employee'].search([('login', '=', loginid)])
-        return re.department_id[0].parent_id.id
-
-    # 根据uid(res.users)获取hr.employee 的id
-    def get_employee_id(self, uuid):
-        res = self.env['res.users'].search([('id', '=', uuid)])
-        re = self.env['hr.employee'].search([('login', '=', res.login)])
-        return re.id
-
-    # 根据hr.employee 的id获取uid(res.users)
-    def get_user_id(self, hrid):
-
-        re = self.env['hr.employee'].search([('id', '=', hrid)])
-
-        res = self.env['res.users'].search([('login', '=', re.login)])
-
-        return res.id
-
-    # 根据uid（res.users中的id）获取直接主管
-    def get_zhuguan(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.manager_id[0].id
-
-    # 根据departmentid 获取直接主管
-    def get_zhuguanfromdepid(self, depid):
-
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.manager_id[0].id
-
-    # 根据uid（res.users中的id）获取第一审批人
-    def get_no_one_auditor(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.no_one_auditor[0].id
-
-    # 根据uid（res.users中的id）获取第一审批人上限金额
-    def get_no_one_auditor_amount(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.no_one_auditor_amount
-
-    # 根据uid（res.users中的id）获取第二审批人
-    def get_no_two_auditor(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.no_two_auditor[0].id
-
-    # 根据uid（res.users中的id）获取接口会计
-    def get_jiekoukuaiji(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.jiekoukuaiji[0].id
-
-    # 根据uid（res.users中的id）获取出纳会计
-    def get_chuna(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.chunakuaiji[0].id
-
-    # 根据uid（res.users中的id）获取行政助理
-    def get_xingzheng(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.assitant_id[0].id
-
-    # 根据uid（res.users中的id）获取第二审批人上限金额
-    def get_no_two_auditor_amount(self, uuid):
-        hr_employee_login = self.get_users_login(uuid)
-        depid = self.get_employee_departmentid(hr_employee_login)
-        re = self.env['hr.department'].search([('id', '=', depid)])
-        return re.no_two_auditor_amount
-
-    ##################################################################################
 
     @api.multi
     def btn_confirm(self):
@@ -126,14 +20,11 @@ class ExpenseWizard(models.TransientModel):
                 raise ValidationError("您不是当前审批人！")
             else:
                 old_state = current_expense_model.state
-                create_hr_id = self.get_employee_id(current_expense_model.create_uid.id)
-                zhuguan_id_hr_employee = self.get_zhuguan(current_expense_model.create_uid.id)  # 主管hr.employee中id
-                zhuguan_login = self.get_employee_login(zhuguan_id_hr_employee)
-                parentdepartmentid = self.get_employee_parentdepartmentid(zhuguan_login)  # 上级部门是否为空，为空则为一级，否则为二级
-                no_one_auditor = self.env['hr.department'].search([('id', '=', current_expense_model.department_id.id)]).no_one_auditor  # 第一审批人在hr.employee中
-                no_one_auditor_amount = self.get_no_one_auditor_amount(current_expense_model.create_uid.id)  # 第一审批人上限金额
-                no_two_auditor = self.env['hr.department'].search([('id', '=', current_expense_model.department_id.id)]).no_two_auditor  # 第二审批人在hr.employee中
-                no_two_auditor_amount = self.get_no_two_auditor_amount(current_expense_model.create_uid.id)  # 第二审批人上限金额
+                parentdepartmentid = current_expense_model.department_id.parent_id  # 上级部门是否为空，为空则为一级，否则为二级
+                no_one_auditor = current_expense_model.department_id.no_one_auditor  # 第一审批人在hr.employee中
+                no_one_auditor_amount = current_expense_model.department_id.no_one_auditor_amount  # 第一审批人上限金额
+                no_two_auditor = current_expense_model.department_id.no_two_auditor  # 第二审批人在hr.employee中
+                no_two_auditor_amount = current_expense_model.department_id.no_two_auditor_amount  # 第二审批人上限金额
                 zongcai_hr_employee = self.env['dtdream.expense.president'].search([('type', '=', 'zongcai')]).name  # 总裁在hr.employee中的
                 old_which_quanqianren = ''
                 current_handlers = current_expense_model.current_handler
@@ -144,15 +35,15 @@ class ExpenseWizard(models.TransientModel):
                     if current_expense_model.showcuiqian == '0':
                         raise exceptions.ValidationError('请先确认签收纸件！')
 
-                    if create_hr_id == zhuguan_id_hr_employee:
+                    if current_expense_model.applicant == current_expense_model.department_id.manager_id:
                         if parentdepartmentid:
                             # 二级部门主管
                             if len(current_expense_model.benefitdep_ids) > 1:
                                 # 受益部门多于一个
                                 current_expense_model.xingzheng2who = "1"
                             else:
-                                if (create_hr_id == no_two_auditor.id and current_expense_model.total_invoicevalue <= no_two_auditor_amount) or \
-                                        (create_hr_id == no_one_auditor.id and current_expense_model.total_invoicevalue <= no_one_auditor_amount):
+                                if (current_expense_model.applicant == no_two_auditor and current_expense_model.total_invoicevalue <= no_two_auditor_amount) or \
+                                        (current_expense_model.applicant == no_one_auditor and current_expense_model.total_invoicevalue <= no_one_auditor_amount):
                                     # 和权签人之一重复且没有超过金额，到主管审批(由上级部门主管审批)
                                     current_expense_model.xingzheng2who = "1"
                                 else:
@@ -166,7 +57,7 @@ class ExpenseWizard(models.TransientModel):
 
                 elif current_expense_model.state == "zhuguan":
                     if len(current_expense_model.benefitdep_ids) > 1:
-                        if current_expense_model.department_id.manager_id.user_id == current_expense_model.create_uid and \
+                        if current_expense_model.department_id.manager_id == current_expense_model.applicant and \
                                 not current_expense_model.department_id.parent_id:
                             # 一级部门主管单据，主管审批（总裁）后直接到直接到接口会计
                             current_expense_model.zhuguan_quanqian_jiekoukuaiji = "2"
@@ -178,7 +69,7 @@ class ExpenseWizard(models.TransientModel):
                                 current_expense_model.zhuguan_quanqian_jiekoukuaiji = "1"
 
                     else:
-                        if current_expense_model.department_id.manager_id.user_id == current_expense_model.create_uid:
+                        if current_expense_model.department_id.manager_id == current_expense_model.applicant:
                             # 主管审批环节，如果是部门主管的单据，总裁或者上级部门主管审批后直接到直接到接口会计
                             current_expense_model.zhuguan_quanqian_jiekoukuaiji = "2"
 
@@ -228,8 +119,8 @@ class ExpenseWizard(models.TransientModel):
                             current_expense_model.write({"hasauditor": [(4, current_handlers[0].id)]})
                             current_expense_model.current_handler = re_currentauditperson
                             # current_expense_model.write({'current_handler': [(6, re_currentauditperson.id)]})
-                            current_expense_model.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(current_expense_model.create_uid.name, current_expense_model.create_date[:10]),
-                               u"%s提交的费用报销单,等待您的审批!" % current_expense_model.create_uid.name,
+                            current_expense_model.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(current_expense_model.applicant.name, current_expense_model.create_date[:10]),
+                               u"%s提交的费用报销单,等待您的审批!" % current_expense_model.applicant.name,
                                email_to=re_currentauditperson.work_email)
                             current_expense_model.send_dingding_msg(current_expense_model, re_currentauditperson.user_id.id)
 
@@ -241,8 +132,8 @@ class ExpenseWizard(models.TransientModel):
                             current_expense_model.write({"hasauditor": [(4, current_handlers[0].id)]})
                             current_expense_model.current_handler = re_currentauditperson
                             # current_expense_model.write({'current_handler': [(6, re_currentauditperson.id)]})
-                            current_expense_model.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(current_expense_model.create_uid.name, current_expense_model.create_date[:10]),
-                               u"%s提交的费用报销单,等待您的审批!" % current_expense_model.create_uid.name,
+                            current_expense_model.send_mail(u"【提醒】{0}于{1}提交的费用报销单,请您审批!".format(current_expense_model.applicant.name, current_expense_model.create_date[:10]),
+                               u"%s提交的费用报销单,等待您的审批!" % current_expense_model.applicant.name,
                                email_to=re_currentauditperson.work_email)
                             current_expense_model.send_dingding_msg(current_expense_model, re_currentauditperson.user_id.id)
 

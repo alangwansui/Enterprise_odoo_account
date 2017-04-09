@@ -10,8 +10,8 @@
             <header>
                 <button name="%(btn_submit)d" string="提交" type="action" class="oe_highlight"
                         attrs="{'invisible':['|',('state','!=','0'),('is_current','=',False)]}"/>
-                <field name="import_button" readonly="1" class="dtdream_import" attrs="{'invisible':['|','|',('is_current','=',False),('state','!=','0'),('has_import_button','=',False)]}"/>
-                <field name="download_button" readonly="1" class="dtdream_download" attrs="{'invisible':['|','|',('is_current','=',False),('state','!=','0'),('has_import_button','=',False)]}"/>
+                <field name="import_button" readonly="1" class="dtdream_import" attrs="{'invisible':['|',('state','!=','0'),('has_import_button','=',False)]}"/>
+                <field name="download_button" readonly="1" class="dtdream_download" attrs="{'invisible':['|',('state','!=','0'),('has_import_button','=',False)]}"/>
                 <button name="act_report_approve_crm" string="同意" type="object" class="oe_highlight"
                 attrs="{'invisible':['|','|','|',('is_newest_record','=',False),('is_current','=',False),('state','not in',('1','2','3','4','5','6','7','8','9')),('rejust_state','=',1)]}"/>
                 <button name="%(act_report_wizard)d" string="驳回" type="action" class="oe_highlight"
@@ -88,7 +88,7 @@
                 <field name="supply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="apply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="total_zhuren_price" readonly="1"
-                       groups="dtdream_sale.group_dtdream_sale_office_manager"/>
+                       groups="dtdream_sale.group_dtdream_sale_office_manager" attrs="{'invisible':[('state','not in',('6','7','9','done')),('is_banshichu_bohui','=',False)]}"/>
                 <field name="total_sale_price" readonly="1"
                        groups="dtdream_sale.group_dtdream_management_manager,
                         dtdream_sale.group_dtdream_market_manager,
@@ -250,6 +250,7 @@
                                         dtdream_sale.group_dtdream_company_manager,
                                         dtdream_sale.group_dtdream_devolopement_manager,
                                         dtdream_sale.group_dtdream_sale_high_manager"/>
+                          <field name="pro_status" string="产品状态"/>
                           <field name="pro_remark" string="备注"/>
                       </tree>
                       <form>
@@ -305,6 +306,7 @@
                                             dtdream_sale.group_dtdream_company_manager,
                                             dtdream_sale.group_dtdream_devolopement_manager,
                                             dtdream_sale.group_dtdream_sale_high_manager"/>
+                                      <field name="pro_status" string="产品状态" readonly="True"/>
                                       <field name="pro_remark" string="备注"/>
                                   </group>
                               </group>
@@ -497,6 +499,7 @@
                 <!--<field name="sale_grant_discount"></field>-->
                   <field name="zongbu_service_charge" options='{"no_open": True, "no_create": True}'/>
                   <field name="company_manager" options='{"no_open": True, "no_create": True}'></field>
+                  <field name="person_import_product" options='{"no_open": True, "no_create": True}'></field>
               </group>
               <group>
                   <field name="market_manager" options='{"no_open": True, "no_create": True}'></field>

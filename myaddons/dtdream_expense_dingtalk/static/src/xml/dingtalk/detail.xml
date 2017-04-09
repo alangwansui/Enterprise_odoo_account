@@ -103,16 +103,19 @@
                                     <div class="clearfix list-detail">
                                         <div class="f-l">
                                             <div class="item-subtitle">
-                                        <t t-if="i.province">
-                                            <t t-esc="i.province[1]"/>
-                                        </t>
-                                        <t t-if="city">-
-                                            <t t-esc="city[1]"/>
-                                        </t>
-                                    </div>
-                                    <div class="item-text">
-                                        <t t-esc="i.currentdate"/>
-                                    </div>
+                                                <t t-if="i.province">
+                                                    <t t-esc="i.province[1]"/>
+                                                </t>
+                                                <t t-if="city">-
+                                                    <t t-esc="city[1]"/>
+                                                </t>
+                                            </div>
+                                            <div class="item-text">
+                                                <t t-esc="i.currentdate"/>
+                                            </div>
+                                            <div class="item-text">
+                                                申请人：<t t-esc="i.applicant[1]"/>
+                                            </div>
                                         </div>
                                         <div class="f-r">
                                             <a href="#" class="btn-tj o_view_expense" t-att-data-id="i.id">查看</a>
@@ -240,7 +243,13 @@
                                     <div class="f-l">
                                         <div class="item-subtitle">￥<t t-esc="i.total_invoicevalue"/></div>
                                         <div class="item-text">
-                                            <t t-esc="i.currentauditperson[1]"/> <t t-esc="create_date"/>
+                                            <t t-esc="create_date"/>
+                                            <div>当前处理人：</div>
+                                            <t t-foreach="i.current_handler" t-as="ii">
+                                                <div class="o_current_handler_id">
+                                                    <input type="hidden" t-att-data-id="ii"></input>
+                                                </div>
+                                            </t>
                                         </div>
                                     </div>
                                     <t t-if="i.cui">
@@ -289,7 +298,7 @@
                                    <div class="f-l">
                                        <div class="item-subtitle">￥<t t-esc="i.total_invoicevalue"/> </div>
                                        <div class="item-text">
-                                           <t t-esc="i.create_uid[1]"/> <t t-esc="create_date"/>
+                                           <t t-esc="i.applicant[1]"/> <t t-esc="create_date"/>
                                        </div>
                                    </div>
                                </div>
@@ -397,6 +406,16 @@
                 <div class="content infinite-scroll">
                     <div class="list-block">
                         <ul>
+                            <li style="display:none">
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title label">申请人</div>
+                                        <div class="item-input">
+                                            <input type="text" data-id="applicant" readonly="readonly"></input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                             <li>
                                 <div class="item-content">
                                     <div class="item-inner">
@@ -677,24 +696,23 @@
                         </div>
                     </li>
 
-                    <li class="o_currentauditperson">
+                    <li class="o_current_handler">
                         <div class="item-content">
                             <div class="item-inner">
                                 <div class="item-title label">当前处理人</div>
-                                <div class="item-input">
-                                    <input type="text" data-id="currentauditperson" readonly="true"/>
+                                <div class="item-input o_current_handler_ids">
                                 </div>
                             </div>
 
                         </div>
                     </li>
 
-                    <li class="o_create_uid_self">
+                    <li class="o_applicant">
                         <div class="item-content">
                             <div class="item-inner">
                                 <div class="item-title label">申请人</div>
                                 <div class="item-input">
-                                    <input type="text" data-id="create_uid_self" readonly="true"/>
+                                    <input type="text" data-id="applicant" readonly="true"/>
                                 </div>
                             </div>
 
@@ -1006,6 +1024,14 @@
             </nav>
         </div>
 
+    </t>
+
+    <t t-name="current_handler_list">
+        <t t-foreach="current_handler_ids" t-as="i">
+            <div>
+                <t t-esc="i.name"></t>.<t t-esc="i.full_name"> </t><t t-esc="i.job_number"></t>
+            </div>
+        </t>
     </t>
 
     <t t-name="receipts_chuchai_list">

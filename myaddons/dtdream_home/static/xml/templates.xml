@@ -95,7 +95,7 @@
                     <div class="panel-heading" role="tab" id="left-title-HR">
                         <h6 class="panel-title">
                             <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-HR" aria-expanded="false" aria-controls="left-HR">
-                                <i class="dodo doicon-reception"/>
+                                <i class="dodo doicon-hr"/>
                                 HR
                                 <span class="dodo doicon-jiantouyou"></span>
                             </a>
@@ -168,7 +168,7 @@
                     <div class="panel-heading" role="tab" id="left-title-service">
                         <h6 class="panel-title">
                             <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-service" aria-expanded="false" aria-controls="left-service">
-                                <i class="dodo doicon-rd"/>
+                                <i class="dodo doicon-reception"/>
                                 服务
                                 <span class="dodo doicon-jiantouyou"></span>
                             </a>
@@ -188,6 +188,31 @@
                         </div>
                     </div>
                 </div>
+                <div class="panel">
+                    <div class="panel-heading" role="tab" id="left-title-chain">
+                        <h6 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-chain" aria-expanded="false" aria-controls="left-chain">
+                                <i class="dodo doicon-account"/>
+                                供应链
+                                <span class="dodo doicon-jiantouyou"></span>
+                            </a>
+                        </h6>
+                    </div>
+                    <div id="left-chain" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-chain">
+                        <div class="panel-body list-group">
+                            <ul>
+                                <t t-foreach="chain_sets" t-as="chain">
+                                    <a t-att-href="chain.url">
+                                        <li class="list-group-item">
+                                            <t t-esc="chain.name"/>
+                                        </li>
+                                    </a>
+                                </t>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <!---->
             <!--<ul>
@@ -265,9 +290,10 @@
                     <div class="blank10"/>
                     <p class="notes">*输入任一条件即可查询</p>
                 </div>
+                <!--通讯录 -->
+                <div class="o_user_search" />
             </div>
-            <!--通讯录 -->
-            <div class="o_user_search"/>
+
 
             <!--相关链接-->
             <div class="line related_links p10">
@@ -279,6 +305,7 @@
                         请选择<span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
+                        <li><a target="_blank" href="https://vpn.dtdream.com/">数梦VPN</a></li>
                         <li><a target="_blank" href="http://www.dtdream.com/">公司官网</a></li>
                         <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29204953">公司发文</a></li>
                         <li><a target="_blank" href="http://doc.dtdream.com/pages/viewpage.action?pageId=3670198">外部文档中心</a></li>
@@ -310,6 +337,16 @@
                     </ul>
                 </div>
 
+                <p>dodo手机客户端</p>
+                <div class="dodo-download">
+                    <img src="/dtdream_home/static/img/Android-dodo.png" />
+                    <span>Android版</span>
+                </div>
+                <div class="dodo-download">
+                    <img src="/dtdream_home/static/img/iPhone-dodo.png" />
+                    <span>iPhone版</span>
+                    <span style="font-size:.2rem;text-align:left;">（iPhone版：安装完后，打开手机设置--通用--设备管理--企业级应用后，点击信任应用，会弹出窗口，继续点击信任即可完成安装）</span>
+                </div>
             </div>
 
             <!--我要吐槽-->
@@ -319,17 +356,17 @@
 
     <t t-name="user_search">
         <t t-if="result == 0">
-            <div class="blank30"/>
-            <div class="info line">
-                <div class="p10">
+            <!--<div class="blank30"/>-->
+            <div class="info line" style="border:0;">
+                <div class="p10" style="padding-top:0;">
                     <p class="notes">没有找到对应员工信息</p>
                 </div>
             </div>
         </t>
         <t t-foreach="users" t-as="user">
-            <div class="blank30"/>
-            <div class="info line">
-                <div class="p10">
+            <!--<div class="blank30"/>-->
+            <div class="info line" style="border:0;">
+                <div class="p10" style="padding-top:0;">
                     <label>姓名:</label><span><t t-esc="user.full_name"/></span>
                     <div class="blank10"/>
                     <label>花名:</label><span><t t-esc="user.nick_name"/></span>

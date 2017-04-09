@@ -49,7 +49,11 @@
                 <field name="items"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
                 <field name="deadline"  attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}" required="1"></field>
                 <!--<field name="pro_name" attrs="{'invisible':[('constract_type_char','!=','商务平台协议')],'required':[('constract_type_char', '=', '商务平台协议')]}" options="{'no_create': True}"></field>-->
-                <field name="pro_responsible_person" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="if_responsible_person" widget="radio"
+                       attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
+                <field name="pro_responsible_person"
+                       attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),
+                       ('is_applicant','=',False)],'invisible':[('if_responsible_person','=','0')]}"></field>
                 <field name="partner_jia" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
                 <field name="partner_yi" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>
                 <field name="partner_bing" attrs="{'readonly':['|',('state','in',('1','2','3','4','5','6','7','8','9','10')),('is_applicant','=',False)]}"></field>

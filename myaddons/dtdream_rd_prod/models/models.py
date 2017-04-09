@@ -50,6 +50,7 @@ class dtdream_prod_appr(models.Model):
         role = self.env["dtdream_rd_config"].search([("name", "=", u"PDT经理")])
         PL_CCB_role = self.env["dtdream_rd_config"].search([("name", "=", u"PL-CCB")])
         QA_role = self.env["dtdream_rd_config"].search([("name", "=", u"质量代表")])
+        YF_role = self.env["dtdream_rd_config"].search([("name", "=", u"研发经理")])
         for recc in self:
             for rec in recc.role_ids:
                 if role ==rec.cof_id:
@@ -61,11 +62,15 @@ class dtdream_prod_appr(models.Model):
                 if QA_role ==rec.cof_id:
                     if rec.person:
                         recc.QA=rec.person.id
+                if YF_role ==rec.cof_id:
+                    if rec.person:
+                        recc.YF_manager=rec.person.id
 
 
     PDT = fields.Many2one("hr.employee",string="PDT经理",compute=_compute_employee)
     PL_CCB = fields.Many2one("hr.employee", string="PL-CCB", compute=_compute_employee)
     QA = fields.Many2one("hr.employee", string="质量代表", compute=_compute_employee)
+    YF_manager = fields.Many2one("hr.employee", string="研发经理", compute=_compute_employee)
 
     color = fields.Integer('Color Index')
     active = fields.Boolean(default=True)
@@ -299,7 +304,7 @@ class dtdream_prod_appr(models.Model):
                     if rec.person.user_id == self.env.user:
                         pdt =True
                         break
-        if self.create_uid==self.env.user or pdt:
+        if self.create_uid==self.env.user or pdt or self.env.user==self.YF_manager.user_id:
             self.is_create=True
         else:
             self.is_create=False
@@ -738,6 +743,15 @@ class dtdream_prod_appr(models.Model):
     execption_id = fields.Many2one('dtdream_execption',string="待提交例外")
     execption_flag = fields.Boolean(string="标记是否存在未提交例外")
 
+    @api.onchange('pro_PDT')
+    def onchange_pro_pdt(self):
+        for rec in self:
+            if rec.pro_PDT:
+                for con in rec.role_ids:
+                    if con.cof_id.name==u"PDT经理":
+                        con.person = rec.pro_PDT.person.id
+                        break;
+
 
 
     @api.model
@@ -880,7 +894,7 @@ class dtdream_prod_appr(models.Model):
             return self._get_parent_id(menu.parent_id)
         else:
             return menu.id
-
+    #我提交的流程
     @api.model
     def get_apply(self):
         applies=[]
@@ -888,32 +902,34 @@ class dtdream_prod_appr(models.Model):
                               ('state_04', '验证发布'), ('state_06', '暂停'), ('state_07', '中止'), ('state_05', '完成')]
         state_dict = dict(state_list)
         em = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
-        appr = self.env['dtdream_prod_appr'].search([('PDT','=',em.id)])
-        appr = [x for x in appr if len(x.current_approver_user) > 0 and x.PDT.id ==em.id]
+        appr = self.env['dtdream_prod_appr'].search([('state','not in',('state_06','state_07','state_05'))])
+        # appr = [x for x in appr if len(x.current_approver_user) > 0 and x.YF_manager.id ==em.id]
         menu_id = self._get_menu_id()
         for app in appr:
-            department = ''
-            if app.department_2:
-                department = app.department.name + '/' + app.department_2.name
-            else:
-                department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
-            if deferdays == 0:
-                defer = False
-            else:
-                defer = True
-            apply={
-                'department': department,
-                'appr': app.name,
-                'version':'',
-                'PDT': app.PDT.name or '',
-                'style':u'产品',
-                'state': state_dict[app.state],
-                'defer':defer,
-                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
-                'deferdays': deferdays
-            }
-            applies.append(apply)
+            if len(app.current_approver_user) > 0 and app.YF_manager.id ==em.id:
+                department = ''
+                if app.department_2:
+                    department = app.department.name + '/' + app.department_2.name
+                else:
+                    department = app.department.name
+                deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
+                if deferdays == 0:
+                    defer = False
+                else:
+                    defer = True
+                apply={
+                    'department': department,
+                    'appr': app.name,
+                    'version':'',
+                    'PDT': app.PDT.name or '',
+                    'YF_manager':app.YF_manager.name or '',
+                    'style':u'产品',
+                    'state': state_dict[app.state],
+                    'defer':defer,
+                    'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                    'deferdays': deferdays
+                }
+                applies.append(apply)
         return applies
 
     def _get_menu_id(self):
@@ -926,7 +942,7 @@ class dtdream_prod_appr(models.Model):
                 break
         menu_id = self._get_parent_id(menu)
         return menu_id
-
+#待我审批流程
     @api.model
     def get_affair(self):
         affairs = []
@@ -951,6 +967,7 @@ class dtdream_prod_appr(models.Model):
                 'appr': app.name,
                 'version': '',
                 'PDT': app.PDT.name or '',
+                'YF_manager': app.YF_manager.name or '',
                 'style':u'产品',
                 'state': state_dict[app.state],
                 'defer': defer,
@@ -984,6 +1001,7 @@ class dtdream_prod_appr(models.Model):
                 'appr': app.name,
                 'version': '',
                 'PDT': app.PDT.name or '',
+                'YF_manager': app.YF_manager.name or '',
                 'style':u'产品',
                 'state': state_dict[app.state],
                 'defer': defer,

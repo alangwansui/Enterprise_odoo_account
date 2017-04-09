@@ -209,6 +209,7 @@ THE SOFTWARE.
 
         dataToOptions = function () {
             var eData;
+            if(eData){
             if (picker.element.is('input')) {
                 eData = picker.element.data();
             }
@@ -284,7 +285,7 @@ THE SOFTWARE.
 //                    picker.options[key] = eData[attributeName];
 //                }
 //            });
-        },
+        }},
 
         place = function () {
             var position = 'absolute',

@@ -103,6 +103,7 @@ html {
 .doicon-feedback:before{
     content:"\e61f";
 }
+<<<<<<< HEAD
 .doicon-dtpay:before{
     content:"\e620";
 }
@@ -111,6 +112,9 @@ html {
 }
 .doicon-jiantouxia:before {
     content: "\e683";
+}
+.doicon-qualification:before{
+    content:"\e61f";
 }
 /*font-family*/
 html,
@@ -543,6 +547,7 @@ h6 {
     text-align: center;
     border:0;
     background-color:#F9FAFC;
+    cursor: pointer;
 }
 .dodo-container .content .main .event-table .title_affairs .nav-tabs .active{
     font-weight: bold;
@@ -688,6 +693,17 @@ margin-top: 5.744rem;
 }
 .dodo-container .content .related .related_links p {
     margin-top: .5rem;
+}
+.dodo-container .content .related .related_links .dodo-download{
+    width: 100%;
+    text-align: center;
+}
+.dodo-container .content .related .related_links .dodo-download img{
+    width: 50%;
+    margin: .5rem 0;
+}
+.dodo-container .content .related .related_links .dodo-download span{
+    display: block;
 }
 .dodo-container .content .related .related_links .btn {
     background-color: #fff;

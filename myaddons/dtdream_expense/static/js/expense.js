@@ -8,6 +8,12 @@ var FormView = require('web.FormView');
 var ListView = require('web.ListView');
 var Model = require('web.Model');
 FormView.include({
+    to_edit_mode: function() {
+        this._super.apply(this, arguments);
+        if (this.model.indexOf("dtdream.expense.report")>-1){
+            this.do_onchange(this.fields['applicant'])
+        }
+    },
     events: _.defaults({
         'keyup input.expense_int_cls': 'expense_int_click',
     }, FormView.prototype.events),

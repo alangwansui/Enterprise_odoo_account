@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data >
+        <record model="ir.module.category" id="module_hr_qua_group">
+            <field name="name">任职管理</field>
+            <field name="description">任职管理</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="group_hr_inter_qua" model="res.groups">
+            <field name="name">HR接口人</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_hr_qua_group"/>
+        </record>
+
+        <record id="group_hr_manage_qua" model="res.groups">
+            <field name="name">HR任职管理员</field>
+            <field name="implied_ids" eval="[(4,ref('group_hr_inter_qua'))]"/>
+            <field name="category_id" ref="module_hr_qua_group"/>
+        </record>
+
+
+        <record id="qua_rule_01" model="ir.rule">
+             <field name="name">普通员工查看任职</field>
+             <field name="model_id" ref="model_dtdream_qualification_management"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+             <field name="domain_force">['|',('name.user_id','=',user.id),('manager_id.user_id','=',user.id)]</field>
+        </record>
+
+        <record id="qua_rule_02" model="ir.rule">
+             <field name="name">接口人查看任职</field>
+             <field name="model_id" ref="model_dtdream_qualification_management"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('group_hr_inter_qua'))]"/>
+             <field name="domain_force">[]</field>
+        </record>
+
+        <record id="qua_rule_03" model="ir.rule">
+             <field name="name">管理员查看任职</field>
+             <field name="model_id" ref="model_dtdream_qualification_management"/>
+             <field name="perm_read" eval="1"/>
+             <field name="perm_create" eval="0"/>
+             <field name="perm_write" eval="0"/>
+             <field name="perm_unlink" eval="0"/>
+             <field name="groups" eval="[(4, ref('group_hr_manage_qua'))]"/>
+             <field name="domain_force">[]</field>
+        </record>
+
+    </data>
+</openerp>

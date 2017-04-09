@@ -18,18 +18,21 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'hr'],
+    'depends': ['base', 'hr', 'dtexport'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
+        'views/dtdream_project_approve_record.xml',
+        'views/order_import_wizard.xml',
         'views/dtdream_project_stage.xml',
-        'views/dtdream_project_plan_config.xml',
+        'views/dtdream_project_manage_config.xml',
         'views/dtdream_project_order.xml',
         'views/dtdream_project_role.xml',
         'views/dtdream_project_manage.xml',
         'views/data.xml',
         'views/workflow.xml',
         'views/dtdream_pmoo_wizard.xml',
+        'views/dtdream_pmo_approve_wizard.xml',
+        'security/ir.model.access.csv',
     ],
 }

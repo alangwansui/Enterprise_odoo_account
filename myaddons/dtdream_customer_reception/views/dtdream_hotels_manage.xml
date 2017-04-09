@@ -128,6 +128,10 @@
             <search string="Search">
                 <field name="name"/>
                 <field name="parent_id"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_name" string="星级" context="{'group_by':'star'}"/>
+                    <filter name="group_name" string="区域" context="{'group_by':'parent_id'}"/>
+                </group>
             </search>
         </field>
     </record>

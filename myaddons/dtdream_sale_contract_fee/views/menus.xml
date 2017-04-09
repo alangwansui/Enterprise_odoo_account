@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem name="合同管理" id="dtdream_menu_contract_fee_menu" parent="base.menu_base_partner" sequence="12"></menuitem>
+        <menuitem name="合同头" id="dtdream_menu_contract_fee" parent="dtdream_menu_contract_fee_menu" sequence="8" action="dtdream_sale_contract_fee_action"></menuitem>
+        <menuitem name="合同明细" id="dtdream_menu_contract_details" parent="dtdream_menu_contract_fee_menu" sequence="10" action="dtdream_sale_contract_details_action"></menuitem>
+    </data>
+</openerp>

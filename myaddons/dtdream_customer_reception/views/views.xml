@@ -13,7 +13,9 @@
             <form>
                 <header>
                     <button name="btn_submit" string="提交" type="workflow" class="oe_highlight"
-                            attrs="{'invisible':['|','&amp;',('state','=','0'),'&amp;',('is_shenqingren','=', False),('is_create','=', False),'|',('state','not in',('0', '3', '4')),'|','&amp;',('state','=','4'),('is_shenqingren','=', False),'&amp;',('state','=','3'),('is_receptionist','=', False)]}" confirm="请确认是否提交?"/>
+                            attrs="{'invisible':['|','&amp;',('state','=','0'),'&amp;',('is_shenqingren','=', False),('is_create','=', False),'|',('state','not in',('0', '3', '4')),'|','&amp;',('state','=','4'),('is_shenqingren','=', False),'|','&amp;',('state','=','3'),('is_current','=', False),'&amp;',('state','=','3'),'&amp;',('is_current','=', True),('is_receptionist','=',False)]}" confirm="请确认是否提交?"/>
+                    <button name="btn_car_submit" string="提交" type="object" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','3'),'|','&amp;',('state','=','3'),('is_current','=', False),'&amp;',('state','=','3'),'&amp;',('is_current','=', True),('is_receptionist','=',True)]}"/>
                     <button name="%(act_customer_reception_back_wizard)d" string="撤回" type="action" class="oe_highlight"
                             attrs="{'invisible':['|',('state','not in',('1', '2', '3')),('is_shenqingren','=',False)]}"/>
                     <button name="btn_agree" string="同意" type="workflow" class="oe_highlight"
@@ -70,6 +72,7 @@
                           <field name="customer" domain="[('customer', '=', True)]" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)], 'invisible':[('customer_source','!=','0')],'required':[('customer_source','=','0')]}"/>
                           <field name="customer_level" class = "customer_level_tooltip" attrs="{'readonly':['|','|',('entry_way','=',True),'&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                           <field name="visit_date" required="True" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                          <field name="visit_time" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                           <field name="purpose" required="True" options="{'no_open': True,'no_create': True}" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                       </group>
                   </group>
@@ -88,6 +91,7 @@
                   <group string="客户接待执行人" attrs="{'invisible':[('state','in',('0','1'))]}">
                       <group>
                           <field name="receptionist" attrs="{'readonly':['|','&amp;',('state','!=', '2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_officer','=',False),('is_manage','=',False)]}"/>
+                          <field name="car_settings" attrs="{'readonly':['|','&amp;',('state','!=', '2'),('is_manage','=',False),'&amp;',('state','=','2'),'&amp;',('is_officer','=',False),('is_manage','=',False)]}"/>
                       </group>
                   </group>
                   <notebook>
@@ -173,7 +177,7 @@
                                   <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
                                       <field name="car" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <div class="transport">
-                                          <span >小车</span>
+                                          <span >小车(4-5座)</span>
                                           <field name="car_num" attrs="{'readonly':['|',('car', '=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                           <span>部</span>
                                       </div>
@@ -181,19 +185,39 @@
                                   <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
                                       <field name="commercial_vehicle" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <div class="transport">
-                                          <span>商务车</span>
+                                          <span>商务车(7-8座)</span>
                                           <field name="commercial_vehicle_num" attrs="{'readonly':['|',('commercial_vehicle','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                           <span>部</span>
                                       </div>
                                   </div>
                               </group>
+
                               <group>
+                                  <div class="o_row dtdream_customer_input dtdream_customer_checkbox">
+                                      <field name="bus" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                      <div class="transport">
+                                          <span>巴士(10座以上)</span>
+                                          <field name="bus_num" attrs="{'readonly':['|',('bus','=',False),'|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
+                                          <span>部</span>
+                                      </div>
+                                  </div>
+
                                   <div class="dtdream_customer_input dtdream_customer_checkbox">
                                       <field name="bicycle" attrs="{'readonly':['|','&amp;',('state','!=', '0'),('is_manage','=',False),'&amp;','&amp;',('state','=', '0'),('is_manage','=',False),'&amp;',('is_shenqingren','=',False),('is_create','=', False)]}"/>
                                       <div class="transport">
                                           <span>自行乘车</span>
                                       </div>
                                   </div>
+                              </group>
+                          </group>
+
+                          <group attrs="{'invisible':[('bicycle','=', True)]}">
+                              <group>
+                                  <field name="licence" attrs="{'required':['&amp;',('state','=', '3'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)],'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_receptionist','=',True),'&amp;','&amp;',('state','=','3'),('is_receptionist','=',False),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
+                                  <field name="driver_name" attrs="{'required':['&amp;',('state','=', '3'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)],'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_receptionist','=',True),'&amp;','&amp;',('state','=','3'),('is_receptionist','=',False),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
+                              </group>
+                              <group>
+                                  <field name="driver_tel" attrs="{'required':['&amp;',('state','=', '3'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)],'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_receptionist','=',True),'&amp;','&amp;',('state','=','3'),('is_receptionist','=',False),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
                               </group>
                           </group>
 
@@ -303,13 +327,21 @@
                   </group>
                   <group string="评价" attrs="{'invisible':[('state','not in',('4','99'))]}">
                       <group>
-                          <field name="evaluate" placeholder="请填写评价或建议!" attrs="{'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)],'required':[('state','=','4')]}"/>
-                      </group>
-                      <group colspan="12">
+                          <label for="score" string="请对本次客户接待安排进行评价(1分最差，10分最好):" colspan="2"/>
                           <div class="o_row">
-                          <label for="score" string="请对本次的客户接待安排进行打分(非常满意8-10分，满意6-8分，正常5分，不满意4分，非常不满意3分以下):"/>
-                          <field name="score" attrs="{'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)],'required':[('state','=','4')]}"/>
-                      </div>
+                              <field name="score" attrs="{'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)],'required':[('state','=','4')]}"/>
+                          </div>
+                          <label for="score" string="请对本次的司机进行评价(1分最差，10分最好):" colspan="2" attrs="{'invisible':['&amp;',('state','in',('4','99')),'&amp;',('car','=',False),'&amp;',('commercial_vehicle','=',False),('bus','=',False)]}"/>
+                          <div class="o_row" attrs="{'invisible':['&amp;',('state','in',('4','99')),'&amp;',('car','=',False),'&amp;',('commercial_vehicle','=',False),('bus','=',False)]}">
+                              <field name="drive_score" attrs="{'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)],'required':['&amp;',('state','=','4'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)]}"/>
+                          </div>
+                      </group>
+                  </group>
+
+                  <group string="问题反馈" attrs="{'invisible':['|',('state','not in',('4','99')),('drive_score', 'not in',('1','2','3','4','5','6'))]}">
+                      <group>
+                          <field name="reason" attrs="{'required':['&amp;',('state','=','4'),('drive_score', 'in',('1','2','3','4','5','6'))] ,'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)]}"/>
+                          <field name="reason_text" attrs="{'invisible':[('reason','!=','4')],'readonly':['|','&amp;',('is_shenqingren','=',False),'&amp;',('state','=', '4'),('is_manage','=',False),'&amp;',('state','!=', '4'),('is_manage','=',False)]}"/>
                       </group>
                   </group>
 

@@ -1,0 +1,336 @@
+<openerp>
+  <data>
+    <!--项目申请授权
+    access_dtdream_project_bid_authorize_apply_apply,dtdream_project_bid_authorize_apply.dtdream_project_bid_authorize_apply,model_dtdream_project_bid_authorize_apply,dtdream_sale.group_dtdream_sale_rep,1,1,1,0
+    -->
+    <record model="ir.ui.view" id="dtdream_project_bid_authorize_apply_form">
+      <field name="name">dtdream.project.bid.authorize.apply.form</field>
+      <field name="model">dtdream.project.bid.authorize.apply</field>
+      <field name="arch" type="xml">
+        <form string="项目授权">
+            <header>
+                <button name="%(btn_confirm)d" string="审核" type="action" class="oe_highlight"
+                        attrs="{'invisible':['|',('state','!=','2'),('present_shenpiren','=',False)]}"/>
+                <button name="btn_apply" string="提交" type="workflow" class="oe_highlight"
+                        attrs="{'invisible':['|',('state','!=','0'),'|',('state','!=','0'),('present_shenpiren','=',False)]}"/>
+                <button name="btn_approve" string="同意" type="workflow" class="oe_highlight"
+                        attrs="{'invisible':['|',('present_shenpiren','=',False),('state','in',['0','1','3','2','4','5'])]}"/>
+                <button name="%(btn_approval)d" string="审批" type="action" class="oe_highlight"
+                        attrs="{'invisible':['|',('present_shenpiren','=',False),('state','in',['0','2','4'])]}"/>
+                <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
+                        invisible="1"/>
+                <button name="%(btn_reject001)d" string="驳回" type="action" class="oe_highlight"
+                        attrs="{'invisible':['|',('state','in',['4','0']),('present_shenpiren','=',False)]}"/>
+                <field name="shouquan_export_button" string="导出项目授权函" readonly="1" class="dtdream_shouquan_export"
+                       attrs="{'invisible':[('state','=','-2')]}"/>
+                <field name="shouhou_export_button" string="导出售后服务承诺函" readonly="1" class="dtdream_shouhou_export"
+                       attrs="{'invisible':[('state','=','-2')]}"/>
+                <field name="state"  widget="statusbar"  statusbar_visible="0,1,2,5,3,4"/>
+            </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="is_current" invisible="1"></field>
+                <field name="project_number" readonly="1"/>
+                <field name="office_id" readonly="1"/>
+                <field name="sale_apply_id" readonly="1"/>
+                <field name="bidding_rep_pro_name"/>
+                <field name="bidding_company"/>
+
+              </group>
+              <group>
+                <field name="present_shenpiren" invisible="1"/>
+                <field name="rep_pro_name" domain="[('has_draft_business_report','=',False)]" />
+                <field name="system_department_id" readonly="0"/>
+                <field name="business_advanced_report" readonly="1"/>
+                <field name="bidding_number"/>
+                <field name="bidding_time"/>
+              </group>
+                <field name="authorization">
+                    <tree editable="bottom">
+                        <field name="content" string=" "></field>
+                        <!--<button  string="导出项目授权函" class="dtdream_shouquan_export"/>-->
+                    </tree>
+                    <form>
+                        <sheet>
+                            <group>
+                                <field name="content"></field>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+
+              <field name="attachment_ids" create="false" options="{'no_create':True}" required="True">
+                  <tree class="contract_attachment" >
+                      <field name="attachment_name" invisible="1"></field>
+                      <field name="attachment" widget="binary" filename="attachment_name"></field>
+                      <field name="attachment_upper" readonly="1"></field>
+                      <field name="attachment_remark"></field>
+                  </tree>
+                  <form >
+                    <sheet>
+                      <group>
+                          <field name="attachment" widget="binary" filename="attachment_name" class="remarkWidth"></field>
+                          <field name="attachment_name" invisible="1"></field>
+                          <field name="attachment_upper" readonly="1"></field>
+                          <field name="attachment_remark"/>
+                      </group>
+                    </sheet>
+                  </form>
+                </field>
+
+                 <div class="o_group_col_12" style="font-family:微软雅黑, 'Microsoft Yahei', 'Hiragino Sans GB', tahoma, arial, 宋体, sans-serif;">
+                        <p >说明</p>
+
+                        <p>1、若有标书电子件等招标材料请上传。</p>
+                        <p>2、服务承诺函若为非标版本（非公司的标准版本），请将非标版本上传附件</p>
+                  </div>
+            </group>
+               <notebook>
+                    <page string="历史审批记录">
+                        <field name="shenpi_text" readonly="True">
+                          <tree string="历史审批记录">
+                              <field name="state"/>
+                              <field name="res"/>
+                              <field name="content"/>
+                              <field name="shenpiren"/>
+                              <field name="time"/>
+                          </tree>
+                        </field>
+                    </page>
+                </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+<!--项目管理中增加项目授权豆腐块-->
+    <record id="view_business_res_product_oppr_authorization__form" model="ir.ui.view">
+            <field name="name">view.business.res.product.oppr</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <button name="toggle_active" position="after">
+                    <button name="action_dtdream_project_authorization" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="business_count" class="o_stat_value"/>
+                              <span class="o_stat_text">项目授权</span>
+                          </div>
+                    </button>
+                </button>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="dtdream_authorize_apply_tree">
+      <field name="name">dtdream.project.bid.authorize.apply.tree</field>
+      <field name="model">dtdream.project.bid.authorize.apply</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="rep_pro_name" string="项目名称"/>
+            <field name="project_number" string="项目编号"/>
+            <field name="office_id" string="办事处"/>
+            <field name="system_department_id" string="系统部"/>
+            <field name="bidding_rep_pro_name" string="投标项目名称"/>
+            <field name="bidding_company" string="招标单位"/>
+            <field name="shenpiren" string="当前审批人"/>
+        </tree>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="dtdream_project_authorize_config_form">
+      <field name="name">dtdream.project.authorize.config.form</field>
+      <field name="model">dtdream.project.authorize.config</field>
+      <field name="arch" type="xml">
+        <form string="项目授权配置" create='4'>
+          <sheet>
+            <!--<group>-->
+              <!--<group>-->
+                <!--&lt;!&ndash;<field name="business_interface_person" options='{"no_open": True, "no_create": True}' widget="many2many_tags"></field>&ndash;&gt;-->
+                <!--&lt;!&ndash;<field name="sales_manager" options='{"no_open": True, "no_create": True}'></field>&ndash;&gt;-->
+                <!--&lt;!&ndash;<field name="sale_grant_discount"></field>&ndash;&gt;-->
+                  <!--<field name="zongbu_service_charge" options='{"no_open": True, "no_create": True}'/>-->
+                  <!--<field name="company_manager" options='{"no_open": True, "no_create": True}'></field>-->
+              <!--</group>-->
+              <!--<group>-->
+                  <!--<field name="market_manager" options='{"no_open": True, "no_create": True}'></field>-->
+                  <!--<field name="area_approve_email_cc" options='{"no_open": True, "no_create": True}'></field>-->
+              <!--</group>-->
+            <!--</group>-->
+             <group>
+                  <group><field name="project_authorize_accessor" string="规范性审核"/></group>
+                  <group><field name="project_authorize_service" string="服务部审批"/></group>
+                  <group><field name="approver" string="审批同意"/></group>
+             </group>
+             <notebook colspan="4">
+                 <page string="办事处/系统部审批">
+                    <field name="office_system_line">
+                        <tree>
+                            <field name="office_id" options='{"no_open": True, "no_create": True}'/>
+                            <field name="office_director" options='{"no_open": True, "no_create": True}'/>
+                            <field name="system_id" options='{"no_open": True, "no_create": True}'/>
+                            <field name="system_director" options='{"no_open": True, "no_create": True}'/>
+                        </tree>
+                        <form>
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="office_id" options='{"no_open": True, "no_create": True}'/>
+                                        <field name="office_director" options='{"no_open": True, "no_create": True}'/>
+                                    </group>
+                                    <group>
+                                        <field name="system_id" options='{"no_open": True, "no_create": True}'/>
+                                        <field name="system_director" options='{"no_open": True, "no_create": True}'/>
+                                    </group>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                 </page>
+
+                 <!--<page string="规范性审核">-->
+                    <!--<field name="standard_line">-->
+                        <!--<tree>-->
+                            <!--<field name="project_authorize_accessor" options='{"no_open": True, "no_create": True}'/>-->
+                          <!--</tree>-->
+                        <!--<form>-->
+                            <!--<sheet>-->
+                                <!--<field name="project_authorize_accessor" options='{"no_open": True, "no_create": True}' />-->
+                            <!--</sheet>-->
+                        <!--</form>-->
+                    <!--</field>-->
+                <!--</page>-->
+
+                <!--<page string="服务部审批">-->
+                    <!--<field name="service_line">-->
+                        <!--<tree>-->
+                            <!--<field name="project_authorize_service" options='{"no_open": True, "no_create": True}'/>-->
+                          <!--</tree>-->
+                        <!--<form>-->
+                            <!--<sheet>-->
+                                <!--<field name="project_authorize_service" options='{"no_open": True, "no_create": True}' />-->
+                            <!--</sheet>-->
+                        <!--</form>-->
+                    <!--</field>-->
+                <!--</page>-->
+
+                 <!--<page string="审批同意">-->
+                    <!--<field name="approval_line">-->
+                        <!--<tree>-->
+                            <!--<field name="approver" options='{"no_open": True, "no_create": True}'/>-->
+                          <!--</tree>-->
+                        <!--<form>-->
+                            <!--<sheet>-->
+                                <!--<field name="approver" options='{"no_open": True, "no_create": True}' />-->
+                            <!--</sheet>-->
+                        <!--</form>-->
+                    <!--</field>-->
+                <!--</page>-->
+
+                 <!--<page string="盖章完成">-->
+                    <!--<field name="finish_line">-->
+                        <!--<tree>-->
+                            <!--<field name="project_authorize_accessor" options='{"no_open": True, "no_create": True}'/>-->
+
+                          <!--</tree>-->
+                        <!--<form>-->
+                            <!--<sheet>-->
+                                <!--<field name="project_authorize_accessor" options='{"no_open": True, "no_create": True}' />-->
+                            <!--</sheet>-->
+                        <!--</form>-->
+                    <!--</field>-->
+                <!--</page>-->
+
+            </notebook>
+            </sheet>
+       </form>
+     </field>
+  </record>
+
+
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="dtdream_project_bid_authorize_apply.list">
+      <field name="name">dtdream_project_bid_authorize_apply list</field>
+      <field name="model">dtdream_project_bid_authorize_apply.dtdream_project_bid_authorize_apply</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="dtdream_project_bid_authorize_apply.action_window">
+      <field name="name">dtdream_project_bid_authorize_apply window</field>
+      <field name="res_model">dtdream_project_bid_authorize_apply.dtdream_project_bid_authorize_apply</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="dtdream_project_bid_authorize_apply.action_server">
+      <field name="name">dtdream_project_bid_authorize_apply server</field>
+      <field name="model_id" ref="model_dtdream_project_bid_authorize_apply_dtdream_project_bid_authorize_apply"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="dtdream_project_bid_authorize_apply" id="dtdream_project_bid_authorize_apply.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="dtdream_project_bid_authorize_apply.menu_1" parent="dtdream_project_bid_authorize_apply.menu_root"/>
+    <menuitem name="Menu 2" id="dtdream_project_bid_authorize_apply.menu_2" parent="dtdream_project_bid_authorize_apply.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="dtdream_project_bid_authorize_apply.menu_1_list" parent="dtdream_project_bid_authorize_apply.menu_1"
+              action="dtdream_project_bid_authorize_apply.action_window"/>
+    <menuitem name="Server to list" id="dtdream_project_bid_authorize_apply" parent="dtdream_project_bid_authorize_apply.menu_2"
+              action="dtdream_project_bid_authorize_apply.action_server"/>
+    -->
+      
+      <record id="view_dtdream_authrization_submit_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.report.submit.wizard.form</field>
+        <field name="model">dtdream.report.submit.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group style="text-align:center">
+                    <span>
+                        <field name="display_text" readonly="1"></field>
+                    </span>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="btn_submit" model="ir.actions.act_window">
+         <field name="name">提交</field>
+         <field name="res_model">dtdream.report.submit.wizard</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="target">new</field>
+     </record>
+
+
+
+  </data>
+</openerp>

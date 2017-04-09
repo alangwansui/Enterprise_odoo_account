@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem name="运维系数配置" id="product_yunwei_config" action="product_yunwei_config_action" parent="base.menu_top_dtdream_product" sequence="2"/>
+    </data>
+</openerp>
+
+
+

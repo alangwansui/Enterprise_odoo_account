@@ -18,13 +18,27 @@
             <field name='name'>view.dtdream.group.apply.tree</field>
             <field name='type'>tree</field>
             <field name='model'>dtdream.group.apply</field>
-            <field eval="0" name="priority"/>
+            <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
                 <tree string='域群组申请列表'>
+                     <field name='apply'/>
+                    <field name='time'/>
+                    <field name="admins" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id='dtdream_group_apply01_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.group.apply01.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.group.apply</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='域群组申请列表' create='false' edit='false'>
                     <field name='apply'/>
-                    <field name='department'/>
-                    <field name="name1" />
-                    <field name="approver" />
+                    <field name='time'/>
+                    <field name="admins" />
                     <field name="state" />
                 </tree>
             </field>
@@ -34,6 +48,7 @@
         <record model="ir.ui.view" id="dtdream_group_apply_kanban">
             <field name="name">view.dtdream.group.apply.kanban</field>
             <field name="model">dtdream.group.apply</field>
+            <field eval="1" name="priority"/>
             <field name="arch" type="xml">
                 <kanban class="o_res_partner_kanban" >
                     <templates>
@@ -46,9 +61,39 @@
                                 <div name="tags"/>
                                     <ul>
                                         <li ><strong>申请人:</strong> <field name='apply'/></li>
-                                        <li ><strong>域群组部门:</strong> <field name="department" /></li>
-                                        <li ><strong>群组名称:</strong> <field name="name1" /></li>
-                                        <li ><strong>审批人:</strong> <field name="approver" /></li>
+                                        <li ><strong>申请时间:</strong> <field name="time" /></li>
+                                        <li ><strong>管理员:</strong> <field name="admins" /></li>
+                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- 域群组申请kanban -->
+        <record model="ir.ui.view" id="dtdream_group_apply01_kanban">
+            <field name="name">view.dtdream.group.apply01.kanban</field>
+            <field name="model">dtdream.group.apply</field>
+            <field eval="0" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" create='false' edit='false'>
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请人:</strong> <field name='apply'/></li>
+                                        <li ><strong>申请时间:</strong> <field name="time" /></li>
+                                        <li ><strong>管理员:</strong> <field name="admins" /></li>
                                         <li > <strong>状态:</strong><field name="state"/></li>
                                     </ul>
                             <div name="tags"/>
@@ -65,12 +110,12 @@
             <field name='name'>view.dtdream.group.apply.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.group.apply</field>
-            <field eval="0" name="priority"/>
+            <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
                 <form  string='域群组申请详情' >
                     <header class='no_hidden'>
                         <button name="btn_confirm" type="workflow" string='提交' groups="dtdream_ad_manager.group_ad_apply"
-                                confirm="是否确认提交？" attrs="{'invisible':[('state','not in',['draft','refuse'])]}"/>
+                                 attrs="{'invisible':[('state','not in',['draft','refuse'])]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,accept,implement"
                                statusbar_colors='{"draft":"blue","confirm":"blue","accept":"blue","implement":"blue"}'/>
                     </header>
@@ -78,17 +123,17 @@
                         <group string='群组信息'>
                             <group name='group_left'>
                                 <field name='apply'/>
-                                <field name='department'  attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
+                                <field name='department' options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
                                 <field name='expire_time' invisible="1" />
                                 <field name="is_approver" invisible="1"/>
                             </group>
                             <group name='group_right'>
                                 <field name='time' />
-                                <field name="approver" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
+                                <field name="approver" options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
                             </group>
                         </group>
                         <group>
-                            <field name='description' class="zx_group_border" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
+                            <field name='description' attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
                         </group>
                         <group>
                             <group name='group_left'>
@@ -97,14 +142,17 @@
                                 <field name='name2' placeholder="若系统默认名称不合理,请输入建议域群组名称" attrs="{'readonly': [('state', 'not in', ['draft'])]}"/>
                             </group>
                             <group name='group_right'>
-                                <field name='ext'  attrs="{'readonly': [('state', '!=', 'draft')]}" />
-                                <field name='group' placeholder="若域群组与团队相关，请填写此项" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
+                                <field name='ext' options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                                <field name='group' placeholder="若域群组是跨一级部门，请填写此项" attrs="{'readonly': [('state', 'not in', ['draft'])]}" />
                             </group>
                         </group>
                         <group string='成员信息'>
-                            <field name='admins' widget='many2many_tags'  options="{'no_create_edit': True, 'no_quick_create': True}"
-                                attrs="{'readonly': [('state', '!=', 'draft')]}" />
-                            <field name='users' widget="many2many" attrs="{'readonly': [('state', '!=', 'draft')]}" >
+                            <group>
+                                <field name='admins' widget='many2many_tags'  options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                            </group>
+                            <field name='users' widget="many2many" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                    options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}">
                                 <tree>
                                     <field name="full_name" />
                                     <field name="nick_name" />
@@ -126,13 +174,13 @@
             <field name='name'>view.dtdream.group.apply01.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.group.apply</field>
-            <field eval="1" name="priority"/>
+            <field eval="0" name="priority"/>
             <field name='arch' type='xml'>
                 <form  string='域群组申请详情' create='false' edit='false'>
                     <header class='no_hidden'>
                         <button name="btn_accept" type="workflow" string='同意'
                                 attrs="{'invisible':['|', ('is_approver','=', False),('state', 'not in', ['confirm'])]}"/>
-                        <button name="act_refuse_apply" type="object"  string='拒绝'
+                        <button name="act_refuse_apply" type="object"  string='驳回'
                                 attrs="{'invisible':['|', ('is_approver','=', False),('state', 'not in', ['confirm'])]}"/>
                         <button name="act_name" type="object" string='实施' attrs="{'invisible':[('state', 'not in', ['accept'])]}"
                                 groups="dtdream_ad_manager.group_ad_implement"/>
@@ -153,7 +201,7 @@
                             </group>
                         </group>
                         <group>
-                            <field name='description' class="zx_group_border"  />
+                            <field name='description'/>
                         </group>
                         <group>
                             <group name='group_left'>
@@ -167,8 +215,9 @@
                             </group>
                         </group>
                         <group string='成员信息'>
-                            <field name='admins' widget='many2many_tags'  options="{'no_create_edit': True, 'no_quick_create': True}"
-                                />
+                            <group>
+                                <field name='admins' widget='many2many_tags'  options="{'no_create_edit': True, 'no_quick_create': True}"/>
+                            </group>
                             <field name='users' widget="many2many"  >
                                 <tree>
                                     <field name="full_name" />
@@ -193,13 +242,13 @@
             <field name='model'>dtdream.group.apply</field>
             <field eval="2" name="priority"/>
             <field name='arch' type='xml'>
-                <form string='域群组创建拒绝理由' >
+                <form string='驳回理由' >
                     <sheet>
                         <group>
                             <field name="reason" required="1"/>
                         </group>
                          <footer>
-                        <button name="btn_refuse" type="workflow" state="confirm" string='确定' class="oe_highlight"/>
+                        <button name="btn_refuse" type="workflow" string='确定' class="oe_highlight"/>
                         或
                         <button special="cancel" string="取消"/>
                     </footer>
@@ -222,8 +271,7 @@
                             <field name="name" required="1"/>
                         </group>
                          <footer>
-                        <button name="btn_implement" type="workflow" string='确定'
-                                groups="dtdream_ad_manager.group_ad_implement" class="oe_highlight"/>
+                        <button name="btn_implement" type="workflow" string='确认' class="oe_highlight"/>
                         或
                         <button special="cancel" string="取消"/>
                     </footer>
@@ -236,10 +284,26 @@
             <field name='name'>view.dtdream.change.apply.tree</field>
             <field name='type'>tree</field>
             <field name='model'>dtdream.change.apply</field>
-            <field eval="0" name="priority"/>
+            <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
                 <tree string='域群组修改申请列表'>
                     <field name='apply'/>
+                    <field name="group" />
+                    <field name='type'/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id='dtdream_change_apply01_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.change.apply01.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.change.apply</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='域群组修改申请列表' create="false" edit="false">
+                    <field name='apply'/>
+                    <field name='time'/>
                     <field name="group" />
                     <field name='type'/>
                     <field name="state" />
@@ -251,8 +315,9 @@
         <record model="ir.ui.view" id="dtdream_change_apply_kanban">
             <field name="name">view.dtdream.change.apply.kanban</field>
             <field name="model">dtdream.change.apply</field>
+            <field eval="1" name="priority"/>
             <field name="arch" type="xml">
-                <kanban class="o_res_partner_kanban" >
+                <kanban class="o_res_partner_kanban">
                     <templates>
                         <t t-name="kanban-box">
                         <div class="oe_kanban_global_click ">
@@ -263,6 +328,39 @@
                                 <div name="tags"/>
                                     <ul>
                                         <li ><strong>申请人:</strong> <field name='apply'/></li>
+                                        <li ><strong>申请时间:</strong> <field name='time'/></li>
+                                        <li ><strong>修改群组:</strong> <field name="group" /></li>
+                                        <li ><strong>修改类型:</strong> <field name="type" /></li>
+                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- 域群组修改申请kanban -->
+        <record model="ir.ui.view" id="dtdream_change_apply01_kanban">
+            <field name="name">view.dtdream.change.apply01.kanban</field>
+            <field name="model">dtdream.change.apply</field>
+            <field eval="0" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" create="false" edit="false">
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请人:</strong> <field name='apply'/></li>
+                                        <li ><strong>申请时间:</strong> <field name='time'/></li>
                                         <li ><strong>修改群组:</strong> <field name="group" /></li>
                                         <li ><strong>修改类型:</strong> <field name="type" /></li>
                                         <li > <strong>状态:</strong><field name="state"/></li>
@@ -281,11 +379,11 @@
             <field name='name'>view.dtdream.change.apply.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.change.apply</field>
-            <field eval="0" name="priority"/>
+            <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
                 <form  string='域群组修改申请详情'>
                     <header class='no_hidden'>
-                        <button name="btn_confirm01" type="workflow" states="draft" string='提交' confirm="是否确认提交？"/>
+                        <button name="btn_confirm01" type="workflow" states="draft" string='提交'/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,implement"
                             statusbar_colors='{"draft":"blue","confirm":"blue","implement":"blue"}'/>
                     </header>
@@ -297,13 +395,13 @@
                             </group>
                             <group>
                                 <field name='time' />
-                                <field name='group' options="{'no_create_edit': True, 'no_quick_create': True}"
+                                <field name='group' options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"
                                     attrs="{'readonly':[('state', 'not in', ['draft', 'refuse'])]}"/>
                             </group>
                         </group>
                         <group>
                             <field name='users' widget='many2many_tags' required="True" attrs="{'readonly':[('state', 'not in', ['draft', 'refuse'])]}"
-                                   options="{'no_create_edit': True, 'no_quick_create': True}"/>
+                                   options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
                         </group>
                         <group>
                             <field name="reason" attrs="{'invisible': [('state', '!=', 'refuse')], 'readonly': True}" />
@@ -321,14 +419,14 @@
             <field name='name'>view.dtdream.change.apply01.form</field>
             <field name='type'>form</field>
             <field name='model'>dtdream.change.apply</field>
-            <field eval="1" name="priority"/>
+            <field eval="0" name="priority"/>
             <field name='arch' type='xml'>
                 <form  string='域群组修改申请详情' create="false" edit="false">
                     <header class='no_hidden'>
-                        <button name="act_refuse_change" type="object" states="confirm" string='拒绝'
-                             groups="dtdream_ad_manager.group_ad_implement"/>
                         <button name="btn_implement01" type="workflow" states="confirm" string='实施'
                             groups="dtdream_ad_manager.group_ad_implement"/>
+                        <button name="act_refuse_change" type="object" states="confirm" string='驳回'
+                             groups="dtdream_ad_manager.group_ad_implement"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,implement"
                             statusbar_colors='{"draft":"blue","confirm":"blue","implement":"blue"}'/>
                     </header>
@@ -340,11 +438,11 @@
                             </group>
                             <group>
                                 <field name='time' />
-                                <field name='group' options="{'no_create_edit': True, 'no_quick_create': True}"/>
+                                <field name='group' options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
                             </group>
                         </group>
                         <group>
-                            <field name='users' widget='many2many_tags' required="True" options="{'no_create_edit': True, 'no_quick_create': True}"/>
+                            <field name='users' widget='many2many_tags' required="True" options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
                         </group>
                         <group>
                             <field name="reason" attrs="{'invisible': [('state', '!=', 'refuse')]}" />
@@ -364,13 +462,13 @@
             <field name='model'>dtdream.change.apply</field>
             <field eval="1" name="priority"/>
             <field name='arch' type='xml'>
-                <form string='域群组修改拒绝理由' >
+                <form string='驳回理由' >
                     <sheet>
                         <group>
                             <field name="reason" required="1"/>
                         </group>
                          <footer>
-                        <button name="btn_refuse01" type="workflow" state="confirm" string='确定' class="oe_highlight"/>
+                        <button name="btn_refuse01" type="workflow" string='确认' class="oe_highlight"/>
                         或
                         <button special="cancel" string="取消"/>
                     </footer>
@@ -389,7 +487,7 @@
                     <field name='name'/>
                     <field name="department" />
                     <field name="description" />
-                    <field name='active'/>
+                    <field name='work'/>
                 </tree>
             </field>
         </record>
@@ -405,7 +503,7 @@
                     <field name="department" />
                     <field name="description" />
                     <field name="remark" />
-                    <field name='active'/>
+                    <field name='work'/>
                 </tree>
             </field>
         </record>
@@ -427,7 +525,7 @@
                                     <ul>
                                         <li ><strong>群组名称:</strong> <field name='name'/></li>
                                         <li ><strong>所属部门:</strong> <field name='department'/></li>
-                                        <li ><strong>是否有效:</strong> <field name="active" /></li>
+                                        <li ><strong>是否有效:</strong> <field name="work" /></li>
                                     </ul>
                             <div name="tags"/>
                             </div>
@@ -447,7 +545,7 @@
             <field name='arch' type='xml'>
                 <form  string='群组详情' create='false' edit='false'>
                     <header>
-                        <button name="%(act_btn_change)d" type="action" string='修改' class='oe_highlight'
+                        <button name="%(act_btn_change)d" type="action" string='修改'
                             context="{'default_group':id}" attrs="{'invisible':[('is_admin', '=', False)]}"/>
                         <field name="is_admin" />
                     </header>
@@ -459,7 +557,7 @@
                             </group>
                             <group>
                                 <field name='time' />
-                                <field name='active' />
+                                <field name='work' />
                                 <field name="expire_time" invisible="1" />
                             </group>
                         </group>
@@ -503,7 +601,7 @@
                             </group>
                             <group>
                                 <field name='time' readonly="1"/>
-                                <field name='active' readonly="1"/>
+                                <field name='work' readonly="1"/>
                                 <field name="expire_time" invisible="1" />
                             </group>
                         </group>
@@ -531,7 +629,7 @@
                 </form>
             </field>
         </record>
-
+<!--
         <record id='dtdream_expire_tree' model='ir.ui.view'>
             <field name='name'>view.dtdream.expire.tree</field>
             <field name='type'>tree</field>
@@ -560,6 +658,12 @@
             </field>
         </record>
 
+        <act_window id='act_expire'
+                    name='有效时长'
+                    res_model='dtdream.expire.time'
+                    view_type='form'
+                    view_mode='tree,form' />
+-->
         <record id="dtdream_group_filter" model="ir.ui.view">
             <field name="name">view.dtdream.group.filter</field>
             <field name="model">dtdream.ad.group</field>
@@ -573,7 +677,7 @@
             </field>
          </record>
 
-        <record id="act_group" model="ir.actions.act_window">
+        <record id="act_ad_group" model="ir.actions.act_window">
             <field name="name">域群组信息</field>
             <field name="res_model">dtdream.ad.group</field>
             <field name="view_mode">tree,kanban,form</field>
@@ -581,129 +685,158 @@
             <field name="context" eval="{'search_default_user': 1}" />
         </record>
 
-        <record id="act_group_all" model="ir.actions.act_window">
-            <field name="name">全部群组信息</field>
-            <field name="res_model">dtdream.ad.group</field>
-            <field name="view_mode">tree,kanban,form</field>
-        </record>
-
-        <record id="act_group_apply" model="ir.actions.act_window">
+        <record id="act_ad_group_apply" model="ir.actions.act_window">
             <field name="name">域群组创建申请</field>
             <field name="res_model">dtdream.group.apply</field>
             <field name="view_mode">tree,kanban,form</field>
             <field name="domain">[('apply.user_id', '=', uid)]</field>
         </record>
 
-        <record id="act_change_apply" model="ir.actions.act_window">
+        <record model="ir.actions.act_window.view" id="act_ad_group_apply_tree_view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_group_apply_tree"/>
+            <field name="act_window_id" ref="act_ad_group_apply"/>
+        </record>
+
+         <record model="ir.actions.act_window.view" id="act_ad_group_apply_kanban_view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="dtdream_group_apply_kanban"/>
+            <field name="act_window_id" ref="act_ad_group_apply"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_ad_group_apply_form_view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_group_apply_form"/>
+            <field name="act_window_id" ref="act_ad_group_apply"/>
+        </record>
+
+        <record id="act_ad_change_apply" model="ir.actions.act_window">
             <field name="name">域群组修改申请</field>
             <field name="res_model">dtdream.change.apply</field>
             <field name="view_mode">tree,kanban,form</field>
             <field name="domain">[('apply.user_id', '=', uid)]</field>
         </record>
 
-        <record id="act_apply_approver" model="ir.actions.act_window">
+        <record model="ir.actions.act_window.view" id="act_ad_change_apply_tree_view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="dtdream_change_apply_tree"/>
+            <field name="act_window_id" ref="act_ad_change_apply"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_ad_change_apply_kanban_view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="dtdream_change_apply_kanban"/>
+            <field name="act_window_id" ref="act_ad_change_apply"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_ad_change_apply_form_view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_change_apply_form"/>
+            <field name="act_window_id" ref="act_ad_change_apply"/>
+        </record>
+
+        <record id="act_ad_apply_all" model="ir.actions.act_window">
+            <field name="name">所有申请</field>
+            <field name="res_model">dtdream.group.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('approver.user_id', '=', uid),('state', '!=', 'draft')]</field>
+        </record>
+
+        <record id="act_ad_apply_approver" model="ir.actions.act_window">
             <field name="name">待我审批</field>
             <field name="res_model">dtdream.group.apply</field>
             <field name="view_mode">tree,kanban,form</field>
             <field name="domain">[('approver.user_id', '=', uid),('state', '=', 'confirm')]</field>
         </record>
 
-        <record model="ir.actions.act_window.view" id="act_apply_approver_tree_view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="dtdream_group_apply_tree"/>
-            <field name="act_window_id" ref="act_apply_approver"/>
-        </record>
-
-        <record model="ir.actions.act_window.view" id="act_apply_approver_form_view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="dtdream_group_apply01_form"/>
-            <field name="act_window_id" ref="act_apply_approver"/>
-        </record>
-
-        <record id="act_apply_implement" model="ir.actions.act_window">
+        <record id="act_ad_apply_implement" model="ir.actions.act_window">
             <field name="name">实施创建域群组</field>
             <field name="res_model">dtdream.group.apply</field>
             <field name="view_mode">tree,kanban,form</field>
-            <field name="view_id" ref="dtdream_group_apply01_form" />
             <field name="domain">[('state', '=', 'accept')]</field>
         </record>
 
-         <record model="ir.actions.act_window.view" id="act_apply_implement_tree_view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="dtdream_group_apply_tree"/>
-            <field name="act_window_id" ref="act_apply_implement"/>
-        </record>
-
-        <record model="ir.actions.act_window.view" id="act_apply_implement_form_view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="dtdream_group_apply01_form"/>
-            <field name="act_window_id" ref="act_apply_implement"/>
-        </record>
-
-        <record id="act_change_implement" model="ir.actions.act_window">
+        <record id="act_ad_change_implement" model="ir.actions.act_window">
             <field name="name">实施修改域群组</field>
             <field name="res_model">dtdream.change.apply</field>
             <field name="view_mode">tree,kanban,form</field>
             <field name="domain">[('state', '=', 'confirm')]</field>
         </record>
 
-        <record model="ir.actions.act_window.view" id="act_change_implement_tree_view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="dtdream_change_apply_tree"/>
-            <field name="act_window_id" ref="act_change_implement"/>
+
+        <record id="act_ad_group_it_all" model="ir.actions.act_window">
+            <field name="name">所有群组信息</field>
+            <field name="res_model">dtdream.ad.group</field>
+            <field name="view_mode">tree,kanban,form</field>
         </record>
 
-        <record model="ir.actions.act_window.view" id="act_change_implement_form_view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="dtdream_change_apply01_form"/>
-            <field name="act_window_id" ref="act_change_implement"/>
-        </record>
-
-        <act_window id='act_expire'
-                    name='有效时长'
-                    res_model='dtdream.expire.time'
-                    view_type='form'
-                    view_mode='tree,form' />
-
-        <record model="ir.actions.act_window.view" id="act_ad_all_tree_view">
+        <record model="ir.actions.act_window.view" id="act_ad_group_it_all_tree_view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="dtdream_ad_all_tree"/>
-            <field name="act_window_id" ref="act_group_all"/>
+            <field name="act_window_id" ref="act_ad_group_it_all"/>
         </record>
 
-        <record model="ir.actions.act_window.view" id="act_ad_all_form_view">
+         <record model="ir.actions.act_window.view" id="act_ad_group_it_all_kanban_view">
             <field eval="2" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="dtdream_ad_kanban"/>
+            <field name="act_window_id" ref="act_ad_group_it_all"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_ad_group_it_all_form_view">
+            <field eval="3" name="sequence"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="dtdream_ad_all_form"/>
-            <field name="act_window_id" ref="act_group_all"/>
+            <field name="act_window_id" ref="act_ad_group_it_all"/>
         </record>
 
+        <record id="act_ad_apply_it_all" model="ir.actions.act_window">
+            <field name="name">所有域群组创建申请</field>
+            <field name="res_model">dtdream.group.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', '!=', 'draft')]</field>
+        </record>
+
+        <record id="act_ad_change_it_all" model="ir.actions.act_window">
+            <field name="name">所有域群组修改申请</field>
+            <field name="res_model">dtdream.change.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', '!=', 'draft')]</field>
+        </record>
+        <!--<menuitem id='menu_ad_confirm' name='我的审批' sequence="200" parent='menu_ad' /> -->
 
         <!-- 菜单 -->
-        <menuitem id='menu_ad' name='域信息管理' sequence='0'/>
-        <menuitem id='menu_ad_group' name='我所在域群组' sequence="0" parent='menu_ad' action='act_group'/>
+        <menuitem id='menu_ad' name='域群组管理' parent="dtdream_demand_manage.menu_dtdream_demand_manage_root" sequence="14"/>
 
-        <menuitem id='menu_ad_apply' name='我的申请' sequence="100" parent='menu_ad' />
-        <menuitem id='menu_ad_apply_group' name='域群组创建申请' sequence="0" parent='menu_ad_apply' action='act_group_apply'
+        <menuitem id='menu_ad_group' name='我相关域群组' sequence="0" parent='menu_ad' action='act_ad_group'/>
+
+        <menuitem id='menu_ad_it_group' name='所有域群组' sequence="100" parent='menu_ad' action="act_ad_group_it_all"
+             groups="dtdream_ad_manager.group_ad_apply"/>
+
+        <menuitem id='menu_ad_create' name='域群组创建' sequence="200" parent='menu_ad' />
+        <menuitem id='menu_ad_create_own' name='我的申请' sequence="0" parent='menu_ad_create' action='act_ad_group_apply'
             groups="dtdream_ad_manager.group_ad_apply"/>
-        <menuitem id='menu_ad_apply_change' name='域群组修改申请' sequence="100" parent='menu_ad_apply' action='act_change_apply' />
-
-        <menuitem id='menu_ad_confirm' name='待我审批' sequence="200" parent='menu_ad' action='act_apply_approver' />
-
-        <menuitem id='menu_ad_implement' name='待我实施' sequence="300" parent='menu_ad' action='act_apply_implement'
+        <menuitem id='menu_ad_create_approve' name='待我审批' sequence="100" parent='menu_ad_create' action='act_ad_apply_approver' />
+        <menuitem id='menu_ad_create_implement' name='待我实施' sequence="200" parent='menu_ad_create' action='act_ad_apply_implement'
             groups="dtdream_ad_manager.group_ad_implement"/>
-         <menuitem id='menu_apply_implement' name='域群组创建实施' sequence="0" parent='menu_ad_implement' action='act_apply_implement' />
-        <menuitem id='menu_change_implement' name='域群组修改实施' sequence="100" parent='menu_ad_implement' action='act_change_implement' />
-
-        <menuitem id='menu_ad_group_all' name='全部群组' sequence="400" parent='menu_ad' action='act_group_all'
+        <menuitem id='menu_ad_create_all' name='所有申请' sequence="400" parent='menu_ad_create' action='act_ad_apply_it_all'
             groups="dtdream_ad_manager.group_ad_implement"/>
+
+        <menuitem id='menu_ad_change' name='域群组修改' sequence="300" parent='menu_ad' />
+        <menuitem id='menu_ad_change_own' name='我的申请' sequence="100" parent='menu_ad_change' action='act_ad_change_apply' />
+        <menuitem id='menu_ad_change_implement' name='待我实施' sequence="200" parent='menu_ad_change' action='act_ad_change_implement'
+            groups="dtdream_ad_manager.group_ad_implement"/>
+        <menuitem id='menu_ad_change_all' name='所有申请' sequence="300" parent='menu_ad_change' action='act_ad_change_it_all'
+            groups="dtdream_ad_manager.group_ad_implement"/>
+
+        <menuitem id='menu_ad_peizhi' name='配置' sequence="400" parent='menu_ad' groups="dtdream_ad_manager.group_ad_implement"/>
 
     </data>
 </openerp>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <record id="view_dtdream_authorization_submit_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.authorization.submit.wizard.form</field>
+        <field name="model">dtdream.authorization.submit.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group style="text-align:center">
+                    <span>
+                        <field name="display_text" readonly="1"></field>
+                    </span>
+                </group>
+                <footer>
+                    <button name="btn_normal" type="object"
+                            string="公司标准模块" class="oe_highlight"/>
+                    <button name="btn_not_normal"
+                            string="售后服务函非标" type="object"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="btn_confirm" model="ir.actions.act_window">
+         <field name="name">确认类型</field>
+         <field name="res_model">dtdream.authorization.submit.wizard</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="target">new</field>
+     </record>
+     <record id="view_dtdream_shenpi_submit_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.shenpi.submit.wizard.form</field>
+        <field name="model">dtdream.shenpi.submit.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group style="text-align:center">
+                <field name="shenpi_text"/>
+                </group>
+                <footer>
+                    <button name="btn_reject001" string="驳回" type="object"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="btn_reject001" model="ir.actions.act_window">
+         <field name="name">确认类型</field>
+         <field name="res_model">dtdream.shenpi.submit.wizard</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="target">new</field>
+     </record>
+
+     <record id="view_dtdream_approval_submit_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.approval.submit.wizard.form</field>
+        <field name="model">dtdream.approval.submit.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group style="text-align:center">
+                <field name="shenpi_text"/>
+                </group>
+                <footer>
+                    <button name="btn_confirm" string="同意" type="object"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="btn_approval" model="ir.actions.act_window">
+         <field name="name">确认类型</field>
+         <field name="res_model">dtdream.approval.submit.wizard</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="target">new</field>
+     </record>
+
+
+    </data>
+</openerp>

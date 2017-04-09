@@ -79,4 +79,7 @@ from openerp.tools.translate import _
 #----------------------------------------------------------
 import cli
 import http
-from . import dingding
+from openerp.dtdream import dingding
+from openerp.dtdream import aliyun
+from openerp.dtdream import confluence
+from openerp.dtdream import ldap

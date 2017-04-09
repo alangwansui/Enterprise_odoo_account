@@ -10,7 +10,7 @@ class DtdreamExpense(ExcelExport):
     @http.route('/dtdream_expense/dtdream_expense_export', type='http',auth='public')
     def dtdream_expense_export(self,data,token):
         index = 0
-        pay_type = {u"fukuangeiyuangong":{u"差旅费":u"报",u"日常业务费":u"日报",u"专项业务费":u"专报",u"行政平台费":u"平报",u"其他费用":u"报"},
+        pay_type = {u"fukuangeiyuangong":{u"差旅费":u"差报",u"日常业务费":u"日报",u"专项业务费":u"专报",u"行政平台费":u"平报",u"其他费用":u"报"},
               u"fukuangeigongyingshang":{u"差旅费":u"付",u"日常业务费":u"日付",u"专项业务费":u"专付",u"行政平台费":u"平付",u"其他费用":u"付"}}
         active_ids = data.split(',')
         batch_prefix = 'DC'+datetime.strftime(datetime.today(),"%Y%m")[-4:]
@@ -38,7 +38,7 @@ class DtdreamExpense(ExcelExport):
             vendor_num = dtdream_expense_report.job_number
             vendor_name = unicode(dtdream_expense_report.full_name)
             vendor_code = dtdream_expense_report.name
-            invoice_type = 'AP'
+            invoice_type = 'AP payments'
             company = '0010'
             gongyingshang = ''
             product = '0000000'
@@ -54,7 +54,7 @@ class DtdreamExpense(ExcelExport):
             tax_stay = 0
 
             if dtdream_expense_report.paycatelog == 'fukuangeigongyingshang':
-                gongyingshang = "@"+dtdream_expense_report.shoukuanrenxinming+"@"
+                gongyingshang = dtdream_expense_report.shoukuanrenxinming
 
             duplicate_removal = {}
             for record in dtdream_expense_report.record_ids:
@@ -73,7 +73,7 @@ class DtdreamExpense(ExcelExport):
                         duplicate_removal[record.expensedetail.id]["account"] = record.expensedetail.account
                         duplicate_removal[record.expensedetail.id]["account_name"] = record.expensedetail.account_name
                         duplicate_removal[record.expensedetail.id]["type"] = pay_type[dtdream_expense_report.paycatelog][record.expensedetail.parentid.name]
-                        duplicate_removal[record.expensedetail.id]["description"] = record.currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or "")
+                        duplicate_removal[record.expensedetail.id]["description"] = record.currentdate[:-3]+'@'+gongyingshang+'@'+(dtdream_expense_report.expensereason or "")
                         duplicate_removal[record.expensedetail.id]["accounted_dr"] = record.notaxamount
                         duplicate_removal[record.expensedetail.id]["accounted_cr"] = 0
                 else:
@@ -89,7 +89,7 @@ class DtdreamExpense(ExcelExport):
                             duplicate_removal[benefitdep_index]["account"] = record.expensedetail.account
                             duplicate_removal[benefitdep_index]["account_name"] = record.expensedetail.account_name
                             duplicate_removal[benefitdep_index]["type"] = pay_type[dtdream_expense_report.paycatelog][record.expensedetail.parentid.name]
-                            duplicate_removal[benefitdep_index]["description"] = record.currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or "")
+                            duplicate_removal[benefitdep_index]["description"] = record.currentdate[:-3]+'@'+gongyingshang+'@'+(dtdream_expense_report.expensereason or "")
                             duplicate_removal[benefitdep_index]["accounted_dr"] = record.notaxamount*float(benefitdep.sharepercent)/100
                             duplicate_removal[benefitdep_index]["accounted_cr"] = 0
 
@@ -98,10 +98,10 @@ class DtdreamExpense(ExcelExport):
             if tax_other > 0:
                 duplicate_removal[9999] = {
                     "cstcenter":"000000",
-                    "account": "2211604",
-                    "account_name": u"应交税金-待认证进项税额(其它)",
+                    "account": "2211602",
+                    "account_name": u"应交税金-待认证进项税额(境内)",
                     "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
-                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or ""),
+                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+'@'+gongyingshang+'@'+(dtdream_expense_report.expensereason or ""),
                     "accounted_dr": tax_other,
                     "accounted_cr": 0
                 }
@@ -111,7 +111,7 @@ class DtdreamExpense(ExcelExport):
                     "account": "2211601",
                     "account_name": u"应交税金-待认证进项税额(住宿)",
                     "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
-                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or ""),
+                    "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+'@'+gongyingshang+'@'+(dtdream_expense_report.expensereason or ""),
                     "accounted_dr": tax_stay,
                     "accounted_cr": 0
                 }
@@ -121,7 +121,7 @@ class DtdreamExpense(ExcelExport):
                 "account": account_credit.account,
                 "account_name": account_credit.account_name,
                 "type": pay_type[dtdream_expense_report.paycatelog][dtdream_expense_report.record_ids[0].expensedetail.parentid.name],
-                "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+gongyingshang+(dtdream_expense_report.expensereason or ""),
+                "description": dtdream_expense_report.record_ids[0].currentdate[:-3]+'@'+gongyingshang+'@'+(dtdream_expense_report.expensereason or ""),
                 "accounted_dr": 0,
                 "accounted_cr": accounted_cr
 

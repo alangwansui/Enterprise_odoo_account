@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id='dtdream_ad_ext_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.ad.ext.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.ad.ext</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='扩展标识列表'>
+                    <field name='name'/>
+                    <field name='value'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_ad_ext_kanban">
+            <field name="name">view.dtdream.ad.ext.kanban</field>
+            <field name="model">dtdream.ad.ext</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>扩展名称:</strong> <field name='name'/></li>
+                                        <li ><strong>扩展缩写:</strong> <field name="value" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
+        <record id='dtdream_ad_ext_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.ad.ext.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.ad.ext</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <form string='扩展标识详情' >
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="value"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_dtdream_ad_ext" model="ir.actions.act_window">
+            <field name="name">扩展标识</field>
+            <field name="res_model">dtdream.ad.ext</field>
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+
+        <!-- 菜单 -->
+        <menuitem id='menu_dtdream_ad_ext' name='扩展标识配置' parent="dtdream_ad_manager.menu_ad_peizhi" sequence="600" action="act_dtdream_ad_ext"/>
+
+    </data>
+</openerp>

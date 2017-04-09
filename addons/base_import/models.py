@@ -329,7 +329,7 @@ class ir_import(orm.TransientModel):
 
         headers = next(rows)
         if record.res_model == "dtdream.product.line":
-                pro_dic = {u'临时目录价':'list_price',u'数量':'pro_num',u'申请折扣':'apply_discount',u'备注':'pro_remark'}
+                pro_dic = {u'临时目录价':'list_price',u'数量':'pro_num',u'申请折扣':'apply_discount',u'备注':'pro_remark',u'成本':'controlled_pro_cost_price'}
                 for rec in headers:
                     headers[headers.index(rec)] = pro_dic.get(rec,rec)
                     if rec.find('BOM') == 1:

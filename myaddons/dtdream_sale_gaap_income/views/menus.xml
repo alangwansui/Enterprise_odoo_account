@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem name="GAAP收入" id="dtdream_menu_gaap_income" parent="base.menu_base_partner" sequence="10" action="dtdream_sale_gaap_income_action"></menuitem>
+    </data>
+</openerp>

@@ -232,7 +232,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 this.approval_list.uid = this.uid;
                 this.approval_list.appendTo($('.o_main_content'));
                 this.current_screen = this.approval_list;
-                options['condition'] = [['currentauditperson.user_id.id', '=', this.uid], ['state', '!=', 'jiekoukuaiji'],['state', '!=', 'daifukuan']];
+                options['condition'] = [['current_handler.user_id.id', '=', this.uid], ['state', '!=', 'jiekoukuaiji'],['state', '!=', 'daifukuan']];
                 options['title'] = "待我审批的报销申请";
             } else if (model == "my") {
                 this.my_list = new My_List();
@@ -494,6 +494,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     active_ids: details_ids,
                 }
 
+                $.showPreloader();
                 $.when(new Model('dtdream.expense.record').call('create_expense_record_baoxiao', {context: context}))
                     .fail(function(error){
                         $.alert(error.data.message);
@@ -504,6 +505,9 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                             action: 'edit',
                             id: records.domain[0][2]
                         });
+                        setTimeout(function () {
+                            $.hidePreloader();
+                        }, 10000);
                     });
             }
         },
@@ -582,7 +586,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             self.is_select = false;
             var def = new $.Deferred();
             new Model('dtdream.expense.record')
-                .query(['id', 'name', 'expensecatelog', 'report_ids', 'expensedetail', 'invoicevalue', 'city', 'province', 'currentdate', 'write_date', 'state'])
+                .query(['id', 'name', 'expensecatelog', 'report_ids', 'expensedetail', 'invoicevalue', 'city', 'province', 'currentdate', 'write_date', 'state','applicant'])
                 .filter(this.options.condition)
                 .order_by('-currentdate')
                 .all({'timeout': 3000, 'shadow': true})
@@ -688,6 +692,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             ev.stopPropagation();
             var id = parseInt($(ev.currentTarget).data('id'));
 
+            $.showPreloader();
             $.when(new Model('dtdream.expense.report').exec_workflow(id, 'btn_submit'))
                 .fail(function (error) {
                     console.log(error);
@@ -708,6 +713,9 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                         id: null,
                         back:true
                     });
+                    setTimeout(function () {
+                        $.hidePreloader();
+                    }, 10000);
                 });
         },
         /**
@@ -789,8 +797,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             self.i = 0;
             new Model('dtdream.expense.report')
                 .query(['id', 'name', 'state', 'paytype', 'total_invoicevalue', 'paycatelog', 'shoukuanrenxinming', 'work_place',
-                    'kaihuhang', 'yinhangkahao', 'expensereason', 'create_uid', 'create_date', 'write_date', 'showcuiqian', 'currentauditperson',
-                    'hasauditor', 'is_outtime', 'xingzhengzhuli', 'department_id', 'create_uid_self'])
+                    'kaihuhang', 'yinhangkahao', 'expensereason', 'create_uid', 'create_date', 'write_date', 'showcuiqian', 'current_handler',
+                    'hasauditor', 'is_outtime', 'xingzhengzhuli', 'department_id', 'applicant'])
                 .filter(self.options.condition)
                 .order_by(['-name'])
                 .all({'timeout': 3000, 'shadow': true})
@@ -830,7 +838,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                                     } else{
                                         value.cui = true;
                                     }
-                                    receipts_not_drafts.push(value)
+
+                                    receipts_not_drafts.push(value);
                                 }
                             });
 
@@ -868,6 +877,25 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 }));
 
                 $el.find('.o_receipts').append($receipts_info);
+                var o_current_handler_input = $el.find('.o_receipts').find('.o_current_handler_id').children()
+                var current_handler_ids = []
+                $.each(o_current_handler_input,function(key,value){
+                    current_handler_ids.push(parseInt($(value).attr('data-id')));
+                });
+                $.when(new Model('hr.employee')
+                    .query(['id', 'name','full_name','job_number'])
+                    .filter([['id', 'in', current_handler_ids]])
+                    .all({'timeout': 3000, 'shadow': true}),o_current_handler_input)
+                    .then(function(employee,o_current_handler_input){
+                        $.each(o_current_handler_input,function(key,value){
+                            $.each(employee,function(key1,value1){
+                                if (parseInt($(value).attr('data-id'))==value1.id){
+                                    $(value).after('<div>'+value1.name+'.'+value1.full_name+' '+value1.job_number+'</div>')
+                                }
+                            })
+                        });
+                    });
+
                 Util.log("QWeb end load data", location.href.substring(location.href.lastIndexOf('/')+1));
             }
         },
@@ -914,7 +942,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
         attach: function (el, options) {
             var self = this;
             if (!options['condition']) {
-                options['condition'] = [['currentauditperson.user_id.id', '=', self.uid]];
+                options['condition'] = [['current_handler.user_id.id', '=', self.uid]];
             }
             this._super(el, options);
             $('.o_main_bar').show();
@@ -1403,6 +1431,16 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     }]
             });
         },
+        get_applicant:function(parent){
+            var self = parent;
+            new Model('hr.employee')
+                    .query(['user_id', 'id'])
+                    .filter([['user_id', '=', self.uid]])
+                    .all({'timeout': 3000, 'shadow': true})
+                    .then(function(employee){
+                        self.$('input[data-id=applicant]').val(employee[0]['id'])
+                    });
+        },
         /**
          * @memberOf Expense_detail_screen
          * @method delete_image
@@ -1488,7 +1526,9 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
 
             if (options && options.detail_id) {
                 $.when(new Model('dtdream.expense.record')
-                    .query(['id', 'name', 'expensecatelog', 'customernumber', 'peitongnumber', 'report_ids', 'expensedetail', 'invoicevalue', 'city', 'province', 'currentdate', 'write_date', 'state', 'actiondesc'])
+                    .query(['id', 'name', 'expensecatelog', 'customernumber', 'peitongnumber', 'report_ids',
+                             'expensedetail', 'invoicevalue', 'city', 'province', 'currentdate',
+                             'write_date', 'state', 'actiondesc','applicant'])
                     .filter([['id', '=', parseInt(options.detail_id)]])
                     .all({'timeout': 3000, 'shadow': true}), this)
                 .fail(function (err) {
@@ -1528,6 +1568,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 this._super(el, options);
                 this.load_detail(this);
                 this.load_city(this);
+                this.get_applicant(this);
             }
 
             if (options && options.edit_type=="create") {
@@ -1581,6 +1622,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 this.$('input[data-id=currentdate]').val(this.detail.currentdate);
 
                 if (self.options.edit_type != "create") {
+                    this.$('input[data-id=applicant]').val(this.detail.applicant[1]);
                     this.$('input[data-id=invoicevalue]').val(this.detail.invoicevalue);
                     this.$('input[data-id=kehurenshu]').val(this.detail.customernumber);
                     this.$('input[data-id=peitongrenshu]').val(this.detail.peitongnumber);
@@ -1691,6 +1733,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             if ($(ev.currentTarget).data('item-id') == 'save_create' || $(ev.currentTarget).data('item-id') == 'save_quit') {
 
                 var expense_detail = {
+                    'applican':parseInt(this.$('input[data-id=applicant]').val()),
                     'expensecatelog': parseInt(this.$('.o_expensecatelog').val()),
                     'expensedetail': parseInt(this.$('.o_expensedetail').val()),
                     'invoicevalue': parseFloat(this.$('input[data-id=invoicevalue]').val()),
@@ -3515,6 +3558,10 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             } else if (itemID == "delete") {
                 this.action_delete(parent);
             } else if (itemID == "save") {
+                $.showPreloader();
+                setTimeout(function () {
+                    $.hidePreloader();
+                }, 2000);
                 this.action_save(parent);
             } else if (itemID == "qianshou") {
                 this.action_qianshou(parent);
@@ -3529,6 +3576,7 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
             } else if (itemID == "sumbit_reject") {
                 this.action_reject(parent);
             }
+
         },
         /**
          * @memberOf Report_detail_screen
@@ -3643,8 +3691,8 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                     new Model('dtdream.expense.report')
                         .query(['id', 'name', 'state', 'paytype', 'total_invoicevalue', 'paycatelog', 'work_place',
                                 'expensereason', 'create_uid', 'create_date', 'write_date', 'showcuiqian',
-                                'currentauditperson', 'hasauditor', 'is_outtime',
-                                'xingzhengzhuli', 'department_id', 'create_uid_self','kaihuhang','shoukuanrenxinming','yinhangkahao', 'compute_currentaudit', 'budget_id', 'zhuanxiang_id'])
+                                'current_handler', 'hasauditor', 'is_outtime',
+                                'xingzhengzhuli', 'department_id', 'applicant','kaihuhang','shoukuanrenxinming','yinhangkahao', 'compute_currentaudit', 'budget_id', 'zhuanxiang_id'])
                         .filter([['id', '=', parseInt(options.receipt_id)]])
                         .all({'timeout': 3000, 'shadow': true}), this)
                 .fail(function (err) {
@@ -3696,13 +3744,14 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 $('.o_zhuanxiang_xxx').hide();
 
                 this.$('input[data-id=work_place]').val(this.expense_report.work_place);
-                this.$('input[data-id=create_uid_self]').val(this.expense_report.create_uid_self[1]);
+                this.$('input[data-id=applicant]').val(this.expense_report.applicant[1]);
 
-                if (this.expense_report.currentauditperson) {
-                    this.$('input[data-id=currentauditperson]').val(this.expense_report.currentauditperson[1]);
-                    this.$('.o_currentauditperson').show();
+                if (this.expense_report.current_handler.length) {
+                    //this.$('input[data-id=currentauditperson]').val(this.expense_report.currentauditperson[1]);
+                    this.rend_current_handler(this);
+                    this.$('.o_current_handler').show();
                 } else {
-                    this.$('.o_currentauditperson').hide();
+                    this.$('.o_current_handler').hide();
                 }
 
                 if (this.expense_report.expensereason) {
@@ -3767,6 +3816,47 @@ odoo.define('dtdream_expense_dingtalk.detail', function (require) {
                 }
             }
         },
+
+        /**
+         * @memberOf Report_detail_screen
+         * @description 显示当前处理人
+         * @param {object} parent 父对象
+         */
+        rend_current_handler: function (parent) {
+            var def = new $.Deferred();
+            var self = this;
+            new Model('hr.employee')
+                .query(['id', 'name', '', 'full_name', 'job_number'])
+                .filter([['id', 'in', this.expense_report.current_handler]])
+                .all({'timeout': 3000, 'shadow': true})
+                .then(function (current_handler_ids) {
+                        if (parent.rend_current_handler_detail(current_handler_ids, parent.$el)) {
+                            def.resolve();
+                        } else {
+                            def.reject();
+                        }
+                    }, function (err, event) {
+                        event.preventDefault();
+                        def.reject();
+                    }
+                );
+        },
+
+        /**
+         * @memberOf Report_detail_screen
+         * @description 显示当前处理人
+         * @param {json} current_handler_ids 当前处理人
+         * @param {object} $el dom对象
+         */
+        rend_current_handler_detail: function (current_handler_ids, $el) {
+            if (current_handler_ids) {
+                var $current_handler_ids = $(QWeb.render('current_handler_list', {
+                    'current_handler_ids': current_handler_ids
+                }));
+                $el.find('.o_current_handler_ids').append($current_handler_ids);
+            }
+        },
+
         /**
          * @memberOf Report_detail_screen
          * @description 显示出差明细

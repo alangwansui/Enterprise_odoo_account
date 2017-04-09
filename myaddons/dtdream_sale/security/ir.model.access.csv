@@ -45,6 +45,7 @@ access_crm_team_user_dtdream_manager,crm.team.user dtdream manager,sales_team.mo
 access_crm_stage_dtdream_manager,crm.stage dtdream manager,crm.model_crm_stage,group_dtdream_sale_manager,1,1,1,1
 access_account_invoice_dtdream_salesman,account.invoice dtdream salesman,account.model_account_invoice,group_dtdream_sale_salesman,1,1,1,1
 access_account_invoice_dtdream_manager,account.invoice dtdream manager,account.model_account_invoice,group_dtdream_sale_manager,1,1,1,1
+access_account_invoice_dtdream_jiekou,account.invoice dtdream jiekou,account.model_account_invoice,base.group_user,1,1,1,1
 crm.access_crm_stage_manager,crm.stage,crm.model_crm_stage,base.group_sale_manager,0,0,0,0
 access_crm_lost_reason_dtdream_manager,crm.lost.reason.dtdream.manager,crm.model_crm_lost_reason,base.group_user,1,1,1,1
 access_product_supplierinfo_product_manager,product.supplierinfo product.manager,product.model_product_supplierinfo,group_product_manage,1,1,1,1
@@ -64,3 +65,4 @@ access_cash_income,cash.income.dtdream.user,model_cash_income,base.group_user,1,
 access_contract_fee,contract.fee.dtdream.user,model_contract_fee,base.group_user,1,1,1,1
 access_gaap_income,gaap.income.dtdream.user,model_gaap_income,base.group_user,1,1,1,1
 access_fee_pay,fee.pay.dtdream.user,model_fee_pay,base.group_user,1,1,1,1
+access_yunwei_config,yunwei.config.dtdream.yunwei.manage,model_yunwei_config,group_yunwei_manage,1,1,1,0

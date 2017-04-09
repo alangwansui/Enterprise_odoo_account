@@ -20,11 +20,27 @@ class dtdream_foreign(models.Model):
                 rec.department_02 = rec.applicant.department_id
                 rec.department_01 = rec.applicant.department_id.parent_id
                 rec.origin_department_01 = rec.applicant.department_id.parent_id
-                rec.secret_person = rec.applicant.department_id.parent_id.xinxianquanyuan
+                if len(rec.applicant.department_id.parent_id.xinxianquanyuan_new)==1:
+                    rec.secret_person = rec.applicant.department_id.parent_id.xinxianquanyuan_new[0]
+                else:
+                    return {
+                        'domain': {
+                            "secret_person": [
+                                ('id', 'in', [x.id for x in rec.applicant.department_id.parent_id.xinxianquanyuan_new])]
+                        }
+                    }
             else:
                 rec.department_01 = rec.applicant.department_id
                 rec.origin_department_01 = rec.applicant.department_id
-                rec.secret_person = rec.applicant.department_id.xinxianquanyuan
+                if len(rec.applicant.department_id.xinxianquanyuan_new)==1:
+                    rec.secret_person = rec.applicant.department_id.xinxianquanyuan_new[0]
+                else:
+                    return {
+                        'domain': {
+                            "secret_person": [
+                                ('id', 'in', [x.id for x in rec.applicant.department_id.xinxianquanyuan_new])]
+                        }
+                    }
 
     # @api.onchange('sfxytm')
     # def _onchange_sfxqbmxy(self):
@@ -37,7 +53,14 @@ class dtdream_foreign(models.Model):
     @api.onchange('origin_department_01')
     def onchange_origin_department_01(self):
         if self.origin_department_01:
-            self.secret_person = self.origin_department_01.xinxianquanyuan
+            if len(self.origin_department_01.xinxianquanyuan_new)==1:
+                self.secret_person = self.origin_department_01.xinxianquanyuan_new[0]
+            else:
+                return {
+                    'domain': {
+                        "secret_person": [('id', 'in', [x.id for x in self.origin_department_01.xinxianquanyuan_new])]
+                    }
+                }
 
     @api.constrains('target_email')
     def check_email(self):
@@ -211,7 +234,7 @@ class dtdream_foreign(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-            if menu == u"我相关的":
+            if menu == u"对外披露/我相关的":
                 uid = self._context.get('uid', '')
                 domain = expression.AND([['|', '|', '|', ('applicant.user_id', '=', uid), ('create_uid', '=', uid),
                                           ('current_approve.user_id', '=', uid), ('approves.user_id', '=', uid)],
@@ -226,7 +249,7 @@ class dtdream_foreign(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-            if menu == u"我相关的":
+            if menu == u"对外披露/我相关的":
                 uid = self._context.get('uid', '')
                 domain = expression.AND([['|', '|', '|', ('applicant.user_id', '=', uid), ('create_uid', '=', uid),
                                               ('current_approve.user_id', '=', uid), ('approves.user_id', '=', uid)],

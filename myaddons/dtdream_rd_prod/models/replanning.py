@@ -230,7 +230,7 @@ class dtdream_rd_replanning(models.Model):
         applies=[]
         state_list = [('state_01','草稿'),('state_02','审批中'),('state_03','已审批')]
         state_dict = dict(state_list)
-        appr = self.env['dtdream.rd.replanning'].search([('create_uid','=',self.env.user.id)])
+        appr = self.env['dtdream.rd.replanning'].search([('create_uid','=',self.env.user.id),('state','in',('state_01','state_02'))])
         menu_id = self._get_menu_id()
         for app in appr:
             department = ''
@@ -248,6 +248,7 @@ class dtdream_rd_replanning(models.Model):
                 'appr': app.proname.name,
                 'version':app.version.version_numb or '',
                 'PDT': app.proname.PDT.name or '',
+                'YF_manager': app.proname.YF_manager.name or '',
                 'style':u'版本重计划',
                 'state': state_dict[app.state],
                 'defer':defer,
@@ -268,6 +269,7 @@ class dtdream_rd_replanning(models.Model):
         menu_id = self._get_parent_id(menu)
         return menu_id
 
+    # 待我审批流程
     @api.model
     def get_affair(self):
         affairs = []
@@ -291,6 +293,7 @@ class dtdream_rd_replanning(models.Model):
                 'appr': app.proname.name or '',
                 'version': app.version.version_numb or '',
                 'PDT': app.proname.PDT.name,
+                'YF_manager': app.proname.YF_manager.name or '',
                 'style': u'版本重计划',
                 'state': state_dict[app.state],
                 'defer': defer,
@@ -323,6 +326,7 @@ class dtdream_rd_replanning(models.Model):
                 'appr': app.proname.name,
                 'version': app.version.version_numb or '',
                 'PDT': app.proname.PDT.name or '',
+                'YF_manager': app.proname.YF_manager.name or '',
                 'style': u'版本重计划',
                 'state': state_dict[app.state],
                 'defer': defer,

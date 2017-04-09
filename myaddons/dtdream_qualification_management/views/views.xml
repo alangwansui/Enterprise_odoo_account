@@ -1,0 +1,234 @@
+<openerp>
+    <data>
+        <record id="view_dtdream_qua_man_filter" model="ir.ui.view">
+            <field name="name">dtdream.qua.man.filter</field>
+            <field name="model">dtdream.qualification.management</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <field name="batchnumber"/>
+                    <filter domain="[('material_finish','=','N'),('state','=','state2')]" string="启动中申报资料未完成"/>
+                    <filter domain="[('is_today_youcui','=',False)]" string="今日未邮催"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_name" string="部门" context="{'group_by':'department_id'}"/>
+                        <filter name="group_name" string="直接主管" context="{'group_by':'manager_id'}"/>
+                        <filter name="group_name" string="状态" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_dtdream_qua_man_filter_self" model="ir.ui.view">
+            <field name="name">dtdream.qua.man.filter</field>
+            <field name="model">dtdream.qualification.management</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <field name="batchnumber"/>
+                    <filter string="我的" name="filter_myself"
+                          domain="[('name.user_id', 'in', [uid])]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="act_dtdream_qua_man_myself" model="ir.actions.act_window">
+            <field name="name">任职资格申请</field>
+            <field name="res_model">dtdream.qualification.management</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_dtdream_qua_man_filter_self"/>
+            <field name="context">{'search_default_filter_myself':1}</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_qua_man_department" model="ir.actions.act_window">
+            <field name="name">HRBP</field>
+            <field name="res_model">dtdream.qualification.management</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_dtdream_qua_man_filter_self"/>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_qua_man_manager" model="ir.actions.act_window">
+            <field name="name">任职管理员</field>
+            <field name="res_model">dtdream.qualification.management</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_dtdream_qua_man_filter"/>
+            <field name="domain">[]</field>
+        </record>
+
+        <record model="ir.ui.view" id="view_dtdream_qua_man_tree">
+            <field name="name">view.dtdream.qua.man.tree</field>
+            <field name="model">dtdream.qualification.management</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="batchnumber"/>
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="entry_day"/>
+                    <field name="manager_id"/>
+                    <field name="post_id"/>
+                    <field name="rank"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dtdream_qua_man_form" model="ir.ui.view">
+            <field name="name">view.dtdream.qua.man.form</field>
+            <field name="model">dtdream.qualification.management</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="state1,state2,state3"/>
+                    </header>
+                    <sheet>
+                         <group string="基本信息">
+                             <group>
+                                 <field name="batchnumber" attrs="{'readonly':[('is_manager','=',False)]}"/>
+                                 <field name="name" options="{'no_create':True}" attrs="{'readonly':[('is_manager','=',False)]}"/>
+                                 <field name="entry_day" />
+                                 <field name="is_write_right" invisible="True"/>
+                                 <field name="is_manager" invisible="True"/>
+                                 <field name="is_write_right_jk" invisible="True"/>
+                                 <field name="is_today_youcui" invisible="True"/>
+                             </group>
+                             <group>
+                                 <field name="department_id" options="{'no_create':True}" attrs="{'readonly':[('is_manager','=',False)]}"/>
+                                 <field name="manager_id" options="{'no_create':True}" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False)]}"/>
+                                 <!--<field name="dead_line"/>-->
+                             </group>
+                        </group>
+                        <group string="考核情况">
+                            <group>
+                                <field name="last_year" />
+                                <field name="year_before"/>
+                            </group>
+                            <group>
+                                <field name="last_year_result" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False)]}"/>
+                                <field name="year_before_result" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False)]}"/>
+                            </group>
+                        </group>
+                        <group style="margin-bottom: 0px;">
+                            <div>
+                                <lable class="o_horizontal_separator">申报信息</lable>
+                                <a href="/dtdream_qualification_management/static/PPT_template.pptx" style="margin-left: 20px;">ppt模板下载</a>
+                                <P style="color:red">说明：附件为任职资格认证PPT的模板，供大家参考。请申请P4级及以上员工，在<label for="dead_line_char" string="" class="oe_edit_only"/> <field name="dead_line_char"/>前完成提交，以免申报无效</P>
+                            </div>
+                        </group>
+                        <group style="margin-top: 0px;">
+                            <group>
+                                <field name="post_type_id" options="{'no_create':True}" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
+                                <field name="post_id" options="{'no_create':True}" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
+                                <field name="material_finish" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="rank" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
+                               <field name="attachment_name" invisible="True"/>
+                                <field name="attachment" widget="binary" filename="attachment_name" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
+                            </group>
+                        </group>
+                        <group string="结果确认">
+                            <group>
+                                <field name="result_post" attrs="{'readonly':[('is_manager','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="result_rank" attrs="{'readonly':[('is_manager','=',False)]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_qua_man_start"
+          name="任职资格启动"
+          src_model="dtdream.qualification.management"
+          res_model="dtdream.qua.man.wizard"
+          view_id="view_dtdream_qua_man_wizard_submit_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_manage_qua"/>
+
+        <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_qua_man_finish"
+          name="任职资格完成"
+          src_model="dtdream.qualification.management"
+          res_model="dtdream.qua.man.wizard"
+          view_id="view_dtdream_qua_man_wizard_finish_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_manage_qua"/>
+
+        <act_window
+          multi="True"
+          key2="client_action_multi"
+          id="act_dtdream_qua_man_email"
+          name="邮催"
+          src_model="dtdream.qualification.management"
+          res_model="dtdream.qua.man.wizard"
+          view_id="view_dtdream_qua_man_wizard_email_from"
+          view_mode="form"
+          view_type="form"
+          target="new"
+          groups="group_hr_inter_qua,group_hr_manage_qua"/>
+
+        <record model="ir.actions.server" id="act_dtdream_email_number">
+            <field name="name">邮催个数</field>
+            <field name="model_id" ref="model_dtdream_email_number"/>
+            <field name="code">
+                action = {
+                'name':'邮催个数',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dtdream.email.number',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+                'context':context,
+                }
+            </field>
+        </record>
+
+        <record id="view_dtdream_email_number_form" model="ir.ui.view">
+            <field name="name">view.dtdream.email.number.form</field>
+            <field name="model">dtdream.email.number</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                         <group >
+                             <field name="number"/>
+                         </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <menuitem id="menu_finance_qualification" name="任职资格认证" icon="fa-user" web_icon="dtdream_qualification_management,static/img/qua.png" />
+        <menuitem id="menu_qua_man_myself" name="任职资格申请" parent="menu_finance_qualification" sequence="100" action="act_dtdream_qua_man_myself"/><!--自己的 或身为主管可查看的-->
+        <menuitem id="menu_qua_man_inter" name="HRBP" parent="menu_finance_qualification" sequence="200" action="act_dtdream_qua_man_department" groups="group_hr_inter_qua,group_hr_manage_qua"/><!--接口人可查看的-->
+        <menuitem id="menu_qua_man_manage" name="任职管理员" parent="menu_finance_qualification" sequence="300" action="act_dtdream_qua_man_manager" groups="group_hr_manage_qua"/><!--管理员可查看的-->
+        <menuitem id="menu_qua_man_config" name="配置" parent="menu_finance_qualification" sequence="400" groups="group_hr_manage_qua"/><!--管理员可查看的-->
+        <menuitem id="menu_post_type" name="职位族" parent="menu_qua_man_config" sequence="100" action="act_dtdream_post_type" groups="group_hr_manage_qua"/>
+        <menuitem id="menu_post" name="岗位" parent="menu_qua_man_config" sequence="200" action="act_dtdream_post" groups="group_hr_manage_qua"/>
+        <menuitem id="menu_email_number" name="邮催个数" parent="menu_qua_man_config" sequence="300" action="act_dtdream_email_number" groups="group_hr_manage_qua"/>
+
+    </data>
+</openerp>

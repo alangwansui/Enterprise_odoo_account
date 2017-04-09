@@ -260,7 +260,7 @@ class dtdream_execption(models.Model):
         applies=[]
         state_list = [('dsp', '待审批'), ('yjsp', '一级审批'), ('Nyjsp', '一级审批不通过'), ('ejsp', '二级审批'), ('Nejsp', '二级审批不通过'), ('ysp', '已审批')]
         state_dict = dict(state_list)
-        appr = self.env['dtdream_execption'].search([('create_uid','=',self.env.user.id)])
+        appr = self.env['dtdream_execption'].search([('create_uid','=',self.env.user.id),('state','!=','ysp')])
         menu_id = self._get_menu_id()
         for app in appr:
             department = ''
@@ -278,6 +278,7 @@ class dtdream_execption(models.Model):
                 'appr': app.name.name,
                 'version':app.version.version_numb or '',
                 'PDT': app.name.PDT.name or '',
+                'YF_manager': app.name.YF_manager.name or '',
                 'style':u'例外',
                 'state': state_dict[app.state],
                 'defer':defer,
@@ -298,6 +299,7 @@ class dtdream_execption(models.Model):
         menu_id = self._get_parent_id(menu)
         return menu_id
 
+    # 待我审批流程
     @api.model
     def get_affair(self):
         affairs = []
@@ -322,6 +324,7 @@ class dtdream_execption(models.Model):
                 'appr': app.name.name,
                 'version': app.version.version_numb or '',
                 'PDT': app.name.PDT.name or '',
+                'YF_manager': app.name.YF_manager.name or '',
                 'style': u'例外',
                 'state': state_dict[app.state],
                 'defer': defer,
@@ -355,6 +358,7 @@ class dtdream_execption(models.Model):
                 'appr': app.name.name,
                 'version': app.version.version_numb or '',
                 'PDT': app.name.PDT.name or '',
+                'YF_manager': app.name.YF_manager.name or '',
                 'style': u'例外',
                 'state': state_dict[app.state],
                 'defer': defer,

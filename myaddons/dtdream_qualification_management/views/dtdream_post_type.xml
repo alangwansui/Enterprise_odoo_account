@@ -1,0 +1,21 @@
+<openerp>
+    <data>
+        <record id="act_dtdream_post_type" model="ir.actions.act_window">
+            <field name="name">职位族</field>
+            <field name="res_model">dtdream.post.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.ui.view" id="view_dtdream_post_type_tree">
+            <field name="name">view.dtdream.post.type.tree</field>
+            <field name="model">dtdream.post.type</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -8,12 +8,11 @@
             <field name="model">dtdream.expense.record</field>
             <field name="arch" type="xml" >
                 <tree>
-                    <!--<field name="name"/>-->
-                    <!--<field name="expensecatelog"/>-->
                     <field name="expensedetail"/>
                     <field name="currentdate"/>
                     <field name="invoicevalue"/>
                     <field name="state"/>
+                    <field name="applicant"></field>
                     <field name="create_date" string="创建时间"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="report_ids" invisible="1"/>
@@ -31,6 +30,7 @@
                     <field name="expensedetail"/>
                     <field name="invoicevalue"/>
                     <field name="state"/>
+                    <field name="applicant"></field>
                     <field name="create_date" string="创建时间"/>
                     <field name="create_uid" string="创建人"/>
                     <filter string="未报销" name="search_draft" domain="[('report_ids','=',False)]" />
@@ -115,6 +115,7 @@
                                  <field name="notaxamount" attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
                                  <field name="taxpercent" attrs="{'invisible':[('state','not in',('jiekoukuaiji'))]}"/>
                                 <field name="state" readonly="1"/>
+                                <field name="applicant"></field>
                                 <field name="create_date" string="创建时间" readonly="1"/>
                                 <field name="create_uid" string="创建人" readonly="1"/>
                             </group>
@@ -149,7 +150,7 @@
         <record model="ir.actions.act_window" id="action_dtdream_expense_record">
             <field name="name">消费明细</field>
             <field name="res_model">dtdream.expense.record</field>
-            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="domain">['|',('applicant.user_id','=',uid),('create_uid','=',uid)]</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="context">{'search_default_search_draft':1}</field>
         </record>

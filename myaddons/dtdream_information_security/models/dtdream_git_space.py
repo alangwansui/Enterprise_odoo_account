@@ -17,7 +17,7 @@ class dtdream_confluence_space(models.Model):
         for gitconfig in gitconfigs:
             try:
                 projectServer = project.DTProject(url=gitconfig.url, token=gitconfig.token)
-                gitprojects = projectServer.get_projects()
+                gitprojects = projectServer.get_all_projects()
                 spaces = self.env['dtdream.git.space'].search([('type','=',gitconfig.id)])
                 keylist = [space['key'] for space in spaces]
                 for gitproject in gitprojects:

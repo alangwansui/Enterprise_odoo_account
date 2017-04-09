@@ -1,0 +1,67 @@
+<openerp>
+  <data>
+
+    <!--GAAP收入豆腐块-->
+    <record id="view_res_gaap_income_form" model="ir.ui.view">
+            <field name="name">view.res.product.oppr</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <button name="toggle_active" position="before">
+                    <button name="%(action_gaap_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_gaap_income" class="o_stat_value"/>
+                              <span class="o_stat_text">GAAP收入(万元)</span>
+                          </div>
+                    </button>
+                </button>
+            </field>
+    </record>
+
+    <!--GAAP收入FORM-->
+    <record model="ir.ui.view" id="dtdream_sale_gaap_income_form">
+        <field name="name">dtdream.sale.gaap.income.form</field>
+        <field name="model">dtdream.sale.gaap.income</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="gaap_income"/>
+                            <field name="gaap_date"/>
+                            <field name="gaap_project_id"/>
+                            <field name="gaap_contract_num"/>
+                            <field name="gaap_partner"/>
+                            <field name="gaap_partner_num"/>
+                            <field name="pro_remark1"/>
+                        </group>
+                        <group>
+                            <field name="gaap_order_num"/>
+                            <field name="bom"/>
+                            <field name="pro_name"/>
+                            <field name="pro_price"/>
+                            <field name="pro_num"/>
+                            <field name="pro_tax"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--GAAP收入TREE-->
+    <record model="ir.ui.view" id="dtdream_sale_gaap_income_tree">
+        <field name="name">dtdream.sale.gaap.income.tree</field>
+        <field name="model">dtdream.sale.gaap.income</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="gaap_project_id"/>
+                <field name="gaap_order_num"/>
+                <field name="gaap_income" />
+                <field name="gaap_date" />
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

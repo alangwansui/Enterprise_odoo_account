@@ -200,7 +200,7 @@ class product_category(osv.osv):
     _name = "product.category"
     _description = "Product Category"
     _columns = {
-        'name': fields.char('Name', required=True, translate=True, select=True),
+        'name': fields.char('Name', required=True, select=True),
         'complete_name': fields.function(_name_get_fnc, type="char", string='Name'),
         'parent_id': fields.many2one('product.category','Parent Category', select=True, ondelete='cascade'),
         'child_id': fields.one2many('product.category', 'parent_id', string='Child Categories'),

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp .exceptions import ValidationError
 
 class view(models.Model):
     _inherit = 'ir.ui.view'
@@ -25,14 +26,24 @@ class dtdream_sale_data_report(models.Model):
     @api.model
     def get_sales_report_data(self):
         cash_income_sum = self.get_cash_income_sum()
-        areas = self.get_pro_selections()
+        areas = self.get_departments_selections()
         return {'cash_income_sum':99999,'areas':areas}
 
     @api.model
-    def get_pro_selections(self):
-        area_list = self.env['dtdream.office'].sudo().search([])
-        areas = [rec.name for rec in area_list]
-        return areas
+    def get_departments_selections(self):
+        department_list = self.env['sale.department'].sudo().search([])
+        departments = [rec.name for rec in department_list]
+        return departments
+
+    @api.model
+    def get_province_by_department(self,dep_name):
+        pro_rec = self.env['department.province'].sudo().search([('sale_department.name','=',dep_name)])
+        if len(pro_rec) == 1:
+            pro_list = pro_rec.sale_project_province
+            provinces = [rec.name for rec in pro_list]
+            return provinces
+        else:
+            return
 
     @api.model
     def get_cash_income_sum(self):

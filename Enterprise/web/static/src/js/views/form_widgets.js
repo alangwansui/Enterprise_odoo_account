@@ -1102,7 +1102,8 @@ var FieldBinary = common.AbstractField.extend(common.ReinitializeFieldMixin, {
             var html='<div class="o_form_image_controls">'+addSize+reduceSize+rotatePicture+'</div>';
             this.$el.append(html);
         }
-        this.$('.o_select_file_button').click(function(e) { 
+        this.$('.o_select_file_button').click(function(e) {
+            self.$inputFile.val("")
             self.$inputFile.click();
         });
         this.$('.o_save_file_button').click(this.on_save_as);
@@ -1256,6 +1257,7 @@ var FieldBinaryFile = FieldBinary.extend({
 
             var self = this;
             this.$input.on('click', function() {
+                self.$inputFile.val("")
                 self.$inputFile.click();
             });
         }

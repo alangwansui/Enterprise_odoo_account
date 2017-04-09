@@ -9,7 +9,7 @@
                     <field name="name"/>
                     <field name="state"/>
                     <field name="current_handler"/>
-                    <field name="create_uid_self"/>
+                    <field name="applicant"/>
                     <field name="create_date" />
                     <field name="department_id"/>
                     <templates>
@@ -66,8 +66,7 @@
                     <sheet>
                         <group>
                             <group string="基本信息">
-                                <field name="job_number" readonly="1"/>
-                                <field name="full_name" readonly="1"/>
+                                <field name="applicant"/>
                                 <field name="work_place" readonly="1"/>　
                                 <field name="department_id" readonly="1"/>
                                 <field name="department_number" readonly="1"/>
@@ -224,8 +223,7 @@
 
                         <notebook>
                             <page string="费用明细">
-                                <field name="create_uid_self" invisible="1"/>
-                                <field name="record_ids" mode="tree,kanban" attrs="{'readonly':['&amp;',('state','!=',('draft')),'|',('state','!=','jiekoukuaiji'),('compute_currentaudit','=',False)]}" domain="[('create_uid','=',create_uid_self),('report_ids','=',False)]">
+                                <field name="record_ids" mode="tree,kanban" attrs="{'readonly':['&amp;',('state','!=',('draft')),'|',('state','!=','jiekoukuaiji'),('compute_currentaudit','=',False)]}">
                                     <tree  >
                                         <field name="expensecatelog"/>
                                         <field name="expensedetail" />
@@ -316,7 +314,7 @@
                     <field name="state"/>
                     <field name="current_handler" widget="many2many_tags"/>
                     <field name="total_shibaoamount"/>
-                    <field name="create_uid_self" string="申请人"/>
+                    <field name="applicant" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <field name="jiekou_approve_time"></field>
                     <field name="department_id"/>
@@ -337,7 +335,7 @@
                     <field name="state"/>
                     <field name="current_handler"/>
                     <field name="total_shibaoamount"/>
-                    <field name="create_uid_self" string="申请人"/>
+                    <field name="applicant" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <field name="jiekou_approve_time"></field>
                     <field name="department_id"/>
@@ -355,7 +353,7 @@
                     <field name="name"/>
                     <field name="state"/>
                     <field name="current_handler"/>
-                    <field name="create_uid_self" string="申请人"/>
+                    <field name="applicant" string="申请人"/>
                     <field name="create_date" string="申请时间"/>
                     <filter string="草稿" name="search_willaudit" domain="[('state','=','draft')]" />
                 </search>
@@ -365,7 +363,7 @@
         <record model="ir.actions.act_window" id="action_dtdream_expense_myreport">
             <field name="name">我的申请</field>
             <field name="res_model">dtdream.expense.report</field>
-            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="domain">['|',('applicant.user_id','=',uid),('create_uid','=',uid)]</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="context">{'search_default_search_willaudit':1}</field>
         </record>

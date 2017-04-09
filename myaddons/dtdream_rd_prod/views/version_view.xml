@@ -75,7 +75,9 @@
                 <tree>
                     <field name="department"/>
                     <field name="department_2"/>
+                    <field name="pro_PDT"/>
                     <field name="PDT"/>
+                    <field name="YF_manager"/>
                     <field name="proName" string="产品名称"/>
                     <field name="pro_flag" />
                     <field name="version_numb"/>
@@ -111,7 +113,7 @@
                             <div class="oe_kanban_details">
                                 <div name="tags"/>
                                     <ul>
-                                        <li ><strong>项目名称:</strong> <field name="proName" /></li>
+                                        <li ><strong>产品名称:</strong> <field name="proName" /></li>
                                         <li ><strong>版本标识:</strong> <field name="pro_flag" /></li>
                                         <li ><strong>版本号:</strong> <field name="version_numb" /></li>
                                         <li > <strong>PDT经理:</strong><field name="PDT" /></li>

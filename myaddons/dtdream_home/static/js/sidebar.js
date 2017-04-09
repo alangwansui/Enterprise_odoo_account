@@ -39,7 +39,9 @@ var Main = Widget.extend({
 			"信息安全":"security",
 			"意见反馈":"feedback",
 			"工资":"dtpay",
-            "项目管理": "project_manage"
+            "项目管理": "project_manage",
+			"任职资格认证":"qualification",
+            "采购":"purchase",
         },
 //        模块类别配置--导航条分类--5类：通用(general)、财务(financial)、HR、市场(market)、研发(RD)
         classify:{
@@ -61,6 +63,7 @@ var Main = Widget.extend({
             "休假":"HR",
             "员工":"HR",
             "工资":"HR",
+			"任职资格认证":"HR",
             "销售":"market",
             "产品":"market",
             "客户接待":"market",
@@ -68,7 +71,10 @@ var Main = Widget.extend({
             "研发":"RD",
             "IT需求管理":"RD",
             "信息安全":"RD",
-            "项目管理": 'service'
+            "项目管理": 'service',
+            "采购":"chain",
+            "酒店管理": "market",
+            "餐饮管理": "market",
         },
         init: function (parent) {
 //            this._super(parent);
@@ -94,6 +100,27 @@ var Main = Widget.extend({
                             menu.class = "dodo doicon-"+self.xls[child.name];
                             menu.url = "/web#menu_id="+child.id;
                             //#menu_id=99&amp;action_id=96
+
+                            if (child.name == "客户接待"){
+                                for(var j=0; j < child.children.length; j++){
+                                    if(child.children[j].name == '酒店餐饮管理'){
+                                        for(var k=0; k < child.children[j].children.length; k++){
+                                            var menu2={url:"",　name:"",class:""};
+                                            menu2.name = child.children[j].children[k].name;
+                                            var model_name;
+                                            if (menu2.name == '酒店管理'){
+                                                model_name = "dtdream.hotels.management";
+                                            }else{
+                                                model_name = "dtdream.dinner.management";
+                                            }
+                                            menu2.url = "/web#view_type=kanban&model=" + model_name + "&action=" + child.children[j].children[k].action.substring(child.children[j].children[k].action.indexOf(',')+1) + "&menu_id=" + child.id ;
+                                            menu2.class = "dodo doicon-hotel-dinner";
+                                            menus.push(menu2);
+                                        }
+                                    }
+                                }
+                            }
+
                             if (child.action === false) {
                                 while (child.children && child.children.length) {
                                     child = child.children[0];
@@ -121,6 +148,7 @@ var Main = Widget.extend({
             var market=[];
             var rd=[];
             var service=[];
+            var chain=[];
 
             if (info) {
                 $.each(info,function(i,ele){
@@ -144,6 +172,9 @@ var Main = Widget.extend({
                         case "service":
                             service.push(ele);
                             break;
+                        case "chain":
+                            chain.push(ele);
+                            break;
                         default:
                             alert("孩砸，去前面代码看看模块类别配置对不对");
                             break;
@@ -156,7 +187,8 @@ var Main = Widget.extend({
                     'HR_sets':HR,
                     'market_sets':market,
                     'rd_sets':rd,
-                    'service_sets':service
+                    'service_sets':service,
+                    'chain_sets':chain,
                 }));
                 $el.append($info);
             }
@@ -169,7 +201,12 @@ var Main = Widget.extend({
         },
         set_sidebar_effect: function(e){
             var $target=$(e.target);
-            var $span=$target.find("span");
+            if($target[0].nodeName.toLowerCase() == "a"){
+                var $span=$target.find("span");
+            }else if($target[0].nodeName.toLowerCase() == "span"){
+                var $span=$target;
+            }
+
             var $panel=$target.closest(".panel");
             var $expand=$panel.find(".panel-collapse");
             if(!$panel.hasClass("select")){

@@ -17,8 +17,9 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="department" />
+                                <!--<field name="department" />-->
                                 <field name="name"/>
+                                <field name="person" options="{'no_create':True}"/>
                             </group>
                         </group>
                     </sheet>
@@ -31,8 +32,9 @@
             <field name="model">dtdream.rd.pdtconfig</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
-                    <field name="department" />
+                    <!--<field name="department" />-->
                     <field name="name"/>
+                    <field name="person" options="{'no_create':True}"/>
                 </tree>
             </field>
         </record>
@@ -42,7 +44,8 @@
             <field name="model">dtdream.rd.pdtconfig</field>
             <field name="arch" type="xml">
                 <kanban class="o_res_partner_kanban" >
-                    <field name="department" />
+                    <!--<field name="department" />-->
+                    <field name="person" />
                     <field name="name"/>
                     <templates>
                         <t t-name="kanban-box">
@@ -53,8 +56,9 @@
                                 <div class="oe_kanban_details">
                                     <div name="tags"/>
                                         <ul>
-                                            <li ><strong>部门:</strong> <field name="department" /></li>
+                                            <!--<li ><strong>部门:</strong> <field name="department" /></li>-->
                                             <li > <strong>PDT:</strong><field name="name" /></li>
+                                            <li ><strong>PDT经理:</strong> <field name="person" /></li>
                                         </ul>
                                     <div name="tags"/>
                                 </div>
@@ -64,26 +68,5 @@
                 </kanban>
             </field>
         </record>
-
-        <!--<record id="view_dtdream_rd_role_from" model="ir.ui.view">-->
-            <!--<field name="name">view.dtdream.rd.role.from</field>-->
-            <!--<field name="model">dtdream_rd_role</field>-->
-            <!--<field name="arch" type="xml">-->
-                <!--<form>-->
-                    <!--<sheet>-->
-                        <!--<group>-->
-                            <!--<group>-->
-                                <!--<field name="cof_id" />-->
-                                <!--<field name="role_id" invisible="1"/>-->
-                            <!--</group>-->
-                            <!--<group>-->
-                                <!--<field name="person" />-->
-                            <!--</group>-->
-                        <!--</group>-->
-                    <!--</sheet>-->
-                <!--</form>-->
-            <!--</field>-->
-        <!--</record>-->
-
     </data>
 </openerp>

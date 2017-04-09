@@ -1,6 +1,30 @@
 <openerp>
   <data>
 
+    <record model="ir.module.category" id="module_project_manage_group">
+            <field name="name">项目管理</field>
+            <field name="description">项目管理</field>
+            <field name="sequence">2</field>
+    </record>
+
+    <record id="group_project_manage_pmo" model="res.groups">
+        <field name="name">PMO接口人</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_project_manage_group"/>
+    </record>
+
+    <record id="group_project_order_view" model="res.groups">
+        <field name="name">查看订单金额</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_project_manage_group"/>
+    </record>
+
+    <record id="group_project_mange_admin" model="res.groups">
+        <field name="name">项目管理员</field>
+        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+        <field name="category_id" ref="module_project_manage_group"/>
+    </record>
+
     <record id="view_dtdream_project_manage_form" model="ir.ui.view">
         <field name="name">view.dtdream.project.manage.form</field>
         <field name="model">dtdream.project.manage</field>
@@ -8,11 +32,21 @@
             <form>
                 <header>
                     <button name="btn_submit_click" string="提交" type="object" class="oe_highlight"
-                    attrs="{'invisible':['|',('state_y', 'not in',('0','10')),'|','&amp;',('state_y','=','0'),('is_create','=',False),'&amp;',('state_y','=','10'),('is_PMOO','=',False)]}"/>
+                    attrs="{'invisible':['|',('state_y', 'not in',('0','10','20')),'|','&amp;',('state_y','=','0'),('is_create','=',False),'|','&amp;',('state_y','=','10'),('is_PMOO','=',False),'&amp;',('state_y','=','20'),('is_current','!=',True)]}"/>
                     <button name="btn_sync" string="同步项目信息" type="workflow" class="oe_highlight"
                     attrs="{'invisible':['|',('state_y','!=','11'),'&amp;',('state_y','=','11'),('is_project_manage','=',False)]}"/>
-                    <button name="multi_manage_approve" string="确认" type="object" class="oe_highlight"
-                    attrs="{'invisible':['|',('state_y','!=','12'),'&amp;',('state_y','=','12'),('is_current','!=',True)]}"/>
+                    <button name="multi_manage_approve" string="同意" type="object" class="oe_highlight"
+                    attrs="{'invisible':['|',('is_project_manage','=',True),'|',('state_y','!=','12'),'&amp;',('state_y','=','12'),('is_current','!=',True)]}"/>
+                    <button name="multi_manage_reject" string="不同意" type="object" class="oe_highlight"
+                    attrs="{'invisible':['|',('is_project_manage','=',True),'|',('state_y','!=','12'),'&amp;',('state_y','=','12'),('is_current','!=',True)]}"/>
+                    <button name="step_to_next_stage" string="进入下一阶段" type="object" class="oe_highlight"
+                    attrs="{'invisible':['|',('state_y','not in',('1','2','3','4')),'|',('is_project_manage','=', False),('is_current','=', False)]}"/>
+                    <button name="approve_agree" string="同意" type="workflow" class="oe_highlight"
+                    attrs="{'invisible':['|',('state_y','!=','21'),('is_current','=', False)]}"/>
+                    <button name="btn_reject_click" string="驳回" type="object" class="oe_highlight"
+                    attrs="{'invisible':['|',('state_y','!=','21'),('is_current','=', False)]}"/>
+                    <button name="btn_import_order" string="导入订单信息" type="object" class="oe_highlight"
+                    attrs="{'invisible':['|',('state_y','!=','0'),('is_create','=',False)]}"/>
                     <field name="state_y"  widget="statusbar" statusbar_visible="0,1,2,3,4,99" attrs="{'invisible':[('yunwei','=','0')]}"/>
                     <field name="state_n"  widget="statusbar" statusbar_visible="0,1,2,3,99" attrs="{'invisible':['|',('yunwei','=','1'),('yunwei','=',False)]}"/>
                 </header>
@@ -20,100 +54,113 @@
                 <sheet>
                     <group string="项目基本信息">
                         <group>
-                          <field name="code" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
+                          <field name="code" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
                           <field name="name" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
-                          <field name="product_manage" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
-                          <field name="project_leval" attrs="{'readonly':['|',('state_y','!=','10'),'&amp;',('state_y','=','10'),('is_PMOO','=',False)],'required':[('state_y','=','10'),('is_PMOO','=',True)]}"/>
+                          <field name="name_contract" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
+                          <field name="project_leval" options="{'no_create': True,'no_open':True}" attrs="{'readonly':['|',('state_y','!=','10'),'&amp;',('state_y','=','10'),('is_PMOO','=',False)],'required':[('state_y','=','10'),('is_PMOO','=',True)]}"/>
                           <field name="project_manage" attrs="{'readonly':['|',('state_y','!=','10'),'&amp;',('state_y','=','10'),('is_PMOO','=',False)],'required':[('state_y','=','10'),('is_PMOO','=',True)]}"/>
                           <field name="contract" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
                           <field name="is_create" invisible="True"/>
                           <field name="is_current" invisible="True"/>
                           <field name="is_PMOO" invisible="True"/>
+                          <field name="is_manage" invisible="True"/>
                           <field name="is_project_manage" invisible="True"/>
+                          <field name="is_deliver_manage" invisible="True"/>
+                          <field name="current_approve" widget="many2many_tags" options="{'no_create':True}" invisible="False"/>
                         </group>
                         <group>
                           <field name="customer" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
                           <field name="customer_manage" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
-                          <field name="pay_way" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
+                          <field name="product_manage" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
+                          <field name="pay_way" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
                           <field name="office" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
                           <field name="sys_department" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
-                          <field name="yunwei" required="True" attrs="{'readonly':[('state_y', '!=', '0')]}"/>
+                          <field name="yunwei" invisible="True"/>
                         </group>
                     </group>
 
                     <group string="项目订单信息">
-                        <notebook>
-                            <page>
-                                <field name="order" attrs="{'readonly':[('state_y', '!=', '0')]}">
-                                    <tree editable="bottom">
-                                        <field name="code" required="True"/>
-                                        <field name="order_type" required="True"/>
-                                        <field name="bom" required="True"/>
-                                        <field name="version" required="True"/>
-                                        <field name="product_type" required="True"/>
-                                        <field name="product_des" required="True"/>
-                                        <field name="company" required="True"/>
-                                        <field name="vender" required="True"/>
-                                        <field name="num"/>
-                                    </tree>
+                        <div>
+                            <span style="color:red;" attrs="{'invisible':[('state_y','!=','0')]}">
+                               注意:如需通过导入方式增加订单信息，请先保存项目信息。
+                            </span>
+                            <notebook>
+                                <page>
+                                    <field name="order" attrs="{'readonly':[('state_y', '!=', '0')]}">
+                                        <tree editable="bottom">
+                                            <field name="code"/>
+                                            <field name="order_type"/>
+                                            <field name="bom"/>
+                                            <field name="version"/>
+                                            <field name="product_type"/>
+                                            <field name="product_des"/>
+                                            <field name="company"/>
+                                            <field name="vender"/>
+                                            <field name="num"/>
+                                            <field name="actual_price" groups="dtdream_project_manage.group_project_manage_pmo,dtdream_project_manage.group_project_order_viewm,dtdream_project_manage.group_project_mange_admin"/>
+                                            <field name="need_price" groups="dtdream_project_manage.group_project_manage_pmo,dtdream_project_manage.group_project_order_view,dtdream_project_manage.group_project_mange_admin"/>
+                                        </tree>
 
-                                    <kanban class="o_res_partner_kanban" >
-                                        <field name="code"/>
-                                        <field name="order_type"/>
-                                        <field name="bom"/>
-                                        <field name="version"/>
-                                        <field name="product_type"/>
-                                        <field name="product_des"/>
-                                        <field name="company"/>
-                                        <field name="vender"/>
-                                        <field name="num"/>
-                                        <templates>
-                                            <t t-name="kanban-box">
-                                              <div class="oe_kanban_global_click ">
-                                                  <div class="o_kanban_image">
-                                                      <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
-                                                  </div>
-                                                  <div class="oe_kanban_details">
-                                                      <div name="tags"/>
-                                                            <div style="overflow:hidden;">
-                                                                <ul style="float:left; width:50%">
-                                                                    <li ><strong>订单编号:</strong> <field name="code" /></li>
-                                                                    <li > <strong>订单类型:</strong><field name="order_type" /></li>
-                                                                    <li ><strong>BOM:</strong> <field name="bom" /></li>
-                                                                    <li > <strong>型号:</strong><field name="version"/></li>
-                                                                </ul>
-                                                                <ul style="float:right; width:50%">
-                                                                    <li><strong>产品类别:</strong> <field name="product_type"/></li>
-                                                                    <li><strong>单位:</strong> <field name="company"/></li>
-                                                                    <li><strong>生产厂家:</strong> <field name="vender"/></li>
-                                                                    <li><strong>数量:</strong> <field name="num"/></li>
-                                                                </ul>
-                                                            </div>
+                                        <kanban class="o_res_partner_kanban" >
+                                            <field name="code"/>
+                                            <field name="order_type"/>
+                                            <field name="bom"/>
+                                            <field name="version"/>
+                                            <field name="product_type"/>
+                                            <field name="product_des"/>
+                                            <field name="company"/>
+                                            <field name="vender"/>
+                                            <field name="num"/>
+                                            <templates>
+                                                <t t-name="kanban-box">
+                                                  <div class="oe_kanban_global_click ">
+                                                      <div class="o_kanban_image">
+                                                          <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                                                      </div>
+                                                      <div class="oe_kanban_details">
+                                                          <div name="tags"/>
+                                                                <div style="overflow:hidden;">
+                                                                    <ul style="float:left; width:50%">
+                                                                        <li ><strong>订单编号:</strong> <field name="code" /></li>
+                                                                        <li > <strong>订单类型:</strong><field name="order_type" /></li>
+                                                                        <li ><strong>BOM:</strong> <field name="bom" /></li>
+                                                                        <li > <strong>型号:</strong><field name="version"/></li>
+                                                                    </ul>
+                                                                    <ul style="float:right; width:50%">
+                                                                        <li><strong>产品类别:</strong> <field name="product_type"/></li>
+                                                                        <li><strong>单位:</strong> <field name="company"/></li>
+                                                                        <li><strong>生产厂家:</strong> <field name="vender"/></li>
+                                                                        <li><strong>数量:</strong> <field name="num"/></li>
+                                                                    </ul>
+                                                                </div>
 
-                                                      <div name="tags"/>
+                                                          <div name="tags"/>
+                                                      </div>
                                                   </div>
-                                              </div>
-                                            </t>
-                                          </templates>
-                                      </kanban>
-                                </field>
-                            </page>
-                        </notebook>
+                                                </t>
+                                              </templates>
+                                          </kanban>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </div>
                     </group>
 
                     <notebook attrs="{'invisible':[('state_y', 'in',('0','10'))]}">
                           <page string="项目负责人" attrs="{'invisible':[('state_y', 'in',('0','10'))]}">
-                              <field name="role" attrs="{'readonly':['|',('state_y', '!=','11'),'&amp;',('state_y','=','11'),('is_project_manage','=',False)]}">
-                                  <tree editable="bottom" create="0" delete="0">
-                                      <field name="name" readonly="True"/>
+                              <field name="role" attrs="{'readonly':['|',('state_y', '=',('99')),('is_project_manage','=',False)]}">
+                                  <tree editable="bottom" colors="red:result==True">
+                                      <field name="name"/>
                                       <field name="state" invisible="True"/>
-                                      <field name="required" invisible="True"/>
-                                      <field name="leader" attrs="{'required':[('required','=','1'),('state','=','11')]}" options="{'no_create': True, 'no_open': True}"/>
+                                      <field name="result" invisible="True"/>
+                                      <field name="approved" invisible="True"/>
+                                      <field name="leader" options="{'no_create': True, 'no_open': True}"/>
                                       <field name="leader_history" widget="many2many_tags" options="{'no_create': True,'no_open': True}"/>
+                                      <field name="suggestion" readonly="True"/>
                                       <field name="project_manage_id" options="{'no_create': True, 'no_open': True}" invisible="True"/>
                                   </tree>
 
-                                  <kanban class="o_res_partner_kanban" >
+                                  <kanban class="o_res_partner_kanban">
                                       <field name="name"/>
                                       <field name="leader"/>
                                       <field name="leader_history"/>
@@ -145,7 +192,7 @@
                           </page>
 
                           <page string="项目阶段点" attrs="{'invisible':[('state_y', 'in',('0','10','11','12'))]}">
-                              <field name="stage" attrs="{'readonly':[('is_project_manage', '=',False)]}">
+                              <field name="stage" attrs="{'readonly':['|',('is_project_manage', '=',False),('state_y', '=', '99')]}">
                                   <tree editable="bottom" create="0">
                                       <field name="name" readonly="True"/>
                                       <field name="plan_start_time" readonly="True"/>
@@ -190,7 +237,221 @@
                           </page>
 
                     </notebook>
+                    <notebook attrs="{'invisible':[('state_y','in',('0','10','11','12'))]}">
+                        <page string="项目章程">
+                            <group>
+                                <group>
+                                    <field name="project_des" placeholder="项目背景与目标描述" attrs="{'required': [('state_y','=', '1')],'readonly':['|',('state_y','!=','1'),'&amp;',('state_y','=', '1'),('is_project_manage','=',False)]}"/>
+                                    <field name="evaluate" placeholder="说明项目成果在何种情况下将被接受" attrs="{'required': [('state_y','=', '1')],'readonly':['|',('state_y','!=','1'),'&amp;',('state_y','=', '1'),('is_project_manage','=',False)]}"/>
+                                </group>
+                                <group>
+                                    <field name="project_range" placeholder="结合项目订单，描述主要交付的内容" attrs="{'required': [('state_y','=', '1')],'readonly':['|',('state_y','!=','1'),'&amp;',('state_y','=', '1'),('is_project_manage','=',False)]}"/>
+                                    <field name="condition" placeholder="说明项目的主要假设条件和限制性条件" attrs="{'required': [('state_y','=', '1')],'readonly':['|',('state_y','!=','1'),'&amp;',('state_y','=', '1'),('is_project_manage','=',False)]}"/>
+                                </group>
+                            </group>
+
+                            <notebook>
+                                <page string="项目初始计划">
+                                    <field name="initial_plan" attrs="{'readonly':['|',('state_y','!=','1'),'&amp;',('state_y','=', '1'),('is_project_manage','=',False)]}">
+                                        <tree editable="bottom" create="0" delete="0">
+                                            <field name="plan"/>
+                                            <field name="design"/>
+                                            <field name="deliver"/>
+                                            <field name="yunwei"/>
+                                            <field name="check"/>
+                                            <field name="check_final"/>
+                                        </tree>
+
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="plan" readonly="True"/>
+                                                    <field name="design" readonly="True"/>
+                                                    <field name="deliver" readonly="True"/>
+                                                </group>
+                                                <group>
+                                                    <field name="yunwei" readonly="True"/>
+                                                    <field name="check" readonly="True"/>
+                                                    <field name="check_final" readonly="True"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </page>
+
+                                <page string="项目组织结构">
+                                    <field name="project_struction" attrs="{'readonly':['|',('state_y','!=','1'),'&amp;',('state_y','=', '1'),('is_project_manage','=',False)]}">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="role"/>
+                                            <field name="department"/>
+                                            <field name="response"/>
+                                        </tree>
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="name" readonly="True"/>
+                                                    <field name="role" readonly="True"/>
+                                                </group>
+                                                <group>
+                                                    <field name="department" readonly="True"/>
+                                                    <field name="response" readonly="True"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+
+                        <page string="项目规划" attrs="{'invisible':[('state_y','in',('0','10','11','12','1'))]}">
+                            <group>
+                                <group>
+                                    <field name="project_type" options="{'no_create':True, 'no_open':True}" attrs="{'required':[('state_y','=','20')],'readonly':['|','|',('is_project_manage','=',False),('state_y','!=','20'),('is_current','=',False)]}"/>
+                                </group>
+                            </group>
+                            <notebook>
+                                <page>
+                                    <field name="plan" attrs="{'readonly':['|','|',('is_project_manage','=',False),('state_y','!=','20'),('is_current','=',False)]}">
+                                        <tree editable="bottom">
+                                            <field name="created" invisible="True"/>
+                                            <field name="state_y" invisible="True"/>
+                                            <field name="is_project_manage" invisible="True"/>
+                                            <field name="name" required="True" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':[('created','=',True)]}"/>
+                                            <field name="work_item" attrs="{'readonly':[('created','=',True)],'required':[('created','!=', True)]}"/>
+                                            <field name="leader" attrs="{'readonly':[('created','=',True)],'required':[('created','!=', True)]}"/>
+                                            <field name="work_details" string="项目经理的工作说明" attrs="{'readonly':[('created','=',True)],'required':[('created','!=', True)]}"/>
+                                            <field name="start_time" attrs="{'readonly':[('state_y','!=','20')]}"/>
+                                            <field name="end_time" attrs="{'readonly':[('state_y','!=','20')]}"/>
+                                            <field name="header" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':[('state_y','!=','20')]}"/>
+                                            <field name="days" attrs="{'readonly':[('state_y','!=','20')]}"/>
+                                        </tree>
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="name" readonly="True"/>
+                                                    <field name="work_item" readonly="True"/>
+                                                    <field name="leader" readonly="True"/>
+                                                    <field name="work_details" readonly="True"/>
+                                                    <field name="created" invisible="True" readonly="True"/>
+                                                    <field name="state_y" invisible="True" readonly="True"/>
+                                                    <field name="can_delete" invisible="True" readonly="True"/>
+                                                    <field name="project_stage_id" invisible="True" readonly="True"/>
+                                                    <field name="project_manage_id" invisible="True" readonly="True"/>
+                                                </group>
+                                                <group>
+                                                    <field name="start_time" readonly="True"/>
+                                                    <field name="end_time" readonly="True"/>
+                                                    <field name="header" readonly="True"/>
+                                                    <field name="days" readonly="True"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+
+                        <page string="输出物规划" attrs="{'invisible':[('state_y','in',('0','10','11','12','1'))]}">
+                            <field name="output_plan" attrs="{'readonly':['|',('is_current','=',False),'|','&amp;',('is_project_manage','=',False),('state_y','=','20'),('state_y','not in',('20','3'))]}" context="{'state': state_y }">
+                                <tree editable="bottom" colors="#666:state in ('0','1','2'); red:state=='3'">
+                                    <field name="created" invisible="True"/>
+                                    <field name="state_y" invisible="True"/>
+                                    <field name="is_header" invisible="True"/>
+                                    <field name="is_assess_man" invisible="True"/>
+                                    <field name="is_project_manage" invisible="True"/>
+                                    <field name="name" required="True" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':[('created','=',True)]}"/>
+                                    <field name="output" attrs="{'readonly':[('created','=',True)],'required':[('created','!=', True)]}"/>
+                                    <field name="plan_time" attrs="{'readonly':[('state_y','!=','20')]}"/>
+                                    <field name="header" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':[('state_y','!=','20')]}"/>
+                                    <field name="submit_time" readonly="True"/>
+                                    <field name="assess_time" readonly="True"/>
+                                    <field name="state" readonly="True"/>
+                                    <field name="assess_times" readonly="True"/>
+                                    <field name="assess_man" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':['|',('state','not in',('0','3')),'|',('is_header','=', False),'&amp;',('is_header','=', True),('state_y','!=','3')]}"/>
+                                    <field name="url" widget="url" attrs="{'readonly':['|',('state','not in',('0', '3')),'|',('is_header','=', False),'&amp;',('is_header','=', True),('state_y','!=','3')]}"/>
+                                    <button name="btn_output_submit" string="发起审核" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_header','=',False),('state','not in',('0','3'))]}"/>
+                                    <button name="btn_lookup_approve_records" string="审批记录" type="object" class="oe_highlight"/>
+                                    <button name="btn_output_approve" string="同意" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_assess_man','=',False),('state','!=','1')]}"/>
+                                    <button name="btn_output_reject" string="驳回" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_assess_man','=',False),('state','!=','1')]}"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="name" readonly="True"/>
+                                            <field name="output" readonly="True"/>
+                                            <field name="plan_time" readonly="True"/>
+                                            <field name="header" readonly="True"/>
+                                            <field name="submit_time" readonly="True"/>
+                                            <field name="created" invisible="True"/>
+                                            <field name="can_delete" invisible="True"/>
+                                            <field name="project_output_id" invisible="True"/>
+                                            <field name="project_manage_id" invisible="True"/>
+                                        </group>
+                                        <group>
+                                            <field name="assess_time" readonly="True"/>
+                                            <field name="state" readonly="True"/>
+                                            <field name="assess_times" readonly="True"/>
+                                            <field name="assess_man" readonly="True"/>
+                                            <field name="url" readonly="True"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="交付输出物规划" attrs="{'invisible':[('state_y','in',('0','10','11','12','1'))]}">
+                            <field name="output_deliver" attrs="{'readonly':['|',('is_current','=',False),'|',('state_y','not in',('20','3'))]}">
+                                <tree editable="bottom" colors="#666:state in ('0','1','2'); red:state=='3'">
+                                    <field name="created" invisible="True"/>
+                                    <field name="is_header" invisible="True"/>
+                                    <field name="is_assess_man" invisible="True"/>
+                                    <field name="state_y" invisible="True"/>
+                                    <field name="is_deliver_manage" invisible="True"/>
+                                    <field name="name" required="True" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':[('created','=',True)]}"/>
+                                    <field name="deliver" attrs="{'readonly':[('created','=',True)],'required':[('created','!=', True)]}"/>
+                                    <field name="header" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':['|',('state_y','!=','20'),('is_deliver_manage','=', False)]}"/>
+                                    <field name="plan_time" attrs="{'readonly':['|',('state_y','!=','20'),('is_deliver_manage','=', False)]}"/>
+                                    <field name="submit_time" readonly="True"/>
+                                    <field name="state" readonly="True"/>
+                                    <field name="assess_times" readonly="True"/>
+                                    <field name="assess_man" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':['|',('state','not in',('0','3')),'|',('is_header','=', False),'&amp;',('is_header','=', True),('state_y','!=','3')]}"/>
+                                    <field name="url" widget="url" attrs="{'readonly':['|',('state','not in',('0', '3')),'|',('is_header','=', False),'&amp;',('is_header','=', True),('state_y','!=','3')]}"/>
+                                    <button name="btn_deliver_submit" string="发起审核" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_header','=',False),('state','not in',('0','3'))]}"/>
+                                    <button name="btn_lookup_approve_records" string="审批记录" type="object" class="oe_highlight"/>
+                                    <button name="btn_deliver_approve" string="同意" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_assess_man','=',False),('state','!=','1')]}"/>
+                                    <button name="btn_deliver_reject" string="驳回" type="object" class="oe_highlight" attrs="{'invisible':['|',('is_assess_man','=',False),('state','!=','1')]}"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="name" readonly="True"/>
+                                            <field name="deliver" readonly="True"/>
+                                            <field name="plan_time" readonly="True"/>
+                                            <field name="header" readonly="True"/>
+                                            <field name="plan_time" readonly="True"/>
+                                            <field name="created" invisible="True" readonly="True"/>
+                                            <field name="can_delete" invisible="True" readonly="True"/>
+                                            <field name="project_deliver_id" invisible="True" readonly="True"/>
+                                            <field name="project_manage_id" invisible="True" readonly="True"/>
+                                        </group>
+                                        <group>
+                                            <field name="submit_time" readonly="True"/>
+                                            <field name="state" readonly="True"/>
+                                            <field name="assess_man" readonly="True"/>
+                                            <field name="url" readonly="True"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
@@ -205,7 +466,7 @@
                 <field name="project_manage"/>
                 <field name="project_leval"/>
                 <field name="state_y"/>
-                <field name="current_approve" widget="many2many_tags"/>
+                <field name="current_approve" string="当前处理人" widget="many2many_tags"/>
             </tree>
         </field>
     </record>
@@ -220,7 +481,6 @@
                 <field name="project_manage"/>
                 <field name="project_leval"/>
                 <field name="contract"/>
-                <field name="yunwei"/>
                 <templates>
                     <t t-name="kanban-box">
                     <div class="oe_kanban_global_click ">
@@ -234,7 +494,6 @@
                                     <ul style="float:left; width:55%">
                                         <li><strong>项目编码:</strong> <field name="code"/></li>
                                         <li><strong>项目等级:</strong> <field name="project_leval"/></li>
-                                        <li><strong>是否需要转运维:</strong> <field name="yunwei"/></li>
                                     </ul>
                                     <ul style="float:right; width:45%">
                                         <li><strong>项目经理:</strong> <field name="project_manage"/></li>
@@ -267,7 +526,8 @@
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,kanban</field>
-        <field name="domain">['|',('create_uid','=',uid),'|',('product_manage.user_id','=',uid),'|',('project_manage.user_id','=',uid),('role.leader.user_id','=',uid)]</field>
+        <field name="domain">['|',('create_uid','=',uid),'|',('customer_manage.user_id','=',uid),'|',('product_manage.user_id','=',uid),'|',('project_manage.user_id','=',uid),'|',('role.leader.user_id','=',uid),'|',('plan.header.user_id','=',uid),'|',('output_plan.header.user_id','=',uid),'|',('output_plan.assess_man.user_id','=',uid),'|',('output_deliver.header.user_id','=',uid),('output_deliver.assess_man.user_id','=',uid)]</field>
+        <field name="context">{}</field>
     </record>
 
     <record id="act_dtdream_project_approve" model="ir.actions.act_window">
@@ -288,34 +548,20 @@
         <field name="domain">[]</field>
     </record>
 
-    <record id="view_dtdream_project_stage_setting_tree" model="ir.ui.view">
-        <field name="name">view.dtdream.project.stage.setting.tree</field>
-        <field name="model">dtdream.project.stage.setting</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="order"/>
-            </tree>
-        </field>
+    <record id="act_dtdream_project_role_setting" model="ir.actions.act_window">
+        <field name="name">角色配置</field>
+        <field name="res_model">dtdream.project.role.setting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
-    <record id="view_dtdream_project_stage_setting_form" model="ir.ui.view">
-        <field name="name">view.dtdream.project.stage.setting.form</field>
-        <field name="model">dtdream.project.stage.setting</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name" required="True"/>
-                        </group>
-                        <group>
-                            <field name="order" required="True"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
+    <record id="act_dtdream_project_level_setting" model="ir.actions.act_window">
+        <field name="name">项目等级配置</field>
+        <field name="res_model">dtdream.project.level</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
     <record id="act_dtdream_project_stage_setting" model="ir.actions.act_window">
@@ -334,13 +580,59 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="act_dtdream_project_out_plan_setting" model="ir.actions.act_window">
+        <field name="name">输出物规划配置</field>
+        <field name="res_model">dtdream.project.output.plan</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="act_dtdream_project_deliver_setting" model="ir.actions.act_window">
+        <field name="name">交付类别配置</field>
+        <field name="res_model">dtdream.project.deliver.config</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="act_dtdream_project_output_deliver_setting" model="ir.actions.act_window">
+        <field name="name">交付输出物规划配置</field>
+        <field name="res_model">dtdream.project.output.deliver</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.server" id="act_dtdream_project_order_view">
+        <field name="name">订单金额权限配置</field>
+        <field name="model_id" ref="model_dtdream_project_order_view"/>
+        <field name="code">
+            action = {
+            'name':'订单金额权限配置',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'dtdream.project.order.view',
+            'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+            'context':context,
+            }
+        </field>
+    </record>
+
     <menuitem name="项目管理" id="menu_dtdream_project_manage_root" icon="fa-user" web_icon="dtdream_assets_management,static/description/icon.jpg"/>
     <menuitem name="项目管理" id="menu_dtdream_project_manage" parent="menu_dtdream_project_manage_root" sequence="10"/>
     <menuitem name="与我相关" id="menu_dtdream_project_apply" parent="menu_dtdream_project_manage" action="act_dtdream_project_apply" sequence="8"/>
     <menuitem name="待我审批" id="menu_dtdream_project_approve" parent="menu_dtdream_project_manage" action="act_dtdream_project_approve" sequence="10"/>
     <menuitem name="所有项目" id="menu_dtdream_project_all" parent="menu_dtdream_project_manage" action="act_dtdream_project_all" sequence="12"/>
-    <menuitem name="配置" id="menu_dtdream_project_manage_setting" parent="menu_dtdream_project_manage_root" sequence="12"/>
-    <menuitem name="项目阶段点配置" id="menu_dtdream_project_stage_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_stage_setting" sequence="12"/>
-    <menuitem name="项目规划配置" id="menu_dtdream_project_plan_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_plan_setting" sequence="14"/>
+    <menuitem name="配置" id="menu_dtdream_project_manage_setting" parent="menu_dtdream_project_manage_root" sequence="12" groups="group_project_mange_admin,base.group_system"/>
+    <menuitem name="角色配置" id="menu_project_manage_role_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_role_setting" sequence="12"/>
+    <menuitem name="项目等级配置" id="menu_project_manage_level_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_level_setting" sequence="14"/>
+    <menuitem name="项目阶段点" id="menu_dtdream_project_stage_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_stage_setting" sequence="16"/>
+    <menuitem name="项目规划" id="menu_dtdream_project_plan_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_plan_setting" sequence="18"/>
+    <menuitem name="输出物规划" id="menu_dtdream_project_out_plan_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_out_plan_setting" sequence="20"/>
+    <menuitem name="交付类别" id="menu_dtdream_project_deliver_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_deliver_setting" sequence="22"/>
+    <menuitem name="交付输出物规划" id="menu_dtdream_project_output_deliver_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_output_deliver_setting" sequence="24"/>
+    <menuitem name="订单金额权限配置" id="menu_dtdream_project_order_view_setting" parent="menu_dtdream_project_manage_setting" action="act_dtdream_project_order_view" sequence="26"/>
   </data>
 </openerp>

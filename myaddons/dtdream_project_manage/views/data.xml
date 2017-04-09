@@ -31,39 +31,175 @@
             <field name="order">6</field>
         </record>
 
+        <record id="dtdream_project_level_ss" model="dtdream.project.level">
+            <field name="name">重大级</field>
+        </record>
+
+        <record id="dtdream_project_level_s" model="dtdream.project.level">
+            <field name="name">公司级</field>
+        </record>
+
+        <record id="dtdream_project_level_v" model="dtdream.project.level">
+            <field name="name">部门级</field>
+        </record>
+
+        <record id="dtdream_project_order_view" model="dtdream.project.order.view">
+            <field name="employee"/>
+        </record>
+
         <record id="dtdream_project_role_PMO" model="dtdream.project.role.setting">
             <field name="name">PMO接口人</field>
-            <field name="required">1</field>
+            <field name="required">False</field>
         </record>
 
         <record id="dtdream_project_role_PMOO" model="dtdream.project.role.setting">
             <field name="name">PMO主管</field>
-            <field name="required">1</field>
+            <field name="required">False</field>
         </record>
 
         <record id="dtdream_project_role_PT" model="dtdream.project.role.setting">
             <field name="name">平台交付经理</field>
-            <field name="required">1</field>
+            <field name="required">False</field>
         </record>
 
         <record id="dtdream_project_role_YY" model="dtdream.project.role.setting">
             <field name="name">应用服务经理</field>
-            <field name="required">1</field>
+            <field name="required">True</field>
         </record>
 
         <record id="dtdream_project_role_PX" model="dtdream.project.role.setting">
             <field name="name">培训服务经理</field>
-            <field name="required">1</field>
+            <field name="required">True</field>
         </record>
 
         <record id="dtdream_project_role_YW" model="dtdream.project.role.setting">
             <field name="name">运维服务经理</field>
-            <field name="required">0</field>
+            <field name="required">True</field>
         </record>
 
         <record id="dtdream_project_role_ZC" model="dtdream.project.role.setting">
             <field name="name">驻场服务经理</field>
-            <field name="required">1</field>
+            <field name="required">True</field>
         </record>
+
+        <record id="dtdream_project_deliver_CP" model="dtdream.project.deliver.config">
+            <field name="name">产品资料</field>
+            <field name="order">1</field>
+        </record>
+
+        <record id="dtdream_project_deliver_GK" model="dtdream.project.deliver.config">
+            <field name="name">工勘</field>
+            <field name="order">2</field>
+        </record>
+
+        <record id="dtdream_project_deliver_IDC" model="dtdream.project.deliver.config">
+            <field name="name">IDC</field>
+            <field name="order">3</field>
+        </record>
+
+        <record id="dtdream_project_deliver_WL" model="dtdream.project.deliver.config">
+            <field name="name">网络</field>
+            <field name="order">4</field>
+        </record>
+
+        <record id="dtdream_project_deliver_OS" model="dtdream.project.deliver.config">
+            <field name="name">OS</field>
+            <field name="order">5</field>
+        </record>
+
+        <record id="dtdream_project_deliver_YP" model="dtdream.project.deliver.config">
+            <field name="name">云平台</field>
+            <field name="order">6</field>
+        </record>
+
+        <record id="dtdream_project_deliver_CS" model="dtdream.project.deliver.config">
+            <field name="name">交付测试</field>
+            <field name="order">7</field>
+        </record>
+
+
+        <record id="dtdream_project_plan_LX" model="dtdream.project.plan.config">
+            <field name="name" eval="ref('dtdream_project_LX')"/>
+        </record>
+
+        <record id="dtdream_project_plan_CH" model="dtdream.project.plan.config">
+            <field name="name" eval="ref('dtdream_project_CH')"/>
+        </record>
+
+        <record id="dtdream_project_plan_details_a" model="dtdream.project.plan.detail">
+            <field name="name" eval="ref('dtdream_project_LX')"/>
+            <field name="work_item">外部项目启动会</field>
+            <field name="leader">1</field>
+            <field name="work_details">确认项目联合组织的工作职责，接口人，建设目标，日常沟通机制。</field>
+            <field name="can_delete">False</field>
+            <field name="project_stage_id" eval="ref('dtdream_project_plan_LX')"/>
+        </record>
+
+        <record id="dtdream_project_plan_details_b" model="dtdream.project.plan.detail">
+            <field name="name" eval="ref('dtdream_project_CH')"/>
+            <field name="work_item">项目策划</field>
+            <field name="leader">1</field>
+            <field name="work_details">召集项目主要人员针对已明确的项目范围和建设目标，制定详细的项目计划，识别项目风险和问题并制定解决办法，后续进行跟踪。</field>
+            <field name="can_delete">True</field>
+            <field name="project_stage_id" eval="ref('dtdream_project_plan_CH')"/>
+        </record>
+
+
+        <record id="dtdream_output_plan_LX" model="dtdream.project.output.plan">
+            <field name="name" eval="ref('dtdream_project_LX')"/>
+        </record>
+
+        <record id="dtdream_output_plan_CH" model="dtdream.project.output.plan">
+            <field name="name" eval="ref('dtdream_project_CH')"/>
+        </record>
+
+        <record id="dtdream_output_plan_manage_a" model="dtdream.project.output.plan.manage">
+            <field name="name" eval="ref('dtdream_project_LX')"/>
+            <field name="output">项目章程</field>
+            <field name="can_delete">True</field>
+            <field name="project_output_id" eval="ref('dtdream_output_plan_LX')"/>
+        </record>
+
+        <record id="dtdream_output_plan_manage_b" model="dtdream.project.output.plan.manage">
+            <field name="name" eval="ref('dtdream_project_CH')"/>
+            <field name="output">项目实施方案</field>
+            <field name="can_delete">True</field>
+            <field name="project_output_id" eval="ref('dtdream_output_plan_CH')"/>
+        </record>
+
+
+        <record id="dtdream_output_deliver_CP" model="dtdream.project.output.deliver">
+            <field name="name" eval="ref('dtdream_project_deliver_CP')"/>
+        </record>
+
+        <record id="dtdream_output_deliver_GK" model="dtdream.project.output.deliver">
+            <field name="name" eval="ref('dtdream_project_deliver_GK')"/>
+        </record>
+
+        <record id="dtdream_output_deliver_OS" model="dtdream.project.output.deliver">
+            <field name="name" eval="ref('dtdream_project_deliver_OS')"/>
+        </record>
+
+        <record id="dtdream_output_deliver_manage_a" model="dtdream.project.output.deliver.manage">
+            <field name="name" eval="ref('dtdream_project_deliver_CP')"/>
+            <field name="deliver">设备清单／采购清单</field>
+            <field name="can_delete">True</field>
+            <field name="project_deliver_id" eval="ref('dtdream_output_deliver_CP')"/>
+        </record>
+
+         <record id="dtdream_output_deliver_manage_b" model="dtdream.project.output.deliver.manage">
+            <field name="name" eval="ref('dtdream_project_deliver_CP')"/>
+            <field name="deliver">服务器配置说明</field>
+            <field name="can_delete">True</field>
+            <field name="project_deliver_id" eval="ref('dtdream_output_deliver_CP')"/>
+        </record>
+
+        <record id="dtdream_output_deliver_manage_d" model="dtdream.project.output.deliver.manage">
+            <field name="name" eval="ref('dtdream_project_deliver_GK')"/>
+            <field name="deliver">机房规划图</field>
+            <field name="can_delete">True</field>
+            <field name="project_deliver_id" eval="ref('dtdream_output_deliver_GK')"/>
+        </record>
+
     </data>
 </openerp>

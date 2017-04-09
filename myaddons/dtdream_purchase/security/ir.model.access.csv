@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_res_partner_supplier_config,res_partner_supplier_config,base.model_res_partner,group_supplier_config,1,1,1,0
+access_account_move_line_supplier_config,account_move_line_supplier_config,account.model_account_move_line,group_supplier_config,1,0,0,0

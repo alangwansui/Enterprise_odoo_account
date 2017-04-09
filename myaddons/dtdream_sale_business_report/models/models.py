@@ -90,21 +90,12 @@ class dtdream_product_line(models.Model):
     is_pro_shenpiren = fields.Boolean(string="是否产品审批人",compute=_compute_is_pro_shenpiren)
     is_bus_shenpiren = fields.Boolean(string="是否商务审批人",compute=_compute_is_pro_shenpiren)
 
-    # send_type = fields.Selection([
-    #     ('1','借货核销'),
-    #     ('2','正常发货'),
-    #     ('3','服务订单'),
-    # ],string='发货模式')
-
 # 商务提前报备类
 class dtdream_sale_business_report(models.Model):
     _name = 'dtdream.sale.business.report'
     _description = u"商务提前报备"
     _inherit = ['mail.thread']
     _order = "apply_time desc"
-    # _sql_constraints = [
-    #     ('name_unique', 'UNIQUE(project_number)', "项目不能重复。"),
-    # ]
 
     @api.multi
     def read(self, fields=None, load='_classic_read'):
@@ -218,6 +209,123 @@ class dtdream_sale_business_report(models.Model):
                 'auto_delete': False,
             }).send()
 
+    def compute_pro_change_compute_chengben(self,pro_shoukong):
+        total_chuhuo_price = 0
+        total_chengben_price = 0
+        total_zhuren_price = 0
+        total_sale_price = 0
+        total_chengben = 0
+        i=0
+        list = [
+                {'pro_source':u'自研软件','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'阿里软件','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'硬件','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'公有云','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                {'pro_source':u'服务','pro_cost_price':0,'pro_apply_price':0,'pro_gross_profit':0},
+                ]
+        if len(self.product_line) > 0 :
+            for product in self.product_line:
+                if not product.pro_num:
+                    messages = []
+                    messages.append(dict(type='error',
+                                 message=u"bom编号为%s的产品数量不能为0" % product.bom,
+                                 moreinfo=""))
+                    return messages
+                if product.apply_discount <= 0:
+                    messages = []
+                    messages.append(dict(type='error',
+                                 message=u"bom编号为%s的产品申请折扣应大于0" % product.bom,
+                                 moreinfo=""))
+                    return messages
+                i = i + 1
+                real_pro = self.env['product.template'].sudo().search([('bom','=',product.bom)])[0]
+                if real_pro.pro_status not in ('outPro','controlled'):
+                    if real_pro.is_software == '1':
+                        pro_line_boms = [rec.bom for rec in self.product_line]
+                        softwareself_recs = self.env['product.template'].search([('bom','in',pro_line_boms),('is_operations_software','=','1'),('is_software','!=','1')])
+                        pro_operations_softwareself = self.product_line.search([('product_business_line_id','=',self.id),('bom','in',[rec.bom for rec in softwareself_recs])])
+                        if len(pro_operations_softwareself) == 0:
+                            messages = []
+                            messages.append(dict(type='error',
+                                         message=u"产品清单中没有计入运维的产品，无法计算bom为%s的运维服务目录价，请确认后导入" % product.bom,
+                                         moreinfo=""))
+                            return messages
+                        else :
+                            sum_list_price = 0
+                            for pro_os in pro_operations_softwareself:
+                                sum_list_price = sum_list_price + pro_os.list_price * pro_os.pro_num
+                            yunwei_config_rec = self.env['yunwei.config'].sudo().search([])
+                            if len(yunwei_config_rec) == 1:
+                                list_price_coefficient = yunwei_config_rec[0].list_price_coefficient
+                                cost_price_coefficient = yunwei_config_rec[0].cost_price_coefficient
+                                yunwei_list_price = round(sum_list_price*list_price_coefficient/100.0, 2)
+                                yunwei_cost_price = round(yunwei_list_price*cost_price_coefficient/100.0, 2)
+                            else:
+                                messages = []
+                                messages.append(dict(type='error',
+                                             message=u"请联系产品管理员配置运维参数",
+                                             moreinfo=""))
+                                return messages
+                            product.list_price = yunwei_list_price
+                            software_cost_price = yunwei_cost_price
+                            total_chengben = total_chengben + software_cost_price*product.pro_num
+                    else:
+                        total_chengben = total_chengben + real_pro.cost_price*product.pro_num
+                    if not product.list_price or product.list_price == 0:
+                        messages = []
+                        messages.append(dict(type='error',
+                                     message=u"请联系产品管理员录入bom编号为%s的产品的目录价" % product.bom,
+                                     moreinfo=""))
+                        return messages
+                else:
+                    if product.controlled_pro_cost_price == 0 or product.list_price == 0:
+                        pro_shoukong.append(product.bom)
+                        continue;
+                    total_chengben = total_chengben + product.controlled_pro_cost_price*product.pro_num
+                total_chuhuo_price = total_chuhuo_price + product.list_price*product.pro_num*product.apply_discount/100.0
+                total_chengben_price = total_chengben_price + product.list_price*product.pro_num
+                total_zhuren_price = total_zhuren_price + product.list_price*real_pro.office_manager_discount*product.pro_num/100.0
+                total_sale_price = total_sale_price + product.list_price*real_pro.sale_grant_discount*product.pro_num/100.0
+                rel_pro = self.env['product.template'].sudo().search([('bom','=',product.bom)])[0]
+                if len(rel_pro.pro_child_ids) > 0:
+                    for zuhe_pro in rel_pro.pro_child_ids:
+                        child_total_num = zuhe_pro.child_pro_num * product.pro_num
+                        child_discount = product.apply_discount
+                        list = self.compute_sum_by_pro_name(zuhe_pro.dtdream_child_product_id,child_total_num,child_discount,list)
+                else:
+                    if real_pro.is_software == '1':
+                        list = self.compute_sum_by_pro_name(rel_pro,product.pro_num,product.apply_discount,list,product.list_price,controlled_pro_cost_price=software_cost_price,is_software=True)
+                    else:
+                        list = self.compute_sum_by_pro_name(rel_pro,product.pro_num,product.apply_discount,list,product.list_price,controlled_pro_cost_price=product.controlled_pro_cost_price)
+            if len(pro_shoukong) > 0:
+                messages = []
+                messages.append(dict(type='error',
+                             message=u"bom编号为%s的产品为受控/停产产品，请联系营销管理部产品管理员导入目录价"  % [(pro_bom).encode('utf-8') for pro_bom in pro_shoukong],
+                             moreinfo=""))
+                return messages
+            list_to_remove = []
+            for list_rec in list:
+                if list_rec['pro_cost_price'] == 0 and list_rec['pro_apply_price'] == 0 and list_rec['pro_gross_profit'] == 0:
+                    list_to_remove.append(list_rec)
+            for list_remove_rec in list_to_remove:
+                list.remove(list_remove_rec)
+            for rec in list:
+                rec['pro_cost_price'] = round(rec['pro_cost_price'] / 10000.0, 2)
+                rec['pro_apply_price'] = round(rec['pro_apply_price'] / 10000.0, 2)
+            self.chengben_detail = [(6,0,[])]
+            self.chengben_detail = list
+            self.total_chengben = round(total_chengben/10000.0,2)
+            self.total_chuhuo_price = round(total_chuhuo_price/10000.0,2)
+            self.total_zhuren_price = round(total_zhuren_price/10000.0,2)
+            self.total_sale_price = round(total_sale_price/10000.0,2)
+            if total_chengben_price != 0:
+                self.a_apply_discount = round(total_chuhuo_price*100.0/total_chengben_price,2)
+                self.sale_grant_discount = round(total_sale_price*100.0/total_chengben_price,2)
+                self.zhuren_grant_discount = round(total_zhuren_price*100.0/total_chengben_price,2)
+            if total_chuhuo_price != 0:
+                self.gross_profit = round(((total_chuhuo_price - total_chengben)/total_chuhuo_price)*100.0,2)
+        return False
+
     # 计算各种总价及折扣，以及是否超权限
     @api.constrains('product_line')
     def pro_change_compute_chengben(self):
@@ -237,24 +345,69 @@ class dtdream_sale_business_report(models.Model):
         if len(self.product_line) > 0 :
             for product in self.product_line:
                 if not product.pro_num:
-                    raise ValidationError("产品数量不能为0")
+                    if not product.bom:
+                        raise ValidationError(u"产品数量不能为0")
+                    else:
+                        raise ValidationError(u"bom编号为%s的产品数量不能为0" % product.bom)
                 if product.apply_discount <= 0:
-                    raise ValidationError("申请折扣应大于0%")
+                    if not product.bom:
+                        raise ValidationError(u"产品申请折扣应大于0")
+                    else:
+                        raise ValidationError(u"bom编号为%s的产品申请折扣应大于0" % product.bom)
                 i = i + 1
-                real_pro = self.env['product.template'].search([('bom','=',product.bom)])[0]
+                if not product.bom:
+                    real_pro = product.product_id
+                else:
+                    real_pro = self.env['product.template'].sudo().search([('bom','=',product.bom)])[0]
+                if real_pro.pro_status not in ('outPro','controlled'):
+                    if real_pro.is_software == '1':
+                        pro_line_boms = [rec.bom for rec in self.product_line]
+                        softwareself_recs = self.env['product.template'].search([('bom','in',pro_line_boms),('is_operations_software','=','1'),('is_software','!=','1')])
+                        softwareself_boms = [op.bom for op in softwareself_recs]
+                        pro_operations_softwareself = []
+                        for rec in self.product_line:
+                            if rec.bom in softwareself_boms:
+                                pro_operations_softwareself.append(rec)
+                        if len(pro_operations_softwareself) == 0:
+                            raise ValidationError(u"产品清单中没有计入运维的产品，无法计算bom为%s的运维服务目录价，请确认" % product.bom)
+                        else :
+                            sum_list_price = 0
+                            for pro_os in pro_operations_softwareself:
+                                sum_list_price = sum_list_price + pro_os.list_price * pro_os.pro_num
+                            yunwei_config_rec = self.env['yunwei.config'].sudo().search([])
+                            if len(yunwei_config_rec) == 1:
+                                list_price_coefficient = yunwei_config_rec[0].list_price_coefficient
+                                cost_price_coefficient = yunwei_config_rec[0].cost_price_coefficient
+                                yunwei_list_price = round(sum_list_price*list_price_coefficient/100.0, 2)
+                                yunwei_cost_price = round(yunwei_list_price*cost_price_coefficient/100.0, 2)
+                            else:
+                                raise ValidationError(u"请联系产品管理员配置运维参数")
+                            product.list_price = yunwei_list_price
+                            software_cost_price = yunwei_cost_price
+                            total_chengben = total_chengben + software_cost_price*product.pro_num
+                    else:
+                        total_chengben = total_chengben + real_pro.cost_price*product.pro_num
+                    if not product.list_price or product.list_price == 0:
+                        raise ValidationError(u"请联系产品管理员录入bom编号为%s的产品的目录价" % product.bom)
+                else:
+                    if product.controlled_pro_cost_price == 0 :
+                        continue;
+                    total_chengben = total_chengben + product.controlled_pro_cost_price*product.pro_num
                 total_chuhuo_price = total_chuhuo_price + product.list_price*product.pro_num*product.apply_discount/100.0
                 total_chengben_price = total_chengben_price + product.list_price*product.pro_num
                 total_zhuren_price = total_zhuren_price + product.list_price*real_pro.office_manager_discount*product.pro_num/100.0
                 total_sale_price = total_sale_price + product.list_price*real_pro.sale_grant_discount*product.pro_num/100.0
-                total_chengben = total_chengben + real_pro.cost_price*product.pro_num
-                rel_pro = self.env['product.template'].search([('bom','=',product.bom)])[0]
+                rel_pro = self.env['product.template'].sudo().search([('bom','=',product.bom)])[0]
                 if len(rel_pro.pro_child_ids) > 0:
                     for zuhe_pro in rel_pro.pro_child_ids:
                         child_total_num = zuhe_pro.child_pro_num * product.pro_num
                         child_discount = product.apply_discount
                         list = self.compute_sum_by_pro_name(zuhe_pro.dtdream_child_product_id,child_total_num,child_discount,list)
                 else:
-                    list = self.compute_sum_by_pro_name(rel_pro,product.pro_num,product.apply_discount,list,product.list_price)
+                    if real_pro.is_software == '1':
+                        list = self.compute_sum_by_pro_name(rel_pro,product.pro_num,product.apply_discount,list,product.list_price,controlled_pro_cost_price=software_cost_price,is_software=True)
+                    else:
+                        list = self.compute_sum_by_pro_name(rel_pro,product.pro_num,product.apply_discount,list,product.list_price,controlled_pro_cost_price=product.controlled_pro_cost_price)
             list_to_remove = []
             for list_rec in list:
                 if list_rec['pro_cost_price'] == 0 and list_rec['pro_apply_price'] == 0 and list_rec['pro_gross_profit'] == 0:
@@ -262,21 +415,34 @@ class dtdream_sale_business_report(models.Model):
             for list_remove_rec in list_to_remove:
                 list.remove(list_remove_rec)
             for rec in list:
-                rec['pro_cost_price'] = rec['pro_cost_price'] / 10000.0
-                rec['pro_apply_price'] = rec['pro_apply_price'] / 10000.0
+                rec['pro_cost_price'] = round(rec['pro_cost_price'] / 10000.0, 2)
+                rec['pro_apply_price'] = round(rec['pro_apply_price'] / 10000.0, 2)
             self.chengben_detail = [(6,0,[])]
             self.chengben_detail = list
             self.total_chengben = round(total_chengben/10000.0,2)
-            self.a_apply_discount = round(total_chuhuo_price*100.0/total_chengben_price,2)
             self.total_chuhuo_price = round(total_chuhuo_price/10000.0,2)
             self.total_zhuren_price = round(total_zhuren_price/10000.0,2)
             self.total_sale_price = round(total_sale_price/10000.0,2)
-            self.sale_grant_discount = round(total_sale_price*100.0/total_chengben_price,2)
-            self.zhuren_grant_discount = round(total_zhuren_price*100.0/total_chengben_price,2)
-            self.gross_profit = round(((total_chuhuo_price - total_chengben)/total_chuhuo_price)*100.0,2)
+            if total_chengben_price != 0:
+                self.a_apply_discount = round(total_chuhuo_price*100.0/total_chengben_price,2)
+                self.sale_grant_discount = round(total_sale_price*100.0/total_chengben_price,2)
+                self.zhuren_grant_discount = round(total_zhuren_price*100.0/total_chengben_price,2)
+            if total_chuhuo_price != 0:
+                self.gross_profit = round(((total_chuhuo_price - total_chengben)/total_chuhuo_price)*100.0,2)
+        else:
+            self.chengben_detail = [(6,0,[])]
+            self.total_chengben = 0
+            self.total_chuhuo_price = 0
+            self.total_zhuren_price = 0
+            self.total_sale_price = 0
+            self.a_apply_discount = 0
+            self.sale_grant_discount = 0
+            self.zhuren_grant_discount = 0
+            self.gross_profit = 0
 
     @api.depends('product_line')
     def _onchange_product_line(self):
+        self.pro_change_compute_chengben()
         list_price = 0
         apply_price = 0
         for rec in self.product_line:
@@ -403,7 +569,7 @@ class dtdream_sale_business_report(models.Model):
     zhuren_grant_discount = fields.Float(string="主任授权折扣")
     total_chengben = fields.Float(string="项目成本(万元)")
     chengben_detail = fields.One2many("chengben.detail.line","chengben_report_id",string="成本明细")
-    gross_profit = fields.Float(string="毛利(%)")
+    gross_profit = fields.Float(string="利润率(%)")
     if_out_grant = fields.Char(default=0)
     approve_records = fields.One2many("report.handle.approve.record","report_handle_id",string="审批记录")
     rejust_state = fields.Integer(string='驳回到销售',default=0)
@@ -413,7 +579,6 @@ class dtdream_sale_business_report(models.Model):
          ('2', '规范性审核、配置清单审核'),
          ('6', '办事处商务审批'),
          ('7', '区域商务审批'),
-         # ('8', '市场部商务审批'),
          ('9', '公司商务审批'),
          ('-1', '驳回'),
          ('done', '完成')], string="状态", default="0",track_visibility='onchange')
@@ -486,8 +651,8 @@ class dtdream_sale_business_report(models.Model):
         if self.state=="2":
             self.write({"shenpiren": [(6,0,[])]})
             for pro_rec in self.product_line:
-                if len(self.env['product.template'].search([('bom','=',pro_rec.bom)])) == 1:
-                    categ_id = self.env['product.template'].search([('bom','=',pro_rec.bom)])[0].categ_id
+                if len(self.env['product.template'].sudo().search([('bom','=',pro_rec.bom)])) == 1:
+                    categ_id = self.env['product.template'].sudo().search([('bom','=',pro_rec.bom)])[0].categ_id
                 else:
                     raise ValidationError(u"bom编号为%s的产品不存在，请检查后提交" % pro_rec.bom)
                 if len(categ_id.parent_id) == 1 and len(categ_id.parent_id.parent_id) == 0:
@@ -495,15 +660,15 @@ class dtdream_sale_business_report(models.Model):
                 elif len(categ_id.parent_id.parent_id) == 1:
                     pro_categ_id = categ_id.parent_id
                 else:
-                    raise ValidationError(u"产品%s无对应二级分类" % pro_rec.pro_name)
+                    raise ValidationError(u"bom编号为%s的产品无对应二级分类" % pro_rec.bom)
                 if len(self.env['dtdream.shenpi.by.product.line'].search([('categ_id.id','=',pro_categ_id.id)])) > 1:
-                    raise ValidationError(u"产品%s对应的二级分类%s对应总部产品经理配置重复" % (pro_rec.pro_name,pro_categ_id.name))
+                    raise ValidationError(u"bom编号为%s的产品对应的二级分类%s对应总部产品经理配置重复" % (pro_rec.bom,pro_categ_id.name))
                 elif len(self.env['dtdream.shenpi.by.product.line'].search([('categ_id.id','=',pro_categ_id.id)])) == 1:
                     pro_shenpiren = self.env['dtdream.shenpi.by.product.line'].search([('categ_id.id','=',pro_categ_id.id)])[0].zongbu_product_charge
                     if not pro_shenpiren:
-                        raise ValidationError(u'请先配置产品%s对应的二级分类%s对应总部产品经理' % (pro_rec.pro_name,pro_categ_id.name))
+                        raise ValidationError(u'请先配置bom编号为%s的产品的对应的二级分类%s对应总部产品经理' % (pro_rec.bom,pro_categ_id.name))
                 else :
-                    raise ValidationError(u"请先配置产品%s对应的二级分类%s对应总部产品经理" % (pro_rec.pro_name,pro_categ_id.name))
+                    raise ValidationError(u"请先配置bom编号为%s的产品的对应的二级分类%s对应总部产品经理" % (pro_rec.bom,pro_categ_id.name))
                 self.write({"product_approveds": [(4,[pro_shenpiren.id])]})
                 self.write({"shenpiren": [(4,[pro_shenpiren.id])]})
             if len(self.env['dtdream.business.shenpi.line'].search([('office_id','=',self.office_id.id)])) > 0 and self.office_id.code != 'H1':
@@ -585,40 +750,69 @@ class dtdream_sale_business_report(models.Model):
         self.write({'state':'6'})
         self.get_shenpiren()
 
-    def compute_sum_by_pro_name(self,pro,pro_num,pro_discount,list,list_price=None):
+    # def compute_sum_of_operations_softwares(self,list,operations_softwares):
+    #     sum_list_price = 0
+    #     for rec in operations_softwares:
+    #         sum_list_price = sum_list_price + rec.list_price * rec.pro_num
+    #     yunwei_config_rec = self.env['yunwei.config'].sudo().search([])
+    #     if len(yunwei_config_rec) == 1:
+    #         list_price_coefficient = yunwei_config_rec[0].list_price_coefficient
+    #         cost_price_coefficient = yunwei_config_rec[0].cost_price_coefficient
+    #         real_list_price = sum_list_price*list_price_coefficient/100.0
+    #         list_price = round(sum_list_price*list_price_coefficient/100.0, 2)
+    #         cost_price = round(real_list_price*cost_price_coefficient/100.0, 2)
+    #     else:
+    #         raise ValidationError('请联系产品管理员配置运维参数')
+    #     for rec in operations_softwares:
+    #         list[4]['pro_cost_price'] = round((list[4]['pro_cost_price'] + cost_price * rec.pro_num),2)
+    #         list[4]['pro_apply_price'] = round((list[4]['pro_apply_price'] + list_price * rec.pro_num * rec.apply_discount/100),2)
+    #         if list[4]['pro_cost_price'] != 0 and list[4]['pro_apply_price'] !=0:
+    #             list[4]['pro_gross_profit'] = round(((list[4]['pro_apply_price'] - list[4]['pro_cost_price']) / list[4]['pro_apply_price'])*100.0,2)
+    #     return list
+
+    def compute_sum_by_pro_name(self,pro,pro_num,pro_discount,list,list_price=None,controlled_pro_cost_price=None,is_software=None):
+        if is_software == True:
+            list[4]['pro_cost_price'] = round((list[4]['pro_cost_price'] + controlled_pro_cost_price * pro_num),2)
+            list[4]['pro_apply_price'] = round((list[4]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
+            if list[4]['pro_cost_price'] != 0 and list[4]['pro_apply_price'] !=0:
+                list[4]['pro_gross_profit'] = round(((list[4]['pro_apply_price'] - list[4]['pro_cost_price']) / list[4]['pro_apply_price'])*100.0,2)
+            return list
+        if pro.pro_status in ('outPro','controlled') and pro.list_price == 0 and pro.controlled_pro_cost_price == 0:
+            return list
+        cost_price = pro.cost_price
+        if pro.pro_status in ('outPro','controlled'):
+            cost_price = controlled_pro_cost_price
         if not list_price:
             list_price = pro.list_price
-        if pro.cost_price == 0 and list_price == 0 and pro.pro_status == 'outPro':
-            raise ValidationError('请联系营销管理部订单管理员在系统中加入配置，并录入产品的成本信息，以便项目的成本核算')
         if pro.categ_id.name == u"公有云":
-            list[3]['pro_cost_price'] = round((list[3]['pro_cost_price'] + pro.cost_price * pro_num),2)
+            list[3]['pro_cost_price'] = round((list[3]['pro_cost_price'] + cost_price * pro_num),2)
             list[3]['pro_apply_price'] = round((list[3]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
             if list[3]['pro_cost_price'] != 0 and list[3]['pro_apply_price'] !=0:
                 list[3]['pro_gross_profit'] = round(((list[3]['pro_apply_price'] - list[3]['pro_cost_price']) / list[3]['pro_apply_price'])*100.0,2)
         elif pro.categ_id.name == u"服务":
             if pro.pro_type.name == u"产品服务":
-                list[2]['pro_cost_price'] = round((list[2]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[2]['pro_cost_price'] = round((list[2]['pro_cost_price'] + cost_price * pro_num),2)
                 list[2]['pro_apply_price'] = round((list[2]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
                 if list[2]['pro_cost_price'] != 0 and list[2]['pro_apply_price'] !=0:
                     list[2]['pro_gross_profit'] = round(((list[2]['pro_apply_price'] - list[2]['pro_cost_price']) / list[2]['pro_apply_price'])*100.0,2)
             else:
-                list[4]['pro_cost_price'] = round((list[4]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[4]['pro_cost_price'] = round((list[4]['pro_cost_price'] + cost_price * pro_num),2)
                 list[4]['pro_apply_price'] = round((list[4]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
                 if list[4]['pro_cost_price'] != 0 and list[4]['pro_apply_price'] !=0:
                     list[4]['pro_gross_profit'] = round(((list[4]['pro_apply_price'] - list[4]['pro_cost_price']) / list[4]['pro_apply_price'])*100.0,2)
         else:
             if len(pro.seller_ids) > 0 and pro.seller_ids[0].name.name == u"数梦工场" and pro.pro_source == "1":
-                list[0]['pro_cost_price'] = round((list[0]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[0]['pro_cost_price'] = round((list[0]['pro_cost_price'] + cost_price * pro_num),2)
                 list[0]['pro_apply_price'] = round((list[0]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
                 if list[0]['pro_cost_price'] != 0 and list[0]['pro_apply_price'] !=0:
                     list[0]['pro_gross_profit'] = round(((list[0]['pro_apply_price'] - list[0]['pro_cost_price']) / list[0]['pro_apply_price'])*100.0,2)
             elif len(pro.seller_ids) > 0 and pro.seller_ids[0].name.name == u"阿里巴巴" and pro.pro_source == "2":
-                list[1]['pro_cost_price'] = round((list[1]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[1]['pro_cost_price'] = round((list[1]['pro_cost_price'] + cost_price * pro_num),2)
                 list[1]['pro_apply_price'] = round((list[1]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
                 if list[1]['pro_cost_price'] != 0 and list[1]['pro_apply_price'] !=0:
                     list[1]['pro_gross_profit'] = round(((list[1]['pro_apply_price'] - list[1]['pro_cost_price']) / list[1]['pro_apply_price'])*100.0,2)
             else:
-                list[2]['pro_cost_price'] = round((list[2]['pro_cost_price'] + pro.cost_price * pro_num),2)
+                list[2]['pro_cost_price'] = round((list[2]['pro_cost_price'] + cost_price * pro_num),2)
                 list[2]['pro_apply_price'] = round((list[2]['pro_apply_price'] + list_price * pro_num * pro_discount/100),2)
                 if list[2]['pro_cost_price'] != 0 and list[2]['pro_apply_price'] !=0:
                     list[2]['pro_gross_profit'] = round(((list[2]['pro_apply_price'] - list[2]['pro_cost_price']) / list[2]['pro_apply_price'])*100.0,2)
@@ -703,7 +897,7 @@ class dtdream_sale_business_report(models.Model):
             self.remark = rec.remark
             list = []
             for pro_rec in rec.product_line:
-                vals = {'product_id':pro_rec.product_id,'bom':pro_rec.bom,'pro_type':pro_rec.pro_type,'pro_description':pro_rec.pro_description,'pro_name':pro_rec.pro_name,'list_price':pro_rec.list_price,'ref_discount':pro_rec.ref_discount,'apply_discount':pro_rec.apply_discount,'pro_num':pro_rec.pro_num,'pro_uom_name':pro_rec.pro_uom_name}
+                vals = {'pro_status':pro_rec.pro_status,'product_id':pro_rec.product_id,'bom':pro_rec.bom,'pro_type':pro_rec.pro_type,'pro_description':pro_rec.pro_description,'pro_name':pro_rec.pro_name,'list_price':pro_rec.list_price,'ref_discount':pro_rec.ref_discount,'apply_discount':pro_rec.apply_discount,'pro_num':pro_rec.pro_num,'pro_uom_name':pro_rec.pro_uom_name}
                 list.append(vals)
             self.product_line = list
         else:
@@ -718,7 +912,7 @@ class dtdream_sale_business_report(models.Model):
             self.project_number = self.rep_pro_name.project_number
             list = []
             for rec in self.rep_pro_name.product_line:
-                vals = {'product_id':rec.product_id,'bom':rec.bom,'pro_type':rec.pro_type,'pro_description':rec.pro_description,'pro_name':rec.pro_name,'list_price':rec.list_price,'ref_discount':rec.ref_discount,'apply_discount':rec.apply_discount,'pro_num':rec.pro_num,'pro_uom_name':rec.pro_uom_name}
+                vals = {'pro_status':rec.pro_status,'product_id':rec.product_id,'bom':rec.bom,'pro_type':rec.pro_type,'pro_description':rec.pro_description,'pro_name':rec.pro_name,'list_price':rec.list_price,'ref_discount':rec.ref_discount,'apply_discount':rec.apply_discount,'pro_num':rec.pro_num,'pro_uom_name':rec.pro_uom_name}
                 list.append(vals)
             self.product_line = list
 
@@ -908,6 +1102,7 @@ class dtdream_shenpi_config(models.Model):
     shenpi_product_line = fields.One2many('dtdream.shenpi.by.product.line','shenpi_by_product_line_id', string='总部产品经理审批配置')
     market_manager = fields.Many2one('hr.employee',string="市场部部长")
     company_manager = fields.Many2one('hr.employee',string="公司总裁")
+    person_import_product = fields.Many2one('hr.employee',string="营销管理部产品管理员")
     zongbu_service_charge = fields.Many2one('hr.employee',string="总部服务经理")
     area_approve_email_cc = fields.Many2one('hr.employee',string="区域审批邮件抄送人")
 
@@ -930,7 +1125,6 @@ class dtdream_ir_import(orm.TransientModel):
     def do(self, cr, uid, id, fields, options, dryrun=False, context=None):
         cr.execute('SAVEPOINT import')
         messages=[]
-
         (record,) = self.browse(cr, uid, [id], context=context)
         try:
             data, import_fields = self._convert_import_data(
@@ -943,7 +1137,7 @@ class dtdream_ir_import(orm.TransientModel):
             }]
         if record.res_model == "dtdream.product.line":
             rec_id = context['params']['id']
-
+            pro_shoukong = []
             for rec in data:
                 import_line = dict(zip(import_fields,rec))
                 import_line['product_business_line_id'] = rec_id
@@ -977,23 +1171,12 @@ class dtdream_ir_import(orm.TransientModel):
                                          message=u"申请折扣应大于0%",
                                          moreinfo=""))
                         return messages
-                # if import_line.has_key('send_type'):
-                #     if import_line['send_type'] and import_line['send_type'] not in (u'借货核销',u'正常发货',u'服务订单'):
-                #         messages.append(dict(type='error',
-                #                     message=u"导入发货模式信息错误，只有'借货核销'、'正常发货'、'服务订单'三种",
-                #                     moreinfo=""))
-                #         return messages
-                #     elif import_line['send_type'] in (u'借货核销',u'正常发货',u'服务订单'):
-                #         list = {
-                #             u'借货核销':'1',
-                #             u'正常发货':'2',
-                #             u'服务订单':'3',
-                #         }
-                #         import_line['send_type'] = list[import_line['send_type']]
                 if len(self.pool["product.template"].search(cr,uid,[('bom','=',import_line['bom'])]))==1:
                     product_rec_id = self.pool["product.template"].search(cr,uid,[('bom','=',import_line['bom'])])[0]
                     product_rec = self.pool.get('product.template').browse(cr,uid,[product_rec_id])
-                    if int(import_line['list_price']) != product_rec.list_price:
+                    if not import_line['list_price']:
+                        import_line['list_price'] = 0
+                    if int(import_line['list_price']) != product_rec.list_price and product_rec.pro_status not in ('outPro','controlled') and product_rec.is_software != '1':
                         messages.append(dict(type='error',
                                      message=u"bom编码为[%s]的产品存在，但对应目录价与导入目录价不同,请修改后导入"%import_line['bom'],
                                      moreinfo=""))
@@ -1001,21 +1184,31 @@ class dtdream_ir_import(orm.TransientModel):
                     import_line['pro_name'] = product_rec.name
                     import_line['pro_type'] = product_rec.pro_type.name
                     import_line['pro_description'] = product_rec.pro_description
-                    import_line['list_price'] = product_rec.list_price
                     import_line['ref_discount'] = product_rec.ref_discount
                     import_line['pro_uom_name'] = product_rec.uom_id.name
+                    import_line['pro_status'] = product_rec.pro_status
+                    person_import_product = self.pool['dtdream.shenpi.config'].browse(cr, uid, [self.pool['dtdream.shenpi.config'].search(cr,uid,[])[0]], context=context).person_import_product
+                    if not person_import_product:
+                        messages.append(dict(type='error',
+                                     message=u"请联系系统管理员配置营销管理部产品管理员",
+                                     moreinfo=""))
+                        return messages
+                    if product_rec.pro_status in ('outPro','controlled') and self.pool['hr.employee'].browse(cr,uid,[self.pool['hr.employee'].search(cr,uid,[('login','=',self.pool['res.users'].browse(cr, uid, uid, context=context).login)])[0]]) != person_import_product:
+                        import_line['list_price'] = 0
+                        import_line['controlled_pro_cost_price'] = 0
                     if len(self.pool[record.res_model].search(cr,uid,[('bom','=',import_line['bom']),('product_business_line_id','=',rec_id)],limit=1))==1 :
                         old_rec_id = self.pool[record.res_model].search(cr,uid,[('bom','=',import_line['bom']),('product_business_line_id','=',rec_id)],limit=1)[0]
                         self.pool[record.res_model].write(cr, uid, [old_rec_id], import_line, context=context)
                     else:
                         self.pool[record.res_model].create(cr,uid,import_line,context=None)
                 else:
-                    messages.append(dict(type='error',
-                                     message=u"bom编码[%s]无对应产品,请修改后导入"%import_line['bom'],
-                                     moreinfo=""))
-                    return messages
+                    pro_shoukong.append(import_line['bom'])
+                    continue
             report_rec = self.pool['dtdream.sale.business.report'].browse(cr, uid, [rec_id], context=context)
-            report_rec.pro_change_compute_chengben()
+            messages_a = report_rec.compute_pro_change_compute_chengben(pro_shoukong)
+            report_rec._onchange_product_line()
+            if messages_a:
+                return messages_a
             return messages
         else:
             _logger.info('importing %d rows...', len(data))

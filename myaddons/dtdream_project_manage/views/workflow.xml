@@ -15,52 +15,73 @@
         </record>
 
         <record id="act_PMO" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">指定项目经理</field>
             <field name="kind">function</field>
             <field name="action">wkf_PMO()</field>
         </record>
 
         <record id="act_sync" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">同步项目订单信息</field>
             <field name="kind">function</field>
             <field name="action">wkf_sync()</field>
         </record>
 
         <record id="act_manage_approve" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">交付服务经理审批</field>
             <field name="kind">function</field>
             <field name="action">wkf_manage_approve()</field>
         </record>
 
         <record id="act_lixian" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">立项</field>
             <field name="kind">function</field>
             <field name="action">wkf_create_project()</field>
         </record>
 
         <record id="act_plan" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">发起策划</field>
             <field name="kind">function</field>
             <field name="action">wkf_plan()</field>
         </record>
 
-        <record id="act_plan" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+        <record id="act_plan_approve" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">PMO审核策划</field>
             <field name="kind">function</field>
             <field name="action">wkf_plan_approve()</field>
         </record>
 
         <record id="act_plan_done" model="workflow.activity">
-            <field name="wkf_id" ref="workflow_project_manage_handle" />
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">策划</field>
             <field name="kind">function</field>
             <field name="action">wkf_plan_done()</field>
+        </record>
+
+        <record id="act_deliver" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">交付</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_deliver()</field>
+        </record>
+
+        <record id="act_yunwei" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">运维</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_yunwei()</field>
+        </record>
+
+        <record id="act_project_done" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">结项</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_project_done()</field>
         </record>
 
         <record id="trans_draft_pmo" model="workflow.transition">
@@ -85,6 +106,57 @@
             <field name="act_from" ref="act_manage_approve"/>
             <field name="act_to" ref="act_lixian"/>
             <field name="signal">approve_pass</field>
+        </record>
+
+        <record id="trans_lixian_plan" model="workflow.transition">
+            <field name="act_from" ref="act_lixian"/>
+            <field name="act_to" ref="act_plan"/>
+            <field name="signal">next_stage</field>
+        </record>
+
+        <record id="trans_plan_approve" model="workflow.transition">
+            <field name="act_from" ref="act_plan"/>
+            <field name="act_to" ref="act_plan_approve"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_approve_done" model="workflow.transition">
+            <field name="act_from" ref="act_plan_approve"/>
+            <field name="act_to" ref="act_plan_done"/>
+            <field name="signal">approve_agree</field>
+        </record>
+
+        <record id="trans_done_deliver" model="workflow.transition">
+            <field name="act_from" ref="act_plan_done"/>
+            <field name="act_to" ref="act_deliver"/>
+            <field name="signal">next_stage</field>
+        </record>
+
+        <record id="trans_deliver_yunwei" model="workflow.transition">
+            <field name="act_from" ref="act_deliver"/>
+            <field name="act_to" ref="act_yunwei"/>
+            <field name="signal">next_stage</field>
+            <field name="condition">check_yunwei()</field>
+        </record>
+
+        <record id="trans_yunwei_project_done" model="workflow.transition">
+            <field name="act_from" ref="act_yunwei"/>
+            <field name="act_to" ref="act_project_done"/>
+            <field name="signal">next_stage</field>
+        </record>
+
+        <record id="trans_deliver_project_done" model="workflow.transition">
+            <field name="act_from" ref="act_deliver"/>
+            <field name="act_to" ref="act_project_done"/>
+            <field name="signal">next_stage</field>
+            <field name="condition">not check_yunwei()</field>
+        </record>
+
+
+        <record id="trans_manage_approve_plan" model="workflow.transition">
+            <field name="act_from" ref="act_plan_approve"/>
+            <field name="act_to" ref="act_plan"/>
+            <field name="signal">approve_reject</field>
         </record>
 
 

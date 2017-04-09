@@ -470,6 +470,9 @@ var ListView = View.extend( /** @lends instance.web.ListView# */ {
             if (self.model == "dtdream.hr.performance"){
                 self.add_button_import();
             }
+            if (self.model == "dtdream.qualification.management"){
+                self.add_button_import_man();
+            }
 
         });
         this.do_push_state({
@@ -1003,6 +1006,18 @@ ListView.List = Class.extend( /** @lends instance.web.ListView.List# */{
                 var checked = $(e.currentTarget).find('input').prop('checked');
                 $(self).trigger(
                         'selected', [selection.ids, selection.records, ! checked]);
+                var $state_check=$(this).closest("tr").find("td[data-field='state']").text();
+                var $submit_btn_none=$(".o_cp_sidebar .dropdown-menu").find("li");
+                for(var i=0;i<$submit_btn_none.length;i++){
+                    var delete_submit=$submit_btn_none[i].innerText.trim();
+                    if(delete_submit == "提交"){
+                        if($state_check == "完成"){
+                            $submit_btn_none[i].style.display="none";
+                        }else{
+                            $submit_btn_none[i].style.display="block";
+                        }
+                    }
+                }
             })
             .delegate('td.o_list_record_delete', 'click', function (e) {
                 e.stopPropagation();

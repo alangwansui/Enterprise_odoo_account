@@ -140,11 +140,11 @@ class dtdream_customer_reception(models.Model):
             else:
                 uid = self._context.get('uid', '')
                 if domain:
-                    domain = expression.AND([['|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
-                                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)], domain])
+                    domain = expression.AND([['|', '|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
+                                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid),('receptionist.user_id','=',uid)], domain])
                 else:
-                    domain = ['|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
-                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid)]
+                    domain = ['|', '|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
+                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid),('receptionist.user_id','=',uid)]
         return super(dtdream_customer_reception, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                    limit=limit, order=order)
 
@@ -251,8 +251,13 @@ class dtdream_customer_reception(models.Model):
             self.update_customer_activities()
         return result
 
+    def check_visit_time(self, visit_time):
+        if not visit_time:
+            raise ValidationError('来访时间为必填项，请填写后再提交!')
+
     @api.model
     def create(self, vals):
+        self.check_visit_time(vals.get('visit_time', ''))
         if vals.has_key('special_code') and vals.get('has_special') == '0':
             cr = self.env['dtdream.approval.fee'].search([('fee', '=', vals.get('special_code'))])
             target = [(0, 0, {'fee_type': crr.fee_type, 'money': crr.money, 'remark': crr.remark}) for crr in cr]
@@ -279,6 +284,9 @@ class dtdream_customer_reception(models.Model):
         follow = self.env['dtdream.customer.follow'].search([], order='id asc')
         if follow:
             rec.update({'showroom_guide': [(6, 0, [follow[0].name.id])]})
+        car = self.env['dtdream.customer.reception.config'].search([], limit=1).car
+        if car:
+            rec.update({'car_settings': car.id})
         return rec
 
     def get_mail_server_name(self):
@@ -410,6 +418,7 @@ class dtdream_customer_reception(models.Model):
     visit_count = fields.Integer(string='来访人数')
     guest = fields.One2many('dtdream.guest.honour', 'customer_reception')
     visit_date = fields.Date(string='来访日期')
+    visit_time = fields.Selection([('%s' % time, '%s点' % time) for time in range(24)], string='来访时间')
     inter_tel = fields.Char(string='接口人联系方式')
     background = fields.Text(string='客户背景')
     purpose = fields.Many2one('dtdream.visit.purpose', string='来访目的')
@@ -434,7 +443,12 @@ class dtdream_customer_reception(models.Model):
     car_num = fields.Integer(string='小车')
     commercial_vehicle = fields.Boolean(string='商务车')
     commercial_vehicle_num = fields.Integer(string='商务车')
+    bus = fields.Boolean(string='巴士')
+    bus_num = fields.Integer(string='巴士')
     bicycle = fields.Boolean(string='自行乘车')
+    licence = fields.Char(string='车牌号', size=8)
+    driver_name = fields.Char(string='司机姓名', size=8)
+    driver_tel = fields.Char(string='联系方式', size=11)
     path = fields.One2many('dtdream.visit.path', 'customer_reception')
     driver = fields.Boolean(string='司机')
     assistance = fields.Boolean(string='接机/接站人员')
@@ -469,10 +483,13 @@ class dtdream_customer_reception(models.Model):
     total_cost = fields.Integer(string='合计(元)', compute=_compute_total_cost)
     has_special = fields.Selection([('0', '是'), ('1', '否')], string='是否有专项')
     special_code = fields.Many2one('dtdream.special.approval', string='专项编码')
-    receptionist = fields.Many2one('hr.employee', string='指定客户接待执行人')
+    receptionist = fields.Many2one('hr.employee', string='客户接待执行人')
     summary = fields.Text(string='接待人员接待小结')
     evaluate = fields.Text(string='评价及建议')
     score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)], string='评分')
+    drive_score = fields.Selection([('%s' % i, '%s分' % i) for i in range(1, 11)], string='司机评分')
+    reason = fields.Selection([('0', '司机不熟悉路线'), ('1', '司机多话'), ('2', '司机不守时'), ('3', '司机服务态度差'), ('4','其它')], string='反馈问题')
+    reason_text = fields.Text(string='其它问题')
     current_approve = fields.Many2one('hr.employee', string='当前审批人')
     approves = fields.Many2many('hr.employee', string='已审批的人')
     is_current = fields.Boolean(string='是否当前审批人', compute=_compute_login_is_approve)
@@ -481,8 +498,8 @@ class dtdream_customer_reception(models.Model):
     is_officer = fields.Boolean(string='是否客工部主管', compute=_compute_is_officer)
     is_manage = fields.Boolean(string='是否客户接待管理员', compute=_compute_is_customer_manage)
     is_create = fields.Boolean(string='是否创建人', compute=_compute_is_create, default=lambda self: True)
-    compute_car_inter = fields.Boolean(string='计算过渡字段', compute=compute_customer_setting)
-    car_settings = fields.Many2one('hr.employee', string='车辆负责人')
+    compute_car_inter = fields.Boolean(string='计算过渡字段')
+    car_settings = fields.Many2one('hr.employee', string='车辆安排负责人')
     inter_settings = fields.Many2one('hr.employee', string='企划部接口人')
     entry_way = fields.Boolean(string='创建客户接待方式')
     state = fields.Selection([('0', '草稿'),
@@ -520,6 +537,7 @@ class dtdream_customer_reception(models.Model):
 
     @api.multi
     def wkf_approve1(self):
+        self.check_visit_time(self.visit_time)
         current_approve = self.name.department_id.manager_id
         self.write({"state": '1',  'current_approve': current_approve.id})
         subject = u'【通知】请您审批%s提交的客户接待申请!' % self.name.name
@@ -542,7 +560,9 @@ class dtdream_customer_reception(models.Model):
         approve = self.current_approve.id
         if not self.receptionist:
             raise ValidationError('请指定客户接待执行人!')
-        current_approve = self.receptionist
+        if not self.car_settings:
+            raise ValidationError('请指定车辆安排负责人!')
+        current_approve = self.car_settings
         self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
         # 通知接待安排执行人
         subject = u'【通知】请您落实安排%s的客户接待申请,待接待完成填写接待小结!' % self.name.name
@@ -551,10 +571,10 @@ class dtdream_customer_reception(models.Model):
         # 通知车辆负责人
         cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
         inter = cr.inter
-        if (self.car and self.car_num) or (self.commercial_vehicle and self.commercial_vehicle_num):
+        if (self.car and self.car_num) or (self.commercial_vehicle and self.commercial_vehicle_num) or (self.bus and self.bus_num):
             car = cr.car
             subject = u'【通知】请您安排客户接待相关接送车辆!'
-            content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看及安排相关接送车辆!' % self.name.name
+            content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您查看及安排相关接送车辆并将车辆相关信息录入接待电子流!' % self.name.name
             self.send_mail(car, subject=subject, content=content)
         # 通知企划部接口人
         if self.camera == '0' or self.camera == '1':
@@ -587,6 +607,13 @@ class dtdream_customer_reception(models.Model):
         content = u'%s对客户接待效果做出了评价,评分:%s分,请您查看!' % (self.name.name, self.score)
         self.send_mail(officer, subject=subject, content=content)
         self._message_poss(state=u'执行评价-->完成', action=u'提交')
+
+    @api.one
+    def btn_car_submit(self):
+        approve = self.current_approve.id
+        current_approve = self.receptionist
+        self.write({'current_approve': current_approve.id, 'approves': [(4, approve)]})
+        self._message_poss(state=u'接待安排与执行', action=u'提交', approve=current_approve.name)
 
 
 class dtdream_customer_cost(models.Model):

@@ -34,6 +34,8 @@ class dtdream_expense_record(models.Model):
                 record.report_ids_count = 0
 
     name = fields.Char(string="记录标题")  # 没用，仅为了链接不显示模型名称
+    applicant = fields.Many2one('hr.employee', string='申请人',
+                                default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.user.id)]))
     state = fields.Selection([('draft', '草稿'), ('xingzheng', '行政助理审批'), ('zhuguan', '主管审批'), ('quanqianren', '权签人审批'),
                               ('jiekoukuaiji', '接口会计审批'), ('daifukuan', '待付款'), ('yifukuan', '已付款')], string="状态",
                              default="draft")
@@ -101,23 +103,24 @@ class dtdream_expense_record(models.Model):
         expense_ids = self.browse(active_ids)
         record_ids = []
         expense_parentids=[]
+        applicant_ids = set()
         for expense in expense_ids:
+            applicant_ids.add(expense.applicant.id)
             if len(expense_parentids) == 0:
                 expense_parentids.append(expense.expensedetail.parentid.id)
             else:
                 if expense.expensedetail.parentid.id not in expense_parentids:
                     raise Warning(u'一张报销单中的费用类别必须相同')
+            if len(applicant_ids) > 1:
+                raise ValidationError("请保持所有消费明细申请人一致！")
             if expense.create_uid.id != self.env.user.id:
                 raise Warning(u'只能对自己的费用明细生成报销单')
             if expense.report_ids:
                 raise Warning(u'%s 已经生成了报销单' % (expense.expensedetail.name))
 
         vals = {
-            'record_ids': [(6, 0, active_ids)],
-            'benefitdep_ids': [(0, 0, {
-                'name': self.env['hr.employee'].search([('login', '=', self.env.user.login)]).department_id.id,
-                'sharepercent': 100
-            })]
+            'applicant': expense_ids[0].applicant.id,
+            'record_ids': [(6, 0, active_ids)]
         }
 
         #_logger.info("vals:" + str(vals))
@@ -219,7 +222,7 @@ class dtdream_expense_record(models.Model):
         for record in self:
             if record.report_ids:
                 raise Warning("已报销记录不能删除!")
-            if record.create_uid.id != self.env.user.id:
+            if record.create_uid.id != self.env.user.id and record.applicant.user_id.id != self.env.user.id:
                 raise Warning(u'只能删除自己的消费记录!')
             res = super(dtdream_expense_record, self).unlink()
             return res

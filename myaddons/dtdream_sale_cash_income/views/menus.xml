@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem name="回款" id="dtdream_menu_cash_income" parent="base.menu_base_partner" sequence="11" action="dtdream_sale_cash_income_action"></menuitem>
+    </data>
+</openerp>

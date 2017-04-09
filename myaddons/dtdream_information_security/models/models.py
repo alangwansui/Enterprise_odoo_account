@@ -404,12 +404,12 @@ class dtdream_information_purview(models.Model):
                 confluence_space_read='conf_'+confluence.space.key+'_read'
                 confluence_space_read = str(confluence_space_read)
                 self.add_employee_to_space_group(dtldap,confluence_space_read,shenqirenList)
-                self.send_email_space_admin(confluence_space_mane=confluence_space_read,type='read',admin=confluence.conf.admin)
+                self.send_email_space_admin(confluence_space_mane=confluence_space_read,type='read',admin=confluence.space.type.admin)
             if confluence.write_right:
                 confluence_space_write='conf_'+confluence.space.key+'_write'
                 confluence_space_write = str(confluence_space_write)
                 self.add_employee_to_space_group(dtldap,confluence_space_write,shenqirenList)
-                self.send_email_space_admin(confluence_space_mane=confluence_space_write,type='write',admin=confluence.conf.admin)
+                self.send_email_space_admin(confluence_space_mane=confluence_space_write,type='write',admin=confluence.space.type.admin)
 
     def check_git_PermissionSets(self,git_list,dtldap,shenqirenList):
         for git in git_list:

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="export_assets_backend" name="document assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/dtdream_project_bid_authorize_apply/static/src/js/authorization.js"></script>
+            </xpath>
+        </template>
+
+        <template id="export_new" name="newcss" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/dtdream_project_bid_authorize_apply/static/src/css/new.css"></link>
+            </xpath>
+        </template>
+    </data>
+</openerp>

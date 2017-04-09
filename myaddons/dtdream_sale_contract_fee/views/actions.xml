@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!--合同额豆腐块跳转动作-->
+    <record id="action_contract_fee" model="ir.actions.act_window">
+        <field name="name">合同额</field>
+        <field name="res_model">dtdream.sale.contract.fee</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{
+                        'default_contract_project_id': active_id
+        }</field>
+        <field name="domain">[('contract_project_id','=',active_id)]</field>
+    </record>
+
+
+    <!--定义合同头action-->
+    <record id="dtdream_sale_contract_fee_action" model="ir.actions.act_window">
+        <field name="name">合同额</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">dtdream.sale.contract.fee</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!--定义合同明细action-->
+    <record id="dtdream_sale_contract_details_action" model="ir.actions.act_window">
+        <field name="name">合同明细</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">dtdream.sale.contract.details</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

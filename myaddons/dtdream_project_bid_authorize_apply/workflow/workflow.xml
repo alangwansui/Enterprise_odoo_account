@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="workflow_project_authorize" model="workflow">
+            <field name="name">项目授权申请电子流</field>
+            <field name="osv">dtdream.project.bid.authorize.apply</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_wkf_create" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">授权申请创建</field>
+            <field name="flow_start">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_create()</field>
+        </record>
+
+        <record id="act_wkf_apply" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">项目授权申请</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_apply()</field>
+        </record>
+
+        <record id="act_wkf_examine" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">办事处/系统部审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_examine()</field>
+        </record>
+
+        <record id="act_wkf_standar" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">规范性审核</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_standar()</field>
+        </record>
+
+        <record id="act_wkf_nostandar" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">售后服务函非标</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_not_standar()</field>
+        </record>
+
+        <record id="act_wkf_approve" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">审批同意</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">wkf_approve()</field>
+        </record>
+
+        <!--<record id="act_wkf_done" model="workflow.activity">-->
+            <!--<field name="wkf_id" ref="workflow_project_authorize"/>-->
+            <!--<field name="name">完成</field>-->
+            <!--<field name="flow_stop">True</field>-->
+            <!--<field name="kind">function</field>-->
+            <!--<field name="action">wkf_done()</field>-->
+        <!--</record>-->
+
+        <record id="trans_create_apply" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_create"/>
+            <field name="act_to" ref="act_wkf_apply"/>
+            <field name="signal">btn_apply</field>
+        </record>
+
+        <record id="trans_apply_examine" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_apply"/>
+            <field name="act_to" ref="act_wkf_examine"/>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_examine_starndar" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_examine"/>
+            <field name="act_to" ref="act_wkf_standar"/>
+            <field name="signal">btn_approve</field>
+        </record>
+        <!---->
+        <record id="trans_standar_nostandar" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_standar"/>
+            <field name="act_to" ref="act_wkf_nostandar"/>
+            <field name="condition">is_normal==False</field>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_nostandar_nostandarsecond" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_nostandar"/>
+            <field name="act_to" ref="act_wkf_approve"/>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_standar_approve" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_standar"/>
+            <field name="act_to" ref="act_wkf_approve"/>
+            <field name="condition">is_normal==True</field>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <!--<record id="trans_approve_done" model="workflow.transition">-->
+            <!--<field name="act_from" ref="act_wkf_approve"/>-->
+            <!--<field name="act_to" ref="act_wkf_done"/>-->
+            <!--<field name="signal">btn_approve</field>-->
+        <!--</record>-->
+
+        <record id="reject" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_apply"/>
+            <field name="act_to" ref="act_wkf_create"/>
+            <field name="signal" >btn_reject</field>
+        </record>
+
+        <record id="reject_apply" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_apply"/>
+            <field name="act_to" ref="act_wkf_create"/>
+            <field name="signal" >btn_reject</field>
+        </record>
+
+        <record id="reject_examine" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_examine"/>
+            <field name="act_to" ref="act_wkf_create"/>
+            <field name="signal" >btn_reject</field>
+        </record>
+
+        <record id="reject_standar" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_standar"/>
+            <field name="act_to" ref="act_wkf_create"/>
+            <field name="signal" >btn_reject</field>
+        </record>
+
+        <record id="reject_approve" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_approve"/>
+            <field name="act_to" ref="act_wkf_create"/>
+            <field name="signal" >btn_reject</field>
+        </record>
+
+        <record id="reject_nostandar" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_nostandar"/>
+            <field name="act_to" ref="act_wkf_create"/>
+            <field name="signal" >btn_reject</field>
+        </record>
+    </data>
+</openerp>

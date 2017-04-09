@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id='dtdream_ad_department_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.ad.department.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.ad.department</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='部门缩写列表'>
+                    <field name='name'/>
+                    <field name='value'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_ad_department_kanban">
+            <field name="name">view.dtdream.ad.department.kanban</field>
+            <field name="model">dtdream.ad.department</field>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>部门:</strong> <field name='name'/></li>
+                                        <li ><strong>部门缩写:</strong> <field name="value" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
+        <record id='dtdream_ad_department_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.ad.department.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.ad.department</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <form string='部门缩写详情' >
+                    <sheet>
+                        <group>
+                            <field name="name"  options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            <field name="value"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_dtdream_ad_department" model="ir.actions.act_window">
+            <field name="name">部门缩写</field>
+            <field name="res_model">dtdream.ad.department</field>
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+
+        <!-- 菜单 -->
+        <menuitem id='menu_dtdream_ad_department' name='部门缩写配置' parent="dtdream_ad_manager.menu_ad_peizhi" sequence="500" action="act_dtdream_ad_department"/>
+
+    </data>
+</openerp>

@@ -64,7 +64,11 @@ def send_sms_aliyun(**kw):
     from openerp.dtdream.aliyun.sms import send_sms
     recNum = kw['phone'].encode('utf-8')
     smsparam = ("{'code': '%s','product': 'dodo'}" % kw['code']).encode('utf-8')
-    status = send_sms(recNum, smsparam)
+    if kw.get('templateCode'):
+        templateCode = kw.get('templateCode')
+        status = send_sms(recNum, smsparam, templateCode=templateCode)
+    else:
+        status = send_sms(recNum, smsparam)
 
     if status == 200:
         return ERROR_NUM_SUCCESS

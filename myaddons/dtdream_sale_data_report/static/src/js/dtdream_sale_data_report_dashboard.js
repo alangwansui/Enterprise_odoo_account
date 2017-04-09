@@ -16,202 +16,61 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
     var _t = core._t;
     var _lt = core._lt;
 
+    var provinces = []
+    //对应一级数据
+    var allSeriesData={
+        "政务":[300,500,600,700,400,50,100,200,300,300,100,100,50,100],
+        "政法":[200,600,300,400,50,100,0,200,0,0,100,100,0,0],
+        "企业":[100,300,700,200,50,100,0,0,300,10,80,30,10,250],
+        "专网":[50,200,400,30,50,100,500,20,300,100,180,130,110,50],
+        "电力":[10,0,300,100,50,100,500,20,300,100,180,130,110,50]
+    };
+    //对应二级数据
+    var provinceSeriesData={
+        "政务":[150,50,250,300,150,200],
+        "政法":[460,260,360,160,56,200],
+        "企业":[40,340,840,440,140,200],
+        "专网":[120,220,420,20,120,580],
+        "电力":[290,590,450,390,230,360]
+    };
+    //对应三级数据
+    var refreshSeries={
+        "政务":[50,100,150,200,250,300],
+        "政法":[60,160,260,360,16,100],
+        "企业":[340,300,240,44,140,200],
+        "专网":[220,20,120,320,420,80],
+        "电力":[90,190,150,290,230,360]
+    };
+    /*图表中数据处理*/
+    //设置初始图表的数据
+    //var selContent=$("#area").val();
+    var data="";
+    var seriesContent="";
+
     /**
      * @class DataReportDashboardView
      * @classdesc 销售数据报表Dashboard
      * @augments KanbanView
      */
     var DataReportDashboardView = KanbanView.extend({
-        /**
-         * @memberOf DataReportDashboardView
-         * @description 标题
-         */
-        display_name: '销售数据报表',
-        /**
-         * @memberOf DataReportDashboardView
-         * @description 图标
-         */
-        icon: 'fa-dashboard',
-        /**
-         * @memberOf DataReportDashboardView
-         * @description 新的视图类型 Data_dashboard
-         */
-        view_type: "dtdream_sale_data_report",
-        /**
-         * @memberOf DataReportDashboardView
-         * @description 是否显示搜索栏
-         */
-        searchview_hidden: true,
-        /**
-         * @memberOf DataReportDashboardView
-         * @description 从服务端获取数据
-         * @returns {*|jQuery.Deferred}
-         */
-        fetch_data: function () {
-             //Overwrite this function with useful data
-            return new Model('dtdream.sale.data.report')
-                .call('get_sales_report_data', []);
-        },
-        /**
-         * @memberOf DataReportDashboardView
-         * @description 显示看板视图内容
-         * @returns {*|Promise|Promise.<TResult>}
-         */
-        render: function () {
-            var super_render = this._super;
-            var self = this;
+        events: _.defaults({
+                'change #area' : 'change_area',
+                'change #selectprovince' : 'change_province',
+                'click #selectQueryBtn': 'click_queryBtn'
+            }, KanbanView.prototype.events),
 
-            self.fetch_data().then(function (result) {
-                var report_dashboard = QWeb.render('dtdream_sale_data_report.sale_report', {
-                    'cash_income_sum' : result.cash_income_sum,
-                    'area' : result.areas
-                });
-                super_render.call(self);
-
-                $(report_dashboard).prependTo(self.$el);
-                self.$el.find('.oe_view_nocontent').hide();
-
-                 //设置时间日期插件
-                self.settingDatetimepicker();
-                //设置选项卡区域的相关效果
-                self.settingSliderArea();
-                self.getEchartData().then(function (result) {
-                    var areaName = result.office_names;
-
-                })
-                self.marketingData($("#cashEchart")[0],$("#cashpie")[0],"现金收入");
-            });
-        },
-        getEchartData:function(){
-            return new Model('dtdream.sale.data.report')
-                .call('get_echart_data', []);
-        },
-        settingDatetimepicker:function(){
-            $(".datepickerstart").datetimepicker({
-                    format:'YYYY-MM-DD',
-                    todayBtn:  true,
-                    autoclose: true,
-                    language: 'zh-CN'
-                });
-            $(".start").click(function(){
-                $(".datepickerstart").datetimepicker('show');
-            });
-            $(".datepickerend").datetimepicker({
-                format:'YYYY-MM-DD',
-                language: 'zh-CN'
-            });
-            $(".end").click(function(){
-                $(".datepickerend").datetimepicker('show');
-            });
-        },
-        settingSliderArea:function(){
-            var super_render = this._super;
-            var self = this;
-            //    设置ul中的li水平居中
-            var ulWidth=$('#MKmyTab').width();
-            var paddingLeft=(ulWidth-750)/2;
-            $("#MKmyTab").css("padding-left",paddingLeft);
-            $('#MKmyTab .inline').css('left',paddingLeft);
-
-            //    设置滑动条的初始距离
-            if($("#MKmyTab li.active a").html() == "现金收入"){
-                $('#MKmyTab .inline').css('width','150px');
-                $("#mkcash").siblings('.active').removeClass('active');
+        //设置选择第二个选项框时的数据
+        getProvinces:function(area){
+            // var nowSelProvince=$("#selectprovince").find("option:selected").text();
+            if(area != "请选择"){
+                data=[area];
             }
-
-            //    设置鼠标移入li时的效果
-            $("#MKmyTab").on("mouseenter","li:not(.inline)",function(){
-                //        获取滑动条的滑动距离
-                var movedistance=($(this).index())*150;
-                $('#MKmyTab .inline').css('width','150px').css('left',paddingLeft+movedistance);
-                //        获取当前li的data-index值
-                var dropId=$(this).data('index');
-                $("#"+dropId).addClass('active').siblings('.active').removeClass('active');
-                /*if($("#"+dropId).hasClass('active')){
-                 $("#"+dropId).addClass('in').siblings('.in').removeClass('in');
-                 }*/
-                $("#"+dropId).addClass('in').siblings('.in').removeClass('in');
-                if(!$(this).hasClass('active')){
-                    $(this).addClass('active').siblings('.active').removeClass('active');
-                }
-
-                var sliceSelectArea=$(this).data("index").slice(2);
-                var SelectAreaBar=$(".tab-content").find("#"+sliceSelectArea+"Echart")[0];
-                var SelectAreaPie=$(".tab-content").find("#"+sliceSelectArea+"pie")[0];
-                var echartTitle=this.innerText.replace(/^\s+|\s+$/g,"");
-                if(this.innerText)
-                self.marketingData(SelectAreaBar,SelectAreaPie,echartTitle);
-            });
+            return data;
         },
-        marketingData:function(barid,pieid,echartTitle){
-            //设置第二个选项框里面的内容
-            var province=[
-                ["北京市"],
-                ["浙江省","上海市","广西省","海南省","福建省","江西省"],
-                ["江苏省","安徽省","山东省"],
-                ["广东省","深圳市"],
-                ["四川省","天津市","河北省","河南省","湖南省","湖北省","云南省","青海省","陕西省","甘肃省","吉林省","宁夏自治区","内蒙古自治区"],
-                ["战略发展部"]
-            ];
-            var ProvinceDetail={
-                "北京市":["北1","北2","北3","北4","北5","北6"],
-                "浙江省":["浙1","浙2","浙3","浙4","浙5","浙6"],
-                "上海市":["上1","上2","上3","上4","上5","上6"],
-                "广西省":["广西1","广西2","广西3","广西4","广西5","广西6"],
-                "海南省":["海南1","海南2","海南3","海南4","海南5","海南6"],
-                "福建省":["福建1","福建2","福建3","福建4","福建5","福建6"],
-                "江西省":["江西1","江西2","江西3","江西4","江西5","江西6"],
-                "江苏省":["江苏1","江苏2","江苏3","江苏4","江苏5","江苏6"],
-                "安徽省":["安徽1","安徽2","安徽3","安徽4","安徽5","安徽6"],
-                "山东省":["山东1","山东2","山东3","山东4","山东5","山东6"],
-                "广东省":["广东1","广东2","广东3","广东4","广东5","广东6"],
-                "深圳市":["深圳1","深圳2","深圳3","深圳4","深圳5","深圳6"],
-                "四川省":["川1","川2","川3","川4","川5","川6"],
-                "天津市":["天津1","天津2","天津3","天津4","天津5","天津6"],
-                "河北省":["河北1","河北2","河北3","河北4","河北5","河北6"],
-                "河南省":["河南1","河南2","河南3","河南4","河南5","河南6"],
-                "湖南省":["湖南1","湖南2","湖南3","湖南4","湖南5","湖南6"],
-                "湖北省":["湖北1","湖北2","湖北3","湖北4","湖北5","湖北6"],
-                "云南省":["云1","云2","云3","云4","云5","云6"],
-                "青海省":["青海1","青海2","青海3","青海4","青海5","青海6"],
-                "陕西省":["陕西1","陕西2","陕西3","陕西4","陕西5","陕西6"],
-                "甘肃省":["甘肃1","甘肃2","甘肃3","甘肃4","甘肃5","甘肃6"],
-                "吉林省":["吉林1","吉林2","吉林3","吉林4","吉林5","吉林6"],
-                "宁夏自治区":["宁夏1","宁夏2","宁夏3","宁夏4","宁夏5","宁夏6"],
-                "内蒙古自治区":["内蒙古1","内蒙古2","内蒙古3","内蒙古4","内蒙古5","内蒙古6"],
-                "战略发展部":["战略发展1","战略发展2","战略发展3","战略发展4","战略发展5","战略发展6"]
-            };
-            //对应一级数据
-            var allSeriesData={
-                "政务":[300,500,600,700,400,50,100,200,300,300,100,100,50,100],
-                "政法":[200,600,300,400,50,100,0,200,0,0,100,100,0,0],
-                "企业":[100,300,700,200,50,100,0,0,300,10,80,30,10,250],
-                "专网":[50,200,400,30,50,100,500,20,300,100,180,130,110,50],
-                "电力":[10,0,300,100,50,100,500,20,300,100,180,130,110,50]
-            };
-            //对应二级数据
-            var provinceSeriesData={
-                "政务":[150,50,250,300,150,200],
-                "政法":[460,260,360,160,56,200],
-                "企业":[40,340,840,440,140,200],
-                "专网":[120,220,420,20,120,580],
-                "电力":[290,590,450,390,230,360]
-            };
-            //对应三级数据
-            var refreshSeries={
-                "政务":[50,100,150,200,250,300],
-                "政法":[60,160,260,360,16,100],
-                "企业":[340,300,240,44,140,200],
-                "专网":[220,20,120,320,420,80],
-                "电力":[90,190,150,290,230,360]
-            };
-            /*图表中数据处理*/
-            //设置初始图表的数据
-            var selContent=$("#area").val();
-            var data="";
-            var seriesContent="";
-            if(selContent=="selectArea"){
-                data=["北京分部","杭州办","南京办","成都办","天津联络处","郑州联络处","长沙联络处","武汉联络处","昆明联络处","西宁联络处","西安联络处","兰州联络处","长春联络处","战略发展部"];
+
+        getSeriesData:function(area){
+            // var nowSelProvince=$("#selectprovince").find("option:selected").text();
+            if(area != "请选择"){
                 seriesContent=[{
                     "name":"政务",
                     "type":"bar",
@@ -233,7 +92,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                             }
                         }
                     },
-                    "data":allSeriesData["政务"]
+                    "data":refreshSeries["政务"]
                 },{
                     "name":"政法",
                     "type":"bar",
@@ -255,7 +114,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                             }
                         }
                     },
-                    "data":allSeriesData["政法"]
+                    "data":refreshSeries["政法"]
                 },{
                     "name":"企业",
                     "type":"bar",
@@ -277,7 +136,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                             }
                         }
                     },
-                    "data":allSeriesData["企业"]
+                    "data":refreshSeries["企业"]
                 },{
                     "name":"专网",
                     "type":"bar",
@@ -299,7 +158,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                             }
                         }
                     },
-                    "data":allSeriesData["专网"]
+                    "data":refreshSeries["专网"]
                 },{
                     "name":"电力",
                     "type":"bar",
@@ -321,21 +180,26 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                             }
                         }
                     },
-                    "data":allSeriesData["电力"]
+                    "data":refreshSeries["电力"]
                 }];
             }
-            //设置选择第二个选项框时的数据
-            function getProvinces(area){
-                var nowSelProvince=$("#selectprovince").find("option:selected").text();
-                if(nowSelProvince != "请选择"){
-                    data=ProvinceDetail[nowSelProvince];
-                }
-                return data;
+            return seriesContent;
+        },
+
+        //获取第二个选项框对应的内容
+        getSelectvalue:function (value){
+            if(value != "选择区域"){
+                return new Model('dtdream.sale.data.report')
+                    .call('get_province_by_department', [value]);
             }
-            function getSeriesData(area){
-                var nowSelProvince=$("#selectprovince").find("option:selected").text();
-                if(nowSelProvince != "请选择"){
-                    seriesContent=[{
+        },
+
+        // 设置数据
+        change_province:function(){
+            var nowSelValue = $("#selectprovince").find("option:selected").text();
+            if(nowSelValue == "请选择"){
+                data=this.provinces;
+                seriesContent=[{
                         "name":"政务",
                         "type":"bar",
                         "stack":"总数",    //设置柱状图堆叠显示
@@ -356,7 +220,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                                 }
                             }
                         },
-                        "data":refreshSeries["政务"]
+                        "data":provinceSeriesData["政务"]
                     },{
                         "name":"政法",
                         "type":"bar",
@@ -378,7 +242,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                                 }
                             }
                         },
-                        "data":refreshSeries["政法"]
+                        "data":provinceSeriesData["政法"]
                     },{
                         "name":"企业",
                         "type":"bar",
@@ -400,7 +264,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                                 }
                             }
                         },
-                        "data":refreshSeries["企业"]
+                        "data":provinceSeriesData["企业"]
                     },{
                         "name":"专网",
                         "type":"bar",
@@ -422,7 +286,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                                 }
                             }
                         },
-                        "data":refreshSeries["专网"]
+                        "data":provinceSeriesData["专网"]
                     },{
                         "name":"电力",
                         "type":"bar",
@@ -444,23 +308,19 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                                 }
                             }
                         },
-                        "data":refreshSeries["电力"]
+                        "data":provinceSeriesData["电力"]
                     }];
-                }
-                return seriesContent;
+            }else{
+                data=this.getProvinces(nowSelValue);
+                seriesContent=this.getSeriesData(nowSelValue);
             }
-            //获取第二个选项框对应的内容
-            function getSelectvalue(value){
-                if(value != "selectArea"){
-                    var nowSelProvince=province[value];
-                    return nowSelProvince;
-                }
-            }
-            //第一个选项框选项发生变化：
-            $("#area").on("change",function(){
-                var nowSelValue=$(this).find("option:selected").text();
+        },
+
+        change_area:function(){
+            //$("#area").on("change",function(){
+                var nowSelValue = $("#area").find("option:selected").val();
                 //设置第二个选项框显示
-                if(nowSelValue == "选择区域"){
+                if(nowSelValue == "selectArea"){
                     $("#selectprovince").css("display","none");
                     data=["北京分部","杭州办","南京办","成都办","天津联络处","郑州联络处","长沙联络处","武汉联络处","昆明联络处","西宁联络处","西安联络处","兰州联络处","长春联络处","战略发展部"];
                     seriesContent=[{
@@ -575,135 +435,23 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                         "data":allSeriesData["电力"]
                     }];
                 }else{
-                    //设置第二个选项框显示
-                    $("#selectprovince").css("display","block");
-
                     //设置第二个选项框里面的内容
-                    var selectNum=$(this).val();
-                    var slProvinces=getSelectvalue(selectNum);
-                    var html="<option value='00' selected>请选择</option>";
-                    for(var i=0;i<slProvinces.length;i++){
-                        html+="<option value='"+i+"'>"+slProvinces[i]+"</option>";
-                    }
-                    $("#selectprovince").html(html);
-
-                    data=province[selectNum];
-                    seriesContent=[{
-                        "name":"政务",
-                        "type":"bar",
-                        "stack":"总数",    //设置柱状图堆叠显示
-                        "barMaxWidth":35,
-                        "barGap":"10%",
-                        "itemStyle":{
-                            "normal":{
-                                "color":"#1A69AD",
-                                "label":{
-                                    "show":true,
-                                    "textStyle":{
-                                        "color":"#fff"
-                                    },
-                                    "position":"insideTop",
-                                    formatter:function(p){
-                                        return p.value > 0 ? (p.value):"";
-                                    }
-                                }
+                    //var selectNum=$(this).val();
+                    this.getSelectvalue(nowSelValue).then(function (result) {
+                        if (!result){
+                            $("#selectprovince").css("display","none");
+                            alert('该区域未设置对应省份。')
+                        }
+                        else{
+                            //设置第二个选项框显示
+                            $("#selectprovince").css("display","block");
+                            var html="<option value='00' selected>请选择</option>";
+                            for(var i=0;i<result.length;i++){
+                                html+="<option value='"+i+"'>"+result[i]+"</option>";
                             }
-                        },
-                        "data":provinceSeriesData["政务"]
-                    },{
-                        "name":"政法",
-                        "type":"bar",
-                        "stack":"总数",    //设置柱状图堆叠显示
-                        "barMaxWidth":35,
-                        "barGap":"10%",
-                        "itemStyle":{
-                            "normal":{
-                                "color":"#1F8AE7",
-                                "label":{
-                                    "show":true,
-                                    "textStyle":{
-                                        "color":"#fff"
-                                    },
-                                    "position":"insideTop",
-                                    formatter:function(p){
-                                        return p.value > 0 ? (p.value):"";
-                                    }
-                                }
-                            }
-                        },
-                        "data":provinceSeriesData["政法"]
-                    },{
-                        "name":"企业",
-                        "type":"bar",
-                        "stack":"总数",    //设置柱状图堆叠显示
-                        "barMaxWidth":35,
-                        "barGap":"10%",
-                        "itemStyle":{
-                            "normal":{
-                                "color":"#1FC2E7",
-                                "label":{
-                                    "show":true,
-                                    "textStyle":{
-                                        "color":"#fff"
-                                    },
-                                    "position":"insideTop",
-                                    formatter:function(p){
-                                        return p.value > 0 ? (p.value):"";
-                                    }
-                                }
-                            }
-                        },
-                        "data":provinceSeriesData["企业"]
-                    },{
-                        "name":"专网",
-                        "type":"bar",
-                        "stack":"总数",    //设置柱状图堆叠显示
-                        "barMaxWidth":35,
-                        "barGap":"10%",
-                        "itemStyle":{
-                            "normal":{
-                                "color":"#21D3FF",
-                                "label":{
-                                    "show":true,
-                                    "textStyle":{
-                                        "color":"#fff"
-                                    },
-                                    "position":"insideTop",
-                                    formatter:function(p){
-                                        return p.value > 0 ? (p.value):"";
-                                    }
-                                }
-                            }
-                        },
-                        "data":provinceSeriesData["专网"]
-                    },{
-                        "name":"电力",
-                        "type":"bar",
-                        "stack":"总数",    //设置柱状图堆叠显示
-                        "barMaxWidth":35,
-                        "barGap":"10%",
-                        "itemStyle":{
-                            "normal":{
-                                "color":"#67E1FF",
-                                "label":{
-                                    "show":true,
-                                    "textStyle":{
-                                        "color":"#fff"
-                                    },
-                                    "position":"insideTop",
-                                    formatter:function(p){
-                                        return p.value > 0 ? (p.value):"";
-                                    }
-                                }
-                            }
-                        },
-                        "data":provinceSeriesData["电力"]
-                    }];
-
-                    // 设置数据
-                    $("#selectprovince").on("change",function(){
-                        if($(this).val() == "00"){
-                            data=province[selectNum];
+                            $("#selectprovince").html(html);
+                            this.provinces = result;
+                            data = result;
                             seriesContent=[{
                                     "name":"政务",
                                     "type":"bar",
@@ -815,47 +563,265 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                                     },
                                     "data":provinceSeriesData["电力"]
                                 }];
-                        }else{
-                            data=getProvinces(nowSelValue);
-                            seriesContent=getSeriesData(nowSelValue);
-                        }
-                    });
+                            }
+                        });
+                        //data=province[selectNum];
+                }
+        },
+        /**
+         * @memberOf DataReportDashboardView
+         * @description 标题
+         */
+        display_name: '销售数据报表',
+        /**
+         * @memberOf DataReportDashboardView
+         * @description 图标
+         */
+        icon: 'fa-dashboard',
+        /**
+         * @memberOf DataReportDashboardView
+         * @description 新的视图类型 Data_dashboard
+         */
+        view_type: "dtdream_sale_data_report",
+        /**
+         * @memberOf DataReportDashboardView
+         * @description 是否显示搜索栏
+         */
+        searchview_hidden: true,
+        /**
+         * @memberOf DataReportDashboardView
+         * @description 从服务端获取数据
+         * @returns {*|jQuery.Deferred}
+         */
+        fetch_data: function () {
+             //Overwrite this function with useful data
+            return new Model('dtdream.sale.data.report')
+                .call('get_sales_report_data', []);
+        },
+        /**
+         * @memberOf DataReportDashboardView
+         * @description 显示看板视图内容
+         * @returns {*|Promise|Promise.<TResult>}
+         */
+        render: function () {
+            var super_render = this._super;
+            var self = this;
+
+            var start_date = $(".datepickerstart").val();
+            var end_date = $(".datepickerend").val()
+            self.fetch_data().then(function (result) {
+                var report_dashboard = QWeb.render('dtdream_sale_data_report.sale_report', {
+                    'cash_income_sum' : result.cash_income_sum,
+                    'area' : result.areas
+                });
+                super_render.call(self);
+
+                $(report_dashboard).prependTo(self.$el);
+                self.$el.find('.oe_view_nocontent').hide();
+
+                 //设置时间日期插件
+                self.settingDatetimepicker();
+                //设置选项卡区域的相关效果
+                self.settingSliderArea();
+                self.getEchartData().then(function (result) {
+                    var areaName = result.office_names;
+
+                })
+                var selContent=$("#area").val();
+                if(selContent=="selectArea"){
+                    data=["北京分部","杭州办","南京办","成都办","天津联络处","郑州联络处","长沙联络处","武汉联络处","昆明联络处","西宁联络处","西安联络处","兰州联络处","长春联络处","战略发展部"];
+                    seriesContent=[{
+                        "name":"政务",
+                        "type":"bar",
+                        "stack":"总数",    //设置柱状图堆叠显示
+                        "barMaxWidth":35,
+                        "barGap":"10%",
+                        "itemStyle":{
+                            "normal":{
+                                "color":"#1A69AD",
+                                "label":{
+                                    "show":true,
+                                    "textStyle":{
+                                        "color":"#fff"
+                                    },
+                                    "position":"insideTop",
+                                    formatter:function(p){
+                                        return p.value > 0 ? (p.value):"";
+                                    }
+                                }
+                            }
+                        },
+                        "data":allSeriesData["政务"]
+                    },{
+                        "name":"政法",
+                        "type":"bar",
+                        "stack":"总数",    //设置柱状图堆叠显示
+                        "barMaxWidth":35,
+                        "barGap":"10%",
+                        "itemStyle":{
+                            "normal":{
+                                "color":"#1F8AE7",
+                                "label":{
+                                    "show":true,
+                                    "textStyle":{
+                                        "color":"#fff"
+                                    },
+                                    "position":"insideTop",
+                                    formatter:function(p){
+                                        return p.value > 0 ? (p.value):"";
+                                    }
+                                }
+                            }
+                        },
+                        "data":allSeriesData["政法"]
+                    },{
+                        "name":"企业",
+                        "type":"bar",
+                        "stack":"总数",    //设置柱状图堆叠显示
+                        "barMaxWidth":35,
+                        "barGap":"10%",
+                        "itemStyle":{
+                            "normal":{
+                                "color":"#1FC2E7",
+                                "label":{
+                                    "show":true,
+                                    "textStyle":{
+                                        "color":"#fff"
+                                    },
+                                    "position":"insideTop",
+                                    formatter:function(p){
+                                        return p.value > 0 ? (p.value):"";
+                                    }
+                                }
+                            }
+                        },
+                        "data":allSeriesData["企业"]
+                    },{
+                        "name":"专网",
+                        "type":"bar",
+                        "stack":"总数",    //设置柱状图堆叠显示
+                        "barMaxWidth":35,
+                        "barGap":"10%",
+                        "itemStyle":{
+                            "normal":{
+                                "color":"#21D3FF",
+                                "label":{
+                                    "show":true,
+                                    "textStyle":{
+                                        "color":"#fff"
+                                    },
+                                    "position":"insideTop",
+                                    formatter:function(p){
+                                        return p.value > 0 ? (p.value):"";
+                                    }
+                                }
+                            }
+                        },
+                        "data":allSeriesData["专网"]
+                    },{
+                        "name":"电力",
+                        "type":"bar",
+                        "stack":"总数",    //设置柱状图堆叠显示
+                        "barMaxWidth":35,
+                        "barGap":"10%",
+                        "itemStyle":{
+                            "normal":{
+                                "color":"#67E1FF",
+                                "label":{
+                                    "show":true,
+                                    "textStyle":{
+                                        "color":"#fff"
+                                    },
+                                    "position":"insideTop",
+                                    formatter:function(p){
+                                        return p.value > 0 ? (p.value):"";
+                                    }
+                                }
+                            }
+                        },
+                        "data":allSeriesData["电力"]
+                    }];
+                }
+                self.marketingData($("#cashEchart")[0],$("#cashpie")[0],"现金收入");
+            });
+        },
+        getEchartData:function(){
+            return new Model('dtdream.sale.data.report')
+                .call('get_echart_data', []);
+        },
+        settingDatetimepicker:function(){
+            $(".datepickerstart").datetimepicker({
+                    format:'YYYY-MM-DD',
+                    todayBtn:  true,
+                    autoclose: true,
+                    language: 'zh-CN'
+                });
+            $(".start").click(function(){
+                $(".datepickerstart").datetimepicker('show');
+            });
+            $(".datepickerend").datetimepicker({
+                format:'YYYY-MM-DD',
+                language: 'zh-CN'
+            });
+            $(".end").click(function(){
+                $(".datepickerend").datetimepicker('show');
+            });
+        },
+        settingSliderArea:function(){
+            var super_render = this._super;
+            var self = this;
+            //    设置ul中的li水平居中
+            var ulWidth=$('#MKmyTab').width();
+            var paddingLeft=(ulWidth-750)/2;
+            $("#MKmyTab").css("padding-left",paddingLeft);
+            $('#MKmyTab .inline').css('left',paddingLeft);
+
+            //    设置滑动条的初始距离
+            if($("#MKmyTab li.active a").html() == "现金收入"){
+                $('#MKmyTab .inline').css('width','150px');
+                $("#mkcash").siblings('.active').removeClass('active');
+            }
+
+            //    设置鼠标移入li时的效果
+            $("#MKmyTab").on("mouseenter","li:not(.inline)",function(){
+                //        获取滑动条的滑动距离
+                var movedistance=($(this).index())*150;
+                $('#MKmyTab .inline').css('width','150px').css('left',paddingLeft+movedistance);
+                //        获取当前li的data-index值
+                var dropId=$(this).data('index');
+                $("#"+dropId).addClass('active').siblings('.active').removeClass('active');
+
+                $("#"+dropId).addClass('in').siblings('.in').removeClass('in');
+                if(!$(this).hasClass('active')){
+                    $(this).addClass('active').siblings('.active').removeClass('active');
                 }
 
+                var sliceSelectArea=$(this).data("index").slice(2);
+                var SelectAreaBar=$(".tab-content").find("#"+sliceSelectArea+"Echart")[0];
+                var SelectAreaPie=$(".tab-content").find("#"+sliceSelectArea+"pie")[0];
+                var echartTitle=this.innerText.replace(/^\s+|\s+$/g,"");
+                if(this.innerText)
+                self.marketingData(SelectAreaBar,SelectAreaPie,echartTitle);
             });
-
-            //点击查询按钮时，更新图表的数据
+        },
+        click_queryBtn: function(){
+            var self = this;
+            var activeArea=$("#MKmyTab").find("li.active").data("index").slice(2);
+            var nowechartsTitle=$("#MKmyTab li.active a").html().trim();
+            var nowbarid=$("#"+activeArea+"Echart")[0];
+            var nowpieid=$("#"+activeArea+"pie")[0];
+            self.marketingData(nowbarid,nowpieid,nowechartsTitle);
+        },
+        marketingData: function(barid,pieid,echartTitle){
+            /*//点击查询按钮时，更新图表的数据
             $("#selectQueryBtn").click(function(){
-
-                //现金收入
                 cashEchart.xAxis[0].data = data;
                 cashEchart.series=seriesContent;
                 mychart.setOption(cashEchart);
-
-                /*//合同额
-                bargainEchart.xAxis[0].data = data;
-                bargainEchart.series=seriesContent;
-                bargainmychart.setOption(bargainEchart,true);
-
-                //中标额
-                winningEchart.xAxis[0].data = data;
-                winningEchart.series=seriesContent;
-                winningmychart.setOption(winningEchart,true);
-
-                //运作中项目空间
-                spaceEchart.xAxis[0].data = data;
-                spaceEchart.series=seriesContent;
-                spacemychart.setOption(spaceEchart,true);
-
-                //GAAP收入
-                GaapEchart.xAxis[0].data = data;
-                GaapEchart.series=seriesContent;
-                Gaapmychart.setOption(GaapEchart,true);*/
             });
-
+*/
 
             //设置柱状图标题和饼图标题
-            console.log(typeof(echartTitle));
             var bartitle="";
             var pietitle=echartTitle+"占比情况";
             if(echartTitle == "现金收入"){
@@ -863,10 +829,10 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
             }else{
                 bartitle=echartTitle+"统计表(万元)";
             }
-
+            console.log(data,seriesContent);
             /*图表处理*/
 
-            //现金收入柱状图
+            //柱状图
             var mychart=echarts.init(barid);
             var cashEchart={
                 backgroundColor:"#F9FAFC",
@@ -886,12 +852,13 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                 legend:{
                     data:['政务','政法','企业','专网','电力'],
                     right:"10%",
-                    top:"20"
+                    top:"50"
                 },
                 grid:{
                     show:true,
                     top:"80",
                     left:"100",
+                    bottom:"85",
                     borderWidth:"0.5"
                 },
             //        calculable: true,
@@ -909,8 +876,8 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
                         "show": false
                     },
                     axisLabel: {
-                        "interval": 0
-            //                rotate:"45"
+                        "interval": 0,
+                        "rotate":"35"
                     },
                     splitArea: {
                         "show": false
@@ -961,7 +928,7 @@ odoo.define('dtdream_sale_data_report.ui.dashboard', function (require) {
             };
             mychart.setOption(cashEchart);
 
-            //现金收入饼图
+            //饼图
             var mychartpie=echarts.init(pieid);
             var cashpie={
                 backgroundColor:"#F9FAFC",

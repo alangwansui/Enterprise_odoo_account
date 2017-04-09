@@ -1,0 +1,82 @@
+<openerp>
+  <data>
+
+    <!--合同豆腐块-->
+    <record id="view_res_contract_fee_form" model="ir.ui.view">
+            <field name="name">view.res.product.oppr</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <button name="toggle_active" position="before">
+                    <button name="%(action_contract_fee)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_contract_fee" class="o_stat_value"/>
+                              <span class="o_stat_text">合同额(万元)</span>
+                          </div>
+                    </button>
+                </button>
+            </field>
+    </record>
+
+    <!--合同额FORM-->
+    <record model="ir.ui.view" id="dtdream_sale_contract_fee_form">
+        <field name="name">dtdream.sale.contract.fee.form</field>
+        <field name="model">dtdream.sale.contract.fee</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="contract_project_id"/>
+                            <field name="contract_pro_number"/>
+                            <field name="contract_order_date"/>
+                            <field name="contract_partner"/>
+                            <field name="contract_partner_num"/>
+                            <field name="contract_num"/>
+                            <field name="contract_order_num"/>
+                            <field name="contract_order_two_num"/>
+                            <field name="contract_pro_sum"/>
+                            <field name="contract_yunbao_fee"/>
+                            <field name="contract_order_fee"/>
+                            <field name="contract_sale_fee"/>
+                        </group>
+                        <group>
+                            <field name="contract_sale_type"/>
+                            <field name="contract_order_type"/>
+                            <field name="contract_old_order_number"/>
+                            <field name="contract_pry_type"/>
+                            <field name="contract_require_goods_date"/>
+                            <field name="contract_delivery_type"/>
+                            <field name="contract_delivery_address"/>
+                            <field name="contract_receiver"/>
+                            <field name="contract_contact_type"/>
+                            <field name="contract_trade_clause"/>
+                            <field name="contract_remark"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--合同额TREE-->
+    <record model="ir.ui.view" id="dtdream_sale_contract_fee_tree">
+        <field name="name">dtdream.sale.contract.fee.tree</field>
+        <field name="model">dtdream.sale.contract.fee</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contract_num"/>
+                <field name="contract_order_two_num"/>
+                <field name="contract_order_num"/>
+                <field name="contract_project_id"/>
+                <field name="contract_pro_number"/>
+                <field name="contract_partner"/>
+                <field name="contract_partner_num"/>
+                <field name="contract_receiver"/>
+                <field name="contract_require_goods_date"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

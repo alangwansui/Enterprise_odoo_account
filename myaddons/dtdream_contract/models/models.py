@@ -163,10 +163,24 @@ class dtdream_contract(models.Model):
     remark=fields.Char(string="备注")
     # pro_name=fields.Many2one("crm.lead",string="项目名称")
     pro_responsible_person = fields.Many2one('hr.employee',string='项目负责人')
+    if_responsible_person = fields.Selection([('0', '没有'), ('1', '有')], string='是否有项目负责人')
+
+    @api.constrains('if_responsible_person')
+    def check_responsible_person(self):
+        if not self.if_responsible_person:
+            raise ValidationError("请确认是否有项目负责人！")
+        elif self.if_responsible_person == '1':
+            if not self.pro_responsible_person:
+                raise ValidationError("请选择项目负责人！")
     tip=fields.Char(default=lambda self:self.env['dtdream.contract.url'].search([],limit=1).name)
     partner_jia = fields.Many2one('res.partner',string='签约方(甲方)',domain=['|',('supplier','=',True),('customer','=',True)])
     partner_yi = fields.Many2one('res.partner',string='签约方(乙方)',domain=['|',('supplier','=',True),('customer','=',True)])
     partner_bing = fields.Many2one('res.partner',string='签约方(其他方)',domain=['|',('supplier','=',True),('customer','=',True)])
+
+    @api.constrains('partner_jia','partner_yi','partner_bing')
+    def checkout_partner(self):
+        if not self.partner_jia or not self.partner_yi or not self.partner_bing:
+            raise ValidationError('请完善签约方信息！')
     is_standard=fields.Boolean(string="是标准合同",help='标准合同无需评审，直接进入会签环节，可快速完成合同评审流程')
     current_handler_ids=fields.Many2many('hr.employee','c_i_h_e',string="当前处理人",store=True)
 

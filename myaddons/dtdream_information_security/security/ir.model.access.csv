@@ -1,20 +1,16 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
 access_dtdream_information_purview,dtdream_information_purview,model_dtdream_information_purview,base.group_user,1,1,1,1
-
 access_dtdream_information_people,dtdream_information_people,model_dtdream_information_people,base.group_user,1,0,0,0
 access_dtdream_information_type,dtdream_information_type,model_dtdream_information_type,base.group_user,1,0,0,0
 access_dtdream_confluence_space,dtdream_confluence_space,model_dtdream_confluence_space,base.group_user,1,1,1,1
 access_dtdream_git_space,dtdream_git_space,model_dtdream_git_space,base.group_user,1,1,1,1
-
 access_dtdream_security_list_confluence,dtdream_security_list_confluence,model_dtdream_security_list_confluence,base.group_user,1,1,1,1
 access_dtdream_security_list_git,dtdream_security_list_git,model_dtdream_security_list_git,base.group_user,1,1,1,1
 access_dtdream_security_list_other,dtdream_security_list_other,model_dtdream_security_list_other,base.group_user,1,1,1,1
-
 access_dtdream_dtdream_foreign,dtdream_foreign,model_dtdream_foreign,base.group_user,1,1,1,1
-
-
 access_dtdream_information_record,dtdream_information_record,model_dtdream_information_record,base.group_user,1,1,1,1
+access_dtdream_foreign_attachment,dtdream_foreign_attachment,model_dtdream_foreign_attachment,base.group_user,1,1,1,1
 
 
 
@@ -29,6 +25,9 @@ manager_dtdream_git_space,dtdream_git_space,model_dtdream_git_space,group_dtdrea
 manager_dtdream_security_list_confluence,dtdream_security_list_confluence,model_dtdream_security_list_confluence,group_dtdream_information_manager,1,1,1,1
 manager_dtdream_security_list_git,dtdream_security_list_git,model_dtdream_security_list_git,group_dtdream_information_manager,1,1,1,1
 manager_dtdream_security_list_other,dtdream_security_list_other,model_dtdream_security_list_other,group_dtdream_information_manager,1,1,1,1
+
+manager_dtdream_information_record,dtdream_information_record,model_dtdream_information_record,group_dtdream_information_manager,1,1,1,1
+manager_dtdream_foreign_attachment,dtdream_foreign_attachment,model_dtdream_foreign_attachment,group_dtdream_information_manager,1,1,1,1
 
 
 

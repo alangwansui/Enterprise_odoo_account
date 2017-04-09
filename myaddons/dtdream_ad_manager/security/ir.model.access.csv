@@ -4,6 +4,10 @@ access_change_base,access_change_base,model_dtdream_change_apply,base.group_user
 access_group_base,access_group_base,model_dtdream_ad_group,base.group_user,1,0,0,0
 access_user_base,access_user_base,model_dtdream_ad_user,base.group_user,1,0,0,0
 access_time_base,access_time_base,model_dtdream_expire_time,base.group_user,1,0,0,0
+access_ad_department_base,access_ad_department_base,model_dtdream_ad_department,base.group_user,1,0,0,0
+access_ad_ext_base,access_ad_ext_base,model_dtdream_ad_ext,base.group_user,1,0,0,0
+access_ad_it_base,access_ad_it_base,model_dtdream_ad_it_man,base.group_user,1,0,0,0
+access_ad_apply_base,access_ad_apply_base,model_dtdream_ad_apply_man,base.group_user,1,0,0,0
 
 access_apply_apply,access_apply_apply,model_dtdream_group_apply,group_ad_apply,1,1,1,1
 access_change_apply,access_change_apply,model_dtdream_change_apply,group_ad_apply,1,1,1,1
@@ -11,9 +15,18 @@ access_group_apply,access_group_apply,model_dtdream_ad_group,group_ad_apply,1,0,
 access_user_apply,access_user_apply,model_dtdream_ad_user,group_ad_apply,1,0,0,0
 access_time_apply,access_time_apply,model_dtdream_expire_time,group_ad_apply,1,0,0,0
 access_employee_apply,access_employee_apply,hr.model_hr_employee,group_ad_apply,1,1,1,1
+access_ad_department_apply,access_ad_department_apply,model_dtdream_ad_department,group_ad_apply,1,0,0,0
+access_ad_ext_apply,access_ad_ext_apply,model_dtdream_ad_ext,group_ad_apply,1,0,0,0
+access_ad_it_apply,access_ad_it_apply,model_dtdream_ad_it_man,group_ad_apply,1,0,0,0
+access_ad_apply_apply,access_ad_apply_apply,model_dtdream_ad_apply_man,group_ad_apply,1,0,0,0
 
 access_apply_implement,access_apply_implement,model_dtdream_group_apply,group_ad_implement,1,1,0,0
 access_change_implement,access_change_implement,model_dtdream_change_apply,group_ad_implement,1,1,1,1
 access_group_implement,access_group_implement,model_dtdream_ad_group,group_ad_implement,1,1,1,1
 access_user_implement,access_user_implement,model_dtdream_ad_user,group_ad_implement,1,0,0,0
 access_time_implement,access_time_implement,model_dtdream_expire_time,group_ad_implement,1,1,1,1
+access_ad_department_implement,access_ad_department_base,model_dtdream_ad_department,group_ad_implement,1,1,1,1
+access_ad_ext_implement,access_ad_ext_implement,model_dtdream_ad_ext,group_ad_implement,1,1,1,1
+access_ad_it_implement,access_ad_it_implement,model_dtdream_ad_it_man,group_ad_implement,1,1,1,1
+access_ad_apply_implement,access_ad_apply_implement,model_dtdream_ad_apply_man,group_ad_implement,1,1,1,1
+access_res_group_implement,access_res_group_implement,base.model_res_groups,group_ad_implement,1,1,1,1

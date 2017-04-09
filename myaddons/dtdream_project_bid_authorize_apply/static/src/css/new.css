@@ -1,0 +1,67 @@
+.contract_attachment table td:nth-child(1){width:30%}
+.contract_attachment table td:nth-child(2){width:20%}
+.contract_attachment table td:nth-child(3){width:50%}
+.dtdream_shouhou_export{
+    position : relative;
+    left : 70px;
+    padding : 5px 10px;
+    font-size : 12px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : px;
+}
+.o_touch_device .dtdream_shouhou_export{
+    position : relative;
+    left : 78px;
+    padding : 7px 14px;
+    margin : -2px 3px 2px 0;
+    font-size : 13px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : 22px;
+
+}
+
+.dtdream_shouhou_export:hover{
+    color: #fff;
+    background-color: #5eb470;
+    border-color: #57b06a;
+}
+.dtdream_shouquan_export{
+    position : relative;
+    left : 360px;
+    padding : 5px 10px;
+    font-size : 12px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : px;
+}
+.o_touch_device .dtdream_shouquan_export{
+    position : relative;
+    left : 78px;
+    padding : 7px 14px;
+    margin : -2px 3px 2px 0;
+    font-size : 13px;
+    line-height : 1.5;
+    color : #fff;
+    background-color : #81c48f;
+    border-color: #81c48f;
+    cursor: pointer;
+    top : 22px;
+
+}
+
+.dtdream_shouquan_export:hover{
+    color: #fff;
+    background-color: #5eb470;
+    border-color: #57b06a;
+}

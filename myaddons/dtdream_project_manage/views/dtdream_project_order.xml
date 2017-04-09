@@ -26,5 +26,21 @@
         </field>
     </record>
 
+    <record id="view_dtdream_project_order_view_form" model="ir.ui.view">
+        <field name="name">view.dtdream.project.order.view.form</field>
+        <field name="model">dtdream.project.order.view</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
   </data>
 </openerp>

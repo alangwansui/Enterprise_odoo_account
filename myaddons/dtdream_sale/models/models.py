@@ -10,10 +10,36 @@ from openerp .exceptions import ValidationError
 class dtdream_product(models.Model):
     _inherit = ["product.template"]
 
+    @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        if not self.user_has_groups('dtdream_sale.group_product_cost_query') and str(fields).find('cost_price') > 0:
+            fields.remove('cost_price')
+        if not (self.user_has_groups('dtdream_sale.group_product_banshichu_query') or self.user_has_groups('dtdream_sale.group_product_system_query')
+                or self.user_has_groups('dtdream_sale.group_product_manage') or self.user_has_groups('dtdream_sale.group_product_market_query')
+                or self.user_has_groups('dtdream_sale.group_product_sale_manager')) and str(fields).find('office_manager_discount') > 0 :
+            fields.remove('office_manager_discount')
+        if not (self.user_has_groups('dtdream_sale.group_product_market_query') or self.user_has_groups('dtdream_sale.group_product_manage')
+                or self.user_has_groups('dtdream_sale.group_product_sale_manager')) and str(fields).find('sale_grant_discount') > 0 :
+            fields.remove('sale_grant_discount')
+        return super(dtdream_product, self).read(fields=fields, load=load)
+
+    def search_read(self, cr, uid, domain=None, fields=None, offset=0, limit=None, order=None, context=None):
+        if not self.user_has_groups(cr,uid,'dtdream_sale.group_product_cost_query') and str(fields).find('cost_price') > 0 :
+            fields.remove('cost_price')
+        if not (self.user_has_groups(cr,uid,'dtdream_sale.group_product_banshichu_query') or self.user_has_groups(cr,uid,'dtdream_sale.group_product_system_query')
+                or self.user_has_groups(cr,uid,'dtdream_sale.group_product_manage') or self.user_has_groups(cr,uid,'dtdream_sale.group_product_market_query')
+                or self.user_has_groups(cr,uid,'dtdream_sale.group_product_sale_manager')) and str(fields).find('office_manager_discount') > 0 :
+            fields.remove('office_manager_discount')
+        if not (self.user_has_groups(cr,uid,'dtdream_sale.group_product_market_query') or self.user_has_groups(cr,uid,'dtdream_sale.group_product_manage')
+                or self.user_has_groups(cr,uid,'dtdream_sale.group_product_sale_manager')) and str(fields).find('sale_grant_discount') > 0 :
+            fields.remove('sale_grant_discount')
+        return super(dtdream_product, self).search_read(cr, uid, domain=domain,fields=fields)
+
     bom = fields.Char(string="BOM编码",required=True)
     pro_status = fields.Selection([
         ('inPro', '生产'),
         ('outPro', '停产'),
+        ('controlled', '受控'),
     ],required=True)
     pro_type = fields.Many2one("product.pro.type", string="产品类别",required=True)
 
@@ -26,8 +52,6 @@ class dtdream_product(models.Model):
     pro_version = fields.Char(string="版本")
     remark = fields.Text(string="备注")
     office_manager_discount = fields.Float(string="办事处主任折扣(%)")
-    system_department_discount = fields.Float(string="系统部折扣(%)")
-    # market_president_discount = fields.Float(string="市场部总裁折扣(%)",required=True)
     sale_grant_discount = fields.Float(string="区域折扣(%)")
     is_temporary_bom = fields.Selection([
         ('1','是'),
@@ -40,7 +64,14 @@ class dtdream_product(models.Model):
         ('1','自研'),
         ('2','外购'),
     ],string="来源",required=True)
-
+    is_operations_software = fields.Selection([
+        ('1','是'),
+        ('2','否'),
+    ],string="是否计入运维的软件",required=True)
+    is_software = fields.Selection([
+        ('1','是'),
+        ('2','否'),
+    ],string="是否运维服务",required=True)
     @api.onchange("list_price")
     def _onchange_list_price(self):
         if self.list_price < 0:
@@ -212,10 +243,11 @@ class dtdream_office(models.Model):
 class dtdream_product_line(models.Model):
     _name = 'dtdream.product.line'
 
-    @api.depends('pro_num','apply_discount')
+    @api.depends('pro_num','apply_discount','list_price')
     def _compute_total_list_price(self):
         for rec in self:
             rec.pro_total_list_price = rec.list_price * rec.pro_num
+            rec.search([('id','=',158)])
             rec.pro_total_chuhuo_price = rec.pro_total_list_price * rec.apply_discount/100
 
 
@@ -233,15 +265,18 @@ class dtdream_product_line(models.Model):
     pro_uom_name = fields.Char('单位')
     pro_total_list_price = fields.Float('总目录价',compute=_compute_total_list_price,store=True)
     pro_total_chuhuo_price = fields.Float('总出货价',compute=_compute_total_list_price,store=True)
+    pro_status = fields.Selection([
+        ('inPro', '生产'),
+        ('outPro', '停产'),
+        ('controlled', '受控'),
+    ])
     pro_remark = fields.Char("备注")
-    # config_set = fields.Char('发货地')
+    controlled_pro_cost_price = fields.Integer(string="受控、停产产品成本价")
 
     @api.onchange("product_id")
     def _onchange_product_id(self):
         for rec in self:
             if rec.product_id.id:
-                if rec.product_id.pro_status == 'outPro' and not self.env.user.has_group('dtdream_sale.group_dtdream_sale_high_manager'):
-                    raise ValidationError("停产的项目仅营销管理组成员可录入")
                 rec.bom = rec.product_id.bom
                 rec.pro_type = rec.product_id.pro_type.name
                 rec.pro_description = rec.product_id.pro_description
@@ -249,7 +284,10 @@ class dtdream_product_line(models.Model):
                 rec.ref_discount = rec.product_id.ref_discount
                 rec.list_price = rec.product_id.list_price
                 rec.pro_uom_name = rec.product_id.uom_id.name
-
+                rec.pro_status = rec.product_id.pro_status
+                if rec.product_id.pro_status in ('outPro','controlled'):
+                    rec.list_price = 0
+                    rec.controlled_pro_cost_price = 0
 
     @api.model
     def create(self, vals):
@@ -263,7 +301,11 @@ class dtdream_product_line(models.Model):
                 vals['list_price'] = rec.list_price
                 vals['pro_uom_name'] = rec.uom_id.name
                 vals['ref_discount'] = rec.ref_discount
+                vals['pro_status'] = rec.pro_status
                 vals['product_id'] = None
+                if rec.pro_status in ('outPro','controlled'):
+                    vals['list_price'] = 0
+                    vals['controlled_pro_cost_price'] = 0
         result = super(dtdream_product_line, self).create(vals)
         return result
 
@@ -279,7 +321,11 @@ class dtdream_product_line(models.Model):
                 vals['list_price'] = rec.list_price
                 vals['pro_uom_name'] = rec.uom_id.name
                 vals['ref_discount'] = rec.ref_discount
+                vals['pro_status'] = rec.pro_status
                 vals['product_id'] = None
+                if rec.pro_status in ('outPro','controlled'):
+                    vals['list_price'] = 0
+                    vals['controlled_pro_cost_price'] = 0
         result = super(dtdream_product_line, self).write(vals)
         return result
 
@@ -631,7 +677,7 @@ class dtdream_sale(models.Model):
             if vals.get('project_leave') == "normal_leave":
                 vals['project_number'] = self.project_number[:-1]+"N"
                 self.project_number = self.project_number[:-1]+"N"
-        if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid and not self.user_has_groups('dtdream_sale.group_dtdream_sale_manager'):
+        if vals.has_key('stage_id') and self.sale_apply_id.user_id.id != self._uid and not self.user_has_groups('dtdream_sale.group_dtdream_sale_manager') and not self.user_has_groups('dtdream_sale.group_dtdream_marketing_department_project_interface_person'):
             raise ValidationError("只有项目的营销责任人可以拖动项目改变项目状态。")
         if vals.has_key('stage_id'):
             if self.stage_id.name == u"机会点" and self.is_project_budget == "0":

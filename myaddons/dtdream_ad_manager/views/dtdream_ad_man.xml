@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="act_dtdream_ad_it_man" model="ir.actions.act_window">
+            <field name="name">IT组配置</field>
+            <field name="res_model">dtdream.ad.it.man</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+
+        <record id="view_dtdream_ad_it_man_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.ad.it.man.tree</field>
+            <field name="model">dtdream.ad.it.man</field>
+            <field name="arch" type="xml">
+                <tree edit="false">
+                     <field name='user'/>
+                     <field name='work'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_dtdream_ad_it_man_kanban">
+            <field name="name">view.dtdream.ad.it.man.kanban</field>
+            <field name="model">dtdream.ad.it.man</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>IT组成员:</strong> <field name='user'/></li>
+                                        <li ><strong>是否是处理人:</strong> <field name="work" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_dtdream_ad_it_man_form" model="ir.ui.view">
+            <field name="name">view.dtdream.ad.it.man.form</field>
+            <field name="model">dtdream.ad.it.man</field>
+            <field name='type'>form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name='user' options="{'no_quick_create':True,'no_create_edit':True}" attrs="{'readonly': [('is_create', '=', True)]}"/>
+                            <field name='work'/>
+                            <field name='is_create' invisible="True"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_dtdream_ad_apply_man" model="ir.actions.act_window">
+            <field name="name">申请组配置</field>
+            <field name="res_model">dtdream.ad.apply.man</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+
+        <record id="view_dtdream_ad_apply_man_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.ad.apply.man.tree</field>
+            <field name="model">dtdream.ad.apply.man</field>
+            <field name="arch" type="xml">
+                <tree edit="false">
+                    <field name='user'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_dtdream_ad_apply_man_kanban">
+            <field name="name">view.dtdream.ad.apply.man.kanban</field>
+            <field name="model">dtdream.ad.apply.man</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请组成员:</strong> <field name='user'/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_dtdream_ad_apply_man_form" model="ir.ui.view">
+            <field name="name">view.dtdream.ad.apply.man.form</field>
+            <field name="model">dtdream.ad.apply.man</field>
+            <field name='type'>form</field>
+            <field name="arch" type="xml">
+                <form edit="false">
+                    <sheet>
+                        <group>
+                            <field name='user' options="{'no_quick_create':True,'no_create_edit':True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- 菜单 -->
+        <menuitem id='menu_dtdream_ad_it_man' name='IT组配置' parent="dtdream_ad_manager.menu_ad_peizhi" sequence="700" action="act_dtdream_ad_it_man"/>
+        <menuitem id='menu_dtdream_ad_apply_man' name='申请组配置' parent="dtdream_ad_manager.menu_ad_peizhi" sequence="800" action="act_dtdream_ad_apply_man"/>
+
+    </data>
+</openerp>

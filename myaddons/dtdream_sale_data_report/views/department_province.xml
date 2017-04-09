@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="dtdream_sale_department_form">
+            <field name="name">dtdream.sale.department.form</field>
+            <field name="model">sale.department</field>
+            <field name="arch" type="xml">
+                <form string="销售部门">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="dtdream_sale_department_tree" model="ir.ui.view">
+            <field name="name">dtdream.sale.department.tree</field>
+            <field name="model">sale.department</field>
+            <field name="arch" type="xml">
+                <tree string="销售部门">
+                    <field name="name"></field>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_sale_department">
+            <field name="name">销售部门定义</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_department_province_form">
+            <field name="name">dtdream.department.province.form</field>
+            <field name="model">department.province</field>
+            <field name="arch" type="xml">
+                <form string="销售部门省份配置">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="sale_department"/>
+                            </group>
+                            <group>
+                                <field name="sale_project_province" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="dtdream_department_province_tree" model="ir.ui.view">
+            <field name="name">dtdream.department.province.tree</field>
+            <field name="model">department.province</field>
+            <field name="arch" type="xml">
+                <tree string="销售部门省份配置">
+                    <field name="sale_department"/>
+                    <field name="sale_project_province"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_department_province">
+            <field name="name">销售部门省份配置</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">department.province</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name='销售部门定义' id='menu_sale_department' parent='base.menu_sale_config' sequence="75" action="act_sale_department"/>
+        <menuitem name='销售部门省份配置' id='menu_department_province' parent='base.menu_sale_config' sequence="80" action="act_department_province"/>
+
+    </data>
+</openerp>

@@ -119,7 +119,9 @@
                     <field name="department_2"/>
                     <field name="pro_PDT"/>
                     <field name="PDT"/>
+                    <field name="YF_manager"/>
                     <field name="name"/>
+                    <field name="Projectmagnitude"/>
                     <field name="state" />
                 </tree>
             </field>
@@ -211,13 +213,13 @@
                         </div>
                          <group>
                              <group>
-                                 <field name="department" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                 <field name="department" options="{'no_create':True}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                  <field name="is_create" invisible="1"/>
                                  <field name="is_appred" invisible="1"/>
                                  <field name="sameDept" invisible="1"/>
                              </group>
                              <group>
-                                 <field name="department_2" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
+                                 <field name="department_2" options="{'no_create':True}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
                                  <field name="is_Qa" invisible="1"/>
                                  <field name="is_shenpiren" invisible="1"/>
                              </group>
@@ -294,8 +296,8 @@
                             <page name="detail" string="角色信息">
                                 <field name="role_ids" mode="tree,kanban" string="角色" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}">
                                     <tree default_order="id" editable="bottom">
-                                        <field name="cof_id"/>
-                                        <field name="person"/>
+                                        <field name="cof_id" options="{'no_create':True}"/>
+                                        <field name="person" options="{'no_create':True}"/>
                                     </tree>
 
                                     <kanban class="o_res_partner_kanban" >

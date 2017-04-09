@@ -13,15 +13,11 @@ class dtdream_pmoo_wizard(models.TransientModel):
         project = self.env['dtdream.project.manage'].browse(self._context['active_id'])
         self.update_pmoo_value(project)
         project.signal_workflow('btn_submit')
-        self.update_role_record(project)
 
     def update_pmoo_value(self, project):
         for rec in project.role:
-                if rec.name == u'PMO主管':
+                if rec.name == self.env.ref('dtdream_project_manage.dtdream_project_role_PMOO').name:
                     rec.leader = self.pmo
-
-    def update_role_record(self, project):
-        if project.yunwei == '0':
-            self.env['dtdream.project.role'].search([('project_manage_id', '=', project.id),
-                                                     ('name', '=', u'运维服务经理')]).unlink()
+                if rec.name == self.env.ref('dtdream_project_manage.dtdream_project_role_PMO').name:
+                    rec.leader = project.create_uid.employee_ids
 

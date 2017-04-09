@@ -1,0 +1,64 @@
+<openerp>
+  <data>
+
+    <!--合同额FORM-->
+    <record model="ir.ui.view" id="dtdream_sale_contract_details_form">
+        <field name="name">dtdream.sale.contract.details.form</field>
+        <field name="model">dtdream.sale.contract.details</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="details_project_id"/>
+                            <field name="details_num"/>
+                            <field name="details_order_num"/>
+                            <field name="details_order_two_num"/>
+                            <field name="details_order_date"/>
+                            <field name="details_service_active_date"/>
+                            <field name="details_service_last_days"/>
+                            <field name="details_bom"/>
+                            <field name="details_pro_name"/>
+                            <field name="details_pro_type"/>
+                            <field name="details_remark"/>
+                        </group>
+                        <group>
+                            <field name="details_pro_description"/>
+                            <field name="details_pro_uom_name"/>
+                            <field name="details_pro_supply"/>
+                            <field name="details_pro_list_price"/>
+                            <field name="details_pro_num"/>
+                            <field name="details_pro_num_by_two"/>
+                            <field name="details_pro_discount"/>
+                            <field name="details_pro_apply_price"/>
+                            <field name="details_pro_sum"/>
+                            <field name="details_pro_sum_two"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--合同额TREE-->
+    <record model="ir.ui.view" id="dtdream_sale_contract_details_tree">
+        <field name="name">dtdream.sale.contract.details.tree</field>
+        <field name="model">dtdream.sale.contract.details</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="details_project_id"/>
+                <field name="details_num"/>
+                <field name="details_order_num"/>
+                <field name="details_order_two_num"/>
+                <field name="details_bom"/>
+                <field name="details_pro_sum"/>
+                <field name="details_pro_sum_two"/>
+                <field name="details_order_date"/>
+                <field name="details_service_last_days"/>
+                <field name="details_remark"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

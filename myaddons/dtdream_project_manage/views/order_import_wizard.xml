@@ -9,7 +9,7 @@
                 <field name="state" invisible="True"/>
                 <div>
                     <div states="1">
-                        <b>注意:</b><a href="/dtdream_project_manage/static/src/project_order_import.xlsx" style="margin-left: 20px;">导入模板下载</a>
+                        <b>注意:</b><a href="/dtdream_project_manage/static/src/project_order_import.xls" style="margin-left: 20px;">导入模板下载</a>
                         <p>请先上传需要导入的excel文件</p>
                     </div>
                     <field name="filename" invisible="1"/>

@@ -430,7 +430,7 @@ class dtdream_hr_performance(models.Model):
                     content = u'%s的绩效考核结果已导入,请查看。如有疑问,可咨询各部门HRBP。' % rec.quarter
                     rec.send_mail(rec.name, subject=subject, content=content)
                 time.sleep(1)
-            rec.write({'email_state': False})
+            rec.email_state = False
 
     name = fields.Many2one('hr.employee', string='花名', required=True)
     department = fields.Many2one('hr.department', string='部门', compute=_compute_employee_info, store=True)

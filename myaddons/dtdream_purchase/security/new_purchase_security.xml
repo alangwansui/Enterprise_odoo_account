@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="group_supplier_config" model="res.groups">
+            <field name="name">配置供应商</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"></field>
+            <field name="category_id" ref="base.module_category_purchase_management"/>
+        </record>
+    </data>
+</openerp>

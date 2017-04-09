@@ -47,8 +47,6 @@
             </field>
         </record>
 
-        <!--'domain': ['|','|','|',('shenpiren.user_id','=',uid),('approveds.user_id','=',uid),('create_uid','=',uid),('message_follower_ids.partner_id', '=', user.partner_id.id)],-->
-
         <record model="ir.actions.server" id="act_shenpi_config">
             <field name="name">商务报备/报单审批配置</field>
             <field name="model_id" ref="model_dtdream_shenpi_config"/>

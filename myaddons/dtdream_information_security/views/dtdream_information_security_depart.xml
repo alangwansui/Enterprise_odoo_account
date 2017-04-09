@@ -46,7 +46,8 @@
                             </group>
                         </group>
                         <group>
-                            <field name="xinxianquanyuan"/>
+                            <!--<field name="xinxianquanyuan"/>-->
+                            <field name="xinxianquanyuan_new" widget="many2many_tags" options="{'no_create': True}"/>
                         </group>
 
                     </sheet>
@@ -65,7 +66,8 @@
                     <field name="complete_name"/>
                     <field name="manager_id" string="主管"/>
                     <field name="assitant_id"/>
-                    <field name="xinxianquanyuan"/>
+                    <!--<field name="xinxianquanyuan"/>-->
+                    <field name="xinxianquanyuan_new"/>
                 </tree>
             </field>
         </record>

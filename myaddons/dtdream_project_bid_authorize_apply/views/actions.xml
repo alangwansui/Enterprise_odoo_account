@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="act_my_applys" model="ir.actions.act_window">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.project.bid.authorize.apply</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('create_uid','=',uid)]</field>
+            <field name="context">{'search_default_effect_record':'record_state'}</field>
+        </record>
+
+        <record id="act_my_approval" model="ir.actions.act_window">
+            <field name="name">待我审批的</field>
+            <field name="res_model">dtdream.project.bid.authorize.apply</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                [('shenpiren.user_id.id','=',uid),('state','not in',['0','done'])]
+            </field>
+            <field name="context">{'search_default_effect_record':'record_state'}</field>
+
+        </record>
+
+         <record id="act_my_already_approval" model="ir.actions.act_window">
+            <field name="name">我已审批</field>
+            <field name="res_model">dtdream.project.bid.authorize.apply</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','|','|',('shenpiren01.user_id.id','=',uid),('shenpiren02.user_id.id','=',uid),('shenpiren03.user_id.id','=',uid),('shenpiren03.user_id.id','=',uid),]</field>
+            <field name="context">{'search_default_effect_record':'record_state'}</field>
+        </record>
+
+        <record id="act_all_applys" model="ir.actions.act_window">
+            <field name="name">所有申请</field>
+            <field name="res_model">dtdream.project.bid.authorize.apply</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+        <record model="ir.actions.server" id="act_project_apply_authorize_config">
+            <field name="name">项目申请授权配置</field>
+            <field name="model_id" ref="model_dtdream_project_authorize_config"/>
+            <field name="code">
+                action = {
+                'name':'项目申请授权配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'dtdream.project.authorize.config',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else self.create(cr,uid,{},context=None),
+                'context':context
+                }
+            </field>
+        </record>
+        <!--<record model="ir.actions.server" id="act_shenpi_config">-->
+            <!--<field name="name">商务报备/报单审批配置</field>-->
+            <!--<field name="model_id" ref="model_dtdream_shenpi_config"/>-->
+            <!--<field name="code">-->
+                <!--action = {-->
+                <!--'name':'商务报备/报单审批配置',-->
+                <!--'type': 'ir.actions.act_window',-->
+                <!--'view_type': 'form',-->
+                <!--'view_mode': 'form',-->
+                <!--'res_model': 'dtdream.shenpi.config',-->
+                <!--'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else self.create(cr,uid,{},context=None),-->
+                <!--'context':context-->
+                <!--}-->
+            <!--</field>-->
+        <!--</record>-->
+    </data>
+</openerp>

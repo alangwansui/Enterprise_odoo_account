@@ -8,5 +8,5 @@ class chengben_detail_line(models.Model):
     pro_source = fields.Char("来源")
     pro_cost_price = fields.Char("成本(万元)")
     pro_apply_price = fields.Text("申请价(万元)")
-    pro_gross_profit = fields.Char("毛利(%)")
+    pro_gross_profit = fields.Char("利润率(%)")
     chengben_report_id = fields.Many2one("dtdream.sale.business.report",string="成本明细")

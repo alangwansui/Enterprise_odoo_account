@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'dtdream_hr'],
+    'depends': ['base', 'dtdream_hr', 'mail'],
 
     # always loaded
     'data': [
@@ -28,6 +28,9 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
+        'views/dtdream_ad_department.xml',
+        'views/dtdream_ad_ext.xml',
+        'views/dtdream_ad_man.xml',
     ],
      'qweb': [
 

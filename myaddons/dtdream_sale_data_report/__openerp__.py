@@ -3,13 +3,13 @@
     'name': "dtdream_sale_data_report",
 
     'summary': """
-        增加销售管理模块报表""",
+        增加销售报表模块""",
 
     'description': """
-        增加销售管理模块报表
+        增加销售报表模块
     """,
 
-    'author': "Dtdream",
+    'author': "泸江",
     'website': "http://www.dtdream.com",
 
     # Categories can be used to filter modules in modules listing
@@ -19,13 +19,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','web'],
+    'depends': ['base','web','dtdream_sale'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
-
+        'security/ir.model.access.csv',
         'views/views.xml',
+        'views/department_province.xml',
 
     ],
     'qweb': [

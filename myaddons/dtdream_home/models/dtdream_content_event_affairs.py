@@ -80,9 +80,9 @@ class dtdream_content_event_affairs(models.Model):
             if configs:
                 fields = configs['fields']
                 if self.env[list][fields['dangqianzerenren']]._name == 'hr.employee':
-                   results = self.env[list].sudo().search([(fields['dangqianzerenren'], '=', em.id)])
+                   results = self.env[list].sudo().search([(fields['dangqianzerenren'], '=', em.id),(fields['state_name'], '!=',fields['state'])])
                 else:
-                    results  = self.env[list].sudo().search([(fields['dangqianzerenren'],'=',self.env.user.id)])
+                    results  = self.env[list].sudo().search([(fields['dangqianzerenren'],'=',self.env.user.id),(fields['state_name'], '!=',fields['state'])])
                 resultList+=results
         for result in resultList:
             configs = config.get_fields_by_model(model_name=result._name)
@@ -139,10 +139,10 @@ class dtdream_content_event_affairs(models.Model):
                 fields = configs['fields']
                 if self.env[list][fields['shenqingren']]._name == 'hr.employee':
                     resultsb = self.env[list].sudo().search(
-                        ['&', (fields['state_name'], 'not in', fields['stateList']), (fields['shenqingren'], '=', em.id)])
+                        ['&', (fields['state_name'], 'not in', fields['stateList']), '&', (fields['shenqingren'], '=', em.id),(fields['state_name'], '!=',fields['state'])])
                 else:
                     resultsb = self.env[list].sudo().search(
-                        ['&', (fields['state_name'], 'not in', fields['stateList']), (fields['shenqingren'], '=', self.env.user.id)])
+                        ['&', (fields['state_name'], 'not in', fields['stateList']), '&', (fields['shenqingren'], '=', self.env.user.id),(fields['state_name'], '!=',fields['state'])])
                 if fields['shenqingren']=="PDT":
                     resultsb=[x for x in resultsb if x[fields['shenqingren']]==em]
                 resultList+=resultsb

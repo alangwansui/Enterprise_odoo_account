@@ -8,7 +8,7 @@ class dtdream_ad_group(models.Model):
     _inherit = ['mail.thread']
 
     name = fields.Char(string=u'域群组名称', required=True)
-    active = fields.Boolean(string=u'是否有效', default=True)
+    work = fields.Boolean(string=u'是否有效', default=True)
     department = fields.Many2one('hr.department', string=u'域群组所属部门', required=True)
     time = fields.Datetime(string=u'创建时间', required=True)
     description = fields.Char(string=u'描述')

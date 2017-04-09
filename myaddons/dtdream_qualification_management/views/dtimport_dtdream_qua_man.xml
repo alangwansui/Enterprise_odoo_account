@@ -1,0 +1,28 @@
+<openerp>
+    <data>
+        <record id="view_dtimport_dtdream_qua_man_from" model="ir.ui.view">
+            <field name="name">view.dtimport.dtdream.qua.man.from</field>
+            <field name="model">dtimport.dtdream.qua.man</field>
+            <field name="arch" type="xml">
+                <form string="导入">
+                    <field name="state" invisible="True"/>
+                    <div>
+                        <div states="1">
+                            <b>注意:</b><a href="/dtdream_qualification_management/static/RZimport_temp.xlsx" style="margin-left: 20px;">导入模板下载</a>
+                            <p>请先上传需要导入的excel文件</p>
+                        </div>
+                        <field name="filename" invisible="1"/>
+                        <field name="data" filename="filename" attrs="{'readonly':[('state', '!=','1')]}"/>
+                        <group states="1">
+                            <button name="button_next" type="object" string="验证" class="oe_highlight"/>
+                        </group>
+                        <group states="2">
+                            <field name="imported"/>
+                            <button name="button_ok" type="object" string="导入" class="oe_highlight"/>
+                        </group>
+                    </div>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

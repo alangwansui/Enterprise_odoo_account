@@ -86,6 +86,11 @@ class dtdream_rd_version(models.Model):
             rec.PDT = rec.proName.PDT.id
             rec.PL_CCB = rec.proName.PL_CCB.id
             rec.QA = rec.proName.QA.id
+            rec.YF_manager = rec.proName.YF_manager.id
+            rec.pro_PDT = rec.proName.pro_PDT.id
+
+    pro_PDT = fields.Many2one('dtdream.rd.pdtconfig','PDT',compute=_compute_proName)
+    YF_manager = fields.Many2one("hr.employee", string="研发经理", compute=_compute_proName)
     PDT = fields.Many2one("hr.employee",string="PDT经理",compute=_compute_proName)
     PL_CCB = fields.Many2one("hr.employee", string="PL-CCB", compute=_compute_proName)
     QA = fields.Many2one("hr.employee", string="质量代表", compute=_compute_proName)
@@ -164,7 +169,7 @@ class dtdream_rd_version(models.Model):
                     if rec.person.user_id == self.env.user:
                         pdt =True
                         break
-        if self.create_uid==self.env.user or pdt:
+        if self.create_uid==self.env.user or pdt or self.YF_manager.user_id==self.env.user:
             self.is_create=True
         else:
             self.is_create=False
@@ -767,34 +772,37 @@ class dtdream_rd_version(models.Model):
                         ('pause','暂停'),('stop','中止'),('released','已发布')]
         state_dict = dict(state_list)
         em = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
-        appr = self.env['dtdream_rd_version'].search([('PDT', '=', em.id),('version_state','not in',('pause','stop','released'))])
-        appr = [x for x in appr if len(x.current_approver_user)>0 and x.PDT.id ==em.id]
+        appr = self.env['dtdream_rd_version'].search([('version_state','not in',('pause','stop','released'))])
+        # appr = [x for x in appr if len(x.current_approver_user) > 0 and x.YF_manager.id == em.id]
         menu_id = self._get_menu_id()
         for app in appr:
-            department = ''
-            if app.department_2:
-                department = app.department.name + '/' + app.department_2.name
-            else:
-                department = app.department.name
-            deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
-            if deferdays == 0:
-                defer = False
-            else:
-                defer = True
-            apply={
-                'department': department,
-                'appr': app.proName.name,
-                'version':app.version_numb,
-                'PDT': app.PDT.name or '',
-                'style':u'版本',
-                'state': state_dict[app.version_state],
-                'defer':defer,
-                'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
-                'deferdays': deferdays
-            }
-            applies.append(apply)
+            if len(app.current_approver_user) > 0 and app.YF_manager.id == em.id:
+                department = ''
+                if app.department_2:
+                    department = app.department.name + '/' + app.department_2.name
+                else:
+                    department = app.department.name
+                deferdays = (datetime.now() - datetime.strptime(app.write_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)).days
+                if deferdays == 0:
+                    defer = False
+                else:
+                    defer = True
+                apply={
+                    'department': department,
+                    'appr': app.proName.name,
+                    'version':app.version_numb,
+                    'PDT': app.PDT.name or '',
+                    'YF_manager': app.YF_manager.name or '',
+                    'style':u'版本',
+                    'state': state_dict[app.version_state],
+                    'defer':defer,
+                    'url': '/web#id=' + str(app.id) + '&view_type=form&model=' + app._name + '&menu_id=' + str(menu_id),
+                    'deferdays': deferdays
+                }
+                applies.append(apply)
         return applies
 
+    # 待我审批流程
     @api.model
     def get_affair(self):
         affairs = []
@@ -819,6 +827,7 @@ class dtdream_rd_version(models.Model):
                 'appr': app.proName.name,
                 'version': app.version_numb,
                 'PDT': app.PDT.name or '',
+                'YF_manager': app.YF_manager.name or '',
                 'style':u'版本',
                 'state': state_dict[app.version_state],
                 'defer': defer,
@@ -863,6 +872,7 @@ class dtdream_rd_version(models.Model):
                 'appr': app.proName.name,
                 'version': app.version_numb,
                 'PDT': app.PDT.name or '',
+                'YF_manager': app.YF_manager.name or '',
                 'style':u'版本',
                 'state': state_dict[app.version_state],
                 'defer': defer,

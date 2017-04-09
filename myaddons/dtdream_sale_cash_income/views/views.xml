@@ -1,0 +1,64 @@
+<openerp>
+  <data>
+
+    <!--现金收入豆腐块-->
+    <record id="view_res_cash_income_form" model="ir.ui.view">
+            <field name="name">view.res.cash.income</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <button name="toggle_active" position="before">
+                    <button name="%(action_cash_income)d" type="action" class="oe_stat_button dtdream_info_btn" icon="fa-pencil-square-o">
+                          <div class="o_stat_info">
+                              <field name="sum_of_cash_income" class="o_stat_value"/>
+                              <span class="o_stat_text">回款金额(万元)</span>
+                          </div>
+                    </button>
+                </button>
+            </field>
+    </record>
+
+    <!--现金收入FORM-->
+    <record model="ir.ui.view" id="dtdream_sale_cash_income_form">
+        <field name="name">dtdream.sale.cash.income.form</field>
+        <field name="model">dtdream.sale.cash.income</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="cash_income"/>
+                            <field name="cash_date"/>
+                            <field name="cash_contract_num"/>
+                            <field name="cash_order_num"/>
+                            <field name="cash_remark"/>
+                        </group>
+                        <group>
+                            <field name="cash_partner"/>
+                            <field name="cash_partner_num"/>
+                            <field name="cash_project_id"/>
+                            <field name="cash_type"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--现金收入TREE-->
+    <record model="ir.ui.view" id="dtdream_sale_cash_income_tree">
+        <field name="name">dtdream.sale.cash.income.tree</field>
+        <field name="model">dtdream.sale.cash.income</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="cash_project_id"/>
+                <field name="cash_contract_num"/>
+                <field name="cash_order_num"/>
+                <field name="cash_income"/>
+                <field name="cash_date"/>
+            </tree>
+        </field>
+    </record>
+
+  </data>
+</openerp>

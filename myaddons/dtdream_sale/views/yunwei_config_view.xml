@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="dtdream_yunwei_config_form">
+            <field name="name">dtdream.yunwei.config.form</field>
+            <field name="model">yunwei.config</field>
+            <field name="arch" type="xml">
+                <form string="运维系数配置" create='0'>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="list_price_coefficient"/>
+                            </group>
+                            <group>
+                                <field name="cost_price_coefficient"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

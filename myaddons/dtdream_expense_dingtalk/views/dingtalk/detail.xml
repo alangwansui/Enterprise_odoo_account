@@ -92,7 +92,7 @@
                     <script src="https://g.alicdn.com/ilw/ding/0.9.2/scripts/dingtalk.js"></script>
                     <script type="text/javascript" src="/dtdream_expense_dingtalk/static/lib/logger.js"></script>
                     <script src="/dtdream_expense_dingtalk/static/src/js/log.js?version=88"></script>
-                    <script src="/dtdream_expense_dingtalk/static/src/js/dingtalk/detail.js?version=91"></script>
+                    <script src="/dtdream_expense_dingtalk/static/src/js/dingtalk/detail.js?version=92"></script>
                     <script src="/dtdream_expense_dingtalk/static/src/js/app.js?version=88"></script>
 
                     <main>
