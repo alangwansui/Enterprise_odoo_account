@@ -1,4 +1,4 @@
-odoo.define('hr_attendance.hr_attendance', function(require) {
+/*odoo.define('hr_attendance.hr_attendance', function(require) {
 "use strict";
 
 var core = require('web.core');
@@ -83,4 +83,4 @@ Users.call('has_group', ['base.group_user']).done(function(is_employee) {
     }
 });
 
-});
+});*/

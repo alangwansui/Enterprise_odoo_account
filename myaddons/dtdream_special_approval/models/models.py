@@ -220,7 +220,8 @@ class dtdream_special_approval(models.Model):
 
     @api.multi
     def do_cgtj(self):
-        self._check_department()
+        if self.business_type!="type4":
+            self._check_department()
         list=['type1']
         if self.business_type in list and not self.product:
             raise ValidationError(u'当业务类型为"公司/样板点考察类",项目必填')

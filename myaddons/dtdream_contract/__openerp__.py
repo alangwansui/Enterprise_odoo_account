@@ -31,6 +31,7 @@
         'views/templates.xml',
         'dtdream_contract_workflow.xml',
         'importjs.xml',
+        'print/dtdream_contract_report.xml',
 
     ],
     # only loaded in demonstration mode

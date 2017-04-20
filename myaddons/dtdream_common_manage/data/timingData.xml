@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.cron" id="cron_dtdream_common_manage_expire_time">
+            <field name='name'>定时检测有效期</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">dtdream.common.expire.time</field>
+            <field name="function">timing_check</field>
+            <field name="args">()</field>
+        </record>
+
+    </data>
+</openerp>

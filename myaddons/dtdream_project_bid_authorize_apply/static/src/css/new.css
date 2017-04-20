@@ -1,9 +1,15 @@
+/*
 .contract_attachment table td:nth-child(1){width:30%}
 .contract_attachment table td:nth-child(2){width:20%}
 .contract_attachment table td:nth-child(3){width:50%}
+
+.openerp .oe_form_editable .qq
+q, .openerp .oe_form_editable .oe_form_field:empty {
+  display: none !important;
+
 .dtdream_shouhou_export{
     position : relative;
-    left : 70px;
+    left : -450px;
     padding : 5px 10px;
     font-size : 12px;
     line-height : 1.5;
@@ -35,10 +41,12 @@
 }
 .dtdream_shouquan_export{
     position : relative;
-    left : 360px;
+    width:152px;
+    left : -12%;
     padding : 5px 10px;
     font-size : 12px;
     line-height : 1.5;
+    text-align:center;
     color : #fff;
     background-color : #81c48f;
     border-color: #81c48f;
@@ -64,4 +72,4 @@
     color: #fff;
     background-color: #5eb470;
     border-color: #57b06a;
-}
+}*/

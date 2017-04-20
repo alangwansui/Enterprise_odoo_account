@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report
+                id="root_dtdream_contract_report_print"
+                string="打印审批单"
+                model="dtdream.contract"
+                report_type="qweb-pdf"
+                name="dtdream_contract.con_dtdream_contract_report_print"
+                file="dtdream_contract.con_dtdream_contract_report_print"/>
+
+        <template id="con_dtdream_contract_report_print">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="dtdream_contract.print_dtdream_contract_report"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="print_dtdream_contract_report">
+            <t t-call="report.external_layout">
+                <div class="page info">
+                    <div class="oe_structure"/>
+                    <style>
+                        .table { margin-bottom: 0px; }
+                        td { border: 1px solid #0F0F0F;}
+                        .info tbody tr .o_td_label{ min-width:150px;
+                        padding:0 15px 5px 0;
+                        }
+                        .info h4{margin-bottom:5px;font-weight:bold;}
+                        .info h2{margin-bottom:10px;font-weight:bold;}
+                        .info .billcode{text-align:right;}
+                        .info .billcode1{text-align:right;margin-bottom:30px; }
+                    </style>
+
+                    <div class="row ">
+                        <div class="col-xs-12">
+                            <h2 align="center"><span t-field="doc.name"/>审批单
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="row" name="total">
+                        <div class="col-xs-11 ">
+                            <div class="billcode" size="7">NO:
+                                <span t-field="doc.contract_id"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td width="25%" style="border-top: 1px solid #0F0F0F;">用印申请部门</td>
+                                    <td style="border-top: 1px solid #0F0F0F;">
+                                        <span t-field="doc.deparment"/>
+                                    </td>
+                                    <td style="border-top: 1px solid #0F0F0F;">合同份数</td>
+                                    <td style="border-top: 1px solid #0F0F0F;">
+                                        <span t-field="doc.amounts"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>用印申请人</td>
+                                    <td>
+                                        <span t-field="doc.applicant.name"/>
+                                    </td>
+                                    <td>项目负责人</td>
+                                    <td>
+                                        <t t-foreach="doc.pro_responsible_person" t-as="d">
+                                            <span t-field="d.name"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td width="25%" rowspan="3">签约方</td>
+                                    <td>甲方：
+                                        <span t-field="doc.partner_jia.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        乙方：
+                                        <span t-field="doc.partner_yi.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        其他方（包括担保方或丙方）：
+                                        <span t-field="doc.partner_bing.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>合同金额</td>
+                                    <td>
+                                        <span t-field="doc.money"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>付款条款</td>
+                                    <td>
+                                        <span t-field="doc.items"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>合同期限</td>
+                                    <td>
+                                        <span t-field="doc.deadline"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>风险提示</td>
+                                    <td>
+                                        <span t-field="doc.risk_warning"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>项目名称及背景介绍</td>
+                                    <td>
+                                        <span t-field="doc.background"/>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>部门负责人审核：
+                                        <br/>
+                                        <div class="text-right">年&amp;nbsp; &amp;nbsp; &amp;nbsp;月 &amp;nbsp; &amp;nbsp;
+                                            &amp;nbsp;日
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <div id="content" t-field="doc.approver_comments_print" style="display:none;"/>
+                        <table class="table">
+                            <tbody id="testdiv">
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <script type="text/javascript">
+                        window.onload = myFunction;
+                        function myFunction()
+                        {
+                        var testdiv = document.getElementById("testdiv");
+                        testdiv.innerHTML= document.getElementById("content").innerText;
+                        }
+
+                    </script>
+                </div>
+            </t>
+        </template>
+    </data>
+</openerp>

@@ -57,7 +57,7 @@
     </div>
 </form>
 
-<div t-name="AppSwitcher" class="o_application_switcher">
+<!--<div t-name="AppSwitcher" class="o_application_switcher">
     <div class="o_apps">
         <t t-foreach="widget.menu_data" t-as="primary_menu">
           <t t-set="action_id" t-value="primary_menu.action ? primary_menu.action.split(',')[1] : ''"/>
@@ -78,8 +78,636 @@
         <img src="/web/static/src/img/dodo.png" alt="dodo"/>
     </div>
 
+</div>-->
+<div t-name="AppSwitcher" class="o_application_switcher dodo-container clearfix">
+    <!--<div class="dodo-container clearfix">
+        <div class="o_main_sidebar"/>
+        <div class="o_main_content"/>
+    </div>-->
+    <div class="o_main_sidebar"/>
+    <div class="o_main_content"/>
 </div>
+<t t-name="LeftSiderbar">
+    <div class="o_sidebar"/>
+</t>
+<t t-name="LeftSiderbar_info">
+    <div class="sidebar hidden-xs">
+        <!--<ul>
+            <li class="selected_dashboard"><i class="dodo doicon-dashboard"/>Dashboard</li>
+        </ul>-->
+        <!---->
+        <div class="panel-group left-nav" id="leftNav" role="tablist" aria-multiselectable="true">
+            <div class="app_search">
+                <input type="text" class="app_search_info on_app_search" placeholder="查找应用"/>
+                <i class="fa fa-search"></i>
+            </div>
+            <!--销售-->
+            <div class="panel ">
+                <div class="panel-heading" role="tab" id="left-title-sell">
+                    <h6 class="panel-title">
+                        <ul class="fix_item">
+                            <t t-foreach="sell_sets" t-as="sell">
+                                <a t-att-href="sell.url">
+                                    <li class="collapsed">
+                                        <i class="dodo doicon-sell"/>
+                                        <t t-esc="sell.name"/>
+                                    </li>
+                                </a>
+                            </t>
+                        </ul>
+                    </h6>
+                </div>
+            </div>
+            <!--产品-->
+           <!-- <div class="panel">
+                <div class="panel-heading" role="tab" id="left-title-item">
+                    <h6 class="panel-title">
+                        <ul class="fix_item">
+                            <t t-foreach="item_sets" t-as="item">
+                                <a t-att-href="item.url">
+                                    <li class="collapsed">
+                                        <i class="dodo doicon-product"/>
+                                        <t t-esc="item.name"/>
+                                    </li>
+                                </a>
+                            </t>
+                        </ul>
+                    </h6>
+                </div>
+            </div>-->
+            <!--研发-->
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="left-title-rd">
+                    <h6 class="panel-title">
+                        <ul class="fix_item">
+                            <t t-foreach="RD_sets" t-as="RD">
+                                <a t-att-href="RD.url">
+                                    <li class="collapsed">
+                                        <i class="dodo doicon-rd"/>
+                                        <t t-esc="RD.name"/>
+                                    </li>
+                                </a>
+                            </t>
+                        </ul>
+                    </h6>
+                </div>
+            </div>
+            <!--服务-->
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="left-title-serve">
+                    <h6 class="panel-title">
+                        <ul class="fix_item">
+                            <t t-foreach="serve_sets" t-as="serve">
+                                <a t-att-href="serve.url">
+                                    <li class="collapsed">
+                                        <i class="dodo doicon-reception"/>
+                                        <t t-esc="serve.name"/>
+                                    </li>
+                                </a>
+                            </t>
+                        </ul>
+                    </h6>
+                </div>
+            </div>
+            <!--采购-->
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="left-title-chain">
+                    <h6 class="panel-title">
+                        <ul class="fix_item">
+                            <t t-foreach="chain_sets" t-as="chain">
+                                <a t-att-href="chain.url">
+                                    <li class="collapsed">
+                                        <i class="dodo doicon-out"/>
+                                        <t t-esc="chain.name"/>
+                                    </li>
+                                </a>
+                            </t>
+                        </ul>
+                    </h6>
+                </div>
+            </div>
+            <!--公共应用-->
+            <div class="panel">
+                <div class="panel-heading" role="tab" id="left-title-general">
+                    <h6 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-general" aria-expanded="false" aria-controls="left-general">
+                            <i class="dodo doicon-holiday"/>
+                            公共应用
+                            <span class="dodo doicon-jiantouyou"></span>
+                        </a>
+                    </h6>
+                </div>
+                <div id="left-general" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-general">
+                    <div class="panel-body list-group">
+                        <ul>
+                            <t t-foreach="general_sets" t-as="general">
+                                <a t-att-href="general.url">
+                                    <li class="list-group-item">
+                                        <t t-esc="general.name"/>
+                                    </li>
+                                </a>
+                            </t>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
+        </div>
+        <!---->
+        <!--<ul>
+            <li class="active"><i class="dodo doicon-dashboard"/>Dashboard</li>
+            <t t-foreach="model_sets" t-as="model">
+                &lt;!&ndash;<a t-att-href="model.url"  t-att-model="model.model" t-att-type="model.view_type" t-att-action-id="model.action" t-att-menu-id="model.menu">&ndash;&gt;
+                <a t-att-href="model.url">
+                    <li>
+                        <i t-att-class="model.class"/>
+                        <t t-esc="model.name"/>
+                    </li>
+                </a>
+            </t>
+        </ul>-->
+    </div>
+    <!--<div class="nav-bar">
+    &lt;!&ndash;<span class="dodo-logo"><img src="/dtdream_home/static/img/dodo-logo.png" /> </span>&ndash;&gt;
+        <div id="nav" class="navbar-collapse collapse in" role="navigation" aria-expanded="true">
+            <ul class="nav navbar-nav clearfix">
+                <t t-foreach="model_sets" t-as="model">
+                    &lt;!&ndash;<a t-att-href="model.url"  t-att-model="model.model" t-att-type="model.view_type" t-att-action-id="model.action" t-att-menu-id="model.menu">&ndash;&gt;
+                    <a t-att-href="model.url">
+                        <li>
+                            <i t-att-class="model.class"/>
+                            <t t-esc="model.name"/>
+                        </li>
+                    </a>
+                </t>
+            </ul>
+        </div>
+    </div>-->
+    <!--<script>
+            var navigation = responsiveNav("#nav", {
+              animate: true,
+              transition: 400
+
+            });
+        </script>-->
+</t>
+
+<t t-name="IndexContent">
+    <div class="content clearfix">
+        <div class="o_related"/>
+        <div class="o_IndexContent"/>
+    </div>
+</t>
+<t t-name="index_content_info">
+    <div class="main">
+        <div class="p30">
+            <div class="o_content_title"/>
+            <div class="o_content_dashboard hidden-xs"/>
+            <!--<div class="o_content_notice"/>-->
+            <div class="o_content_event"/>
+            <!--<div class="o_content_relatelinks hidden-xs">-->
+                <!--<div class="relatelinks clearfix line">-->
+                   <!--<div class="container-fluid ">-->
+                       <!--<div class="row">-->
+
+                           <!--<div class="col-md-12">-->
+                               <!--<h4>相关链接</h4>-->
+
+                               <!--<ul>-->
+                                   <!--&lt;!&ndash;1&ndash;&gt;-->
+                                   <!--<li><a target="_blank" href="http://www.dtdream.com/">公司官网</a></li>-->
+                                   <!--<li><a target="_blank" href="http://jira.dtdream.com">JIRA</a></li>-->
+                                   <!--<li><a target="_blank" href="http://dashboard-rd.dtdream.com"> 研发质量看板</a></li>-->
+                                   <!--<li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=361134">帮助中心</a></li>-->
+                                   <!--<li><a target="_blank" href="http://bbs.dtdream.com/">BBS</a></li>-->
+
+                                   <!--&lt;!&ndash;2&ndash;&gt;-->
+                                   <!--<li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29204953">公司发文</a></li>-->
+                                   <!--<li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?projectKey=DTEST&amp;rapidView=185">验收电子流</a></li>-->
+                                   <!--<li><a target="_blank" href="http://dtp.dtdream.com/">DTP测试平台</a></li>-->
+                                   <!--<li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=246&amp;view=null">网上问题</a></li>-->
+                                   <!--<li><a target="_blank" href="http://mail.dtdream.com/">邮箱</a></li>-->
+
+                                   <!--&lt;!&ndash;3&ndash;&gt;-->
+                                   <!--<li><a target="_blank" href="http://doc.dtdream.com/pages/viewpage.action?pageId=3670198">外部文档中心</a></li>-->
+
+                                   <!--<li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=163&amp;projectKey=REQ">需求接纳电子流</a></li>-->
+                                   <!--&lt;!&ndash;<li><a href="javascript:void(0)" class="ft-tip"> 文件服务器<span class="title">请通过“远程桌面”的方式访问文件服务器，服务器IP：10.130.5.5</span></a></li>&ndash;&gt;-->
+                                   <!--<li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904559">版本服务器</a></li>-->
+                                   <!--<li><a target="_blank" href="http://all.dtdream.com/letter.html"> 给新员工的一封信</a></li>-->
+                                   <!--<li><a target="_blank" href="http://shumeng.yunxuetang.cn/">云学堂</a></li>-->
+
+                                   <!--&lt;!&ndash;4&ndash;&gt;-->
+                                   <!--<li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=25788516">内部文档中心</a></li>-->
+                                   <!--<li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=135&amp;projectKey=MRKT">对外测试电子流</a> </li>-->
+                                   <!--<li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904616">文件服务器</a></li>-->
+                                   <!--<li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45748653"> dodo手机客户端</a></li>-->
+
+
+                               <!--</ul>-->
+                           <!--</div>-->
+
+                       <!--</div>-->
+                    <!--</div>-->
+
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+    </div>
+</t>
+
+<t t-name="index_content_title">
+    <div class="title hidden-xs">
+        <h2>常用应用入口</h2>
+        <p>
+            <!--<span>
+                <t t-esc="username"/>
+            </span>-->
+            下面列出的是dodo部分常用功能的链接，如需要查看全部链接，请使用页面左侧菜单。
+        </p>
+    </div>
+</t>
+
+<t t-name="index_content_dashboard">
+    <div class="o_web_dashboard">
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <div class="panel">
+                    <div class="panel-heading o_web_blue">
+                        <h3 class="panel-title">
+                            <i></i>
+                            我的考勤
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="item_list">
+                            <t t-foreach="check_sets" t-as="check">
+                                <li>
+                                    <a t-att-href="check.url">
+                                        <t t-esc="check.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                            <!--<li><a href="#menu_id=358&amp;action_id=515">外出公干</a></li>
+                            <li><a href="#menu_id=333&amp;action_id=483">出差</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="panel">
+                    <div class="panel-heading o_web_light_green">
+                        <h3 class="panel-title">
+                            <i></i>
+                            我的财务
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="item_list">
+                            <t t-foreach="finacial_sets" t-as="finacial">
+                                <li>
+                                    <a t-att-href="finacial.url">
+                                        <t t-esc="finacial.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                           <!-- <li><a href="#menu_id=417&amp;action_id=592">费用报销</a></li>
+                            <li><a href="#menu_id=704&amp;action_id=865">工资</a></li>
+                            <li><a href="#menu_id=588&amp;action_id=782">资产管理</a></li>
+                            <li><a href="#menu_id=383&amp;action_id=533">预算管理</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="panel">
+                    <div class="panel-heading o_web_yellow">
+                        <h3 class="panel-title">
+                            <i></i>
+                            我的绩效
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="item_list">
+                            <t t-foreach="performance_sets" t-as="performance">
+                                <li>
+                                    <a t-att-href="performance.url">
+                                        <t t-esc="performance.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                            <!--<li><a href="#menu_id=356&amp;action_id=493">绩效</a></li>
+                            <li><a href="#menu_id=676&amp;action_id=840">任职资格认证</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="panel">
+                    <div class="panel-heading o_web_dark_green">
+                        <h3 class="panel-title">
+                            <i></i>
+                            通用应用
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="item_list">
+                            <t t-foreach="general_sets" t-as="general">
+                                <li>
+                                    <a t-att-href="general.url">
+                                        <t t-esc="general.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                            <!--<li><a href="#menu_id=518&amp;action_id=671">信息安全</a></li>
+                            <li><a href="#menu_id=417&amp;action_id=772">IT需求管理</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</t>
+
+<!--<t t-name="index_content_notice">
+    <div class="notice line hidden-xs">
+        <div class="title">
+            公告
+        </div>
+        &lt;!&ndash;新闻列表 &ndash;&gt;
+        <div class="newsticker">
+            <ul class="newsticker-list" >
+                <t t-foreach="notices" t-as="notice">
+                    <li class="newsticker-item">
+                        <a  t-att-href="notice.url" target="_blank"><t t-esc="notice.content"/> </a>
+                    </li>
+                </t>
+            </ul>
+        </div>
+        &lt;!&ndash;新闻列表 &ndash;&gt;
+    </div>
+</t>-->
+
+<t t-name="index_content_event">
+    <h3 class="about_self_events">与我相关的事项</h3>
+    <div class="event-table container-fluid">
+        <div class="tb-row clearfix  row">
+            <div class="col-xs-12 title_affairs">
+                <ul class="nav nav-tabs" role="tablist" id="sliderSelectOptions">
+                    <li role="presentation" data-index="slider_affairs" class="slider_li active">
+                        <a href="#slider_affairs_events" aria-controls="slider_affairs_events" role="tab" data-toggle="tab">
+                            待我处理事项
+                            <span class="badge o_affairs_badge"></span>
+                        </a>
+                    </li>
+                    <li role="presentation" data-index="slider_applies" class="slider_li">
+                        <a href="#slider_applies_events" aria-controls="slider_applies_events" role="tab" data-toggle="tab">
+                            我申请的事项
+                        </a>
+                    </li>
+                    <li class="inline"></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active fade in" role="tabpanel" id="slider_affairs_events">
+                        <div class=" tb-box-l  col-xs-12">
+                            <div class="o_content_event_affairs"/>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" role="tabpanel" id="slider_applies_events">
+                        <div class=" tb-box-r col-xs-12">
+                            <div class="o_content_event_applies"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class=" line tb-box-l  col-xs-12">
+                <div class="o_content_event_affairs"/>
+            </div>
+            <div class=" line tb-box-r col-xs-12">
+                <div class="o_content_event_applies"/>
+            </div>-->
+        </div>
+    </div>
+</t>
+
+<t t-name="index_content_event_affairs">
+    <!--<h4>待我处理事项</h4>-->
+    <div class="tb-p-10">
+        <div class="tb-h">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>申请事项</th>
+                        <th>状态</th>
+                        <th>申请人</th>
+                        <th>申请时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="affairs" t-as="affair">
+                        <tr t-att-class="affair.affair_id">
+                            <td><t t-esc="affair.name"/> </td>
+                            <td>
+                                <t t-if="affair.defer">
+                                    <span class="defer">停留<t t-esc="affair.deferdays"/>天 </span>
+                                </t>
+                                <t t-if="!affair.defer">
+                                    <span class="normal">正常</span>
+                                </t>
+                            </td>
+                            <td><t t-esc="affair.user"/></td>
+                            <td><t t-esc="affair.date"/></td>
+                            <td><a t-att-href="affair.url">审批</a></td>
+
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+        <!--<nav>
+            <ul class="pager">
+                <li class="previous disabled" type="affairs" t-att-value="affpreviousPage"><a href="javascript:void(0);">上一页</a></li>
+                <span class="pagination-info">共<t t-esc="afftotalPage"/>页/第<t t-esc="affcurrentPage"/>页</span>
+                <li class="next" type="affairs" t-att-value="affnextPage" ><a href="javascript:void(0);">下一页</a></li>
+            </ul>
+        </nav>-->
+    </div>
+</t>
+
+<t t-name="index_content_event_applies">
+    <!--<h4>我申请的事项</h4>-->
+    <div class="tb-p-10">
+        <div class="tb-h">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>申请事项</th>
+                    <th>状态</th>
+                    <th>当前责任人</th>
+                    <th>申请时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="applies" t-as="apply">
+                        <tr t-att-class="apply.apply_id">
+                            <td><t t-esc="apply.name"/> </td>
+                            <td>
+                                <t t-if="apply.defer">
+                                    <span class="defer">停留<t t-esc="apply.deferdays"/>天</span>
+                                </t>
+                                <t t-if="!apply.defer">
+                                    <span class="normal">正常</span>
+                                </t>
+                            </td>
+                            <td><t t-esc="apply.user"/></td>
+                            <td><t t-esc="apply.date"/></td>
+                            <td><a t-att-href="apply.url">查看</a></td>
+                            <!--<td><a t-att-data-id="apply.id" href="#">查看</a></td>-->
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+        <!--<nav>
+            <ul class="pager">
+                <li class="previous" type="applies" t-att-value="previousPage"><a href="javascript:void(0);">上一页</a></li>
+                <span class="pagination-info">共<t t-esc="totalPage"/>页/第<t t-esc="currentPage"/>页</span>
+                <li class="next" type="applies" t-att-value="nextPage" ><a href="javascript:void(0);">下一页</a></li>
+            </ul>
+        </nav>-->
+    </div>
+</t>
+
+<t t-name="index_related">
+    <div class="o_related_info"/>
+</t>
+
+<t t-name="index_related_info">
+    <div class="related">
+        <!--<div class="blank30"></div>-->
+        <!--&lt;!&ndash;日历 &ndash;&gt;-->
+        <!--<div class="alendar line">-->
+            <!--插入dodo日历-->
+        <!--</div>-->
+        <!--&lt;!&ndash;日历 &ndash;&gt;-->
+
+        <!--通讯录 -->
+        <div class="address line">
+            <div class="p10">
+                <h4>员工通讯录</h4>
+                <label>
+                    <input class="form-control o_input_text" placeholder="请输入姓名花名或工号" />
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </label>
+                <!--<input class="form-control o_input_text" placeholder="请输入姓名花名或工号" />-->
+
+                <div class="blank10"/>
+                <a class="btn submit o_user_search_btn">提交</a>
+
+                <div class="blank10"/>
+                <p class="notes">*输入任一条件即可查询</p>
+
+                <!--通讯录 -->
+                <div class="o_user_search" />
+            </div>
+        </div>
+
+
+        <!--相关链接-->
+        <div class="line related_links p10">
+            <h4>相关链接</h4>
+            <div class="related_padding">
+                <p>通用</p>
+                <div class="btn-group">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        请选择<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a target="_blank" href="https://vpn.dtdream.com/">数梦VPN</a></li>
+                        <li><a target="_blank" href="http://www.dtdream.com/">公司官网</a></li>
+                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29204953">公司发文</a></li>
+                        <li><a target="_blank" href="http://doc.dtdream.com/pages/viewpage.action?pageId=3670198">外部文档中心</a></li>
+                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=25788516">内部文档中心</a></li>
+                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=361134">帮助中心</a></li>
+                        <li><a target="_blank" href="http://jira.dtdream.com/projects/ONLINE">网上问题</a></li>
+                        <li><a target="_blank" href="http://all.dtdream.com/letter.html"> 给新员工的一封信</a></li>
+                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45748653"> dodo手机客户端</a></li>
+                        <li><a target="_blank" href="http://bbs.dtdream.com/">BBS</a></li>
+                        <li><a target="_blank" href="http://mail.dtdream.com/">邮箱</a></li>
+                        <li><a target="_blank" href="http://shumeng.yunxuetang.cn/">云学堂</a></li>
+                    </ul>
+                </div>
+
+                <p>研发相关链接</p>
+                <div class="btn-group">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        请选择<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a target="_blank" href="http://jira.dtdream.com">JIRA</a></li>
+                        <li><a target="_blank" href="http://dtp.dtdream.com:9000/">sonar</a></li>
+                        <li><a target="_blank" href="http://dashboard-rd.dtdream.com">研发质量看板</a></li>
+                        <li><a target="_blank" href="http://dtp.dtdream.com/">DTP测试平台</a></li>
+                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904559">版本服务器</a></li>
+                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904616">文件服务器</a></li>
+                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?projectKey=DTEST&amp;rapidView=185">验收电子流</a></li>
+                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=163&amp;projectKey=REQ">需求接纳电子流</a></li>
+                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=135&amp;projectKey=MRKT">对外测试电子流</a></li>
+                    </ul>
+                </div>
+
+                <p>dodo手机客户端</p>
+                <div class="dodo-download">
+                    <img src="/dtdream_home/static/img/Android-dodo.png" />
+                    <span>Android版</span>
+                </div>
+                <div class="dodo-download">
+                    <img src="/dtdream_home/static/img/iPhone-dodo.png" />
+                    <span>iPhone版</span>
+                    <span style="font-size:.2rem;text-align:left;">（iPhone版：安装完后，打开手机设置--通用--设备管理--企业级应用后，点击信任应用，会弹出窗口，继续点击信任即可完成安装）</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!--我要吐槽-->
+        <button class="teasing" name="dtdream_feedback.act_feedback">意见反馈</button>
+    </div>
+</t>
+
+<t t-name="index_related_user_search">
+    <t t-if="result == 0">
+        <!--<div class="blank30"/>-->
+        <div class="info line" style="border:0;">
+            <div class="hr_info" style="padding-top:0;">
+                <p class="notes">没有找到对应员工信息</p>
+            </div>
+        </div>
+    </t>
+    <t t-foreach="users" t-as="user">
+        <!--<div class="blank30"/>-->
+        <div class="info line" style="border:0;">
+            <div class="hr_info" style="padding-top:0;">
+                <label>姓名:</label><span><t t-esc="user.full_name"/></span>
+                <div class="blank10"/>
+                <label>花名:</label><span><t t-esc="user.nick_name"/></span>
+                <div class="blank10"/>
+                <label>工号:</label><span><t t-esc="user.job_number"/></span>
+                <div class="blank10"/>
+                <label>部门:</label><span><t t-esc="user.department_id[1]"/></span>
+                <div class="blank10"/>
+                <label>邮箱:</label><span><t t-esc="user.work_email"/></span>
+                <div class="blank10"/>
+                <label>电话:</label><span><t t-esc="user.mobile_phone"/></span>
+                <div class="blank10"/>
+            </div>
+        </div>
+    </t>
+</t>
 <!-- <div t-name="WebClient.database_expiration_panel">
     <div class="database_expiration_panel" id="announcement_bar_table">
         <div t-attf-class="alert alert-#{diffDays&lt;6?'danger':(diffDays&lt;16?'warning':'info')}" role="alert">
@@ -1345,18 +1973,30 @@
                     <span class="icon-bar"/>
                     <span class="icon-bar"/>
                 </button>
-                <a href="#" class="navbar-brand o_menu_toggle"><i class="fa"/></a>
+                <a href="#" class="navbar-brand o_menu_toggle menu_arrow"><i class="fa"/></a>
+                <span class="navbar-brand o_menu_logo nav_padding" ><img src="/web/static/src/img/logo@2x.png" /></span>
                 <span class="navbar-brand o_menu_brand"/>
             </div>
 
             <div class="collapse navbar-collapse" id="o_navbar_collapse">
-                <ul class="nav navbar-nav o_menu_sections"/>
-                <ul class="nav navbar-nav navbar-right oe_systray"/>
+                <ul class="nav navbar-nav o_menu_sections PC_systray"/>
+                <ul class="nav navbar-nav navbar-right oe_systray PC_systray"/>
+                <ul class="nav navbar-nav clearfix phone_menu"></ul>
             </div>
         </div>
     </nav>
 </t>
-
+<t t-name="Menu.phone">
+    <t t-foreach="model_sets" t-as="model">
+        <!--<a t-att-href="model.url"  t-att-model="model.model" t-att-type="model.view_type" t-att-action-id="model.action" t-att-menu-id="model.menu">-->
+        <a t-att-href="model.url">
+            <li>
+                <i t-att-class="model.class"/>
+                <t t-esc="model.name"/>
+            </li>
+        </a>
+    </t>
+</t>
 <t t-name="Menu.link">
     <t t-if="!depth"><t t-set="depth" t-value="1"/></t>
     <t t-if="depth"><t t-set="depth" t-value="depth + 1"/></t>
@@ -1417,7 +2057,7 @@
         </a>
         <ul class="dropdown-menu" role="menu">
             <!--<li><a href="#" data-menu="documentation">Documentation</a></li>-->
-            <li><a href="#" data-menu="support">Support</a></li>
+            <!--<li><a href="#" data-menu="support">Support</a></li>-->
             <li><a href="#" data-menu="about">About</a></li>
             <li class="divider"/>
             <li><a href="#" data-menu="settings">Preferences</a></li>
@@ -1430,9 +2070,9 @@
 <div t-name="UserMenu.about" class="oe_about">
     <div class="container-fluid">
 
-        <div class="row">
-           <!-- <a class="oe_activate_debug_mode oe_right label label-primary" href="?debug" >Activate the developer mode</a>-->
-        </div>
+        <!--<div class="row">
+           &lt;!&ndash; <a class="oe_activate_debug_mode oe_right label label-primary" href="?debug" >Activate the developer mode</a>&ndash;&gt;
+        </div>-->
 
         <div class="row">
             <div class="col-sm-offset-2 col-md-offset-2 col-sm-8 col-md-8 user-details">
@@ -1449,12 +2089,12 @@
                             <h5>Database expiration: <t t-esc="new moment(db_info.expiration_date).format('LL')"/></h5>
                         </t>
                         -->
-                        <h3>版本 : v1.0.0 (Enterprise Edition)</h3>
+                        <h3>版本 : v1.10.0 (Enterprise Edition)</h3>
                     </div>
                     <div class="user-body">
                         <div class="tab-content">
                             <div id="settings" class="tab-pane active">
-                                <h4>版权所有 © 杭州数梦工场科技有限公司 2015-2016。</h4>
+                                <h4>版权所有 © 杭州数梦工场科技有限公司 2015-2017。</h4>
                                 <p>帮助手册请拜访信息 <a target="_blank" href="http://confluence.dtdream.com/display/CON/dodo" style="text-decoration: underline;">帮助手册</a></p>
                                 <!--
                                 <p>Odoo is a trademark of <a target="_blank" href="https://www.odoo.com" style="text-decoration: underline;">Odoo S.A.</a></p>

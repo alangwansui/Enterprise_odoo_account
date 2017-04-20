@@ -8,7 +8,14 @@ var _t = core._t;
 var FormView = require('web.FormView');
 var rec_id;
 FormView.include({
-
+    add_two_buttons:function(){
+        console.log(this.$el.find('.o_statusbar_buttons'));
+        var button=`
+            <button class='btn btn-sm btn-primary dtdream_shouquan_export'>导出项目授权函</button>
+            <button class='btn btn-sm btn-primary dtdream_shouhou_export'>导出售后服务承诺函</button>
+        `;
+        this.$el.find('.o_statusbar_buttons').append(button);
+    },
     events: _.defaults({
         'click .dtdream_shouhou_export': 'export_shouhou_click',
         'click .dtdream_shouquan_export': 'export_shouquan_click',

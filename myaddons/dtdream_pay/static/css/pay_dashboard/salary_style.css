@@ -13,7 +13,7 @@
 }
 .salaryIndex .container {
   width: 100%;
-  font-family: "Microsoft YaHei", sans-serif, Arial;
+  //font-family: "Microsoft YaHei", sans-serif, Arial;
 }
 .salaryIndex .container .blueMark {
   color: #2BC6EA;

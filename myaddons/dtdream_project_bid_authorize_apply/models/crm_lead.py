@@ -5,8 +5,8 @@ from openerp .exceptions import ValidationError
 class dtdream_crm_lead(models.Model):
     _inherit = 'crm.lead'
 
-    business_count = fields.Integer(string="项目授权数量",default=0,readonly=True)
-    has_draft_business_report = fields.Boolean(default=False,string="项目授权是否已经存在")
+    authorization_count = fields.Integer(string="项目授权数量",default=0,readonly=True)
+    has_draft_authorization = fields.Boolean(default=False,string="项目授权是否已经存在")
 
     @api.multi
     def action_dtdream_project_authorization(self):

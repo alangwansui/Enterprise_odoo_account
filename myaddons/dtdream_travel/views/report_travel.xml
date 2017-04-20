@@ -161,7 +161,7 @@
                                 <label>合计(元)</label>
                             </td>
                             <td colspan="1">
-                                <span t-field="doc.total"/>
+                                <span t-esc="float(doc.traveling_fee)+float(doc.incity_fee)+float(doc.hotel_expense)+float(doc.other_expense)"/>
                             </td>
                         </tr>
                     </tbody>

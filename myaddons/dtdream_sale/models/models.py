@@ -467,10 +467,10 @@ class dtdream_sale(models.Model):
         ('company_leave', '公司级'),
         ('department_leave', '部门级'),
         ('normal_leave', '一般项目'),
-    ],required=True,track_visibility='onchange',string="项目级别")
+    ],required=True,track_visibility='onchange',string="项目级别(市场)")
     system_department_id = fields.Many2one("dtdream.industry", string="系统部",required=True,track_visibility='onchange')
     industry_id = fields.Many2one("dtdream.industry", string="行业",required=True,track_visibility='onchange')
-    office_id = fields.Many2one("dtdream.office", string="办事处",required=True,track_visibility='onchange')
+    office_id = fields.Many2one("dtdream.office", string="办事处/联络处",required=True,track_visibility='onchange')
     bidding_time = fields.Date("招标时间",required=True,default=lambda self:datetime.now(),track_visibility='onchange')
     supply_time = fields.Date("供货时间",required=True,default=lambda self:(datetime.now() + relativedelta(months=1)),track_visibility='onchange')
     pre_implementation_time = fields.Date("预计开始实施时间",default=lambda self:(datetime.now() + relativedelta(months=2)))
@@ -573,6 +573,8 @@ class dtdream_sale(models.Model):
 
     categ_id = fields.Many2one('product.category',string="产品二级分类",related='project_space.categ_id',store=True)
 
+    product_dimension_lev = fields.Many2many('product.category', string='项目级别(产品)', domain=[('parent_id','=',False)])
+
     is_lost = fields.Boolean(string="已丢单",default=False)
     is_won = fields.Boolean(string="已中标",default=False)
     is_important = fields.Boolean(string="重点项目",default=False)
@@ -665,8 +667,82 @@ class dtdream_sale(models.Model):
             return {'value': {}}
         return {'value': {'probability': stage.probability}}
 
+    # 更新草稿状态周报中对应项目的招标时间
+    def update_report_bidding_time(self,rec_id,bidding_time):
+        update_leads = self.env['lead.project'].sudo().search([('project_id','=',self.id),('lead_project_id.state','=','0')])
+        update_projects = self.env['zhengwu.system.project'].sudo().search([('project_id','=',self.id),('zhengwu_project_id.state','=','0')])
+        update_other_projects = self.env['other.project'].sudo().search([('project_id','=',self.id),('other_project_id.state','=','0')])
+        update_next_projects = self.env['zhengwu.system.project'].sudo().search([('project_id','=',self.id),('next_zhengwu_project_id.state','=','0')])
+        update_manager_leads = self.env['manager.lead.project'].sudo().search([('project_id','=',self.id),('manager_lead_project_id.state','=','0')])
+        update_manager_projects = self.env['manager.zhengwu.system.project'].sudo().search([('project_id','=',self.id),('manager_zhengwu_project_id.state','=','0')])
+        update_manager_other_projects = self.env['manager.other.project'].sudo().search([('project_id','=',self.id),('manager_other_project_id.state','=','0')])
+        update_manager_next_projects = self.env['manager.zhengwu.system.project'].sudo().search([('project_id','=',self.id),('manager_next_zhengwu_project_id.state','=','0')])
+        if len(update_leads) > 0 :
+            for update_lead in update_leads:
+                update_lead.sudo().write({'bidding_time':bidding_time})
+        if len(update_projects) > 0 :
+            for update_project in update_projects:
+                update_project.sudo().write({'bidding_time':bidding_time})
+        if len(update_other_projects) > 0 :
+            for update_other_project in update_other_projects:
+                update_other_project.sudo().write({'bidding_time':bidding_time})
+        if len(update_next_projects) > 0 :
+            for update_next_project in update_next_projects:
+                update_next_project.sudo().write({'bidding_time':bidding_time})
+        if len(update_manager_leads) > 0 :
+            for update_manager_lead in update_manager_leads:
+                update_manager_lead.sudo().write({'bidding_time':bidding_time})
+        if len(update_manager_projects) > 0 :
+            for update_manager_project in update_manager_projects:
+                update_manager_project.sudo().write({'bidding_time':bidding_time})
+        if len(update_manager_other_projects) > 0 :
+            for update_manager_other_project in update_manager_other_projects:
+                update_manager_other_project.sudo().write({'bidding_time':bidding_time})
+        if len(update_manager_next_projects) > 0 :
+            for update_manager_next_project in update_manager_next_projects:
+                update_manager_next_project.sudo().write({'bidding_time':bidding_time})
+
+    # 更新草稿状态周报中对应项目的项目把握度
+    def update_report_project_master_degree(self,rec_id,project_master_degree):
+        update_leads = self.env['lead.project'].sudo().search([('project_id','=',self.id),('lead_project_id.state','=','0')])
+        update_projects = self.env['zhengwu.system.project'].sudo().search([('project_id','=',self.id),('zhengwu_project_id.state','=','0')])
+        update_other_projects = self.env['other.project'].sudo().search([('project_id','=',self.id),('other_project_id.state','=','0')])
+        update_next_projects = self.env['zhengwu.system.project'].sudo().search([('project_id','=',self.id),('next_zhengwu_project_id.state','=','0')])
+        update_manager_leads = self.env['manager.lead.project'].sudo().search([('project_id','=',self.id),('manager_lead_project_id.state','=','0')])
+        update_manager_projects = self.env['manager.zhengwu.system.project'].sudo().search([('project_id','=',self.id),('manager_zhengwu_project_id.state','=','0')])
+        update_manager_other_projects = self.env['manager.other.project'].sudo().search([('project_id','=',self.id),('manager_other_project_id.state','=','0')])
+        update_manager_next_projects = self.env['manager.zhengwu.system.project'].sudo().search([('project_id','=',self.id),('manager_next_zhengwu_project_id.state','=','0')])
+        if len(update_leads) > 0 :
+            for update_lead in update_leads:
+                update_lead.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_projects) > 0 :
+            for update_project in update_projects:
+                update_project.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_other_projects) > 0 :
+            for update_other_project in update_other_projects:
+                update_other_project.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_next_projects) > 0 :
+            for update_next_project in update_next_projects:
+                update_next_project.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_manager_leads) > 0 :
+            for update_manager_lead in update_manager_leads:
+                update_manager_lead.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_manager_projects) > 0 :
+            for update_manager_project in update_manager_projects:
+                update_manager_project.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_manager_other_projects) > 0 :
+            for update_manager_other_project in update_manager_other_projects:
+                update_manager_other_project.sudo().write({'project_master_degree':project_master_degree})
+        if len(update_manager_next_projects) > 0 :
+            for update_manager_next_project in update_manager_next_projects:
+                update_manager_next_project.sudo().write({'project_master_degree':project_master_degree})
+
     @api.multi
     def write(self, vals):
+        if vals.has_key('bidding_time') and self.id:
+            self.update_report_bidding_time(rec_id=self.id, bidding_time=vals.get('bidding_time'))
+        if vals.has_key('project_master_degree') and self.id:
+            self.update_report_project_master_degree(rec_id=self.id, project_master_degree=vals.get('project_master_degree'))
         if vals.has_key('project_leave'):
             if vals.get('project_leave') == "company_leave":
                 vals['project_number'] = self.project_number[:-1]+"A"

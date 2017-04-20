@@ -3,154 +3,204 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.yf .container > h6 {
+.dm .container > h6 {
   font-size: 18px;
-  font-family: "Microsoft YaHei";
-  color: #7f7f7f;
+  color: #4a4a4a;
   text-align: justify;
   font-weight: bold;
 }
-.yf {
+.dm {
   margin-top: 20px;
-  font-family: "Microsoft YaHei", Arial, sans-serif;
   width: 100%;
 }
-.yf a:hover {
+.dm a:hover {
   text-decoration: none;
 }
-.yf .container {
+.dm .container {
   width: 100%;
 }
-.yf .panelbox-blue {
-  background: url("../img/dodo_yf1.png") no-repeat 90% 45%;
+.dm .panelbox-blue {
+  background: url("../img/dodo_IT1.png") no-repeat 90% 45%;
   background-color: #7e9fcc;
   padding: 10px 0 0 0;
 }
-.yf .panelbox-blue .yf-more {
+.dm .panelbox-blue .dm-more {
   background-color: rgba(85, 114, 153, 0.4);
   padding: 8px 20px 8px 15px;
   color: #fff;
 }
-.yf .panelbox-red {
-  background: url("../img/dodo_yf2.png") no-repeat 90% 45%;
+.dm .panelbox-red {
+  background: url("../img/dodo_IT2.png") no-repeat 90% 45%;
   background-color: #cc7e7e;
   padding: 10px 0 0 0;
 }
-.yf .panelbox-red .yf-more {
+.dm .panelbox-red .dm-more {
   background-color: rgba(157, 95, 95, 0.4);
   padding: 8px 20px 8px 15px;
   color: #fff;
 }
-.yf .panel-footer h4 {
+.dm .panelbox-green {
+  background: url("../img/dodo_IT3.png") no-repeat 90% 45%;
+  background-color: #21C09C;
+  padding: 10px 0 0 0;
+}
+.dm .panelbox-green .dm-more {
+  background-color: rgba(31, 155, 126, 0.4);
+  padding: 8px 20px 8px 15px;
   color: #fff;
-  font-family: "Microsoft YaHei";
-  font-size: 16px;
+}
+.dm .panel-footer h4 {
+  color: #fff;
+  font-size: 20px;
   letter-spacing: 0;
   text-align: left;
   padding-left: 15px;
 }
-.yf .panel-footer .yf-t {
+.dm .panel-footer .dm-t {
   color: #fff;
-  font-family: "Microsoft YaHei";
-  font-size: 36px;
+  font-size: 14px;
   letter-spacing: 0;
   text-align: left;
-  padding-bottom: 15px;
+  /*padding-bottom: 15px;*/
   padding-left: 15px;
+  height: 55px;
 }
-.yf .panel-footer span {
+.dm .panel-footer span {
   font-size: 14px;
 }
-.yf .panel-footer img {
+.dm .panel-footer img {
   float: right;
 }
-.yf .table caption {
-  font-size: 18px;
-  color: #444954;
-  letter-spacing: 0;
-  text-align: left;
-  margin-bottom: 25px;
+.dm .state_normal {
+  color: #76C470;
 }
-.yf table thead {
-  letter-spacing: 0.58px;
+.dm .interval {
+  margin-top: 20px;
 }
-.yf table tbody {
-  font-size: 12px;
-  letter-spacing: 0.49px;
+.dm .bold {
+  font-weight: bold;
 }
-.yf .state_delay {
-  display: inline-block;
-  background: #F06C73;
-  color: #fff;
-  border-radius: 2px;
-  padding: 0 15px;
-  line-height: 18px;
+.dm table tbody {
+  border-bottom: 1px solid #ddd;
 }
-.yf .state_normal {
-  display: inline-block;
-  background: #76C470;
-  color: #fff;
-  border-radius: 2px;
-  padding: 0 15px;
-  line-height: 18px;
+.dm .table > thead > tr > td,
+.dm .table > tbody > tr > td {
+  line-height: 1.42857143;
 }
-.yf .state_finish {
-  display: inline-block;
-  background: #9B9B9B;
-  color: #fff;
-  border-radius: 2px;
-  padding: 0 15px;
-  line-height: 18px;
+.dm .IT_table_tabs .nav-tabs {
+  height: 4.325rem;
+  line-height: 4.325rem;
+  background-color: #F9FAFC;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-top: 2.5rem;
 }
-.yf table tbody td:last-child {
-  /*color: #39b4e1;*/
+.dm .IT_table_tabs .slider_li {
+  height: 4rem;
 }
-.yf .pager {
+.dm .IT_table_tabs .nav-tabs li a {
+  width: 155px;
+  padding-top: 13px;
+  font-size: 1.5rem;
+  color: #4a4a4a;
+  text-align: center;
+  border: 0;
+  background-color: #F9FAFC;
+  cursor: pointer;
+}
+.dm .IT_table_tabs .nav-tabs > li.active > a,
+.dm .IT_table_tabs .nav-tabs > li.active > a:focus,
+.dm .IT_table_tabs .nav-tabs > li.active > a:hover {
+  font-weight: bold;
+  border: 0;
+  background-color: #F9FAFC;
+}
+.dm .IT_table_tabs .inline {
+  position: absolute;
+  width: 0;
+  height: 3px;
+  background-color: #00C1DE;
+  bottom: 0;
+  left: 0;
+  transition: all 0.3s;
+}
+.dm .nopadding {
+  padding-left: 0;
+  padding-right: 0;
+}
+.dm .pager_select {
   width: 100%;
   overflow: hidden;
 }
-.yf .pager .btn {
-  border-radius: 0;
-  width: 79px;
-  font-size: 12px;
-  color: #4a4a4a;
-  letter-spacing: 0.49px;
-  border-color: #979797;
-  border:1px solid #ccc;
-}
-.yf .pager .prev-btn {
-  width: 20%;
-  float: left;
-}
-.yf .pager p {
-  float: left;
-  width: 20%;
-  margin-left: 20%;
-}
-.yf .pager .next-btn {
-  width: 20%;
+.dm .pager_select .btn {
   float: right;
+  border-radius: 4px;
 }
-.yf .table-div {
-  height: 270px;
+.dm .pager_select .previous {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
-.yf .interval {
-  margin-top: 20px;
+.dm .pager_select .next {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
-.yf .table-responsive .table .bold {
-  font-weight: bold;
-  color:#7f7f7f;
+.dm .pager_select .btn-default {
+  border: 1px solid #e0e0e0;
+  color: #00C1DE;
 }
-.yf .mr{
- margin-right:20px;
+.dm .pager_select .btn-default:focus {
+  background-color: #fff;
+  color: #00C1DE;
 }
-@media screen and (max-width: 750px) {
-  .yf .table-responsive table caption {
-    font-size: 14px;
-    margin-bottom:10px;
-  }
-  .yf .table-responsive table thead,
-  .yf .table-responsive table tbody {
+.dm .pager_select .btn-default:hover {
+  background-color: #00C1DE;
+  color: #fff;
+}
+.dm .pager_select .disabled {
+  opacity: 1;
+  background-color: #fff;
+  color: #bfbfbf;
+}
+.dm .pager_select .disabled:hover {
+  background-color: #fff;
+  color: #bfbfbf;
+}
+.dm .pager_select .pager_number {
+  float: right;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+.dm .pager_select .pager_number li {
+  color: #00C1DE;
+  padding: 6px 12px;
+  display: table-cell;
+  border-right: 1px solid #e0e0e0;
+}
+.dm .pager_select .pager_number li.active {
+  background-color: #00C1DE;
+  color: #fff;
+}
+.dm .pager_select .pager_number li:last-child {
+  border-right: 0;
+}
+.dm .pager_select .pager_number li:hover {
+  background-color: #00C1DE;
+  color: #fff;
+  cursor: pointer;
+}
+.dm .pager_select p {
+  float: right;
+  height: 32px;
+  line-height: 32px;
+  margin-bottom: 0;
+  margin-right: 10px;
+}
+@media screen and (min-width: 400px) and (max-width: 750px) {
+  .dm .table-responsive table thead,
+  .dm .table-responsive table tbody {
     font-size: 10px;
   }
 }

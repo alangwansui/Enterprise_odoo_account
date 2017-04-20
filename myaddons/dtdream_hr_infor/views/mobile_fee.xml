@@ -1,0 +1,101 @@
+<openerp>
+    <data>
+        <!-- ====================================================视图===================================================== -->
+
+        <!--form视图-->
+        <record id="view_dtdream_hr_infor_mobile_fee_from" model="ir.ui.view">
+            <field name="name">view.dtdream.hr.infor.mobile.fee.from</field>
+            <field name="model">hr.employee.mobile.fee</field>
+            <field name="arch" type="xml">
+                <form string="修改手机话费标准">
+                    <header>
+                        <button name="btn_submit" string="提交" class="btn-primary"
+                                attrs="{'invisible':['|',('state','not in','0'),('is_applicant','=',False)]}"/>
+                        <button name="%(act_hr_mobile_fee_wizard_agree)d" type="action" string="通过"
+                                attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('1','2'))]}"/>
+                        <button name="%(act_hr_mobile_fee_wizard_refuse)d" type="action" string="驳回"
+                                attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('1','2'))]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="0,1,2,3" class="zx_status"/>
+                    </header>
+                    <sheet>
+                        <group string="修改手机话费标准">
+                            <field name="standard_mobile_fee"
+                                   attrs="{'readonly':['|',('state','in',('1','2','3')),('is_applicant','=',False)]}"
+                                   required="1"/>
+                            <field name="is_handler" invisible="1"/>
+                            <field name="is_applicant" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!--list视图-->
+        <record id="view_dtdream_hr_infor_mobile_fee" model="ir.ui.view">
+            <field name="name">view.dtdream.hr.infor.mobile_fee</field>
+            <field name="model">hr.employee.mobile.fee</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="standard_mobile_fee"/>
+                    <field name="state"/>
+                    <field name="department_manager"/>
+                    <field name="quanqian"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ====================================================动作===================================================== -->
+        <record model="ir.actions.act_window" id="act_dtdream_hr_mobile_fee_my">
+            <field name="name">我的申请</field>
+            <field name="res_model">hr.employee.mobile.fee</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|',('create_uid','=',uid),('applicant.user_id','=',uid)]</field>
+
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_hr_mobile_fee_wait_to_approve">
+            <field name="name">待我审批</field>
+            <field name="res_model">hr.employee.mobile.fee</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_handler_id.user_id','=',uid)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_hr_mobile_fee_approved">
+            <field name="name">我已审批</field>
+            <field name="res_model">hr.employee.mobile.fee</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                ['|',('department_manager.user_id','=',uid),('quanqian.user_id','=',uid)]
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_hr_mobile_fee_all">
+            <field name="name">所有单据</field>
+            <field name="res_model">hr.employee.mobile.fee</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                ['|','&amp;','|',('department_manager.user_id','=',uid),('quanqian.user_id','=',uid),('state','!=','0'),('applicant.user_id.id','=',uid)]
+            </field>
+        </record>
+
+        <!-- ====================================================菜单===================================================== -->
+        <menuitem name="手机话费标准更改" sequence="12" id="dtdream_hr_mobile_fee" parent="hr.menu_hr_root"/>
+        <menuitem name="我的申请" sequence="10" id="dtdream_hr_mobile_fee_my" parent="dtdream_hr_mobile_fee"
+                  action="act_dtdream_hr_mobile_fee_my"/>
+        <menuitem name="待我审批" sequence="20" id="dtdream_hr_mobile_fee_approving" parent="dtdream_hr_mobile_fee"
+                  action="act_dtdream_hr_mobile_fee_wait_to_approve"/>
+        <menuitem name="我已审批" sequence="30" id="dtdream_hr_mobile_fee_approved" parent="dtdream_hr_mobile_fee"
+                  action="act_dtdream_hr_mobile_fee_approved"/>
+        <menuitem name="所有单据" sequence="40" id="dtdream_hr_mobile_fee_all" parent="dtdream_hr_mobile_fee"
+                  action="act_dtdream_hr_mobile_fee_all"/>
+    </data>
+</openerp>

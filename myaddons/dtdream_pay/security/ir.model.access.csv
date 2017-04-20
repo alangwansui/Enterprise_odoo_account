@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dtdream_pay,dtdream_pay,model_dtdream_pay,base.group_user,1,0,0,0
+access_dtdream_pay_limited_login,dtdream_pay_limited_login,base.model_res_users,,1,0,0,0

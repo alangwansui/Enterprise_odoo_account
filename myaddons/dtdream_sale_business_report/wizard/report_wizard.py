@@ -69,10 +69,18 @@ class ReportSubmitWizard(models.TransientModel):
     @api.one
     def btn_confirm(self):
         current_report = self.env['dtdream.sale.business.report'].browse(self._context['active_id'])
+
         pro_list = []
+        for p in current_report.rep_pro_name.product_line:
+            p = [(2,p.id)]
+        current_report.rep_pro_name.product_line = None
+        for p in current_report.product_line:
+            self.env['dtdream.product.line'].create({'product_line_id':current_report.rep_pro_name.id,'pro_name':p.pro_name,'product_id':p.product_id,'bom':p.bom,'pro_type':p.pro_type,'pro_description':p.pro_description,'list_price':p.list_price,'ref_discount':p.ref_discount,'apply_dicount':p.apply_discount,'pro_uom_name':p.pro_uom_name,'pro_num':p.pro_num,'pro_status':p.pro_status})
+
         for product in current_report.product_line:
             if product.pro_status in ('outPro','controlled') and (product.controlled_pro_cost_price == 0 or product.list_price == 0):
                 pro_list.append(product.bom)
         if len(pro_list) > 0:
             raise ValidationError(u'bom编号为%s的产品为受控/停产产品，请联系营销管理部产品管理员导入目录价后提交' % [(pro_bom).encode('utf-8') for pro_bom in pro_list])
+        pass
         current_report.signal_workflow('btn_submit')

@@ -2,6 +2,27 @@
 <openerp>
     <data>
 
+        <record id="view_dtdream_ad_it_man_filter" model="ir.ui.view">
+            <field name="name">dtdream.ad.it.man.filter</field>
+            <field name="model">dtdream.ad.it.man</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="user"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_dtdream_ad_apply_man_filter" model="ir.ui.view">
+            <field name="name">dtdream.ad.apply.man.filter</field>
+            <field name="model">dtdream.ad.apply.man</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="user"/>
+                </search>
+            </field>
+        </record>
+
+
         <record id="act_dtdream_ad_it_man" model="ir.actions.act_window">
             <field name="name">IT组配置</field>
             <field name="res_model">dtdream.ad.it.man</field>

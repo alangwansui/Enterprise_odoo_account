@@ -42,6 +42,12 @@ class dtdream_project_manage(models.Model):
                             rec.leader.user_id == self.env.user:
                 self.is_deliver_manage = True
 
+    def compute_is_deliver_res(self):
+        for rec in self.output_deliver:
+            if rec.assess_man_deliver.user_id == self.env.user:
+                self.is_deliver_res = True
+            break
+
     def compute_is_current(self):
         if self.env.user in [rec.user_id for rec in self.current_approve]:
             self.is_current = True
@@ -74,9 +80,10 @@ class dtdream_project_manage(models.Model):
     def btn_submit_click(self):
         if not len(self.order) and self.state_y == '0':
             raise ValidationError('订单信息为必填，请添加后提交!')
-        if self.state_y == '0':
+        if self.state_y in ('0', '33'):
+            name = '确认PMO主管' if self.state_y == '0' else '确认VIP经理'
             action = {
-                        'name': '确认PMO主管',
+                        'name': name,
                         'type': 'ir.actions.act_window',
                         'view_type': 'form',
                         'view_mode': 'form',
@@ -96,8 +103,14 @@ class dtdream_project_manage(models.Model):
             if not self.current_approve:
                 self.signal_workflow('btn_submit')
             else:
+                self.send_mail(subject=u'请您输出或修改交付输出物规划', content=u'''项目(%s)处于项目规划阶段，
+                请您输出或修改交付输出物规划。''' % self.name, name=self.current_approve)
                 self.record_action_message(state=u'发起策划', action=u'提交', approve=','.join(
                     [rec.name for rec in self.current_approve]))
+        elif self.state_y == '30':
+            if any([True for rec in self.output_deliver if rec.state != '2']):
+                raise ValidationError('存在交付输出物未审批通过，无法提交!')
+            self.signal_workflow('btn_submit')
         else:
             self.signal_workflow('btn_submit')
 
@@ -133,8 +146,8 @@ class dtdream_project_manage(models.Model):
                 continue
             if not rec.approved and 'PMO' not in rec.name.upper():
                 approve_list.append(rec.leader.id)
-        if any([rec.result for rec in self.role]):
-            approve_list = [self.project_manage.id]
+        if any([rec.result for rec in self.role]) and self.project_manage.id not in approve_list:
+            approve_list.append(self.project_manage.id)
         return approve_list
 
     @api.multi
@@ -181,9 +194,9 @@ class dtdream_project_manage(models.Model):
             if cr.plan_manage:
                 for crr in cr.plan_manage:
                     output.append({'name': cr.name.id, 'output': crr.output, 'can_delete': crr.can_delete,
-                                   'created': True, 'state': '0'})
+                                   'created': True, 'state': '0', 'assess_times': 0})
             else:
-                output.append({'name': cr.name.id, 'created': True, 'state': '0'})
+                output.append({'name': cr.name.id, 'created': True, 'state': '0', 'assess_times': 0})
         for rec in self.output_plan:
             rec.write({'can_delete': False})
         self.output_plan = output
@@ -195,9 +208,9 @@ class dtdream_project_manage(models.Model):
             if cr.deliver_manage:
                 for crr in cr.deliver_manage:
                     deliver.append({'name': cr.name.id, 'deliver': crr.deliver, 'can_delete': crr.can_delete,
-                                    'created': True, 'state': '0'})
+                                    'created': True, 'state': '0', 'assess_times': 0})
             else:
-                deliver.append({'name': cr.name.id, 'created': True, 'state': '0'})
+                deliver.append({'name': cr.name.id, 'created': True, 'state': '0', 'assess_times': 0})
         for rec in self.output_deliver:
             rec.write({'can_delete': False})
         self.output_deliver = deliver
@@ -224,6 +237,15 @@ class dtdream_project_manage(models.Model):
             states = self.get_output_approve_states()
             if states != ['2']:
                 raise AccessError('存在未审核通过输出物,无法进入下一阶段!')
+            action = {
+                    'name': '是否转运维',
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'dtdream.yunwei.confirm.wizard',
+                    'target': 'new'
+                    }
+            return action
         self.signal_workflow('next_stage')
 
     @api.model
@@ -264,7 +286,7 @@ class dtdream_project_manage(models.Model):
         stages = self.env['dtdream.project.stage.setting'].search([], order='order asc')
         roles = self.env['dtdream.project.role.setting'].search([])
         rec.update({'stage': [(6, 0, [])] + [(0, 0, {'name': stage.name}) for stage in stages],
-                    'role': [(6, 0, [])] + [(0, 0, {'name': role.name, 'required': role.required,'state': ''}) for role in roles]})
+                    'role': [(6, 0, [])] + [(0, 0, {'name': role.name, 'required': role.required,'state': '', 'is_manage': ''}) for role in roles if role.role]})
         return rec
 
     @api.multi
@@ -277,6 +299,42 @@ class dtdream_project_manage(models.Model):
                                                -moz-text-overflow: ellipsis;-webkit-text-overflow: ellipsis;
                                                overflow:hidden;">%s</td></tr>
                                                </table>""" % (state, action, approve))
+
+    def get_project_manage_menu(self):
+        menu_id = self.env['ir.ui.menu'].search([('name', '=', u'服务')], limit=1).id
+        parent_id = self.env['ir.ui.menu'].search([('name', '=', u'项目管理'), ('parent_id', '=', menu_id)], limit=1).id
+        menu = self.env['ir.ui.menu'].search([('name', '=', u'与我相关'), ('parent_id', '=', parent_id)], limit=1)
+        action = menu.action.id
+        return menu_id, action
+
+    def get_mail_server_name(self):
+        return self.env['ir.mail_server'].search([], limit=1).smtp_user
+
+    def get_base_url(self, cr, uid):
+        base_url = self.pool.get('ir.config_parameter').get_param(cr, uid, 'web.base.url')
+        return base_url
+
+    def send_mail(self, subject, content,  name=None, email_cc=''):
+        email_to = name.work_email if name else ''
+        appellation = u'{0},您好：'.format(name.name) if name else ''
+        base_url = self.get_base_url()
+        menu_id, action = self.get_project_manage_menu()
+        url = '%s/web#id=%s&view_type=form&model=dtdream.project.manage&action=%s&menu_id=%s' % (base_url, self.id, action, menu_id)
+        subject = subject
+        content = content
+        self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
+                                <p>%s</p>
+                                <p><a href="%s">点击进入查看</a></p>
+                                <p>dodo</p>
+                                <p>万千业务，简单有do</p>
+                                <p>%s</p>''' % (appellation, content, url, self.write_date[:10]),
+                'subject': subject,
+                'email_from': self.get_mail_server_name(),
+                'email_to': email_to,
+                'email_cc': email_cc,
+                'auto_delete': False,
+            }).send()
 
     code = fields.Char(string='项目编码', size=16)
     name = fields.Char(string='项目名称(服务)', size=32)
@@ -296,8 +354,18 @@ class dtdream_project_manage(models.Model):
     evaluate = fields.Text(string='评价标准')
     condition = fields.Text(string='项目假定与约束条件')
     project_type = fields.Many2one('dtdream.project.type', string='项目类型')
+    promble_v = fields.Char(string='紧要问题数', size=5)
+    promble_s = fields.Char(string='严重问题数', size=5)
+    promble_c = fields.Char(string='一般问题数', size=5)
+    promble_t = fields.Char(string='提示问题数', size=5)
+    promble_v_l = fields.Char(string='遗留紧要问题数', size=5)
+    promble_s_l = fields.Char(string='遗留严重问题数', size=5)
+    promble_c_l = fields.Char(string='遗留一般问题数', size=5)
+    promble_t_l = fields.Char(string='遗留提示问题数', size=5)
+    result_test = fields.Text(string='测试结果')
     initial_plan = fields.One2many('dtdream.project.initial.plan', 'project_manage_id', string='初始计划')
-    project_struction = fields.One2many('dtdream.project.construction', 'project_manage_id', string='项目组织结构')
+    project_struction = fields.One2many('dtdream.project.construction', 'project_manage_id', string='公司外部人员')
+    project_struction_inner = fields.One2many('dtdream.project.construction.inner', 'project_manage_id', string='公司内部人员')
     order = fields.One2many('dtdream.project.order', 'project_manage_id', string='订单信息')
     stage = fields.One2many('dtdream.project.stage', 'project_manage_id', string='项目阶段')
     role = fields.One2many('dtdream.project.role', 'project_manage_id', string='负责人')
@@ -309,6 +377,7 @@ class dtdream_project_manage(models.Model):
     is_create = fields.Boolean(string='是否创建者', compute=compute_is_create)
     is_project_manage = fields.Boolean(string='是否项目经理', compute=compute_is_manage)
     is_deliver_manage = fields.Boolean(string='是否交付经理', compute=compute_is_deliver_manage)
+    is_deliver_res = fields.Boolean(string='是否运维管控', compute=compute_is_deliver_res)
     current_approve = fields.Many2many('hr.employee', string='当前审批人')
     is_current = fields.Boolean(string='是否当前审批人', compute=compute_is_current)
     state_y = fields.Selection([('0', '草稿'),
@@ -320,6 +389,11 @@ class dtdream_project_manage(models.Model):
                                ('21', 'PMO审核策划'),
                                ('2', '策划'),
                                ('3', '交付'),
+                               ('30', '运维管控测试'),
+                               ('31', '交付运维测试'),
+                               ('32', '运维服务经理审核'),
+                               ('33', '指定VIP经理'),
+                               ('34', 'VIP经理确认'),
                                ('4', '运维'),
                                ('99', '结项')], string='项目状态', default='0')
     state_n = fields.Selection([('0', '草稿'),
@@ -343,10 +417,14 @@ class dtdream_project_manage(models.Model):
                 pmo = rec.leader.id
                 leader = rec.leader
         self.write({'state_y': '10', 'state_n': '10', 'current_approve': [(6, 0, [pmo])]})
+        self.send_mail(subject=u'项目基本信息和订单信息提交', content=u'''%s提交了项目(%s)基本信息和订单信息，
+        请您查看并指定项目等级以及项目经理。''' % (self.create_uid.employee_ids.name, self.name), name=leader)
         self.record_action_message(state=u'草稿-->指派项目经理', action=u'提交', approve=leader.name)
 
     def wkf_sync(self):
         self.write({'state_y': '11', 'state_n': '11', 'current_approve': [(6, 0, [self.project_manage.id])]})
+        self.send_mail(subject=u'您被指定为项目经理，请您同步项目信息给相关负责人', content=u'''您被确认为"%s"的项目经理，
+        请您知悉且同步项目订单信息给相关负责人。''' % self.name, name=self.project_manage)
         self.record_action_message(state=u'指派项目经理-->同步项目订单信息', action=u'提交', approve=self.project_manage.name)
 
     def wkf_manage_approve(self):
@@ -357,32 +435,40 @@ class dtdream_project_manage(models.Model):
             if rec.leader.id and 'PMO' not in rec.name.upper():
                 approve.append(rec.leader.id)
         self.write({'state_y': '12', 'state_n': '12', 'current_approve': [(6, 0, approve)]})
+        self.send_mail(subject=u'同步项目信息及订单信息', content=u'%s同步了项目(%s)基本信息以及订单信息，请您查看并确认。' % (self.project_manage.name, self.name),
+                       email_cc=';'.join([rec.work_email for rec in self.current_approve]))
         self.record_action_message(state=u'同步项目订单信息-->交付服务经理确认', action=u'同步项目信息',
                                    approve=','.join([rec.name for rec in self.current_approve]))
 
     def wkf_create_project(self):
         self.write({'state_y': '1', 'state_n': '1', 'current_approve': [(6, 0, [self.project_manage.id])]})
+        self.send_mail(subject=u'交付服务经理已确认', content=u'''交付服务经理已经完成了项目(%s)信息及订单信息的确认，
+        请您发布项目章程及项目组织结构相关人员等。''' % self.name, name=self.project_manage)
         self.record_action_message(state=u'交付服务经理确认-->立项', action=u'确认', approve=self.project_manage.name)
 
     def wkf_plan(self):
         approve = [self.project_manage.id]
         if self.state_y == '21':
             self.write({'state_y': '20', 'state_n': '20', 'current_approve': [(6, 0, approve)]})
-            self.record_action_message(state=u'PMO审核策划-->发起策划', action=u'驳回',
-                                       approve=','.join([rec.name for rec in self.current_approve]))
+            self.send_mail(subject=u'项目规划及输出物规划被驳回', content=u'项目(%s)规划及输出物规划被驳回，请您重新规划。' % self.name, name=self.current_approve)
         else:
             self.write({'state_y': '20', 'state_n': '20', 'current_approve': [(6, 0, approve)]})
+            self.send_mail(subject=u'请您输出项目策划及输出物规划', content=u'''项目(%s)处于策划阶段，
+            请您输出项目策划及输出物规划。''' % self.name, name=self.project_manage)
             self.record_action_message(state=u'立项-->发起策划', action=u'进入下一阶段',
                                        approve=','.join([rec.name for rec in self.current_approve]))
 
     def wkf_plan_approve(self):
-        self.write({'state_y': '21', 'state_n': '21', 'current_approve': [
-            (6, 0, [rec.leader.id for rec in self.role if rec.name == self.env.ref('dtdream_project_manage.dtdream_project_role_PMO').name])]})
+        self.write({'state_y': '21', 'state_n': '21', 'current_approve': [(6, 0, [rec.leader.id for rec in self.role
+                                                                                  if rec.name == self.env.ref('dtdream_project_manage.dtdream_project_role_PMO').name])]})
+        self.send_mail(subject=u'请您审核项目规划及输出物规划', content=u'相关负责人已经完成项目(%s)规划及输出物规划，请您审核。' % self.name, name=self.current_approve)
         self.record_action_message(state=u'发起策划-->PMO审核策划', action=u'提交',
                                    approve=','.join([rec.name for rec in self.current_approve]))
 
     def wkf_plan_done(self):
         self.write({'state_y': '2', 'state_n': '2', 'current_approve': [(6, 0, [self.project_manage.id])]})
+        self.send_mail(subject=u'项目策划已完成，请将项目进入下一阶段', content=u'''项目(%s)策划已完成，
+        请将项目进入下一阶段。''' % self.name, name=self.current_approve)
         self.record_action_message(state=u'PMO审核策划-->策划', action=u'同意', approve=self.project_manage.name)
 
     def get_deliver_stage_approve(self):
@@ -398,11 +484,63 @@ class dtdream_project_manage(models.Model):
     def wkf_deliver(self):
         approve = self.get_deliver_stage_approve()
         self.write({'state_y': '3', 'state_n': '3', 'current_approve': [(6, 0, approve)]})
+        self.send_mail(subject=u'请您提交相关输出物且指定审核人', content=u'''项目(%s)进入交付阶段，
+        请您提交相关输出物且指定审核人并发起审核。''' % self.name, email_cc=';'.join([rec.work_email for rec in self.current_approve]))
         self.record_action_message(state=u'策划-->交付', action=u'进入下一阶段',
                                    approve=','.join([rec.name for rec in self.current_approve]))
 
+    def wkf_yunwei_test(self):
+        approve = [rec.name.id for rec in self.project_struction_inner if rec.role.name ==
+                   self.env.ref('dtdream_project_manage.dtdream_project_role_YWF').name]
+        for rec in self.output_deliver:
+            rec.write({"assess_man_deliver": approve[0]})
+        self.write({'state_y': '30', 'current_approve': [(6, 0, approve)]})
+        self.send_mail(subject=u'请您通知运维人员与交付团队开始测试', content=u'''项目(%s)进入运维管控测试阶段，
+        请您通知运维人员与交付团队开始测试。''' % self.name, name=self.current_approve)
+        self.record_action_message(state=u'交付-->运维管控测试', action=u'进入下一阶段',
+                                   approve=self.current_approve.name)
+
+    def wkf_deliver_test(self):
+        approve = [rec.name.id for rec in self.project_struction_inner if rec.role.name ==
+                   self.env.ref('dtdream_project_manage.dtdream_project_role_JFF').name]
+        if self.state_y == '32':
+            self.write({'state_y': '31', 'current_approve': [(6, 0, approve)]})
+            self.send_mail(subject=u'运维负责人驳回了测试结果', content=u'''项目(%s)被驳回交付运维测试阶段，
+            请您重新安排运维人员与交付团队开展运维测试。''' % self.name, name=self.current_approve)
+        else:
+            self.write({'state_y': '31', 'current_approve': [(6, 0, approve)]})
+            self.send_mail(subject=u'请您通知运维人员与交付团队开展运维测试', content=u'''项目(%s)进入交付运维测试阶段，
+            请您通知运维人员与交付团队开展运维测试。''' % self.name, name=self.current_approve)
+            self.record_action_message(state=u'运维管控测试-->交付运维测试', action=u'提交',
+                                       approve=self.current_approve.name)
+
+    def wkf_yunwei_approve(self):
+        approve = [rec.leader.id for rec in self.role if rec.name ==
+                   self.env.ref('dtdream_project_manage.dtdream_project_role_YW').name and rec.leader.id]
+        self.write({'state_y': '32',  'current_approve': [(6, 0, approve)]})
+        self.send_mail(subject=u'运维测试已完成请您审核', content=u'''项目(%s)运维测试已经完成，
+        请您审核测试结果。''' % self.name, name=self.current_approve)
+        self.record_action_message(state=u'交付运维测试-->运维服务经理审核', action=u'提交', approve=self.current_approve.name)
+
+    def wkf_pmo_vip(self):
+        approve = [rec.leader.id for rec in self.role if rec.name ==
+                   self.env.ref('dtdream_project_manage.dtdream_project_role_PMOO').name]
+        self.write({'state_y': '33',  'current_approve': [(6, 0, approve)]})
+        self.send_mail(subject=u'运维测试审核已经通过，请您指定VIP经理', content=u'''项目(%s)运维测试审核已通过，
+        请您指定VIP经理。''' % self.name, name=self.current_approve)
+        self.record_action_message(state=u'运维服务经理审核-->指定VIP经理', action=u'同意', approve=self.current_approve.name)
+
+    def wkf_vip_confirm(self):
+        self.write({'state_y': '34'})
+        self.send_mail(subject=u'运维测试审核已经通过，请您确认', content=u'''项目(%s)运维测试审核已通过，
+        请您确认。''' % self.name, name=self.current_approve)
+        self.record_action_message(state=u'PMO指定VIP经理-->VIP经理确认', action=u'提交', approve=self.current_approve.name)
+
     def wkf_yunwei(self):
-        self.write({'state_y': '4'})
+        self.write({'state_y': '4', 'current_approve': [(6, 0, [self.project_manage.id])]})
+        self.send_mail(subject=u'项目转运维已经结束，请将项目进入下一阶段', content=u'''项目(%s)转运维已结束，
+        请将项目进入下一阶段。''' % self.name, name=self.current_approve)
+        self.record_action_message(state=u'VIP经理确认-->运维', action=u'提交', approve=self.project_manage.name)
 
     def wkf_project_done(self):
         if self.state_y == '3':

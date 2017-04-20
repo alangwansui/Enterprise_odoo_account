@@ -1,0 +1,107 @@
+<openerp>
+    <data>
+        <!-- ====================================================视图===================================================== -->
+
+        <!--form视图-->
+        <record id="view_dtdream_hr_infor_travel_grant_from" model="ir.ui.view">
+            <field name="name">view.dtdream.hr.infor.travel.grant.from</field>
+            <field name="model">hr.employee.travel.grant</field>
+            <field name="arch" type="xml">
+                <form string="修改是否享受交通补助">
+                    <header>
+                        <button name="btn_submit" string="提交" class="btn-primary"
+                                attrs="{'invisible':['|',('state','not in','0'),('is_applicant','=',False)]}"/>
+                        <button name="%(act_hr_travel_grant_wizard_agree)d" type="action" string="通过"
+                                attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('1','2','3','4'))]}"/>
+                        <button name="%(act_hr_travel_grant_wizard_refuse)d" type="action" string="驳回"
+                                attrs="{'invisible':['|',('is_handler','=',False),('state','not in',('1','2','3','4'))]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="0,1,2,3,4,5" class="zx_status"/>
+                    </header>
+                    <sheet>
+                        <group string="修改是否享受交通补助">
+                            <field name="travel_grant"
+                                   attrs="{'readonly':['|',('state','in',('1','2','3','4','5')),('is_applicant','=',False)]}"
+                                   required="1"/>
+                            <field name="is_handler" invisible="1"/>
+                            <field name="is_applicant" invisible="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!--list视图-->
+        <record id="view_dtdream_hr_infor_travel_grant" model="ir.ui.view">
+            <field name="name">view.dtdream.hr.infor.travel.grant</field>
+            <field name="model">hr.employee.travel.grant</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="travel_grant"/>
+                    <field name="state"/>
+                    <field name="department_manager"/>
+                    <field name="quanqian"/>
+                    <field name="caiwu"/>
+                    <field name="hr"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ====================================================动作===================================================== -->
+        <record model="ir.actions.act_window" id="act_dtdream_hr_travel_grant_my">
+            <field name="name">我的申请</field>
+            <field name="res_model">hr.employee.travel.grant</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|',('create_uid','=',uid),('applicant.user_id','=',uid)]</field>
+
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_hr_travel_grant_wait_to_approve">
+            <field name="name">待我审批</field>
+            <field name="res_model">hr.employee.travel.grant</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                [('current_handler_id.user_id.id','=',uid)]
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_hr_travel_grant_approved">
+            <field name="name">我已审批</field>
+            <field name="res_model">hr.employee.travel.grant</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                ['|','|','|','|',('applicant.user_id.id','=',uid),('department_manager.user_id','=',uid),('quanqian.user_id','=',uid)
+                ,('caiwu.user_id','=',uid),('hr.user_id','=',uid)]
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_dtdream_hr_travel_grant_all">
+            <field name="name">所有单据</field>
+            <field name="res_model">hr.employee.travel.grant</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                ['|','|','|','|',('applicant.user_id.id','=',uid),('department_manager.user_id','=',uid),('quanqian.user_id','=',uid)
+                ,('caiwu.user_id','=',uid),('hr.user_id','=',uid)]
+            </field>
+        </record>
+
+        <!-- ====================================================菜单===================================================== -->
+        <menuitem name="交通补助申请" sequence="12" id="dtdream_hr_travel_grant" parent="hr.menu_hr_root"/>
+        <menuitem name="我的申请" sequence="10" id="dtdream_hr_travel_grant_my" parent="dtdream_hr_travel_grant"
+                  action="act_dtdream_hr_travel_grant_my"/>
+        <menuitem name="待我审批" sequence="20" id="dtdream_hr_travel_grant_approving" parent="dtdream_hr_travel_grant"
+                  action="act_dtdream_hr_travel_grant_wait_to_approve"/>
+        <menuitem name="我已审批" sequence="30" id="dtdream_hr_travel_grant_approved" parent="dtdream_hr_travel_grant"
+                  action="act_dtdream_hr_travel_grant_approved"/>
+        <menuitem name="所有单据" sequence="40" id="dtdream_hr_travel_grant_all" parent="dtdream_hr_travel_grant"
+                  action="act_dtdream_hr_travel_grant_all"/>
+    </data>
+</openerp>

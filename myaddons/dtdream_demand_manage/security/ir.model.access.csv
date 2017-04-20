@@ -4,3 +4,5 @@ access_dtdream_demand_manage_manage,dtdream_demand_manage manage,model_dtdream_d
 access_ir_mail_server_demand_manage,ir.mail_server_demand_manage,base.model_ir_mail_server,,1,0,0,0
 access_dtdream_demand_it_department,dtdream_demand_it_department,model_dtdream_demand_it_department,,1,1,1,1
 access_dtdream_demand_it_department,dtdream_demand_it_department,model_dtdream_demand_it_department,,1,1,1,1
+
+access_dtdream_demand_dashboard,dtdream_demand_dashboard,model_dtdream_remand_dashboard,,1,1,1,1

@@ -1,18 +1,87 @@
 <?xml version="1.0"?>
 <odoo>
 
-    <!--费用支出豆腐块跳转动作-->
-    <record id="action_fee_pay" model="ir.actions.act_window">
-        <field name="name">费用支出</field>
-        <field name="res_model">fee.pay</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+    <record id="product.product_template_action" model="ir.actions.act_window">
+          <field name="name">产品列表</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">product.template</field>
+          <field name="view_mode">tree,kanban,form</field>
+          <field name="view_type">form</field>
+          <field name="view_id" ref="view_res_product_template_tree_list_view"/>
+          <field name="search_view_id" ref="product_template_search_view"/>
+          <field name="context">{"search_default_filter_to_sell":1}</field>
+          <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                  Click to define a new product.
+              </p>
+              <p>
+                  You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to  customers.
+              </p>
+              <p>
+                  The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc.
+              </p>
+          </field>
+      </record>
+
+    <!-- 让tree视图里的记录也可双击修改 -->
+      <record id="act_dtdream_product_form" model="ir.actions.act_window">
+          <field name="name">产品</field>
+          <field name="res_model">product.template</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="view_id" ref="view_res_product_template_tree_view"/>
+          <field name="domain">[('id','=',active_id)]</field>
+      </record>
+
+      <record id="ir_open_product" model="ir.values">
+          <field name='key2'>tree_but_open</field>
+          <field name='model'>product.template</field>
+          <field name="name">产品</field>
+          <field eval="'ir.actions.act_window,%d'%act_dtdream_product_form" name='value'/>
+      </record>
+
+    <!--行政区域action定义-->
+      <record id="act_dtdream_area" model="ir.actions.act_window">
+          <field name="name">行政区域</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">dtdream.area</field>
+          <field name="view_type">tree</field>
+          <field name="view_mode">tree,list,form</field>
+          <field name="domain">[('parent_id','=',False)]</field>
+      </record>
+
+    <record model="ir.actions.act_window" id="crm.crm_lead_opportunities_tree_view">
+        <field name="name">Your Pipeline</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">tree,kanban,graph,pivot,form,calendar</field>
+        <field name="domain">[]</field>
         <field name="context">{
-                        'default_pay_project_id': active_id
+                        'default_type': 'lead',
+                        'search_default_filter_project_processing': 1
         }</field>
-        <field name="domain">[('pay_project_id','=',active_id)]</field>
+        <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="view_id" ref="crm.crm_case_form_view_oppor"/>
+        <field name="help" type="html">
+            <p>
+                Odoo helps you keep track of your sales pipeline to follow
+                up potential sales and better forecast your future revenues.
+            </p><p>
+                You will be able to plan meetings and phone calls from
+                opportunities, convert them into quotations, attach related
+                documents, track all discussions, and much more.
+            </p>
+        </field>
     </record>
+
+    <!--定义产品类别action-->
+      <record id="product_pro_type_form_action" model="ir.actions.act_window">
+          <field name="name">产品类别</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">product.pro.type</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+      </record>
 
     <record model="ir.actions.server" id="product_yunwei_config_action">
         <field name="name">运维系数配置</field>

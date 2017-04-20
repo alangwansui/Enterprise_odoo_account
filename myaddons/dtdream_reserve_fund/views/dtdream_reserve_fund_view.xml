@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="dtdream_reserve_fund_list">
+            <field name="name">dtdream.reserve.fund.list</field>
+            <field name="model">dtdream.reserve.fund</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="state"/>
+                    <field name="total_amount"/>
+                    <field name="applicant"/>
+                    <field name="department_id"/>
+                    <field name="current_handler"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="dtdream_reserve_interface_tree">
+            <field name="name">dtdream.reserve.interface.tree</field>
+            <field name="model">dtdream.reserve.fund</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="state"/>
+                    <field name="total_amount"/>
+                    <field name="applicant"/>
+                    <field name="department_id"/>
+                    <field name="jiekou_approve_time"/>
+                    <field name="current_handler"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_reserve_fund_form">
+            <field name="name">dtdream.reserve.fund.form</field>
+            <field name="model">dtdream.reserve.fund</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="提交" name="btn_submit" type="workflow"
+                                attrs="{'invisible':['|',('state','!=','草稿'),('is_applicant','=',False)]}"></button>
+                        <button string="同意" name="%(act_dtdream_reserve_wizard_agree)d" type="action"
+                                class="oe_highlight" attrs="{'invisible':[('is_handlers','=',False)]}"></button>
+                        <button string="驳回" name="%(act_dtdream_reserve_wizard_reject)d" type="action"
+                                attrs="{'invisible':[('is_handlers','=',False)]}"></button>
+                        <button string="催签" name="btn_urge" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|',('state','in',['草稿','已付款']),('is_applicant','=',False)]}"></button>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="基本信息">
+                                <field name="applicant" required="1" attrs="{'readonly':[('state','!=','草稿')]}"></field>
+                                <field name="department_id" readonly="1"></field>
+                                <field name="dep_code" readonly="1"></field>
+                                <field name="type" required="1" attrs="{'readonly':[('state','!=','草稿')]}"></field>
+                                <field name="illustration" attrs="{'readonly':[('state','!=','草稿')]}"></field>
+                                <field name="is_applicant" invisible="1"></field>
+                                <field name="is_handlers" invisible="1"></field>
+                            </group>
+                            <group string="支付信息">
+                                <field name="pay_to_who" widget="radio"
+                                       attrs="{'readonly':[('state','!=','草稿')]}"></field>
+                                <field name="payee_name" attrs="{'readonly':[('pay_to_who','=','付款给员工')]}"></field>
+                                <field name="bank_address" attrs="{'readonly':[('pay_to_who','=','付款给员工')]}"></field>
+                                <field name="bank_card_number"
+                                       attrs="{'readonly':[('pay_to_who','=','付款给员工')]}"></field>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="费用明细">
+                                <field name="reserve_fund_record" attrs="{'readonly':[('state','!=','草稿')]}">
+                                    <tree editable="bottom">
+                                        <field name="name" options="{'no_create':True}" required="1"></field>
+                                        <field name="pay_time" required="1"></field>
+                                        <field name="estimate_amount" required="1"></field>
+                                        <field name="pay_to_who" readonly="1" required="1"></field>
+                                    </tree>
+                                </field>
+                                <div style="color:red">提示：支付类别为“付款给员工”时请选择费用类别“备用金”,
+                                    支付类别为“付款给供应商“时请选择其他费用类别。
+                                </div>
+                            </page>
+                            <page string="专项信息">
+                                <group>
+                                    <field name="special_approval_id" options="{'no_create':True}"></field>
+                                </group>
+                                <field name="special_approval_fee_ids">
+                                    <tree>
+                                        <field name="fee_type"></field>
+                                        <field name="fee_amount"></field>
+                                        <field name="fee_description"></field>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="fee_type"></field>
+                                                <field name="fee_amount"></field>
+                                                <field name="fee_description"></field>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="合同信息">
+                                <group>
+                                    <field name="contract_name" options="{'no_create':True}"></field>
+                                </group>
+                                <table width="100%">
+                                    <tr>
+                                        <td>
+                                            <label for="contract_id"></label>
+                                        </td>
+                                        <td>
+                                            <label for="contract_type"></label>
+                                        </td>
+                                        <td>
+                                            <label for="contract_money"></label>
+                                        </td>
+                                        <td>
+                                            <label for="contract_state"></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <field name="contract_id"></field>
+                                        </td>
+                                        <td>
+                                            <field name="contract_type"></field>
+                                        </td>
+                                        <td>
+                                            <field name="contract_money"></field>
+                                        </td>
+                                        <td>
+                                            <field name="contract_state"></field>
+                                        </td>
+
+                                    </tr>
+                                </table>
+                            </page>
+                        </notebook>
+                        <group>
+                            <field name="total_amount"></field>
+                            <field name="amount_off" attrs="{'invisible':[('state','!=','已付款')]}"></field>
+                            <field name="amount_on" attrs="{'invisible':[('state','!=','已付款')]}"></field>
+                            <field name="if_off" attrs="{'invisible':[('state','!=','已付款')]}"></field>
+                            <field name="done_time" readonly="1" invisible="1"></field>
+                            <field name="is_out_time" readonly="1" invisible="1"></field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_my_reserve_unsubmit">
+            <field name="name">我的未提交备用金</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('applicant.user_id','=',uid),('state','=','草稿')]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_my_reserve_not_off">
+            <field name="name">我的未核销备用金</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('applicant.user_id','=',uid),('state','=','已付款'),('if_off', '=', False)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_my_reserve_out_time">
+            <field name="name">我的超期备用金</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('applicant.user_id','=',uid),('state','=','已付款'),('if_off', '=', False),('is_out_time', '=', True)]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_my_reserve">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('applicant.user_id','=',uid)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_to_be_approved">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('current_handler.user_id','=',uid)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_approved">
+            <field name="name">我已审批</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('his_handler.user_id','=',uid)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_my_related_reserve">
+            <field name="name">所有单据</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">
+                ['|','|',('applicant.user_id','=',uid),('current_handler.user_id','=',uid),('his_handler.user_id','=',uid)]
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_interface_export">
+            <field name="name">接口会计导出</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="dtdream_reserve_interface_tree"></field>
+            <field name="domain">[('state','in',['出纳','已付款']),('batch','=',False)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_all_reserve">
+            <field name="name">报告</field>
+            <field name="res_model">dtdream.reserve.fund</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+
+        <menuitem name="备用金管理" id="menu_root"/>
+        <menuitem name="我的申请" id="menu_my_reserve" parent="menu_root" action="action_my_reserve"/>
+        <menuitem name="待我审批" id="menu_to_be_approved" parent="menu_root" action="action_to_be_approved"/>
+        <menuitem name="我已审批" id="menu_approved" parent="menu_root" action="action_approved"/>
+        <menuitem name="所有单据" id="menu_my_related_reserve" parent="menu_root" action="action_my_related_reserve"/>
+        <menuitem name="接口会计导出" id="menu_interface_export" parent="menu_root" action="action_interface_export" groups="group_dtdream_reserve_interface"/>
+        <menuitem name="报告" id="menu_all_reserve" parent="menu_root" action="action_all_reserve"/>
+        <menuitem name="配置" id="menu_config" parent="menu_root"/>
+        <menuitem name="费用类别" id="menu_reserve_record" parent="menu_config" action="act_reserve_record_config"/>
+        <menuitem name="权签配置" id="menu_reserve_sign" parent="menu_config" action="action_open_reserve_sign"/>
+    </data>
+</openerp>

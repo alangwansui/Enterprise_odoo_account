@@ -131,20 +131,20 @@ class dtdream_customer_reception(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-        if menu == u"所有单据":
-            member = self.env.ref("dtdream_customer_reception.customer_reception_member") in self.env.user.groups_id
-            manage = self.env.ref("dtdream_customer_reception.customer_reception_manage") in self.env.user.groups_id
-            inter = self.env['dtdream.customer.reception.config'].search([], limit=1).inter.user_id == self.env.user
-            if member or manage or inter:
-                domain = domain if domain else []
-            else:
-                uid = self._context.get('uid', '')
-                if domain:
-                    domain = expression.AND([['|', '|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
-                                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid),('receptionist.user_id','=',uid)], domain])
+            if menu == u"所有单据":
+                member = self.env.ref("dtdream_customer_reception.customer_reception_member") in self.env.user.groups_id
+                manage = self.env.ref("dtdream_customer_reception.customer_reception_manage") in self.env.user.groups_id
+                inter = self.env['dtdream.customer.reception.config'].search([], limit=1).inter.user_id == self.env.user
+                if member or manage or inter:
+                    domain = domain if domain else []
                 else:
-                    domain = ['|', '|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
-                              ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid),('receptionist.user_id','=',uid)]
+                    uid = self._context.get('uid', '')
+                    if domain:
+                        domain = expression.AND([['|', '|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
+                                                  ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid),('receptionist.user_id','=',uid)], domain])
+                    else:
+                        domain = ['|', '|', '|', '|', '|', ('showroom_guide.user_id', '=', uid), ('approves.user_id', '=', uid),
+                                  ('name.user_id', '=', uid), ('current_approve.user_id', '=', uid), ('create_uid', '=', uid),('receptionist.user_id','=',uid)]
         return super(dtdream_customer_reception, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                    limit=limit, order=order)
 
@@ -395,6 +395,28 @@ class dtdream_customer_reception(models.Model):
             rec.send_mail(rec.name, subject=u'【通知】您还未对客户接待进行评价并打分', content=u'您还未对本次客户接待进行评价并打分，请做出评价并打分!',
                           date=datetime.now().strftime("%Y-%m-%d"))
 
+    def compute_customer_name(self):
+        for rec in self:
+            rec.customer_display = rec.sudo().customer.name or rec.customer_char
+
+    @api.onchange('visit_date')
+    def check_visit_date(self):
+        if self.visit_date and self.visit_date < fields.date.today().strftime('%Y-%m-%d'):
+            self.visit_date = False
+            return {'warning': {'title': u'提示', 'message': u'来访日期不能早于今日'}}
+
+    @api.onchange('visit_time')
+    def check_visit_time_hour(self):
+        if self.visit_date == fields.date.today().strftime('%Y-%m-%d') and fields.datetime.now().hour + 8 > int(self.visit_time):
+            self.visit_time = False
+            return {'warning': {'title': u'提示', 'message': u'来访时间不能早于当前时间'}}
+
+    @api.onchange('live_in')
+    def check_live_in(self):
+        if self.live_in and self.live_in < fields.date.today().strftime('%Y-%m-%d'):
+            self.live_in = False
+            return {'warning': {'title': u'提示', 'message': u'入住时间不能早于今日'}}
+
     bill_num = fields.Char(string='单据号', store=True)
     title = fields.Char(default='客户接待')
     write_time = fields.Datetime(string='填单时间', default=lambda self: fields.Datetime.now())
@@ -409,7 +431,7 @@ class dtdream_customer_reception(models.Model):
     code = fields.Char(string='部门编码', compute=compute_employee_info)
     customer = fields.Many2one('res.partner', string='客户名称')
     customer_char = fields.Char(string='客户名称')
-
+    customer_display = fields.Char(string='客户名称', compute=compute_customer_name)
     customer_level = fields.Selection([('VIP', 'VIP'),('SS', 'SS'), ('S', 'S'), ('A+', 'A+'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],help=u"查看级别描述",
                                       string='客户重要级',required=True)
     customer_source = fields.Selection([('0', '营销体系邀请'), ('1', '政府邀请'), ('2', '合作伙伴邀请')], string='客户来源', default='0')
@@ -449,6 +471,7 @@ class dtdream_customer_reception(models.Model):
     licence = fields.Char(string='车牌号', size=8)
     driver_name = fields.Char(string='司机姓名', size=8)
     driver_tel = fields.Char(string='联系方式', size=11)
+    driver_info = fields.One2many('dtdream.customer_car_info', 'customer_reception_id')
     path = fields.One2many('dtdream.visit.path', 'customer_reception')
     driver = fields.Boolean(string='司机')
     assistance = fields.Boolean(string='接机/接站人员')
@@ -560,14 +583,17 @@ class dtdream_customer_reception(models.Model):
         approve = self.current_approve.id
         if not self.receptionist:
             raise ValidationError('请指定客户接待执行人!')
-        if not self.car_settings:
+        if not self.car_settings and not self.bicycle:
             raise ValidationError('请指定车辆安排负责人!')
-        current_approve = self.car_settings
+        if not self.car and not self.commercial_vehicle and not self.bus:
+            current_approve = self.receptionist
+        else:
+            current_approve = (self.car_settings, self.receptionist)[self.bicycle]
         self.write({"state": '3', 'current_approve': current_approve.id, 'approves': [(4, approve)]})
         # 通知接待安排执行人
         subject = u'【通知】请您落实安排%s的客户接待申请,待接待完成填写接待小结!' % self.name.name
         content = u'%s提交的客户接待申请进入接待安排与执行阶段,请您与申请人沟通,落实安排,待接待完成填写接待小结!' % self.name.name
-        self.send_mail(current_approve, subject=subject, content=content)
+        self.send_mail(self.receptionist, subject=subject, content=content)
         # 通知车辆负责人
         cr = self.env['dtdream.customer.reception.config'].search([], limit=1)
         inter = cr.inter
@@ -748,14 +774,14 @@ class dtdream_customer_res_partner(models.Model):
         return action
 
 
-class dtdream_hr_department(models.Model):
-    _inherit = 'hr.department'
-
-    @api.onchange('manager_id')
-    def update_customer_reception(self):
-        reception = self.env['dtdream.customer.reception'].search([('state', '=', '1')])
-        for cr in reception:
-            cr.write({'current_approve': self.manager_id.id})
+# class dtdream_hr_department(models.Model):
+#     _inherit = 'hr.department'
+#
+#     @api.onchange('manager_id')
+#     def update_customer_reception(self):
+#         reception = self.env['dtdream.customer.reception'].search([('state', '=', '1')])
+#         for cr in reception:
+#             cr.write({'current_approve': self.manager_id.id})
 
 
 class dtdream_customer_special(models.Model):

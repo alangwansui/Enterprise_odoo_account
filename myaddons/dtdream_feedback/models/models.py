@@ -74,11 +74,11 @@ class dtdream_feedback_advice(models.Model):
     # 向意见反馈人发送意见接收邮件
     def confirm_send_email(self):
         self.env['mail.mail'].create({
-            'body_html': u'''<p>您的吐槽已经被捕捉，我们会马不停蹄地解决这个重大bug。</p>
+            'body_html': u'''<p>您的意见已经被捕捉，我们会马不停蹄地解决这个重大bug。</p>
                                  <p>感谢您那善于发现的眼睛。</p>
                                 <p>dodo</p>
                                  <p>万千业务，简单有do</p>''',
-            'subject': u'您的吐槽已被签收啦',
+            'subject': u'您的意见已被签收啦',
             'email_to': '%s' % self.adviceMan.work_email,
             'auto_delete': False,
             'email_from': self.get_mail_server_name(),
@@ -91,7 +91,7 @@ class dtdream_feedback_advice(models.Model):
                                  <p>请前往意见反馈模块查看详情。</p>
                                 <p>dodo</p>
                                  <p>万千业务，简单有do</p>''',
-            'subject': u'有新的dodo吐槽已被签收啦',
+            'subject': u'有新的dodo意见已被签收啦',
             'email_to': '%s' % self.name.manager.work_email,
             'auto_delete': False,
             'email_from': self.get_mail_server_name(),
@@ -104,7 +104,7 @@ class dtdream_feedback_advice(models.Model):
                                  <p>感谢您那善于发现的眼睛。</p>
                                 <p>dodo</p>
                                  <p>万千业务，简单有do</p>''' % self.answer,
-            'subject': u'您的吐槽已被回复啦',
+            'subject': u'您的意见已被回复啦',
             'email_to': '%s' % self.adviceMan.work_email,
             'auto_delete': False,
             'email_from': self.get_mail_server_name(),

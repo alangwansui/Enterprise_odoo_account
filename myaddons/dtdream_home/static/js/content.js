@@ -10,6 +10,8 @@ var QWeb = core.qweb;
 var applyData= [];
 var affairData= [];
 
+var affairs_length="";
+
 var Main = Widget.extend({
         template: 'content',
         init: function (parent) {
@@ -144,7 +146,7 @@ var Related = Widget.extend({
         '</div>'
         ].join('\n');
         layer.open({
-          title: "我要吐槽",
+          title: "意见反馈",
           type: 1,
           skin: 'layui-layer-rim', //加上边框
           area: ['980px', '560px'], //宽高
@@ -253,7 +255,7 @@ var Content = Widget.extend({
 
         this.render_title();
         this.render_dashboard(this);
-        this.render_notice();
+        /*this.render_notice();*/
         this.render_event();
         this.render_slider();
     },
@@ -265,7 +267,93 @@ var Content = Widget.extend({
         $info.appendTo('.o_content_title');
     },
     render_dashboard: function(parent){
-        var data = {out:10, special:20, expense:30, my:50};
+        new Model('ir.ui.menu')
+            .call('load_menus', [core.debug], {context: session.user_context}).then(function(menu_data) {
+                var menus = menu_data.children;
+
+                var check=[];
+                var finacial=[];
+                var performance=[];
+                var general=[];
+
+                _.each(menus,function(ele,i){
+                    var item = {url:"", name:""};
+                    item.name = ele.name;
+                    if(ele.name == "休假" || ele.name == "外出公干" || ele.name == "出差"){
+                        item.url = "/web#menu_id="+ele.id;
+                        if(ele.action){
+                            item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                            check.push(item);
+                        }else if(ele.action === false){
+                            while (ele.children && ele.children.length) {
+                                    ele = ele.children[0];
+                                    if (ele.action) {
+                                        item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                                        check.push(item);
+                                        break;
+                                    }
+                                }
+                        }
+                    }
+                    if(ele.name == "费用报销" || ele.name == "工资" || ele.name == "资产管理" || ele.name =="补助金管理"){
+                        item.url = "/web#menu_id="+ele.id;
+                        if(ele.action){
+                            item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                            finacial.push(item);
+                        }else if(ele.action === false){
+                            while (ele.children && ele.children.length) {
+                                    ele = ele.children[0];
+                                    if (ele.action) {
+                                        item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                                        finacial.push(item);
+                                        break;
+                                    }
+                                }
+                        }
+                    }
+                    if(ele.name == "绩效" || ele.name == "任职资格认证"){
+                        item.url = "/web#menu_id="+ele.id;
+                        if(ele.action){
+                            item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                            performance.push(item);
+                        }else if(ele.action === false){
+                            while (ele.children && ele.children.length) {
+                                    ele = ele.children[0];
+                                    if (ele.action) {
+                                        item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                                        performance.push(item);
+                                        break;
+                                    }
+                                }
+                        }
+                    }
+                    if(ele.name == "信息安全" || ele.name == "IT需求管理"){
+                        item.url = "/web#menu_id="+ele.id;
+                        if(ele.action){
+                            item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                            general.push(item);
+                        }else if(ele.action === false){
+                            while (ele.children && ele.children.length) {
+                                    ele = ele.children[0];
+                                    if (ele.action) {
+                                        item.url = item.url+"&action_id="+ele.action.substring(ele.action.indexOf(',')+1)
+                                        general.push(item);
+                                        break;
+                                    }
+                                }
+                        }
+                    }
+                });
+
+                var $info = $(QWeb.render('content_dashboard', {
+                    "check_sets": check,
+                    "finacial_sets": finacial,
+                    "performance_sets": performance,
+                    "general_sets": general
+                }));
+                $info.appendTo('.o_content_dashboard');
+            });
+        /*var data = {out:10, special:20, expense:30, my:50};
         new Model('dtdream_home.dtdream_home')
                 .call('get_record_num', [{'user_id': this.uid}]).then(function (result) {
                 data = result || data;
@@ -276,11 +364,11 @@ var Content = Widget.extend({
                 new Model('dtdream_home.dtdream_home')
                     .call('get_month_record', [{'user_id': parent.uid}]).then(function(result){
                     console.log(result);
-                    parent.load_echarts(result.month, result.total, result.completed, result.grants);
+                    *//*parent.load_echarts(result.month, result.total, result.completed, result.grants);*//*
                 })
-            });
+            });*/
     },
-    load_echarts:function(month, total, completed,grants){
+    /*load_echarts:function(month, total, completed,grants){
             var firstchartid=echarts.init($("#firstchart")[0]); //显示区域的id
             var option1  =  {
                 title:  {
@@ -439,8 +527,8 @@ var Content = Widget.extend({
                 ]
             };
             relatechatsid.setOption(option2);
-        },
-    render_notice: function(){
+        },*/
+    /*render_notice: function(){
         new Model('dtdream_notice.dtdream_notice')
             .query(['name', 'url', 'content'])
             .filter([['valid','=', true]])
@@ -462,7 +550,7 @@ var Content = Widget.extend({
             // 5min 执行一次
             this.notices_time_hd = setInterval(this.render_notice, 600*1000);
         }
-    },
+    },*/
     render_event: function(){
         var $info = $(QWeb.render('content_event', {}));
         $info.appendTo('.o_content_event');
@@ -470,6 +558,8 @@ var Content = Widget.extend({
         this.render_applies();
     },
     render_affairs: function(){
+        var self = this;
+
         var affairs = [];
         var currentPage =1
         var Menus = new Model('ir.ui.menu');
@@ -480,8 +570,9 @@ var Content = Widget.extend({
                     .call("get_all_affairs", [menu_data],{},null)
                     .then(function (data) {
                         if (data) {
-                            affairData=data
-                            affairs=data['affairs']
+                            affairData=data;
+                            affairs=data['affairs'];
+                            affairs_length=affairs.length;
                         }
                         var $info = $(QWeb.render('content_event_affairs', {
                             'affairs': affairs,
@@ -491,6 +582,12 @@ var Content = Widget.extend({
 //                            'affpreviousPage':parseInt(data['currentPage'])-1,
                         }));
                         $info.appendTo('.o_content_event_affairs');
+                        console.log(affairs_length);
+                        if(affairs_length == 0){
+                            self.$el.find(".o_affairs_badge").css("display","none");
+                        }else{
+                            self.$el.find(".o_affairs_badge").text(affairs_length);
+                        }
                         /*currentPage = 'affair_'+currentPage+'_'
                         var all = $("tr[class*='affair_']")
                         for (var i=0;i<all.length;i++){
@@ -560,10 +657,10 @@ var Content = Widget.extend({
 
     },
     destroy: function() {
-        if (this.notices_time_hd){
+        /*if (this.notices_time_hd){
             clearInterval(this.notices_time_hd);
             this.notices_time_hd=null;
-        }
+        }*/
     },
     on_next_click:function(ev){
         if($(ev.currentTarget).hasClass('disabled')) return true
@@ -628,7 +725,7 @@ var Content = Widget.extend({
         }
     },
     render_slider: function(){
-        if($("#sliderSelectOptions li.active a").html() == "待我处理事项"){
+        if($("#sliderSelectOptions li.active a").text().trim() == "待我处理事项"){
             $('#sliderSelectOptions .inline').css('width','150px').css('left',0);
         }
         $("#sliderSelectOptions").on("mouseenter","li.slider_li",function(){

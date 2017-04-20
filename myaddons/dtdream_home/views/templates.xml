@@ -16,6 +16,11 @@
                     <link href="/dtdream_home/static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
                     <link href="/dtdream_home/static/css/style.css" rel="stylesheet" type="text/css"/>
                     <link href="/dtdream_home/static/css/responsive-nav.css" rel="stylesheet" type="text/css"/>
+                    <link href="/web/static/lib/fontawesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+                    <!-- 思源字体加载-->
+                    <script src="https://use.typekit.net/ycx0edj.js"></script>
+                    <script>try{Typekit.load({ async: true });}catch(e){}</script>
+                    <!-- 思源字体加载-->
                 </head>
                 <script type="text/javascript">
                     odoo.define('web.csrf', function (require) {
@@ -40,6 +45,7 @@
                     <script src="/dtdream_home/static/js/sidebar.js"></script>
                     <script src="/dtdream_home/static/js/content.js"></script>
                     <script src="/dtdream_home/static/js/home.js"></script>
+                    <script src="/dtdream_home/static/js/watermark.js"></script>
 
                     <script type="text/javascript">
                         $(function () {

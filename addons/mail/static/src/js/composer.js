@@ -348,7 +348,7 @@ var BasicComposer = Widget.extend({
             input_min_height: 28,
             mention_fetch_limit: 8,
             mention_partners_restricted: false, // set to true to only suggest prefetched partners
-            send_text: _('Send'),
+            send_text: _('提交'),
             default_body: '',
             default_mention_selections: {},
         });

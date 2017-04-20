@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <template id="assets_backend_a" name="reserve_fund assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/dtdream_reserve_fund/static/src/css/style.css"/>
+                <script type="text/javascript" src="/dtdream_reserve_fund/static/src/js/reserve_fund_dashboard.js"/>
+            </xpath>
+        </template>
+
+        <record id="dtdream_reserve_fund_dashboard_view_kanban" model="ir.ui.view">
+            <field name="name">dtdream.reserve.fund.dashboard</field>
+            <field name="model">dtdream.reserve.fund.dashboard</field>
+            <field name="type">reserve_fund_dashboard</field>
+            <field name="arch" type="xml">
+                <reserve_fund_dashboard create="0">
+                </reserve_fund_dashboard>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="act_open_dtdream_reserve_fund_dashboard_view">
+            <field name="name">仪表盘</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dtdream.reserve.fund.dashboard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">reserve_fund_dashboard,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem name="仪表盘" id="menu_dashboard" parent="menu_root"
+                  action="act_open_dtdream_reserve_fund_dashboard_view"/>
+    </data>
+</openerp>

@@ -7,7 +7,7 @@ body {
   color: #666;
   min-height: 700px;
   height: 100%;
-  font-family: "Microsoft YaHei", sans-serif;
+  //font-family: "Microsoft YaHei", sans-serif;
 }
 .phoneVcode .phoneContainer {
   width: 997px;
@@ -78,7 +78,7 @@ body {
   cursor: pointer;
   outline: none;
   border: 0;
-  font-family: "Microsoft YaHei", sans-serif;
+  //font-family: "Microsoft YaHei", sans-serif;
 }
 .phoneVcode .phoneContainer .phone-body .line .line-error {
   margin-left: 30px;
@@ -91,7 +91,7 @@ body {
 .phoneVcode .phoneContainer .phone-body .line .line-error label {
   font-size: 12px;
   padding-left: 20px;
-  font-family: "Microsoft YaHei", sans-serif;
+  //font-family: "Microsoft YaHei", sans-serif;
 }
 .phoneVcode .phoneContainer .phone-body .line .line-error .lineFt-error {
   background: url(/web/static/src/img/tishi_error.png) no-repeat left center;
@@ -122,7 +122,7 @@ body {
   height: 40px;
   border: 0;
   outline: none;
-  font-family: "Microsoft YaHei", sans-serif;
+  //font-family: "Microsoft YaHei", sans-serif;
   cursor: pointer;
 }
 .phoneVcode .phoneContainer .phone-body .line:after {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="reserve_record_config_list">
+            <field name="name">reserve.record.config.list</field>
+            <field name="model">dtdream.reserve.fund.config</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"></field>
+                    <field name="account"></field>
+                    <field name="pay_to_who"></field>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="reserve_record_config_form">
+            <field name="name">reserve.record.config.form</field>
+            <field name="model">dtdream.reserve.fund.config</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"></field>
+                            <field name="account"></field>
+                            <field name="pay_to_who"></field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_reserve_record_config">
+            <field name="name">费用类别</field>
+            <field name="res_model">dtdream.reserve.fund.config</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</openerp>

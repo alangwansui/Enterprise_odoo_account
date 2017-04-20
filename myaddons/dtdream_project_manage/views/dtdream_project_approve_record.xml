@@ -1,44 +1,16 @@
 <openerp>
   <data>
-     <record id="view_dtdream_project_approve_record_filter" model="ir.ui.view">
-        <field name="name">dtdream.project.approve.record.filter</field>
-        <field name="model">dtdream.project.approve.record</field>
-        <field name="arch" type="xml">
-            <search string="Search">
-                <field name="output"/>
-            </search>
-        </field>
-    </record>
 
     <record id="view_dtdream_project_approve_record_tree" model="ir.ui.view">
         <field name="name">view.dtdream.project.approve.record.tree</field>
         <field name="model">dtdream.project.approve.record</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree create="0" delete="0">
                 <field name="output"/>
                 <field name="result"/>
                 <field name="approve"/>
                 <field name="approve_time"/>
             </tree>
-        </field>
-    </record>
-
-    <record id="view_dtdream_project_approve_record_form" model="ir.ui.view">
-        <field name="name">view.dtdream.project.approve.record.form</field>
-        <field name="model">dtdream.project.approve.record</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                    <group>
-                        <field name="output"/>
-                        <field name="result"/>
-                    </group>
-                    <group>
-                        <field name="approve"/>
-                        <field name="approve_time"/>
-                    </group>
-                </group>
-            </form>
         </field>
     </record>
 

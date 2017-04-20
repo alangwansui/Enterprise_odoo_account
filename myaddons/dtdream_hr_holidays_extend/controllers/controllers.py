@@ -4,17 +4,41 @@ from openerp.http import request
 from openerp.addons.web.controllers.main import ExcelExport
 class DtdreamHrHolidaysExtend(ExcelExport):
     @http.route('/dtdream_hr_holidays_extend/annual_leave_data_proofreading_export/', auth='public')
-    def annual_leave_data_proofreading_export(self, data,token):
+    def annual_leave_data_proofreading_export(self, active_ids,token):
         excel_header = ['JOB_CODE', 'NAME', 'FULL_NAME', 'LEVEL_DEPARTMENT','SECONDARY_SECTOR','THREE_DEPARTMENT',
-                        'WORK_PLACE', 'ENTRY_DAY', '2015ANNUAL', '2015ANNUAL_LE',
-                         '2016ANNUAL', '2016ANNUAL_LE',
-                         '2017ANNUAL', '2017ANNUAL_LE']
-        excel_values = []
-        excel_values.append([u'工号', u'姓名', u'花名', u'一级部门', u'二级部门', u'三级部门', u'工作地', u'入职时间', u'2015年休假配额', u'2015年休假剩余',u'2016年休假配额', u'2016年休假剩余',
-                             u'2017年休假配额', u'2017年休假剩余'])
+                        'WORK_PLACE', 'ENTRY_DAY']
+        rowa = [u'工号', u'姓名', u'花名', u'一级部门', u'二级部门', u'三级部门', u'工作地', u'入职时间']
 
-        years=['2','1','0']
-        ems = request.env['hr.employee'].sudo().search([('Inaugural_state', '=', 'Inaugural_state_01')])
+        ids = []
+        for id in active_ids.split(','):
+            ids.append(int(id))
+        holidays = request.env['hr.holidays'].sudo().browse(ids)
+        yearlist = [holiday.year for holiday in holidays]
+
+        years =[]
+        yearsKey = []
+        for year in yearlist:
+            if int(year) not in yearsKey:
+                yearsKey.append(int(year))
+                years.append(int(2017)-int(year))
+
+        yearsKey.sort()
+        yearsKey.reverse()
+        years.sort()
+        for year in years:
+            yearha = str(year)+'ANNUAL'
+            yearhb = str(year)+'ANNUAL_LE'
+            excel_header.append(yearha)
+            excel_header.append(yearhb)
+            yearha = str(year) + u'年休假配额'
+            yearhb = str(year) + u'年休假剩余'
+            rowa.append(yearha)
+            rowa.append(yearhb)
+        excel_values = []
+        excel_values.append(rowa)
+
+
+        ems = set([holiday.employee_id for holiday in holidays])
         for em in ems:
             row = [em.job_number, em.full_name, em.name]
             department=em.department_id
@@ -33,10 +57,9 @@ class DtdreamHrHolidaysExtend(ExcelExport):
                     row.append(department.name)
             row.append(em.work_place)
             row.append(em.entry_day)
-            for year in years:
-                domains = [('employee_id', '=', em.id), ('type', '=', 'add'), ('create_type', '=', 'manage'),
-                           ('state', '=', 'validate'),('year','=',year)]
-                result =  request.env['hr.holidays'].sudo().search_read(domain=domains)
+            for year in yearsKey:
+                domains = [('employee_id', '=', em.id),('year','=',str(year)),('id','in',ids)]
+                result =  request.env['hr.holidays'].sudo().search(domains)
                 if len(result)>0:
                     row.append(result[0]['nxj_fenpei'])
                     row.append(result[0]['nxj_yue'])

@@ -2,13 +2,52 @@ odoo.define('web.AppSwitcher', function (require) {
 "use strict";
 
 var core = require('web.core');
+var session = require('web.session');
 var Widget = require('web.Widget');
 var Model = require('web.Model');
 var QWeb = core.qweb;
 var utils = require('web.utils');
 var _t = core._t;
 
+var LeftSiderbar = require('web.LeftSiderbar');
+var IndexContent = require('web.IndexContent');
+
 var AppSwitcher = Widget.extend({
+    template: 'AppSwitcher',
+    init: function (parent, menu_data) {
+        this._super.apply(this, arguments);
+        this.menu_data = menu_data;
+    },
+    willStart: function() {
+        var self=this;
+        return $.when(this._super.apply(this, arguments));
+    },
+    start: function (parent) {
+//            this._super(parent);
+        var self = this;
+        return this._super.apply(this, arguments);
+    },
+    render: function(){
+        var self = this;
+        var option = {
+            user: session.username,
+            uid: session.uid
+        }
+        this.leftSiderbar = new LeftSiderbar(self, this.menu_data);
+        this.leftSiderbar.appendTo($('.o_main_sidebar'))
+        this.leftSiderbar.attach($('.o_main_sidebar'), option);
+
+        this.IndexContent = new IndexContent(self, this.menu_data);
+        this.IndexContent.appendTo($('.o_main_content'));
+        this.IndexContent.attach($('.o_main_content'), option);
+    }
+});
+
+
+
+
+
+/*var AppSwitcher = Widget.extend({
     template: 'AppSwitcher',
     events: {
         'click .o_action_app': 'on_app_click',
@@ -40,7 +79,7 @@ var AppSwitcher = Widget.extend({
     //    self.enterprise_expiration_check();
     //    return this._super.apply(this, arguments);
     //},
-    ///** Checks for the database expiration date and display a warning accordingly. */
+    //*//** Checks for the database expiration date and display a warning accordingly. *//*
     //enterprise_expiration_check: function() {
     //    var self = this;
     //    if (!self.session) {
@@ -111,7 +150,7 @@ var AppSwitcher = Widget.extend({
     //        }
     //    }
     //},
-    ///** Save the registration code then triggers a ping to submit it*/
+    //*//** Save the registration code then triggers a ping to submit it*//*
     //enterprise_code_submit: function(ev) {
     //    ev.preventDefault();
     //    var P = new Model('ir.config_parameter');
@@ -148,8 +187,9 @@ var AppSwitcher = Widget.extend({
             menu_id: $(ev.currentTarget).data('menu'),
             action_id: $(ev.currentTarget).data('action-id'),
         });
+        $(".o_web_client").css("background-color","#fff");
     },
-});
+});*/
 
 return AppSwitcher;
 

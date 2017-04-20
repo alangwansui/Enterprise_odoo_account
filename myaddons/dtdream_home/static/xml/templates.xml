@@ -21,7 +21,7 @@
     <t t-name="header_info">
         <div>
             <div class="dodo-header clearfix ">
-                <div class="logo"><img src="/dtdream_home/static/img/logo@2x.png"/></div>
+                <div class="logo"><a href="/index"><img src="/dtdream_home/static/img/logo@2x.png"/></a></div>
                 <div class="item-bar clearfix">
                     <ul>
                         <li class="user-menu">
@@ -38,17 +38,108 @@
 
     <t t-name="sidebar_info">
         <div class="sidebar hidden-xs">
-            <ul>
+            <!--<ul>
                 <li class="selected_dashboard"><i class="dodo doicon-dashboard"/>Dashboard</li>
-            </ul>
+            </ul>-->
             <!---->
             <div class="panel-group left-nav" id="leftNav" role="tablist" aria-multiselectable="true">
+                <div class="app_search">
+                    <input type="text" class="app_search_info on_app_search" placeholder="查找应用"/>
+                    <i class="fa fa-search"></i>
+                </div>
+                <!--销售-->
                 <div class="panel ">
+                    <div class="panel-heading" role="tab" id="left-title-sell">
+                        <h6 class="panel-title">
+                            <ul class="fix_item">
+                                <t t-foreach="sell_sets" t-as="sell">
+                                    <a t-att-href="sell.url">
+                                        <li class="collapsed">
+                                            <i class="dodo doicon-sell"/>
+                                            <t t-esc="sell.name"/>
+                                        </li>
+                                    </a>
+                                </t>
+                            </ul>
+                        </h6>
+                    </div>
+                </div>
+                <!--产品-->
+                <!--<div class="panel">
+                    <div class="panel-heading" role="tab" id="left-title-item">
+                        <h6 class="panel-title">
+                            <ul class="fix_item">
+                                <t t-foreach="item_sets" t-as="item">
+                                    <a t-att-href="item.url">
+                                        <li class="collapsed">
+                                            <i class="dodo doicon-product"/>
+                                            <t t-esc="item.name"/>
+                                        </li>
+                                    </a>
+                                </t>
+                            </ul>
+                        </h6>
+                    </div>
+
+                </div>-->
+                <!--研发-->
+                <div class="panel">
+                    <div class="panel-heading" role="tab" id="left-title-rd">
+                        <h6 class="panel-title">
+                            <ul class="fix_item">
+                                <t t-foreach="RD_sets" t-as="RD">
+                                    <a t-att-href="RD.url">
+                                        <li class="collapsed">
+                                            <i class="dodo doicon-rd"/>
+                                            <t t-esc="RD.name"/>
+                                        </li>
+                                    </a>
+                                </t>
+                            </ul>
+                        </h6>
+                    </div>
+                </div>
+                <!--服务-->
+                <div class="panel">
+                    <div class="panel-heading" role="tab" id="left-title-serve">
+                        <h6 class="panel-title">
+                            <ul class="fix_item">
+                                <t t-foreach="serve_sets" t-as="serve">
+                                    <a t-att-href="serve.url">
+                                        <li class="collapsed">
+                                            <i class="dodo doicon-reception"/>
+                                            <t t-esc="serve.name"/>
+                                        </li>
+                                    </a>
+                                </t>
+                            </ul>
+                        </h6>
+                    </div>
+                </div>
+                <!--采购-->
+                <div class="panel">
+                    <div class="panel-heading" role="tab" id="left-title-chain">
+                        <h6 class="panel-title">
+                            <ul class="fix_item">
+                                <t t-foreach="chain_sets" t-as="chain">
+                                    <a t-att-href="chain.url">
+                                        <li class="collapsed">
+                                            <i class="dodo doicon-out"/>
+                                            <t t-esc="chain.name"/>
+                                        </li>
+                                    </a>
+                                </t>
+                            </ul>
+                        </h6>
+                    </div>
+                </div>
+                <!--公共应用-->
+                <div class="panel">
                     <div class="panel-heading" role="tab" id="left-title-general">
                         <h6 class="panel-title">
                             <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-general" aria-expanded="false" aria-controls="left-general">
                                 <i class="dodo doicon-holiday"/>
-                                通用
+                                公共应用
                                 <span class="dodo doicon-jiantouyou"></span>
                             </a>
                         </h6>
@@ -67,152 +158,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel">
-                    <div class="panel-heading" role="tab" id="left-title-financial">
-                        <h6 class="panel-title">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-financial" aria-expanded="false" aria-controls="left-financial">
-                                <i class="dodo doicon-expense"/>
-                                财务
-                                <span class="dodo doicon-jiantouyou"></span>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="left-financial" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-financial">
-                        <div class="panel-body list-group">
-                            <ul>
-                                <t t-foreach="financial_sets" t-as="financial">
-                                    <a t-att-href="financial.url">
-                                        <li class="list-group-item">
-                                            <t t-esc="financial.name"/>
-                                        </li>
-                                    </a>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel">
-                    <div class="panel-heading" role="tab" id="left-title-HR">
-                        <h6 class="panel-title">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-HR" aria-expanded="false" aria-controls="left-HR">
-                                <i class="dodo doicon-hr"/>
-                                HR
-                                <span class="dodo doicon-jiantouyou"></span>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="left-HR" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-HR">
-                        <div class="panel-body list-group">
-                            <ul>
-                                <t t-foreach="HR_sets" t-as="HR">
-                                    <a t-att-href="HR.url">
-                                        <li class="list-group-item">
-                                            <t t-esc="HR.name"/>
-                                        </li>
-                                    </a>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel">
-                    <div class="panel-heading" role="tab" id="left-title-market">
-                        <h6 class="panel-title">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-market" aria-expanded="false" aria-controls="left-market">
-                                <i class="dodo doicon-sell"/>
-                                市场
-                                <span class="dodo doicon-jiantouyou"></span>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="left-market" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-market">
-                        <div class="panel-body list-group">
-                            <ul>
-                                <t t-foreach="market_sets" t-as="market">
-                                    <a t-att-href="market.url">
-                                        <li class="list-group-item">
-                                            <t t-esc="market.name"/>
-                                        </li>
-                                    </a>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel">
-                    <div class="panel-heading" role="tab" id="left-title-rd">
-                        <h6 class="panel-title">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-rd" aria-expanded="false" aria-controls="left-rd">
-                                <i class="dodo doicon-rd"/>
-                                研发
-                                <span class="dodo doicon-jiantouyou"></span>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="left-rd" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-rd">
-                        <div class="panel-body list-group">
-                            <ul>
-                                <t t-foreach="rd_sets" t-as="rd">
-                                    <a t-att-href="rd.url">
-                                        <li class="list-group-item">
-                                            <t t-esc="rd.name"/>
-                                        </li>
-                                    </a>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-heading" role="tab" id="left-title-service">
-                        <h6 class="panel-title">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-service" aria-expanded="false" aria-controls="left-service">
-                                <i class="dodo doicon-reception"/>
-                                服务
-                                <span class="dodo doicon-jiantouyou"></span>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="left-service" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-service">
-                        <div class="panel-body list-group">
-                            <ul>
-                                <t t-foreach="service_sets" t-as="service">
-                                    <a t-att-href="service.url">
-                                        <li class="list-group-item">
-                                            <t t-esc="service.name"/>
-                                        </li>
-                                    </a>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel">
-                    <div class="panel-heading" role="tab" id="left-title-chain">
-                        <h6 class="panel-title">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#leftNav" href="#left-chain" aria-expanded="false" aria-controls="left-chain">
-                                <i class="dodo doicon-account"/>
-                                供应链
-                                <span class="dodo doicon-jiantouyou"></span>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="left-chain" class="panel-collapse collapse" role="tabpanel" aria-labelledby="left-title-chain">
-                        <div class="panel-body list-group">
-                            <ul>
-                                <t t-foreach="chain_sets" t-as="chain">
-                                    <a t-att-href="chain.url">
-                                        <li class="list-group-item">
-                                            <t t-esc="chain.name"/>
-                                        </li>
-                                    </a>
-                                </t>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
             </div>
             <!---->
             <!--<ul>
@@ -229,7 +174,7 @@
             </ul>-->
         </div>
         <div class="nav-bar">
-            <span class="dodo-logo"><img src="/dtdream_home/static/img/dodo-logo.png" /> </span>
+            <span class="dodo-logo"><img src="/dtdream_home/static/img/logo@2x.png" /> </span>
                 <div id="nav" class="navbar-collapse collapse in" role="navigation" aria-expanded="true">
                     <ul class="nav navbar-nav clearfix">
                         <t t-foreach="model_sets" t-as="model">
@@ -241,6 +186,9 @@
                                 </li>
                             </a>
                         </t>
+                        <li class="divider"></li>
+
+                        <li class="do_mobile_logout"><a href="/web/login">注销</a></li>
                     </ul>
                 </div>
             </div>
@@ -282,75 +230,82 @@
             <div class="address line">
                 <div class="p10">
                     <h4>员工通讯录</h4>
-                    <input class="form-control o_input_text" placeholder="请输入姓名花名或工号" />
+                    <label>
+                        <input id="o_search_hr" class="form-control o_input_text" placeholder="请输入姓名花名或工号" />
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </label>
 
                     <div class="blank10"/>
                     <a class="btn submit o_user_search_btn">提交</a>
 
                     <div class="blank10"/>
                     <p class="notes">*输入任一条件即可查询</p>
+
+                    <!--通讯录 -->
+                    <div class="o_user_search" />
                 </div>
-                <!--通讯录 -->
-                <div class="o_user_search" />
             </div>
 
 
             <!--相关链接-->
             <div class="line related_links p10">
                 <h4>相关链接</h4>
+                <div class="related_padding">
+                    <p>通用</p>
+                    <div class="btn-group">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            请选择<span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a target="_blank" href="https://vpn.dtdream.com/">数梦VPN</a></li>
+                            <li><a target="_blank" href="http://www.dtdream.com/">公司官网</a></li>
+                            <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29204953">公司发文</a></li>
+                            <li><a target="_blank" href="http://doc.dtdream.com/pages/viewpage.action?pageId=3670198">外部文档中心</a></li>
+                            <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=25788516">内部文档中心</a></li>
+                            <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=361134">帮助中心</a></li>
+                            <li><a target="_blank" href="http://jira.dtdream.com/projects/ONLINE">网上问题</a></li>
+                            <li><a target="_blank" href="http://all.dtdream.com/letter.html"> 给新员工的一封信</a></li>
+                            <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45748653"> dodo手机客户端</a></li>
+                            <li><a target="_blank" href="http://bbs.dtdream.com/">BBS</a></li>
+                            <li><a target="_blank" href="http://mail.dtdream.com/">邮箱</a></li>
+                            <li><a target="_blank" href="http://shumeng.yunxuetang.cn/">云学堂</a></li>
+                        </ul>
+                    </div>
 
-                <p>通用</p>
-                <div class="btn-group">
-                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        请选择<span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a target="_blank" href="https://vpn.dtdream.com/">数梦VPN</a></li>
-                        <li><a target="_blank" href="http://www.dtdream.com/">公司官网</a></li>
-                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=29204953">公司发文</a></li>
-                        <li><a target="_blank" href="http://doc.dtdream.com/pages/viewpage.action?pageId=3670198">外部文档中心</a></li>
-                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=25788516">内部文档中心</a></li>
-                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=361134">帮助中心</a></li>
-                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=246&amp;view=null">网上问题</a></li>
-                        <li><a target="_blank" href="http://all.dtdream.com/letter.html"> 给新员工的一封信</a></li>
-                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=45748653"> dodo手机客户端</a></li>
-                        <li><a target="_blank" href="http://bbs.dtdream.com/">BBS</a></li>
-                        <li><a target="_blank" href="http://mail.dtdream.com/">邮箱</a></li>
-                        <li><a target="_blank" href="http://shumeng.yunxuetang.cn/">云学堂</a></li>
-                    </ul>
+                    <p>研发相关链接</p>
+                    <div class="btn-group">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            请选择<span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a target="_blank" href="http://jira.dtdream.com">JIRA</a></li>
+                            <li><a target="_blank" href="http://dtp.dtdream.com:9000/">sonar</a></li>
+                            <li><a target="_blank" href="http://dashboard-rd.dtdream.com">研发质量看板</a></li>
+                            <li><a target="_blank" href="http://dtp.dtdream.com/">DTP测试平台</a></li>
+                            <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904559">版本服务器</a></li>
+                            <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904616">文件服务器</a></li>
+                            <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?projectKey=DTEST&amp;rapidView=185">验收电子流</a></li>
+                            <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=163&amp;projectKey=REQ">需求接纳电子流</a></li>
+                            <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=135&amp;projectKey=MRKT">对外测试电子流</a></li>
+                        </ul>
+                    </div>
+
+                    <p>dodo手机客户端</p>
+                    <div class="dodo-download">
+                        <img src="/dtdream_home/static/img/Android-dodo.png" />
+                        <span>Android版</span>
+                    </div>
+                    <div class="dodo-download">
+                        <img src="/dtdream_home/static/img/iPhone-dodo.png" />
+                        <span>iPhone版</span>
+                        <span style="font-size:.2rem;text-align:left;">（iPhone版：安装完后，打开手机设置--通用--设备管理--企业级应用后，点击信任应用，会弹出窗口，继续点击信任即可完成安装）</span>
+                    </div>
                 </div>
 
-                <p>研发相关链接</p>
-                <div class="btn-group">
-                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        请选择<span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a target="_blank" href="http://jira.dtdream.com">JIRA</a></li>
-                        <li><a target="_blank" href="http://dashboard-rd.dtdream.com">研发质量看板</a></li>
-                        <li><a target="_blank" href="http://dtp.dtdream.com/">DTP测试平台</a></li>
-                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904559">版本服务器</a></li>
-                        <li><a target="_blank" href="http://confluence.dtdream.com/pages/viewpage.action?pageId=34904616">文件服务器</a></li>
-                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?projectKey=DTEST&amp;rapidView=185">验收电子流</a></li>
-                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=163&amp;projectKey=REQ">需求接纳电子流</a></li>
-                        <li><a target="_blank" href="http://jira.dtdream.com/secure/RapidBoard.jspa?rapidView=135&amp;projectKey=MRKT">对外测试电子流</a></li>
-                    </ul>
-                </div>
-
-                <p>dodo手机客户端</p>
-                <div class="dodo-download">
-                    <img src="/dtdream_home/static/img/Android-dodo.png" />
-                    <span>Android版</span>
-                </div>
-                <div class="dodo-download">
-                    <img src="/dtdream_home/static/img/iPhone-dodo.png" />
-                    <span>iPhone版</span>
-                    <span style="font-size:.2rem;text-align:left;">（iPhone版：安装完后，打开手机设置--通用--设备管理--企业级应用后，点击信任应用，会弹出窗口，继续点击信任即可完成安装）</span>
-                </div>
             </div>
 
             <!--我要吐槽-->
-            <button class="teasing" name="dtdream_feedback.act_feedback">我要吐槽</button>
+            <button class="teasing" name="dtdream_feedback.act_feedback">意见反馈</button>
         </div>
     </t>
 
@@ -358,7 +313,7 @@
         <t t-if="result == 0">
             <!--<div class="blank30"/>-->
             <div class="info line" style="border:0;">
-                <div class="p10" style="padding-top:0;">
+                <div class="hr_info" style="padding-top:0;">
                     <p class="notes">没有找到对应员工信息</p>
                 </div>
             </div>
@@ -366,7 +321,7 @@
         <t t-foreach="users" t-as="user">
             <!--<div class="blank30"/>-->
             <div class="info line" style="border:0;">
-                <div class="p10" style="padding-top:0;">
+                <div class="hr_info" style="padding-top:0;">
                     <label>姓名:</label><span><t t-esc="user.full_name"/></span>
                     <div class="blank10"/>
                     <label>花名:</label><span><t t-esc="user.nick_name"/></span>
@@ -389,7 +344,7 @@
             <div class="p30">
                 <div class="o_content_title"/>
                 <div class="o_content_dashboard hidden-xs"/>
-                <div class="o_content_notice"/>
+                <!--<div class="o_content_notice"/>-->
                 <div class="o_content_event"/>
                 <!--<div class="o_content_relatelinks hidden-xs">-->
                     <!--<div class="relatelinks clearfix line">-->
@@ -444,19 +399,118 @@
 
     <t t-name="content_title">
         <div class="title hidden-xs">
-            <h2>Dashboard</h2>
+            <h2>常用应用入口</h2>
             <p>
-                <span>
+                <!--<span>
                     <t t-esc="username"/>
-                </span>，欢迎访问dodo，希望今天有个好心情~
+                </span>，欢迎访问dodo，希望今天有个好心情~-->
+                下面列出的是dodo部分常用功能的链接，如需要查看全部链接，请使用页面左侧菜单。
             </p>
         </div>
     </t>
 
     <t t-name="content_dashboard">
-        <div class="line dashboard">
+        <div class="o_web_dashboard">
+            <div class="row">
+                <div class="col-sm-6 col-md-3">
+                    <div class="panel">
+                        <div class="panel-heading o_web_blue">
+                            <h3 class="panel-title">
+                                <i></i>
+                                我的考勤
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="item_list">
+                                <t t-foreach="check_sets" t-as="check">
+                                    <li>
+                                        <a t-att-href="check.url">
+                                            <t t-esc="check.name"/>
+                                        </a>
+                                    </li>
+                                </t>
+                                <!--<li><a href="#menu_id=358&amp;action_id=515">外出公干</a></li>
+                                <li><a href="#menu_id=333&amp;action_id=483">出差</a></li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="panel">
+                        <div class="panel-heading o_web_light_green">
+                            <h3 class="panel-title">
+                                <i></i>
+                                我的财务
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="item_list">
+                                <t t-foreach="finacial_sets" t-as="finacial">
+                                    <li>
+                                        <a t-att-href="finacial.url">
+                                            <t t-esc="finacial.name"/>
+                                        </a>
+                                    </li>
+                                </t>
+                               <!-- <li><a href="#menu_id=417&amp;action_id=592">费用报销</a></li>
+                                <li><a href="#menu_id=704&amp;action_id=865">工资</a></li>
+                                <li><a href="#menu_id=588&amp;action_id=782">资产管理</a></li>
+                                <li><a href="#menu_id=383&amp;action_id=533">预算管理</a></li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="panel">
+                        <div class="panel-heading o_web_yellow">
+                            <h3 class="panel-title">
+                                <i></i>
+                                我的绩效
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="item_list">
+                                <t t-foreach="performance_sets" t-as="performance">
+                                    <li>
+                                        <a t-att-href="performance.url">
+                                            <t t-esc="performance.name"/>
+                                        </a>
+                                    </li>
+                                </t>
+                                <!--<li><a href="#menu_id=356&amp;action_id=493">绩效</a></li>
+                                <li><a href="#menu_id=676&amp;action_id=840">任职资格认证</a></li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="panel">
+                        <div class="panel-heading o_web_dark_green">
+                            <h3 class="panel-title">
+                                <i></i>
+                                通用应用
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="item_list">
+                                <t t-foreach="general_sets" t-as="general">
+                                    <li>
+                                        <a t-att-href="general.url">
+                                            <t t-esc="general.name"/>
+                                        </a>
+                                    </li>
+                                </t>
+                                <!--<li><a href="#menu_id=518&amp;action_id=671">信息安全</a></li>
+                                <li><a href="#menu_id=417&amp;action_id=772">IT需求管理</a></li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="line dashboard">
             <div class="count-a container ">
-                <!-- 最常用功能统计-->
+                &lt;!&ndash; 最常用功能统计&ndash;&gt;
                 <div class="row">
                     <div class="col-sm-4 clearfix f-c-1">
                         <a class="pic" t-att-href="data.budget_url">
@@ -487,10 +541,10 @@
                         </div>
                     </div>
                 </div>
-                <!-- 最常用功能统计-->
-                <!--年统计 -->
+                &lt;!&ndash; 最常用功能统计&ndash;&gt;
+                &lt;!&ndash;年统计 &ndash;&gt;
                 <div id="firstchart"/>
-                <!--年统计 -->
+                &lt;!&ndash;年统计 &ndash;&gt;
             </div>
             <div class="count-b container">
                 <div class="row">
@@ -516,30 +570,30 @@
                             </div>
                         </div>
                     </div>
-                    <!--<div class="col-sm-12 f-c-4">-->
-                        <!--<div class="pic">-->
-                            <!--<img src="/dtdream_home/static/img/db-icon-ywxg.png"/>-->
-                        <!--</div>-->
-                        <!--<div class="data">-->
-                            <!--<div class="title">与我相关</div>-->
-                            <!--<div class="nb"><span class="nb-c"><t t-esc="data.my"></t></span>个</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                    &lt;!&ndash;<div class="col-sm-12 f-c-4">&ndash;&gt;
+                        &lt;!&ndash;<div class="pic">&ndash;&gt;
+                            &lt;!&ndash;<img src="/dtdream_home/static/img/db-icon-ywxg.png"/>&ndash;&gt;
+                        &lt;!&ndash;</div>&ndash;&gt;
+                        &lt;!&ndash;<div class="data">&ndash;&gt;
+                            &lt;!&ndash;<div class="title">与我相关</div>&ndash;&gt;
+                            &lt;!&ndash;<div class="nb"><span class="nb-c"><t t-esc="data.my"></t></span>个</div>&ndash;&gt;
+                        &lt;!&ndash;</div>&ndash;&gt;
+                    &lt;!&ndash;</div>&ndash;&gt;
                 </div>
                 <div class="row">
                     <div id="relatechats"/>
                 </div>
 
             </div>
-        </div>
+        </div>-->
     </t>
 
-    <t t-name="content_notice">
+    <!--<t t-name="content_notice">
         <div class="notice line hidden-xs">
             <div class="title">
                 公告
             </div>
-            <!--新闻列表 -->
+            &lt;!&ndash;新闻列表 &ndash;&gt;
             <div class="newsticker">
                 <ul class="newsticker-list" >
                     <t t-foreach="notices" t-as="notice">
@@ -549,20 +603,26 @@
                     </t>
                 </ul>
             </div>
-            <!--新闻列表 -->
+            &lt;!&ndash;新闻列表 &ndash;&gt;
         </div>
-    </t>
+    </t>-->
 
     <t t-name="content_event">
+        <h3 class="about_self_events">与我相关的事项</h3>
         <div class="event-table container-fluid">
             <div class="tb-row clearfix  row">
                 <div class="col-xs-12 title_affairs">
                     <ul class="nav nav-tabs" role="tablist" id="sliderSelectOptions">
                         <li role="presentation" data-index="slider_affairs" class="slider_li active">
-                            <a href="#slider_affairs_events" aria-controls="slider_affairs_events" role="tab" data-toggle="tab">待我处理事项</a>
+                            <a href="#slider_affairs_events" aria-controls="slider_affairs_events" role="tab" data-toggle="tab">
+                                待我处理事项
+                                <span class="badge o_affairs_badge"></span>
+                            </a>
                         </li>
                         <li role="presentation" data-index="slider_applies" class="slider_li">
-                            <a href="#slider_applies_events" aria-controls="slider_applies_events" role="tab" data-toggle="tab">我申请的事项</a>
+                            <a href="#slider_applies_events" aria-controls="slider_applies_events" role="tab" data-toggle="tab">
+                                我申请的事项
+                            </a>
                         </li>
                         <li class="inline"></li>
                     </ul>

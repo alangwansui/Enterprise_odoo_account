@@ -18,4 +18,5 @@ access_dtdream_dinner_management,dtdream_customer_reception.dtdream_dinner_manag
 access_dtdream_hotel_room,dtdream_customer_reception.dtdream_hotel_roomt,model_dtdream_hotel_room,,1,1,1,1
 access_dtdream_hotel_dinner,dtdream_customer_reception.dtdream_hotel_dinner,model_dtdream_hotel_dinner,,1,1,1,1
 access_dtdream_dinner_zone,dtdream_customer_reception.dtdream_dinner_zone,model_dtdream_dinner_zone,,1,1,1,1
+access_dtdream_customer_car_info,dtdream_customer_car_info,model_dtdream_customer_car_info,,1,1,1,1
 

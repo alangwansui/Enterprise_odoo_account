@@ -4,7 +4,7 @@ from openerp.exceptions import ValidationError
 from datetime import datetime,timedelta
 from openerp.osv import expression
 from lxml import etree
-
+import time
 class dtdream_rd_replanning(models.Model):
     _name = 'dtdream.rd.replanning'
     _inherit = ['mail.thread']
@@ -34,24 +34,34 @@ class dtdream_rd_replanning(models.Model):
     @api.onchange('message_follower_ids')
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
+        t_in = time.clock()
         self.followers_user = False
+        array = [(4,foll.partner_id.user_ids.id) for foll in self.message_follower_ids]
+        self.write({'followers_user': array})
+        print "========================tttttttttttttttt=====================", time.clock() - t_in
         for foll in self.message_follower_ids:
-            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
-            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users and foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
                 self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4,foll.partner_id.user_ids.id)]})
+        print "========================zzzzzzzzzzzzz=====================", time.clock() - t_in
 
     followers_user = fields.Many2many("res.users" ,"replanning_f_u_u",string="关注者")
 
     @api.constrains('proname')
     def con_name_role(self):
+        t_in = time.clock()
         self.department=self.proname.department.id
         self.department_2=self.proname.department_2.id
         self.role_person=[(5,)]
-        for role in self.proname.role_ids:
-            if role.person:
-                self.write({'role_person': [(4,role.person.user_id.id)]})
-                if role.person.user_id:
-                    self.message_subscribe_users(user_ids=[role.person.user_id.id])
+        # for role in self.proname.role_ids:
+        #     if role.person:
+        #         self.write({'role_person': [(4,role.person.user_id.id)]})
+        #         if role.person.user_id:
+        #             self.message_subscribe_users(user_ids=[role.person.user_id.id])
+        array = [(4, role.person.user_id.id) for role in self.proname.role_ids if role.person]
+        array2 = [role.person.user_id.id for role in self.proname.role_ids if role.person and role.person.user_id.id]
+        self.write({'role_person': array})
+        self.message_subscribe_users(user_ids=array2)
+        print "========================yyyyyyyyyyy=====================", time.clock() - t_in
 
     @api.model
     def _compute_create(self):
@@ -407,6 +417,8 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
 
     @api.multi
     def btn_replanning_tj(self):
+        import time
+        t_in = time.clock()
         if not self.reason:
             raise ValidationError(u"原因未填写")
         is_plccb = False
@@ -416,13 +428,14 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
                 is_plccb = True
                 plccb = role.person
                 break
+        print "========================ksdjfiodsfhdsfifhdishfiufisdhfiia=====================", time.clock() - t_in
         if not is_plccb or not plccb:
             raise ValidationError(u"该产品没有配置PL-CCB")
         else:
             res = self.env['dtdream.rd.replanning'].create({'proname':self.proname.id,'version':self.version.id,'old_plan_time':self.old_plan_time,'new_plan_time':self.new_plan_time,'reason':self.reason,'state':self.state})
             res.write({'current_approver_user': plccb.user_id.id})
             res.signal_workflow("cg_to_spz")
-
+            print "========================ksdjfiodsfhdsfifhdishfiufisdhfiia=====================", time.clock() - t_in
             next_shenpi = plccb
             current_product =self.proname
             current_version = self.version
@@ -448,7 +461,9 @@ class dtdream_rd_replanning_wizard(models.TransientModel):
             'auto_delete': False,
             'email_from':self.get_mail_server_name(),
         }).send()
+        print "========================ksdjfiodsfhdsfifhdishfiufisdhfiia=====================", time.clock() - t_in
         self._message_post(replanning=res,current_product=current_product,current_version=current_version)
+        print "========================ksdjfiodsfhdsfifhdishfiufisdhfiia=====================", time.clock() - t_in
 
 
 

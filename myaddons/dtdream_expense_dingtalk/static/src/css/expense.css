@@ -474,7 +474,7 @@ table.dataTable thead .sorting:after {
 .panelbox-yellow,.panelbox-yellow-02 {
   margin-bottom: 30px;
   position: relative;
-  font-family: "Microsoft YaHei", Arial, sans-serif;
+  //font-family: "Microsoft YaHei", Arial, sans-serif;
   padding: 0;
 }
 .panelbox-blue .panel-footer,

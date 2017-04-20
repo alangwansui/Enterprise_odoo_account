@@ -23,10 +23,10 @@ class dtdream_assets_mac_manage(models.Model):
         if manage:
             domain = domain if domain else []
         elif officer:
-            domain = expression.AND([['|', ('name.user_id', '=', uid),
-                                      ('name.department_id', '=', self.env.user.employee_ids.department_id.id)], domain])
+            domain = expression.AND([['|', ('assets_code.name.user_id', '=', uid),
+                                      ('assets_code.name.department_id', '=', self.env.user.employee_ids.department_id.id)], domain])
         else:
-            domain = expression.AND([[('name.user_id', '=', uid)], domain])
+            domain = expression.AND([[('assets_code.name.user_id', '=', uid)], domain])
         return super(dtdream_assets_mac_manage, self).search_read(domain=domain, fields=fields, offset=offset,
                                                              limit=limit, order=order)
 
@@ -54,9 +54,8 @@ class dtdream_assets_mac_manage(models.Model):
     assets_code = fields.Many2one('dtdream.assets.management', string='资产编码')
     name = fields.Many2one('hr.employee', string='责任人', compute=compute_name_department)
     department = fields.Many2one('hr.department', string='部门', compute=compute_name_department)
-    mac_address = fields.Char(string='mac地址', size=16)
+    mac_address = fields.Char(string='mac地址', size=17)
 
     _sql_constraints = [
-        ('asset_code_uniquee', 'UNIQUE(asset_code)', "资产编码已存在!"),
         ('asset_mac_address', 'UNIQUE(mac_address)', "MAC地址已存在已存在!"),
     ]

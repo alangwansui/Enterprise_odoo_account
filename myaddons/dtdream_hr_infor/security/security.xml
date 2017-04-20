@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="0">
+        <record model="ir.module.category" id="model_hr_employee_set_caiwu_hr_group">
+            <field name="name">财务和HR审批人设置</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="group_cai_hr_config" model="res.groups">
+            <field name="name">财务和HR审批人设置</field>
+            <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
+            <field name="category_id" ref="model_hr_employee_set_caiwu_hr_group"/>
+        </record>
+    </data>
+</openerp>

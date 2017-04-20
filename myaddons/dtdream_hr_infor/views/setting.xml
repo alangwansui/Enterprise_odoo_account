@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--===========================views===========================-->
+        <record id="hr_infor_set_caiwu_hr_form" model="ir.ui.view">
+            <field name="name">hr.infor.set.caiwu.hr.form</field>
+            <field name="model">hr.employee.set.caiwu.hr</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="出纳、财务和HR审批人设置">
+                            <field name="chuna" options="{'no_open': True}" required="1"/>
+                            <field name="caiwu" options="{'no_open': True}" required="1"/>
+                            <field name="hr" options="{'no_open': True}" required="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--==========================action==========================-->
+
+        <record model="ir.actions.server" id="set_travel_grant_config">
+            <field name="name">人员配置</field>
+            <field name="model_id" ref="model_hr_employee_set_caiwu_hr"/>
+            <field name="code">
+                action = {
+                'name':'人员配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'hr.employee.set.caiwu.hr',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else "",
+                'context':context,
+                }
+            </field>
+        </record>
+
+        <!--===========================menu============================================-->
+        <menuitem name="财务和HR审批人配置" sequence="100" id="hr_infor_set_caiwu_hr"
+                  parent="hr.menu_hr_root"
+                  action="set_travel_grant_config" groups="group_cai_hr_config"/>
+    </data>
+</openerp>

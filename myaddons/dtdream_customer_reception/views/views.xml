@@ -212,13 +212,30 @@
                           </group>
 
                           <group attrs="{'invisible':[('bicycle','=', True)]}">
-                              <group>
-                                  <field name="licence" attrs="{'required':['&amp;',('state','=', '3'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)],'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_receptionist','=',True),'&amp;','&amp;',('state','=','3'),('is_receptionist','=',False),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
-                                  <field name="driver_name" attrs="{'required':['&amp;',('state','=', '3'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)],'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_receptionist','=',True),'&amp;','&amp;',('state','=','3'),('is_receptionist','=',False),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
-                              </group>
-                              <group>
-                                  <field name="driver_tel" attrs="{'required':['&amp;',('state','=', '3'),'|',('car','=',True),'|',('commercial_vehicle','=',True),('bus','=',True)],'readonly':['|','&amp;',('state','!=', '3'),('is_manage','=',False),'|','&amp;',('state','=','3'),('is_receptionist','=',True),'&amp;','&amp;',('state','=','3'),('is_receptionist','=',False),'&amp;',('is_current','=',False),('is_manage','=',False)]}"/>
-                              </group>
+                              <notebook>
+                                  <page>
+                                      <field name="driver_info" attrs="{'readonly':['|','&amp;',('is_manage','=', False),('state','!=','3'),'&amp;',('is_current', '=', False),('is_manage','=',False)]}">
+                                          <tree editable="bottom">
+                                              <field name="licence"/>
+                                              <field name="car_type"/>
+                                              <field name="driver_name"/>
+                                              <field name="driver_tel"/>
+                                          </tree>
+                                          <form>
+                                              <group>
+                                                  <group>
+                                                      <field name="licence" readonly="True"/>
+                                                      <field name="car_type" readonly="True"/>
+                                                  </group>
+                                                  <group>
+                                                      <field name="driver_name" readonly="True"/>
+                                                      <field name="driver_tel" readonly="True"/>
+                                                  </group>
+                                              </group>
+                                          </form>
+                                      </field>
+                                  </page>
+                              </notebook>
                           </group>
 
                           <group string="行程路线">
@@ -375,6 +392,8 @@
               <field name="bill_num"/>
               <field name="name"/>
               <field name="iphone"/>
+              <field name="customer_display"/>
+              <field name="visit_date"/>
               <field name="state"/>
               <field name="current_approve" string="当前处理人"/>
             </tree>

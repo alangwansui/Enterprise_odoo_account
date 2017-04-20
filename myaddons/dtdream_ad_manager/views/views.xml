@@ -8,11 +8,18 @@
             </xpath>
         </template>
 -->
-        <record id="act_btn_change" model="ir.actions.act_window">
-            <field name="name">域群组修改申请</field>
-            <field name="res_model">dtdream.change.apply</field>
-            <field name="view_mode">form</field>
+
+        <record id="view_dtdream_ad_user_filter" model="ir.ui.view">
+            <field name="name">dtdream.ad.user.filter</field>
+            <field name="model">dtdream.ad.user</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="user_name"/>
+                    <field name="display_name"/>
+                </search>
+            </field>
         </record>
+
 
         <record id='dtdream_group_apply_tree' model='ir.ui.view'>
             <field name='name'>view.dtdream.group.apply.tree</field>
@@ -168,6 +175,13 @@
                     </div>
                 </form>
             </field>
+        </record>
+
+        <record id="act_btn_apply" model="ir.actions.act_window">
+            <field name="name">域群组创建申请</field>
+            <field name="res_model">dtdream.group.apply</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_group_apply_form"/>
         </record>
 
          <record id='dtdream_group_apply01_form' model='ir.ui.view'>
@@ -537,6 +551,24 @@
             </field>
         </record>
 
+        <record id="view_dtdream_change_apply_filter" model="ir.ui.view">
+            <field name="name">dtdream.change.apply.filter</field>
+            <field name="model">dtdream.change.apply</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="group"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="act_btn_change" model="ir.actions.act_window">
+            <field name="name">域群组修改申请</field>
+            <field name="res_model">dtdream.change.apply</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_change_apply_form"/>
+            <field name="search_view_id" ref="view_dtdream_change_apply_filter"/>
+        </record>
+
         <record id='dtdream_ad_form' model='ir.ui.view'>
             <field name='name'>view.dtdream.ad.form</field>
             <field name='type'>form</field>
@@ -718,6 +750,7 @@
             <field name="res_model">dtdream.change.apply</field>
             <field name="view_mode">tree,kanban,form</field>
             <field name="domain">[('apply.user_id', '=', uid)]</field>
+            <field name="search_view_id" ref="view_dtdream_change_apply_filter"/>
         </record>
 
         <record model="ir.actions.act_window.view" id="act_ad_change_apply_tree_view">
@@ -784,10 +817,10 @@
         </record>
 
          <record model="ir.actions.act_window.view" id="act_ad_group_it_all_kanban_view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">kanban</field>
-            <field name="view_id" ref="dtdream_ad_kanban"/>
-            <field name="act_window_id" ref="act_ad_group_it_all"/>
+             <field eval="2" name="sequence"/>
+             <field name="view_mode">kanban</field>
+             <field name="view_id" ref="dtdream_ad_kanban"/>
+             <field name="act_window_id" ref="act_ad_group_it_all"/>
         </record>
 
         <record model="ir.actions.act_window.view" id="act_ad_group_it_all_form_view">
@@ -801,16 +834,38 @@
             <field name="name">所有域群组创建申请</field>
             <field name="res_model">dtdream.group.apply</field>
             <field name="view_mode">tree,kanban,form</field>
-            <field name="domain">[('state', '!=', 'draft')]</field>
+            <field name="domain">[]</field>
         </record>
 
         <record id="act_ad_change_it_all" model="ir.actions.act_window">
             <field name="name">所有域群组修改申请</field>
             <field name="res_model">dtdream.change.apply</field>
             <field name="view_mode">tree,kanban,form</field>
-            <field name="domain">[('state', '!=', 'draft')]</field>
+            <field name="domain">[]</field>
         </record>
-        <!--<menuitem id='menu_ad_confirm' name='我的审批' sequence="200" parent='menu_ad' /> -->
+
+
+        <record id="view_dtdream_ad_user_tree" model="ir.ui.view">
+            <field name="name">view.dtdream.ad.user.tree</field>
+            <field name="model">dtdream.ad.user</field>
+            <field name="arch" type="xml">
+                <tree edit="false" create="false">
+                     <field name='user_name'/>
+                     <field name='work'/>
+                     <field name='display_name'/>
+                     <field name='email'/>
+                     <field name='phone'/>
+                     <field name='expire_time'/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="act_ad_user_all" model="ir.actions.act_window">
+            <field name="name">所有域用户</field>
+            <field name="res_model">dtdream.ad.user</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+        </record>
 
         <!-- 菜单 -->
         <menuitem id='menu_ad' name='域群组管理' parent="dtdream_demand_manage.menu_dtdream_demand_manage_root" sequence="14"/>
@@ -830,13 +885,15 @@
             groups="dtdream_ad_manager.group_ad_implement"/>
 
         <menuitem id='menu_ad_change' name='域群组修改' sequence="300" parent='menu_ad' />
-        <menuitem id='menu_ad_change_own' name='我的申请' sequence="100" parent='menu_ad_change' action='act_ad_change_apply' />
+        <menuitem id='menu_ad_change_own' name='我的申请' sequence="100" parent='menu_ad_change' action='act_ad_change_apply' groups="dtdream_ad_manager.group_ad_apply_manager"/>
         <menuitem id='menu_ad_change_implement' name='待我实施' sequence="200" parent='menu_ad_change' action='act_ad_change_implement'
             groups="dtdream_ad_manager.group_ad_implement"/>
         <menuitem id='menu_ad_change_all' name='所有申请' sequence="300" parent='menu_ad_change' action='act_ad_change_it_all'
             groups="dtdream_ad_manager.group_ad_implement"/>
 
         <menuitem id='menu_ad_peizhi' name='配置' sequence="400" parent='menu_ad' groups="dtdream_ad_manager.group_ad_implement"/>
+        <menuitem id='menu_ad_user' name='所有域用户' sequence="500" parent='menu_ad' groups="dtdream_ad_manager.group_ad_implement"
+            action="act_ad_user_all"/>
 
     </data>
 </openerp>

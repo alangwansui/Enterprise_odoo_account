@@ -78,7 +78,7 @@ class dtdream_hr_holidays_extend(models.Model):
     nxj_jiesuan = fields.Float(string="年休假结算天数",default=0.0)
 
     nxj_jisuan = fields.Boolean(string="标记计算数据",default=False)
-    is_nxj_jiesuan = fields.Boolean(string="标记年休假受否结算", default=False)
+    is_nxj_jiesuan = fields.Boolean(string="年休假是否结算", default=False)
 
     _check_holidays = lambda self, cr, uid, ids, context=None: self.check_holidays(cr, uid, ids, context=context)
 
@@ -186,22 +186,7 @@ class dtdream_hr_holidays_extend(models.Model):
                            'Status', readonly=True, track_visibility='onchange',default='draft')
 
     @api.one
-    def _compute_is_shenpiren(self):            #为什么不用current_shenpiren来判断？
-        # if (self.shenpiren1.user_id.id==self.env.user.id) and self.state=='confirm':
-        #     self.is_shenpiren=True
-        # elif (self.shenpiren2.user_id.id==self.env.user.id) and self.state=='confirm2':
-        #     self.is_shenpiren=True
-        #
-        # elif (self.shenpiren3.user_id.id==self.env.user.id) and self.state=='confirm3':
-        #     self.is_shenpiren=True
-        #
-        # elif (self.shenpiren4.user_id.id==self.env.user.id) and self.state=='confirm4':
-        #     self.is_shenpiren=True
-        #
-        # elif (self.shenpiren5.user_id.id==self.env.user.id) and self.state=='confirm5':
-        #     self.is_shenpiren=True
-        # else:
-        #     self.is_shenpiren=False
+    def _compute_is_shenpiren(self):
         if self.current_shenpiren and (self.current_shenpiren.user_id.id==self.env.user.id):
             self.is_shenpiren = True
         else:
@@ -660,6 +645,21 @@ class dtdream_hr_holidays_extend(models.Model):
 
 
 
+    @api.model
+    def if_in_hr(self):
+        if self.env.user.has_group("base.group_hr_user") or self.env.user.has_group("base.group_hr_manager"):
+            return True
+
+    @api.model
+    def nianxiujia_jiesuan(self,active_ids):
+        ids=[]
+        for id in active_ids:
+            ids.append(int(id))
+        results = self.browse(ids)
+        for rec in results:
+            if not rec.is_nxj_jiesuan:
+                rec.sudo().write({'is_nxj_jiesuan':True,'nxj_jiesuan':rec.nxj_yue,'nxj_yue':0})
+
 
 #-------------无用model---------------------
 class dtdream_nianjia(models.Model):
@@ -742,9 +742,9 @@ class hr_holidays_status_extend(osv.osv):
                     # note: add only validated allocation even for the virtual
                     # count; otherwise pending then refused allocation allow
                     # the employee to create more leaves than possible
-                    status_dict['virtual_remaining_leaves'] += holiday.number_of_days_temp
+                    status_dict['virtual_remaining_leaves'] += holiday.number_of_days_temp-holiday.nxj_jiesuan
                     status_dict['max_leaves'] += holiday.number_of_days_temp
-                    status_dict['remaining_leaves'] += holiday.number_of_days_temp
+                    status_dict['remaining_leaves'] += holiday.number_of_days_temp-holiday.nxj_jiesuan
             elif holiday.type == 'remove':  # number of days is negative
                 status_dict['virtual_remaining_leaves'] -= holiday.number_of_days_temp
                 if holiday.state == 'validate':

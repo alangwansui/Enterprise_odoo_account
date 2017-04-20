@@ -19,20 +19,23 @@ FormView.include({
 
     change_is_budget:function(){
         var self = this;
-        if ($('.is_budget')[1].value == $('.is_budget')[1][2].value){
-            Dialog.confirm(self, _t("选择无预算后，项目将进入机会点阶段，是否确认修改？"), {
-                confirm_callback: function() {
-                    new Model('crm.lead').call('action_set_lead_stage',[self.datarecord.id]).then(function(result){
-                        self.reload()
-                    })
-                },
-                cancel_callback: function() {
-                    $('.is_budget')[1].value = $('.is_budget')[1][1].value
-                },
-                title : "提示",
-            });
+        if (self.datarecord.id && self.datarecord.stage_id[1] != "机会点"){
+                if ($('.is_budget')[1].value == $('.is_budget')[1][2].value){
+                Dialog.confirm(self, _t("选择无预算后，项目将进入机会点阶段，是否确认修改？"), {
+                    confirm_callback: function() {
+                        new Model('crm.lead').call('action_set_lead_stage',[self.datarecord.id]).then(function(result){
+                            self.reload()
+                        })
+                    },
+                    cancel_callback: function() {
+                        $('.is_budget')[1].value = $('.is_budget')[1][1].value
+                    },
+                    title : "提示",
+                });
+            }
         }
     },
+
     opp_stage_click: function(kwargs) {
         var self = this;
         var stage_name = kwargs.target.innerHTML.trim() || window.event.target.innerHTML.trim();

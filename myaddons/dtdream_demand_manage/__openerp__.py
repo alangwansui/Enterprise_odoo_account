@@ -29,10 +29,10 @@
         'workflow/dtdream_demand_app_workflow.xml',
         'views/dtdream_demand_app_js.xml',
         'security/dtdream_demand_manage_security.xml',
-        #'views/dtdream_demand_dashboard.xml'
+        'views/dtdream_demand_dashboard.xml'
     ],
     'qweb':[
-        #'views/dtdream_demand_templates.xml'
+        'views/dtdream_demand_templates.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

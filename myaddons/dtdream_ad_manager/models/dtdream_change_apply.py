@@ -83,9 +83,9 @@ class dtdream_change_apply(models.Model):
                     users += (u.nick_name + '<br/>')
                 result.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                    <tr><th style="padding:10px" colspan="3" align="center">添加成员</th></tr>
-                                                   <tr><td style="padding:10px">群组名称</td><td style="padding:10px">添加成员</td><td style="padding:10px">时间</td></tr>
-                                                   <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                   </table>""" % (result.name, users, fields.Datetime.now()))
+                                                   <tr><td style="padding:10px">群组名称</td><td style="padding:10px">添加成员</td></tr>
+                                                   <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                   </table>""" % (result.name, users))
             elif self.type == '2':
                 for user in self.users:
                     if dtldap.is_user_exist(user.account) and dtldap.is_user_in_group(user.account, result.name):
@@ -96,9 +96,9 @@ class dtdream_change_apply(models.Model):
                     users += (u.nick_name + '<br/>')
                 result.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                     <tr><th style="padding:10px" colspan="3" align="center">删除成员</th></tr>
-                                                    <tr><td style="padding:10px">群组名称</td><td style="padding:10px">删除成员</td><td style="padding:10px">时间</td></tr>
-                                                   <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                   </table>""" % (result.name, users, fields.Datetime.now()))
+                                                    <tr><td style="padding:10px">群组名称</td><td style="padding:10px">删除成员</td></tr>
+                                                   <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                   </table>""" % (result.name, users))
             elif self.type == '3':
                 result.write({'admins': [(4, user.id) for user in self.users]})
                 users = ''
@@ -106,9 +106,9 @@ class dtdream_change_apply(models.Model):
                     users += (u.nick_name + '<br/>')
                 result.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                     <tr><th style="padding:10px" colspan="3" align="center">添加管理员</th></tr>
-                                                    <tr><td style="padding:10px">群组名称</td><td style="padding:10px">添加管理员</td><td style="padding:10px">时间</td></tr>
-                                                   <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                   </table>""" % (result.name, users, fields.Datetime.now()))
+                                                    <tr><td style="padding:10px">群组名称</td><td style="padding:10px">添加管理员</td></tr>
+                                                   <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                   </table>""" % (result.name, users))
             elif self.type == '4':
                 result.write({'admins': [(3, user.id) for user in self.users]})
                 users = ''
@@ -116,9 +116,9 @@ class dtdream_change_apply(models.Model):
                     users += (u.nick_name + '<br/>')
                 result.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                     <tr><th style="padding:10px" colspan="3" align="center">添加成员</th></tr>
-                                                    <tr><td style="padding:10px">群组名称</td><td style="padding:10px">删除管理员</td><td style="padding:10px">时间</td></tr>
-                                                    <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                    </table>""" % (result.name, users, fields.Datetime.now()))
+                                                    <tr><td style="padding:10px">群组名称</td><td style="padding:10px">删除管理员</td></tr>
+                                                    <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                    </table>""" % (result.name, users))
             self.accept_refuse_mail()
             self.user_change_mail(result.id)
             dtldap.unbind()
@@ -189,7 +189,7 @@ class dtdream_change_apply(models.Model):
         for user in self.users:
             person += (user.nick_name + '<br/>')
         self.env['mail.mail'].create({
-            'body_html': u'''<p>您好，您关于域群组的相关申请已被%s，请前往查看。</p>
+            'body_html': u'''<p>您好，您关于域群组修改的相关申请已被%s，请前往查看。</p>
                              <p><a href="%s">%s</a></p>
                              <table border="1">
                                 <tr>
@@ -281,9 +281,9 @@ class dtdream_change_apply(models.Model):
         if self.state == 'confirm':
             self.accept_refuse_mail()
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                                <tr><td style="padding:10px">操作</td><td style="padding:10px">理由</td><td style="padding:10px">时间</td></tr>
-                                                                <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                                </table>""" % (u'拒绝', self.reason, fields.Datetime.now()))
+                                                                <tr><td style="padding:10px">操作</td><td style="padding:10px">理由</td></tr>
+                                                                <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                                </table>""" % (u'拒绝', self.reason))
         self.write({'state': 'draft'})
 
 
@@ -294,19 +294,19 @@ class dtdream_change_apply(models.Model):
         self.implement_mail(self.get_it_man_mail())
         self.confirm_mail()
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                            <tr><td style="padding:10px">操作</td><td style="padding:10px">时间</td></tr>
-                                                            <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                            </table>""" % (u'提交', fields.Datetime.now()))
+                                                            <tr><td style="padding:10px">操作</td></tr>
+                                                            <tr><td style="padding:10px">%s</td></tr>
+                                                            </table>""" % u'提交')
 
     # 工作流状态implement的处理
     @api.multi
     def wkf_implement01(self):
-        self.group_change()
         self.write({'state': 'implement'})
+        self.group_change()
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                                    <tr><td style="padding:10px">操作</td><td style="padding:10px">时间</td></tr>
-                                                                    <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                                    </table>""" % (u'实施', fields.Datetime.now()))
+                                                                    <tr><td style="padding:10px">操作</td></tr>
+                                                                    <tr><td style="padding:10px">%s</td></tr>
+                                                                    </table>""" % u'实施')
 
     def act_refuse_change(self, cr, uid, ids, context={}):
         obj = self.pool.get('ir.ui.view')

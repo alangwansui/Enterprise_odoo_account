@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="dtdream_reserve_fund.ReserveFundReportDashboard">
+        <style>.container {width:100%;}</style>
+        <div class="container">
+            <div class="row" style="padding-top: 30px;">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-red" name="dtdream_reserve_fund.action_my_reserve_unsubmit">
+                        <a href="#">
+                            <div class="panel-footer">
+                                <h4>
+                                    我的未提交备用金
+                                </h4>
+                                <div class="fy-t">
+                                    <t t-esc="receipts_is_draft"/>
+                                </div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <img src="/dtdream_reserve_fund/static/src/img/fy-more.png"/>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-yellow-02" name="dtdream_reserve_fund.action_my_reserve_not_off">
+                        <a href="#">
+                            <div class="panel-footer">
+                                <h4>
+                                    我的未核销备用金
+                                </h4>
+                                <div class="fy-t">
+                                    <t t-esc="receipts_not_off"/>
+                                </div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <img src="/dtdream_reserve_fund/static/src/img/fy-more.png"/>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-red-02" name="dtdream_reserve_fund.action_my_reserve_out_time">
+                        <a href="#">
+                            <div class="panel-footer">
+                                <h4>
+                                    我的超期备用金
+                                </h4>
+                                <div class="fy-t">
+                                    <t t-esc="receipts_out_time"/>
+                                </div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <img src="/dtdream_reserve_fund/static/src/img/fy-more.png"/>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panelbox-green" name="dtdream_reserve_fund.action_to_be_approved">
+                        <a href="#">
+                            <div class="panel-footer">
+                                <h4>
+                                    待我审批备用金
+                                </h4>
+                                <div class="fy-t">
+                                    <t t-esc="receipts_approvaling_by_me"/>
+                                </div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <img src="/dtdream_reserve_fund/static/src/img/fy-more.png"/>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 ">
+                    <div class="panel panelbox-gray" name="dtdream_reserve_fund.action_approved">
+                        <a href="#">
+                            <div class="panel-footer">
+                                <h4>
+                                    我已审批备用金
+                                </h4>
+                                <div class="fy-t">
+                                    <t t-esc="receipts_approvaled_by_me"/>
+                                </div>
+                                <div class="fy-more">
+                                    <span>显示明细</span>
+                                    <img src="/dtdream_reserve_fund/static/src/img/fy-more.png"/>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </t>
+</templates>

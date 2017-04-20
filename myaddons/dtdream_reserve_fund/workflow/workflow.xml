@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_dtdream_reserve_fund">
+            <field name="name">备用金管理工作流</field>
+            <field name="osv">dtdream.reserve.fund</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="reserve_draft">
+            <field name="name">草稿</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_manager">
+            <field name="name">主管审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_manager()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_first_sign">
+            <field name="name">第一权签人审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_first_sign()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_second_sign">
+            <field name="name">第二权签人审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_second_sign()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_president">
+            <field name="name">总裁审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_president()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_interface_account">
+            <field name="name">接口会计审批</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_interface_account()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_cashier">
+            <field name="name">出纳</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_cashier()</field>
+        </record>
+        <record model="workflow.activity" id="reserve_done">
+            <field name="name">完成</field>
+            <field name="wkf_id" ref="wkf_dtdream_reserve_fund"/>
+            <field name="kind">function</field>
+            <field name="action">wkf_done()</field>
+        </record>
+
+        <record model="workflow.transition" id="reserve_draft_to_manager">
+            <field name="act_from" ref="reserve_draft"/>
+            <field name="act_to" ref="reserve_manager"/>
+            <field name="condition">condition_draft_who() == 'manager' and check_reserve_fund_record()</field>
+            <field name="signal">btn_submit</field>
+        </record>
+        <record model="workflow.transition" id="reserve_draft_to_first_sign">
+            <field name="act_from" ref="reserve_draft"/>
+            <field name="act_to" ref="reserve_first_sign"/>
+            <field name="condition">condition_draft_who() == 'first' and check_reserve_fund_record()</field>
+            <field name="signal">btn_submit</field>
+        </record>
+        <record model="workflow.transition" id="reserve_draft_to_second_sign">
+            <field name="act_from" ref="reserve_draft"/>
+            <field name="act_to" ref="reserve_second_sign"/>
+            <field name="condition">condition_draft_who() == 'second' and check_reserve_fund_record()</field>
+            <field name="signal">btn_submit</field>
+        </record>
+        <record model="workflow.transition" id="reserve_draft_to_president">
+            <field name="act_from" ref="reserve_draft"/>
+            <field name="act_to" ref="reserve_president"/>
+            <field name="condition">condition_draft_who() == 'president' and check_reserve_fund_record()</field>
+            <field name="signal">btn_submit</field>
+        </record>
+        <record model="workflow.transition" id="reserve_draft_to_interface_account">
+            <field name="act_from" ref="reserve_draft"/>
+            <field name="act_to" ref="reserve_interface_account"/>
+            <field name="condition">condition_draft_who == 'interface' and check_reserve_fund_record()</field>
+            <field name="signal">btn_submit</field>
+        </record>
+        <record model="workflow.transition" id="reserve_manager_to_first_sign">
+            <field name="act_from" ref="reserve_manager"/>
+            <field name="act_to" ref="reserve_first_sign"/>
+            <field name="condition">condition_manager_who() == 'first'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_manager_to_second_sign">
+            <field name="act_from" ref="reserve_manager"/>
+            <field name="act_to" ref="reserve_second_sign"/>
+            <field name="condition">condition_manager_who() == 'second'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_manager_to_president">
+            <field name="act_from" ref="reserve_manager"/>
+            <field name="act_to" ref="reserve_president"/>
+            <field name="condition">condition_manager_who() == 'president'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_manager_to_interface_account">
+            <field name="act_from" ref="reserve_manager"/>
+            <field name="act_to" ref="reserve_interface_account"/>
+            <field name="condition">condition_manager_who() == 'interface'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_manager_to_draft">
+            <field name="act_from" ref="reserve_manager"/>
+            <field name="act_to" ref="reserve_draft"/>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_first_to_second_sign">
+            <field name="act_from" ref="reserve_first_sign"/>
+            <field name="act_to" ref="reserve_second_sign"/>
+            <field name="condition">condition_first_who() == 'second'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_first_to_president">
+            <field name="act_from" ref="reserve_first_sign"/>
+            <field name="act_to" ref="reserve_president"/>
+            <field name="condition">condition_first_who() == 'president'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_first_to_interface_account">
+            <field name="act_from" ref="reserve_first_sign"/>
+            <field name="act_to" ref="reserve_interface_account"/>
+            <field name="condition">condition_first_who() == 'interface'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_first_to_draft">
+            <field name="act_from" ref="reserve_first_sign"/>
+            <field name="act_to" ref="reserve_draft"/>
+            <field name="condition">reject_state == 'draft'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_first_to_manager">
+            <field name="act_from" ref="reserve_first_sign"/>
+            <field name="act_to" ref="reserve_manager"/>
+            <field name="condition">reject_state == 'manager'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_second_sign_to_president">
+            <field name="act_from" ref="reserve_second_sign"/>
+            <field name="act_to" ref="reserve_president"/>
+            <field name="condition">condition_second_who() == 'president'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_second_sign_to_interface_account">
+            <field name="act_from" ref="reserve_second_sign"/>
+            <field name="act_to" ref="reserve_interface_account"/>
+            <field name="condition">condition_second_who() == 'interface'</field>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_second_sign_to_draft">
+            <field name="act_from" ref="reserve_second_sign"/>
+            <field name="act_to" ref="reserve_draft"/>
+            <field name="condition">reject_state == 'draft'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_second_sign_to_manager">
+            <field name="act_from" ref="reserve_second_sign"/>
+            <field name="act_to" ref="reserve_manager"/>
+            <field name="condition">reject_state == 'manager'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_second_sign_to_first">
+            <field name="act_from" ref="reserve_second_sign"/>
+            <field name="act_to" ref="reserve_first_sign"/>
+            <field name="condition">reject_state == 'first'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_president_to_interface_account">
+            <field name="act_from" ref="reserve_president"/>
+            <field name="act_to" ref="reserve_interface_account"/>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_president_to_draft">
+            <field name="act_from" ref="reserve_president"/>
+            <field name="act_to" ref="reserve_draft"/>
+            <field name="condition">reject_state == 'draft'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_president_to_manager">
+            <field name="act_from" ref="reserve_president"/>
+            <field name="act_to" ref="reserve_manager"/>
+            <field name="condition">reject_state == 'manager'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_president_to_first">
+            <field name="act_from" ref="reserve_president"/>
+            <field name="act_to" ref="reserve_first_sign"/>
+            <field name="condition">reject_state == 'first'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_president_to_second">
+            <field name="act_from" ref="reserve_president"/>
+            <field name="act_to" ref="reserve_second_sign"/>
+            <field name="condition">reject_state == 'second'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_interface_account_to_cashier">
+            <field name="act_from" ref="reserve_interface_account"/>
+            <field name="act_to" ref="reserve_cashier"/>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_interface_account_to_draft">
+            <field name="act_from" ref="reserve_interface_account"/>
+            <field name="act_to" ref="reserve_draft"/>
+            <field name="condition">reject_state == 'draft'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_interface_account_to_manager">
+            <field name="act_from" ref="reserve_interface_account"/>
+            <field name="act_to" ref="reserve_manager"/>
+            <field name="condition">reject_state == 'manager'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_interface_account_to_first">
+            <field name="act_from" ref="reserve_interface_account"/>
+            <field name="act_to" ref="reserve_first_sign"/>
+            <field name="condition">reject_state == 'first'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_interface_account_to_second">
+            <field name="act_from" ref="reserve_interface_account"/>
+            <field name="act_to" ref="reserve_second_sign"/>
+            <field name="condition">reject_state == 'second'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_interface_account_to_president">
+            <field name="act_from" ref="reserve_interface_account"/>
+            <field name="act_to" ref="reserve_president"/>
+            <field name="condition">reject_state == 'president'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_cashier_to_done">
+            <field name="act_from" ref="reserve_cashier"/>
+            <field name="act_to" ref="reserve_done"/>
+            <field name="signal">btn_agree</field>
+        </record>
+        <record model="workflow.transition" id="reserve_cashier_to_draft">
+            <field name="act_from" ref="reserve_cashier"/>
+            <field name="act_to" ref="reserve_draft"/>
+            <field name="condition">reject_state == 'draft'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_cashier_to_manager">
+            <field name="act_from" ref="reserve_cashier"/>
+            <field name="act_to" ref="reserve_manager"/>
+            <field name="condition">reject_state == 'manager'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_cashier_to_first">
+            <field name="act_from" ref="reserve_cashier"/>
+            <field name="act_to" ref="reserve_first_sign"/>
+            <field name="condition">reject_state == 'first'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_cashier_to_second">
+            <field name="act_from" ref="reserve_cashier"/>
+            <field name="act_to" ref="reserve_second_sign"/>
+            <field name="condition">reject_state == 'second'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+        <record model="workflow.transition" id="reserve_cashier_to_president">
+            <field name="act_from" ref="reserve_cashier"/>
+            <field name="act_to" ref="reserve_president"/>
+            <field name="condition">reject_state == 'president'</field>
+            <field name="signal">btn_reject</field>
+        </record>
+    </data>
+</openerp>

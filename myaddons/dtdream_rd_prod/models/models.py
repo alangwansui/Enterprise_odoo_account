@@ -79,6 +79,13 @@ class dtdream_prod_appr(models.Model):
 
     ztsj_process_ids = fields.One2many('dtdream_rd_process','ztsj_process_id',string="总体设计审批意见",track_visibility='onchange')
 
+    ddkf_process_ids = fields.One2many('dtdream_rd_process', 'ddkf_process_id', string="迭代开发审批意见", track_visibility='onchange')
+    yzfb_process_ids = fields.One2many('dtdream_rd_process', 'yzfb_process_id', string="验证发布审批意见",track_visibility='onchange')
+    is_finsished_03 = fields.Boolean(string="迭代开发多人审批是否结束", store=True)
+    is_finsished_04 = fields.Boolean(string="验证发布多人审批是否结束", store=True)
+    is_ddkf_appred = fields.Boolean(string="标识迭代开发提交按钮", default=False)
+    is_yzfb_appred = fields.Boolean(string="标识验证发布提交按钮", default=False)
+
     def _compute_liwai_log(self):
         cr = self.env["dtdream_execption"].search([("name.id", "=", self.id)])
         self.liwai_nums = len(cr)
@@ -126,78 +133,61 @@ class dtdream_prod_appr(models.Model):
     def get_mail_server_name(self):
         return self.env['ir.mail_server'].sudo().search([], limit=1).smtp_user
 
-    @api.constrains('process_ids')
-    def _compute_process_ids(self):
-        for process in self.process_ids:
-            if process.approver_old and process.approver!=process.approver_old:
-                if self.department_2:
-                    subject=process.approver_old.name+u"把"+self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
-                    content = process.approver_old.name+u"把"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
-                else:
-                    subject=process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
-                    content = process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
-                appellation = process.approver.name+u",您好"
-
-                base_url = self.get_base_url()
-                link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
-                url = base_url+link
-                self.env['mail.mail'].create({
-                    'body_html': u'''<p>%s</p>
+    def check_process_person(self, process):
+        if process.approver_old and process.approver != process.approver_old:
+            if self.department_2:
+                subject = process.approver_old.name + u"把" + self.department.name + u"/" + self.department_2.name + u"的" + self.name + u"审批权限授予你"
+                content = process.approver_old.name + u"把" + self.department_2.name + u"的" + self.name + u"审批权限授予你"
+            else:
+                subject = process.approver_old.name + u"把" + self.department.name + u"的" + self.name + u"审批权限授予你"
+                content = process.approver_old.name + u"把" + self.department.name + u"的" + self.name + u"审批权限授予你"
+            appellation = process.approver.name + u",您好"
+            base_url = self.get_base_url()
+            link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
+            url = base_url + link
+            self.env['mail.mail'].create({
+                'body_html': u'''<p>%s</p>
                                  <p>%s</p>
                                  <p> 请点击链接进入:
                                  <a href="%s">%s</a></p>
                                 <p>dodo</p>
                                  <p>万千业务，简单有do</p>
-                                 <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
-                    'subject': '%s' % subject,
-                    'email_to': '%s' % process.approver.work_email,
-                    'auto_delete': False,
-                    'email_from':self.get_mail_server_name(),
-                }).send()
-                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
+                                 <p>%s</p>''' % (appellation, content, url, url, self.write_date[:10]),
+                'subject': '%s' % subject,
+                'email_to': '%s' % process.approver.work_email,
+                'auto_delete': False,
+                'email_from': self.get_mail_server_name(),
+            }).send()
+            self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                        <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
                                        <tr><td style="padding:10px">操作人</td><td style="padding:10px">%s</td></tr>
                                        <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.name,process.approver_old.name,u'将审批权限授给'+process.approver.name))
-                process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
-                self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
-                self.add_follower(employee_id=process.approver.id)
+                                       </table>""" % (
+                self.name, process.approver_old.name, u'将审批权限授给' + process.approver.name))
+            process.write({'is_pass': False, 'is_refuse': False, 'is_risk': False,
+                           'approver_old': process.approver.id, 'approve_state': ''})
+            self.write({'current_approver_user': [(4, process.approver.user_id.id)]})
+            self.add_follower(employee_id=process.approver.id)
+
+    @api.constrains('process_ids')
+    def _compute_process_ids(self):
+        for process in self.process_ids:
+            self.check_process_person(process)
 
     @api.constrains('ztsj_process_ids')
     def _compute_ztsj_process_ids(self):
         for process in self.ztsj_process_ids:
-            if process.approver_old and process.approver!=process.approver_old:
-                if self.department_2:
-                    subject=process.approver_old.name+u"把"+self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
-                    content = process.approver_old.name+u"把"+self.department_2.name+u"的"+self.name+u"审批权限授予你"
-                else:
-                    subject=process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
-                    content = process.approver_old.name+u"把"+self.department.name+u"的"+self.name+u"审批权限授予你"
-                appellation = process.approver.name+u",您好"
-                base_url = self.get_base_url()
-                link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
-                url = base_url+link
-                self.env['mail.mail'].create({
-                    'body_html': u'''<p>%s</p>
-                                 <p>%s</p>
-                                 <p> 请点击链接进入:
-                                 <a href="%s">%s</a></p>
-                                <p>dodo</p>
-                                 <p>万千业务，简单有do</p>
-                                 <p>%s</p>''' % (appellation,content, url,url,self.write_date[:10]),
-                    'subject': '%s' % subject,
-                    'email_to': '%s' % process.approver.work_email,
-                    'auto_delete': False,
-                    'email_from':self.get_mail_server_name(),
-                }).send()
-                self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                       <tr><th style="padding:10px">产品名称</th><th style="padding:10px">%s</th></tr>
-                                       <tr><td style="padding:10px">操作人</td><td style="padding:10px">%s</td></tr>
-                                       <tr><td style="padding:10px">内容</td><td style="padding:10px">%s</td></tr>
-                                       </table>""" %(self.name,process.approver_old.name,u'将审批权限授给'+process.approver.name))
-                process.write({'is_pass':False,'is_refuse':False,'is_risk':False,'approver_old':process.approver.id})
-                self.write({'current_approver_user': [(4,process.approver.user_id.id)]})
-                self.add_follower(employee_id=process.approver.id)
+            self.check_process_person(process)
+
+    @api.constrains('ddkf_process_ids')
+    def _compute_ddkf_process_ids(self):
+        for process in self.ddkf_process_ids:
+            self.check_process_person(process)
+
+    @api.constrains('yzfb_process_ids')
+    def _compute_ddkf_process_ids(self):
+        for process in self.yzfb_process_ids:
+            self.check_process_person(process)
 
     # 获取抄送人邮箱
     def compute_email_list(self):
@@ -256,7 +246,7 @@ class dtdream_prod_appr(models.Model):
     @api.onchange('message_follower_ids')
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
-        # self.followers_user = False
+        self.followers_user = [(5,)]
         for foll in self.message_follower_ids:
             self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
             if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users and foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users:
@@ -265,12 +255,6 @@ class dtdream_prod_appr(models.Model):
     followers_user = fields.Many2many("res.users" ,"f_u_u",string="关注者")
     is_appred = fields.Boolean(string="标识总体设计阶段提交按钮",default=False)
     is_lixiangappred = fields.Boolean(string="标识立项阶段提交按钮",default=False)
-
-    # #关注者添加方法重写
-    # @api.multi
-    # def message_subscribe(self, partner_ids=None, channel_ids=None, subtype_ids=None, force=True):
-    #     gen ,part = self.env['mail.followers']._add_follower_command(self._name, self.ids, {partner_ids[0]:None},{},True)
-    #     self.sudo().write({'message_follower_ids': gen})
 
 
     #关注者删除方法重写
@@ -410,9 +394,7 @@ class dtdream_prod_appr(models.Model):
 
     @api.multi
     def wkf_lixiang(self):
-        self.write({'is_lixiangappred': False})
-        self.write({'is_appred': False})
-        self.write({'is_finsished_01': False, 'is_finsished_02': False})
+        self.write({'is_lixiangappred': False,'is_appred': False,'is_finsished_01': False, 'is_finsished_02': False})
         processes = self.env['dtdream_rd_process'].search([('process_id', '=', self.id)])
         processes.unlink()
         ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id', '=', self.id)])
@@ -431,8 +413,6 @@ class dtdream_prod_appr(models.Model):
 
     @api.multi
     def wkf_ztsj(self):
-        self.write({'is_appred': False})
-        self.write({'is_finsished_02': False})
         ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id', '=', self.id)])
         ztsj_processes.unlink()
         if self.state=="state_03":
@@ -444,11 +424,13 @@ class dtdream_prod_appr(models.Model):
         elif self.state=='state_01':
             self._wkf_message_post(statechange=u'产品状态: 立项->总体设计')
             self.write({'lx_finsh_time':datetime.now()})
-        self.write({'state': 'state_02'})
+        self.write({'state': 'state_02','is_appred': False,'is_finsished_02': False})
         self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_ddkf(self):
+        ddkf_processes = self.env['dtdream_rd_process'].search([('ddkf_process_id', '=', self.id)])
+        ddkf_processes.unlink()
         if self.state=="state_02":
             self._wkf_message_post(statechange=u'产品状态: 总体设计->迭代开发')
             self.write({'ztsj_finsh_time':datetime.now()})
@@ -458,11 +440,13 @@ class dtdream_prod_appr(models.Model):
             self._wkf_message_post(statechange=u'产品状态: 中止->迭代开发')
         if self.state=="state_04":
             self._wkf_message_post(statechange=u'产品状态: 验证发布->迭代开发')
-        self.write({'state': 'state_03'})
+        self.write({'state': 'state_03','is_finsished_03': False,'is_ddkf_appred': False})
         self.current_approver_user = [(5,)]
 
     @api.multi
     def wkf_yzfb(self):
+        yzfb_processes = self.env['dtdream_rd_process'].search([('yzfb_process_id', '=', self.id)])
+        yzfb_processes.unlink()
         if self.state=="state_03":
             self._wkf_message_post(statechange=u'产品状态: 迭代开发->验证发布')
             self.write({'ddfb_finsh_time':datetime.now()})
@@ -472,7 +456,7 @@ class dtdream_prod_appr(models.Model):
             self._wkf_message_post(statechange=u'产品状态: 中止->验证发布')
         if self.state=="state_05":
             self._wkf_message_post(statechange=u'产品状态: 完成->验证发布')
-        self.write({'state': 'state_04'})
+        self.write({'state': 'state_04','is_finsished_04': False,'is_yzfb_appred': False})
         self.current_approver_user = [(5,)]
 
     @api.multi
@@ -532,10 +516,19 @@ class dtdream_prod_appr(models.Model):
         if self.state=="state_01":
             self.signal_workflow('lixiang_to_draft')
         if self.state=="state_02":
+            self.write({'is_finsished_02': False, 'is_appred': False})
+            ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id', '=', self.id)])
+            ztsj_processes.unlink()
             self.signal_workflow('ztsj_to_lixiang')
         if self.state=="state_03":
+            self.write({'is_finsished_03': False, 'is_ddkf_appred': False})
+            ddkf_processes = self.env['dtdream_rd_process'].search([('ddkf_process_id', '=', self.id)])
+            ddkf_processes.unlink()
             self.signal_workflow('ddkf_to_ztsj')
         if self.state=="state_04":
+            self.write({'is_finsished_04': False, 'is_yzfb_appred': False})
+            yzfb_processes = self.env['dtdream_rd_process'].search([('yzfb_process_id', '=', self.id)])
+            yzfb_processes.unlink()
             self.signal_workflow('yzfb_to_ddkf')
         if self.state=="state_05":
             self.signal_workflow('js_to_yzfb')
@@ -593,40 +586,36 @@ class dtdream_prod_appr(models.Model):
         for i in range(len(tt)):
             tt[i].join()
 
+        roles = [(4, role) for role in person]
+
         versions = self.env["dtdream_rd_version"].search([('proName', '=', self.id)])
         for version in versions:
-            for role in person:
-                version.write({'followers_user': [(4, role)]})
+            version.write({'followers_user': roles})
 
         exceptions = self.env["dtdream_execption"].search([('name', '=',self.id)])
         for exception in exceptions:
             exception.role_person = [(5,)]
-            for role in person:
-                exception.write({'role_person': [(4,role)]})
+            exception.write({'role_person': roles})
 
         replannings = self.env["dtdream.rd.replanning"].search([('proname', '=', self.id)])
         for replanning in replannings:
             replanning.role_person = [(5,)]
-            for role in person:
-                replanning.write({'role_person': [(4, role)]})
+            replanning.write({'role_person': roles})
 
         suspensions = self.env["dtdream.prod.suspension"].search([('project', '=', self.id)])
         for suspension in suspensions:
             suspension.role_person = [(5,)]
-            for role in person:
-                suspension.write({'role_person': [(4, role)]})
+            suspension.write({'role_person': roles})
 
         suspensions = self.env["dtdream.prod.suspension.restoration"].search([('project', '=', self.id)])
         for suspension in suspensions:
             suspension.role_person = [(5,)]
-            for role in person:
-                suspension.write({'role_person': [(4, role)]})
+            suspension.write({'role_person': roles})
 
         suspensions = self.env["dtdream.prod.termination"].search([('project', '=', self.id)])
         for suspension in suspensions:
             suspension.role_person = [(5,)]
-            for role in person:
-                suspension.write({'role_person': [(4, role)]})
+            suspension.write({'role_person': roles})
 
     @api.multi
     def do_cgtj(self):
@@ -637,12 +626,163 @@ class dtdream_prod_appr(models.Model):
     @api.multi
     def do_next(self):
         if self.state=='state_03':
-            self.signal_workflow('btn_to_yzfb')
+            self.write({'is_ddkf_appred': True})
+            self.current_approver_user = [(5,)]
+            records = self.env['dtdream_rd_approver'].search([('pro_state', '=', 'state_03'), ('level', '=', 'level_01')])  # 审批人配置
+            rold_ids = []
+            for record in records:
+                rold_ids += [record.name.id]
+            appro = self.env['dtdream_rd_role'].search(
+                [('role_id', '=', self.id), ('cof_id', 'in', rold_ids), ('person', '!=', False)])  # 产品中角色配置
+            for record in appro:
+                self.env['dtdream_rd_process'].create(
+                    {"role": record.cof_id.id, "ddkf_process_id": self.id, 'pro_state': 'state_03',
+                     'approver': record.person.id, 'approver_old': record.person.id, 'level': 'level_01'})  # 审批意见记录创建
+                self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                if self.department_2:
+                    subject = self.department.name + u"/" + self.department_2.name + u"的" + self.name + u"待您的审批"
+                else:
+                    subject = self.department.name + u"的" + self.name + u"待您的审批"
+                appellation = record.person.name + u",您好"
+                content = self.department.name + u"的" + self.name + u"已进入迭代开发阶段，等待您的审批"
+                base_url = self.get_base_url()
+                link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
+                url = base_url + link
+                self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                             <p>%s</p>
+                                             <p> 请点击链接进入:
+                                             <a href="%s">%s</a></p>
+                                            <p>dodo</p>
+                                             <p>万千业务，简单有do</p>
+                                             <p>%s</p>''' % (appellation, content, url, url, self.write_date[:10]),
+                    'subject': '%s' % subject,
+                    'email_to': '%s' % record.person.work_email,
+                    'auto_delete': False,
+                    'email_from': self.get_mail_server_name(),
+                }).send()
+
+            processes = self.env['dtdream_rd_process'].search([('ddkf_process_id', '=', self.id), ('pro_state', '=', 'state_03'), ('level', '=', 'level_01'),('is_new', '=', True)])
+            if len(processes) == 0:
+                records = self.env['dtdream_rd_approver'].search([('pro_state', '=', self.state), ('level', '=', 'level_02')])  # 审批人配置
+                rold_ids = []
+                for record in records:
+                    rold_ids += [record.name.id]
+                appro = self.env['dtdream_rd_role'].search([('role_id', '=', self.id), ('cof_id', 'in', rold_ids), ('person', '!=', False)])  # 产品中角色配置
+                if len(appro) == 0:
+                    self.signal_workflow('btn_to_yzfb')
+                else:
+                    self.current_approver_user = [(5,)]
+                    for record in appro:
+                        self.env['dtdream_rd_process'].create(
+                            {"role": record.cof_id.id, "ddkf_process_id": self.id, 'pro_state': self.state,
+                             'approver': record.person.id, 'approver_old': record.person.id,
+                             'level': 'level_02'})  # 审批意见记录创建
+                        self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                        if self.department_2:
+                            subject = self.department.name + u"/" + self.department_2.name + u"的" + self.name + u"待您的审批"
+                        else:
+                            subject = self.department.name + u"的" + self.name + u"待您的审批"
+                        appellation = record.person.name + u",您好"
+                        content = self.department.name + u"的" + self.name + u"已进入迭代开发阶段，等待您的审批"
+                        base_url = self.get_base_url()
+                        link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
+                        url = base_url + link
+                        self.env['mail.mail'].create({
+                            'body_html': u'''<p>%s</p>
+                                                     <p>%s</p>
+                                                     <p> 请点击链接进入:
+                                                     <a href="%s">%s</a></p>
+                                                    <p>dodo</p>
+                                                     <p>万千业务，简单有do</p>
+                                                     <p>%s</p>''' % (
+                            appellation, content, url, url, self.write_date[:10]),
+                            'subject': '%s' % subject,
+                            'email_to': '%s' % record.person.work_email,
+                            'auto_delete': False,
+                            'email_from': self.get_mail_server_name(),
+                        }).send()
 
     #结束
     @api.multi
     def do_jieshu(self):
-        self.signal_workflow('btn_to_jieshu')
+        if self.state=='state_04':
+            self.write({'is_yzfb_appred': True})
+            self.current_approver_user = [(5,)]
+            records = self.env['dtdream_rd_approver'].search([('pro_state', '=', 'state_04'), ('level', '=', 'level_01')])  # 审批人配置
+            rold_ids = []
+            for record in records:
+                rold_ids += [record.name.id]
+            appro = self.env['dtdream_rd_role'].search(
+                [('role_id', '=', self.id), ('cof_id', 'in', rold_ids), ('person', '!=', False)])  # 产品中角色配置
+            for record in appro:
+                self.env['dtdream_rd_process'].create(
+                    {"role": record.cof_id.id, "yzfb_process_id": self.id, 'pro_state': 'state_04',
+                     'approver': record.person.id, 'approver_old': record.person.id, 'level': 'level_01'})  # 审批意见记录创建
+                self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                if self.department_2:
+                    subject = self.department.name + u"/" + self.department_2.name + u"的" + self.name + u"待您的审批"
+                else:
+                    subject = self.department.name + u"的" + self.name + u"待您的审批"
+                appellation = record.person.name + u",您好"
+                content = self.department.name + u"的" + self.name + u"已进入验证发布阶段，等待您的审批"
+                base_url = self.get_base_url()
+                link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
+                url = base_url + link
+                self.env['mail.mail'].create({
+                    'body_html': u'''<p>%s</p>
+                                             <p>%s</p>
+                                             <p> 请点击链接进入:
+                                             <a href="%s">%s</a></p>
+                                            <p>dodo</p>
+                                             <p>万千业务，简单有do</p>
+                                             <p>%s</p>''' % (appellation, content, url, url, self.write_date[:10]),
+                    'subject': '%s' % subject,
+                    'email_to': '%s' % record.person.work_email,
+                    'auto_delete': False,
+                    'email_from': self.get_mail_server_name(),
+                }).send()
+
+            processes = self.env['dtdream_rd_process'].search([('yzfb_process_id', '=', self.id), ('pro_state', '=', 'state_04'), ('level', '=', 'level_01'),('is_new', '=', True)])
+            if len(processes) == 0:
+                records = self.env['dtdream_rd_approver'].search([('pro_state', '=', self.state), ('level', '=', 'level_02')])  # 审批人配置
+                rold_ids = []
+                for record in records:
+                    rold_ids += [record.name.id]
+                appro = self.env['dtdream_rd_role'].search([('role_id', '=', self.id), ('cof_id', 'in', rold_ids), ('person', '!=', False)])  # 产品中角色配置
+                if len(appro) == 0:
+                    self.signal_workflow('btn_to_jieshu')
+                else:
+                    self.current_approver_user = [(5,)]
+                    for record in appro:
+                        self.env['dtdream_rd_process'].create(
+                            {"role": record.cof_id.id, "yzfb_process_id": self.id, 'pro_state': self.state,
+                             'approver': record.person.id, 'approver_old': record.person.id,
+                             'level': 'level_02'})  # 审批意见记录创建
+                        self.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                        if self.department_2:
+                            subject = self.department.name + u"/" + self.department_2.name + u"的" + self.name + u"待您的审批"
+                        else:
+                            subject = self.department.name + u"的" + self.name + u"待您的审批"
+                        appellation = record.person.name + u",您好"
+                        content = self.department.name + u"的" + self.name + u"已进入验证发布阶段，等待您的审批"
+                        base_url = self.get_base_url()
+                        link = '/web#id=%s&view_type=form&model=dtdream_prod_appr' % self.id
+                        url = base_url + link
+                        self.env['mail.mail'].create({
+                            'body_html': u'''<p>%s</p>
+                                                     <p>%s</p>
+                                                     <p> 请点击链接进入:
+                                                     <a href="%s">%s</a></p>
+                                                    <p>dodo</p>
+                                                     <p>万千业务，简单有do</p>
+                                                     <p>%s</p>''' % (
+                            appellation, content, url, url, self.write_date[:10]),
+                            'subject': '%s' % subject,
+                            'email_to': '%s' % record.person.work_email,
+                            'auto_delete': False,
+                            'email_from': self.get_mail_server_name(),
+                        }).send()
 
     #总体设计提交
     @api.multi
@@ -695,7 +835,7 @@ class dtdream_prod_appr(models.Model):
                 else:
                     self.current_approver_user = [(5,)]
                     for record in appro:
-                        self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "process_id":self.id,'pro_state':self.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
+                        self.env['dtdream_rd_process'].create({"role":record.cof_id.id, "ztsj_process_id":self.id,'pro_state':self.state,'approver':record.person.id,'approver_old':record.person.id,'level':'level_02'})       #审批意见记录创建
                         self.write({'current_approver_user': [(4, record.person.user_id.id)]})
                         if self.department_2:
                             subject=self.department.name+u"/"+self.department_2.name+u"的"+self.name+u"待您的审批"
@@ -823,6 +963,21 @@ class dtdream_prod_appr(models.Model):
             'email_from':self.get_mail_server_name(),
         }).send()
 
+    # 中止恢复
+    @api.multi
+    def do_zhongzhi_back(self):
+        if self.state_old == 'state_00':
+            self.signal_workflow('zhongzhi_to_draft')
+        if self.state_old == 'state_01':
+            self.signal_workflow('zhongzhi_to_lixiang')
+        if self.state_old == 'state_02':
+            self.signal_workflow('zhongzhi_to_ztsj')
+        if self.state_old == 'state_03':
+            self.signal_workflow('zhongzhi_to_ddkf')
+        if self.state_old == 'state_04':
+            self.signal_workflow('zhongzhi_to_yzfb')
+        if self.state_old == 'state_06':
+            self.signal_workflow('zhongzhi_to_zanting')
 
     #定时发送邮件提醒
     @api.model

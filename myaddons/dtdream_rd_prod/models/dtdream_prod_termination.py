@@ -20,7 +20,7 @@ class dtdream_prod_termination(models.Model):
     name = fields.Char(compute=compute_get_name)
     project = fields.Many2one("dtdream_prod_appr" ,required=True,string="产品名称")
     version = fields.Many2one("dtdream_rd_version",string="版本")
-    reason = fields.Text(string="暂停原因",track_visibility='onchange')
+    reason = fields.Text(string="中止原因",track_visibility='onchange')
     state= fields.Selection([('cg','草稿'),('spz','审批中'),('ysp','已审批')],string="状态",default='cg')
     appr_PL_CCB = fields.Many2one("hr.employee", string="审批人PL-CCB")
 
@@ -41,9 +41,10 @@ class dtdream_prod_termination(models.Model):
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
         self.followers_user = False
+        followers_user = [(4, foll.partner_id.user_ids.id) for foll in self.message_follower_ids]
+        self.write({'followers_user': followers_user})
         for foll in self.message_follower_ids:
-            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
-            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users and  foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
                 self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4,foll.partner_id.user_ids.id)]})
 
     followers_user = fields.Many2many("res.users" ,"termination_f_u_u",string="关注者")
@@ -51,11 +52,12 @@ class dtdream_prod_termination(models.Model):
     @api.constrains('project')
     def con_name_role(self):
         self.role_person=[(5,)]
-        for role in self.project.role_ids:
-            if role.person:
-                self.write({'role_person': [(4,role.person.user_id.id)]})
-                if role.person.user_id:
-                    self.message_subscribe_users(user_ids=[role.person.user_id.id])
+        roles = [(4, role.person.user_id.id) for role in self.project.role_ids if
+                 role.person.id and role.person.user_id.id]
+        self.write({'role_person': roles})
+        roles = [role.person.user_id.id for role in self.project.role_ids if
+                 role.person.id and role.person.user_id.id]
+        self.message_subscribe_users(user_ids=roles)
 
 
     @api.multi

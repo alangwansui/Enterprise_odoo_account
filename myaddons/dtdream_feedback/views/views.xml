@@ -150,7 +150,7 @@
             <field name='model'>dtdream.feedback.advice</field>
             <field eval="4" name="priority"/>
             <field name='arch' type='xml'>
-                <form  string='吐槽单'>
+                <form  string='感谢你的反馈'>
                     <header class='no_hidden'>
                         <button name='btn_confirm' type='workflow' attrs="{'invisible':[('state', 'not in', ['draft'])]}" string='提交' class='oe_highlight' />
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,answer" statusbar_colors='{"draft":"blue","confirm":"blue","anwser":"blue"}'/>
@@ -282,7 +282,7 @@
 
         <!-- 打开意见反馈的动作 -->
         <act_window id='act_feedback'
-                    name='吐槽单'
+                    name='感谢你的反馈'
                     res_model='dtdream.feedback.advice'
                     view_mode='form'
                     target='new'

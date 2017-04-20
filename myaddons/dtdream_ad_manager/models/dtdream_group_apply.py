@@ -4,6 +4,12 @@ from datetime import datetime
 from openerp.dtdream.ldap.dtldap import DTLdap
 from openerp.osv import osv
 
+import sys
+
+reload(sys)
+
+sys.setdefaultencoding('utf-8')
+
 # 域群组申请信息
 class dtdream_group_apply(models.Model):
     _name = 'dtdream.group.apply'
@@ -12,8 +18,7 @@ class dtdream_group_apply(models.Model):
 
     apply = fields.Many2one('hr.employee', string=u'申请人', required=True, readonly=True,
                             default=lambda self: self.env['hr.employee'].search([('login', '=', self.env.user.login)]))
-    department = fields.Many2one('hr.department', string=u'域群组所属部门', default=lambda self: self.env['hr.employee']
-                                 .search([('login', '=', self.env.user.login)]).department_id, required=True)
+    department = fields.Many2one('hr.department', string=u'域群组所属部门', required=True)
     approver = fields.Many2one('hr.employee', string='审批人', required=True)
     group = fields.Char(string=u'团队')
     label = fields.Char(string=u'域群组缩写', required=True)
@@ -33,6 +38,15 @@ class dtdream_group_apply(models.Model):
         ('implement', u'已实施')], string=u'状态', default='draft', readonly=True)
     reason = fields.Char(string=u'驳回理由')
 
+    # 一级部门
+    def get_department(self):
+        department = self.apply.department_id
+        print department
+        while department.parent_id:
+            department = department.parent_id
+            print department
+        self.department = department.id
+
     # 显示名称
     @api.multi
     def name_get(self):
@@ -51,15 +65,28 @@ class dtdream_group_apply(models.Model):
 
     is_approver = fields.Boolean(string=u'是否是审批人', compute=_compute_is_approver)
 
+    @api.onchange('apply')
+    def onchange_department(self):
+        department = self.apply.department_id
+        while department.parent_id:
+            department = department.parent_id
+        self.department = department.id
+
     @api.onchange('department')
     def onchange_employee1(self):
-        self.approver = self.department.manager_id
+        department = self.department
+        while department.parent_id:
+            department = department.parent_id
+        self.approver = department.manager_id
 
     @api.onchange('department', 'label', 'ext')
     def onchange_name(self):
         array = []
         if self.department:
-            result = self.env['dtdream.ad.department'].search([('name', '=', self.department.id)])
+            department = self.department
+            while department.parent_id:
+                department = department.parent_id
+            result = self.env['dtdream.ad.department'].search([('name', '=', department.id)])
             if result:
                 array.append(result[0].value)
         if self.label:
@@ -72,10 +99,16 @@ class dtdream_group_apply(models.Model):
         array = []
         if vals.has_key('department'):
             if vals['department']:
-                result = self.env['dtdream.ad.department'].search([('name', '=', vals['department'])])
+                depart = self.env['hr.department'].search([('id', '=', vals['department'])])[0]
+                while depart.parent_id:
+                    depart = depart.parent_id
+                result = self.env['dtdream.ad.department'].search([('name', '=', depart.id)])
                 array.append(result[0].value) if result else None
         elif self.department:
-            result = self.env['dtdream.ad.department'].search([('name', '=', self.department.id)])
+            depart = self.department
+            while depart.parent_id:
+                depart = depart.parent_id
+            result = self.env['dtdream.ad.department'].search([('name', '=', depart.id)])
             array.append(result[0].value) if result else None
         if vals.has_key('label'):
             array.append(vals['label'])
@@ -100,6 +133,15 @@ class dtdream_group_apply(models.Model):
         res = super(dtdream_group_apply, self).write(vals)
         return res
 
+    @api.multi
+    def unlink(self):
+        for admin in self.admins:
+            if len(self.sudo().search([('admins','=',admin.id)]))==1:
+                self.env.ref("dtdream_ad_manager.group_ad_apply_manager").sudo().write({'users': [(3,admin.user_id.id)]})
+        res = super(dtdream_group_apply, self).unlink()
+        return res
+
+
     # 群组修改
     def group_create(self):
         try:
@@ -117,7 +159,7 @@ class dtdream_group_apply(models.Model):
             raise osv.except_osv(u'ldap连接错误,请联系管理员检查公司LDAP数据配置')
         if dtldap.is_group_exist(self.name):
             raise osv.except_osv(u'域群组名称已存在，请更换')
-        dtldap.create_group(self.name.encode('utf-8'))
+        dtldap.create_group(self.name)
         for user in self.users:
             if dtldap.is_user_exist(user.account):
                  dtldap.add_user_to_group(user.account, self.name)
@@ -133,9 +175,9 @@ class dtdream_group_apply(models.Model):
         })
         result.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
                                                 <tr><th style="padding:10px" colspan="2" align="center">创建域群组</th></tr>
-                                                <tr><td style="padding:10px">创建时间</td><td style="padding:10px">群组名称</td></tr>
-                                                <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                </table>""" % (fields.Datetime.now(), result.name))
+                                                <tr><td style="padding:10px">群组名称</td></tr>
+                                                <tr><td style="padding:10px">%s</td></tr>
+                                                </table>""" %  result.name)
         self.create_mail(result.id)
         dtldap.unbind()
 
@@ -334,9 +376,9 @@ class dtdream_group_apply(models.Model):
         if self.state == 'confirm':
             self.refuse_mail()
             self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                                <tr><td style="padding:10px">操作</td><td style="padding:10px">理由</td><td style="padding:10px">时间</td></tr>
-                                                                <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                                </table>""" % (u'拒绝', self.reason, fields.Datetime.now()))
+                                                                <tr><td style="padding:10px">操作</td><td style="padding:10px">理由</td></tr>
+                                                                <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
+                                                                </table>""" % (u'拒绝', self.reason))
         self.write({'state': 'draft'})
 
     # 工作流状态confirm的处理
@@ -351,25 +393,20 @@ class dtdream_group_apply(models.Model):
         self.confirm_mail()
         self.approver_mail()
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                            <tr><td style="padding:10px">操作</td><td style="padding:10px">时间</td></tr>
-                                                            <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                            </table>""" % (u'提交', fields.Datetime.now()))
+                                                            <tr><td style="padding:10px">操作</td></tr>
+                                                            <tr><td style="padding:10px">%s</td></tr>
+                                                            </table>""" % u'提交')
 
     # 工作流状态accept的处理
     @api.multi
     def wkf_accept(self):
         self.write({'state': 'accept'})
         self.accept_mail()
-        #group = self.env['ir.model.data'].get_object('dtdream_ad_manager', 'group_ad_implement')
-        #mail_to = ''
-        #for user in group.users:
-        #    mail = self.env['hr.employee'].search([('login', '=', user.login)]).work_email + ';'
-        #    mail_to += mail
         self.implement_mail(self.get_it_man_mail())
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                            <tr><td style="padding:10px">操作</td><td style="padding:10px">时间</td></tr>
-                                                            <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                            </table>""" % (u'审批同意', fields.Datetime.now()))
+                                                            <tr><td style="padding:10px">操作</td></tr>
+                                                            <tr><td style="padding:10px">%s</td></tr>
+                                                            </table>""" % u'审批同意')
 
     # 工作流状态implement的处理
     @api.multi
@@ -377,9 +414,12 @@ class dtdream_group_apply(models.Model):
         self.group_create()
         self.write({'state': 'implement'})
         self.message_post(body=u"""<table class="zxtable" border="1" style="border-collapse: collapse;">
-                                                        <tr><td style="padding:10px">操作</td><td style="padding:10px">时间</td></tr>
-                                                        <tr><td style="padding:10px">%s</td><td style="padding:10px">%s</td></tr>
-                                                        </table>""" % (u'实施', fields.Datetime.now()))
+                                                        <tr><td style="padding:10px">操作</td></tr>
+                                                        <tr><td style="padding:10px">%s</td></tr>
+                                                        </table>""" % u'实施')
+        array = [(4, admin.user_id.id) for admin in self.admins]
+        self.env.ref("dtdream_ad_manager.group_ad_apply_manager").sudo().write({'users': array})
+
 
     def act_refuse_apply(self, cr, uid, ids, context={}):
         obj = self.pool.get('ir.ui.view')

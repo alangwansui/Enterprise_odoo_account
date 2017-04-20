@@ -393,12 +393,23 @@ class dtdream_rd_version(models.Model):
 
     his_app_user = fields.Many2many("res.users" ,"ver_h_a_u_u",string="历史审批人用户")
 
+    @api.constrains('proName')
+    def con_name_role(self):
+        self.role_person = [(5,)]
+        roles = [(4, role.person.user_id.id) for role in self.proName.role_ids if
+                 role.person.id and role.person.user_id.id]
+        self.write({'role_person': roles})
+
+    role_person = fields.Many2many("res.users", "dtdream_version_role_user", string="对应产品角色中的人员用户")
+
     @api.onchange('message_follower_ids')
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
+        self.followers_user = False
+        followers_user = [(4, foll.partner_id.user_ids.id) for foll in self.message_follower_ids]
+        self.write({'followers_user': followers_user})
         for foll in self.message_follower_ids:
-            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
-            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users and  foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
                 self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4,foll.partner_id.user_ids.id)]})
 
     followers_user = fields.Many2many("res.users" ,"ver_f_u_u",string="关注者")
@@ -432,9 +443,8 @@ class dtdream_rd_version(models.Model):
         self.message_subscribe_users(cr, uid, [prod_id], user_ids=[uid], context=context)
         pro = self.pool.get('dtdream_prod_appr').browse(cr,uid,values['proName'])
         rold_ids = pro.role_ids
-        for rold in rold_ids:
-            if rold.person:
-                self.add_follower(cr, uid, [prod_id], rold.person.id, context=context)
+        user_ids = [rold.person.user_id.id for rold in rold_ids if rold.person.user_id]
+        self.message_subscribe_users(cr, uid, [prod_id], user_ids=user_ids, context=context)
         return prod_id
 
 
@@ -629,7 +639,7 @@ class dtdream_rd_version(models.Model):
             self.signal_workflow('vzhongzhi_to_vzanting')
         if self.version_state_old=='released':
             self.signal_workflow('vzhongzhi_to_yfb')
-        self.write({'reason_request':'','agree':False,'disagree':False,'comments':''})
+        # self.write({'reason_request':'','agree':False,'disagree':False,'comments':''})
 
     @api.model
     def read_group(self,domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
@@ -640,7 +650,7 @@ class dtdream_rd_version(models.Model):
             if menu_ver == u"我相关的":
                 uid = self._context.get('uid', '')
                 em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-                domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
+                domain = expression.AND([['|','|','|','|','|','|',('role_person','=',uid),('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
         res = super(dtdream_rd_version, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
         return res
 
@@ -653,7 +663,7 @@ class dtdream_rd_version(models.Model):
             if menu_ver == u"我相关的":
                 uid = self._context.get('uid', '')
                 em = self.env['hr.employee'].search([('user_id','=',self.env.uid)])
-                domain = expression.AND([['|','|','|','|','|',('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
+                domain = expression.AND([['|','|','|','|','|','|',('role_person','=',uid),('department','=',em.department_id.id),('create_uid','=',uid),('current_approver_user','=',uid),('his_app_user','=',uid),('followers_user','=',uid),('department_2','=',em.department_id.id)], domain])
         return super(dtdream_rd_version, self).search_read(domain=domain, fields=fields, offset=offset,limit=limit, order=order)
 
 

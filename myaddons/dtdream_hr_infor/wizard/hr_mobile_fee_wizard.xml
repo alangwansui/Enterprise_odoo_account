@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="view_hr_mobile_fee_wizard" model="ir.ui.view">
+            <field name="name">view.hr.mobile.fee.wizard</field>
+            <field name="model">hr.mobile.fee.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="reason"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="btn_confirm" type="object" string="确定" class="oe_highlight"
+                                style="border-radius:5px"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+        <record id="view_hr_mobile_fee_wizard_refuse" model="ir.ui.view">
+            <field name="name">view.hr.mobile.fee.wizard.refuse</field>
+            <field name="model">hr.mobile.fee.wizard.refuse</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="reason" required="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="btn_confirm" type="object" string="确定" class="oe_highlight"
+                                style="border-radius:5px"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+        <!--============================================================action============================================================-->
+        <record id="act_hr_mobile_fee_wizard_agree" model="ir.actions.act_window">
+            <field name="name">意见</field>
+            <field name="res_model">hr.mobile.fee.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="act_hr_mobile_fee_wizard_refuse" model="ir.actions.act_window">
+            <field name="name">驳回理由</field>
+            <field name="res_model">hr.mobile.fee.wizard.refuse</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

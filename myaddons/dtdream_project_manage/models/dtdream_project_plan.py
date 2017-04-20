@@ -22,11 +22,13 @@ class dtdream_project_plan_detail(models.Model):
 
     @api.model
     def create(self, vals):
-        cr = self.env['dtdream.project.manage'].search([('id', '=', vals.get('project_manage_id', ''))])
-        if cr and cr.state_y != '20':
-            raise AccessError('项目规划只有在策划阶段且是项目经理才可新增项。')
-        if vals:
-            vals.update({'created': True})
+        project_id = vals.get('project_manage_id', '')
+        if project_id:
+            cr = self.env['dtdream.project.manage'].search([('id', '=', project_id)])
+            if cr and cr.state_y != '20' and not cr.is_manage:
+                raise AccessError('项目规划只有在策划阶段且是项目经理才可新增项。')
+            if vals:
+                vals.update({'created': True})
         return super(dtdream_project_plan_detail, self).create(vals)
 
     @api.depends('is_project_manage')
@@ -38,12 +40,16 @@ class dtdream_project_plan_detail(models.Model):
         for rec in self:
             rec.is_project_manage = rec.project_manage_id.is_project_manage
 
+    def compute_is_admin(self):
+        for rec in self:
+            rec.is_manage = rec.project_manage_id.is_manage
+
     @api.multi
     def unlink(self):
         for rec in self:
-            if rec.can_delete:
+            if rec.can_delete and not rec.is_manage:
                 raise AccessError('此项为必须项不可删除!')
-            if rec.state_y != '20':
+            if rec.state_y != '20' and rec.is_manage:
                 raise AccessError('无法删除此项!')
         return super(dtdream_project_plan_detail, self).unlink()
 
@@ -60,6 +66,7 @@ class dtdream_project_plan_detail(models.Model):
     can_delete = fields.Boolean(string='是否必须')
     created = fields.Boolean(string='是否已创建')
     is_project_manage = fields.Boolean(string='是否项目经理', compute=compute_is_manage)
+    is_manage = fields.Boolean(string='是否管理员', compute=compute_is_admin)
     state_y = fields.Selection([('0', '草稿'),
                                ('10', '指派项目经理'),
                                ('11', '同步项目订单信息'),
@@ -69,6 +76,11 @@ class dtdream_project_plan_detail(models.Model):
                                ('21', 'PMO审核策划'),
                                ('2', '策划'),
                                ('3', '交付'),
+                               ('30', '运维管控测试'),
+                               ('31', '交付运维测试'),
+                               ('32', '运维服务经理审核'),
+                               ('33', '指定VIP经理'),
+                               ('34', 'VIP经理确认'),
                                ('4', '运维'),
                                ('99', '结项')], string='项目状态', compute=compute_project_state)
 

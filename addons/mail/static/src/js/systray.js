@@ -5,7 +5,7 @@ var core = require('web.core');
 var SystrayMenu = require('web.SystrayMenu');
 var Widget = require('web.Widget');
 
-var chat_manager = require('mail.chat_manager');
+//var chat_manager = require('mail.chat_manager');
 
 var QWeb = core.qweb;
 
@@ -13,7 +13,7 @@ var QWeb = core.qweb;
  * Menu item appended in the systray part of the navbar, redirects to the Inbox in Discuss
  * Also displays the needaction counter (= Inbox counter)
  */
-var InboxItem = Widget.extend({
+/*var InboxItem = Widget.extend({
     template:'mail.chat.InboxItem',
     events: {
         "click": "on_click",
@@ -43,7 +43,7 @@ var InboxItem = Widget.extend({
     }, 1000, true),
 });
 
-SystrayMenu.Items.push(InboxItem);
+SystrayMenu.Items.push(InboxItem);*/
 
 /**
  * Menu item appended in the systray part of the navbar
@@ -53,7 +53,7 @@ SystrayMenu.Items.push(InboxItem);
  * static and mass mailing channels) with a quick link to open them in chat windows. It also
  * contains a direct link to the Inbox in Discuss.
  **/
-var MessagingMenu = Widget.extend({
+/*var MessagingMenu = Widget.extend({
         template:'mail.chat.MessagingMenu',
         events: {
             "click": "on_click",
@@ -150,6 +150,6 @@ var MessagingMenu = Widget.extend({
         },
 });
 
-SystrayMenu.Items.push(MessagingMenu);
+SystrayMenu.Items.push(MessagingMenu);*/
 
 });

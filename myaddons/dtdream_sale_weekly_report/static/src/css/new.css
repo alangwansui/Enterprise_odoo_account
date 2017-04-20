@@ -78,3 +78,85 @@
 .o_form_label.form_cls {
     width: 150px;
 }
+
+
+.weeklyReport_check {
+    position: absolute;
+    left: 16px;
+}
+
+.check_layer .form-group {
+    margin-top: 30px;
+    display: table;
+    width: 100%;
+}
+.check_layer label{
+    padding-left: 5%;
+}
+.check_layer .col-sm-6 {
+    padding-left: 0;
+    padding-right: 0;
+}
+.check_layer .check_input{
+    position: relative;
+    display: -ms-inline-flexbox;
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+    border-bottom: 1px solid #cfcfcf;
+}
+.check_layer .check_input_content {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 0 100px;
+    flex: 1 0 100px;
+    max-width: 100%;
+    width: 100%;
+    position: relative;
+}
+.check_layer .check_input_dropdown {
+    position: relative;
+}
+.check_layer .check_send_name {
+    display: inline-block;
+    border: 0;
+}
+.check_layer i {
+    position: absolute;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+}
+.check_layer .check_dropdown {
+    display: none;
+    margin-top: 2px;
+}
+.check_layer .check_dropdown_li {
+    height: 25px;
+    line-height: 25px;
+    cursor: pointer;
+    padding: 0 10px;
+}
+.check_layer .check_input .badge {
+    border: 0;
+    background-color: #62b2e5;
+    color: #fff;
+    font-weight: 300;
+}
+.check_layer .check_input .badge .badge_text {
+    display:inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-right: 5px;
+}
+.check_layer .check_input .badge .check_delete {
+    cursor: pointer;
+}
+.check_layer .check_write {
+    border-bottom: 0;
+}
+.check_layer .check_write textarea {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}

@@ -2,38 +2,66 @@
 <templates>
 
     <t t-name="dtdream_demand_manage.RemandDashboardView">
-        <div class="yf">
+        <div class="dm">
             <div class="container">
-                <h6>应用开发及优化和域群组管理</h6>
+                <h6>IT需求概览</h6>
                 <div class="row interval" >
-                    <div class="col-md-3 col-sm-6 col-xs-12">
-                        <div class="panel" style="border: 0px;" name="dtdream_demand_manage.act_dtdream_demand_manage">
+                    <div class="col-md-3 col-xs-12">
+                        <div class="panel" name="dtdream_demand_manage.act_dtdream_demand_manage_new">
                             <a href="#">
                                 <div class="panel-footer panelbox-blue">
-                                    <h4>我相关的应用开发及优化</h4>
-                                    <div class="yf-t"><t t-esc="demand_number"/></div>
-                                    <div class="yf-more">
-                                        <span>显示明细</span>
+                                    <h4>应用开发及优化申请</h4>
+                                    <div class="dm-t">IT应用开发或应用优化需求请点击此按钮申请</div>
+                                    <div class="dm-more">
+                                        <span>申请</span>
                                         <img src="/dtdream_demand_manage/static/src/img/dodo_arrow.png" alt=""/>
                                     </div>
                                 </div>
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-3 col-md-offset-1 col-sm-6 col-xs-12" >
-                        <div class="panel" style="border: 0px;"  name="dtdream_ad_manager.act_ad_group">
+                    <div class="col-md-3 col-xs-12">
+                        <div class="panel" name="dtdream_ad_manager.act_btn_apply">
                             <a href="#">
                                 <div class="panel-footer panelbox-red">
-                                    <h4>我相关的域群组</h4>
-                                    <div class="yf-t"><t t-esc="group_number"/></div>
-                                    <div class="yf-more panel" name="dtdream_ad_manager.act_ad_group_apply">
-                                        <span>申请创建域群组</span>
+                                    <h4>域群组创建申请</h4>
+                                    <div class="dm-t">域群组创建请点击此按钮申请</div>
+                                    <div class="dm-more">
+                                        <span>申请</span>
                                         <img src="/dtdream_demand_manage/static/src/img/dodo_arrow.png" alt=""/>
                                     </div>
                                 </div>
                             </a>
                         </div>
                     </div>
+                    <div class="col-md-3 col-xs-12">
+                        <div class="panel" name="dtdream_ad_manager.act_btn_change">
+                            <a href="#">
+                                <div class="panel-footer panelbox-green">
+                                    <h4>域群组修改申请</h4>
+                                    <div class="dm-t">域群组修改请点击此按钮申请</div>
+                                    <div class="dm-more">
+                                        <span>申请</span>
+                                        <img src="/dtdream_demand_manage/static/src/img/dodo_arrow.png" alt=""/>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <!--<div class="col-md-3 col-sm-6 col-xs-12">-->
+                        <!--<div class="panel" name="dtdream_common_manage.act_dtdream_mail_new">-->
+                            <!--<a href="#">-->
+                                <!--<div class="panel-footer panelbox-green">-->
+                                    <!--<h4>通用申请</h4>-->
+                                    <!--<div class="dm-t">此模块用于邮箱、域名、vpn、服务器资源的申请</div>-->
+                                    <!--<div class="dm-more">-->
+                                        <!--<span>新建</span>-->
+                                        <!--<img src="/dtdream_demand_manage/static/src/img/dodo_arrow.png" alt=""/>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
             </div>
         </div>

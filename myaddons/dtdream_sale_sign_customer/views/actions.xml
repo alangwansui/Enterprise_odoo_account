@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!--定义签单客户action-->
+    <record id="dtdream_sale_sign_customer_action" model="ir.actions.act_window">
+        <field name="name">签单客户</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">dtdream.sale.sign.customer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

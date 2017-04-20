@@ -22,9 +22,18 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
+        'workflow/workflow.xml',
+        'wizard/hr_travel_grant_wizard.xml',
+        'wizard/hr_bank_wizard.xml',
+        'wizard/hr_mobile_fee_wizard.xml',
+        'views/setting.xml',
         'views/views.xml',
         'views/data.xml',
+        'views/bank_info.xml',
+        'views/mobile_fee.xml',
+        'views/travel_grant.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

@@ -4,6 +4,7 @@
             <template id="dtdream_qua_man_js" name="dtdream_qua_man_js" inherit_id="web.assets_backend">
                 <xpath expr="." position="inside">
                     <script type="text/javascript" src="/dtdream_qualification_management/static/src/js/dtimport_button.js"/>
+                    <script type="text/javascript" src="/dtdream_qualification_management/static/src/js/dtdream_qua_man.js"/>
                 </xpath>
             </template>
         </data>

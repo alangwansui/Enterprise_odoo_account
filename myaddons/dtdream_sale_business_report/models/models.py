@@ -582,6 +582,11 @@ class dtdream_sale_business_report(models.Model):
          ('9', '公司商务审批'),
          ('-1', '驳回'),
          ('done', '完成')], string="状态", default="0",track_visibility='onchange')
+    is_zongdai = fields.Selection(
+        [('1', '是'),
+         ('0', '否')
+         ], string="是否走总代", required=True,track_visibility='onchange')
+    channel_and_customername = fields.Char(string='签单渠道/客户名称',required=True,default=None)
     file = fields.Binary(string="文件")
     file_name = fields.Char(string="文件名")
     remark = fields.Text(string="备注")

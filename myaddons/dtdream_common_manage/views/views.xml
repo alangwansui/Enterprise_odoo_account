@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id='dtdream_common_opinion_show_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.opinion.show.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.common.opinion</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <form>
+                    <sheet>
+                        <group string='审批信息'>
+                            <field name='stage'/>
+                            <field name='approver'/>
+                            <field name="result"/>
+                            <field name='opinion'/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id='dtdream_common_opinion_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.opinion.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.common.opinion</field>
+            <field eval="1" name="priority"/>
+            <field name='arch' type='xml'>
+                <form>
+                    <sheet>
+                        <group string='审批信息'>
+                            <field name='stage'/>
+                            <field name='approver'/>
+                            <field name="result"/>
+                            <field name='opinion'/>
+                        </group>
+                    </sheet>
+                     <footer>
+                        <button name="create_opinion" type="object" string='确认' class="oe_highlight"/>
+                        或
+                        <button special="cancel" string="取消" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_btn_approve" model="ir.actions.act_window">
+            <field name="name">我的审批</field>
+            <field name="res_model">dtdream.common.opinion</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dtdream_common_opinion_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id='dtdream_common_apply_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.apply.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.common.apply</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='申请列表'>
+                    <field name='apply'/>
+                    <field name='apply_time'/>
+                    <field name='type'/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_common_apply_kanban">
+            <field name="name">view.dtdream.common.apply.kanban</field>
+            <field name='type'>kanban</field>
+            <field name="model">dtdream.common.apply</field>
+            <field eval="0" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请人:</strong> <field name='apply'/></li>
+                                        <li ><strong>申请时间:</strong> <field name="apply_time" /></li>
+                                        <li ><strong>申请类型:</strong> <field name="type" /></li>
+                                        <li > <strong>状态:</strong><field name="state"/></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id='dtdream_common_apply_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.apply.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.common.apply</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <form  string='申请详情'>
+                    <header class='no_hidden'>
+                        <button name="btn_confirm" type="workflow" string='提交' attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="%(act_btn_approve)d" type="action" string='审批' attrs="{'invisible': ['|', ('is_approver', '=', False), ('state', '!=', 'confirm')]}"
+                                 context="{'default_apply_id':id, 'default_stage':'manager', 'default_approver':current_employee}" />
+                        <button name="%(act_btn_approve)d" type="action" string='审批' attrs="{'invisible': ['|', ('is_it_approver', '=', False), ('state', '!=', 'acceptByMa')]}"
+                                 context="{'default_apply_id':id, 'default_stage':'it', 'default_approver':current_employee}" />
+                        <button name="%(act_btn_approve)d" type="action" string='审批' attrs="{'invisible': [('state', '!=', 'acceptByIT')]}" groups="dtdream_ad_manager.group_ad_implement"
+                                 context="{'default_apply_id':id, 'default_stage':'im', 'default_approver':current_employee}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,acceptByMa,acceptByIT,implement"
+                               statusbar_colors='{"draft":"blue","confirm":"blue","acceptByMa":"blue","acceptByIT":"blue","implement":"blue"}'/>
+                        <field name="is_approver" invisible="1"/>
+                        <field name="is_it_approver" invisible="1"/>
+                        <field name="is_users" invisible="1"/>
+                        <field name="current_employee" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <group string='基本信息'>
+                            <group name='group_left'>
+                                <field name='apply'/>
+                            </group>
+                            <group name='group_right'>
+                                <field name='apply_time'/>
+                            </group>
+                        </group>
+                        <group string="申请信息">
+                            <group>
+                                <field name="type" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                        options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
+                            </group>
+                            <group>
+                                 <field name='expire_time' attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                        options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name='description' attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                        </group>
+                        <group>
+                            <group name='group_left'>
+                                <field name='approver' attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                       options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
+                            </group>
+                            <group name='group_right'>
+                                <field name='it_approver' attrs="{'readonly': True}"
+                                       options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name='users' widget="many2many" attrs="{'readonly': [('state', '!=', 'draft')],'invisible': [('is_users', '=', False)]}"
+                                options="{'no_create_edit': True, 'no_quick_create': True, 'no_create': True}">
+                                <tree>
+                                    <field name="full_name" />
+                                    <field name="nick_name" />
+                                    <field name="job_number" />
+                                    <field name="department_id" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <notebook>
+                                <page string="审批意见">
+                                    <field name="opinion" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                                        <tree editable="bottom" create="false" delete="false" >
+                                            <field name="stage" />
+                                            <field name="approver" />
+                                            <field name="result"/>
+                                            <field name="opinion" />
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                          <field name="message_follower_ids" widget="mail_followers" groups="base.group_user" />
+                          <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id='dtdream_common_apply_type_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.apply.type.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.common.apply.type</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='类型列表'>
+                    <field name='type'/>
+                    <field name='approver'/>
+                    <field name='use_users'/>
+                    <field name='work'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_common_apply_type_kanban">
+            <field name="name">view.dtdream.common.apply.work.kanban</field>
+            <field name='type'>kanban</field>
+            <field name="model">dtdream.common.apply.type</field>
+            <field eval="0" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>申请类型:</strong> <field name='type'/></li>
+                                        <li ><strong>审批人:</strong> <field name="approver" /></li>
+                                        <li ><strong>是否使用成员:</strong> <field name="use_users" /></li>
+                                        <li ><strong>是否有效:</strong> <field name="work" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id='dtdream_common_apply_type_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.apply.type.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.common.apply.type</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <form string='类型详情'>
+                    <sheet>
+                        <group>
+                            <field name='type'/>
+                            <field name='approver'/>
+                            <field name='use_users'/>
+                            <field name="work"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id='dtdream_common_expire_time_tree' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.expire.time.tree</field>
+            <field name='type'>tree</field>
+            <field name='model'>dtdream.common.expire.time</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <tree string='有效期列表'>
+                    <field name='name'/>
+                    <field name='days'/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="dtdream_common_expire_time_kanban">
+            <field name="name">view.dtdream.common.expire.time.kanban</field>
+            <field name='type'>kanban</field>
+            <field name="model">dtdream.common.expire.time</field>
+            <field eval="0" name="priority"/>
+            <field name="arch" type="xml">
+                <kanban class="o_res_partner_kanban" >
+                    <templates>
+                        <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click ">
+                             <div class="o_kanban_image">
+                                  <img t-att-src="kanban_image('product.template', 'image_small', record.id.value)"/>
+                              </div>
+                            <div class="oe_kanban_details">
+                                <div name="tags"/>
+                                    <ul>
+                                        <li ><strong>有效期文本:</strong> <field name='name'/></li>
+                                        <li ><strong>有效期天数:</strong> <field name="days" /></li>
+                                    </ul>
+                            <div name="tags"/>
+                            </div>
+                        </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id='dtdream_common_expire_time_form' model='ir.ui.view'>
+            <field name='name'>view.dtdream.common.expire.time.form</field>
+            <field name='type'>form</field>
+            <field name='model'>dtdream.common.expire.time</field>
+            <field eval="0" name="priority"/>
+            <field name='arch' type='xml'>
+                <form string='有效期详情'>
+                    <sheet>
+                        <group>
+                            <field name='name'/>
+                            <field name='days'/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_dtdream_common_apply" model="ir.actions.act_window">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.common.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('apply.user_id', '=', uid)]</field>
+        </record>
+
+        <record id="act_dtdream_common_accept" model="ir.actions.act_window">
+            <field name="name">待我审批</field>
+            <field name="res_model">dtdream.common.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', 'in', ['confirm', 'acceptByMa']), ('current_approver.user_id', '=', uid)]</field>
+        </record>
+
+        <record id="act_dtdream_common_all" model="ir.actions.act_window">
+            <field name="name">所有申请</field>
+            <field name="res_model">dtdream.common.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_common_implement" model="ir.actions.act_window">
+            <field name="name">待我实施</field>
+            <field name="res_model">dtdream.common.apply</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[('state', '=', 'acceptByIT')]</field>
+        </record>
+
+        <record id="act_dtdream_common_type" model="ir.actions.act_window">
+            <field name="name">申请类型</field>
+            <field name="res_model">dtdream.common.apply.type</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_common_expire_time" model="ir.actions.act_window">
+            <field name="name">有效期设置</field>
+            <field name="res_model">dtdream.common.expire.time</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <record id="act_dtdream_common_new" model="ir.actions.act_window">
+            <field name="name">我的申请</field>
+            <field name="res_model">dtdream.common.apply</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id='menu_dtdream_common' name='通用管理' parent="dtdream_demand_manage.menu_dtdream_demand_manage_root" sequence='15'/>
+        <menuitem id='menu_dtdream_common_apply' name='我的申请' sequence='0' parent="menu_dtdream_common" action="act_dtdream_common_apply"/>
+        <menuitem id='menu_dtdream_common_accept' name='待我审批' sequence='100' parent="menu_dtdream_common" action="act_dtdream_common_accept"/>
+        <menuitem id='menu_dtdream_common_implement' name='待我实施' sequence='200' parent="menu_dtdream_common"
+                  action="act_dtdream_common_implement" groups="dtdream_ad_manager.group_ad_implement"/>
+        <menuitem id='menu_dtdream_common_all' name='所有申请' sequence='250' parent="menu_dtdream_common" action="act_dtdream_common_all"
+                  groups="dtdream_ad_manager.group_ad_implement"/>
+        <menuitem id='menu_dtdream_common_peizhi' name='申请类型配置' sequence='300' parent="menu_dtdream_common"
+                  action="act_dtdream_common_type" groups="dtdream_ad_manager.group_ad_implement"/>
+         <menuitem id='menu_dtdream_common_xepire' name='有效期配置' sequence='400' parent="menu_dtdream_common"
+                  action="act_dtdream_common_expire_time" groups="dtdream_ad_manager.group_ad_implement"/>
+    </data>
+</openerp>

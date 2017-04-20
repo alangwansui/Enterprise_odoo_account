@@ -1,0 +1,252 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!--==========================modify bank info workflow==============================-->
+        <record model="workflow" id="wkf_modify_bank_info">
+            <field name="name">hr.wkf.bank</field>
+            <field name="osv">hr.employee.bank</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!--workflow activity-->
+        <record id="activity_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_bank_info"/>
+            <field name="flow_start">True</field>
+            <field name="name">草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="activity_chuna" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_bank_info"/>
+            <field name="name">出纳</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_chuna()</field>
+        </record>
+
+        <record id="activity_end" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_bank_info"/>
+            <field name="flow_stop">True</field>
+            <field name="name">完成</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_end()</field>
+        </record>
+
+        <!--workflow transition-->
+        <record model="workflow.transition" id="draft2chuna">
+            <field name="act_from" ref="activity_draft"/>
+            <field name="act_to" ref="activity_chuna"/>
+            <field name="signal">btn_submit</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="chuna2end">
+            <field name="act_from" ref="activity_chuna"/>
+            <field name="act_to" ref="activity_end"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="chuna2draft">
+            <field name="act_from" ref="activity_chuna"/>
+            <field name="act_to" ref="activity_draft"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+
+        <!--==========================modify mobile fee  workflow==============================-->
+        <record model="workflow" id="wkf_modify_mobile_fee_info">
+            <field name="name">hr.wkf.mobile.fee</field>
+            <field name="osv">hr.employee.mobile.fee</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!--workflow activity-->
+        <record id="activity_draft1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_mobile_fee_info"/>
+            <field name="flow_start">True</field>
+            <field name="name">草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="activity_manager" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_mobile_fee_info"/>
+            <field name="name">部门主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_department_manager()</field>
+        </record>
+
+        <record id="activity_quanqian" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_mobile_fee_info"/>
+            <field name="name">权签中</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_quanqian()</field>
+        </record>
+
+        <record id="activity_end1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_mobile_fee_info"/>
+            <field name="flow_stop">True</field>
+            <field name="name">完成</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_end()</field>
+        </record>
+
+        <!--workflow transition-->
+        <record model="workflow.transition" id="draft12manager">
+            <field name="act_from" ref="activity_draft1"/>
+            <field name="act_to" ref="activity_manager"/>
+            <field name="signal">btn_submit</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="manager2quanqian">
+            <field name="act_from" ref="activity_manager"/>
+            <field name="act_to" ref="activity_quanqian"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="manager2draft1">
+            <field name="act_from" ref="activity_manager"/>
+            <field name="act_to" ref="activity_draft1"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="quanqian2end1">
+            <field name="act_from" ref="activity_quanqian"/>
+            <field name="act_to" ref="activity_end1"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="quanqian2draft1">
+            <field name="act_from" ref="activity_quanqian"/>
+            <field name="act_to" ref="activity_draft1"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+
+
+        <!--==========================modify travel grant  workflow==============================-->
+        <record model="workflow" id="wkf_modify_travel_grant_info">
+            <field name="name">hr.wkf.travel.grant</field>
+            <field name="osv">hr.employee.travel.grant</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!--workflow activity-->
+        <record id="activity_draft2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_travel_grant_info"/>
+            <field name="flow_start">True</field>
+            <field name="name">草稿</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_draft()</field>
+        </record>
+
+        <record id="activity_manager1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_travel_grant_info"/>
+            <field name="name">部门主管审批</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_department_manager()</field>
+        </record>
+
+        <record id="activity_quanqian1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_travel_grant_info"/>
+            <field name="name">权签中</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_quanqian()</field>
+        </record>
+
+        <record id="activity_caiwu" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_travel_grant_info"/>
+            <field name="name">财务审批中</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_caiwu()</field>
+        </record>
+
+        <record id="activity_hr" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_travel_grant_info"/>
+            <field name="name">HR审批中</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_hr()</field>
+        </record>
+
+        <record id="activity_end2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_modify_travel_grant_info"/>
+            <field name="flow_stop">True</field>
+            <field name="name">完成</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_end()</field>
+        </record>
+
+        <!--workflow transition-->
+        <record model="workflow.transition" id="draft22manager1">
+            <field name="act_from" ref="activity_draft2"/>
+            <field name="act_to" ref="activity_manager1"/>
+            <field name="signal">btn_submit</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="manager12quanqian1">
+            <field name="act_from" ref="activity_manager1"/>
+            <field name="act_to" ref="activity_quanqian1"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="manager12draft2">
+            <field name="act_from" ref="activity_manager1"/>
+            <field name="act_to" ref="activity_draft2"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="quanqian12caiwu">
+            <field name="act_from" ref="activity_quanqian1"/>
+            <field name="act_to" ref="activity_caiwu"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="quanqian12draft2">
+            <field name="act_from" ref="activity_quanqian1"/>
+            <field name="act_to" ref="activity_draft2"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="caiwu2hr">
+            <field name="act_from" ref="activity_caiwu"/>
+            <field name="act_to" ref="activity_hr"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="caiwu2draft2">
+            <field name="act_from" ref="activity_caiwu"/>
+            <field name="act_to" ref="activity_draft2"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="hr2end2">
+            <field name="act_from" ref="activity_hr"/>
+            <field name="act_to" ref="activity_end2"/>
+            <field name="signal">btn_agree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+        <record model="workflow.transition" id="hr2draft2">
+            <field name="act_from" ref="activity_hr"/>
+            <field name="act_to" ref="activity_draft2"/>
+            <field name="signal">btn_disagree</field>
+            <field name="group_id" ref="base.group_user"/>
+        </record>
+
+    </data>
+</openerp>

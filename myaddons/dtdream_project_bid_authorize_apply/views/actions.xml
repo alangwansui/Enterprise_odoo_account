@@ -19,7 +19,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">
-                [('shenpiren.user_id.id','=',uid),('state','not in',['0','done'])]
+                [('state','=','wait_shenpi'),("shenpirens.user_id","=",uid)]
             </field>
             <field name="context">{'search_default_effect_record':'record_state'}</field>
 
@@ -31,7 +31,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|','|','|',('shenpiren01.user_id.id','=',uid),('shenpiren02.user_id.id','=',uid),('shenpiren03.user_id.id','=',uid),('shenpiren03.user_id.id','=',uid),]</field>
+            <field name="domain">[('state','=','shenpi_done'),('history_shenpirens.user_id','=',uid)]</field>
             <field name="context">{'search_default_effect_record':'record_state'}</field>
         </record>
 
@@ -40,6 +40,7 @@
             <field name="res_model">dtdream.project.bid.authorize.apply</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
+            <field name="domain"></field>
             <field name="view_mode">tree,form</field>
         </record>
 

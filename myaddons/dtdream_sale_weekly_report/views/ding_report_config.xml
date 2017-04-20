@@ -1,0 +1,21 @@
+<openerp>
+  <data>
+
+       <record model="ir.ui.view" id="dtdream_ding_report_config_form">
+          <field name="name">dtdream.ding.report.config.form</field>
+          <field name="model">ding.report.config</field>
+          <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="agentid"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+          </field>
+       </record>
+
+  </data>
+</openerp>

@@ -50,36 +50,53 @@
         <record id="dtdream_project_role_PMO" model="dtdream.project.role.setting">
             <field name="name">PMO接口人</field>
             <field name="required">False</field>
+            <field name="role">True</field>
         </record>
 
         <record id="dtdream_project_role_PMOO" model="dtdream.project.role.setting">
             <field name="name">PMO主管</field>
             <field name="required">False</field>
+            <field name="role">True</field>
         </record>
 
         <record id="dtdream_project_role_PT" model="dtdream.project.role.setting">
             <field name="name">平台交付经理</field>
             <field name="required">False</field>
+            <field name="role">True</field>
         </record>
 
         <record id="dtdream_project_role_YY" model="dtdream.project.role.setting">
             <field name="name">应用服务经理</field>
             <field name="required">True</field>
+            <field name="role">True</field>
         </record>
 
         <record id="dtdream_project_role_PX" model="dtdream.project.role.setting">
             <field name="name">培训服务经理</field>
             <field name="required">True</field>
+            <field name="role">True</field>
         </record>
 
         <record id="dtdream_project_role_YW" model="dtdream.project.role.setting">
             <field name="name">运维服务经理</field>
             <field name="required">True</field>
+            <field name="role">True</field>
         </record>
 
         <record id="dtdream_project_role_ZC" model="dtdream.project.role.setting">
             <field name="name">驻场服务经理</field>
             <field name="required">True</field>
+            <field name="role">True</field>
+        </record>
+
+        <record id="dtdream_project_role_YWF" model="dtdream.project.role.setting">
+            <field name="name">运维管控负责人</field>
+            <field name="required">False</field>
+        </record>
+
+        <record id="dtdream_project_role_JFF" model="dtdream.project.role.setting">
+            <field name="name">交付负责人</field>
+            <field name="required">False</field>
         </record>
 
         <record id="dtdream_project_deliver_CP" model="dtdream.project.deliver.config">

@@ -159,7 +159,7 @@ class dtdream_assets_management(models.Model):
     in_use = fields.Date(string='领用日期')
     asset_name = fields.Many2one('dtdream.assets.name', string='资产名称')
     asset_type = fields.Many2one('dtdream.assets.type', string='资产类别')
-    asset_desc = fields.Char(string='资产配置', size=128)
+    asset_desc = fields.Char(string='资产配置', size=256)
     asset_spec = fields.Char(string='资产规格', size=128)
     account = fields.Char(string='会计科目', compute=compute_account_discount)
     price = fields.Float(string='资产原值(元)')

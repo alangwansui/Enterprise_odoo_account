@@ -22,11 +22,13 @@ class dtdream_project_output_plan_manage(models.Model):
 
     @api.model
     def create(self, vals):
-        cr = self.env['dtdream.project.manage'].search([('id', '=', vals.get('project_manage_id', ''))])
-        if cr and cr.state_y != '20':
-            raise AccessError('输出物规划只有在策划阶段且是项目经理才可新增项。')
-        if vals:
-            vals.update({'created': True})
+        project_id = vals.get('project_manage_id', '')
+        if project_id:
+            cr = self.env['dtdream.project.manage'].search([('id', '=', project_id)])
+            if cr and cr.state_y != '20' and not cr.is_manage:
+                raise AccessError('输出物规划只有在策划阶段且是项目经理才可新增项。')
+            if vals:
+                vals.update({'created': True})
         return super(dtdream_project_output_plan_manage, self).create(vals)
 
     @api.depends('is_header')
@@ -37,6 +39,10 @@ class dtdream_project_output_plan_manage(models.Model):
     def compute_is_manage(self):
         for rec in self:
             rec.is_project_manage = rec.project_manage_id.is_project_manage
+
+    def compute_is_admin(self):
+        for rec in self:
+            rec.is_manage = rec.project_manage_id.is_manage
 
     def compute_is_header(self):
         for rec in self:
@@ -55,9 +61,9 @@ class dtdream_project_output_plan_manage(models.Model):
     @api.multi
     def unlink(self):
         for rec in self:
-            if rec.can_delete:
+            if rec.can_delete and not rec.is_manage:
                 raise AccessError('此项为必须项不可删除!')
-            if rec.state_y != '20':
+            if rec.state_y != '20' and not rec.rec.is_manage:
                 raise AccessError('无法删除此项!')
         return super(dtdream_project_output_plan_manage, self).unlink()
 
@@ -89,14 +95,27 @@ class dtdream_project_output_plan_manage(models.Model):
         if not self.assess_man or not self.url:
             raise AccessError('请指定审核人提交相关输出物之后在发起审核!')
         self.write({'submit_time': fields.date.today(), 'state': '1'})
+        self.project_manage_id.send_mail(subject=u'请您审核%s' % self.output, content=u'''%s发起了%s的审核，
+        请您审核。''' % (self.header.name, self.output), name=self.assess_man)
         self.update_current_approve()
+
+    def create_approve_log(self, result=u''):
+        name = self.env.user.employee_ids
+        self.env['dtdream.project.approve.record'].create({'output': self.output, 'result': result,
+                                                           'approve': '.'.join([name.name, name.full_name, name.job_number]),
+                                                           'approve_time': fields.Datetime.now(),
+                                                           'project_manage_id': self.project_manage_id.id,
+                                                           'output_plan_id': self.id})
 
     @api.multi
     def btn_output_approve(self):
         self.write({'assess_time': fields.date.today(), 'state': '2', 'assess_times': self.assess_times + 1})
+        self.create_approve_log(result=u'同意')
         self.update_current_approve()
         if not self.project_manage_id.current_approve:
             self.project_manage_id.current_approve = [(6, 0, [self.project_manage_id.project_manage.id])]
+            self.project_manage_id.send_mail(subject=u'项目交付已经完成,请将项目进入下一阶段', content=u'''项目(%s)交付已经完成，
+            请将项目进入下一阶段。''' % self.project_manage_id.name, name=self.project_manage_id.project_manage)
 
     @api.multi
     def btn_output_reject(self):
@@ -118,8 +137,7 @@ class dtdream_project_output_plan_manage(models.Model):
                   'name': "审批记录",
                   'view_mode': 'tree',
                   'view_type': 'form',
-                  'domain': [],
-                  'target': 'new'}
+                  'domain': [('output_plan_id', '=', self.id), ('project_manage_id', '=', self.project_manage_id.id)]}
         return action
 
     name = fields.Many2one('dtdream.project.stage.setting', string='项目阶段')
@@ -139,6 +157,7 @@ class dtdream_project_output_plan_manage(models.Model):
     is_header = fields.Boolean(string='是否责任人', compute=compute_is_header)
     is_assess_man = fields.Boolean(string='是否审核人', compute=compute_is_assess_man)
     is_project_manage = fields.Boolean(string='是否项目经理', compute=compute_is_manage)
+    is_manage = fields.Boolean(string='是否管理员', compute=compute_is_admin)
     state_y = fields.Selection([('0', '草稿'),
                                ('10', '指派项目经理'),
                                ('11', '同步项目订单信息'),
@@ -148,6 +167,11 @@ class dtdream_project_output_plan_manage(models.Model):
                                ('21', 'PMO审核策划'),
                                ('2', '策划'),
                                ('3', '交付'),
+                               ('30', '运维管控测试'),
+                               ('31', '交付运维测试'),
+                               ('32', '运维服务经理审核'),
+                               ('33', '指定VIP经理'),
+                               ('34', 'VIP经理确认'),
                                ('4', '运维'),
                                ('99', '结项')], string='项目状态', compute=compute_project_state)
 

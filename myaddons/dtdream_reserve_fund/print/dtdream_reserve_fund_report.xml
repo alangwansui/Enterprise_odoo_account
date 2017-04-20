@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report
+                id="root_dtdream_reserve_fund_report_print"
+                string="打印备用金"
+                model="dtdream.reserve.fund"
+                report_type="qweb-html"
+                name="dtdream_reserve_fund.con_dtdream_reserve_fund_report_print"
+                file="dtdream_reserve_fund.con_dtdream_reserve_fund_report_print"/>
+
+        <template id="con_dtdream_reserve_fund_report_print">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="dtdream_reserve_fund.print_dtdream_reserve_fund_report"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="print_dtdream_reserve_fund_report">
+            <t t-call="report.external_layout">
+                <div class="page info">
+
+                    <style>
+                        .info tbody tr .o_td_label{ min-width:150px;
+                        padding:0 15px 5px 0;
+                        }
+                        .info h4{margin-bottom:5px;font-weight:bold;}
+                        .info h2{margin-bottom:10px;font-weight:bold;}
+                        .info .billcode{text-align:right;}
+                        .info .billcode1{text-align:right;margin-bottom:30px; }
+                    </style>
+
+                    <div class="row ">
+                        <div class="col-xs-12">
+                            <h2 align="center">备用金</h2>
+                        </div>
+                    </div>
+
+                    <div class="row" name="total">
+                        <div class="col-xs-11 ">
+                            <div class="billcode" size="7">单据号:
+                                <span t-field="doc.name"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="col-xs-6">
+                            <h4>基本信息</h4>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="o_td_label">申请人:</td>
+                                        <td>
+                                            <span t-field="doc.applicant"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">部门:</td>
+                                        <td>
+                                            <span t-field="doc.department_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">部门编码:</td>
+                                        <td>
+                                            <span t-field="doc.dep_code"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">备用金类型:</td>
+                                        <td>
+                                            <span t-field="doc.type"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">情况说明:</td>
+                                        <td>
+                                            <span t-field="doc.illustration"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="col-xs-6">
+                            <h4>支付信息</h4>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="o_td_label">支付方式:</td>
+                                        <td>
+                                            <span t-field="doc.pay_type"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">支付类别:</td>
+                                        <td>
+                                            <span t-field="doc.pay_to_who"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">收款人姓名:</td>
+                                        <td>
+                                            <span t-field="doc.payee_name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">开户行:</td>
+                                        <td>
+                                            <span t-field="doc.bank_address"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">银行卡号:</td>
+                                        <td>
+                                            <span t-field="doc.bank_card_number"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <br/>
+
+                    <div class="row ">
+                        <div class="col-xs-12">
+                            <h4>费用明细</h4>
+                        </div>
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th width="25%">费用类别</th>
+                                <th width="25%">要求支付时间</th>
+                                <th width="25%">预估金额</th>
+                                <th width="25%">支付类别</th>
+                            </tr>
+                        </thead>
+                        <tbody class="sale_tbody">
+                            <t t-foreach="doc.reserve_fund_record" t-as="d">
+                                <tr>
+                                    <td>
+                                        <span t-field="d.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="d.pay_time"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="d.estimate_amount"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="d.pay_to_who"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <br/>
+
+                    <div class="row ">
+                        <div class="col-xs-12">
+                            <h4>专项信息</h4>
+                        </div>
+                    </div>
+
+                    <tr>
+                        <td>专项编号:</td>
+                        <td>
+                            <span t-field="doc.special_approval_id"/>
+                        </td>
+                    </tr>
+
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th width="33%">费用类别</th>
+                                <th width="33%">金额(元)</th>
+                                <th width="33%">费用事项说明</th>
+                            </tr>
+                        </thead>
+                        <tbody class="sale_tbody">
+                            <t t-foreach="doc.special_approval_fee_ids" t-as="d">
+                                <tr>
+                                    <td>
+                                        <span t-field="d.fee_type"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="d.fee_amount"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="d.fee_description"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+
+                    <br/>
+
+                    <div class="row ">
+                        <div class="col-xs-12">
+                            <h4>合同信息</h4>
+                        </div>
+                    </div>
+                    <tr>
+                        <td>合同名称:</td>
+                        <td>
+                            <span t-field="doc.contract_name"/>
+                        </td>
+                    </tr>
+
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th width="25%">合同编号</th>
+                                <th width="25%">合同类型</th>
+                                <th width="25%">合同金额</th>
+                                <th width="25%">审批状态</th>
+                            </tr>
+                        </thead>
+                        <tbody class="sale_tbody">
+                            <tr>
+                                <td>
+                                    <span t-field="doc.contract_id"/>
+                                </td>
+                                <td>
+                                    <span t-field="doc.contract_type"/>
+                                </td>
+                                <td>
+                                    <span t-field="doc.contract_money"/>
+                                </td>
+                                <td>
+                                    <span t-field="doc.contract_state"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <br/>
+
+                    <tr>
+                        <td>总金额:</td>
+                        <td>
+                            <span t-field="doc.total_amount"/>
+                        </td>
+                    </tr>
+
+
+                </div>
+            </t>
+        </template>
+    </data>
+</openerp>

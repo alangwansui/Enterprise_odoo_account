@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+import sys
+
+reload(sys)
+
+sys.setdefaultencoding('utf-8')
 
 __author__ = "g0335"
 
@@ -171,8 +176,8 @@ class DTLdap(object):
         :return:
         '''
         attrs = []
-        attrs.append(('cn', [name]))
-        attrs.append(('sAMAccountName', [name]))
+        attrs.append(('cn', [name.encode("utf-8")]))
+        attrs.append(('sAMAccountName', [name.encode("utf-8")]))
         attrs.append(('objectClass', ['group']))
         dn = 'cn=%s,%s' % (name, self._get_base())
         dn = dn.encode("utf-8")

@@ -9,15 +9,15 @@ var form_common = require('web.form_common');
 
 FormView.include({
     events: _.defaults({
-        'click select[name=customer_level]': 'test_click2',
+        'click select[name=customer_level]': 'test_click2_customer',
         'click  label.customer_level_tooltip':'tooltip_show',
     }, FormView.prototype.events),
 
-    test_click2: function(ev) {
+    test_click2_customer: function(ev) {
     var anArray = ['"VIP"','"S"','"A+"','"A"' ];
-        var list = $("select[name=customer_level]").find("option")
+        var list = $("select[name=customer_level]").find("option");
         for( var i=0;i<list.length;i++){
-            if (!anArray.includes(list[i].value)){
+            if (anArray.indexOf(list[i].value) < 0){
                 $(list[i]).remove()
             }
         }

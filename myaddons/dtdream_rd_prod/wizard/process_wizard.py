@@ -120,17 +120,100 @@ class process_wizard(models.TransientModel):
             current_product.write({'is_appred':False})
             self._message_post(current_product=current_product,current_process=current_process,state=u'总体设计阶段',level=u'二级',result=flag,reason=reason)
 
+    def check_ddkf_process_ids(self, current_process, current_product, flag):
+        current_product.is_finsished_03 = True
+        reason = current_process.reason or u'无'
+        current_product.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
+        if current_process.level == 'level_01':
+            self._message_post(current_product=current_product, current_process=current_process, state=u'迭代开发阶段',
+                               level=u'一级', result=flag, reason=reason)
+            processes = self.env['dtdream_rd_process'].search(
+                [('ddkf_process_id', '=', current_product.id), ('pro_state', '=', current_product.state),
+                 ('is_new', '=', True), ('level', '=', 'level_01')])
+            for process in processes:
+                if not (process.is_pass or process.is_risk):
+                    current_product.is_finsished_03 = False
+                    break
+            if current_product.is_finsished_03:
+                records = self.env['dtdream_rd_approver'].search(
+                    [('pro_state', '=', current_product.state), ('level', '=', 'level_02')])  # 审批人配置
+                rold_ids = []
+                for record in records:
+                    rold_ids += [record.name.id]
+                appro = self.env['dtdream_rd_role'].search(
+                    [('role_id', '=', current_product.id), ('cof_id', 'in', rold_ids),
+                     ('person', '!=', False)])  # 产品中角色配置
+                current_product.current_approver_user = [(5,)]
+                if len(appro) == 0:
+                    current_product.signal_workflow('btn_to_yzfb')
+                else:
+                    for record in appro:
+                        self.env['dtdream_rd_process'].create(
+                            {"role": record.cof_id.id, "ddkf_process_id": current_product.id,
+                             'pro_state': current_product.state, 'approver': record.person.id,
+                             'approver_old': record.person.id, 'level': 'level_02'})  # 审批意见记录创建
+                        current_product.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                        self.send_next_shenpi_mail(current_product=current_product, next_shenpi=record.person,
+                                                   state_display=u'迭代开发阶段')
+        elif current_process.level == 'level_02':
+            current_product.signal_workflow('btn_to_yzfb')
+            self._message_post(current_product=current_product, current_process=current_process, state=u'迭代开发阶段',
+                               level=u'二级', result=flag, reason=reason)
+
+    def check_yzfb_process_ids(self, current_process, current_product, flag):
+        current_product.is_finsished_04 = True
+        reason = current_process.reason or u'无'
+        current_product.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
+        if current_process.level == 'level_01':
+            self._message_post(current_product=current_product, current_process=current_process, state=u'验证发布阶段',
+                               level=u'一级', result=flag, reason=reason)
+            processes = self.env['dtdream_rd_process'].search(
+                [('yzfb_process_id', '=', current_product.id), ('pro_state', '=', current_product.state),
+                 ('is_new', '=', True), ('level', '=', 'level_01')])
+            for process in processes:
+                if not (process.is_pass or process.is_risk):
+                    current_product.is_finsished_04 = False
+                    break
+            if current_product.is_finsished_04:
+                records = self.env['dtdream_rd_approver'].search(
+                    [('pro_state', '=', current_product.state), ('level', '=', 'level_02')])  # 审批人配置
+                rold_ids = []
+                for record in records:
+                    rold_ids += [record.name.id]
+                appro = self.env['dtdream_rd_role'].search(
+                    [('role_id', '=', current_product.id), ('cof_id', 'in', rold_ids),
+                     ('person', '!=', False)])  # 产品中角色配置
+                current_product.current_approver_user = [(5,)]
+                if len(appro) == 0:
+                    current_product.signal_workflow('btn_to_jieshu')
+                else:
+                    for record in appro:
+                        self.env['dtdream_rd_process'].create(
+                            {"role": record.cof_id.id, "yzfb_process_id": current_product.id,
+                             'pro_state': current_product.state, 'approver': record.person.id,
+                             'approver_old': record.person.id, 'level': 'level_02'})  # 审批意见记录创建
+                        current_product.write({'current_approver_user': [(4, record.person.user_id.id)]})
+                        self.send_next_shenpi_mail(current_product=current_product, next_shenpi=record.person,
+                                                   state_display=u'验证发布阶段')
+        elif current_process.level == 'level_02':
+            current_product.signal_workflow('btn_to_jieshu')
+            self._message_post(current_product=current_product, current_process=current_process, state=u'验证发布阶段',
+                               level=u'二级', result=flag, reason=reason)
     #通过
     @api.multi
     def btn_agree(self):
         active_id = self._context['active_id']
         current_process = self.env['dtdream_rd_process'].browse(active_id)
         current_process.write({"is_pass":True,'is_risk':False,'is_refuse':False,'approve_state':"通过","reason":self.reason})
-        current_product = current_process.process_id or current_process.ztsj_process_id
+        current_product = current_process.process_id or current_process.ztsj_process_id or current_process.ddkf_process_id or current_process.yzfb_process_id
         if current_process.pro_state=='state_01' and current_process.pro_state==current_product.state:
             self.check_process_ids(current_process=current_process,current_product=current_product,flag=u'通过')
         elif current_process.pro_state=='state_02' and current_process.pro_state==current_product.state:
             self.check_ztsj_process_ids(current_process=current_process,current_product=current_product,flag=u'通过')
+        elif current_process.pro_state=='state_03' and current_process.pro_state==current_product.state:
+            self.check_ddkf_process_ids(current_process=current_process,current_product=current_product,flag=u'通过')
+        elif current_process.pro_state=='state_04' and current_process.pro_state==current_product.state:
+            self.check_yzfb_process_ids(current_process=current_process,current_product=current_product,flag=u'通过')
 
         return {
                 'type': 'ir.actions.client',
@@ -143,11 +226,15 @@ class process_wizard(models.TransientModel):
         active_id = self._context['active_id']
         current_process = self.env['dtdream_rd_process'].browse(active_id)
         current_process.write({"is_pass":False,'is_risk':True,'is_refuse':False,'approve_state':"带风险通过","reason":self.reason})
-        current_product = current_process.process_id or current_process.ztsj_process_id
+        current_product = current_process.process_id or current_process.ztsj_process_id or current_process.ddkf_process_id or current_process.yzfb_process_id
         if current_process.pro_state=='state_01' and current_process.pro_state==current_product.state:
             self.check_process_ids(current_process=current_process,current_product=current_product,flag=u'带风险通过')
         elif current_process.pro_state=='state_02' and current_process.pro_state==current_product.state:
             self.check_ztsj_process_ids(current_process=current_process,current_product=current_product,flag=u'带风险通过')
+        elif current_process.pro_state=='state_03' and current_process.pro_state==current_product.state:
+            self.check_ddkf_process_ids(current_process=current_process,current_product=current_product,flag=u'带风险通过')
+        elif current_process.pro_state=='state_04' and current_process.pro_state==current_product.state:
+            self.check_yzfb_process_ids(current_process=current_process,current_product=current_product,flag=u'带风险通过')
 
         return {
                 'type': 'ir.actions.client',
@@ -163,7 +250,7 @@ class process_wizard(models.TransientModel):
         if not self.reason:
             raise ValidationError(u'不通过时意见必填')
         current_process.write({"is_pass":False,'is_risk':False,'is_refuse':True,'approve_state':"不通过","reason":self.reason})
-        current_product = current_process.process_id or current_process.ztsj_process_id
+        current_product = current_process.process_id or current_process.ztsj_process_id or current_process.ddkf_process_id or current_process.yzfb_process_id
         current_product.write({'his_app_user': [(4, current_process.approver.user_id.id)]})
         if current_process.pro_state=='state_01' and current_process.pro_state==current_product.state:
             if current_process.level=='level_01':
@@ -181,6 +268,23 @@ class process_wizard(models.TransientModel):
                 current_product.write({'is_appred':False,'is_finsished_02':False})
                 ztsj_processes = self.env['dtdream_rd_process'].search([('ztsj_process_id','=',current_product.id)])
                 ztsj_processes.unlink()
+        elif current_process.pro_state=='state_03' and current_process.pro_state==current_product.state:
+            if current_process.level=='level_01':
+                self._message_post(current_product=current_product,current_process=current_process,state=u'迭代开发阶段',level=u'一级',result=u'不通过',reason=self.reason)
+            elif current_process.level=='level_02':
+                self._message_post(current_product=current_product,current_process=current_process,state=u'迭代开发阶段',level=u'二级',result=u'不通过',reason=self.reason)
+                current_product.write({'is_ddkf_appred':False,'is_finsished_03':False})
+                ddkf_processes = self.env['dtdream_rd_process'].search([('ddkf_process_id','=',current_product.id)])
+                ddkf_processes.unlink()
+        elif current_process.pro_state=='state_04' and current_process.pro_state==current_product.state:
+            if current_process.level=='level_01':
+                self._message_post(current_product=current_product,current_process=current_process,state=u'验证发布阶段',level=u'一级',result=u'不通过',reason=self.reason)
+            elif current_process.level=='level_02':
+                self._message_post(current_product=current_product,current_process=current_process,state=u'验证发布阶段',level=u'二级',result=u'不通过',reason=self.reason)
+                current_product.write({'is_yzfb_appred':False,'is_finsished_04':False})
+                yzfb_processes = self.env['dtdream_rd_process'].search([('yzfb_process_id','=',current_product.id)])
+                yzfb_processes.unlink()
+
         return {
                 'type': 'ir.actions.client',
                 'tag': 'reload',

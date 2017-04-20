@@ -108,21 +108,21 @@ class dtdream_demand_app(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-        if menu == u"所有单据":
-            manage = self.env.ref("dtdream_demand_manage.dtdream_demand_manage") in self.env.user.groups_id
-            if manage:
-                domain = domain if domain else []
-            else:
-                uid = self._context.get('uid', '')
-                domain = expression.AND([['|', '|', '|', ('name.user_id', '=', uid), ('create_uid', '=', uid),
-                                          ('current_approve.user_id', '=', uid), ('approves.user_id', '=', uid)], domain])
+            if menu == u"所有单据":
+                manage = self.env.ref("dtdream_demand_manage.dtdream_demand_manage") in self.env.user.groups_id
+                if manage:
+                    domain = domain if domain else []
+                else:
+                    uid = self._context.get('uid', '')
+                    domain = expression.AND([['|', '|', '|', ('name.user_id', '=', uid), ('create_uid', '=', uid),
+                                              ('current_approve.user_id', '=', uid), ('approves.user_id', '=', uid)], domain])
         return super(dtdream_demand_app, self).search_read(domain=domain, fields=fields, offset=offset,
                                                            limit=limit, order=order)
 
     def get_demand_app_menu(self):
         menu_id = self.env['ir.ui.menu'].search([('name', '=', u'IT需求管理')], limit=1).id
-        parent_id = self.env['ir.ui.menu'].search([('name', '=', u'所有单据'), ('parent_id', '=', menu_id)], limit=1).id
-        menu = self.env['ir.ui.menu'].search([('name', '=', u'应用开发及优化'), ('parent_id', '=', parent_id)], limit=1)
+        parent_id = self.env['ir.ui.menu'].search([('name', '=', u'应用开发及优化'), ('parent_id', '=', menu_id)], limit=1).id
+        menu = self.env['ir.ui.menu'].search([('name', '=', u'待我审批'), ('parent_id', '=', parent_id)], limit=1)
         action = menu.action.id
         return menu_id, action
 

@@ -74,7 +74,7 @@ class dtimport_dtdream_qua_man(osv.osv):
             year_before_result_b = ""
             year1 = str(int(datetime.now().year) - 1) + u'财年年度'
             year2 = str(int(datetime.now().year) - 2) + u'财年年度'
-            list1 = self.env["dtdream.hr.performance"].search(
+            list1 = self.env["dtdream.hr.performance"].sudo().search(
                 [('name', '=', name), ('quarter', 'in', (year1, year2))], order="id desc")
             if len(list1) >= 2:
                 last_year_result_b = list1[0].result

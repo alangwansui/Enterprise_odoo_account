@@ -23,7 +23,7 @@ class dtdream_qualification_management(models.Model):
             rec.entry_day = rec.name.entry_day
             year1 = str(int(datetime.now().year)-1)+u'财年年度'
             year2 = str(int(datetime.now().year)-2) + u'财年年度'
-            list1 = self.env["dtdream.hr.performance"].search([('name','=',rec.name.id),('quarter','in',(year1,year2))],order="id desc")
+            list1 = self.env["dtdream.hr.performance"].sudo().search([('name','=',rec.name.id),('quarter','in',(year1,year2))],order="id desc")
             if len(list1)>=2:
                 rec.last_year_result = list1[0].result
                 rec.year_before_result = list1[1].result
@@ -116,9 +116,11 @@ class dtdream_qualification_management(models.Model):
             self.is_manager=True
         if self.env.user.has_group("dtdream_qualification_management.group_hr_inter_qua"):
             department_id = []
-            department = self.env["dtdream.pbc.hr.interface"].search([('name', '=', em.id)]).department
-            department_id.append(department.id)
-            department_id = self.get_department_id(department_id, department)
+            interfaces = self.env["dtdream.pbc.hr.interface"].search([('name', '=', em.id)])
+            if len(interfaces) > 0:
+                for interface in interfaces:
+                    department_id.append(interface.department.id)
+                    department_id = self.get_department_id(department_id, interface.department)
             if (self.department_id.id in department_id and self.state!='state3') or \
                     (self.name==em and self.state=='state2' and not self.is_over_dead_line):
                 self.is_write_right_jk=True
@@ -249,6 +251,11 @@ class dtdream_qualification_management(models.Model):
             'email_to': '%s' % email_to,
             'auto_delete': False,
         }).send()
+
+    @api.model
+    def if_in_hr_rz(self):
+        if self.env.user.has_group("dtdream_qualification_management.group_hr_inter_qua") or self.env.user.has_group("dtdream_qualification_management.group_hr_manage_qua"):
+            return True
 
 
 class dtdream_email_number(models.Model):

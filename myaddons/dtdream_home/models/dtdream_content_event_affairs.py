@@ -137,14 +137,23 @@ class dtdream_content_event_affairs(models.Model):
             configs = config.get_fields_by_model(model_name=list)
             if configs:
                 fields = configs['fields']
-                if self.env[list][fields['shenqingren']]._name == 'hr.employee':
-                    resultsb = self.env[list].sudo().search(
-                        ['&', (fields['state_name'], 'not in', fields['stateList']), '&', (fields['shenqingren'], '=', em.id),(fields['state_name'], '!=',fields['state'])])
+                if fields['shenqingren'] == "PDT":
+                    if self.env[list][fields['shenqingren']]._name == 'hr.employee':
+                        resultsb = self.env[list].sudo().search(
+                            ['&', (fields['state_name'], 'not in', fields['stateList']),(fields['state_name'], '!=',fields['state'])])
+                    else:
+                        resultsb = self.env[list].sudo().search(
+                            ['&', (fields['state_name'], 'not in', fields['stateList']),(fields['state_name'], '!=',fields['state'])])
+                    resultsb = [x for x in resultsb if x[fields['shenqingren']] == em]
                 else:
-                    resultsb = self.env[list].sudo().search(
-                        ['&', (fields['state_name'], 'not in', fields['stateList']), '&', (fields['shenqingren'], '=', self.env.user.id),(fields['state_name'], '!=',fields['state'])])
-                if fields['shenqingren']=="PDT":
-                    resultsb=[x for x in resultsb if x[fields['shenqingren']]==em]
+                    if self.env[list][fields['shenqingren']]._name == 'hr.employee':
+                        resultsb = self.env[list].sudo().search(
+                            ['&', (fields['state_name'], 'not in', fields['stateList']), '&', (fields['shenqingren'], '=', em.id),(fields['state_name'], '!=',fields['state'])])
+                    else:
+                        resultsb = self.env[list].sudo().search(
+                            ['&', (fields['state_name'], 'not in', fields['stateList']), '&', (fields['shenqingren'], '=', self.env.user.id),(fields['state_name'], '!=',fields['state'])])
+
+
                 resultList+=resultsb
         for result in resultList:
             configs = config.get_fields_by_model(model_name=result._name)

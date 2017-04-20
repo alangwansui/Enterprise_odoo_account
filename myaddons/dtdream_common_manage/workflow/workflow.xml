@@ -1,0 +1,105 @@
+<?xml version='1.0' ?>
+
+<openerp>
+    <data noupdate='0'>
+
+        <!-- 工作流 -->
+        <record id='wkf_dtdream_common' model='workflow' >
+            <field name='name'>wkf.dtdream.common</field>
+            <field name='osv'>dtdream.common.apply</field>
+            <field name='on_create'>True</field>
+        </record>
+
+        <!-- 工作流draft节点 -->
+        <record id='act_draft' model='workflow.activity' >
+            <field name='wkf_id' ref='wkf_dtdream_common' />
+            <field name='name'>draft</field>
+            <field name='flow_start' eval='True'/>
+            <field name='kind'>function</field>
+            <field name='action'>wkf_draft()</field>
+        </record>
+
+        <!-- 工作流confirm节点 -->
+        <record id='act_confirm' model='workflow.activity' >
+            <field name='wkf_id' ref='wkf_dtdream_common' />
+            <field name='name'>confirm</field>
+            <field name='kind'>function</field>
+            <field name='action'>wkf_confirm()</field>
+        </record>
+
+        <!-- 工作流acceptByMa节点 -->
+        <record id='act_acceptByMa' model='workflow.activity' >
+            <field name='wkf_id' ref='wkf_dtdream_common' />
+            <field name='name'>acceptByMa</field>
+            <field name='kind'>function</field>
+            <field name='action'>wkf_acceptByManager()</field>
+        </record>
+
+        <!-- 工作流acceptByIT节点 -->
+        <record id='act_acceptByIT' model='workflow.activity' >
+            <field name='wkf_id' ref='wkf_dtdream_common' />
+            <field name='name'>acceptByIT</field>
+            <field name='kind'>function</field>
+            <field name='action'>wkf_acceptByIT()</field>
+        </record>
+
+         <!-- 工作implement节点 -->
+        <record id='act_implement' model='workflow.activity' >
+            <field name='wkf_id' ref='wkf_dtdream_common' />
+            <field name='name'>implement</field>
+            <field name='flow_stop' eval='True' />
+            <field name='kind'>function</field>
+            <field name='action'>wkf_implement()</field>
+        </record>
+
+        <!-- 工作流draft->confirm节点转换 -->
+        <record model='workflow.transition' id='common_draft2confirm'>
+            <field name='act_from' ref='act_draft' />
+            <field name='act_to' ref='act_confirm' />
+            <field name='signal'>btn_confirm</field>
+        </record>
+
+        <!-- 工作流confirm->acceptByMa节点转换 -->
+        <record model='workflow.transition' id='common_confirm2acceptByMa'>
+            <field name='act_from' ref='act_confirm' />
+            <field name='act_to' ref='act_acceptByMa' />
+            <field name='signal'>btn_acceptByMa</field>
+        </record>
+
+        <!-- 工作流acceptByMa->act_acceptByIT节点转换 -->
+        <record model='workflow.transition' id='common_acceptByMa2acceptByIT'>
+            <field name='act_from' ref='act_acceptByMa' />
+            <field name='act_to' ref='act_acceptByIT' />
+            <field name='signal'>btn_acceptByIT</field>
+        </record>
+
+        <!-- 工作流acceptByIT->implement节点转换 -->
+        <record model='workflow.transition' id='common_acceptByIT2implement'>
+            <field name='act_from' ref='act_acceptByIT' />
+            <field name='act_to' ref='act_implement' />
+            <field name='signal'>btn_implement</field>
+        </record>
+
+        <!-- 工作流confirm->draft节点转换 -->
+        <record model='workflow.transition' id='common_confirm2draft'>
+            <field name='act_from' ref='act_confirm' />
+            <field name='act_to' ref='act_draft' />
+            <field name='signal'>btn_refuseByMa</field>
+        </record>
+
+        <!-- 工作流acceptByMa->draft节点转换 -->
+        <record model='workflow.transition' id='common_acceptByMa2draft'>
+            <field name='act_from' ref='act_acceptByMa' />
+            <field name='act_to' ref='act_draft' />
+            <field name='signal'>btn_refuseByIT</field>
+        </record>
+
+        <!-- 工作流acceptByIT->draft节点转换 -->
+        <record model='workflow.transition' id='common_acceptByIT2draft'>
+            <field name='act_from' ref='act_acceptByIT' />
+            <field name='act_to' ref='act_draft' />
+            <field name='signal'>btn_refuseByIm</field>
+        </record>
+
+    </data>
+</openerp>

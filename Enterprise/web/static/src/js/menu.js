@@ -5,6 +5,9 @@ var core = require('web.core');
 var Widget = require('web.Widget');
 var SystrayMenu = require('web.SystrayMenu');
 var UserMenu = require('web.UserMenu');
+var session = require('web.session');
+var navdata = require('web.NavData');
+var Model = require('web.Model');
 
 SystrayMenu.Items.push(UserMenu);
 
@@ -14,9 +17,14 @@ var Menu = Widget.extend({
     template: 'Menu',
     events: {
         'click .o_menu_toggle': function (ev) {
-//            ev.preventDefault();
-//            this.trigger_up((this.appswitcher_displayed)? 'hide_app_switcher' : 'show_app_switcher');
-            $('.o_menu_toggle').attr('href','/index#');
+            ev.preventDefault();
+            this.trigger_up((this.appswitcher_displayed)? 'hide_app_switcher' : 'show_app_switcher');
+            if(!this.$el.find('.o_menu_sections').hasClass("hidden")){
+                this.$el.find('.o_menu_logo').css("display","none");
+            }else{
+                this.$el.find('.o_menu_logo').css("display","block");
+            }
+//            $('.o_menu_toggle').attr('href','/web');
         },
         'mouseover .o_menu_sections > li:not(.open)': function(e) {
             var $opened = this.$('.o_menu_sections > li.open');
@@ -25,7 +33,13 @@ var Menu = Widget.extend({
                 $(e.currentTarget).addClass('open').find('> a').focus();
             }
         },
+        'click .phone_menu > a': function(e){
+            console.log(this);
+            $(e.target).closest('.collapse').removeClass("in").attr("aria-expanded","false").css("height","1px");
+            this.$el.find(".o_menu_logo").css("display","none");
+        }
     },
+    xls: navdata,
     init: function (parent, menu_data) {
         var self = this;
         this._super.apply(this, arguments);
@@ -70,6 +84,61 @@ var Menu = Widget.extend({
         // Systray Menu
         this.systray_menu = new SystrayMenu(this);
         this.systray_menu.attachTo(this.$('.oe_systray'));
+        //
+        var Menus = new Model('ir.ui.menu');
+            Menus.call('load_menus', [core.debug], {context: session.user_context}).
+                then( function(menu_data) {
+                    // Compute action_id if not defined on a top menu item
+                    var menus = []
+                    for (var i = 0; i < menu_data.children.length; i++) {
+                        var menu={url:"",　name:"",class:""};
+                        var child = menu_data.children[i];
+                        menu.name = child.name
+                        if (self.xls[child.name]){
+                            menu.class = "dodo doicon-"+self.xls[child.name];
+                            menu.url = "/web#menu_id="+child.id;
+                            //#menu_id=99&amp;action_id=96
+
+                            if (child.name == "客户接待"){
+                                for(var j=0; j < child.children.length; j++){
+                                    if(child.children[j].name == '酒店餐饮管理'){
+                                        for(var k=0; k < child.children[j].children.length; k++){
+                                            var menu2={url:"",　name:"",class:""};
+                                            menu2.name = child.children[j].children[k].name;
+                                            var model_name;
+                                            if (menu2.name == '酒店管理'){
+                                                model_name = "dtdream.hotels.management";
+                                            }else{
+                                                model_name = "dtdream.dinner.management";
+                                            }
+                                            menu2.url = "/web#view_type=kanban&model=" + model_name + "&action=" + child.children[j].children[k].action.substring(child.children[j].children[k].action.indexOf(',')+1) + "&menu_id=" + child.id ;
+                                            menu2.class = "dodo doicon-hotel-dinner";
+                                            menus.push(menu2);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (child.action === false) {
+                                while (child.children && child.children.length) {
+                                    child = child.children[0];
+                                    if (child.action) {
+                                        menu.url = menu.url+"&action_id="+child.action.substring(child.action.indexOf(',')+1)
+                                        menus.push(menu);
+                                        break;
+                                    }
+                                }
+                            } else if(child.action){
+                                menu.url = menu.url+"&action_id="+child.action.substring(child.action.indexOf(',')+1)
+                                menus.push(menu);
+                            }
+                        }
+                    }
+                    var $info = $(QWeb.render('Menu.phone', {
+                        'model_sets': menus,
+                    }));
+                    self.$el.find('.phone_menu').append($info);
+                });
 
         return this._super.apply(this, arguments);
     },

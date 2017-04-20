@@ -32,24 +32,13 @@ odoo.define('dtdream_demand_manage.ui.dashboard', function (require) {
             'click .panel': 'on_dashboard_action_clicked',
         },
 
-        fetch_data: function () {
-            // Overwrite this function with useful data
-            return new Model('dtdream.remand.dashboard')
-                .call('retrieve_remand_dashboard', []);
-        },
-
         render: function () {
             var super_render = this._super;
             var self = this;
-            this.fetch_data().then(function (result) {
-                var report_dashboard = QWeb.render('dtdream_demand_manage.RemandDashboardView', {
-                    "group_number":result.group_number,
-                    "demand_number": result.demand_number
-                });
+            var report_dashboard = QWeb.render('dtdream_demand_manage.RemandDashboardView', {});
             super_render.call(self);
             $(report_dashboard).prependTo(self.$el);
             self.$el.find('.oe_view_nocontent').hide();
-            });
         },
 
         /**

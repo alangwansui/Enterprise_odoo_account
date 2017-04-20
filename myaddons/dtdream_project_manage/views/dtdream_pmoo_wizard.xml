@@ -9,7 +9,9 @@
             <form>
                 <group>
                     <group>
-                        <field name="pmo" required="True"/>
+                        <field name="pmo" attrs="{'invisible':[('state_y','!=','0')],'required':[('state_y','=','0')]}" options="{'no_open':True,'no_create':True}"/>
+                        <field name="vip" attrs="{'invisible':[('state_y','!=','33')],'required':[('state_y','=','33')]}" options="{'no_open':True,'no_create':True}"/>
+                        <field name="state_y" invisible="True"/>
                     </group>
                 </group>
                 <footer>

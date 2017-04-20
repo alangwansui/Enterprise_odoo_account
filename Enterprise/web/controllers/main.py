@@ -1267,7 +1267,7 @@ class Action(http.Controller):
             if url:
                 model = re.search('(model=)(.+?)(&)', url)
                 if not model:
-                    forbidden['forbidden'] = True
+                    forbidden['forbidden'] = True if not request.env.user.has_group('base.group_system') and action_id in (38, 78) else False
                 else:
                     model_name = model.group(2)
                     res_model = request.env['ir.actions.act_window'].search([('id', '=', action_id)]).res_model
@@ -1292,6 +1292,8 @@ class Action(http.Controller):
                         forbidden['forbidden'] = True
                     else:
                         forbidden['forbidden'] = False
+            # if request.env.user.has_group('base.group_system'):
+            #     forbidden['forbidden'] = False
         except ValueError:
             try:
                 module, xmlid = action_id.split('.', 1)

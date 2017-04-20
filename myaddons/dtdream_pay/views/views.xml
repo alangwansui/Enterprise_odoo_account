@@ -42,5 +42,41 @@
 
         <menuitem id="menu_finance_pay" name="工资"  icon="fa-user"/>
         <menuitem id="menu_rd_dashboard" name="工资查询" parent="menu_finance_pay" sequence="50" action="act_open_dtdream_pay_dashboard_view"/>
+
+
+        <record id="view_users_form_inher_pay" model="ir.ui.view">
+            <field name="name">view.users.form.inher.pay</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//page[@name="access_rights"]' position="after">
+                    <page string="工资验证状态">
+                        <group>
+                            <group>
+                                <field name="pay_fail_times" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="is_locked_pay"/>
+                            </group>
+                            <group>
+                                <button name="btn_unlocked_pay"  string="解除锁定" type="object"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.cron" id="ir_cron_timing_to_restar_pay_right">
+            <field name='name'>定时开启被关闭工资查询的用户权限</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">res.users</field>
+            <field name="function">timing_to_open_pay_right</field>
+            <field name="args">()</field>
+        </record>
+
     </data>
 </openerp>

@@ -43,9 +43,10 @@ class dtdream_prod_suspension_restoration(models.Model):
     @api.constrains('message_follower_ids')
     def _compute_follower(self):
         self.followers_user = False
+        followers_user = [(4, foll.partner_id.user_ids.id) for foll in self.message_follower_ids]
+        self.write({'followers_user': followers_user})
         for foll in self.message_follower_ids:
-            self.write({'followers_user': [(4,foll.partner_id.user_ids.id)]})
-            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
+            if foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").users and foll.partner_id.user_ids not in self.env.ref("dtdream_rd_prod.group_dtdream_rd_qa").users:
                 self.env.ref("dtdream_rd_prod.group_dtdream_rd_user_all").sudo().write({'users': [(4,foll.partner_id.user_ids.id)]})
 
     followers_user = fields.Many2many("res.users" ,"suspension_rest_f_u_u",string="关注者")
@@ -53,11 +54,12 @@ class dtdream_prod_suspension_restoration(models.Model):
     @api.constrains('project')
     def con_name_role(self):
         self.role_person=[(5,)]
-        for role in self.project.role_ids:
-            if role.person:
-                self.write({'role_person': [(4,role.person.user_id.id)]})
-                if role.person.user_id:
-                    self.message_subscribe_users(user_ids=[role.person.user_id.id])
+        roles = [(4, role.person.user_id.id) for role in self.project.role_ids if
+                 role.person.id and role.person.user_id.id]
+        self.write({'role_person': roles})
+        roles = [role.person.user_id.id for role in self.project.role_ids if
+                 role.person.id and role.person.user_id.id]
+        self.message_subscribe_users(user_ids=roles)
 
     @api.multi
     def _compute_is_shenpiren(self):

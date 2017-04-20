@@ -12,7 +12,7 @@ var QWeb = core.qweb;
 var Header = require('dtdream_home.header');
 var Siderbar = require('dtdream_home.siderbar');
 var Content = require('dtdream_home.content');
-
+var WaterMark = require('dtdream_home.WaterMark');
 
 var Main = Widget.extend({
         template: 'home',
@@ -51,6 +51,9 @@ var Main = Widget.extend({
             this.content = new Content(self);
             this.content.appendTo($('.o_main_content'));
             this.content.attach($('.o_main_content'), option);
+
+            this.waterMark = new WaterMark();
+            this.waterMark.start();
         },
         load_template: function () {
             var xml = $.ajax({

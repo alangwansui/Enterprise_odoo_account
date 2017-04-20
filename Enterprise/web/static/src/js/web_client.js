@@ -15,6 +15,7 @@ var NotificationManager = require('web.notification').NotificationManager;
 var session = require('web.session');
 var utils = require('web.utils');
 var Widget = require('web.Widget');
+var WaterMark = require('web.WaterMark');
 
 var QWeb = core.qweb;
 var _t = core._t;
@@ -257,10 +258,15 @@ var WebClient = Widget.extend({
             // into the DOM.
             self.app_switcher = new AppSwitcher(self, menu_data.children);
             self.menu = new Menu(self, menu_data);
+            self.watermark = new WaterMark();
+            self.watermark.start();
 
             var defs = [];
             defs.push(self.app_switcher.appendTo(document.createDocumentFragment()));
             defs.push(self.menu.prependTo(self.$el));
+            if(location.href.indexOf('home') == -1){
+                self.$el.find('.o_menu_logo').css("display","none");
+            }
             return $.when.apply($, defs);
         }).then(function () {
             $(window).bind('hashchange', self.on_hashchange);
@@ -441,10 +447,18 @@ var WebClient = Widget.extend({
                     in_DOM: true,
                 });
 
+                if(self.$el.find('.o_content').length == 0 && self.$el.find('.o_IndexContent').length == 0){
+                    self.app_switcher.render();
+                }
                 // Save and clear the url
                 self.url = $.bbq.getState();
                 self._ignore_hashchange = true;
                 $.bbq.pushState('#home', 2); // merge_mode 2 to replace the current state
+                if(location.href.indexOf('home') == -1){
+                    self.$el.find('.o_menu_logo').css("display","none");
+                }else{
+                    self.$el.find('.o_menu_logo').css("display","block");
+                }
             });
         } else {
             framework.detach([{widget: this.app_switcher}]);

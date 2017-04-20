@@ -8,10 +8,13 @@ var time_module = require('web.time');
 var Model = require('web.Model');
 var QWeb = core.qweb;
 
+var apps = "";
+
 var Main = Widget.extend({
         template: 'sidebar',
         events:{
-            'click .panel': 'set_sidebar_effect'
+            'click .panel': 'set_sidebar_effect',
+            'keyup .on_app_search': 'search_app'
         },
         xls: {
             "销售":"sell",
@@ -39,42 +42,43 @@ var Main = Widget.extend({
 			"信息安全":"security",
 			"意见反馈":"feedback",
 			"工资":"dtpay",
-            "项目管理": "project_manage",
+            "服务": "project_manage",
 			"任职资格认证":"qualification",
             "采购":"purchase",
         },
-//        模块类别配置--导航条分类--5类：通用(general)、财务(financial)、HR、市场(market)、研发(RD)
+//        模块类别配置--导航条分类--5类：公共应用(general)、销售(sell)、研发(RD)、服务(serve)、采购(chain)
         classify:{
+            "销售":"sell",
+            "研发":"RD",
+            "采购":"chain",
+            "服务": 'serve',
+            "产品":"general",
             "合同评审":"general",
             "应用":"general",
             "设置":"general",
             "公告":"general",
             "电子名片":"general",
             "意见反馈":"general",
-            "预算管理":"financial",
-            "专项审批":"financial",
-            "费用报销":"financial",
-            "资产管理":"financial",
-            "外出公干":"HR",
-            "绩效":"HR",
-            "出差":"HR",
-            "补助金管理":"HR",
-            "人力资源":"HR",
-            "休假":"HR",
-            "员工":"HR",
-            "工资":"HR",
-			"任职资格认证":"HR",
-            "销售":"market",
-            "产品":"market",
-            "客户接待":"market",
-            "开票":"market",
-            "研发":"RD",
-            "IT需求管理":"RD",
-            "信息安全":"RD",
-            "项目管理": 'service',
-            "采购":"chain",
-            "酒店管理": "market",
-            "餐饮管理": "market",
+            "预算管理":"general",
+            "专项审批":"general",
+            "费用报销":"general",
+            "资产管理":"general",
+            "外出公干":"general",
+            "绩效":"general",
+            "出差":"general",
+            "补助金管理":"general",
+            "人力资源":"general",
+            "休假":"general",
+            "员工":"general",
+            "工资":"general",
+			"任职资格认证":"general",
+            "客户接待":"general",
+            "开票":"general",
+            "酒店管理": "general",
+            "餐饮管理": "general",
+            "IT需求管理":"general",
+            "信息安全":"general",
+            "备用金管理":"general"
         },
         init: function (parent) {
 //            this._super(parent);
@@ -143,11 +147,9 @@ var Main = Widget.extend({
             var self=this;
 
             var general=[];
-            var financial=[];
-            var HR=[];
-            var market=[];
-            var rd=[];
-            var service=[];
+            var sell=[];
+            var RD=[];
+            var serve=[];
             var chain=[];
 
             if (info) {
@@ -157,20 +159,14 @@ var Main = Widget.extend({
                         case "general":
                             general.push(ele);
                             break;
-                        case "financial":
-                            financial.push(ele);
-                            break;
-                        case "HR":
-                            HR.push(ele);
-                            break;
-                        case "market":
-                            market.push(ele);
+                        case "sell":
+                            sell.push(ele);
                             break;
                         case "RD":
-                            rd.push(ele);
+                            RD.push(ele);
                             break;
-                        case "service":
-                            service.push(ele);
+                        case "serve":
+                            serve.push(ele);
                             break;
                         case "chain":
                             chain.push(ele);
@@ -180,48 +176,69 @@ var Main = Widget.extend({
                             break;
                     }
                 });
+                console.log(info);
                 var $info = $(QWeb.render('sidebar_info', {
                     'model_sets': info,
                     'general_sets':general,
-                    'financial_sets':financial,
-                    'HR_sets':HR,
-                    'market_sets':market,
-                    'rd_sets':rd,
-                    'service_sets':service,
+                    'sell_sets':sell,
+                    'RD_sets':RD,
+                    'serve_sets':serve,
                     'chain_sets':chain,
                 }));
                 $el.append($info);
+                apps = self.$el.find(".panel-body li");
             }
         },
         attach: function (el, options) {
             this.load_data(this);
+//            this.search_app();
         },
         detach: function () {
             this.$el.detach();
         },
         set_sidebar_effect: function(e){
             var $target=$(e.target);
-            if($target[0].nodeName.toLowerCase() == "a"){
-                var $span=$target.find("span");
-            }else if($target[0].nodeName.toLowerCase() == "span"){
-                var $span=$target;
-            }
+            if($target.data("toggle") == "collapse" || $target.hasClass("dodo")){
+                if($target[0].nodeName.toLowerCase() == "a"){
+                    var $span=$target.find("span");
+                }else if($target[0].nodeName.toLowerCase() == "span"){
+                    var $span=$target;
+                }
 
-            var $panel=$target.closest(".panel");
-            var $expand=$panel.find(".panel-collapse");
-            if(!$panel.hasClass("select")){
-                $panel.addClass("select").siblings(".select").removeClass("select");
-            }
-            if($expand.hasClass("in")){
-                if(!$span.hasClass("doicon-jiantouyou")){
-                    $span.removeClass("doicon-jiantouxia").addClass("doicon-jiantouyou");
+                var $panel=$target.closest(".panel");
+                var $expand=$panel.find(".panel-collapse");
+                if(!$panel.hasClass("select")){
+                    $panel.addClass("select").siblings(".select").removeClass("select");
                 }
-            }else{
-                if(!$span.hasClass("doicon-jiantouxia")){
-                    $span.removeClass("doicon-jiantouyou").addClass("doicon-jiantouxia");
-                    $panel.siblings(".panel").find(".doicon-jiantouxia").removeClass("doicon-jiantouxia").addClass("doicon-jiantouyou");
+                if($expand.hasClass("in")){
+                    if(!$span.hasClass("doicon-jiantouyou")){
+                        $span.removeClass("doicon-jiantouxia").addClass("doicon-jiantouyou");
+                    }
+                }else{
+                    if(!$span.hasClass("doicon-jiantouxia")){
+                        $span.removeClass("doicon-jiantouyou").addClass("doicon-jiantouxia");
+                        $panel.siblings(".panel").find(".doicon-jiantouxia").removeClass("doicon-jiantouxia").addClass("doicon-jiantouyou");
+                    }
                 }
             }
+        },
+        search_app: function(){
+            var self = this;
+            var current_value = self.$el.find(".on_app_search").val().trim();
+            if(current_value == ""){
+                $("#left-general").removeClass("in").attr("aria-expanded","false").closest(".panel").removeClass("select");
+                self.$el.find(".panel-body li").css("background-color","transparent");
+                return;
+            }
+            _.each(apps, function(ele){
+                if(ele.innerText.trim().indexOf(current_value) != -1){
+                    $("#left-general").addClass("in").attr("aria-expanded","true").closest(".panel").addClass("select");
+                    ele.style.backgroundColor = "#d3dce6";
+                    var move_distance = Math.ceil($(ele).offset().top);
+                    $(".sidebar").scrollTop(move_distance-336);
+                }
+            });
+
         }
     });
 

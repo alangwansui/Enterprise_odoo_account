@@ -1,6 +1,12 @@
-
+/*
+* modify by wx-5044
+* 改动web页面之前的css
+*/
 .o_application_switcher {
-    padding-top: @odoo-navbar-height;
+    //background: transparent url("../img/application-switcher-bg.jpg") no-repeat scroll center center;
+    //.o-background-size(cover);
+    //background-color:#2E90B3;
+    //padding-top: @odoo-navbar-height;
     @media (max-width: @screen-xs-max) {
         padding-top: 15px;
     }
@@ -8,11 +14,16 @@
     height: 100%;
     overflow: auto;
     .o-flex-display();
-    .o-flex-flow(column, nowrap);
-    .o-justify-content(space-between);
-    .o-align-items(center);
+    .o-flex-flow(row, nowrap);
+    .o-justify-content(flex-start);
+    .o-align-items(stretch);
+
+    font-size: @odoo-font-size-base-touch;
 
     .o_apps {
+
+        .user-select(none);
+
         .o-flex(0, 0, auto);
         width: 100%;
         max-width: @screen-sm-min;
@@ -24,6 +35,31 @@
             width: 13.66%; // +3% margin = 6 apps per line
             @media (max-width: @screen-xs-max) {
                 width: 22%; // +3% margin = 4 apps per line
+            }
+            background: transparent;
+            text-decoration: none;
+            text-align: center;
+            outline: none;
+
+            .o_app_icon {
+                width: 80%;
+                max-width: 80px;
+                border-radius: 8%;
+            }
+
+            .o_caption {
+                .o-text-overflow(block);
+                //color: @odoo-brand-lightsecondary;
+                //color:#e2e2e0;
+                color:#666666;
+                margin-top: 8px;
+            }
+        }
+        .o_application_switcher_footer {
+            .user-select(none);
+            > img {
+                width: 130px;
+                margin-bottom: 10px;
             }
         }
     }

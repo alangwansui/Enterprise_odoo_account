@@ -5,7 +5,7 @@ from openerp import models, fields, api
 class dtdream_rd_approver(models.Model):
     _name = 'dtdream_rd_approver'
     name = fields.Many2one('dtdream_rd_config',string="角色")
-    pro_state = fields.Selection([('state_01','立项'),('state_02','总体设计')],string='阶段')
+    pro_state = fields.Selection([('state_01','立项'),('state_02','总体设计'), ('state_03', '迭代开发'), ('state_04', '验证发布')],string='阶段')
     level = fields.Selection([('level_01','一级'),('level_02','二级')],string='级别')
 
     @api.onchange('level')

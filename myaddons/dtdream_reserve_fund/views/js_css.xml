@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="assets_backend" name="account assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/dtdream_reserve_fund/static/src/js/reserve_fund.js"></script>
+            </xpath>
+        </template>
+    </data>
+</openerp>

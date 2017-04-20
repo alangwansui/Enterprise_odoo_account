@@ -25,6 +25,18 @@
                             <span class="cText"><t t-esc="bfsyjbgzhgwjt"/></span>
                         </div>
                         <div class="col-xs-4 canhide">
+                            <span class="tText">事假天数</span>
+                            <span class="cText"><t t-esc="shijiatianshu"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">病假天数</span>
+                            <span class="cText"><t t-esc="bingjiatianshu"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
+                            <span class="tText">产假天数</span>
+                            <span class="cText"><t t-esc="chanjiatianshu"/></span>
+                        </div>
+                        <div class="col-xs-4 canhide">
                             <span class="tText">事假扣款</span>
                             <span class="cText"><t t-esc="shijiakoukuang"/></span>
                         </div>
@@ -140,8 +152,8 @@
                 </div>
                 </t>
                 <div class="footText">
-                    <p class="noticeText">工资保密，请勿传播，多谢合作！</p>
-                    <p class="rightText">注：如对数据有疑问，请咨询人力资源部 <span class="blueMark"> 黄蓉0292</span>。</p>
+                    <p class="noticeText">工资保密，请勿传播！</p>
+                    <p class="rightText">注：如对数据有疑问，请咨询人力资源部 <span class="blueMark"> 墨子0041</span>。</p>
                 </div>
             </div>
         </div>

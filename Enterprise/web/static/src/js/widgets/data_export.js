@@ -235,13 +235,23 @@ var DataExport = Dialog.extend({
         waitFor.push(got_fields);
 
         waitFor.push(this.getParent().get_active_domain().then(function (domain) {
-            if (domain === undefined) {
-                self.ids_to_export = self.getParent().get_selected_ids();
-                self.domain = self.dataset.domain;
-            } else {
-                self.ids_to_export = false;
-                self.domain = domain;
-            }
+//            if (domain === undefined) {
+//                self.ids_to_export = self.getParent().get_selected_ids();
+//                self.domain = self.dataset.domain;
+//            } else {
+//                self.ids_to_export = false;
+//                self.domain = domain;
+//            }
+              if(self.getParent().get_selected_ids().length>0){
+                  self.ids_to_export = self.getParent().get_selected_ids();
+              }else{
+                  self.ids_to_export = false;
+              }
+              if (domain === undefined) {
+                  self.domain = self.dataset.domain;
+              } else {
+                  self.domain = domain;
+              }
             self.on_show_domain();
         }));
 

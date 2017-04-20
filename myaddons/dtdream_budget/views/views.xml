@@ -40,7 +40,7 @@
                 <field name="expensed_daily" invisible="1"/>
               </group>
               <group>
-                <field name="name" widget="selection" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"/>
+                <field name="name" options="{'no_open':True,'no_create':True}" attrs="{'readonly':['&amp;',('is_current_handler','=',False),'|',('state','in',('1','2','3','4')),('is_applicant','=',False)]}" required="1"/>
                 <field name="expensed_zhuanx" invisible="1"/>
                 <field name="expensed_xingz" invisible="1"/>
 

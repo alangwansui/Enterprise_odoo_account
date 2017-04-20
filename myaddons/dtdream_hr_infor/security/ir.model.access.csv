@@ -3,3 +3,8 @@ access_dtdream_hr_infor_hr_employee_family,dtdream_hr_infor.hr_employee_family,m
 access_dtdream_hr_infor_hr_employee_province,dtdream_hr_infor.hr_employee_province,model_dtdream_hr_province,,1,1,1,1
 access_dtdream_hr_infor_hr_employee_state,dtdream_hr_infor.hr_employee_state,model_dtdream_hr_state,,1,1,1,1
 access_hr_employee_all,hr.employee all,model_hr_employee,base.group_user,1,1,0,0
+access_hr_employee_bank,hr_employee_bank,model_hr_employee_bank,,1,1,1,1
+access_hr_employee_mobile_fee,hr_employee_mobile_fee,model_hr_employee_mobile_fee,,1,1,1,1
+access_hr_employee_travel_grant,hr_employee_travel_grant,model_hr_employee_travel_grant,,1,1,1,1
+access_hr_employee_set_caiwu_hr,hr_employee_set_caiwu_hr,model_hr_employee_set_caiwu_hr,,1,0,0,0
+access_hr_employee_set_caiwu_hr_manager,hr_employee_set_caiwu_hr_manager,model_hr_employee_set_caiwu_hr,group_cai_hr_config,1,1,1,0

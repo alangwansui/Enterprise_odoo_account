@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dtdream_sale_sign_customer_dtdream_sale_sign_customer,dtdream_sale_sign_customer.dtdream_sale_sign_customer,model_dtdream_sale_sign_customer_dtdream_sale_sign_customer,,1,0,0,0

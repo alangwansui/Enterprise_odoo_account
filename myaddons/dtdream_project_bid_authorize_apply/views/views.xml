@@ -8,59 +8,61 @@
       <field name="model">dtdream.project.bid.authorize.apply</field>
       <field name="arch" type="xml">
         <form string="项目授权">
-            <header>
+            <header class="no_hidden">
                 <button name="%(btn_confirm)d" string="审核" type="action" class="oe_highlight"
                         attrs="{'invisible':['|',('state','!=','2'),('present_shenpiren','=',False)]}"/>
                 <button name="btn_apply" string="提交" type="workflow" class="oe_highlight"
                         attrs="{'invisible':['|',('state','!=','0'),'|',('state','!=','0'),('present_shenpiren','=',False)]}"/>
-                <button name="btn_approve" string="同意" type="workflow" class="oe_highlight"
-                        attrs="{'invisible':['|',('present_shenpiren','=',False),('state','in',['0','1','3','2','4','5'])]}"/>
+                <button name="btn_approve" string="shenpi" type="workflow" class="oe_highlight"
+                       invisible="1"/>
+                <button name="%(btn_config)d" string="配置审批人" type="action" class="oe_highlight"
+                       attrs="{'invisible':['|',('state','!=','6'),('present_shenpiren','=',False)]}"/>
                 <button name="%(btn_approval)d" string="审批" type="action" class="oe_highlight"
-                        attrs="{'invisible':['|',('present_shenpiren','=',False),('state','in',['0','2','4'])]}"/>
-                <button name="btn_reject" string="驳回" type="workflow" class="oe_highlight"
-                        invisible="1"/>
+                        attrs="{'invisible':['|',('present_shenpiren','=',False),('state','in',['0','2','6','done'])]}"/>
                 <button name="%(btn_reject001)d" string="驳回" type="action" class="oe_highlight"
-                        attrs="{'invisible':['|',('state','in',['4','0']),('present_shenpiren','=',False)]}"/>
-                <field name="shouquan_export_button" string="导出项目授权函" readonly="1" class="dtdream_shouquan_export"
-                       attrs="{'invisible':[('state','=','-2')]}"/>
-                <field name="shouhou_export_button" string="导出售后服务承诺函" readonly="1" class="dtdream_shouhou_export"
-                       attrs="{'invisible':[('state','=','-2')]}"/>
-                <field name="state"  widget="statusbar"  statusbar_visible="0,1,2,5,3,4"/>
+                        attrs="{'invisible':['|',('state','in',['0']),('present_shenpiren','=',False)]}"/>
+                <!--<field name="shouquan_export_button" string="导出项目授权函" readonly="1" class="dtdream_shouquan_export"/>
+                <field name="shouhou_export_button" string="导出售后服务承诺函" readonly="1" class="dtdream_shouhou_export"/>-->
+                <field name="state"  widget="statusbar"  statusbar_visible="0,1,2,6,5,3,4,done"/>
             </header>
           <sheet>
             <group>
               <group>
+                <field name="is_fuwufawu_shenpi" invisible="1"/>
+                <field name="system_shenpi_state" invisible="1"/>
+                <field name="office_shenpi_state" invisible="1"/>
+                <field name="history_shenpirens" invisible="1"/>
+                <field name="present_shenpiren" invisible="1"/>
+                <field name="rep_pro_name" domain="[('has_draft_authorization','=',False),('sale_apply_id.user_id.id','=',uid)]"  attrs="{'readonly': [('state','!=', '0')]}"/>
+                <field name="bidding_number" attrs="{'readonly': [('state','!=', '0')]}"/>
+                <field name="bidding_rep_pro_name" attrs="{'readonly': [('state','!=', '0')]}"/>
+                <field name="bidding_company" attrs="{'readonly': [('state','!=', '0')]}"/>
+                <field name="bidding_time" attrs="{'readonly': [('state','!=', '0')]}"/>
+                <field name="yearnum" attrs="{'readonly':[('state','!=','0')]}"/>
+              </group>
+              <group>
                 <field name="is_current" invisible="1"></field>
                 <field name="project_number" readonly="1"/>
                 <field name="office_id" readonly="1"/>
-                <field name="sale_apply_id" readonly="1"/>
-                <field name="bidding_rep_pro_name"/>
-                <field name="bidding_company"/>
-
-              </group>
-              <group>
-                <field name="present_shenpiren" invisible="1"/>
-                <field name="rep_pro_name" domain="[('has_draft_business_report','=',False)]" />
-                <field name="system_department_id" readonly="0"/>
+                <field name="system_department_id" readonly="1"/>
                 <field name="business_advanced_report" readonly="1"/>
-                <field name="bidding_number"/>
-                <field name="bidding_time"/>
+                <field name="sale_apply_id" readonly="1"/>
               </group>
-                <field name="authorization">
+                <field name="authorization" attrs="{'readonly': [('state','!=', '0')]}">
                     <tree editable="bottom">
-                        <field name="content" string=" "></field>
+                        <field name="content" string=" " placeholder="请填写完整的授权渠道名称"></field>
                         <!--<button  string="导出项目授权函" class="dtdream_shouquan_export"/>-->
                     </tree>
                     <form>
                         <sheet>
                             <group>
-                                <field name="content"></field>
+                                <field name="content" placeholder="请填写完整的授权渠道名称"></field>
                             </group>
                         </sheet>
                     </form>
                 </field>
 
-              <field name="attachment_ids" create="false" options="{'no_create':True}" required="True">
+              <field name="attachment_ids" create="false" options="{'no_create':True}" required="True" >
                   <tree class="contract_attachment" >
                       <field name="attachment_name" invisible="1"></field>
                       <field name="attachment" widget="binary" filename="attachment_name"></field>
@@ -81,7 +83,6 @@
 
                  <div class="o_group_col_12" style="font-family:微软雅黑, 'Microsoft Yahei', 'Hiragino Sans GB', tahoma, arial, 宋体, sans-serif;">
                         <p >说明</p>
-
                         <p>1、若有标书电子件等招标材料请上传。</p>
                         <p>2、服务承诺函若为非标版本（非公司的标准版本），请将非标版本上传附件</p>
                   </div>
@@ -94,12 +95,17 @@
                               <field name="res"/>
                               <field name="content"/>
                               <field name="shenpiren"/>
-                              <field name="time"/>
+                              <field name="create_date" string="审批时间"/>
                           </tree>
+
                         </field>
                     </page>
                 </notebook>
           </sheet>
+            <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
         </form>
       </field>
     </record>
@@ -113,7 +119,7 @@
                 <button name="toggle_active" position="after">
                     <button name="action_dtdream_project_authorization" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
                           <div class="o_stat_info">
-                              <field name="business_count" class="o_stat_value"/>
+                              <field name="authorization_count" class="o_stat_value"/>
                               <span class="o_stat_text">项目授权</span>
                           </div>
                     </button>
@@ -126,13 +132,16 @@
       <field name="model">dtdream.project.bid.authorize.apply</field>
       <field name="arch" type="xml">
         <tree>
-            <field name="rep_pro_name" string="项目名称"/>
+            <field name="rep_pro_name_str" string="项目名称"/>
+            <field name="sale_apply_id" string="申请人"/>
             <field name="project_number" string="项目编号"/>
             <field name="office_id" string="办事处"/>
             <field name="system_department_id" string="系统部"/>
             <field name="bidding_rep_pro_name" string="投标项目名称"/>
             <field name="bidding_company" string="招标单位"/>
-            <field name="shenpiren" string="当前审批人"/>
+            <field name="state" string="当前阶段"/>
+            <field name="shenpirens" string="当前审批人"/>
+
         </tree>
       </field>
     </record>
@@ -157,29 +166,37 @@
             <!--</group>-->
              <group>
                   <group><field name="project_authorize_accessor" string="规范性审核"/></group>
-                  <group><field name="project_authorize_service" string="服务部审批"/></group>
-                  <group><field name="approver" string="审批同意"/></group>
+                  <group><field name="fuwu_fawu_config" string="服务与法务配置人"/></group>
+                  <group><field name="approver" string="营销管理部门"/></group>
              </group>
              <notebook colspan="4">
-                 <page string="办事处/系统部审批">
-                    <field name="office_system_line">
+                 <page string="办事处">
+                    <field name="office_line">
                         <tree>
                             <field name="office_id" options='{"no_open": True, "no_create": True}'/>
                             <field name="office_director" options='{"no_open": True, "no_create": True}'/>
-                            <field name="system_id" options='{"no_open": True, "no_create": True}'/>
+                        </tree>
+                        <form>
+                            <sheet>
+                                <group>
+                                    <field name="office_id" options='{"no_open": True, "no_create": True}'/>
+                                    <field name="office_director" options='{"no_open": True, "no_create": True}'/>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                 </page>
+                 <page string="系统部审批">
+                    <field name="system_line">
+                        <tree>
+                            <field name="system_id" domain="[('parent_id','=',False)]" options='{"no_open": True, "no_create": True}'/>
                             <field name="system_director" options='{"no_open": True, "no_create": True}'/>
                         </tree>
                         <form>
                             <sheet>
                                 <group>
-                                    <group>
-                                        <field name="office_id" options='{"no_open": True, "no_create": True}'/>
-                                        <field name="office_director" options='{"no_open": True, "no_create": True}'/>
-                                    </group>
-                                    <group>
-                                        <field name="system_id" options='{"no_open": True, "no_create": True}'/>
-                                        <field name="system_director" options='{"no_open": True, "no_create": True}'/>
-                                    </group>
+                                    <field name="system_id" domain="[('parent_id','=',False)]" options='{"no_open": True, "no_create": True}'/>
+                                    <field name="system_director" options='{"no_open": True, "no_create": True}'/>
                                 </group>
                             </sheet>
                         </form>

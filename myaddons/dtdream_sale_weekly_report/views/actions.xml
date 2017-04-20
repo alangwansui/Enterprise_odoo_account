@@ -28,5 +28,21 @@
             <field name="view_mode">tree,form</field>
         </record>
 
+        <record model="ir.actions.server" id="act_ding_report_config">
+            <field name="name">周报钉钉应用配置</field>
+            <field name="model_id" ref="model_ding_report_config"/>
+            <field name="code">
+                action = {
+                'name':'周报钉钉应用配置',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'ding.report.config',
+                'res_id': self.search(cr,uid,[],context=None)[0] if self.search(cr,uid,[],context=None) else self.create(cr,uid,{},context=None),
+                'context':context
+                }
+            </field>
+        </record>
+
     </data>
 </openerp>

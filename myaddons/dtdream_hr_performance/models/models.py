@@ -45,6 +45,13 @@ class dtdream_hr_performance(models.Model):
             self.write({"pbc": [(6, 0, target)]})
         return result
 
+    def get_department_id(self, department_id, department):
+        for dep in department.child_ids:
+            department_id.append(dep.id)
+            if dep.child_ids:
+                self.get_department_id(department_id, dep)
+        return department_id
+
     def check_access_rights_performance(self):
         """HR绩效接口人查看自己的接口部门的申请，
         限制通过id遍历所有的申请"""
@@ -55,10 +62,9 @@ class dtdream_hr_performance(models.Model):
                 department_id = []
                 for crr in cr:
                     department_id.append(crr.department.id)
-                    for department in crr.department.child_ids:
-                        department_id.append(department.id)
+                    department_id = self.get_department_id(department_id, crr.department)
                 if rec.name.user_id != self.env.user and rec.department.id not in department_id:
-                    raise AccessError('由于安全限制，请求的操作不能被完成。请联系你的系统管理员。\n\n(单据类型: dtdream.hr.performance, 操作: read)')
+                    raise AccessError('由于安全限制，请求的操作不能被完成。请联系你的系统管理员。\n\n(单据类型: dtdream.hr.performance, 操作: read.)')
 
     def update_dtdream_hr_pbc(self):
         for rec in self:
@@ -106,8 +112,7 @@ class dtdream_hr_performance(models.Model):
             inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
             for crr in inter:
                 department.append(crr.department.id)
-                for depart in crr.department.child_ids:
-                    department.append(depart.id)
+                department = self.get_department_id(department, crr.department)
             employee = self.env['hr.employee'].search([('id', '=', vals.get('name', 0))])
             if employee.department_id.id not in department:
                 raise ValidationError("HR接口人只能创建所接口部门员工的绩效考核单!")
@@ -243,36 +248,35 @@ class dtdream_hr_performance(models.Model):
         action = params.get('action', None)
         if action:
             menu = self.env["ir.actions.act_window"].search([('id', '=', action)]).name
-        if menu == u"所有单据" or menu == u"绩效管理":
-            if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
-                domain = domain if domain else []
-            elif self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
-                cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
-                department_id = []
-                for crr in cr:
-                    department_id.append(crr.department.id)
-                    for department in crr.department.child_ids:
-                        department_id.append(department.id)
-                domain = domain + [("department", 'in', department_id)] if domain else [("department", 'in', department_id)]
-            else:
-                uid = self._context.get('uid', '')
-                if domain:
-                    domain = expression.AND([['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
-                                              ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
-                                              '&', ('name.user_id', '=', uid), ('state', '!=', '0')], domain])
-                    # value = []
-                    # for key in domain:
-                    #     value += ['&', key]
-                    # value.pop(-2)
-                    # a = ['|', '&'] + [('department.parent_id.manager_id.user_id', '=', uid)] + value
-                    # b = ['|', '&'] +  [('officer.user_id', '=', uid)] + value
-                    # c = ['|', '&'] + [('officer_sec.user_id', '=', uid)] + value
-                    # d = ['&', ('name.user_id', '=', uid), '&', ('state', '!=', '0')] + value
-                    # domain = a + b + c + d
+            if menu == u"所有单据" or menu == u"绩效管理":
+                if self.env.ref("dtdream_hr_performance.group_hr_manage_performance") in self.env.user.groups_id:
+                    domain = domain if domain else []
+                elif self.env.ref("dtdream_hr_performance.group_hr_inter_performance") in self.env.user.groups_id:
+                    cr = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
+                    department_id = []
+                    for crr in cr:
+                        department_id.append(crr.department.id)
+                        department_id = self.get_department_id(department_id, crr.department)
+                    domain = domain + [("department", 'in', department_id)] if domain else [("department", 'in', department_id)]
                 else:
-                    domain = ['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
-                              ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
-                              '&', ('name.user_id', '=', uid), ('state', '!=', '0')]
+                    uid = self._context.get('uid', '')
+                    if domain:
+                        domain = expression.AND([['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
+                                                  ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
+                                                  '&', ('name.user_id', '=', uid), ('state', '!=', '0')], domain])
+                        # value = []
+                        # for key in domain:
+                        #     value += ['&', key]
+                        # value.pop(-2)
+                        # a = ['|', '&'] + [('department.parent_id.manager_id.user_id', '=', uid)] + value
+                        # b = ['|', '&'] +  [('officer.user_id', '=', uid)] + value
+                        # c = ['|', '&'] + [('officer_sec.user_id', '=', uid)] + value
+                        # d = ['&', ('name.user_id', '=', uid), '&', ('state', '!=', '0')] + value
+                        # domain = a + b + c + d
+                    else:
+                        domain = ['|', ('department.parent_id.manager_id.user_id', '=', uid), '|',
+                                  ('officer_sec.user_id', '=', uid), '|', ('officer.user_id', '=', uid),
+                                  '&', ('name.user_id', '=', uid), ('state', '!=', '0')]
         return super(dtdream_hr_performance, self).search_read(domain=domain, fields=fields, offset=offset,
                                                                limit=limit, order=order)
 
@@ -720,6 +724,13 @@ class dtdream_hr_pbc(models.Model):
         res['arch'] = etree.tostring(doc)
         return res
 
+    def get_department_id(self, department_id, department):
+        for dep in department.child_ids:
+            department_id.append(dep.id)
+            if dep.child_ids:
+                self.get_department_id(department_id, dep)
+        return department_id
+
     @api.multi
     def unlink(self):
         for rec in self:
@@ -731,8 +742,7 @@ class dtdream_hr_pbc(models.Model):
                     raise ValidationError("普通员工无法删除部门绩效目标!")
                 for crr in inter:
                     department.append(crr.department.id)
-                    for depart in crr.department.child_ids:
-                        department.append(depart.id)
+                    department = self.get_department_id(department, crr.department)
                 if rec.name.id not in department:
                     raise ValidationError("HR接口人只能删除所接口部门的部门绩效目标!")
         return super(dtdream_hr_pbc, self).unlink()
@@ -799,8 +809,7 @@ class dtdream_hr_pbc(models.Model):
                 inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
                 for crr in inter:
                     department.append(crr.department.id)
-                    for depart in crr.department.child_ids:
-                        department.append(depart.id)
+                    department = self.get_department_id(department, crr.department)
                 if self.name.id not in department:
                     raise ValidationError("HR接口人只能编辑所接口部门的部门绩效目标!")
             if self.state == "99" and (vals.get('target', '') or vals.get('quarter', '') or vals.get('name')):
@@ -825,8 +834,7 @@ class dtdream_hr_pbc(models.Model):
             inter = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
             for crr in inter:
                 department.append(crr.department.id)
-                for depart in crr.department.child_ids:
-                    department.append(depart.id)
+                department = self.get_department_id(department, crr.department)
             if vals.get('name', '') not in department:
                 raise ValidationError("HR接口人只能创建所接口部门的部门绩效目标!")
         result = super(dtdream_hr_pbc, self).create(vals)
@@ -875,8 +883,7 @@ class dtdream_hr_pbc(models.Model):
             departments = self.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', self.env.user.id)])
             for crr in departments:
                 department.append(crr.department.id)
-                for depart in crr.department.child_ids:
-                    department.append(depart.id)
+                department = self.get_department_id(department, crr.department)
             return [('id', 'in', department)]
         else:
             return [('id', '!=', False)]
@@ -1042,6 +1049,13 @@ class dtdream_hr_pbc_start(models.TransientModel):
             rec.write({'email_state': json.dumps(email_state)})
         return {'type': 'ir.actions.act_window_close'}
 
+    def get_department_id(self, department_id, department):
+        for dep in department.child_ids:
+            department_id.append(dep.id)
+            if dep.child_ids:
+                self.get_department_id(department_id, dep)
+        return department_id
+
     @api.one
     def start_hr_pbc_submit(self):
         context = dict(self._context or {})
@@ -1056,8 +1070,7 @@ class dtdream_hr_pbc_start(models.TransientModel):
                     inter = rec.env['dtdream.pbc.hr.interface'].search([('name.user_id', '=', rec.env.user.id)])
                     for crr in inter:
                         department.append(crr.department.id)
-                        for depart in crr.department.child_ids:
-                            department.append(depart.id)
+                        department = self.get_department_id(department, crr.department)
                     if rec.name.id in department:
                         rec.signal_workflow('btn_submit')
         return {'type': 'ir.actions.act_window_close'}

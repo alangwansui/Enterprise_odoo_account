@@ -13,9 +13,9 @@
                 </group>
                 <footer>
                     <button name="btn_normal" type="object"
-                            string="公司标准模块" class="oe_highlight"/>
+                            string="是" class="oe_highlight"/>
                     <button name="btn_not_normal"
-                            string="售后服务函非标" type="object"/>
+                            string="否" type="object"/>
                 </footer>
             </form>
         </field>
@@ -29,6 +29,34 @@
          <field name="view_mode">form</field>
          <field name="target">new</field>
      </record>
+        dtdream_shenpi_config_wizard
+      <record id="view_dtdream_shenpi_config_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.shenpi.submit.config.form</field>
+        <field name="model">dtdream.shenpi.config.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group style="text-align:center">
+                        <field name="fawu" string="法务审批人"></field>
+                        <field name="fuwu" string="服务部审批人"></field>
+                </group>
+                <footer>
+                    <button name="btn_config" type="object"
+                            string="配置" class="oe_highlight"/>
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+     <record id="btn_config" model="ir.actions.act_window">
+         <field name="name">确认类型</field>
+         <field name="res_model">dtdream.shenpi.config.wizard</field>
+         <field name="type">ir.actions.act_window</field>
+         <field name="view_type">form</field>
+         <field name="view_mode">form</field>
+         <field name="target">new</field>
+     </record>
+
      <record id="view_dtdream_shenpi_submit_wizard_form" model="ir.ui.view">
         <field name="name">view.dtdream.shenpi.submit.wizard.form</field>
         <field name="model">dtdream.shenpi.submit.wizard</field>
@@ -39,6 +67,7 @@
                 </group>
                 <footer>
                     <button name="btn_reject001" string="驳回" type="object"/>
+                    <button special="cancel" string="取消"/>
                 </footer>
             </form>
         </field>
@@ -63,6 +92,7 @@
                 </group>
                 <footer>
                     <button name="btn_confirm" string="同意" type="object"/>
+                    <button special="cancel" string="取消"/>
                 </footer>
             </form>
         </field>

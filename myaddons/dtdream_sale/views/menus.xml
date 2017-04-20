@@ -1,7 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <!--新增产品类别菜单-->
+        <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />
+        <menuitem id="crm.crm_lead_menu_activities" name="Next Activities" sequence="5"
+            parent="base.menu_sales" action="crm.crm_lead_action_activities" groups="group_menu_hide"/>
+        //开票
+        <menuitem name="Invoicing"
+                id="sale.menu_sale_invoicing" parent="base.menu_base_partner"
+                sequence="5" groups="group_menu_hide" />
+        <menuitem action="sale.action_orders_to_invoice"
+                id="sale.menu_sale_order_invoice" parent="sale.menu_sale_invoicing"
+                sequence="2" groups="group_menu_hide"/>
+        <menuitem action="sale.action_orders_upselling"
+                id="sale.menu_sale_order_upselling" parent="sale.menu_sale_invoicing"
+                sequence="5" groups="group_menu_hide"/>
+        //报价
+        <menuitem id="sale.menu_sale_quotations"
+                action="sale.action_quotations" parent="base.menu_sales"
+                sequence="11" groups="group_menu_hide"/>
+        //销售订单
+        <record id="sale.menu_sale_order" model="ir.ui.menu">
+              <field name="groups_id" eval="[(6, 0, [ref('group_menu_hide')])]"/>
+        </record>
+        //销售顶级菜单
+        <menuitem name="Sales"
+                  id="base.menu_base_partner"
+                  web_icon="sale,static/description/icon.png"
+                  groups="group_dtdream_sale_salesman_all_leads,group_dtdream_sale_salesman,group_dtdream_sale_manager,group_dtdream_sale_read,group_dtdream_sale_rep,group_dtdream_sale_office_manager,group_dtdream_office_product_vice_manager,group_dtdream_headquarters_server_manager,group_dtdream_server_manager,group_dtdream_marketing_department_manager,group_dtdream_marketing_department_vice_manager,group_dtdream_marketing_department_business_interface_person,group_dtdream_system_manager,group_dtdream_system_vice_manager,group_dtdream_system_product_vice_manager,group_dtdream_market_manager,group_dtdream_headquarters_product_manager,group_dtdream_product_director,group_dtdream_management_manager,group_dtdream_management_vice_manager,group_dtdream_management_product_vice_manager,group_dtdream_company_manager,group_dtdream_devolopement_manager,group_dtdream_sale_high_manager" sequence="6"/>
+        //仪表盘
+        <menuitem id="sales_team.menu_sales_team_act" action="sales_team.crm_team_salesteams_act" sequence="1" parent="base.menu_base_partner" name="Dashboard" groups="group_menu_hide"/>
+        <menuitem id="base.menu_sales" name="Sales" parent="base.menu_base_partner" sequence="5" groups="group_menu_hide"/>
+        <menuitem name="联系人" id="dtdream_sale.menu_contacts" sequence="11" action="mail.action_contacts" parent="base.menu_base_partner" groups="group_menu_hide"/>
+        <menuitem action="product.product_template_action"
+                  id="product.menu_product_template_action"
+                  parent="base.menu_sales" sequence="13" groups="group_menu_hide"/>
+        <delete id="crm.menu_crm_leads" model="ir.ui.menu"/>
+        <menuitem name="机会点" id="crm.menu_crm_leads" parent="base.menu_base_partner" sequence="3" action="crm.crm_lead_all_leads" groups="group_menu_hide"/>
+        <menuitem id="crm.menu_crm_opportunities" action="crm.action_your_pipeline" parent="base.menu_base_partner" sequence="4"/>
+        <menuitem id="base.menu_partner_form" parent="base.menu_base_partner" action="base.action_partner_form" sequence="15"/>
+        <menuitem name="产品" id="base.menu_top_dtdream_product" web_icon="dtdream_sale,static/description/product.png" action="product.product_template_action"/>
+        <menuitem name="产品列表" id="product_list_view_menuitem" action="product.product_template_action" parent="base.menu_top_dtdream_product" sequence="1"/>
         <menuitem name="运维系数配置" id="product_yunwei_config" action="product_yunwei_config_action" parent="base.menu_top_dtdream_product" sequence="2"/>
+        <!--定义行政区域菜单-->
+        <menuitem name='行政区域配置' id='menu_setting_dtdream_area' parent='base.menu_sale_config' sequence="65" action="act_dtdream_area"/>
     </data>
 </openerp>
 

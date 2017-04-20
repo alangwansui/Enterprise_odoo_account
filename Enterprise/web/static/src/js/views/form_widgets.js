@@ -1263,6 +1263,11 @@ var FieldBinaryFile = FieldBinary.extend({
         }
     },
     render_value: function() {
+        var reg = new RegExp("(^|#)id=([^&]*)(&|$)");
+        var r = window.location.hash.match(reg);
+        if (r!=null && r[2]!=this.view.datarecord['id']){
+            this.filename = (this.node.attrs.filename)? this.view.datarecord[this.node.attrs.filename] : '';
+        }
         if (this.get("effective_readonly")) {
             this.do_toggle(!!this.get('value'));
             if (this.get('value')) {

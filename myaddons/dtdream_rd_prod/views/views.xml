@@ -168,8 +168,8 @@
                         <button name="do_cgtj" string="进入下一阶段" type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|',('state','not in',('state_00')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_lixiang_wizardappr)d"  string="进入下一阶段"  type="action" attrs="{'invisible':['|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_lixiangappred','=',True),('state','not in',('state_01')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_ztsjtj"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_appred','=',True),('state','not in',('state_02')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
-                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_next"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_ddkf_appred','=',True),('state','not in',('state_03')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        <button name="do_jieshu"  string="进入下一阶段"  type="object" confirm="是否确认进入下一阶段？" attrs="{'invisible':['|','|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('is_yzfb_appred','=',True),('state','not in',('state_04')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="do_back"  string="返回上一阶段"  type="object" confirm="是否确认返回上一阶段？" attrs="{'invisible':['|','|','|',('is_zhongzhitjN','=',True),('is_zantingtjN','=',True),('state','in',('state_00','state_06','state_07')),'&amp;',('is_Qa','=',False),('is_create','=',False)]}"/>
 
 
@@ -180,12 +180,12 @@
 
 
                         <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension_w)d" string="申请暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
-                        attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        attrs="{'invisible':['|','|','|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_ddkf_appred','=',True),('is_yzfb_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
                         <button name="%(dtdream_rd_prod.act_dtdream_prod_suspension_restoration_w)d" string="申请恢复暂停" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
                         attrs="{'invisible':['|','|',('is_zanting_backtjN','=',True),('state','not in',('state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
                         <button name="%(dtdream_rd_prod.act_dtdream_prod_termination_w)d" string="申请中止" type="action" context="{'default_project': id,'default_appr_PL_CCB':PL_CCB}"
-                        attrs="{'invisible':['|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
+                        attrs="{'invisible':['|','|','|','|','|','|','|',('is_lixiangappred','=',True),('is_appred','=',True),('is_ddkf_appred','=',True),('is_yzfb_appred','=',True),('is_zantingtjN','=',True),('is_zhongzhitjN','=',True),('state','in',('state_00','state_05','state_07','state_06')),'&amp;',('is_create','=',False),('is_Qa','=',False)]}"/>
 
                         <field name="state" widget="statusbar" statusbar_visible="state_00,state_01,state_02,state_03,state_04,state_06,state_07,state_05" />
                     </header>
@@ -217,6 +217,8 @@
                                  <field name="is_create" invisible="1"/>
                                  <field name="is_appred" invisible="1"/>
                                  <field name="sameDept" invisible="1"/>
+                                 <field name="is_ddkf_appred" invisible="1"/>
+                                 <field name="is_yzfb_appred" invisible="1"/>
                              </group>
                              <group>
                                  <field name="department_2" options="{'no_create':True}" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_00'))]}"/>
@@ -230,6 +232,56 @@
                             </group>
                         </group>
                         <notebook>
+                            <page string="验证发布阶段" attrs="{'invisible':[('state','in',('state_00','state_01','state_02','state_03'))]}">
+                                <group>
+                                    <notebook>
+                                        <page string="审批意见" states="state_00,state_01,state_02,state_03,state_04,state_05">
+                                            <div>
+                                              <p><font color="red">注：当修改审批人时相当于授权</font></p>
+                                            </div>
+                                            <field name="yzfb_process_ids">
+                                                <tree editable="bottom" create="false" delete="false" >
+                                                    <field name="pro_state" />
+                                                    <field name="role" />
+                                                    <field name="level"/>
+                                                    <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
+                                                    <field name="approve_state" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
+                                                    <field name="editable" invisible="1"/>
+                                                    <field name="is_Qa" invisible="1"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
+                                </group>
+                            </page>
+                            <page string="迭代开发阶段" attrs="{'invisible':[('state','in',('state_00','state_01','state_02'))]}">
+                                <group>
+                                    <notebook>
+                                        <page string="审批意见" states="state_00,state_01,state_02,state_03,state_04,state_05">
+                                            <div>
+                                              <p><font color="red">注：当修改审批人时相当于授权</font></p>
+                                            </div>
+                                            <field name="ddkf_process_ids">
+                                                <tree editable="bottom" create="false" delete="false" >
+                                                    <field name="pro_state" />
+                                                    <field name="role" />
+                                                    <field name="level"/>
+                                                    <field name="approver" attrs="{'readonly':['&amp;',('is_Qa','=',False),('editable','=',False)]}"/>
+                                                    <button name="%(dtdream_rd_prod.act_dtdream_process_wizard)d"
+                                                            attrs="{'invisible':['&amp;',('is_Qa','=',False),('editable','=',False)]}" type="action" string="审批" class="oe_highlight"/>
+                                                    <field name="approve_state" attrs="{'readonly':True}"/>
+                                                    <field name="reason" attrs="{'readonly':True}"/>
+                                                    <field name="editable" invisible="1"/>
+                                                    <field name="is_Qa" invisible="1"/>
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </notebook>
+                                </group>
+                            </page>
                             <page string="总体设计阶段" attrs="{'invisible':[('state','in',('state_00','state_01'))]}">
                                 <group>
                                     <field name="overall_mar" attrs="{'readonly':['&amp;',('is_Qa','=',False),'|',('is_create','=',False),('state','not in',('state_02'))]}"/>

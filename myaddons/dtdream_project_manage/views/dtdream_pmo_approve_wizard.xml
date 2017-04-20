@@ -22,5 +22,25 @@
         </field>
     </record>
 
+    <record id="view_dtdream_yunwei_confirm_wizard_form" model="ir.ui.view">
+        <field name="name">view.dtdream.yunwei.confirm.wizard.form</field>
+        <field name="model">dtdream.yunwei.confirm.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="yunwei"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="btn_confirm" type="object"
+                            string="确认" class="oe_highlight"/>
+
+                    <button special="cancel" string="取消"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     </data>
 </openerp>

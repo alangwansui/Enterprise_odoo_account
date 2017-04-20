@@ -66,7 +66,7 @@ class dtdream_notice_config(object):
     __conf_list = [
         {
             "model": DTDREAM_EXPENSE_REPORT,
-            "fields": {'description': u'费用报销', 'shenqingren': 'create_uid_self', 'shenqishijian': 'write_date', 'dangqianzerenren': 'currentauditperson', 'state': 'yifukuan', 'state_name': 'state'
+            "fields": {'description': u'费用报销', 'shenqingren': 'applicant', 'shenqishijian': 'write_date', 'dangqianzerenren': 'current_handler', 'state': 'yifukuan', 'state_name': 'state'
                        ,'stateList':("yifukuan","draft")}
         },
         {

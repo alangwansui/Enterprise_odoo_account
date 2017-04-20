@@ -146,10 +146,30 @@
         <field name="signal">btn_agree</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
+     <record model="workflow.transition" id="contract_wait_countersign2void">
+        <field name="act_from" ref="activity_wait_countersign" />
+        <field name="act_to" ref="activity_void" />
+        <field name="signal">btn_void</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+     <record model="workflow.transition" id="contract_wait_countersign2review">
+        <field name="act_from" ref="activity_wait_countersign" />
+        <field name="act_to" ref="activity_review" />
+        <field name="signal">btn_reject</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
+    <record model="workflow.transition" id="contract_countersign2stamp">
+        <field name="act_from" ref="activity_countersign" />
+        <field name="act_to" ref="activity_stamp" />
+        <field name="signal">btn_agree</field>
+        <field name="condition">money &lt; 20000</field>
+        <field name="group_id" ref="base.group_user"/>
+    </record>
     <record model="workflow.transition" id="contract_countersign2sign">
         <field name="act_from" ref="activity_countersign" />
         <field name="act_to" ref="activity_sign" />
         <field name="signal">btn_agree</field>
+        <field name="condition">money &gt;= 20000</field>
         <field name="group_id" ref="base.group_user"/>
     </record>
     <record model="workflow.transition" id="contract_countersign2sign_force">

@@ -4,7 +4,7 @@ from openerp import models, fields, api
 #产品审批意见
 class dtdream_rd_process(models.Model):
     _name = 'dtdream_rd_process'
-    pro_state = fields.Selection([('state_01','立项'),('state_02','总体设计')],string='阶段', readonly=True)
+    pro_state = fields.Selection([('state_01','立项'),('state_02','总体设计'), ('state_03', '迭代开发'), ('state_04', '验证发布')],string='阶段', readonly=True)
     role = fields.Many2one('dtdream_rd_config',string="角色",readonly=True)
     approver = fields.Many2one('hr.employee',string="审批人",help="可选择进行授权")
     level = fields.Selection([('level_01','一级'),('level_02','二级')],string='级别',readonly=True)
@@ -41,6 +41,9 @@ class dtdream_rd_process(models.Model):
     process_id = fields.Many2one('dtdream_prod_appr',string='研发产品')
     ztsj_process_id = fields.Many2one('dtdream_prod_appr',string='研发产品')
 
+    ddkf_process_id = fields.Many2one('dtdream_prod_appr', string='研发产品')
+    yzfb_process_id = fields.Many2one('dtdream_prod_appr', string='研发产品')
+
     is_new = fields.Boolean(string="标记是否为新",default=True)
 
     @api.model
@@ -57,7 +60,7 @@ class dtdream_rd_process(models.Model):
                         rec.editable=True
                     else:
                         rec.editable=False
-            else:
+            elif rec.pro_state=='state_02':
                 if rec.level=='level_01':
                     if rec.ztsj_process_id.state==rec.pro_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new and not rec.ztsj_process_id.is_finsished_02:
                         rec.editable=True
@@ -68,7 +71,28 @@ class dtdream_rd_process(models.Model):
                         rec.editable=True
                     else:
                         rec.editable=False
-
+            elif rec.pro_state=='state_03':
+                if rec.level=='level_01':
+                    if rec.ddkf_process_id.state==rec.pro_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new and not rec.ddkf_process_id.is_finsished_03:
+                        rec.editable=True
+                    else:
+                        rec.editable=False
+                if rec.level=='level_02':
+                    if rec.ddkf_process_id.state==rec.pro_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new:
+                        rec.editable=True
+                    else:
+                        rec.editable=False
+            elif rec.pro_state=='state_04':
+                if rec.level=='level_01':
+                    if rec.yzfb_process_id.state==rec.pro_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new and not rec.yzfb_process_id.is_finsished_04:
+                        rec.editable=True
+                    else:
+                        rec.editable=False
+                if rec.level=='level_02':
+                    if rec.yzfb_process_id.state==rec.pro_state and rec.approver.user_id.id ==self.env.user.id and rec.is_new:
+                        rec.editable=True
+                    else:
+                        rec.editable=False
 
     editable = fields.Boolean(string="能否修改",compute = _compute_editable,default=True)
 

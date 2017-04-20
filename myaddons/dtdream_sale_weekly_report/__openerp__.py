@@ -31,6 +31,7 @@
         'views/data.xml',
         'views/templates.xml',
         'importcss.xml',
+        'views/ding_report_config.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

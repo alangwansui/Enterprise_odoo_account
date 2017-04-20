@@ -12,6 +12,7 @@ var Pager = require('web.Pager');
 var Sidebar = require('web.Sidebar');
 var utils = require('web.utils');
 var View = require('web.View');
+var WaterMark = require('web.WaterMark');
 
 var _t = core._t;
 var _lt = core._lt;
@@ -145,6 +146,10 @@ var FormView = View.extend(common.FieldManagerMixin, {
         this.rendering_engine.set_widgets_registry(this.widgets_registry);
         this.rendering_engine.set_fields_view(data);
         this.rendering_engine.render_to(this.$el);
+
+        if(self.model == "dtdream.project.bid.authorize.apply"){
+            self.add_two_buttons();
+        }
 
         this.$el.on('mousedown.formBlur', function () {
             self.__clicked_inside = true;
@@ -338,6 +343,11 @@ var FormView = View.extend(common.FieldManagerMixin, {
             self._actualize_mode(options.mode || self.options.initial_mode);
             var result=null;
             result= core.bus.trigger('form_view_shown', self);
+
+ //        add watermark
+            self.watermark = new WaterMark();
+            self.watermark.start();
+            
             var timer = setInterval(function(){
               self.show_form();
               if(result){

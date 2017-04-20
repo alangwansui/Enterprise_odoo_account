@@ -2,6 +2,8 @@
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from datetime import datetime
+from lxml import etree
 
 
 class dtdream_hr_infor(models.Model):
@@ -145,13 +147,18 @@ class dtdream_hr_infor(models.Model):
                 field = rec[2]
                 add += u'''<tr style='color: red;'><td>新增</td><td>{0}</td><td>{1}</td><td>{2}</td>
                          <td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td></tr>'''.format(
-                    field.get('relation'), field.get('name'), field.get('company'), field.get('address'),
-                    field.get('postcode'), field.get('mail'), field.get('tel'), field.get('emergency'))
+                        field.get('relation'), field.get('name'), field.get('company'), field.get('address'),
+                        field.get('postcode'), field.get('mail'), field.get('tel'), field.get('emergency'))
             elif rec[0] == 2:
                 tracked = True
                 message += u'''<tr style='color: red;'><td>删除</td><td>{0}</td><td>{1}</td><td>{2}</td>
                          <td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td><td>{7}</td></tr>'''.format(cr.relation,
-                        cr.name, cr.company, cr.address, cr.postcode, cr.mail, cr.tel, cr.emergency)
+                                                                                                     cr.name,
+                                                                                                     cr.company,
+                                                                                                     cr.address,
+                                                                                                     cr.postcode,
+                                                                                                     cr.mail, cr.tel,
+                                                                                                     cr.emergency)
         if not tracked:
             return ''
         message += add + u"</tbody></table></li></ul>"
@@ -201,7 +208,409 @@ class dtdream_hr_infor(models.Model):
     edit_public_info = fields.Boolean(string="是否有权限编辑公开信息", compute=_compute_can_edit_public, default=True)
     edit_basic_info = fields.Boolean(string="是否有编辑基本信息权限", compute=_compute_can_edit_basic, default=True)
     edit_self_info = fields.Boolean(string="是否有权限编辑自助信息", compute=_compute_can_edit_self)
+
+    @api.one
+    def _compute_can_edit_bank_mobile_travel_info(self):
+        self.edit_bank_mobile_travel_info = True
+        # hr_manager = self.env.ref("base.group_hr_manager") in self.env.user.groups_id
+        # if hr_manager:
+        #     self.edit_bank_mobile_travel_info = True
+        # else:
+        #     self.edit_bank_mobile_travel_info = False
+
+    edit_bank_mobile_travel_info = fields.Boolean(string="是否有编辑银行、手机标准话费和交通权限",
+                                                  compute=_compute_can_edit_bank_mobile_travel_info, default=True)
     active = fields.Boolean(default=True, string='有效')
+
+
+class dtdream_hr_set_caiwu_hr(models.Model):
+    _name = "hr.employee.set.caiwu.hr"
+    _description = u'设置财务和HR'
+
+    @api.model
+    def create(self, vals):
+        cr = self.env["hr.employee.set.caiwu.hr"].search([])
+        if len(cr):
+            raise ValidationError("已经存在一条配置,无法创建多条!")
+        return super(dtdream_hr_set_caiwu_hr, self).create(vals)
+
+    name = fields.Char(default="出纳、财务和HR审批人")
+    caiwu = fields.Many2one('hr.employee', string="财务审批人")
+    hr = fields.Many2one('hr.employee', string="HR审批人")
+    chuna = fields.Many2one("hr.employee", string="出纳")
+
+
+class dtdream_hr_bank_info(models.Model):
+    _name = "hr.employee.bank"
+    _inherit = ['mail.thread']
+    _description = u'银行信息更改'
+
+    name = fields.Char(default="银行信息更改")
+    applicant = fields.Many2one("hr.employee", string="申请人", default=lambda self: self.env['hr.employee'].search(
+            [('user_id', '=', self.env.user.id)]))
+    bankaddr = fields.Char(string="开户行地址")
+    bankcardno = fields.Char(string="银行卡号")
+    create_time = fields.Datetime(string='创建时间', default=lambda self: datetime.now(), readonly=1)
+
+    state = fields.Selection([("0", "草稿"),
+                              ("1", "出纳确认"),
+                              ("2", "完成"), ], string="状态", default='0')
+
+    @api.one
+    def _compute_is_handler(self):
+        self.is_handler = False
+        if self.chuna.user_id.id == self.env.user.id:
+            self.is_handler = True
+
+    is_handler = fields.Boolean("是否当前处理人", compute=_compute_is_handler)
+
+    @api.one
+    def _compute_is_applicant(self):
+        self.is_applicant = False
+        if self.applicant.user_id.id == self.env.user.id:
+            self.is_applicant = True
+
+    is_applicant = fields.Boolean("是否申请者", compute=_compute_is_applicant, default=True)
+
+    @api.one
+    def get_chuna(self):
+        chuna = self.env["hr.employee.set.caiwu.hr"].search([])
+        if len(chuna) == 0:
+            raise ValidationError('请通知管理员设置出纳！')
+        else:
+            self.chuna = chuna.chuna
+
+    chuna = fields.Many2one("hr.employee", string="出纳")
+
+    def send_chuna_email(self, cr, uid, id):
+        damn_self = self.pool.get('hr.employee.bank').browse(cr, uid, id)
+        for people in damn_self.chuna:
+            damn_self.env['mail.mail'].create({
+                'subject': u'【dodo提醒】员工：银行信息更改申请提醒',
+                'body_html': u'''
+                        <p>%s，您好：</p>
+                        <p>员工%s申请更改银行信息，请至dodo HR-》员工-》银行信息更改进行审批。</p>
+                        <p>dodo</p>
+                        <p>万千业务，简单有do</p>
+                        <p>%s</p>''' % (people.name, damn_self.applicant.name, damn_self.write_date[:10]),
+                'email_from': damn_self.env['ir.mail_server'].search([], limit=1).smtp_user,
+                'email_to': people.work_email,
+            }).send()
+
+    @api.multi
+    def wkf_draft(self):
+        # 草稿状态
+        self.state = '0'
+
+    @api.multi
+    def wkf_chuna(self):
+        # 出纳确认
+        self.get_chuna()
+        self.state = '1'
+        self.send_chuna_email()
+        self.message_post(body=u"提交更改银行信息申请。")
+
+    @api.multi
+    def wkf_end(self):
+        # 完成
+        self.state = '2'
+        self.applicant.bankaddr = self.bankaddr
+        self.applicant.bankcardno = self.bankcardno
+
+
+class dtdream_hr_bank_wizard(models.TransientModel):
+    _name = "hr.bank.wizard"
+    reason = fields.Text("意见")
+
+    @api.one
+    def btn_confirm(self):
+        current_record = self.env['hr.employee.bank'].browse(self._context['active_id'])
+        state = dict(self.env['hr.employee.bank']._columns['state'].selection)[current_record.state]
+        state_code = unicode(state, 'utf-8')
+
+        if not self.reason:
+            self.reason = unicode('无', 'utf-8')
+
+        current_record.signal_workflow('btn_agree')
+        current_record.message_post(body=u"审批意见：%s，%s，状态：%s" % (u'通过', self.reason, state_code))
+
+
+class dtdream_hr_bank_wizard_refuse(models.TransientModel):
+    _name = "hr.bank.wizard.refuse"
+    reason = fields.Text("驳回理由")
+
+    @api.one
+    def btn_confirm(self):
+        current_record = self.env['hr.employee.bank'].browse(self._context['active_id'])
+        state = dict(self.env['hr.employee.bank']._columns['state'].selection)[current_record.state]
+        state_code = unicode(state, 'utf-8')
+
+        if not self.reason:
+            self.reason = unicode('无', 'utf-8')
+
+        current_record.signal_workflow('btn_disagree')
+        current_record.message_post(body=u"驳回理由：%s; 状态：%s" % (self.reason, state_code))
+
+
+class dtdream_hr_mobile_fee(models.Model):
+    _name = "hr.employee.mobile.fee"
+    _inherit = ['mail.thread']
+    _description = u'手机话费标准更改'
+
+    name = fields.Char(default="手机话费标准更改")
+    applicant = fields.Many2one("hr.employee", string="申请人", default=lambda self: self.env['hr.employee'].search(
+            [('user_id', '=', self.env.user.id)]))
+    standard_mobile_fee = fields.Integer(string='手机话费标准')
+    create_time = fields.Datetime(string='创建时间', default=lambda self: datetime.now(), readonly=1)
+
+    state = fields.Selection([("0", "草稿"),
+                              ("1", "主管审批"),
+                              ("2", "权签中"),
+                              ("3", "完成"), ], string="状态")
+
+    @api.one
+    def get_approvers(self):
+        self.department_manager = self.applicant.department_id.manager_id
+        self.quanqian = self.applicant.department_id.no_one_auditor
+
+    department_manager = fields.Many2one('hr.employee', string="直接主管")
+    quanqian = fields.Many2one('hr.employee', string="权签人")
+
+    @api.one
+    def _compute_is_handler(self):
+        self.is_handler = False
+        if self.current_handler_id.user_id.id == self.env.user.id:
+            self.is_handler = True
+
+    current_handler_id = fields.Many2one('hr.employee', string="当前处理人")
+
+    is_handler = fields.Boolean("是否当前处理人", compute=_compute_is_handler)
+
+    @api.one
+    def _compute_is_applicant(self):
+        self.is_applicant = False
+        if self.applicant.user_id.id == self.env.user.id:
+            self.is_applicant = True
+
+    is_applicant = fields.Boolean("是否申请者", compute=_compute_is_applicant, default=True)
+
+    def send_current_handler_email(self, cr, uid, id):
+        damn_self = self.pool.get('hr.employee.mobile.fee').browse(cr, uid, id)
+        for people in damn_self.current_handler_id:
+            damn_self.env['mail.mail'].create({
+                'subject': u'【dodo提醒】员工：手机话费标准更改申请提醒',
+                'body_html': u'''
+                        <p>%s，您好：</p>
+                        <p>员工%s申请更改手机话费标准，请至dodo HR-》员工-》手机话费标准更改进行审批。</p>
+                        <p>dodo</p>
+                        <p>万千业务，简单有do</p>
+                        <p>%s</p>''' % (people.name, damn_self.applicant.name, damn_self.write_date[:10]),
+                'email_from': damn_self.env['ir.mail_server'].search([], limit=1).smtp_user,
+                'email_to': people.work_email,
+            }).send()
+
+    @api.multi
+    def wkf_draft(self):
+        # 草稿状态
+        self.current_handler_id = self.applicant
+        self.state = '0'
+        self.get_approvers()
+
+    @api.multi
+    def wkf_department_manager(self):
+        # 直接主管审批
+        self.current_handler_id = self.department_manager
+        self.state = '1'
+        self.send_current_handler_email()
+        self.message_post(body=u"%s提交更改手机话费标准申请。" % (self.applicant.name))
+
+    @api.multi
+    def wkf_quanqian(self):
+        # 权签人审批
+        self.current_handler_id = self.quanqian
+        self.state = '2'
+        self.send_current_handler_email()
+
+    @api.multi
+    def wkf_end(self):
+        # 完成
+        self.state = '3'
+        self.applicant.standard_mobile_fee = self.standard_mobile_fee
+
+
+class dtdream_hr_mobile_fee_wizard(models.TransientModel):
+    _name = "hr.mobile.fee.wizard"
+    reason = fields.Text("意见")
+
+    @api.one
+    def btn_confirm(self):
+        current_record = self.env['hr.employee.mobile.fee'].browse(self._context['active_id'])
+        state = dict(self.env['hr.employee.mobile.fee']._columns['state'].selection)[current_record.state]
+        state_code = unicode(state, 'utf-8')
+
+        if not self.reason:
+            self.reason = unicode('无', 'utf-8')
+
+        current_record.signal_workflow('btn_agree')
+        current_record.message_post(body=u"审批意见：%s，%s，状态：%s" % (u'通过', self.reason, state_code))
+
+
+class dtdream_hr_mobile_fee_wizard_refuse(models.TransientModel):
+    _name = "hr.mobile.fee.wizard.refuse"
+    reason = fields.Text("驳回理由")
+
+    @api.one
+    def btn_confirm(self):
+        current_record = self.env['hr.employee.mobile.fee'].browse(self._context['active_id'])
+        state = dict(self.env['hr.employee.mobile.fee']._columns['state'].selection)[current_record.state]
+        state_code = unicode(state, 'utf-8')
+        if not self.reason:
+            self.reason = unicode('无', 'utf-8')
+
+        current_record.signal_workflow('btn_disagree')
+        current_record.message_post(body=u"驳回理由：%s; 状态：%s" % (self.reason, state_code))
+
+
+class dtdream_hr_travel_grant(models.Model):
+    _name = "hr.employee.travel.grant"
+    _inherit = ['mail.thread']
+    _description = u'"是否享受交通补助"更改审批'
+
+    name = fields.Char(default="'是否享受交通补助'更改审批")
+    applicant = fields.Many2one("hr.employee", string="申请人", default=lambda self: self.env['hr.employee'].search(
+            [('user_id', '=', self.env.user.id)]))
+    travel_grant = fields.Boolean(string='是否享有交通补助')
+    create_time = fields.Datetime(string='创建时间', default=lambda self: datetime.now(), readonly=1)
+
+    @api.one
+    def _compute_is_handler(self):
+        self.is_handler = False
+        if self.current_handler_id.user_id.id == self.env.user.id:
+            self.is_handler = True
+
+    current_handler_id = fields.Many2one('hr.employee', string="当前处理人")
+    is_handler = fields.Boolean("是否当前处理人", compute=_compute_is_handler)
+
+    @api.one
+    def _compute_is_applicant(self):
+        self.is_applicant = False
+        if self.applicant.user_id.id == self.env.user.id:
+            self.is_applicant = True
+
+    is_applicant = fields.Boolean("是否申请者", compute=_compute_is_applicant, default=True)
+
+    @api.one
+    def get_approvers(self):
+        self.department_manager = self.applicant.department_id.manager_id
+        self.quanqian = self.applicant.department_id.no_one_auditor
+        caiwu_hr = self.env["hr.employee.set.caiwu.hr"].search([])
+        if len(caiwu_hr) == 0:
+            raise ValidationError('请通知管理员设置财务和HR审批人！')
+        else:
+            self.caiwu = caiwu_hr.caiwu
+            self.hr = caiwu_hr.hr
+
+    department_manager = fields.Many2one('hr.employee', string="直接主管")
+    quanqian = fields.Many2one('hr.employee', string="权签人")
+    caiwu = fields.Many2one('hr.employee', string="财务审批人")
+    hr = fields.Many2one('hr.employee', string="HR审批人")
+
+    state = fields.Selection([("0", "草稿"),
+                              ("1", "主管审批"),
+                              ("2", "权签中"),
+                              ("3", "财务审批"),
+                              ("4", "HR审批"),
+                              ("5", "完成"), ], string="状态")
+
+    def send_current_handler_email(self, cr, uid, id):
+        damn_self = self.pool.get('hr.employee.travel.grant').browse(cr, uid, id)
+        for people in damn_self.current_handler_id:
+            damn_self.env['mail.mail'].create({
+                'subject': u'【dodo提醒】员工："是否享受交通补助"更改申请提醒',
+                'body_html': u'''
+                        <p>%s，您好：</p>
+                        <p>员工%s申请更改是否享受交通补助，请至dodo HR-》员工-》交通补助进行审批。</p>
+                        <p>dodo</p>
+                        <p>万千业务，简单有do</p>
+                        <p>%s</p>''' % (people.name, damn_self.applicant.name, damn_self.write_date[:10]),
+                'email_from': damn_self.env['ir.mail_server'].search([], limit=1).smtp_user,
+                'email_to': people.work_email,
+            }).send()
+
+    @api.multi
+    def wkf_draft(self):
+        # 草稿状态
+        self.current_handler_id = self.applicant
+        self.state = '0'
+
+    @api.multi
+    def wkf_department_manager(self):
+        # 直接主管审批
+        self.state = '1'
+        self.get_approvers()
+        self.current_handler_id = self.department_manager
+        self.send_current_handler_email()
+        self.message_post(body=u"提交'是否享受交通补助'标准申请。")
+
+    @api.multi
+    def wkf_quanqian(self):
+        # 权签人审批
+        self.current_handler_id = self.quanqian
+        self.state = '2'
+        self.send_current_handler_email()
+
+    @api.multi
+    def wkf_caiwu(self):
+        # 财务审批
+        self.current_handler_id = self.caiwu
+        self.state = '3'
+        self.send_current_handler_email()
+
+    @api.multi
+    def wkf_hr(self):
+        # hr审批
+        self.current_handler_id = self.hr
+        self.state = '4'
+        self.send_current_handler_email()
+
+    @api.multi
+    def wkf_end(self):
+        # 完成
+        self.state = '5'
+        self.applicant.travel_grant = self.travel_grant
+
+
+class dtdream_hr_travel_grant_wizard(models.TransientModel):
+    _name = "hr.travel.grant.wizard"
+    reason = fields.Text("意见")
+
+    @api.one
+    def btn_confirm(self):
+        current_record = self.env['hr.employee.travel.grant'].browse(self._context['active_id'])
+        state = dict(self.env['hr.employee.travel.grant']._columns['state'].selection)[current_record.state]
+        state_code = unicode(state, 'utf-8')
+
+        if not self.reason:
+            self.reason = unicode('无', 'utf-8')
+
+        current_record.signal_workflow('btn_agree')
+        current_record.message_post(body=u"审批意见：%s，%s，状态：%s" % (u'通过', self.reason, state_code))
+
+
+class dtdream_hr_travel_grant_wizard_refuse(models.TransientModel):
+    _name = "hr.travel.grant.wizard.refuse"
+    reason = fields.Text("驳回理由")
+
+    @api.one
+    def btn_confirm(self):
+        current_record = self.env['hr.employee.travel.grant'].browse(self._context['active_id'])
+        state = dict(self.env['hr.employee.travel.grant']._columns['state'].selection)[current_record.state]
+        state_code = unicode(state, 'utf-8')
+        if not self.reason:
+            self.reason = unicode('无', 'utf-8')
+
+        current_record.signal_workflow('btn_disagree')
+        current_record.message_post(body=u"驳回理由：%s; 状态：%s" % (self.reason, state_code))
 
 
 class dtdream_hr_family(models.Model):
@@ -266,5 +675,6 @@ class dtdream_hr_department(models.Model):
         """ Wrapper on message_subscribe, using users. If user_ids is not
             provided, subscribe uid instead. """
         user_ids = []
-        result = self.message_subscribe(self.env['res.users'].browse(user_ids).mapped('partner_id').ids, subtype_ids=subtype_ids)
+        result = self.message_subscribe(self.env['res.users'].browse(user_ids).mapped('partner_id').ids,
+                                        subtype_ids=subtype_ids)
         return result

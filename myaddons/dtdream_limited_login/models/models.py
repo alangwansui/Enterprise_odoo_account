@@ -73,8 +73,8 @@ class Home_inher(openerp.addons.web.controllers.main.Home):
                     if user:
                         user.fail_times = 0
                     if not redirect:
-                        redirect = '/index'
-                        # redirect = '/web'
+                        # redirect = '/index'
+                        redirect = '/web'
                     return http.redirect_with_hash(redirect)
                 else:
                     if user and user.id != 1:

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem name="签单客户" id="dtdream_menu_sign_customer" parent="base.menu_base_partner" sequence="10" action="dtdream_sale_sign_customer_action"></menuitem>
+    </data>
+</openerp>

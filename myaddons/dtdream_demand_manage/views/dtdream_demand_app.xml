@@ -234,6 +234,14 @@
         <field name="domain">['|',('name.user_id','=',uid),('create_uid','=',uid)]</field>
     </record>
 
+      <record id="act_dtdream_demand_manage_new" model="ir.actions.act_window">
+        <field name="name">我的申请</field>
+        <field name="res_model">dtdream.demand.app</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+    </record>
+
     <record id="act_dtdream_demand_manage_approve" model="ir.actions.act_window">
         <field name="name">待我审批</field>
         <field name="res_model">dtdream.demand.app</field>
@@ -276,8 +284,8 @@
     <!--<menuitem name="所有单据" id="dtdream_demand_manage_all" parent="menu_dtdream_demand_manage_root" sequence="16"/>-->
     <!--<menuitem name="应用开发及优化" id="menu_dtdream_customer_all" parent="dtdream_demand_manage_all" sequence="4" action="act_dtdream_demand_manage_all"/>-->
 
-    <menuitem name="配置" id="dtdream_demand_manage_config" parent="menu_dtdream_demand_manage_root" sequence="18" groups="dtdream_demand_manage"/>
-    <menuitem name="IT部门配置" id="menu_dtdream_IT_department" parent="dtdream_demand_manage_config" action="act_dtream_IT_department_config"/>
+    <!--<menuitem name="配置" id="dtdream_demand_manage_config" parent="menu_dtdream_demand_manage" sequence="18" groups="dtdream_demand_manage"/>-->
+    <menuitem name="IT部门配置" id="menu_dtdream_IT_department" parent="menu_dtdream_demand_manage" groups="dtdream_demand_manage" action="act_dtream_IT_department_config"/>
 
   </data>
 </openerp>

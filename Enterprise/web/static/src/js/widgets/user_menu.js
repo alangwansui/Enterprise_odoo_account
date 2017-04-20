@@ -77,7 +77,7 @@ var UserMenu = Widget.extend({
             new Dialog(self, {
                 size: 'medium',
                 dialogClass: 'o_act_window',
-                title: _t("About"),
+                title: "关于dodo",
                 $content: $help
             }).open();
         }

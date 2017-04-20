@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="dtdream_reserve_wizard_form">
+            <field name="name">dtdream.reserve.wizard.form</field>
+            <field name="model">dtdream.reserve.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="reason" attrs="{'required':[('result','=','reject')]}"></field>
+                            <field name="result" invisible="1"></field>
+                            <field name="state" attrs="{'invisible':[('result','=','agree')]}"></field>
+                        </group>
+                        <footer>
+                            <button name="btn_confirm" type="object" string="确认" class="oe_highlight"/>
+                            <button special="cancel" string="取消"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="act_dtdream_reserve_wizard_agree" model="ir.actions.act_window">
+            <field name="name">确认</field>
+            <field name="res_model">dtdream.reserve.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_result':'agree'}</field>
+        </record>
+        <record id="act_dtdream_reserve_wizard_reject" model="ir.actions.act_window">
+            <field name="name">确认</field>
+            <field name="res_model">dtdream.reserve.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_result':'reject'}</field>
+        </record>
+    </data>
+</openerp>

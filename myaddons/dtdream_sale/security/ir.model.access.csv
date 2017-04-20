@@ -61,8 +61,4 @@ access_dtdream_project_space_line,dtdream.project.space.line user,model_dtdream_
 access_dtdream_des_records,dtdream.des.records user,model_dtdream_des_records,base.group_user,1,1,1,1
 access_dtdream_area,dtdream_area,model_dtdream_area,,1,1,1,1
 access_crm_lead_lost,crm.lead.lost.dtdream.user,crm.model_crm_lead_lost,base.group_user,1,1,1,1
-access_cash_income,cash.income.dtdream.user,model_cash_income,base.group_user,1,1,1,1
-access_contract_fee,contract.fee.dtdream.user,model_contract_fee,base.group_user,1,1,1,1
-access_gaap_income,gaap.income.dtdream.user,model_gaap_income,base.group_user,1,1,1,1
-access_fee_pay,fee.pay.dtdream.user,model_fee_pay,base.group_user,1,1,1,1
 access_yunwei_config,yunwei.config.dtdream.yunwei.manage,model_yunwei_config,group_yunwei_manage,1,1,1,0

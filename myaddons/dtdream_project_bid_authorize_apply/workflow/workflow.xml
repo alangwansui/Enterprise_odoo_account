@@ -37,6 +37,13 @@
             <field name="action">wkf_standar()</field>
         </record>
 
+        <record id="act_wkf_config" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">配置服务与法务审批人</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_not_standar_config()</field>
+        </record>
+
         <record id="act_wkf_nostandar" model="workflow.activity">
             <field name="wkf_id" ref="workflow_project_authorize"/>
             <field name="name">售后服务函非标</field>
@@ -48,17 +55,16 @@
             <field name="wkf_id" ref="workflow_project_authorize"/>
             <field name="name">审批同意</field>
             <field name="kind">function</field>
-            <field name="flow_stop">True</field>
             <field name="action">wkf_approve()</field>
         </record>
 
-        <!--<record id="act_wkf_done" model="workflow.activity">-->
-            <!--<field name="wkf_id" ref="workflow_project_authorize"/>-->
-            <!--<field name="name">完成</field>-->
-            <!--<field name="flow_stop">True</field>-->
-            <!--<field name="kind">function</field>-->
-            <!--<field name="action">wkf_done()</field>-->
-        <!--</record>-->
+        <record id="act_wkf_done" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_authorize"/>
+            <field name="name">盖章完成</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_done()</field>
+        </record>
 
         <record id="trans_create_apply" model="workflow.transition">
             <field name="act_from" ref="act_wkf_create"/>
@@ -75,19 +81,43 @@
         <record id="trans_examine_starndar" model="workflow.transition">
             <field name="act_from" ref="act_wkf_examine"/>
             <field name="act_to" ref="act_wkf_standar"/>
+            <field name="condition">system_shenpi_state == True and office_shenpi_state == True</field>
             <field name="signal">btn_approve</field>
         </record>
+
+         <record id="trans_examine_examine" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_examine"/>
+            <field name="act_to" ref="act_wkf_examine"/>
+            <field name="condition">system_shenpi_state == False or office_shenpi_state == False</field>
+            <field name="signal">btn_approve</field>
+        </record>
+
         <!---->
-        <record id="trans_standar_nostandar" model="workflow.transition">
+
+        <record id="trans_standar_config" model="workflow.transition">
             <field name="act_from" ref="act_wkf_standar"/>
-            <field name="act_to" ref="act_wkf_nostandar"/>
+            <field name="act_to" ref="act_wkf_config"/>
             <field name="condition">is_normal==False</field>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_config_nostandar" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_config"/>
+            <field name="act_to" ref="act_wkf_nostandar"/>
+            <field name="signal">btn_approve</field>
+        </record>
+
+        <record id="trans_notstandar_nostandar" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_nostandar"/>
+            <field name="act_to" ref="act_wkf_nostandar"/>
+            <field name="condition">fawu_shenpi_state == False or fuwu_shenpi_state == False</field>
             <field name="signal">btn_approve</field>
         </record>
 
         <record id="trans_nostandar_nostandarsecond" model="workflow.transition">
             <field name="act_from" ref="act_wkf_nostandar"/>
             <field name="act_to" ref="act_wkf_approve"/>
+            <field name="condition">fawu_shenpi_state and fuwu_shenpi_state</field>
             <field name="signal">btn_approve</field>
         </record>
 
@@ -98,11 +128,11 @@
             <field name="signal">btn_approve</field>
         </record>
 
-        <!--<record id="trans_approve_done" model="workflow.transition">-->
-            <!--<field name="act_from" ref="act_wkf_approve"/>-->
-            <!--<field name="act_to" ref="act_wkf_done"/>-->
-            <!--<field name="signal">btn_approve</field>-->
-        <!--</record>-->
+        <record id="trans_approve_done" model="workflow.transition">
+            <field name="act_from" ref="act_wkf_approve"/>
+            <field name="act_to" ref="act_wkf_done"/>
+            <field name="signal">btn_approve</field>
+        </record>
 
         <record id="reject" model="workflow.transition">
             <field name="act_from" ref="act_wkf_apply"/>
@@ -137,6 +167,7 @@
         <record id="reject_nostandar" model="workflow.transition">
             <field name="act_from" ref="act_wkf_nostandar"/>
             <field name="act_to" ref="act_wkf_create"/>
+
             <field name="signal" >btn_reject</field>
         </record>
     </data>

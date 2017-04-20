@@ -12,8 +12,10 @@
                         <field name="nxj_yixiu" string="已休年休假"/>
                         <field name="nxj_tiaozheng" string="年休假调整天数"/>
                         <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
-                        <field name="nxj_yue" string="年休假余额"/>
                         <field name="state" invisible="1"/>
+                        <field name="is_nxj_jiesuan"/>
+                        <field name="nxj_jiesuan"/>
+                        <field name="nxj_yue" string="年休假余额"/>
                     </tree>
                 </field>
             </record>
@@ -128,8 +130,10 @@
                         <field name="nxj_yixiu" string="已休年休假"/>
                         <field name="nxj_tiaozheng" string="年休假调整天数"/>
                         <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
-                        <field name="nxj_yue" string="年休假余额"/>
                         <field name="state" invisible="1"/>
+                        <field name="is_nxj_jiesuan"/>
+                        <field name="nxj_jiesuan"/>
+                        <field name="nxj_yue" string="年休假余额"/>
                     </tree>
                 </field>
             </record>
@@ -147,10 +151,12 @@
                                     <field name="nxj_fenpei" string="年休假配额"/>
                                     <field name="nxj_yixiu" string="已休年休假"/>
                                     <field name="state" invisible="1"/>
+                                    <field name="is_nxj_jiesuan"/>
                                 </group>
                                 <group>
                                     <field name="nxj_tiaozheng" string="年休假调整天数"/>
                                     <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
+                                    <field name="nxj_jiesuan"/>
                                     <field name="nxj_yue" string="年休假余额"/>
                                 </group>
                             </group>
@@ -171,7 +177,9 @@
                     <field name="nxj_tiaozheng" string="年休假调整天数"/>
                     <field name="nxj_tiaozhengbeizhu" string="年休假调整备注"/>
                     <field name="nxj_yue" string="年休假余额"/>
+                    <field name="is_nxj_jiesuan"/>
                     <field name="state" invisible="1"/>
+                    <field name="is_nxj_jiesuan"/>
                     <templates>
                         <t t-name="kanban-box">
                         <div class="oe_kanban_global_click ">
@@ -195,6 +203,25 @@
             </field>
         </record>
 
+        <record id="hr_holidays.view_hr_holidays_nianxiujia_filter" model="ir.ui.view"><!--休假搜索视图-->
+            <field name="name">hr.holidays.nianxiujia_filter</field>
+            <field name="model">hr.holidays</field>
+            <field name="arch" type="xml">
+                <search string="Search Leave">
+                    <field name="employee_id"/>
+                    <field name="state"/>
+                    <field name="year" string="年度"/>
+                    <filter domain="[('is_nxj_jiesuan','=',True)]" string="年休假已结算"/>
+                    <filter domain="[('is_nxj_jiesuan','=',False)]" string="年休假未结算"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_name" string="说明" context="{'group_by':'name'}"/>
+                        <filter name="group_employee" string="员工" context="{'group_by':'employee_id'}"/>
+                        <filter name="group_year" string="年度" context="{'group_by':'year'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
 
             <record model="ir.actions.act_window" id="hr_holidays.open_nianxiujiayue_all"><!--所有年休假余额-->
                 <field name="name">所有年休假余额</field>
@@ -212,6 +239,7 @@
                 }</field>
                 <field name="domain">[('type','=','add'),('create_type','=','manage')]</field>
                 <field name="view_id" ref="view_holiday_nianxiujia_all_tree"/>
+                <field name="search_view_id" ref="hr_holidays.view_hr_holidays_nianxiujia_filter"/>
             </record>
 
             <record id="action_dtdream_nianxiujia_all_a" model="ir.actions.act_window.view">

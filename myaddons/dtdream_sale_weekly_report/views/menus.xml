@@ -5,10 +5,14 @@
         <menuitem name="市场周报" id="dtdream_menu_sale_report" parent="base.menu_base_partner" sequence="9"></menuitem>
 
         <menuitem name="个人周报" id="menu_own_report" parent="dtdream_menu_sale_report" sequence="10" action="act_my_report"></menuitem>
-        <menuitem name="主管周报" id="menu_manager_report" parent="dtdream_menu_sale_report"  sequence="20" action="act_manager_report"></menuitem>
+
+        <menuitem name="主管周报" id="menu_manager_report" parent="dtdream_menu_sale_report"  sequence="20" action="act_manager_report"
+                  groups="dtdream_sale.group_dtdream_sale_office_manager,dtdream_sale.group_dtdream_office_product_vice_manager,dtdream_sale.group_dtdream_company_manager,dtdream_sale.group_dtdream_management_manager,dtdream_sale.group_dtdream_management_vice_manager,dtdream_sale.group_dtdream_management_product_vice_manager,dtdream_sale.group_dtdream_market_manager,dtdream_sale.group_dtdream_system_manager,dtdream_sale.group_dtdream_system_vice_manager,dtdream_sale.group_dtdream_system_product_vice_manager,dtdream_sale.group_dtdream_marketing_department_manager,dtdream_sale.group_dtdream_marketing_department_project_interface_person,dtdream_sale.group_dtdream_sale_high_manager,dtdream_sale.group_dtdream_devolopement_manager"
+        ></menuitem>
 
         <menuitem name='求助问题类型配置' id='menu_problem_type_config' parent='base.menu_sale_config' sequence="70" action="act_problem_type_config" />
 
+        <menuitem name='周报钉钉应用配置' id='menu_ding_report_config' parent='base.menu_sale_config' sequence="67" action="act_ding_report_config" />
 
     </data>
 </openerp>

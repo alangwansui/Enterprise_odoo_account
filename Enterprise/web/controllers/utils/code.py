@@ -18,3 +18,13 @@ def generate_verification_code():
         code_list.append(random_lowercase_letter)
     verification_code = ''.join(code_list)
     return verification_code
+
+
+def generate_verification_code_num():
+    ''' 随机生成4位的纯数字验证码 '''
+    code_list = []
+    for i in range(4):
+        random_num = random.randint(0, 9)  # 随机生成0-9的数字
+        code_list.append(str(random_num))
+    verification_code = ''.join(code_list)
+    return verification_code

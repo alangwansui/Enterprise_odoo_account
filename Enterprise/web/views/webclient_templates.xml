@@ -37,10 +37,17 @@
             <script type="text/javascript" src="/web/static/src/js/framework/core.js"></script>
             <script type="text/javascript" src="/web/static/src/js/framework/dialog.js"></script>
             <script type="text/javascript" src="/web/static/src/js/widgets/user_menu.js"></script>
-            <script type="text/javascript" src="/web/static/src/js/app_switcher.js"></script>
             <script type="text/javascript" src="/web/static/src/js/tour.js"></script>
             <script type="text/javascript" src="/web/static/test/menu.js"></script>
             <script type="text/javascript" src="/web/static/test/x2many.js"></script>
+
+            <!--web页面相关js-->
+            <script type="text/javascript" src="/web/static/src/js/app_switcher.js"></script>
+            <script type="text/javascript" src="/web/static/src/js/left_sidebar.js"></script>
+            <script type="text/javascript" src="/web/static/src/js/index_content.js"></script>
+            <script type="text/javascript" src="/web/static/src/js/responsive-nav.js"></script>
+            <!--水印-->
+            <script type="text/javascript" src="/web/static/src/js/watermark.js"></script>
 
             <link rel="stylesheet" href="/web/static/src/less/fonts.less"/>
             <link rel="stylesheet" href="/web/static/src/less/variables.less"/>
@@ -173,7 +180,7 @@
             <link rel="stylesheet" href="/web/static/src/less/tooltip.less"/>
             <link rel="stylesheet" href="/web/static/src/less/debug_manager.less"/>
             <link rel="stylesheet" href="/web/static/src/less/app_switcher.less"/>
-            <link rel="stylesheet" href="/web/static/src/less/app_switcher_layout.less"/>
+            <!--<link rel="stylesheet" href="/web/static/src/less/app_switcher_layout.less"/>-->
             <link rel="stylesheet" href="/web/static/src/less/control_panel.less"/>
             <link rel="stylesheet" href="/web/static/src/less/control_panel_layout.less"/>
             <link rel="stylesheet" href="/web/static/src/less/views.less"/>
@@ -187,6 +194,8 @@
             <link rel="stylesheet" href="/web/static/src/less/modal.less"/>
             <link rel="stylesheet" href="/web/static/src/less/data_export.less"/>
             <link rel="stylesheet" href="/web/static/src/less/compatibility.less"/>
+            <link rel="stylesheet" href="/web/static/src/css/responsive-nav.css" />
+            <link rel="stylesheet" href="/web/static/src/css/web_indexstyle.css" />
         </template>
 
         <template id="web.layout" name="Web layout">&lt;!DOCTYPE html&gt;
@@ -343,6 +352,7 @@
             <title>dodo</title>
 
             <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
+            <!--<link rel="stylesheet" href="/web/static/lib/bootstrap/css/bootstrap.css"/>-->
 
             <t t-call-assets="web.assets_common"/>
             <script type="text/javascript">
@@ -377,6 +387,14 @@
                     </t>
                 });
             </script>
+
+            <!--layer-->
+            <script type="text/javascript" src="/web/static/lib/layer/layer.js"></script>
+
+            <!-- 思源字体加载-->
+            <script src="https://use.typekit.net/ycx0edj.js"></script>
+            <script>try{Typekit.load({ async: true });}catch(e){}</script>
+            <!-- 思源字体加载-->
         </head>
         <body class="o_web_client">
         </body>

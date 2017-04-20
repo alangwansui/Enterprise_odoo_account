@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template id="template" xml:space="preserve">
+    <t t-extend="ListView.row">
+        <t t-jquery="button[name=delete]" t-operation="replace">
+            <button t-if="record.get('deletable') or record.get('deletable')==null" type="button" name="delete" class="oe_i">d</button>
+        </t>
+    </t>
+
+</template>

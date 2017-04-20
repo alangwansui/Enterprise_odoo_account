@@ -31,7 +31,6 @@
                         <div name="tags"/>
                             <ul>
                                 <li ><strong>单号:</strong> <field name="name" /></li>
-                                <li ><strong>内容:</strong> <field name="applicant" /></li>
                             </ul>
                     <div name="tags"/>
                     </div>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record model="ir.cron" id="ir_cron_timing_send_email">
+            <field name='name'>备用金定时计算超期</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">dtdream.reserve.fund</field>
+            <field name="function">compute_out_time</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</openerp>

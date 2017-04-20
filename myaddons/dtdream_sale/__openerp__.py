@@ -24,16 +24,15 @@
     # always loaded
     'data': [
         'import.xml',
-        'views/actions.xml',
-        'views/menus.xml',
         'views/incomes.xml',
-        'views/actions.xml',
         'security/dtdream_sale_security.xml',
         'security/dtdream_sale_permission_groups.xml',
         'security/ir.model.access.csv',
         'sale_sequence.xml',
         'views/crm_lead_won_view.xml',
         'views/views.xml',
+        'views/actions.xml',
+        'views/menus.xml',
         'views/industry_office.xml',
         'views/yunwei_config_view.xml',
         'views/templates.xml',

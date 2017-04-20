@@ -31,6 +31,7 @@
         'views/dtdream_ad_department.xml',
         'views/dtdream_ad_ext.xml',
         'views/dtdream_ad_man.xml',
+        'data/timingData.xml'
     ],
      'qweb': [
 

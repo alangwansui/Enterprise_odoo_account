@@ -154,46 +154,6 @@
           </field>
       </record>
 
-      <!--<record id="action_product_tree_view" model="ir.actions.act_window">-->
-          <!--<field name="name">产品层级图</field>-->
-          <!--<field name="type">ir.actions.act_window</field>-->
-          <!--<field name="res_model">product.template</field>-->
-          <!--<field name="view_mode">tree,form</field>-->
-          <!--<field name="view_type">tree</field>-->
-          <!--<field name="view_id" ref="view_res_product_template_tree_view"/>-->
-          <!--<field name="context">{"search_default_filter_to_sell":1}</field>-->
-          <!--<field name="domain">[('pro_parent_id','=',False)]</field>-->
-          <!--<field name="help" type="html">-->
-              <!--<p class="oe_view_nocontent_create">-->
-                  <!--Click to define a new product.-->
-              <!--</p>-->
-              <!--<p>-->
-                  <!--You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to  customers.-->
-              <!--</p>-->
-              <!--<p>-->
-                  <!--The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc.-->
-              <!--</p>-->
-          <!--</field>-->
-      <!--</record>-->
-
-      <!-- 让tree视图里的记录也可双击修改 -->
-      <record id="act_dtdream_product_form" model="ir.actions.act_window">
-          <field name="name">产品</field>
-          <field name="res_model">product.template</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
-          <field name="view_id" ref="view_res_product_template_tree_view"/>
-          <field name="domain">[('id','=',active_id)]</field>
-      </record>
-
-      <record id="ir_open_product" model="ir.values">
-          <field name='key2'>tree_but_open</field>
-          <field name='model'>product.template</field>
-          <field name="name">产品</field>
-          <field eval="'ir.actions.act_window,%d'%act_dtdream_product_form" name='value'/>
-      </record>
-
       <record id="view_res_product_template_tree_list_view" model="ir.ui.view">
           <field name="name">view.res.product.template.tree.list</field>
           <field name="model">product.template</field>
@@ -283,28 +243,6 @@
           </field>
       </record>
 
-      <record id="product.product_template_action" model="ir.actions.act_window">
-          <field name="name">产品列表</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="res_model">product.template</field>
-          <field name="view_mode">tree,kanban,form</field>
-          <field name="view_type">form</field>
-          <field name="view_id" ref="view_res_product_template_tree_list_view"/>
-          <field name="search_view_id" ref="product_template_search_view"/>
-          <field name="context">{"search_default_filter_to_sell":1}</field>
-          <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                  Click to define a new product.
-              </p>
-              <p>
-                  You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to  customers.
-              </p>
-              <p>
-                  The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc.
-              </p>
-          </field>
-      </record>
-
       <!--重写机会点tree视图-->
       <record id="view_res_product_leads_tree_view" model="ir.ui.view">
             <field name="name">view.res.product.leads.tree</field>
@@ -319,7 +257,7 @@
                 </field>
                 <field name="name" position="after">
                     <field name="is_red" invisible="1"/>
-                    <field name="project_leave" string="项目级别"/>
+                    <field name="project_leave" string="项目级别(市场)"/>
                     <field name="office_id"/>
                     <field name="system_department_id"/>
                     <field name="bidding_time"/>
@@ -352,6 +290,19 @@
                     <attribute name="invisible">1</attribute>
                 </field>
             </field>
+        </record>
+
+      <!--费用支出豆腐块跳转动作-->
+        <record id="action_fee_pay" model="ir.actions.act_window">
+            <field name="name">费用支出</field>
+            <field name="res_model">fee.pay</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{
+                            'default_pay_project_id': active_id
+            }</field>
+            <field name="domain">[('pay_project_id','=',active_id)]</field>
         </record>
 
       <!--项目管理字段添加-->
@@ -402,7 +353,8 @@
                     <field name="is_important" invisible="1"/>
                     <field name="project_number"/>
                     <field name="sale_apply_id_uid" invisible="True"/>
-                    <field name="project_leave" string="项目级别"/>
+                    <field name="project_leave" string="项目级别(市场)"/>
+                    <field name="product_dimension_lev" options="{'no_create': True}" widget="many2many_tags"/>
                     <field name="project_province_new" options="{'no_create': True}"/>
                     <field name="project_place_new" options="{'no_create': True}"/>
                     <field name="project_country" options="{'no_create': True}"/>
@@ -658,23 +610,6 @@
             </field>
       </record>
 
-      <!--<delete model="ir.values" id="crm.action_mark_as_lost"/>-->
-      <!--<record id="crm.action_mark_as_lost" model="ir.actions.server">-->
-          <!--<field name="name">Mark As Lost</field>-->
-          <!--<field name="model_id" ref="model_crm_lead"/>-->
-          <!--<field name="state">code</field>-->
-          <!--<field name="code">-->
-              <!--if context.get('active_model') == 'crm.lead' and context.get('active_ids'):-->
-              <!--self.case_mark_lost(cr, uid, context['active_ids'], context=context)-->
-          <!--</field>-->
-      <!--</record>-->
-
-      <!--<delete model="ir.values" id="crm.ir_mark_as_lost"/>-->
-      <!--<record id="crm.ir_mark_as_lost" model="ir.values">-->
-          <!--<field eval="'client_action_multi'" name="key2"/>-->
-          <!--<field eval="'crm.lead'" name="model"/>-->
-          <!--<field name="name">Mark As Lost</field>-->
-      <!--</record>-->
       <!--重写项目管理tree视图-->
       <!-- Opportunities Tree View -->
         <record model="ir.ui.view" id="crm.crm_case_tree_view_oppor">
@@ -706,12 +641,12 @@
 
                     <field name="project_number"/>
                     <field name="name" string="项目名称"/>
-                    <field name="project_leave" string="项目级别"/>
+                    <field name="project_leave" string="项目级别(市场)"/>
                     <field name="office_id"/>
                     <field name="system_department_id"/>
                     <field name="bidding_time"/>
-                    <field name="space_total" string="项目空间（万元）"/>
-                    <field name="software_space"/>
+                    <field name="space_total" string="项目空间总额（万元）"/>
+                    <!--<field name="software_space"/>-->
                     <field name="project_master_degree"/>
                     <field name="sale_apply_id"/>
                     <field name="write_date" string="更新时间" widget="date"/>
@@ -790,7 +725,7 @@
                       </field>
                   </page>
                   <page name="access_product_type" string="产品类">
-                      <field name="user_access_product_type" widget="many2many_kanban" context="{'search_default_group_by_parent_id':'parent_id'}">
+                      <field name="user_access_product_type" domain="[('parent_id.parent_id','=',False),('parent_id','!=',False)]" widget="many2many_kanban" context="{'search_default_group_by_parent_id':'parent_id'}">
                           <kanban quick_create="false" create="true" delete="true">
                               <field name="name"/>
                               <templates>
@@ -834,15 +769,6 @@
           </field>
       </record>
 
-      <!--定义产品类别action-->
-      <record id="product_pro_type_form_action" model="ir.actions.act_window">
-          <field name="name">产品类别</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="res_model">product.pro.type</field>
-          <field name="view_type">form</field>
-          <field name="view_mode">tree,form</field>
-      </record>
-
       <!-- 定义机会点 -->
       <record model="ir.ui.view" id="dtdream_sale.crm_lead_form">
           <field name="name">机会点</field>
@@ -854,7 +780,7 @@
                   <field name="is_red" invisible="1"/>
                   <field name="sale_apply_id_uid" invisible="True"/>
                   <field name="project_number"/>
-                  <field name="project_leave" string="项目级别"/>
+                  <field name="project_leave" string="项目级别(市场)"/>
                   <field name="project_province_new"  options="{'no_create': True}"/>
                   <field name="project_place_new" options="{'no_create': True}"/>
                   <field name="project_country" options="{'no_create': True}"/>
@@ -1027,10 +953,10 @@
             <field name="model">crm.lead</field>
             <field name="arch" type="xml">
                 <search string="Search Leads">
-                    <field name="project_number" string="项目编号"/>
                     <field name="name" string="项目名称" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
-                    <field name="project_leave" string="项目级别"/>
-                    <field name="office_id" string="办事处"/>
+                    <field name="project_leave" string="项目级别(市场)"/>
+                    <field name="project_number" string="项目编号"/>
+                    <field name="office_id" string="办事处/联络处"/>
                     <field name="system_department_id" string="系统部"/>
                     <field name="bidding_time" string="招标时间"/>
                     <field name="space_total" string="项目空间"/>
@@ -1060,10 +986,10 @@
                         <!--<filter string="Salesperson" name="groupby_salesperson" domain="[]" context="{'group_by':'user_id'}"/>-->
                         <filter string="Sales Team" name="groupby_team" domain="[]" context="{'group_by':'team_id'}"/>
                         <filter string="Stage" name="groupby_stage" domain="[]" context="{'group_by':'stage_id'}"/>
-                        <filter string="办事处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
+                        <filter string="办事处/联络处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
                         <filter string="系统部" name="groupby_stage" domain="[]" context="{'group_by':'system_department_id'}"/>
                         <filter string="项目把握度" name="groupby_stage" domain="[]" context="{'group_by':'project_master_degree'}"/>
-                        <filter string="项目级别" name="groupby_stage" domain="[]" context="{'group_by':'project_leave'}"/>
+                        <filter string="项目级别(市场)" name="groupby_stage" domain="[]" context="{'group_by':'project_leave'}"/>
 
                         <!--<filter name="customer" string="Customer" help="Partner" domain="[]" context="{'group_by':'partner_id'}"/>-->
                         <!--<filter string="Campaign" name="groupby_campaign"  domain="[]" context="{'group_by':'campaign_id'}"/>-->
@@ -1160,8 +1086,14 @@
           <field name="inherit_id" ref="product.product_category_search_view"/>
           <field name="arch" type="xml">
               <field name="parent_id" position="after">
+                  <filter string="一级产品分类" name="leavel_one"
+                            domain="[('parent_id','=',False)]"/>
+                  <filter string="二级产品分类" name="leavel_two"
+                            domain="[('parent_id.parent_id','=',False),('parent_id','!=',False)]"/>
+                  <filter string="三级产品分类" name="leavel_three"
+                            domain="[('parent_id.parent_id','!=',False)]"/>
                   <group expand="0" string="Group By">
-                      <filter string="一级分类" context="{'group_by':'parent_id'}" name="group_by_parent_id"/>
+                      <filter string="父级分类" context="{'group_by':'parent_id'}" name="group_by_parent_id"/>
                   </group>
               </field>
           </field>
@@ -1224,10 +1156,10 @@
           <field name="model">crm.lead</field>
           <field name="arch" type="xml">
               <search string="Search Opportunities">
-                  <field name="project_number" string="项目编号"/>
                   <field name="name" string="项目名称" filter_domain="['|','|','|',('partner_id','ilike',self),('partner_name','ilike',self),('email_from','ilike',self),('name', 'ilike', self)]"/>
-                  <field name="project_leave" string="项目级别"/>
-                  <field name="office_id" string="办事处"/>
+                  <field name="project_leave" string="项目级别(市场)"/>
+                  <field name="project_number" string="项目编号"/>
+                  <field name="office_id" string="办事处/联络处"/>
                   <field name="system_department_id" string="系统部"/>
                   <field name="bidding_time" string="招标时间"/>
                   <field name="space_total" string="项目空间"/>
@@ -1255,7 +1187,7 @@
                   <separator/>
                   <filter string="Archived" domain="[('active', '=', False)]" groups="dtdream_sale.group_dtdream_sale_manager"/>
                   <group string="Group By">
-                        <filter string="办事处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
+                        <filter string="办事处/联络处" name="groupby_office" domain="[]" context="{'group_by':'office_id'}"/>
                         <filter string="系统部" name="groupby_stage" domain="[]" context="{'group_by':'system_department_id'}"/>
                         <filter string="阶段" name="groupby_stage_id" domain="[]" context="{'group_by':'stage_id'}"/>
                         <filter string="招标时间" name="groupby_time" domain="[]" context="{'group_by':'bidding_time'}"/>
@@ -1271,85 +1203,6 @@
               </search>
           </field>
       </record>
-
-      <record model="ir.actions.act_window" id="crm.crm_lead_opportunities_tree_view">
-        <field name="name">Your Pipeline</field>
-        <field name="res_model">crm.lead</field>
-        <field name="view_mode">tree,kanban,graph,pivot,form,calendar</field>
-        <field name="domain">[]</field>
-        <field name="context">{
-                        'default_type': 'lead',
-                        'search_default_filter_project_processing': 1
-        }</field>
-        <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
-        <field name="view_id" ref="crm.crm_case_form_view_oppor"/>
-        <field name="help" type="html">
-            <p>
-                Odoo helps you keep track of your sales pipeline to follow
-                up potential sales and better forecast your future revenues.
-            </p><p>
-                You will be able to plan meetings and phone calls from
-                opportunities, convert them into quotations, attach related
-                documents, track all discussions, and much more.
-            </p>
-        </field>
-    </record>
-
-      <!--新增产品类别菜单-->
-      <menuitem name="产品类别" action="product_pro_type_form_action" id="menu_product_pro_type_form_action" parent="product.prod_config_main" sequence="8" />
-
-      <menuitem id="crm.crm_lead_menu_activities" name="Next Activities" sequence="5"
-        parent="base.menu_sales" action="crm.crm_lead_action_activities" groups="group_menu_hide"/>
-      <!--<menuitem id="base.menu_invoiced" name="Invoicing" parent="base.menu_aftersale" sequence="1" groups="group_menu_hide"/>-->
-      //开票
-      <menuitem name="Invoicing"
-            id="sale.menu_sale_invoicing" parent="base.menu_base_partner"
-            sequence="5" groups="group_menu_hide" />
-      <menuitem action="sale.action_orders_to_invoice"
-            id="sale.menu_sale_order_invoice" parent="sale.menu_sale_invoicing"
-            sequence="2" groups="group_menu_hide"/>
-      <menuitem action="sale.action_orders_upselling"
-            id="sale.menu_sale_order_upselling" parent="sale.menu_sale_invoicing"
-            sequence="5" groups="group_menu_hide"/>
-      //报价
-      <menuitem id="sale.menu_sale_quotations"
-            action="sale.action_quotations" parent="base.menu_sales"
-            sequence="11" groups="group_menu_hide"/>
-      //销售订单
-      <record id="sale.menu_sale_order" model="ir.ui.menu">
-          <field name="groups_id" eval="[(6, 0, [ref('group_menu_hide')])]"/>
-      </record>
-      //销售顶级菜单
-      <menuitem name="Sales"
-            id="base.menu_base_partner"
-            web_icon="sale,static/description/icon.png"
-            groups="group_dtdream_sale_salesman_all_leads,group_dtdream_sale_salesman,group_dtdream_sale_manager,group_dtdream_sale_read,group_dtdream_sale_rep,group_dtdream_sale_office_manager,group_dtdream_office_product_vice_manager,group_dtdream_headquarters_server_manager,group_dtdream_server_manager,group_dtdream_marketing_department_manager,group_dtdream_marketing_department_vice_manager,group_dtdream_marketing_department_business_interface_person,group_dtdream_system_manager,group_dtdream_system_vice_manager,group_dtdream_system_product_vice_manager,group_dtdream_market_manager,group_dtdream_headquarters_product_manager,group_dtdream_product_director,group_dtdream_management_manager,group_dtdream_management_vice_manager,group_dtdream_management_product_vice_manager,group_dtdream_company_manager,group_dtdream_devolopement_manager,group_dtdream_sale_high_manager" sequence="6"/>
-
-
-
-      //仪表盘
-      <menuitem id="sales_team.menu_sales_team_act" action="sales_team.crm_team_salesteams_act" sequence="1" parent="base.menu_base_partner" name="Dashboard" groups="group_menu_hide"/>
-
-      <menuitem id="base.menu_sales" name="Sales" parent="base.menu_base_partner" sequence="5" groups="group_menu_hide"/>
-
-      <menuitem name="联系人" id="dtdream_sale.menu_contacts" sequence="11" action="mail.action_contacts" parent="base.menu_base_partner" groups="group_menu_hide"/>
-
-      <menuitem action="product.product_template_action"
-            id="product.menu_product_template_action"
-            parent="base.menu_sales" sequence="13" groups="group_menu_hide"/>
-
-
-      <delete id="crm.menu_crm_leads" model="ir.ui.menu"/>
-      <menuitem name="机会点" id="crm.menu_crm_leads" parent="base.menu_base_partner" sequence="3" action="crm.crm_lead_all_leads" groups="group_menu_hide"/>
-      <menuitem id="crm.menu_crm_opportunities" action="crm.action_your_pipeline" parent="base.menu_base_partner" sequence="4"/>
-      <menuitem id="base.menu_partner_form" parent="base.menu_base_partner" action="base.action_partner_form" sequence="15"/>
-
-      <menuitem name="产品" id="base.menu_top_dtdream_product" web_icon="dtdream_sale,static/description/product.png" action="product.product_template_action"/>
-
-      <!--<menuitem name="产品层级图" id="product_tree_view_menuitem" action="action_product_tree_view" parent="base.menu_top_dtdream_product" sequence="2"/>-->
-
-      <menuitem name="产品列表" id="product_list_view_menuitem" action="product.product_template_action" parent="base.menu_top_dtdream_product" sequence="1"/>
-
 
       <!--定义行政区域-->
       <record id="view_dtdream_area_form" model="ir.ui.view">
@@ -1396,19 +1249,6 @@
               </tree>
           </field>
       </record>
-
-      <!--行政区域action定义-->
-      <record id="act_dtdream_area" model="ir.actions.act_window">
-          <field name="name">行政区域</field>
-          <field name="type">ir.actions.act_window</field>
-          <field name="res_model">dtdream.area</field>
-          <field name="view_type">tree</field>
-          <field name="view_mode">tree,list,form</field>
-          <field name="domain">[('parent_id','=',False)]</field>
-      </record>
-
-      <!--定义行政区域菜单-->
-      <menuitem name='行政区域配置' id='menu_setting_dtdream_area' parent='base.menu_sale_config' sequence="65" action="act_dtdream_area"/>
 
       <delete id="crm.ir_mark_as_lost" model="ir.values"/>
   </data>

@@ -70,6 +70,41 @@
             <field name="action">wkf_deliver()</field>
         </record>
 
+        <record id="act_yunwei_test" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">运维管控测试</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_yunwei_test()</field>
+        </record>
+
+        <record id="act_deliver_test" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">交付运维测试</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_deliver_test()</field>
+        </record>
+
+        <record id="act_yw_approve" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">运维服务经理审核</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_yunwei_approve()</field>
+        </record>
+
+        <record id="act_pmo_vip" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">PMO主管指定VIP经理</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_pmo_vip()</field>
+        </record>
+
+        <record id="act_vip_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="workflow_project_manage_handle"/>
+            <field name="name">VIP经理确认</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_vip_confirm()</field>
+        </record>
+
         <record id="act_yunwei" model="workflow.activity">
             <field name="wkf_id" ref="workflow_project_manage_handle"/>
             <field name="name">运维</field>
@@ -132,11 +167,41 @@
             <field name="signal">next_stage</field>
         </record>
 
-        <record id="trans_deliver_yunwei" model="workflow.transition">
+        <record id="trans_deliver_yunwei_test" model="workflow.transition">
             <field name="act_from" ref="act_deliver"/>
-            <field name="act_to" ref="act_yunwei"/>
+            <field name="act_to" ref="act_yunwei_test"/>
             <field name="signal">next_stage</field>
             <field name="condition">check_yunwei()</field>
+        </record>
+
+        <record id="trans_yunwei_test_deliver_test" model="workflow.transition">
+            <field name="act_from" ref="act_yunwei_test"/>
+            <field name="act_to" ref="act_deliver_test"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_deliver_test_yw_approve" model="workflow.transition">
+            <field name="act_from" ref="act_deliver_test"/>
+            <field name="act_to" ref="act_yw_approve"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_yw_approve_vip" model="workflow.transition">
+            <field name="act_from" ref="act_yw_approve"/>
+            <field name="act_to" ref="act_pmo_vip"/>
+            <field name="signal">approve_agree</field>
+        </record>
+
+        <record id="trans_vip_confirm" model="workflow.transition">
+            <field name="act_from" ref="act_pmo_vip"/>
+            <field name="act_to" ref="act_vip_confirm"/>
+            <field name="signal">btn_submit</field>
+        </record>
+
+        <record id="trans_vip_confirm_yunwei" model="workflow.transition">
+            <field name="act_from" ref="act_vip_confirm"/>
+            <field name="act_to" ref="act_yunwei"/>
+            <field name="signal">btn_submit</field>
         </record>
 
         <record id="trans_yunwei_project_done" model="workflow.transition">
@@ -152,10 +217,15 @@
             <field name="condition">not check_yunwei()</field>
         </record>
 
-
         <record id="trans_manage_approve_plan" model="workflow.transition">
             <field name="act_from" ref="act_plan_approve"/>
             <field name="act_to" ref="act_plan"/>
+            <field name="signal">approve_reject</field>
+        </record>
+
+        <record id="trans_yw_approve_deliver_test" model="workflow.transition">
+            <field name="act_from" ref="act_yw_approve"/>
+            <field name="act_to" ref="act_deliver_test"/>
             <field name="signal">approve_reject</field>
         </record>
 

@@ -17,13 +17,21 @@ def send(access_token, touser, toparty, send_type, content, agentid=3873399):
         "access_token": access_token
     }
     url += urlencode(args)
-    data = {
-        "access_token": access_token,
-        "touser": touser,
-        "toparty": toparty,
-        "agentid": agentid,
-        "msgtype": send_type,
-        send_type: content
-    }
-
+    if send_type == "link":
+        data = {
+            "touser": touser,
+            "toparty": toparty,
+            "agentid": agentid,
+            "msgtype": send_type,
+            "link": content
+        }
+    else:
+        data = {
+            "access_token": access_token,
+            "touser": touser,
+            "toparty": toparty,
+            "agentid": agentid,
+            "msgtype": send_type,
+            send_type: content
+        }
     return http_post(url, data)

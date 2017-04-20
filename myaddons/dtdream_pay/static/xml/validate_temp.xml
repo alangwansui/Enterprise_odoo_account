@@ -34,4 +34,8 @@
         </div>
     </t>
 
+
+    <t t-name="dtdream_pay.Mobile">
+        <p style="padding:10px 16px;color:#8f8f8f;">按公司HR规定，工资信息请到电脑上操作。</p>
+    </t>
 </templates>

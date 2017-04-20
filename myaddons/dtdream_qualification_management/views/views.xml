@@ -129,7 +129,7 @@
                             </group>
                             <group>
                                 <field name="rank" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
-                               <field name="attachment_name" invisible="True"/>
+                               <field name="attachment_name" invisible="1"/>
                                 <field name="attachment" widget="binary" filename="attachment_name" attrs="{'readonly':[('is_manager','=',False),('is_write_right_jk','=',False),('is_write_right','=',False)]}"/>
                             </group>
                         </group>

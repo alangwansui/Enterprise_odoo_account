@@ -78,6 +78,7 @@
                         dtdream_sale.group_dtdream_market_manager,
                         dtdream_sale.group_dtdream_company_manager,
                         dtdream_sale.group_dtdream_marketing_department_manager" attrs="{'invisible':[('state','not in',('7','9','done')),('is_quyu_zongcai_bohui','=',False)]}"/>
+                  <field name="channel_and_customername" placeholder="请填写完整名称" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
               </group>
               <group>
                 <field name="partner_id" options='{"no_create": True}' domain="[('customer','=','True')]" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
@@ -87,6 +88,7 @@
                 <field name="pre_implementation_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="supply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="apply_time" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
+                <field name="is_zongdai" attrs="{'readonly':['|','|',('is_newest_record','=',False),('state','not in',('0','4')),('is_current','=',False)]}"></field>
                 <field name="total_zhuren_price" readonly="1"
                        groups="dtdream_sale.group_dtdream_sale_office_manager" attrs="{'invisible':[('state','not in',('6','7','9','done')),('is_banshichu_bohui','=',False)]}"/>
                 <field name="total_sale_price" readonly="1"

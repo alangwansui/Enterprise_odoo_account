@@ -31,14 +31,14 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
         searchview_hidden: true,
 
         events: {
-            'click.sjbtn':'on_open_item_sjbtn',
+            'click .sjbtn':'on_open_item_sjbtn',
             'click .dosave':'on_doSave',
             'click .open_detail': 'open_detail',
-            'click.queryBtn':'do_pay_search',
-            'click.return':'do_back',
-            'click.open_detail_phone':'open_detail_phone',
-            'click.phone_back':'do_phone_back',
-            'click.toIndex':'do_to_index',
+            'click .queryBtn':'do_pay_search',
+            'click .return':'do_back',
+            'click .open_detail_phone':'open_detail_phone',
+            'click .phone_back':'do_phone_back',
+            'click .toIndex':'do_to_index',
         },
 
         fetch_data: function () {
@@ -50,14 +50,36 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
         render: function () {
             var super_render = this._super;
             var self = this;
-            var report_dashboard = QWeb.render('dtdream_pay.validate', {
-            });
-            super_render.call(self);
-            $(report_dashboard).prependTo(self.$el);
-            self.$el.find('.oe_view_nocontent').hide();
+
+
+            var userAgentInfo = navigator.userAgent;
+            var Agents = ["Android", "iPhone","SymbianOS", "Windows Phone", "iPod"];
+            var flag = true;
+            for (var v = 0; v < Agents.length; v++) {
+                if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(window.screen.width<768){
+                 flag = false;
+            }
+            if(flag){
+                var report_dashboard = QWeb.render('dtdream_pay.validate', {
+                });
+                super_render.call(self);
+                $(report_dashboard).prependTo(self.$el);
+                self.$el.find('.oe_view_nocontent').hide();
+            }else{
+                var report_dashboard = QWeb.render('dtdream_pay.Mobile', {
+                });
+                super_render.call(self);
+                $(report_dashboard).prependTo(self.$el);
+                self.$el.find('.oe_view_nocontent').hide();
+            }
         },
         on_open_item_sjbtn:function(ev){
-        if($(ev.target).attr('class')=='lineInput-btn sjbtn'){
+            $(ev.target).attr("disabled","disabled").css("background-color","rgba(39,180,231,.4)")
             var data={}
             $.ajax({
                 type: 'POST',
@@ -66,13 +88,14 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
                 data: JSON.stringify(data),
                 dataType: "json",
                 success: function(data){
+                    $(ev.target).attr("disabled",false).css("background-color","rgba(39,180,231)")
                     console.log(data.result);
                     if(data.result){
                         if (data.result.code == 10000){
-                            $(".pleasedxfs").children()[0].innerText="校验码短信已发送到你的手机"+data.result.telephone+"上，请及时查收。"
+                            $(".pleasedxfs").children()[0].innerText="验证码将发至您的手机"+data.result.telephone.slice(-4)+"，验证码将在5分钟后失效。"
                             $(".pleasedxfs").addClass("appearError").siblings('.appearError').removeClass('appearError');
                         } else{
-                            $(".pleasewarm").children()[0].innerText=data.result.message
+                            $(".pleasewarm").children()[0].innerText=data.result.message+",请稍后再试"
                             $(".pleasewarm").addClass("appearError").siblings('.appearError').removeClass('appearError');
                         }
                     }else if(data.error){
@@ -80,13 +103,13 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
                     }
                 },
                 error:function(data){
+                    $(ev.target).attr("disabled",false).css("background-color","rgba(39,180,231)")
                     console.log("error")
                 }
             });
-            }
         },
         on_doSave:function(ev){
-        if($(ev.target).attr('class')=='savebtn dosave'){
+            $(ev.target).attr("disabled","disabled").css("background-color","rgba(39,180,231,.4)")
             ev.preventDefault();
             ev.stopPropagation();
             var self = this;
@@ -94,7 +117,8 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
             if ( sn == null || sn == undefined || sn == "" ) {
                 $("#lineInput").addClass("errorBorder");
                 $(".pleaseSR").addClass("appearError").siblings('.appearError').removeClass('appearError');
-                return true;
+                $(ev.target).attr("disabled",false).css("background-color","rgba(39,180,231)")
+                return;
             } else{
                 document.getElementById("lineInput").className = "lineInput-no";
                 $(".pleaseSR").removeClass("appearError")
@@ -107,11 +131,14 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
                 data: JSON.stringify(data),
                 dataType: "json",
                 success: function(data){
+                    $(ev.target).attr("disabled",false).css("background-color","rgba(39,180,231)")
                     console.log(data.result);
                     if(data.result){
                         if (data.result.code == 10000){
                             sessionStorage.setItem("vaCode", data.result.vaCode)
-                            var startMonth="";
+                            var date = new Date();
+                            var month = date.getMonth() + 1
+                            var startMonth=date.getFullYear()+"-"+month;
                             var endMonth="";
                             self.fetch_data().then(function (result) {
                                 var $info = QWeb.render('dtdream_pay.dashboardView', {
@@ -121,7 +148,7 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
                                 $('.o_kanban_ungrouped').html('')
                                 $($info).appendTo('.o_kanban_ungrouped');
                                 self.render_content(startMonth,endMonth,sessionStorage.getItem('vaCode'));
-                                self.render_watermark(data.result.waterline);
+//                                self.render_watermark(data.result.waterline);
                                 self.render_datetimepicker();
                             });
                         }else if(data.result.code==10002){
@@ -135,10 +162,10 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
                     }
                 },
                 error:function(data){
+                    $(ev.target).attr("disabled",false).css("background-color","rgba(39,180,231)")
                     console.log("error")
                 }
             });
-            }
         },
         render_content: function(startMonth,endMonth,vaCode){
             new Model("dtdream.pay")
@@ -166,12 +193,16 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
              });
         },
         render_datetimepicker:function(){
+            var date = new Date();
+            var month = date.getMonth() + 1
             $('.datepicker').datetimepicker({
                 format:'YYYY-MM',
                 calendarWeeks: false,
                 viewMode:'months',
                 minViewMode:'months',
                 pickTime: false,
+                minDate: moment({y: date.getFullYear()-2,M:month}),
+                maxDate: moment({y: date.getFullYear(),M:month-1}),
                 useMinutes: false,
                 language: 'zh-CN'             //设置时间控件为中文          
             });
@@ -259,11 +290,7 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
                             $(all[i]).remove()
                         }
                     }
-                    var noText=`
-                    <div class="col-xs-4">
-                        <span class="tText"></span>
-                        <span class="cText"></span>
-                    </div>`;
+                    var noText="<div class='col-xs-4'><span class='tText'></span><span class='cText'></span></div>";
                     var judgeAll=document.querySelectorAll('.judge');
                     for(var i=0,l=judgeAll.length;i<l;i++){
                         var html=judgeAll[i].innerHTML;
@@ -354,76 +381,72 @@ odoo.define('dtdream_pay.ui.dashboard', function (require) {
             ev.preventDefault();
             ev.stopPropagation();
             var self = this;
-            if($(ev.target).attr('class')=='qyText open_detail_phone'){
-                var month=$('.faxinyue')[0].innerText
-                var vaCode=sessionStorage.getItem('vaCode')
-                new Model("dtdream.pay")
-                .call("get_pay_phone_list_detail_by_month", [month,vaCode,location.host],{},null)
-                .then(function (data) {
-                    if (data && data['lists']) {
-                        var lists=data['lists']
-                        var $info = $(QWeb.render('dtdream_pay.dashboard_detailphoneView', {
-                            'lists':lists,
-                        }));
-                        $('.o_kanban_ungrouped').html('')
-                        $info.appendTo('.o_kanban_ungrouped');
-                        var all = document.querySelectorAll('.canhide')
-                        for(var i=0,l=all.length;i<l;i++){
-                            if(all[i].children[1].innerText==0){
-                                $(all[i]).parent().remove()
-                            }
-                        }
-                        var all = document.querySelectorAll('.canhidedif')
-                        var canhidedif=false
-                        for(var i=0,l=all.length;i<l;i++){
-                            if(all[i].children[1].innerText!=0){
-                                canhidedif=true
-                                break
-                            }
-                        }
-                        if(!canhidedif){
-                            for(var i=0,l=all.length;i<l;i++){
-                                $(all[i]).parent().remove()
-                            }
-                        }
-                    }else if(data && data['code']){
-                        if(data['code']==10001){
-                            location.reload([true])
-                        }else{
-                            alert(data['message'])
+            var month=$('.faxinyue')[0].innerText
+            var vaCode=sessionStorage.getItem('vaCode')
+            new Model("dtdream.pay")
+            .call("get_pay_phone_list_detail_by_month", [month,vaCode,location.host],{},null)
+            .then(function (data) {
+                if (data && data['lists']) {
+                    var lists=data['lists']
+                    var $info = $(QWeb.render('dtdream_pay.dashboard_detailphoneView', {
+                        'lists':lists,
+                    }));
+                    $('.o_kanban_ungrouped').html('')
+                    $info.appendTo('.o_kanban_ungrouped');
+                    var all = document.querySelectorAll('.canhide')
+                    for(var i=0,l=all.length;i<l;i++){
+                        if(all[i].children[1].innerText==0){
+                            $(all[i]).parent().remove()
                         }
                     }
-                })
-            }
+                    var all = document.querySelectorAll('.canhidedif')
+                    var canhidedif=false
+                    for(var i=0,l=all.length;i<l;i++){
+                        if(all[i].children[1].innerText!=0){
+                            canhidedif=true
+                            break
+                        }
+                    }
+                    if(!canhidedif){
+                        for(var i=0,l=all.length;i<l;i++){
+                            $(all[i]).parent().remove()
+                        }
+                    }
+                }else if(data && data['code']){
+                    if(data['code']==10001){
+                        location.reload([true])
+                    }else{
+                        alert(data['message'])
+                    }
+                }
+            })
         },
         do_phone_back:function(ev){
             ev.preventDefault();
             ev.stopPropagation();
             var self = this;
-            if($(ev.target).attr('class')=='qyText phone_back'){
-                var startMonth=sessionStorage.getItem('startMonth');
-                var endMonth=sessionStorage.getItem('endMonth');
-                 new Model("dtdream.pay")
-                    .call("get_pay_phone_list_by_user", [startMonth,endMonth,sessionStorage.getItem('vaCode'),location.host],{},null)
-                    .then(function (data) {
-                        if (data && data['lists']) {
-                            var lists=data['lists']
-                            var $info = $(QWeb.render('dtdream_pay.dashboardPhoneView', {
-                                'startMonth':startMonth,
-                                'endMonth':endMonth,
-                                'lists':lists,
-                            }));
-                            $('.o_kanban_ungrouped').html('')
-                            $info.appendTo('.o_kanban_ungrouped');
-                        }else if(data && data['code']){
-                        if(data['code']==10001){
-                            location.reload([true])
-                        }else{
-                            alert(data['message'])
-                        }
+            var startMonth=sessionStorage.getItem('startMonth');
+            var endMonth=sessionStorage.getItem('endMonth');
+             new Model("dtdream.pay")
+            .call("get_pay_phone_list_by_user", [startMonth,endMonth,sessionStorage.getItem('vaCode'),location.host],{},null)
+            .then(function (data) {
+                if (data && data['lists']) {
+                    var lists=data['lists']
+                    var $info = $(QWeb.render('dtdream_pay.dashboardPhoneView', {
+                        'startMonth':startMonth,
+                        'endMonth':endMonth,
+                        'lists':lists,
+                    }));
+                    $('.o_kanban_ungrouped').html('')
+                    $info.appendTo('.o_kanban_ungrouped');
+                }else if(data && data['code']){
+                    if(data['code']==10001){
+                        location.reload([true])
+                    }else{
+                        alert(data['message'])
                     }
-                    })
-            }
+                }
+            })
         },
     });
 

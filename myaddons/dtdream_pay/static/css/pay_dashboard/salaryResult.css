@@ -3,7 +3,7 @@
     background-color: #EFF2F7;
   }
   .salaryResult {
-    font-family: "Microsoft YaHei", SansSerif, Arial;
+    //font-family: "Microsoft YaHei", SansSerif, Arial;
     background-color: rgba( 98,131,196 ,.1);
     width:100%;
     height:100%;
@@ -66,7 +66,7 @@
     background-color:rgba(255,255,255,.7);
   }
   .salaryResult .list-group .list-group-item .titleYM {
-    font-family: Arial;
+    //font-family: Arial;
     font-weight: bold;
   }
   .salaryResult .list-group .list-group-item .pull-left {
